@@ -1,0 +1,1271 @@
+DEFINT A-Z
+DECLARE SUB CSMsgBox (Message$, Wdth, Cnf AS ANY)
+DECLARE SUB TITLE ()
+DECLARE SUB GETKEY ()
+DECLARE SUB ReadFile (BYVAL Address%)
+DECLARE SUB SortStr (BYVAL Address%, size%, Direction%)
+DECLARE SUB MAMenu (BYVAL Address%, SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
+DECLARE FUNCTION QPRTrim$ (Work$)
+DECLARE SUB MQPrint (X$, Colr)
+DECLARE FUNCTION FCount% (FSpec$)
+DECLARE SUB MPaintBox (ULRow, ULCol, LRRow, LRCol, Colr)
+DECLARE SUB MScrnSave (ULRow, ULCol, LRRow, LRCol, SEG Address)
+DECLARE SUB MScrnRest (ULRow, ULCol, LRRow, LRCol, SEG Address)
+DECLARE FUNCTION GetDrive% ()
+DECLARE FUNCTION EXIST (FILENAME$)
+DECLARE FUNCTION FCount% (FSpec$)
+DECLARE SUB Box0 (ULRow%, ULCol%, LRRow%, LRCol%, Char%, Colr%)
+DECLARE SUB MMenuVert (BYVAL Address%, Choice%, Start%, SCANCODE%, NormClr%, HiLite%, NumRows%, Row%, Column%)
+DECLARE SUB ReadFile (BYVAL Address%)
+DECLARE SUB KILLFILE (FILENAME$)
+
+   '$INCLUDE: 'QEditype.BI'
+DECLARE SUB QEdit (array$(), Ky$, Action, Ed AS EditInfo)
+   DIM Ed AS EditInfo              'create the editor's data structure
+   DIM VV$(500), V%(500), TE$(1), TF$(1)
+   DIM Q$(375), AP%(1), T%(9)
+   DIM Z1$(30), Z1%(30), Z2$(30)
+   DIM H$(20), V$(20), MO$(3), ITEM$(11)
+   DIM HS%(1700), VS%(1700), LO$(1), P$(2), E%(13)
+   DIM TS$(1), SC$(2), U5$(4), CM$(1), LC$(2)
+   DIM Y AS LONG, U6 AS SINGLE, M AS LONG
+   DIM D AS LONG
+   REDIM YN$(1700, 1), NG%(1700, 18)
+   REDIM DY(1700) AS LONG
+
+   '$INCLUDE: 'DEFCNF.BI'
+   '$INCLUDE: 'SetCnf.BI'          'queries the system info for MsgBox
+
+   F2$ = CHR$(0) + CHR$(60)        'extended code for the F2 function key
+                                    '(used in this demo to change margins)
+   F3$ = CHR$(0) + CHR$(61)
+   D1% = GetDrive%
+   OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, P$(0): INPUT #1, P$(1): CLOSE 1
+   DATA HH,CV,CH,CC
+   FOR X = 0 TO 3
+   READ MO$(X)
+   NEXT
+
+10 COLOR 7, 0: CLS
+
+   NG%(0, 8) = 3
+   NG%(0, 3) = 1
+   NG%(0, 7) = 1
+   NG%(0, 2) = 1
+   NG%(0, 5) = 5
+
+   DT$ = "10-01-96"
+   TM$ = "07:30P"
+
+   TF$(0) = "N": TF$(1) = "Y"
+   TS$(0) = "N": TS$(1) = "Y"
+   SC$(0) = "NO SHOT CLOCK       "
+   SC$(1) = "45 SECOND SHOT CLOCK"
+   SC$(2) = "35 SECOND SHOT CLOCK"
+
+   U5$(0) = "HUMAN OPPONENT            "
+   U5$(1) = "COMPUTER IS VISITING TEAM "
+   U5$(2) = "COMPUTER IS HOME TEAM     "
+   U5$(3) = "COMPUTER VS COMPUTER      "
+   TE$(0) = "SHOOT 1+1"
+   TE$(1) = "SHOOT 2  "
+   LC$(1) = "HOME COURT ADVANTAGE"
+   LC$(2) = "NEUTRAL SITE        "
+   CM$(0) = "COACH AND SELECT SHOTS           "
+   CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+
+    CALL TITLE
+
+
+   ITEM$(1) = "ENTER A NEW SCHEDULE                             "
+   ITEM$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
+   ITEM$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
+   ITEM$(4) = "EXTRACT A CONFERENCE SCHEDULE FROM MAIN SCHEDULE "
+   ITEM$(5) = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE "
+   ITEM$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE                "
+   ITEM$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE          "
+   ITEM$(8) = "BOXSCORE MAINTENANCE / SAVE BOXSCORE PARAMETERS  "
+   ITEM$(9) = "EXIT AUTO SCHEDULER TO COURTSIDE MAIN MENU       "
+
+     SELECTION% = 1
+     Count% = 9
+     Start% = 1
+     SCANCODE% = 9
+     FileColr% = 31
+     HiLiteColr% = 112
+     Spacing% = 1
+     Row% = 6
+     Column% = 16
+     CALL Box0(5, 15, 15, 65, 2, 31)
+     CALL ShowCursor
+     MMenuVert VARPTR(ITEM$(1)), SELECTION%, Start%, SCANCODE%, FileColr%, HiLiteColr%, Count%, Row%, Column%
+     CALL HideCursor
+     COLOR , 0
+     IF SCANCODE% = 27 THEN SELECTION% = 9
+
+     D3% = SELECTION% - 1
+
+'D3% = 0 ENTER A NEW SCHEDULE
+'D3% = 1 LOAD/EDIT EXISTING SCHEDULE
+'D3% = 2 EXTRACT A TEAM'S SCHEDULE
+'D3% = 3 NO LONGER AVAILABLE
+'D3% = 4 MAIN MENU
+   ON SELECTION% GOTO 20, 600, 600, 600, 600, 600, 1300, 4500
+   IF D1% >= 67 THEN RUN "HELLO.EXE 1"
+   PRINT
+   PRINT "MAKE SURE COURTSIDE PROGRAM DISK IS IN DRIVE"
+   LOCATE 23, 1: PRINT "PRESS ANY KEY TO CONTINUE"
+15 I$ = INKEY$: IF I$ = "" THEN 15
+   RUN "HELLO.EXE 1"
+
+20 AP%(0) = 0: NS% = 0: TS% = 0
+21 COLOR 15, 0: CLS
+    JJ = 7
+    LOCATE 6, 8: COLOR 15, 1
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "ENTER NAME FOR SCHEDULE: ": PRINT
+    LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+    LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+    LOCATE , 12: PRINT "WILL AUTOMATICALLY ADD .SCD"
+    LOCATE , 12: PRINT "SAMPLE NAMES ARE ARKANSAS, LSU-68, IU76, ETC."
+    LOCATE 7, 37: INPUT F$
+    IF F$ = "" THEN 21
+    LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
+22 I$ = INKEY$: IF I$ = "" THEN 22
+   IF UCASE$(I$) = "Y" THEN 21
+   COLOR 15, 0
+
+
+25 CLS
+   LOCATE 23, 1: COLOR , 1: PRINT TAB(80); : LOCATE 23, 1
+   COLOR 13: PRINT "SC"; : COLOR 14: PRINT "-SHOT CLOCK  ";
+   COLOR 13: PRINT "MA"; : COLOR 14: PRINT "-MODE OF PLAY  ";
+   COLOR 11: PRINT " G"; : COLOR 14: PRINT "-GOTO GAME";
+   COLOR 11: PRINT " B"; : COLOR 14: PRINT "-BOXSCORE OPTIONS"
+   LOCATE 24, 1: COLOR , 1: PRINT TAB(80); : LOCATE 24, 1
+   COLOR 11: PRINT "C"; : COLOR 14: PRINT "-SAVE AND CONTINUE  ";
+   COLOR 11: PRINT "A"; : COLOR 14: PRINT "-ADD A GAME  ";
+   COLOR 11: PRINT "D"; : COLOR 14: PRINT "-DELETE A GAME  ";
+   COLOR 11: PRINT "E"; : COLOR 14: PRINT "-EDIT A GAME  ";
+   COLOR 11: PRINT "PGUP  PGDN";
+   LOCATE 25, 1: COLOR , 1: PRINT TAB(80); : LOCATE 25, 1
+   COLOR 11: PRINT "S"; : COLOR 14: PRINT "-SORT GAMES  ";
+   COLOR 11: PRINT "P"; : COLOR 14: PRINT "-PLAY GAMES   ";
+   COLOR 11: PRINT "X"; : COLOR 14: PRINT "-SAVE AND EXIT  ";
+   COLOR 11: PRINT "Q"; : COLOR 14: PRINT "-QUIT  ";
+   COLOR 11: PRINT "R"; : COLOR 14: PRINT "-RESET SCORES";
+
+
+   LOCATE 1, 1: PRINT TAB(80); : LOCATE 1, 1: PRINT F$: LOCATE 1, 33: COLOR 14: PRINT "AUTO SCHEDULER"
+   COLOR , 0
+50 LOCATE 2, 1
+   COLOR 14
+   PRINT "GAME  DATE      TIME    VISITING TEAM        HOME TEAM            MA  HC  3  SC": COLOR 15
+   FOR X = 1 TO 20
+   LOCATE X + 2, 1
+   IF X + NS% * 20 > AP%(0) THEN 100
+
+   T1 = NG%(X + NS% * 20, 0): YN$ = YN$(X + NS% * 20, 0)
+   GOSUB 9000
+   V$(X) = N$
+   T1 = NG%(X + NS% * 20, 1): YN$ = YN$(X + NS% * 20, 1)
+   GOSUB 9000
+   H$(X) = N$
+
+
+
+   PRINT USING "####  "; X + NS% * 20;
+   PRINT USING "##/##/##"; NG%(X + NS% * 20, 17); NG%(X + NS% * 20, 16); NG%(X + NS% * 20, 18);
+   LOCATE , 17
+   I$ = "A"
+   HR% = NG%(X + NS% * 20, 15) / 100
+   MIN% = NG%(X + NS% * 20, 15) - HR% * 100
+   IF HR% = 12 THEN I$ = "P"
+   IF HR% > 12 THEN HR% = HR% - 12: I$ = "P"
+   TM$ = RIGHT$(STR$(HR%), 2) + ":"
+   IF MIN% < 10 THEN TM$ = TM$ + "0" + RIGHT$(STR$(MIN%), 1)
+   IF MIN% >= 10 THEN TM$ = TM$ + RIGHT$(STR$(MIN%), 2)
+   TM$ = TM$ + I$
+   PRINT TM$;
+   LOCATE , 25: PRINT V$(X); " ";
+   IF NG%(X + NS% * 20, 13) = 1 THEN PRINT USING "###"; VS%(X + NS% * 20);
+   LOCATE , 46: PRINT H$(X); " ";
+   IF NG%(X + NS% * 20, 13) = 1 THEN PRINT USING "###"; HS%(X + NS% * 20);
+   LOCATE , 67: PRINT MO$(NG%(X + NS% * 20, 8));
+   LOCATE , 72: IF NG%(X + NS% * 20, 2) = 1 THEN PRINT "Y"; :  ELSE PRINT "N";
+   LOCATE , 75: PRINT TS$(NG%(X + NS% * 20, 3));
+   LOCATE , 78: PRINT LEFT$(SC$(NG%(X+NS%*20,7)),2)
+   NEXT
+100 I$ = INKEY$: IF I$ = "" THEN 100
+   IF UCASE$(I$) = "A" THEN GOSUB 150: GOTO 25
+   IF UCASE$(I$) = "E" THEN GOSUB 140: GOTO 25
+   IF UCASE$(I$) = "B" THEN 5000
+   IF UCASE$(I$) = "G" THEN GOSUB 120: GOTO 25
+   IF UCASE$(I$) = "D" THEN GOSUB 200: GOTO 25
+   IF UCASE$(I$) = "S" THEN GOSUB 8500: GOTO 25
+   IF UCASE$(I$) = "C" THEN GOSUB 350: GOTO 25
+   IF UCASE$(I$) = "X" THEN GOSUB 350: GOTO 10
+   IF I$ = CHR$(0) + "Q" THEN GOSUB 130: GOTO 25
+   IF I$ = CHR$(0) + "I" THEN GOSUB 135: GOTO 25
+   IF UCASE$(I$) = "Q" THEN 10
+   IF UCASE$(I$) = "P" THEN GOSUB 350: GOTO 300
+   IF UCASE$(I$) = "R" THEN GOSUB 400: GOTO 25
+   GOTO 100
+120 REM:GOTO A SPECIFIC PAGE
+    LOCATE 23, 1: PRINT "ENTER GAME # TO GO TO        "
+    LOCATE 23, 1: INPUT "ENTER GAME # TO GO TO "; NG%
+    IF NG% < 1 OR NG% > AP%(0) THEN 120
+    NS% = INT((NG% - 1) / 20)
+    RETURN
+130 REM *** PAGE DOWN ***
+    IF NS% >= BS% THEN NS% = BS%: GOTO 133
+    NS% = NS% + 1
+133 RETURN
+135 REM *** PAGE UP ***
+    IF NS% = 0 THEN 137
+    NS% = NS% - 1
+137 RETURN
+140 REM *** EDIT A GAME ***
+    LOCATE 23, 1: PRINT "ENTER GAME # TO EDIT        "
+    LOCATE 23, 1: INPUT "ENTER GAME # TO EDIT "; NG%
+    IF NG% < 1 OR NG% > AP%(0) THEN 140
+    V$ = V$(NG% - INT(NG% / 20) * 20)
+    H$ = H$(NG% - INT(NG% / 20) * 20)
+    IF NG% - INT(NG% / 20) * 20 = 0 THEN V$ = V$(20): H$ = H$(20)
+    I$ = "A"
+    HR% = INT(NG%(NG%, 15) / 100)
+    MIN% = NG%(NG%, 15) - HR% * 100
+    IF HR% = 12 THEN I$ = "P"
+    IF HR% > 12 THEN HR% = HR% - 12: I$ = "P"
+    TM$ = RIGHT$(STR$(HR%), 2) + ":"
+    IF MIN% < 10 THEN TM$ = TM$ + "0" + RIGHT$(STR$(MIN%), 1)
+    IF MIN% >= 10 THEN TM$ = TM$ + RIGHT$(STR$(MIN%), 2)
+    TM$ = TM$ + I$
+    DT$ = RIGHT$(STR$(NG%(NG%, 17)), 2) + "/"
+    DY = VAL(RIGHT$(STR$(NG%(NG%, 16)), 2))
+    IF DY < 10 THEN DAY$ = "0" + RIGHT$(STR$(NG%(NG%, 16)), 1)
+    IF DY >= 10 THEN DAY$ = RIGHT$(STR$(NG%(NG%, 16)), 2)
+    DT$ = DT$ + DAY$ + "/" + RIGHT$(STR$(NG%(NG%, 18)), 2)
+    GOTO 149
+150 REM *** ADD A GAME TO THE SCHEDULE ***
+    V$ = "": H$ = ""
+    AP%(0) = AP%(0) + 1
+    NG% = AP%(0)
+    BS% = INT((NG% - 1) / 20): IF NS% < BS% THEN NS% = BS%
+    FOR X = 0 TO 18
+    IF X = 13 THEN 139
+    NG%(NG%, X) = NG%(NG% - 1, X)
+139 NEXT
+    FOR X = 0 TO 1: YN$(NG%, X) = YN$(NG% - 1, X): NEXT
+149 CLS : COLOR 2: PRINT TAB(29); "SELECT GAME OPTIONS": PRINT
+151 LOCATE 2, 2: COLOR 14: PRINT "(1) "; : COLOR 15: PRINT U5$(NG%(NG%, 8))
+152 LOCATE 3, 2: COLOR 14: PRINT "(2) "; : COLOR 15: PRINT "VISITING TEAM: "; V$
+153 LOCATE 4, 2: COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "HOME TEAM: "; H$
+154 LOCATE 5, 2: COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "3-POINT SHOT: "; TS$(NG%(NG%, 3))
+155 LOCATE 6, 2: COLOR 14: PRINT "(5) "; : COLOR 15: PRINT "SHOT CLOCK "; SC$(NG%(NG%, 7))
+156 LOCATE 7, 2: COLOR 14: PRINT "(6) "; : COLOR 15: PRINT "HOME COURT ADVANTAGE: "; LC$(NG%(NG%, 2))
+157 LOCATE 8, 2: COLOR 14: PRINT "(7) "; : COLOR 15: PRINT USING "DISPLAY PAUSE IN SECONDS: ##.#  "; NG%(NG%, 4) / 10
+158 LOCATE 9, 2: COLOR 14: PRINT "(8) "; : COLOR 15: PRINT "FOULS TO DISQUALIFY: "; NG%(NG%, 5)
+159 LOCATE 10, 2: COLOR 14: PRINT "(9) "; : COLOR 15: PRINT "HUMAN COACHES WILL: "; CM$(NG%(NG%, 9))
+160 LOCATE 11, 2: COLOR 14: PRINT "(A) "; : COLOR 15: PRINT "GAME DATE (XX-XX-XX) "; DT$; "   "
+161 LOCATE 12, 2: COLOR 14: PRINT "(B) "; : COLOR 15: PRINT "GAME TIME (XX:XXP) "; TM$; "   "
+162 LOCATE 13, 2: COLOR 14: PRINT "(C) "; : COLOR 15: PRINT "FREE THROWS ON 10TH FOUL "; TE$(NG%(NG%, 6))
+164 LOCATE 14, 2: COLOR 14: PRINT "(D) "; : COLOR 15: PRINT "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(NG%(NG%, 10))
+165 LOCATE 15, 2: COLOR 14: PRINT "(E) "; : COLOR 15: PRINT "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(NG%(NG%, 14))
+163 LOCATE 17, 2: COLOR 14: PRINT "(0) "; : COLOR 15: PRINT "ACCEPT SETTINGS"
+175 I$ = INKEY$: IF I$ = "" THEN 175
+    IF UCASE$(I$) = "A" THEN I$ = "11"
+    IF UCASE$(I$) = "B" THEN I$ = "12"
+    IF UCASE$(I$) = "C" THEN I$ = "13"
+    IF UCASE$(I$) = "D" THEN I$ = "14"
+    IF UCASE$(I$) = "E" THEN I$ = "15"
+    I8% = VAL(I$): IF I8% < 0 OR I8% > 15 THEN 175
+    ON I8% GOTO 180, 181, 181, 184, 185, 186, 187, 188, 189, 175, 190, 191, 192, 193, 194
+    IF V$ <> "" AND H$ <> "" AND TM$ <> "" AND DT$ <> "" THEN 250
+    GOTO 175
+250 I$ = RIGHT$(TM$, 1): TM$ = LEFT$(TM$, LEN(TM$) - 1)
+    MIN% = VAL(RIGHT$(TM$, 2))
+    TM$ = LEFT$(TM$, LEN(TM$) - 3)
+    HR% = VAL(TM$)
+    IF UCASE$(I$) = "P" AND HR% < 12 THEN HR% = HR% + 12
+    NG%(NG%, 15) = HR% * 100 + MIN%
+    NG%(NG%, 17) = VAL(LEFT$(DT$, 2))
+    NG%(NG%, 18) = VAL(MID$((DT$), 7, 2))
+    NG%(NG%, 16) = VAL(MID$((DT$), 4, 2))
+    RETURN
+193 NG%(NG%, 10) = 1 - NG%(NG%, 10): GOTO 149
+194 NG%(NG%, 14) = 1 - NG%(NG%, 14): GOTO 149
+180 NG%(NG%, 8) = NG%(NG%, 8) + 1: IF NG%(NG%, 8) > 3 THEN NG%(NG%, 8) = 0
+    GOTO 151
+181 COLOR 15, 0: CLS
+    JJ = 7
+    LOCATE 6, 8: COLOR 15, 4
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
+    LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+    LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+    LOCATE , 12: PRINT "HIT <ENTER> TO USE PREVIOUS ID"
+    LOCATE 7, 27: INPUT NY$
+    IF NY$ = "" THEN GOSUB 1102: GOTO 182
+    YN$ = NY$
+    FOR II = 1 TO 500: VV$(II) = "": NEXT
+    GOSUB 1100
+182 IF BO% = 1 THEN BO% = 0: GOTO 181
+183 LOCATE 2, 33: COLOR T%(0), T%(1): PRINT N$: COLOR 15, 4
+    LOCATE , 33: PRINT "ANY CHANGE (YN)"; : I$ = INKEY$: IF I$ = "" THEN 183
+    IF UCASE$(I$) = "Y" THEN 181
+    COLOR 15, 0
+    NG%(NG%, I8% - 2) = T1: YN$(NG%, I8% - 2) = YN$
+2   IF I8% = 2 THEN V$ = N$: V$(NG% - INT(NG% / 20) * 20) = N$
+3   IF I8% = 3 THEN H$ = N$: H$(NG% - INT(NG% / 20) * 20) = N$
+    GOTO 149
+184 NG%(NG%, 3) = 1 - NG%(NG%, 3): GOTO 154
+185 NG%(NG%, 7) = 1 + NG%(NG%, 7)
+    IF NG%(NG%, 7) > 2 THEN NG%(NG%, 7) = 0
+    GOTO 155
+
+186 N = 1 - (NG%(NG%, 2) - 1): NG%(NG%, 2) = N + 1: GOTO 156
+
+187 LOCATE 8, 32: INPUT U6: NG%(NG%, 4) = U6 * 10: GOTO 157
+188 NG%(NG%, 5) = 1 + NG%(NG%, 5): IF NG%(NG%, 5) > 6 THEN NG%(NG%, 5) = 5
+    GOTO 158
+189 NG%(NG%, 9) = 1 - NG%(NG%, 9): GOTO 159
+190 LOCATE 11, 27: INPUT DT$: GOTO 160
+191 LOCATE 12, 25: INPUT TM$: GOTO 161
+192 NG%(NG%, 6) = 1 - NG%(NG%, 6): GOTO 162
+200 REM *** DELETE A GAME FROM THE SCHEDULE ***
+    LOCATE 24, 1: INPUT "ENTER GAME # TO DELETE "; NG%
+    IF NG% < 1 OR NG% > AP%(0) THEN 200
+    FOR X = NG% TO AP%(0) - 1
+    FOR X1 = 0 TO 18: NG%(X, X1) = NG%(X + 1, X1): NEXT
+    VS%(X) = VS%(X + 1)
+    HS%(X) = HS%(X + 1)
+    FOR X1 = 0 TO 1: YN$(X, X1) = YN$(X + 1, X1): NEXT
+    NEXT
+    AP%(0) = AP%(0) - 1: BS% = INT((AP%(0) - 1) / 20)
+    IF NS% > BS% THEN NS% = BS%
+    RETURN
+300 REM *** PLAY GAMES ***
+    COLOR , 0: CLS
+    JJ = 8
+    LOCATE 6, 8: COLOR 15, 4
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "TOTAL GAMES ="; AP%(0)
+    LOCATE , 12: PRINT "SELECT GAME # TO START AND END WITH": PRINT
+    LOCATE , 12: INPUT "ENTER START GAME #: "; SG%: PRINT
+    LOCATE , 12: INPUT "ENTER END GAME #:"; EG%: PRINT
+    LOCATE , 12: PRINT "ANY CHANGE (YN)"
+301 I$ = INKEY$: IF I$ = "" THEN 301
+    IF UCASE$(I$) = "Y" THEN 300
+    IF SG% <= 0 THEN SG% = 1
+    IF EG% > AP%(0) THEN EG% = AP%(0)
+    OPEN "GAME82" FOR OUTPUT AS #2
+    PRINT #2, F$ + ".SCD"
+    PRINT #2, SG%
+    PRINT #2, EG%
+    PRINT #2, 0
+    CLOSE 2
+    GOSUB 1200
+    OPEN "TICKER" FOR OUTPUT AS #2
+    FOR I = 1 TO 32: FOR I1 = 0 TO 1: FOR I2 = 1 TO 14
+    PRINT #2, -1: NEXT: NEXT: NEXT
+    FOR I = 1 TO 32: FOR I1 = 0 TO 1: PRINT #2, "XXX"
+    NEXT: NEXT
+    FOR I = SG% TO SG% + 31
+    PRINT #2, NG%(I, 12)
+    NEXT
+    CLOSE 2
+335 RUN "COLHOOP.EXE"
+350 REM *** SAVE SCHEDULE FILE ***
+351 IF EXIST(P$(0) + F$ + ".SCD") THEN KILL P$(0) + F$ + ".SCD"
+
+    OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    FOR I = 1 TO AP%(0)
+    FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(I, X)): NEXT
+    FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(I, X): NEXT
+    LSET Q$(22) = MKI$(VS%(I)): LSET Q$(23) = MKI$(HS%(I))
+    PUT #1, I
+    NEXT
+    CLOSE 1
+    RETURN
+400 REM *** RESET GAMES ***
+    FOR I = 1 TO AP%(0)
+    NG%(I, 13) = 0
+    NEXT
+    RETURN
+
+
+600 REM *** LOAD IN A SAVED SCHEDULE ***
+    Spec$ = P$(0) + "*.SCD"
+    GOSUB 2100
+601 OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+    Y = LOF(1)
+    CLOSE 1
+    AP%(0) = Y / 48
+    BS% = INT((AP%(0) - 1) / 20)
+    OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    FOR I = 1 TO AP%(0)
+    GET #1, I
+    FOR X = 0 TO 18: NG%(I, X) = CVI(Q$(X + 1)): NEXT
+    FOR X = 0 TO 1: YN$(I, X) = Q$(20 + X): NEXT
+    VS%(I) = CVI(Q$(22)): HS%(I) = CVI(Q$(23))
+    NEXT
+    CLOSE 1: NS% = 0: TS% = 0
+    IF D3% = 2 OR D3% = 3 OR D3% = 4 OR D3% = 5 THEN 700
+    GOTO 25
+700 REM:EXTRACT A SCHEDULE FROM ANOTHER
+    IF D3% = 4 THEN 725
+    IF D3% = 5 THEN
+       GOSUB 900
+       GOSUB 350
+       GOTO 25
+    END IF
+    COLOR 15, 0: CLS
+    JJ = 7
+    LOCATE 6, 8: COLOR 15, 1
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "ENTER NAME FOR SUB-SCHEDULE: ": PRINT
+    LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+    LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+    LOCATE , 12: PRINT "WILL AUTOMATICALLY ADD .SCD"
+    LOCATE , 12: PRINT "SAMPLE NAMES ARE INDIANA, UCLA-68, KY-76, ETC"
+    LOCATE 7, 37: INPUT SF$
+    IF SF$ = "" THEN 700
+    LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
+705 I$ = INKEY$: IF I$ = "" THEN 705
+   IF UCASE$(I$) = "Y" THEN 700
+   COLOR 15, 0
+   CLS
+725 IF D3% = 3 THEN 800
+    COLOR 15, 0: CLS
+    JJ = 7
+    LOCATE 6, 8: COLOR 15, 4
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
+    LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+    LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+    LOCATE , 12: PRINT
+    LOCATE , 12: PRINT "HIT <ENTER> TO USE PREVIOUS ID"
+    LOCATE 7, 27: INPUT NY$
+    IF NY$ = "" THEN GOSUB 1102: GOTO 730
+    YN$ = NY$
+    FOR I = 1 TO 500: VV$(I) = "": NEXT
+    GOSUB 1100
+730 IF BO% = 1 THEN BO% = 0: GOTO 725
+732 LOCATE 2, 33: COLOR T%(0), T%(1): PRINT N$: COLOR 15, 4
+    LOCATE , 33: PRINT "ANY CHANGE (YN)"; : I$ = INKEY$: IF I$ = "" THEN 732
+    IF UCASE$(I$) = "Y" THEN 725
+    COLOR 15, 0
+    IF D3% = 4 THEN GOSUB 775
+    REM:HAVE T1 AND YN$
+    FOR I = 1 TO AP%(0)
+735 IF RIGHT$(YN$(I, 0), 1) = " " THEN YN$(I, 0) = LEFT$(YN$(I, 0), LEN(YN$(I, 0)) - 1): GOTO 735
+736 IF RIGHT$(YN$(I, 1), 1) = " " THEN YN$(I, 1) = LEFT$(YN$(I, 1), LEN(YN$(I, 1)) - 1): GOTO 736
+    IF T1 = NG%(I, 0) AND YN$ = YN$(I, 0) OR T1 = NG%(I, 1) AND YN$ = YN$(I, 1) THEN GOSUB 780:GOSUB 750
+    NEXT
+    IF D3% = 4 THEN GOSUB 350
+    GOTO 10
+750 IF D3% = 4 THEN 755
+    LOCATE 1, 1: PRINT NG% + 1; " MATCHES"
+    OPEN P$(0) + SF$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+    Y = LOF(1): GOTO 753
+752 Y = 0
+753 NG% = Y / 48
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(I, X)): NEXT
+    FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(I, X): NEXT
+    LSET Q$(22) = MKI$(VS%(I)): LSET Q$(23) = MKI$(HS%(I))
+    PUT #1, NG% + 1
+    CLOSE 1
+755 RETURN
+
+775 CLS
+    COLOR T%(0), T%(1): PRINT N$; : COLOR 15, 0: PRINT " IS TO BE:"
+    PRINT
+    PRINT "(0) MANUALLY CONTROLLED": PRINT
+    PRINT "(1) COMPUTER CONTROLLED"
+776 I$ = INKEY$: IF I$ = "" THEN 776
+    I1 = VAL(I$)
+    IF I1 < 0 OR I1 > 1 THEN 776
+    INPUT "ENTER DISPLAY VARIABLE FOR THESE GAMES "; U6
+    U6 = U6 * 10
+    RETURN
+
+
+780 REM: CHANGE SETTINGS FOR A TEAM
+    IF T1 = NG%(I, 0) AND YN$ = YN$(I, 0) THEN NG%(I, 8) = 2
+    IF T1 = NG%(I, 1) AND YN$ = YN$(I, 1) THEN NG%(I, 8) = 1
+    IF (T1 = NG%(I, 0) AND YN$ = YN$(I, 0) OR T1 = NG%(I, 1) AND YN$ = YN$(I, 1)) AND I1 = 1 AND D3% = 3 THEN NG%(I, 8) = 3
+    NG%(I, 4) = U6
+    RETURN
+
+800 Spec$ = P$(1) + "*.LIB"
+    Count% = FCount%(Spec$)
+    IF Count% = 0 THEN 4700
+    REDIM F$(0 TO Count%)
+    FOR X = 1 TO Count%
+    F$(X) = SPACE$(12)
+    NEXT
+    F$(0) = Spec$
+    CALL ReadFile(VARPTR(F$(0)))
+    CALL SortStr(VARPTR(F$(1)), Count%, 0)
+    GOSUB 1310
+    OPEN P$(1) + F$ + ".LIB" FOR INPUT AS #1
+    INPUT #1, X%
+    INPUT #1, LG$
+    INPUT #1, X$:INPUT #1, X$
+    FOR X = 1 TO 30
+    INPUT #1, Z1$(X): INPUT #1, Z1%(X): INPUT #1, Z2$(X)
+    NEXT
+    NT = 30
+    CLOSE 1
+    FOR I = 1 TO AP%(0)
+
+835 IF RIGHT$(YN$(I, 0), 1) = " " THEN YN$(I, 0) = LEFT$(YN$(I, 0), LEN(YN$(I, 0)) - 1): GOTO 835
+836 IF RIGHT$(YN$(I, 1), 1) = " " THEN YN$(I, 1) = LEFT$(YN$(I, 1), LEN(YN$(I, 1)) - 1): GOTO 836
+
+    FOR I1 = 1 TO NT
+'    PRINT AP%(0),Z1%(I1),NG%(I,0),NG%(I,1), Z2$(I1),YN$(I,0),YN$(I,1)
+'    839 I$=INKEY$:IF I$="" THEN 839
+    IF Z1$(I1) = "XXX" THEN 837
+    IF Z1%(I1) = NG%(I, 0) AND Z2$(I1) = YN$(I, 0) OR Z1%(I1) = NG%(I, 1) AND Z2$(I1) = YN$(I, 1) THEN GOSUB 850: GOTO 838
+837 NEXT I1
+838 NEXT I
+    GOTO 10
+
+850 PRINT "FOUND A MATCH"
+'    IF NOT EXIST%(DRI$(0) + SF$ + ".SCD") THEN 852
+    OPEN P$(0) + SF$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+    Y = LOF(1): GOTO 853
+852 Y = 0
+853 NG% = Y / 48
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(I, X)): NEXT
+    FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(I, X): NEXT
+    LSET Q$(22) = MKI$(VS%(I)): LSET Q$(23) = MKI$(HS%(I))
+    PUT #1, NG% + 1
+    CLOSE 1
+864 RETURN
+
+
+
+
+900 REM: GLOBAL SETTINGS FOR A SCHEDULE
+    U5% = 3: RC% = 1: SC% = 1: CM% = 1
+    NF% = 5: FT% = 0
+    FR% = 1: LP% = 0
+    COLOR 15, 0: CLS : PRINT TAB(30); "GLOBAL SETTINGS FOR SCHEDULE"
+901 LOCATE 3, 2: COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "TYPE OF GAME: "; U5$(U5%)
+    LOCATE 4, 2: COLOR 14: PRINT "(2) "; : COLOR 15: PRINT USING "DISPLAY PAUSE IN SECONDS: ##.#  "; U6 / 10
+    LOCATE 5, 2: COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "OPTION RESERVED FOR FUTURE USE"
+    LOCATE 6, 2: COLOR 14: PRINT "(4) "; : COLOR 15: PRINT "SHOT CLOCK: "; SC$(SC%)
+    LOCATE 7, 2: COLOR 14: PRINT "(5) "; : COLOR 15: PRINT "HUMAN PLAYERS: "; CM$(CM%)
+    LOCATE 8, 2: COLOR 14: PRINT "(6) "; : COLOR 15: PRINT "3-POINT SHOT: "; TS$(RC%)
+    LOCATE 9, 2: COLOR 14: PRINT "(7) "; : COLOR 15: PRINT USING "FOULS TO DISQUALIFY: ##"; NF%
+    LOCATE 10, 2: COLOR 14: PRINT "(8) "; : COLOR 15: PRINT "FREE THROWS ON 10TH FOUL "; TE$(FT%)
+    LOCATE 11, 2: COLOR 14: PRINT "(9) "; : COLOR 15: PRINT "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(FR%)
+    LOCATE 12, 2: COLOR 14: PRINT "(A) "; : COLOR 15: PRINT "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): ";TF$(LP%)
+    LOCATE 13, 2: COLOR 14: PRINT "(0) "; : COLOR 15: PRINT "ACCEPT GLOBAL SETTINGS"
+905 I$ = INKEY$: IF I$ = "" THEN 905
+    IF UCASE$(I$) = "A" THEN I$ = "10"
+    I = VAL(I$)
+    IF I < 0 OR I > 10 THEN 905
+    IF I = 3 THEN 901
+    IF I = 1 THEN
+         U5% = U5% + 1
+         IF U5% > 3 THEN U5% = 0
+         GOTO 901
+    END IF
+    IF I = 4 THEN
+       SC% = 1 + SC%
+       IF SC% > 2 THEN SC% = 0
+       GOTO 901
+    END IF
+    IF I = 5 THEN CM% = 1 - CM%: GOTO 901
+    IF I = 8 THEN FT% = 1 - FT%: GOTO 901
+    IF I = 9 THEN FR% = 1 - FR%: GOTO 901
+    IF I =10 THEN LP% = 1 - LP%: GOTO 901
+    IF I = 6 THEN RC% = 1 - RC%: GOTO 901
+    IF I = 2 THEN INPUT "DISPLAY VARIABLE "; U6: U6 = U6 * 10: GOTO 901
+    IF I = 7 THEN
+        NF% = NF% + 1
+        IF NF% > 6 THEN NF% = 5
+        GOTO 901
+    END IF
+
+    FOR I = 1 TO AP%(0)
+           NG%(I, 8) = U5%
+           NG%(I, 4) = U6
+           NG%(I, 7) = SC%
+           NG%(I, 9) = CM%
+           NG%(I, 3) = RC%
+           NG%(I, 5) = NF%
+           NG%(I, 6) = FT%
+           NG%(I, 10) = FR%
+           NG%(I, 14) = LP%
+
+    NEXT
+    RETURN
+
+1100 NT = 0
+     OPEN P$(0) + "BASK." + YN$ FOR RANDOM AS #1 LEN = 655
+     Y = LOF(1)
+     FIELD #1, 15 AS Q$(0), 640 AS X$
+     FOR I1 = 1 TO Y / 655
+     GET #1, I1
+     NT = NT + 1
+     VV$(I1) = Q$(0): V%(I1) = I1
+     NEXT
+     CLOSE 1
+     NT = Y / 655
+     TS% = INT((NT - 1) / 80)
+
+1102 SELECTION% = 1
+     Count% = NT
+     Start% = 1
+     FileColr% = 79
+     HiLiteColr% = 112
+     Rows% = 20
+     Columns% = 4
+     Spacing% = 6
+     Row% = 4
+     Column% = 1
+     COLOR , 4: CLS : LOCATE , 33: COLOR 14
+     PRINT "TEAM SELECTION": COLOR 15
+     LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
+     PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
+     PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
+     CALL ShowCursor
+206  MAMenu VARPTR(VV$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
+     CALL HideCursor
+     IF EXITCODE% = 27 THEN BO% = 1: RETURN
+     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 206
+     IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 206
+     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
+     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 206
+     T1 = V%(SELECTION%)
+     GOTO 9000
+
+1200 FOR I = 1 TO AP%(0)
+     HR% = INT(NG%(I, 15) / 100)
+     MIN% = NG%(I, 15) - HR% * 100
+     TM% = HR% * 60 + MIN%
+     NG%(I, 12) = INT(TM% / 30 - 18)
+     NEXT
+     RETURN
+
+2100 Count% = FCount%(Spec$)
+     IF Count% = 0 THEN 4400
+     REDIM F$(0 TO Count%)
+     FOR X = 1 TO Count%
+     F$(X) = SPACE$(12)
+     NEXT
+     F$(0) = Spec$
+     CALL ReadFile(VARPTR(F$(0)))
+     CALL SortStr(VARPTR(F$(1)), Count%, 0)
+
+
+1310 CLS
+    COLOR , 1
+    CLS
+    LOCATE , 28
+    COLOR 14
+    PRINT "SELECT SCHEDULE TO VIEW": COLOR 15
+     SELECTION% = 1
+     Start% = 1
+     FileColr% = 31
+     HiLiteColr% = 112
+     Rows% = 20
+     Columns% = 4
+     Spacing% = 6
+     Row% = 4
+     Column% = 1
+    LOCATE 25, 1
+    COLOR 14
+    PRINT "ENTER"; : COLOR 15
+    PRINT "-SELECTS SCHEDULE";
+CALL ShowCursor
+320 MAMenu VARPTR(F$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
+CALL HideCursor
+     IF EXITCODE% = 27 THEN 2900
+     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 320
+     IF EXITCODE% = -79 THEN Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GOTO 320
+     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > Count% THEN Start% = Count%
+     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 320
+     F$ = F$(SELECTION%)
+   LOCATE 2, 33: PRINT F$: LOCATE , 33: PRINT "ANY CHANGE (YN)";
+     COLOR 15, 0
+3910 I$ = INKEY$: IF I$ = "" THEN 3910
+    IF UCASE$(I$) = "Y" THEN 1310
+     F$ = QPRTrim$(F$)
+    WE$ = LEFT$(F$, LEN(F$) - 4)
+    COLOR 15, 0
+    F$ = WE$
+    RETURN
+
+
+8500 REM *** SORT SCHEDULE ***
+     FOR I = 1 TO AP%(0)
+     HR% = INT(NG%(I, 15) / 100)
+     MIN% = NG%(I, 15) - HR% * 100
+     TM% = HR% * 60 + MIN%
+     NG%(I, 12) = INT(TM% / 30 - 18)
+     D = (NG%(I, 18) - 1): D = D * 372
+     M = (NG%(I, 17) - 1)
+     M = M * 31
+     Y = NG%(I, 16)
+     DY(I) = (D + M + Y) * 24 * 60 + TM%
+     NEXT
+     FOR Z = 1 TO AP%(0) - 1: FOR Z1 = Z + 1 TO AP%(0)
+     LOCATE 1, 1: PRINT Z, Z1
+     IF NG%(Z, 12) <= NG%(Z1, 12) THEN 8505
+     GOSUB 8525
+8505 NEXT Z1: NEXT Z
+     FOR Z = 1 TO AP%(0) - 1: FOR Z1 = Z + 1 TO AP%(0)
+     IF DY(Z) <= DY(Z1) THEN 8510
+     GOSUB 8525
+8510 NEXT Z1: NEXT Z
+     RETURN
+8525 FOR I = 0 TO 18: SWAP NG%(Z, I), NG%(Z1, I): NEXT
+     FOR I = 0 TO 1: SWAP YN$(Z, I), YN$(Z1, I): NEXT
+     SWAP DY(Z), DY(Z1)
+     SWAP VS%(Z), VS%(Z1)
+     SWAP HS%(Z), HS%(Z1)
+     RETURN
+9000 OPEN P$(0) + "BASK." + YN$ FOR RANDOM AS #1 LEN = 655
+FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
+ AS Q$(19)
+
+GET #1, T1
+N$ = Q$(0)
+FOR I3 = 0 TO 9: T%(I3) = CVI(Q$(I3 + 10)): NEXT
+CLOSE 1
+9005 IF RIGHT$(N$, 1) = " " THEN N$ = LEFT$(N$, LEN(N$) - 1): GOTO 9005
+
+     RETURN
+
+'EDIT THE PARAMETERS TO SAVE A SPECIAL EVENTS BOXSCORE
+5070 IF NOT EXIST%("EVENTS.BOX") THEN 5075
+     OPEN "EVENTS.BOX" FOR INPUT AS #1
+     FOR X = 1 TO 13
+     INPUT #1, E%(X)
+     NEXT
+     CLOSE 1
+5075 CLS : COLOR 14
+     PRINT "PARAMETERS FOR SAVING SPECIAL EVENTS BOXSCORES": X% = 2: COLOR 15
+     PRINT " 1. OVERTIME PERIODS ARE OVER "; E%(1)
+     PRINT " 2. TOTAL POINTS GREATER THAN "; E%(2)
+     PRINT " 3. TOTAL REBOUNDS GREATER THAN "; E%(3)
+     PRINT " 4. TEAM POINTS GREATER THAN "; E%(4)
+     PRINT " 5. TEAM REBOUNDS GREATER THAN "; E%(5)
+     PRINT " 6. PLAYER'S POINTS MORE THAN "; E%(6)
+     PRINT " 7. PLAYER'S REBOUNDS MORE THAN "; E%(7)
+     PRINT " 8. PLAYER'S ASSISTS MORE THAN "; E%(8)
+     PRINT " 9. PLAYER'S BLOCKS MORE THAN "; E%(9)
+     PRINT "10. PLAYER'S STEALS MORE THAN "; E%(10)
+     PRINT "11. PLAYER'S 3-FGM MORE THAN "; E%(11)
+     GOTO 197
+147  LOCATE 2: INPUT " 1. OVERTIME PERIODS ARE OVER "; E%(1): IF C1 = 1 THEN 197
+3162 LOCATE 3: INPUT " 2. TOTAL POINTS GREATER THAN "; E%(2): IF C1 = 1 THEN 197
+3164 LOCATE 4: INPUT " 3. TOTAL REBOUNDS GREATER THAN "; E%(3): IF C1 = 1 THEN 197
+3165 LOCATE 5: INPUT " 4. TEAM POINTS GREATER THAN "; E%(4): IF C1 = 1 THEN 197
+3163 LOCATE 6: INPUT " 5. TEAM REBOUNDS GREATER THAN "; E%(5): IF C1 = 1 THEN 197
+148  LOCATE 7: INPUT " 6. PLAYER'S POINTS MORE THAN "; E%(6): IF C1 = 1 THEN 197
+178  LOCATE 8: INPUT " 7. PLAYER'S REBOUNDS MORE THAN "; E%(7): IF C1 = 1 THEN 197
+3152 LOCATE 9: INPUT " 8. PLAYER'S ASSISTS MORE THAN "; E%(8): IF C1 = 1 THEN 197
+111  LOCATE 10: INPUT " 9. PLAYER'S BLOCKS MORE THAN "; E%(9): IF C1 = 1 THEN 197
+112  LOCATE 11: INPUT "10. PLAYER'S STEALS MORE THAN "; E%(10): IF C1 = 1 THEN 197
+3153 LOCATE 12: INPUT "11. PLAYER'S 3-FGM MORE THAN "; E%(11): IF C1 = 1 THEN 197
+197 C1 = 1
+    LOCATE 23, 1: PRINT "SELECT # TO CHANGE 1-11 (0 TO CONTINUE) ";
+    INPUT B9
+    ON B9 GOTO 147, 3162, 3164, 3165, 3163, 148, 178, 3152, 111, 112, 3153
+
+     OPEN "EVENTS.BOX" FOR OUTPUT AS #1
+     FOR X = 1 TO 13
+     PRINT #1, E%(X)
+     NEXT
+     CLOSE 1
+     GOTO 4500
+
+4011 LOCATE 10, 8
+     CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
+3811 I$ = INKEY$: IF I$ = "" THEN 3811
+     CALL CSMsgBox("", 0, Cnf)
+     GOTO 10
+
+4010 LOCATE 10, 8
+     CALL CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Cnf)
+3806 I$ = INKEY$: IF I$ = "" THEN 3806
+     CALL CSMsgBox("", 0, Cnf)
+     GOTO 4500
+
+4020 LOCATE 10, 8
+     CALL CSMsgBox("NO BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Cnf)
+3808 I$ = INKEY$: IF I$ = "" THEN 3808
+     CALL CSMsgBox("", 0, Cnf)
+     GOTO 4500
+
+
+
+4060 LOCATE 10, 8
+     CALL CSMsgBox("BOXSCORE DOES NOT EXIST PRESS ANY KEY TO RETURN TO MAIN MENU", 23, Cnf)
+3807 I$ = INKEY$: IF I$ = "" THEN 3807
+     CALL CSMsgBox("", 0, Cnf)
+     RETURN
+
+4500 'BOXSCORE MAINTENANCE
+   CALL TITLE
+   ITEM$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
+   ITEM$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
+   ITEM$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
+   ITEM$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
+   ITEM$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
+   ITEM$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
+
+     SELECTION% = 1
+     Count% = 6
+     Start% = 1
+     SCANCODE% = 6
+     FileColr% = 31
+     HiLiteColr% = 112
+     Spacing% = 1
+     Row% = 6
+     Column% = 16
+     CALL Box0(5, 15, 12, 65, 2, 31)
+     CALL ShowCursor
+     MMenuVert VARPTR(ITEM$(1)), SELECTION%, Start%, SCANCODE%, FileColr%, HiLiteColr%, Count%, Row%, Column%
+     CALL HideCursor
+     COLOR , 0
+     IF SCANCODE% = 27 THEN SELECTION% = 6
+
+     ON SELECTION% GOTO 5070, 5060, 5010, 5010, 5010
+
+      GOTO 10
+
+5000 REDIM array$(500)               'holds the main editor string array
+     LOCATE 23, 1: PRINT "ENTER GAME # TO GO TO        "
+     LOCATE 23, 1: INPUT "ENTER GAME # TO GO TO "; NG%
+     IF NG% < 1 OR NG% > AP%(0) THEN 120
+     NS% = INT((NG% - 1) / 20)
+     BN$ = P$(1) + "box" + MID$(STR$(NG%), 2, LEN(STR$(NG%)))
+     GOSUB 5050
+     GOTO 25
+
+5010 IF SELECTION% = 3 THEN Spec$ = P$(1) + "BOX*."
+     IF SELECTION% = 4 THEN Spec$ = P$(1) + "*.SPC"
+     IF SELECTION% = 5 THEN Spec$ = P$(1) + "*.SPC"
+     GOSUB 5020
+     IF SELECTION% = 5 THEN Spec$ = P$(1) + "BOX*.": GOSUB 5020
+     GOTO 4500
+
+5020 Count = FCount%(Spec$)
+     IF Count = 0 AND SELECTION% = 4 THEN 4010
+     IF Count = 0 AND SELECTION% = 3 THEN 4020
+     IF Count = 0 AND SELECTION% = 5 THEN RETURN
+     REDIM F$(0 TO Count)
+     FOR X = 1 TO Count
+     F$(X) = SPACE$(12)
+     NEXT
+     F$(0) = Spec$
+     CALL ReadFile(VARPTR(F$(0)))
+
+     FOR X = 1 TO Count
+     CALL KILLFILE(P$(1) + F$(X))
+     LOCATE 12, 34: PRINT "DELETING "; F$(X)
+     NEXT
+     RETURN
+
+
+5060 Spec$ = P$(1) + "*.SPC"
+   Count = FCount%(Spec$)
+   IF Count = 0 THEN 4010
+   REDIM F$(0 TO Count)
+   FOR X = 1 TO Count
+       F$(X) = SPACE$(12)
+   NEXT
+   F$(0) = Spec$
+   CALL ReadFile(VARPTR(F$(0)))
+   CALL SortStr(VARPTR(F$(1)), Count, 0)
+
+5065 CLS
+    COLOR , 1
+    CLS
+    LOCATE , 28
+    COLOR 14
+    PRINT "SELECT BOXSCORE TO VIEW": COLOR 15
+     SELECTION% = 1
+     Start% = 1
+     FileColr% = 31
+     HiLiteColr% = 112
+     Rows% = 20
+     Columns% = 4
+     Spacing% = 6
+     Row% = 4
+     Column% = 1
+    LOCATE 25, 1
+    COLOR 14
+    PRINT "ENTER"; : COLOR 15
+    PRINT "-SELECTS BOXSCORE";
+CALL ShowCursor
+MAMenu VARPTR(F$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
+CALL HideCursor
+     IF EXITCODE% = 27 THEN 4500
+     F$ = F$(SELECTION%)
+   LOCATE 2, 33: PRINT F$: LOCATE , 33: PRINT "ANY CHANGE (YN)";
+     COLOR 15, 0
+3912 I$ = INKEY$: IF I$ = "" THEN 3912
+    IF UCASE$(I$) = "Y" THEN 5065
+    BN$ = P$(1) + F$
+    REDIM array$(500)               'holds the main editor string array
+    GOSUB 5050
+    GOTO 5060
+
+'EDIT A BOXSCORE LOADED FROM THE FILE NAME BN$
+
+5050 IF NOT EXIST%(BN$) THEN GOSUB 4060: RETURN
+     OPEN BN$ FOR INPUT AS #1
+     CURLINE = 1
+     WHILE NOT EOF(1)
+       LINE INPUT #1, array$(CURLINE)
+       CURLINE = CURLINE + 1
+    WEND
+    CLOSE #1
+
+
+    CLS                             '  show how QEdit saves the screen
+
+    COLOR 15, 0                     'print instructions on bottom of screen
+    LOCATE 25, 1
+    PRINT " ESC - Quit    F1 - Help    F2 - Print Boxscore   F3 - Save Boxscore"; TAB(79);
+
+
+
+    '----- fill in editing parameters
+    SELECT CASE Monitor%            'determine the monitor type
+       CASE 3, 5, 7, 9, 10, 12      'CGA, EGA, VGA monitors
+          Ed.AColor = 23            'white on blue
+       CASE ELSE                    'all other monitors
+          Ed.AColor = 7             'white on black
+    END SELECT
+
+    Ed.Wrap = 0   'word wrap at column 65 (use 0 for to disable word wrap)
+    Ed.Frame = 0  'frame code (1 = show ruler line & scroll bars, 0 = don't)
+    Ed.Rows = 24   'number of text lines to display on the screen (3 - 25)
+    Ed.Wide = 80   'width of the active screen (10 - 80)
+    Ed.HTab = 4    'set tab stops to 4 spaces
+
+    LOCATE 1, 1    'locate the upper left corner of the edit window frame
+
+
+    Action = 1                      'Action 1 to save underlying screen and
+                                    '  display text, operate in polled mode
+    '----- main loop for editing
+    DO
+        '----- call QEdit in polled mode
+        CALL QEdit(array$(), Ky$, Action, Ed)
+
+        '----- F2 function key pressed? - change margin
+IF Ky$ = F2$ THEN : FOR I = 1 TO CURLINE - 1: LPRINT array$(I): NEXT
+
+IF Ky$ = F3$ THEN
+     OPEN BN$ FOR OUTPUT AS #1
+     FOR I = 1 TO CURLINE - 1
+     PRINT #1, array$(I)
+     NEXT
+     CLOSE 1
+     CALL CSMsgBox("REVISED BOXSCORE HAS BEEN SAVED...PRESS ANY KEY TO CONTINUE", 31, Cnf)
+3815 I$ = INKEY$: IF I$ = "" THEN 3815
+     CALL CSMsgBox("", 0, Cnf)
+END IF
+
+    LOOP UNTIL Ky$ = CHR$(27)       'keep calling QEdit until Esc is pressed
+
+    '----- call QEdit again with an Action flag of 5 to restore the screen
+    CALL QEdit(array$(), Ky$, 5, Ed)
+
+
+    RETURN
+2900 IF D1% >= 67 THEN 2905
+     CLS
+     PRINT "MAKE SURE PROGRAM DISK IS IN DRIVE"
+     CALL GETKEY
+2905 RUN "HELLO.EXE 1"
+
+4400 LOCATE 10, 8
+     CALL CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
+3810 I$ = INKEY$: IF I$ = "" THEN 3810
+     CALL CSMsgBox("", 0, Cnf)
+     GOTO 2900
+
+4700 LOCATE 10, 8
+     GOSUB 4600
+     LOCATE, 12:PRINT "NO LEAGUE FILES WERE FOUND"
+     LOCATE, 12:PRINT "PRESS ANY KEY TO RETURN TO MAIN MENU"
+3809 I$ = INKEY$: IF I$ = "" THEN 3809
+     GOTO 2900
+
+
+4600 JJ = 4
+     LOCATE 6, 8: COLOR 15, 1
+     PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
+     FOR II = 1 TO JJ: LOCATE 6 + II, 8
+     PRINT " º"; STRING$(61, 32); "º "; : NEXT
+     LOCATE 7 + JJ, 8
+     PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
+     RETURN
+
+STATIC SUB CSMsgBox (Message$, Wdth, Cnf AS Config)
+    IF LEN(Message$) THEN
+       Row = CSRLIN                             'Get the Row Position
+       REDIM Temp$(23)                          'Make a temporary array to
+                                                '  hold the parsed up lines
+       MesLen = LEN(Message$)                   'Get the total length of the
+                                                '  help message
+       LN = 0                                   'Line number
+       Strt = 1                                 'Starting parse position
+       '*** Parse the message into lines
+       DO
+           WHILE MID$(Message$, Strt, 1) = " "  'Skip over blanks
+              Strt = Strt + 1
+           WEND
+           ND = Strt + Wdth                     'Guess at the end of line
+                                                'Loop backwards to find
+           WHILE MID$(Message$, ND, 1) <> " " AND ND <= MesLen AND ND > Strt
+               ND = ND - 1                      '  blank space
+           WEND
+           LN = LN + 1                          'Increment the Line number
+                                                'Pull out the new line
+           Temp$(LN) = MID$(Message$, Strt, ND - Strt)
+           Strt = ND + 1                        'Reset starting posit. for
+                                                '  next line
+       LOOP UNTIL ND >= MesLen                  'Get more unless @ end of mes
+       BotRow = Row + LN + 1                    'Find the bottom row #
+       IF BotRow > 24 THEN BotRow = 24          'No farther than line 24
+       ArraySize = 80 * (BotRow - Row + 2)      'Find the array size to use
+       REDIM ScrBuf(ArraySize)                  '  for the background screen
+       MScrnSave Row, 1, BotRow + 1, 80, ScrBuf(0)
+       BoxWdth = Wdth + 4                       'Find the outer box width
+       ColPos = 40 - (BoxWdth \ 2)              'Starting posit for centered
+                                                '  box
+       LOCATE Row, ColPos                       'Print the top of box
+       MQPrint "É" + STRING$(Wdth + 2, "Í") + "»", Cnf.MenBox
+       Box$ = "º" + SPACE$(Wdth + 2) + "º"      'Make the box sides
+       FOR N = 1 TO LN                          'Print message lines
+           LOCATE N + Row, ColPos
+           MQPrint Box$, Cnf.MenBox
+           LOCATE , ColPos + 2
+           MQPrint Temp$(N), Cnf.ActivCh
+       NEXT
+       LOCATE N + Row, ColPos                   'Print the bottom of box
+       MQPrint "È" + STRING$(Wdth + 2, "Í") + "¼", Cnf.MenBox
+       MPaintBox Row + 1, ColPos + BoxWdth, N + Row, ColPos + BoxWdth + 1, 8
+       MPaintBox N + Row + 1, ColPos + 2, N + Row + 1, ColPos + BoxWdth + 1, 8
+       Pass = 1                                 'Set flag say we've been here
+       ERASE Temp$                              'Don't need this anymore
+    ELSEIF Pass = 1 THEN                        'If we've been here before,
+                                                '  restore the screen
+       MScrnRest Row, 1, BotRow + 1, 80, SEG ScrBuf(0)
+       ERASE ScrBuf                             'Clean up memory
+       Pass = 0                                 'Reset flag for next call
+    END IF
+END SUB
+
+SUB GETKEY ()
+12 I$ = INKEY$: IF I$ = "" THEN 12
+END SUB
+
+SUB TITLE ()
+   COLOR , 0: KEY OFF: CLS
+   COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 33: COLOR 14
+   PRINT "AUTO SCHEDULER"
+   LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
+   PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997";
+   LOCATE 5, 1: COLOR , 0
+END SUB
+
+
+1300 CLS : COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 33: COLOR 14
+   PRINT "AUTO SCHEDULER"
+   LOCATE 25, 1: PRINT TAB(80); : LOCATE , 1: PRINT "(C) SHANNON LYNN 1990 V3.0";
+   LOCATE 5, 1: COLOR , 0
+   COLOR 15: PRINT "(1) "; : COLOR 14: PRINT "6 TEAM, 30 GAME SCHEDULE"
+   COLOR 15: PRINT "(2) "; : COLOR 14: PRINT "7 TEAM, 42 GAME SCHEDULE"
+   COLOR 15: PRINT "(3) "; : COLOR 14: PRINT "8 TEAM, 56 GAME SCHEDULE"
+   COLOR 15: PRINT "(4) "; : COLOR 14: PRINT "9 TEAM, 72 GAME SCHEDULE"
+   COLOR 15: PRINT "(5) "; : COLOR 14: PRINT "10 TEAM, 90 GAME SCHEDULE"
+   COLOR 15: PRINT "(6) "; : COLOR 14: PRINT "11 TEAM, 88 GAME SCHEDULE"
+   COLOR 15: PRINT "(7) "; : COLOR 14: PRINT "12 TEAM  96 GAME SCHEDULE"
+   COLOR 15: PRINT "(8) "; : COLOR 14: PRINT "13 TEAM 117 GAME SCHEDULE"
+   COLOR 15: PRINT "(9) "; : COLOR 14: PRINT "16 TEAM 128 GAME SCHEDULE"
+   COLOR 15: PRINT "(0) "; : COLOR 14: PRINT "RETURN TO COURTSIDE MAIN MENU"
+1305 I$ = INKEY$: IF I$ = "" THEN 1305
+   D3% = VAL(I$)
+   IF I$ = CHR$(27) THEN D3% = 0
+   IF D3% < 0 OR D3% > 9 THEN 1305
+   IF D3% = 0 THEN 10
+   Spec$ = P$(1) + "*.LIB"
+   Count = FCount%(Spec$)
+   IF Count = 0 THEN 4011
+   REDIM F$(0 TO Count)
+   FOR X = 1 TO Count
+       F$(X) = SPACE$(12)
+   NEXT
+   F$(0) = Spec$
+   CALL ReadFile(VARPTR(F$(0)))
+   CALL SortStr(VARPTR(F$(1)), Count, 0)
+
+1311 CLS
+    COLOR , 1
+    CLS
+    LOCATE , 28
+    COLOR 14
+    PRINT "SELECT CONFERENCE TO SCHEDULE": COLOR 15
+     SELECTION% = 1
+     Start% = 1
+     FileColr% = 31
+     HiLiteColr% = 112
+     Rows% = 20
+     Columns% = 4
+     Spacing% = 6
+     Row% = 4
+     Column% = 1
+    LOCATE 25, 1
+    COLOR 14
+    PRINT "ENTER"; : COLOR 15
+    PRINT "-SELECTS CONFERENCE";
+CALL ShowCursor
+1320 MAMenu VARPTR(F$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
+CALL HideCursor
+     IF EXITCODE% = 27 THEN 1300
+     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 1320
+     IF EXITCODE% = -79 THEN Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GOTO 1320
+     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > Count% THEN Start% = Count%
+     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 1320
+     F$ = F$(SELECTION%)
+   LOCATE 2, 33: PRINT F$: LOCATE , 33: PRINT "ANY CHANGE (YN)";
+     COLOR 15, 0
+3911 I$ = INKEY$: IF I$ = "" THEN 3911
+     IF UCASE$(I$) = "Y" THEN 1311
+     OPEN P$(1) + F$ FOR INPUT AS #2
+     X1 = 0
+     INPUT #2, LG%
+     INPUT #2, LG$
+     INPUT #2, D1$: INPUT #2, D2$
+     FOR X = 1 TO 30
+     INPUT #2, D1$:INPUT #2, LG%:INPUT #2, D2$
+     IF D1$ = "XXX" OR D1$ = "" THEN 3913
+     X1 = X1 + 1
+     Z1$(X1) = D1$: Z1%(X1) = LG%: Z2$(X1) = D2$
+3913 NEXT
+
+    CLOSE 2
+    IF D3% = 1 THEN F$ = "6TM.SCX"
+    IF D3% = 2 THEN F$ = "7TM.SCX"
+    IF D3% = 3 THEN F$ = "8TM.SCX"
+    IF D3% = 4 THEN F$ = "9TM.SCX"
+    IF D3% = 5 THEN F$ = "10TM.SCX"
+    IF D3% = 6 THEN F$ = "11TM.SCX"
+    IF D3% = 7 THEN F$ = "12TM.SCX"
+    IF D3% = 8 THEN F$ = "13TM.SCX"
+    IF D3% = 9 THEN F$ = "16TM.SCX"
+
+    OPEN F$ FOR RANDOM AS #1 LEN = 48
+    Y = LOF(1)
+    AP%(0) = Y / 48
+    BS% = INT((AP%(0) - 1) / 20)
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    FOR I = 1 TO AP%(0)
+    GET #1, I
+    FOR X = 0 TO 18: NG%(I, X) = CVI(Q$(X + 1)): NEXT
+    FOR X = 0 TO 1: YN$(I, X) = Q$(20 + X): NEXT
+    VS%(I) = CVI(Q$(22)): HS%(I) = CVI(Q$(23))
+    NEXT
+    CLOSE 1
+    GOSUB 900
+    GOSUB 4100
+    FOR I = 1 TO AP%(0)
+    PRINT "GAME"; I
+    PRINT NG%(I, 0), YN$(I, 0)
+    PRINT NG%(I, 1), YN$(I, 1)
+    X = NG%(I, 0): NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X)
+'    IF D3% < 7 THEN X = NG%(I, 0): NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X)
+'    IF D3% = 7 AND NG%(I, 0) <= 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): GOTO 3915
+'    IF D3% = 7 AND NG%(I, 0) > 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = Z1%(X + 9): YN$(I, 0) = Z2$(X + 9)
+'3915 IF D3% = 7 AND NG%(I, 1) <= 6 THEN X = NG%(I, 1): PRINT X: NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X): GOTO 3916
+'     IF D3% = 7 AND NG%(I, 1) > 6 THEN X = NG%(I, 1): PRINT X: NG%(I, 1) = Z1%(X + 9): YN$(I, 1) = Z2$(X + 9)
+
+3916 PRINT "GAME"; I
+    PRINT NG%(I, 0), YN$(I, 0)
+    PRINT NG%(I, 1), YN$(I, 1)
+    NEXT
+
+    OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+    Y = LOF(1) / 48
+    FOR X = 0 TO 18
+    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
+    NEXT
+    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
+    FOR I = 1 TO AP%(0)
+    FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(I, X)): NEXT
+    FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(I, X): NEXT
+    LSET Q$(22) = MKI$(VS%(I)): LSET Q$(23) = MKI$(HS%(I))
+    PUT #1, I + Y
+    NEXT
+    CLOSE 1
+    D3% = 1:GOTO 601
+4100 COLOR 15, 0: CLS
+    JJ = 7
+    LOCATE 6, 8: COLOR 15, 1
+    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+    PRINT " º"; STRING$(61, 32); "º "; : NEXT
+    LOCATE 7 + JJ, 8
+    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+    LOCATE , 12: PRINT "ENTER NAME FOR SCHEDULE: ": PRINT
+    LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+    LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+    LOCATE , 12: PRINT "WILL AUTOMATICALLY ADD .SCD"
+    LOCATE , 12: PRINT "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
+    LOCATE 7, 37: INPUT F$
+    IF F$ = "" THEN 21
+    LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
+23 I$ = INKEY$: IF I$ = "" THEN 23
+   IF UCASE$(I$) = "Y" THEN 4100
+   COLOR 15, 0
+RETURN
+

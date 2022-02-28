@@ -1,0 +1,348 @@
+DEFINT A-Z
+DECLARE FUNCTION INSTRTBL (START, Source$, TABLE$)
+DECLARE FUNCTION Exist% (NewSpec$)
+REM reads apba file PLAYERS into replay
+DIM GW(40)
+
+DIM DC(4)
+DIM nd$(4)
+DIM Tc$(40)
+DIM TCY$(40)
+
+DIM tnn$(40)
+DIM TN(40)
+DIM OFFSET AS LONG
+DIM A AS STRING * 19
+DIM A1 AS STRING * 19
+DIM A2 AS STRING * 19
+DIM FTA(40)
+DIM FGA(40)
+DIM FGM(40)
+DIM REB(40)
+DIM OPREB(40)
+DIM ASS(40)
+DIM PF(40)
+Tc$(0) = "   "
+CLS
+GOTO 500
+
+OPEN "apbadata" FOR INPUT AS #1
+INPUT #1, ng
+INPUT #1, afp$
+INPUT #1, aft$
+INPUT #1, afl$
+INPUT #1, afs$
+INPUT #1, fil$
+INPUT #1, fln$
+CLOSE
+
+
+CLS
+REM LOAD IN NEW ISAM DATA BASE FROM LEDIT
+REM MAKE LEAGUE
+REM MAKE TEAMS
+REM MAKE PLAYERS
+REM MAKE SKED
+REM READ TEAM NAMES TO GET CODES
+OPEN afl$ FOR INPUT AS #1
+REM MAY BE HAND JOB
+INPUT #1, D
+INPUT #1, df'DIVISIONS FOUND
+INPUT #1, D
+FOR X = 1 TO df'REM TEAM COUNT
+INPUT #1, DC(X)
+NT = NT + DC(X)
+NEXT
+INPUT #1, D$
+INPUT #1, D$
+FOR X = 1 TO df
+INPUT #1, nd$(X)
+NEXT
+
+FOR X = 1 TO NT
+INPUT #1, TCY$(X)'TEAM CITY
+INPUT #1, tnn$(X)'TEAM NAME
+INPUT #1, TN(X)'TEAM NUMBER'MAY NOT BE NEEDED IF ALWAYS IN SEQUENCE
+LTC = LEN(TCY$(X))
+REM FIND SPACE
+TABLE$ = " "
+START = 1
+POSITION = INSTRTBL(START, TCY$(X), TABLE$)
+IF POSITION = 0 THEN
+Tc$(X) = UCASE$(LEFT$(TCY$(X), 3))
+ELSE
+Tc$(X) = UCASE$(LEFT$(TCY$(X), 1) + MID$(TCY$(X), POSITION + 1, 1) + LEFT$(tnn$(X), 1))
+END IF
+NEXT X
+CLOSE
+
+REM GETS ALL LEAGUE AND TEAM VALUES
+OPEN "CBTEAMS.S92" FOR BINARY AS #1
+'OFFSET = 106 * 251
+'OFFSET = 0
+FOR X = 1 TO 1
+GET #1, 92 + OFFSET, FGA(X)
+GET #1, 94 + OFFSET, FGM(X)
+GET #1, 100 + OFFSET, FGA3(X)
+GET #1, 102 + OFFSET, FGM3(X)
+GET #1, 108 + OFFSET, FTA(X)
+GET #1, 110 + OFFSET, FTM(X)
+GET #1, 116 + OFFSET, OREB(X)
+GET #1, 118 + OFFSET, DREB(X)
+GET #1, 120 + OFFSET, REB(X)
+GET #1, 122 + OFFSET, ASS(X)
+GET #1, 124 + OFFSET, PF(X)
+GET #1, 126 + OFFSET, DQ(X)
+GET #1, 128 + OFFSET, STL(X)
+GET #1, 130 + OFFSET, TOV(X)
+GET #1, 132 + OFFSET, BLK(X)
+GET #1, 134 + OFFSET, PTS(X)
+GET #1, 200 + OFFSET, OPFGA(X)
+GET #1, 202 + OFFSET, OPFGM(X)
+GET #1, 206 + OFFSET, OPFGA3(X)
+GET #1, 208 + OFFSET, OPFGM3(X)
+GET #1, 214 + OFFSET, OPFTA(X)
+GET #1, 216 + OFFSET, OPFTM(X)
+GET #1, 224 + OFFSET, OPOREB(X)
+GET #1, 226 + OFFSET, OPDREB(X)
+GET #1, 228 + OFFSET, OPREB(X)
+GET #1, 230 + OFFSET, OPASS(X)
+GET #1, 232 + OFFSET, OPPF(X)
+GET #1, 234 + OFFSET, OPDQ(X)
+GET #1, 236 + OFFSET, OPSTL(X)
+GET #1, 238 + OFFSET, OPTOV(X)
+GET #1, 240 + OFFSET, OPBLK(X)
+GET #1, 242 + OFFSET, OPPTS(X)
+
+
+OFFSET = OFFSET + 251
+OPEN "TEST" FOR APPEND AS #2
+WRITE #2, FGA(X), FGM(X), FGA3(X), FGM3(X), FTA(X), FTM(X), OREB(X), DREB(X), REB(X), ASS(X), PF(X), DQ(X), STL(X), TOV(X), BLK(X), PTS(X)
+WRITE #2, OPFGA(X), OPFGM(X), OPFGA3(X), OPFGM3(X), OPFTA(X), OPFTM(X), OPOREB(X), OPDREB(X), OPREB(X), OPASS(X), OPPF(X), OPDQ(X), OPSTL(X), OPTOV(X), OPBLK(X), OPPTS(X)
+CLOSE 2
+NEXT X
+
+END
+
+tshots = (lfga! / (NT * ng)) * 2
+lr = (lreb! / (NT * ng)) * 2
+la = (lass! / (NT * ng)) * 2
+lf = (lpf! / (NT * ng)) * 2
+lratio = (lpf! / lfta!) * 1000
+lpct = (lfgm! / lfga!) * 1000
+name$ = fln$
+L.div = df
+div1name$ = UCASE$(nd$(1))
+div2name$ = UCASE$(nd$(2))
+div3name$ = UCASE$(nd$(3))
+div4name$ = UCASE$(nd$(4))
+L.pts = lratio
+L.shots = tshots
+L.pct = lpct
+L.reb = lr
+L.assist = la
+L.pf = lf
+GOSUB makeleague
+
+REM do leaague files
+FOR X = 1 TO NT
+city$ = UCASE$(TCY$(X))
+name$ = UCASE$(tnn$(X))
+tcode$ = Tc$(X)
+DL1 = DC(1)
+DL2 = DC(1) + DC(2)
+DL3 = DC(1) + DC(2) + DC(3)
+
+SELECT CASE X
+CASE IS <= DL1
+dcode = 1
+
+CASE DL1 + 1 TO DL2
+dcode = 2
+
+CASE DL2 + 1 TO DL3
+dcode = 3
+
+CASE IS > DL3
+dcode = 4
+END SELECT
+
+aw = GW(X)
+NEXT X
+CLOSE
+
+REM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+500
+OPEN "CBPLAYER.S92" FOR BINARY AS #1
+OFFSET = 0
+DO
+
+
+GET #1, 72 + OFFSET, I
+PRINT I
+'tcode$ = Tc$(I)
+REM IF NO A2 THEN FIRST NAME IS A, GAMENAME ALWAYS IS A1 ADD INIT LATER
+GET #1, 30 + OFFSET, A2
+GET #1, 11 + OFFSET, A
+GET #1, 49 + OFFSET, A1
+IF LEFT$(A2, 2) = "  " THEN FIRST$ = UCASE$(A) ELSE FIRST$ = UCASE$(A2)
+LAST$ = A1
+p.ratio = L.pts
+GAMENAME$ = A1
+
+
+
+
+REM MAKE ROSTER AS "I"
+roster$ = "I"
+
+REM DON'T FORGET GUYS NOT ON A TEAM
+REM LINEUPS TO REFLECT END OF YEAR
+REM DON'T FORGET INVPTS
+REM WILL SHOTS ETC RETURN? YES
+
+REM PRELIMINARY DEFENSE
+GET #1, 80 + OFFSET, D'DEFENSE
+RD = 6 - D
+DEFENSE = RD
+
+GET #1, 426 + OFFSET, DA'ASSISTS
+GET #1, 424 + OFFSET, DR'REBOUNDS
+GET #1, 394 + OFFSET, DM'MINUTES
+IF DM = 0 THEN EXIT DO
+A48# = (DA / DM) * 48
+r48# = (DR / DM) * 48
+GET #1, 92 + OFFSET, D
+IF D = 1 THEN
+IF INT(A48#) > 5 THEN PP$ = "1 2" ELSE PP$ = "2 1"
+IF INT(A48#) = 5 THEN PP$ = "12 "
+END IF
+IF D = 3 THEN
+IF r48# < 6 THEN PP$ = "2 3" ELSE PP$ = "3 2"
+IF INT(r48#) = 7 THEN PP$ = "324"
+IF INT(r48#) = 6 THEN PP$ = "231"
+END IF
+IF D = 2 THEN
+IF r48# < 12 THEN PP$ = "3 4" ELSE PP$ = "4 3"
+IF INT(r48#) = 12 OR INT(r48#) = 13 THEN PP$ = "345"
+END IF
+IF D = 4 THEN PP$ = "5 4"
+IF D = 5 THEN BEEP: STOP
+IF D = 6 THEN
+IF r48# < 16 THEN PP$ = "453" ELSE PP$ = "543"
+END IF
+IF D = 7 THEN PP$ = "325"
+IF D > 7 OR D < 1 THEN PP$ = "321"
+PLPOS$ = PP$
+
+GET #1, 390 + OFFSET, D
+p.AG = D
+
+'GET #1, 392 + OFFSET, D
+'PRINT D
+
+GET #1, 394 + OFFSET, D
+p.AMIN = D
+GET #1, 396 + OFFSET, D
+p.AFGM = D
+GET #1, 398 + OFFSET, D
+p.AFGA = D
+GET #1, 404 + OFFSET, D
+p.AFG3M = D
+GET #1, 406 + OFFSET, D
+p.AFG3A = D
+GET #1, 412 + OFFSET, D
+p.AFTM = D
+GET #1, 414 + OFFSET, D
+p.AFTA = D
+GET #1, 420 + OFFSET, D
+p.AOREB = D
+GET #1, 422 + OFFSET, D
+p.ADREB = D
+
+IF p.AOREB + p.ADREB = 0 THEN
+GET #1, 424 + OFFSET, D
+p.AOREB = D / 3: p.ADREB = p.AOREB * 2
+END IF
+
+
+p.tmrebadv = 1000
+GET #1, 426 + OFFSET, D
+p.AASS = D
+GET #1, 428 + OFFSET, D
+p.APF = D
+GET #1, 430 + OFFSET, D
+p.ADQ = D
+GET #1, 432 + OFFSET, D
+p.ASTL = D
+IF p.ASTL = 0 THEN p.ASTL = .04 * p.AMIN
+GET #1, 434 + OFFSET, D
+p.ATVR = D
+IF p.ATVR = 0 THEN p.ATVR = .07 * p.AMIN
+
+GET #1, 436 + OFFSET, D
+p.ABLK = D
+IF p.ABLK = 0 THEN p.ABLK = .35 * p.AOREB
+
+GET #1, 438 + OFFSET, D
+p.APTS = D
+p.shots = L.shots
+p.lfgpct = L.pct
+p.lrebounds = L.reb
+p.lassists = L.assist
+p.lpf = L.pf
+p.INVPTS = 10000 - p.APTS
+PRINT USING "WRITING: &"; GAMENAME$; : PRINT ZZ
+OFFSET = OFFSET + 686
+ZZ = ZZ + 1
+LOOP UNTIL EOF(1) OR p.MIN
+CLOSE
+
+
+
+X! = 0
+OPEN afs$ FOR BINARY AS #2
+B1! = 5
+SETINDEX 1
+MOVEFIRST 1
+DO
+X! = X! + 1
+OFFSET = 58
+GET #2, B1! + OFFSET * X!, AV1
+GET #2, B1! + (OFFSET * X!) + 2, AV2
+N = X!
+VIS$ = Tc$(AV1)
+HOM$ = Tc$(AV2)
+MA = 1
+LOOP UNTIL X! = 1300 OR EOF(2)
+PRINT X!
+CLOSE
+
+
+
+
+
+
+
+
+
+
+
+END
+
+
+makeleague:
+CLOSE
+there = Exist(fil$)
+IF there = 0 THEN
+Source$ = "EMPTY.TDB"
+dest$ = fil$
+CALL FCopy(Source$, dest$, SPACE$(4096), ErrCode)
+CLOSE
+CLOSE
+END IF
+RETURN
+
+

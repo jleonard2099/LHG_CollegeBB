@@ -1,0 +1,72 @@
+REM: THIS FILE BUILDS A TEMPLATE TO BE USED WITH POWERRAT.BAS
+10 REM **************** REVISED NOVEMBER 1, 1988 ****************************
+20 DIM A$(13),A(13,6),Q$(250),X(13,6), DF(13),P$(13),RS(13,13),T1%(20)
+30 DIM W$(11),N$(13),V$(500)
+40 OPEN "DEV.BAS" FOR INPUT AS #2:INPUT #2,D$(0):CLOSE 2
+
+yn$ = "81"
+for t1 = 1 to 264
+
+9000 OPEN D$(0)+"BASK."+YN$ AS #1 LEN=655
+FIELD #1,15 AS Q$(0),2 AS Q$(1),2 AS Q$(2),2 AS Q$(3),2 AS Q$(4),2 AS Q$(5),2 AS Q$(6),2 AS Q$(7),2 AS Q$(8),2 AS Q$(9),2 AS Q$(10),2 AS Q$(11),2 AS Q$(12),2 AS Q$(13),2 AS Q$(14),2 AS Q$(15),2 AS Q$(16),2 AS Q$(17),2 AS Q$(18),2 AS Q$(19),602 AS _
+X$
+FOR I=0 TO 13
+FIELD #1,53+I*43 AS X$,15 AS Q$(I*15+20),2 AS Q$(I*15+21),2 AS Q$(I*15+22),2 AS Q$(I*15+23),2 AS Q$(I*15+24),2 AS Q$(I*15+25),2 AS Q$(I*15+26),2 AS Q$(I*15+27),2 AS Q$(I*15+28),2 AS Q$(I*15+29),2 AS Q$(I*15+30),2 AS Q$(I*15+31),2 AS Q$(I*15+32),2 _
+AS Q$(I*15+33),2 AS Q$(I*15+34),655-53-43-I*43 AS X$
+NEXT
+GET #1,T1
+   A$=Q$(0)
+9005 IF RIGHT$(A$,1)=" " THEN A$=LEFT$(A$,LEN(A$)-1):GOTO 9005
+     SP=CVI(Q$(1)):DA=CVI(Q$(2)):V1%=CVI(Q$(3)):V2%=CVI(Q$(4))
+     FOR I=0 TO 4:L%(I)=CVI(Q$(I+5)):NEXT
+     FOR I=0 TO 9:T%(I)=CVI(Q$(I+10)):NEXT
+     FOR I=0 TO 13
+     A$(I)=Q$(I*15+20)
+9007 IF RIGHT$(A$(I),1)=" " THEN A$(I)=LEFT$(A$(I),LEN(A$(I))-1):GOTO 9007
+     FOR I1=0 TO 6
+     A(I,I1)=CVI(Q$(I*15+I1+21))
+     X(I,I1)=CVI(Q$(I*15+I1+28))
+     NEXT:NEXT
+     CLOSE 1
+
+OPEN D$(0)+"COLBBTMS."+YN$ AS #1 LEN=566
+FIELD #1,15 AS Q$(0),40 AS Q$(1),15 AS Q$(2),4 AS Q$(3)
+FOR I=0 TO 13
+FIELD #1,74+I*32 AS X$,2 AS Q$(I*16+4),2 AS Q$(I*16+5),2 AS Q$(I*16+6),2 AS Q$(I*16+7),2 AS Q$(I*16+8),2 AS Q$(I*16+9),2 AS Q$(I*16+10),2 AS Q$(I*16+11),2 AS Q$(I*16+12),2 AS Q$(I*16+13),2 AS Q$(I*16+14),2 AS Q$(I*16+15),2 AS Q$(I*16+16),2 AS Q$(I_
+*16+17),2 AS Q$(I*16+18),2 AS Q$(I*16+19)
+FIELD #1, 522 AS X$,2 AS Q$(228),2 AS Q$(229),2 AS Q$(230),2 AS Q$(231),2 AS Q$(232),2 AS Q$(233),2 AS Q$(234),2 AS Q$(235),2 AS Q$(236),2 AS Q$(237),2 AS Q$(238),2 AS Q$(239),2 AS Q$(240),2 AS Q$(241),2 AS Q$(242),2 AS Q$(243),2 AS Q$(244),2 AS  _
+Q$(245),2 AS Q$(246),2 AS Q$(247),2 AS Q$(248),2 AS Q$(249)
+NEXT
+GET #1, T1
+     C$ = Q$(0)
+     S$ = Q$(1)
+     A1$ = Q$(2)
+     ATT = CVL(Q$(3))
+
+     FOR I=0 TO 13
+     DF(I) = CVI(Q$(I*16+4))
+     P$(I) = Q$(I*16+5)
+     FOR I1=0 TO 13
+     RS(I, I1) = CVI(Q$(I*16+I1+6))
+     NEXT:NEXT
+     FOR I = 0 TO 20
+     T1%(I) = CVI(Q$(228+I))
+     NEXT
+     CK = CVI(Q$(249))
+     CLOSE 1
+IF CK <> 999 THEN
+   C$="":S$="":A1$="":ATT=0
+   FOR I = 0 TO 13:DF(I) = 5:P$(I) = ""
+   FOR I1 = 0 TO 13:RS(I,I1)=0
+   NEXT:NEXT
+   FOR I=0 TO 20:T1%(I)=0:NEXT
+END IF
+
+mid$(a$,1) = "80"
+open "specs.80" for append as #2
+write #2, a$,a1$,c$,s$,att
+close 2
+
+next t1
+
+
