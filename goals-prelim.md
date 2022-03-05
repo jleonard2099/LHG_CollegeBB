@@ -26,6 +26,8 @@
 *** From WWW - "COURTSIDE COLLEGE BASKETBALL V4.2"
 *** From Code - "COURTSIDE COLLEGE BASKETBALL V4.1"
 
+[ ] Re-create all library code natively in BASIC
+
 [ ] Attempt first compilation of each game
 	[ ] bring in files from "misc" as needed	
 	[ ] delete "misc" folder when done 

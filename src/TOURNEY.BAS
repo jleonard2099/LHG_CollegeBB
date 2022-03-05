@@ -5,7 +5,7 @@ DECLARE FUNCTION FCount% (FSpec$)
 DECLARE SUB ReadFile (BYVAL Address%)
 DECLARE SUB SortStr (BYVAL Address%, Size%, Direction%)
   '$INCLUDE: 'DEFCNF.BI'
-  '$INCLUDE: 'SetCnf.BI'          'queries the system info for MsgBox
+  '$INCLUDE: 'SETCNF.BI'          'queries the system info for MsgBox
   DRIVE = GetDrive%
    DIM VV$(500)
    DIM A$(11), A(11, 6), Q$(375), YN$(500, 3), AP%(1), NG%(500, 17), T(34), NGG(500)

@@ -34,7 +34,7 @@ DECLARE SUB QEdit (array$(), Ky$, Action, Ed AS EditInfo)
    REDIM DY(1700) AS LONG
 
    '$INCLUDE: 'DEFCNF.BI'
-   '$INCLUDE: 'SetCnf.BI'          'queries the system info for MsgBox
+   '$INCLUDE: 'SETCNF.BI'          'queries the system info for MsgBox
 
    F2$ = CHR$(0) + CHR$(60)        'extended code for the F2 function key
                                     '(used in this demo to change margins)

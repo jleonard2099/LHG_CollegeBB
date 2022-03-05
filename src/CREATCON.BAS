@@ -32,7 +32,7 @@ DECLARE SUB MScrnRest (ULRow, ULCol, LRRow, LRCol, SEG Address)
   DIM VV$(500), V%(500), L%(4), item$(3)
   DIM Y AS LONG
   '$INCLUDE: 'DEFCNF.BI'
-  '$INCLUDE: 'SetCnf.BI'          'queries the system info for MsgBox
+  '$INCLUDE: 'SETCNF.BI'          'queries the system info for MsgBox
   DEF FnExt$ (X$, Length) = X$ + SPACE$(Length - LEN(X$))  'for display only
 'determine if the monitor is mono or color
    '

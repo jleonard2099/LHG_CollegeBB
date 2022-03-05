@@ -37,7 +37,7 @@ DIM CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), ITEM$(17), T%(9)
 COMMON SHARED R, TC, NG%(), OP%(), V$(), H$(), YN$(), F$, HS%(), VS%(), Q$(), C%(), D$()
 DEF FnExt$ (X$, Length) = X$ + SPACE$(Length - LEN(X$))  'for display only
 '$INCLUDE: 'DEFCNF.BI'
-'$INCLUDE: 'SetCnf.BI'          'queries the system info for MsgBox
+'$INCLUDE: 'SETCNF.BI'          'queries the system info for MsgBox
 
    TS$(0) = "N": TS$(1) = "Y": SC$(0) = "NO SHOT CLOCK": SC$(1) = "45 SEC CLOCK ": SC$(2) = "35 SEC CLOCK "
    HC$(1) = "Y": HC$(2) = "N"

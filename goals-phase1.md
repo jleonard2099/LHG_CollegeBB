@@ -1,6 +1,16 @@
 
 ** PHASE 1 - BASIC FIXES / UI IMPROVEMENT
 
+[ ] Make menu wording consistent
+	There are slight variations between games
+
+[ ] Improve DECLARE statements
+	Adjust inconsistent in variable names
+		DECLARE FUNCTION EXIST (FILENAME$)
+			vs
+		DECLARE FUNCTION EXIST% (FILENAME$)
+	Migrate to DECLARE.BAS file for project
+
 [ ] Create "DEFAULT" files, by default!
 
 [ ] Fix teams disk prompts

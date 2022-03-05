@@ -35,7 +35,7 @@ DIM N%(17, 17, 3): REM: REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 DIM C%(1): REM 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
 DIM CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), ITEM$(18), T%(9)
 '$INCLUDE: 'DEFCNF.BI'
-'$INCLUDE: 'SetCnf.BI'          'queries the system info for MsgBox
+'$INCLUDE: 'SETCNF.BI'          'queries the system info for MsgBox
    OPEN "DEV.BAS" FOR INPUT AS #1
    INPUT #1, D$(0)
    CLOSE 1
