@@ -26,8 +26,19 @@
 *** From WWW - "COURTSIDE COLLEGE BASKETBALL V4.2"
 *** From Code - "COURTSIDE COLLEGE BASKETBALL V4.1"
 
-[ ] Re-create all library code natively in BASIC
+[ ] Re-create dependent functions with no QB64 equivalent in native BASIC
+	[X] ClearEOL
+	[X] FCopy
+	[X] MAMenu
+	[X] MMenuVert
+	[ ] MPaintBox
+	[X] QPrint/MQPrint	
+	[X] ReadFile + FCount
+	[X] Text In
+	[X] YesNoB
+	
+[ ] Replace dependent functions with QB64 equivalents
 
-[ ] Attempt first compilation of each game
-	[ ] bring in files from "misc" as needed	
-	[ ] delete "misc" folder when done 
+[ ] Make code compatible with QB64
+	[ ] Remove unused DECLARE / DIM
+	[ ] Replace RND(1) with RND
