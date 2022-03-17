@@ -21,8 +21,8 @@ Since 1983 Lance Haffner Games has been publishing the finest quality text-based
 LH Games were some of the premier simulators of the 80's. They were a staple of of the mail order days and  served as one of the earliest computer sports simulation. Available for several platforms at the time thanks to their use of BASIC, they fast became known for their impressive accuracy and surprisingly quick speed. Not only that, they allowed very detailed and thorough team, conference and season management - yet somehow maintained an entertaining feel with gameplay that was never overly detailed. 
 
 # Visuals
-![fb-box](image.jpg)
-![fb-action](image.jpg)
+![football box art](fb-box.jpg)
+![football in action](fb-action.jpg)
 	
 # Installation
 No installation required. Pre-compiled binaries and required reference files are in /bin.
