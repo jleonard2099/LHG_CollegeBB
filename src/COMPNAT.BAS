@@ -1,889 +1,958 @@
-DECLARE SUB GETKEY ()
-DECLARE SUB ReadFile (BYVAL Address%)
-DECLARE SUB SortStr (BYVAL Address%, Size%, Direction%)
-DECLARE SUB MAMenu (BYVAL Address%, SELECTION%, START%, COUNT%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
-DECLARE FUNCTION QPRTrim$ (Work$)
-DECLARE SUB MQPrint (X$, Colr)
-DECLARE FUNCTION FCount% (FSpec$)
-DECLARE SUB MPaintBox (ULRow, ULCol, LRRow, LRCol, Colr)
-DECLARE SUB MScrnSave (ULRow, ULCol, LRRow, LRCol, SEG Address)
-DECLARE SUB MScrnRest (ULRow, ULCol, LRRow, LRCol, SEG Address)
-DECLARE FUNCTION GetDrive% ()
-DECLARE FUNCTION EXIST% (f$)
-  DIM O1(30), Z1$(30), NZ1$(30)
-  DIM NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
-  DIM W0(15), W1(15)
-  DIM DL$(40), OL$(40), OL(40, 20), DL(40, 20), N$(14)
-  DIM NDL$(40), NOL$(40), NOL(40, 20), NDL(40, 20)
-  DIM O3(30), O4(30), O5(30), O6(30)
-  DIM O2(30)
-  DIM NZ2$(250), Z2$(250), QM$(40), PS$(40)
-  DIM NZ3$(250), Z3$(250), Z4$(40), O%(100), O$(100), AP%(100, 1), CRD(100), SITE$(100)
-  DIM T%(100), H1$(40), CN$(40)
-  DIM LD(250, 2), S(14, 26), H$(100), M1$(40), OT(21), DT(21), HA$(40), ZA$(40)
-  DIM NLD(250, 2)
-  DIM D$(1), BRC(32), BRC$(32, 1), TRC(21), TRC$(21), TRC1(21), TRC1$(21)
-  REDIM PT(1200, 4), PT$(1200)
-  DRIVE = GetDrive%
-  OPEN "DEV.BAS" FOR INPUT AS #2
-  INPUT #2, D$(0): INPUT #2, D$(1)
-  CLOSE 2
-  CLS
-  IF UCASE$(LEFT$(D$(1), 1)) <> "A" AND UCASE$(LEFT$(D$(1), 1)) <> "B" THEN 4001
-  GOSUB 4605
-  U$ = "INSERT DISK WITH LEAGUE STATS IN DRIVE " + D$(1)
-  LOCATE , (80 - LEN(U$)) / 2
-  PRINT U$
-  U$ = "HIT ANY KEY TO CONTINUE"
-  LOCATE , (80 - LEN(U$)) / 2
-  PRINT U$
-  COLOR 15, 0
-7 I$ = INKEY$: IF I$ = "" THEN 7
+'$INCLUDE: 'KeyInput.BI'
+'$INCLUDE: 'QPProEqu.BI'
+
+DIM O1(30), Z1$(30), NZ1$(30)
+DIM NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
+DIM W0(15), W1(15)
+DIM DL$(40), OL$(40), OL(40, 20), DL(40, 20), N$(14)
+DIM NDL$(40), NOL$(40), NOL(40, 20), NDL(40, 20)
+DIM O3(30), O4(30), O5(30), O6(30)
+DIM O2(30)
+DIM NZ2$(250), Z2$(250), QM$(40), PS$(40)
+DIM NZ3$(250), Z3$(250), Z4$(40), O%(100), O$(100), AP%(100, 1), CRD(100), SITE$(100)
+DIM T%(100), H1$(40), CN$(40)
+DIM LD(250, 2), S(14, 26), H$(100), M1$(40), OT(21), DT(21), HA$(40), ZA$(40)
+DIM NLD(250, 2)
+DIM D$(1), BRC(32), BRC$(32, 1), TRC(21), TRC$(21), TRC1(21), TRC1$(21)
+REDIM PT(1200, 4), PT$(1200)
+
+OPEN "DEV.BAS" FOR INPUT AS #2
+	INPUT #2, D$(0): INPUT #2, D$(1)
+CLOSE 2
+
+CLS
 
 4001 TRC(14) = 19999: TRC(18) = 19999
-     FOR I = 1 TO 13: TRC1(I) = 19999: NEXT
-     FOR I = 15 TO 17: TRC1(I) = 19999: NEXT
-     FOR I = 19 TO 20: TRC1(I) = 19999: NEXT
-
-   IF NOT EXIST%(D$(1) + "RECORDS.CBB") THEN 4003
-   OPEN D$(1) + "RECORDS.CBB" FOR INPUT AS #1
-   FOR I = 1 TO 25
-   INPUT #1, BRC(I)
-   INPUT #1, BRC$(I, 0)
-   INPUT #1, BRC$(I, 1)
-   NEXT
-   FOR I = 1 TO 21
-   INPUT #1, TRC(I)
-   INPUT #1, TRC$(I)
-   NEXT
-   FOR I = 1 TO 21
-   INPUT #1, TRC1(I)
-   INPUT #1, TRC1$(I)
-   NEXT
-   CLOSE 1
+	FOR I = 1 TO 13: TRC1(I) = 19999: NEXT
+	FOR I = 15 TO 17: TRC1(I) = 19999: NEXT
+	FOR I = 19 TO 20: TRC1(I) = 19999: NEXT
+	IF NOT _FILEEXISTS(D$(1) + "RECORDS.CBB") THEN 4003
+OPEN D$(1) + "RECORDS.CBB" FOR INPUT AS #1
+	FOR I = 1 TO 25
+	INPUT #1, BRC(I)
+	INPUT #1, BRC$(I, 0)
+	INPUT #1, BRC$(I, 1)
+	NEXT
+	FOR I = 1 TO 21
+	INPUT #1, TRC(I)
+	INPUT #1, TRC$(I)
+	NEXT
+	FOR I = 1 TO 21
+	INPUT #1, TRC1(I)
+	INPUT #1, TRC1$(I)
+	NEXT
+CLOSE 1
 
 4003 Spec$ = D$(1) + "*.CON"
-    COUNT% = FCount%(Spec$)
-   IF COUNT% = 0 THEN 4500
-   REDIM f$(0 TO COUNT%)
-   FOR X = 1 TO COUNT%
-       f$(X) = SPACE$(12)
-   NEXT
-   f$(0) = Spec$
-   CALL ReadFile(VARPTR(f$(0)))
-   CALL SortStr(VARPTR(f$(1)), COUNT%, 0)
+	COUNT% = FCount%(Spec$)
+	IF COUNT% = 0 THEN 4500
+REDIM f$(0 TO COUNT%)
+	FOR X = 1 TO COUNT%
+	  f$(X) = SPACE$(12)
+	NEXT
+	f$(0) = Spec$
+	CALL ReadFile(VARPTR(f$(0)))
+	'CALL SortStr(VARPTR(f$(1)), COUNT%, 0)
 
 1310 CLS
-    COLOR , 1
-    CLS
-    LOCATE , 28
-    COLOR 14
-    PRINT "SELECT LEAGUE TO UPDATE": COLOR 15
-    SELECTION% = 1
-    START% = 1
-    FileColr% = 31
-    HiLiteColr% = 112
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    LOCATE 25, 1
-    COLOR 14
-    PRINT "ENTER"; : COLOR 15
-    PRINT "-SELECTS LEAGUE";
-CALL SHOWCURSOR
-20 MAMenu VARPTR(f$(1)), SELECTION%, START%, COUNT%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
-CALL HIDECURSOR
-     IF EXITCODE% = 27 THEN 2900
-     IF EXITCODE% = -71 THEN START% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
-     IF EXITCODE% = -79 THEN START% = COUNT%: EXITCODE% = 3: SELECTION% = COUNT%: GOTO 20
-     IF EXITCODE% = -73 THEN START% = START% - 80: IF START% < 1 THEN START% = 1
-     IF EXITCODE% = -81 THEN START% = START% + 80: IF START% > COUNT% THEN START% = COUNT%
-     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = START%: GOTO 20
-     f$ = f$(SELECTION%)
-   LOCATE 2, 33: PRINT f$: LOCATE , 33: PRINT "ANY CHANGE (YN)";
-     COLOR 15, 0
-3910 I$ = INKEY$: IF I$ = "" THEN 3910
-    IF UCASE$(I$) = "Y" THEN 1310
-3911 f$ = QPRTrim$(f$)
-    WE$ = LEFT$(f$, LEN(f$) - 4)
-    LH$ = WE$
-    CLS : PRINT "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-     COLOR 15, 0
-3912 I$ = INKEY$: IF I$ = "" THEN 3912
-    IF UCASE$(I$) = "Y" THEN UP$ = "Y"
+	COLOR , 1
+	CLS
+	LOCATE , 28
+	COLOR 14
+	PRINT "SELECT LEAGUE TO UPDATE": COLOR 15
+	SELECTION% = 1
+	START% = 1
+	FileFGColr% = 15:FileBGColr% = 1
+	HiLiteFGColr% = 0:HiLiteBGColr% = 7
+	Rows% = 20
+	Columns% = 4
+	Spacing% = 6
+	Row% = 4
+	Column% = 1
+	LOCATE 25, 1
+	COLOR 14
+	PRINT "ENTER"; : COLOR 15
+	PRINT "-SELECTS LEAGUE";
 
+_MouseShow "DEFAULT"
+20 MAMenu VARPTR(f$(1)), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+_MouseHide
 
-   OPEN D$(1) + WE$ + ".CON" FOR INPUT AS #2
-   INPUT #2, X$
-   FOR I = 1 TO 40
-   INPUT #2, CN$(I)
-   NEXT
-   CLOSE 2
+	IF EXITCODE% = 27 THEN 2905
+	IF EXITCODE% = -71 THEN START% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
+	IF EXITCODE% = -79 THEN START% = COUNT%: EXITCODE% = 3: SELECTION% = COUNT%: GOTO 20
+	IF EXITCODE% = -73 THEN START% = START% - 80: IF START% < 1 THEN START% = 1
+	IF EXITCODE% = -81 THEN START% = START% + 80: IF START% > COUNT% THEN START% = COUNT%
+	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = START%: GOTO 20
+	f$ = f$(SELECTION%)
+	LOCATE 2, 33: PRINT F$
+LOCATE , 33: PRINT "ANY CHANGE (YN)";
+	COLOR 15, 0
+3910 I$ = GetKeyPress$
+	IF UCASE$(I$) = "Y" THEN 1310
 
-   FOR X = 1 TO 40
-   NDL(X, 19) = 9999
-   NEXT
-
-
-
-   FOR NC = 1 TO 40
-   IF CN$(NC) = "XXX" THEN 90
-
-   CLS
-
-   FOR X = 0 TO 40
-   OL$(X) = ""
-   DL$(X) = ""
-   FOR X1 = 0 TO 20
-   DL(X, X1) = 0
-   OL(X, X1) = 0
-   NEXT: NEXT
-
-   FOR X = 1 TO 40
-   DL(X, 19) = 9999
-   NEXT
-
-   FOR X = 1 TO 250
-   Z2$(X) = "": Z3$(X) = ""
-   FOR X1 = 0 TO 2
-   LD(X, X1) = 0
-   NEXT: NEXT
-
-   FOR X = 1 TO 30
-   Z1$(X) = "": O1(X) = 0: O2(X) = 0: O3(X) = 0: O4(X) = 0: O5(X) = 0: O6(X) = 0
-   NEXT
-
-
-   OPEN D$(1) + CN$(NC) + ".TMS" FOR INPUT AS #2
-   INPUT #2, LG$
-   INPUT #2, D1$: INPUT #2, D2$
-   FOR XW = 1 TO 30
-   INPUT #2, H1$(XW)
-   Z1$(XW) = H1$(XW)
-   NEXT
-   CLOSE 2
-
-
-   
-   FOR XW = 1 TO 30
-   GOSUB 700
-   GOSUB 900
-   IF H1$(XW) <> "*" AND EXIST%(D$(1) + H1$(XW) + "S") THEN GOSUB 2800
-   CLOSE 3
-   NEXT
-   AA = 1: ZZ = 15: GOSUB 950
-   AA = 16: ZZ = 30: GOSUB 950
-   GOSUB 4000
-
+3911 f$ = RTrim$(f$)
+	WE$ = LEFT$(f$, LEN(f$) - 4)
+	LH$ = WE$
+	CLS : PRINT "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+	COLOR 15, 0
+3912 I$ = GetKeyPress$
+	IF UCASE$(I$) = "Y" THEN UP$ = "Y"
+OPEN D$(1) + WE$ + ".CON" FOR INPUT AS #2
+	INPUT #2, X$
+	FOR I = 1 TO 40
+	INPUT #2, CN$(I)
+	NEXT
+CLOSE 2
+	FOR X = 1 TO 40
+	NDL(X, 19) = 9999
+	NEXT
+	  FOR NC = 1 TO 40
+	IF CN$(NC) = "XXX" THEN 90
+	CLS
+	FOR X = 0 TO 40
+	OL$(X) = ""
+	DL$(X) = ""
+	FOR X1 = 0 TO 20
+	DL(X, X1) = 0
+	OL(X, X1) = 0
+	NEXT: NEXT
+	FOR X = 1 TO 40
+	DL(X, 19) = 9999
+	NEXT
+	FOR X = 1 TO 250
+	Z2$(X) = "": Z3$(X) = ""
+	FOR X1 = 0 TO 2
+	LD(X, X1) = 0
+	NEXT: NEXT
+	FOR X = 1 TO 30
+	Z1$(X) = "": O1(X) = 0: O2(X) = 0: O3(X) = 0: O4(X) = 0: O5(X) = 0: O6(X) = 0
+	NEXT
+OPEN D$(1) + CN$(NC) + ".TMS" FOR INPUT AS #2
+	INPUT #2, LG$
+	INPUT #2, D1$: INPUT #2, D2$
+	FOR XW = 1 TO 30
+	INPUT #2, H1$(XW)
+	Z1$(XW) = H1$(XW)
+	NEXT
+CLOSE 2
+	FOR XW = 1 TO 30
+	GOSUB 700
+	GOSUB 900
+	IF H1$(XW) <> "*" AND _FILEEXISTS(D$(1) + H1$(XW) + "S") THEN GOSUB 2800
+CLOSE 3
+	NEXT
+	AA = 1: ZZ = 15: GOSUB 950
+	AA = 16: ZZ = 30: GOSUB 950
+	GOSUB 4000
 
 90 NEXT NC
-   GOSUB 4010
+	GOSUB 4010
 
-99 REM:
-2900 IF DRIVE >= 67 THEN 2905
-     CLS
-     PRINT "MAKE SURE PROGRAM DISK 3 IS IN DRIVE"
-     CALL GETKEY
+99 '
+
 2905 RUN "HELLO.EXE 3"
-     END
-
-
+	END
 
 700 WN = 0: LS = 0: CW = 0: CL = 0
-    IF H1$(XW) = CHR$(42) THEN RETURN
-    GOSUB 9131
-    IF NOT EXIST%(D$(1) + H1$(XW) + "S") THEN 1030
-    OPEN D$(1) + H1$(XW) + "S" FOR INPUT AS #2
+	IF H1$(XW) = CHR$(42) THEN RETURN
+	GOSUB 9131
+	IF NOT _FILEEXISTS(D$(1) + H1$(XW) + "S") THEN 1030
+OPEN D$(1) + H1$(XW) + "S" FOR INPUT AS #2
+
 801 INPUT #2, Y%
-    FOR I = 1 TO 100: INPUT #2, O%(I): NEXT I
-    FOR I = 1 TO 100: INPUT #2, O$(I): NEXT I
+	FOR I = 1 TO 100: INPUT #2, O%(I): NEXT I
+	FOR I = 1 TO 100: INPUT #2, O$(I): NEXT I
+
 802 FOR I = 1 TO 100: INPUT #2, T%(I): NEXT I
-    FOR I = 1 TO 100: INPUT #2, H$(I): NEXT I
-    FOR I = 1 TO 100
-    FOR I1 = 0 TO 1
-    INPUT #2, AP%(I, I1)
-    NEXT: NEXT
-    FOR I = 1 TO 100: INPUT #2, CRD(I): NEXT I
-    FOR I = 1 TO 100: INPUT #2, SITE$(I): NEXT I
+	FOR I = 1 TO 100: INPUT #2, H$(I): NEXT I
+	FOR I = 1 TO 100
+	FOR I1 = 0 TO 1
+	INPUT #2, AP%(I, I1)
+	NEXT: NEXT
+	FOR I = 1 TO 100: INPUT #2, CRD(I): NEXT I
+	FOR I = 1 TO 100: INPUT #2, SITE$(I): NEXT I
+	 CLOSE 2
 
-    CLOSE 2
 803 WN = 0: LS = 0: CW = 0: CL = 0
-804 GOSUB 5500
-    CLS
-    LOCATE 4, 5
-    COLOR 14: PRINT "FINDING ";
-    COLOR 15: PRINT H1$(XW); : COLOR 14
-    PRINT " STATS            "
-    RETURN
 
+804 GOSUB 5500
+	CLS
+	LOCATE 4, 5
+	COLOR 14: PRINT "FINDING ";
+	COLOR 15: PRINT H1$(XW); : COLOR 14
+	PRINT " STATS            "
+	RETURN
 
 811 FOR I = 0 TO 13: FOR J = 0 TO 26: S(I, J) = 0: NEXT: NEXT
-    IF NOT EXIST%(D$(1) + H1$(XW)) THEN 1030
-    OPEN D$(1) + H1$(XW) FOR INPUT AS #2: INPUT #2, TN$
+	IF NOT _FILEEXISTS(D$(1) + H1$(XW)) THEN 1030
+OPEN D$(1) + H1$(XW) FOR INPUT AS #2: INPUT #2, TN$
+
 812 FOR I = 0 TO 13
-    INPUT #2, N$(I): FOR J = 0 TO 13: INPUT #2, S(I, J): NEXT
-    INPUT #2, W0(I): INPUT #2, W1(I)
-    NEXT: FOR L = 1 TO 16: INPUT #2, OT(L): NEXT: FOR L = 1 TO 16: INPUT #2, DT(L): NEXT: CLOSE 2
-    FOR I = 0 TO 13
-    S(I, 25) = S(I, 13)
-    S(I, 26) = S(I, 12)
-    S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): REM *** PTS ***
-    IF S(I, 0) = 0 THEN 835
-    S(I, 13) = S(I, 5) / S(I, 0): REM *** RB/G ***
-    S(I, 14) = S(I, 6) / S(I, 0): REM *** FOULS/G ***
-    S(I, 15) = S(I, 7) / S(I, 0): REM *** STEALS/G ***
-    S(I, 16) = S(I, 8) / S(I, 0): REM *** ASSISTS/G ***
-    S(I, 17) = S(I, 9) / S(I, 0): REM *** BLOCKS/G ***
-    S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
-    S(I, 18) = S(I, 10) / 60 / S(I, 0): REM *** MIN/G ***
-    IF S(I, 1) = 0 OR (S(I, 2) / Y% < 5) THEN 826
-    S(I, 19) = S(I, 2) / S(I, 1): REM *** FG% ***
+	INPUT #2, N$(I): FOR J = 0 TO 13: INPUT #2, S(I, J): NEXT
+	INPUT #2, W0(I): INPUT #2, W1(I)
+	NEXT: FOR L = 1 TO 16: INPUT #2, OT(L): NEXT: FOR L = 1 TO 16: INPUT #2, DT(L): NEXT: CLOSE 2
+	FOR I = 0 TO 13
+	S(I, 25) = S(I, 13)
+	S(I, 26) = S(I, 12)
+	S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): ' *** PTS ***
+	IF S(I, 0) = 0 THEN 835
+	S(I, 13) = S(I, 5) / S(I, 0): ' *** RB/G ***
+	S(I, 14) = S(I, 6) / S(I, 0): ' *** FOULS/G ***
+	S(I, 15) = S(I, 7) / S(I, 0): ' *** STEALS/G ***
+	S(I, 16) = S(I, 8) / S(I, 0): ' *** ASSISTS/G ***
+	S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
+	S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
+	S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
+	IF S(I, 1) = 0 OR (S(I, 2) / Y% < 5) THEN 826
+	S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
+
 826 IF S(I, 3) = 0 OR (S(I, 4) / Y%) < 2.5 THEN 828
-    S(I, 20) = S(I, 4) / S(I, 3): REM *** FT% ***
+	S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
+
 828 IF W1(I) = 0 OR W0(I) / Y% < 1.5 THEN 831
-    S(I, 21) = W0(I) / W1(I): REM *** 3FG% ***
-831 S(I, 22) = S(I, 12) / S(I, 0): REM *** PTS/G ***
-    IF S(I, 0) > BRC(1) THEN BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
-    IF S(I, 1) > BRC(2) THEN BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
-    IF S(I, 2) > BRC(3) THEN BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
-    IF S(I, 19) > BRC(4) AND UCASE$(UP$) = "Y" AND S(I, 2) / Y% >= 5 THEN BRC(4) = S(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
-    IF W1(I) > BRC(5) THEN BRC(5) = W1(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
-    IF W0(I) > BRC(6) THEN BRC(6) = W0(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
-    IF S(I, 21) > BRC(7) AND UCASE$(UP$) = "Y" AND W0(I) / Y% >= 1.5 THEN BRC(7) = S(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
-    IF S(I, 3) > BRC(8) THEN BRC(8) = S(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
-    IF S(I, 4) > BRC(9) THEN BRC(9) = S(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
-    IF S(I, 20) > BRC(10) AND UCASE$(UP$) = "Y" AND S(I, 4) / Y% >= 2.5 THEN BRC(10) = S(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
-    IF S(I, 10) / 60 > BRC(11) THEN BRC(11) = S(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
-    IF S(I, 12) > BRC(12) THEN BRC(12) = S(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
-    IF S(I, 22) > BRC(13) AND UCASE$(UP$) = "Y" THEN BRC(13) = S(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
-    IF S(I, 25) > BRC(14) THEN BRC(14) = S(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
-    IF S(I, 26) > BRC(15) THEN BRC(15) = S(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
-    IF S(I, 5) - S(I, 26) > BRC(16) THEN BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
-    IF S(I, 5) > BRC(17) THEN BRC(17) = S(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
-    IF S(I, 13) > BRC(18) AND UCASE$(UP$) = "Y" THEN BRC(18) = S(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
-    IF S(I, 6) > BRC(19) THEN BRC(19) = S(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
-    IF S(I, 7) > BRC(20) THEN BRC(20) = S(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
-    IF S(I, 8) > BRC(21) THEN BRC(21) = S(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
-    IF S(I, 9) > BRC(22) THEN BRC(22) = S(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
-    IF S(I, 11) > BRC(23) THEN BRC(23) = S(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
-    IF S(I, 18) > BRC(24) AND UCASE$(UP$) = "Y" THEN BRC(24) = S(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
-    IF S(I, 24) > BRC(25) THEN BRC(25) = S(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
+	S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
+
+831 S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
+	IF S(I, 0) > BRC(1) THEN BRC(1) = S(I, 0): BRC$(1, 0) = N$(I): BRC$(1, 1) = TN$
+	IF S(I, 1) > BRC(2) THEN BRC(2) = S(I, 1): BRC$(2, 0) = N$(I): BRC$(2, 1) = TN$
+	IF S(I, 2) > BRC(3) THEN BRC(3) = S(I, 2): BRC$(3, 0) = N$(I): BRC$(3, 1) = TN$
+	IF S(I, 19) > BRC(4) AND UCASE$(UP$) = "Y" AND S(I, 2) / Y% >= 5 THEN BRC(4) = S(I, 19): BRC$(4, 0) = N$(I): BRC$(4, 1) = TN$
+	IF W1(I) > BRC(5) THEN BRC(5) = W1(I): BRC$(5, 0) = N$(I): BRC$(5, 1) = TN$
+	IF W0(I) > BRC(6) THEN BRC(6) = W0(I): BRC$(6, 0) = N$(I): BRC$(6, 1) = TN$
+	IF S(I, 21) > BRC(7) AND UCASE$(UP$) = "Y" AND W0(I) / Y% >= 1.5 THEN BRC(7) = S(I, 21): BRC$(7, 0) = N$(I): BRC$(7, 1) = TN$
+	IF S(I, 3) > BRC(8) THEN BRC(8) = S(I, 3): BRC$(8, 0) = N$(I): BRC$(8, 1) = TN$
+	IF S(I, 4) > BRC(9) THEN BRC(9) = S(I, 4): BRC$(9, 0) = N$(I): BRC$(9, 1) = TN$
+	IF S(I, 20) > BRC(10) AND UCASE$(UP$) = "Y" AND S(I, 4) / Y% >= 2.5 THEN BRC(10) = S(I, 20): BRC$(10, 0) = N$(I): BRC$(10, 1) = TN$
+	IF S(I, 10) / 60 > BRC(11) THEN BRC(11) = S(I, 10) / 60: BRC$(11, 0) = N$(I): BRC$(11, 1) = TN$
+	IF S(I, 12) > BRC(12) THEN BRC(12) = S(I, 12): BRC$(12, 0) = N$(I): BRC$(12, 1) = TN$
+	IF S(I, 22) > BRC(13) AND UCASE$(UP$) = "Y" THEN BRC(13) = S(I, 22): BRC$(13, 0) = N$(I): BRC$(13, 1) = TN$
+	IF S(I, 25) > BRC(14) THEN BRC(14) = S(I, 25): BRC$(14, 0) = N$(I): BRC$(14, 1) = TN$
+	IF S(I, 26) > BRC(15) THEN BRC(15) = S(I, 26): BRC$(15, 0) = N$(I): BRC$(15, 1) = TN$
+	IF S(I, 5) - S(I, 26) > BRC(16) THEN BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = N$(I): BRC$(16, 1) = TN$
+	IF S(I, 5) > BRC(17) THEN BRC(17) = S(I, 5): BRC$(17, 0) = N$(I): BRC$(17, 1) = TN$
+	IF S(I, 13) > BRC(18) AND UCASE$(UP$) = "Y" THEN BRC(18) = S(I, 13): BRC$(18, 0) = N$(I): BRC$(18, 1) = TN$
+	IF S(I, 6) > BRC(19) THEN BRC(19) = S(I, 6): BRC$(19, 0) = N$(I): BRC$(19, 1) = TN$
+	IF S(I, 7) > BRC(20) THEN BRC(20) = S(I, 7): BRC$(20, 0) = N$(I): BRC$(20, 1) = TN$
+	IF S(I, 8) > BRC(21) THEN BRC(21) = S(I, 8): BRC$(21, 0) = N$(I): BRC$(21, 1) = TN$
+	IF S(I, 9) > BRC(22) THEN BRC(22) = S(I, 9): BRC$(22, 0) = N$(I): BRC$(22, 1) = TN$
+	IF S(I, 11) > BRC(23) THEN BRC(23) = S(I, 11): BRC$(23, 0) = N$(I): BRC$(23, 1) = TN$
+	IF S(I, 18) > BRC(24) AND UCASE$(UP$) = "Y" THEN BRC(24) = S(I, 18): BRC$(24, 0) = N$(I): BRC$(24, 1) = TN$
+	IF S(I, 24) > BRC(25) THEN BRC(25) = S(I, 24): BRC$(25, 0) = N$(I): BRC$(25, 1) = TN$
+
 835 NEXT
-    OT(16) = Y%: DT(16) = Y%: OT(17) = OT(3) / OT(2): DT(17) = DT(3) / DT(2)
-    OT(18) = OT(5) / OT(4): DT(18) = DT(5) / DT(4)
-    OT(20) = OT(11): DT(20) = DT(11)
-    IF OT(15) <> 0 THEN OT(21) = OT(14) / OT(15) ELSE OT(21) = 0
-    IF DT(15) <> 0 THEN DT(21) = DT(14) / DT(15) ELSE DT(21) = 999
-    OT(19) = OT(20) / Y%: DT(19) = DT(20) / Y%
-    IF OT(2) > TRC(1) THEN TRC(1) = OT(2): TRC$(1) = TN$
-    IF OT(3) > TRC(2) THEN TRC(2) = OT(3): TRC$(2) = TN$
-    IF OT(17) > TRC(3) AND UCASE$(UP$) = "Y" THEN TRC(3) = OT(17): TRC$(3) = TN$
-    IF OT(15) > TRC(4) THEN TRC(4) = OT(15): TRC$(4) = TN$
-    IF OT(14) > TRC(5) THEN TRC(5) = OT(14): TRC$(5) = TN$
-    IF OT(21) > TRC(6) AND UCASE$(UP$) = "Y" THEN TRC(6) = OT(21): TRC$(6) = TN$
-    IF OT(4) > TRC(7) THEN TRC(7) = OT(4): TRC$(7) = TN$
-    IF OT(5) > TRC(8) THEN TRC(8) = OT(5): TRC$(8) = TN$
-    IF OT(18) > TRC(9) AND UCASE$(UP$) = "Y" THEN TRC(9) = OT(18): TRC$(9) = TN$
-    IF OT(13) > TRC(10) THEN TRC(10) = OT(13): TRC$(10) = TN$
-    IF OT(6) - OT(13) > TRC(11) THEN TRC(11) = OT(6) - OT(13): TRC$(11) = TN$
-    IF OT(6) > TRC(12) THEN TRC(12) = OT(6): TRC$(12) = TN$
-    IF OT(6) / Y% > TRC(13) AND UCASE$(UP$) = "Y" THEN TRC(13) = OT(6) / Y%: TRC$(13) = TN$
-    IF OT(7) < TRC(14) AND UCASE$(UP$) = "Y" THEN TRC(14) = OT(7): TRC$(14) = TN$
-    IF OT(8) > TRC(15) THEN TRC(15) = OT(8): TRC$(15) = TN$
-    IF OT(9) > TRC(16) THEN TRC(16) = OT(9): TRC$(16) = TN$
-    IF OT(10) > TRC(17) THEN TRC(17) = OT(10): TRC$(17) = TN$
-    IF OT(12) < TRC(18) AND UCASE$(UP$) = "Y" THEN TRC(18) = OT(12): TRC$(18) = TN$
-    IF OT(11) > TRC(19) THEN TRC(19) = OT(11): TRC$(19) = TN$
-    IF OT(11) / Y% > TRC(20) AND UCASE$(UP$) = "Y" THEN TRC(20) = OT(11) / Y%: TRC$(20) = TN$
-    IF WN > TRC(21) THEN TRC(21) = WN: TRC$(21) = TN$
-    IF DT(2) < TRC1(1) THEN TRC1(1) = DT(2): TRC1$(1) = TN$
-    IF DT(3) < TRC1(2) THEN TRC1(2) = DT(3): TRC1$(2) = TN$
-    IF DT(17) < TRC1(3) AND UCASE$(UP$) = "Y" THEN TRC1(3) = DT(17): TRC1$(3) = TN$
-    IF DT(15) < TRC1(4) THEN TRC1(4) = DT(15): TRC1$(4) = TN$
-    IF DT(14) < TRC1(5) THEN TRC1(5) = DT(14): TRC1$(5) = TN$
-    IF DT(21) < TRC1(6) AND DT(15) <> 0 AND UCASE$(UP$) = "Y" THEN TRC1(6) = DT(21): TRC1$(6) = TN$
-    IF DT(4) < TRC1(7) THEN TRC1(7) = DT(4): TRC1$(7) = TN$
-    IF DT(5) < TRC1(8) THEN TRC1(8) = DT(5): TRC1$(8) = TN$
-    IF DT(18) < TRC1(9) AND UCASE$(UP$) = "Y" THEN TRC1(9) = DT(18): TRC1$(9) = TN$
-    IF DT(13) < TRC1(10) THEN TRC1(10) = DT(13): TRC1$(10) = TN$
-    IF DT(6) - DT(13) < TRC1(11) THEN TRC1(11) = DT(6) - DT(13): TRC1$(11) = TN$
-    IF DT(6) < TRC1(12) THEN TRC1(12) = DT(6): TRC1$(12) = TN$
-    IF DT(6) / Y% < TRC1(13) AND UCASE$(UP$) = "Y" THEN TRC1(13) = DT(6) / Y%: TRC1$(13) = TN$
-    IF DT(7) > TRC1(14) AND UCASE$(UP$) = "Y" THEN TRC1(14) = DT(7): TRC1$(14) = TN$
-    IF DT(8) < TRC1(15) THEN TRC1(15) = DT(8): TRC1$(15) = TN$
-    IF DT(9) < TRC1(16) THEN TRC1(16) = DT(9): TRC1$(16) = TN$
-    IF DT(10) < TRC1(17) THEN TRC1(17) = DT(10): TRC1$(17) = TN$
-    IF DT(12) > TRC1(18) AND UCASE$(UP$) = "Y" THEN TRC1(18) = DT(12): TRC1$(18) = TN$
-    IF DT(11) < TRC1(19) THEN TRC1(19) = DT(11): TRC1$(19) = TN$
-    IF DT(11) / Y% < TRC1(20) AND UCASE$(UP$) = "Y" THEN TRC1(20) = DT(11) / Y%: TRC1$(20) = TN$
-    IF LS > TRC1(21) THEN TRC1(21) = LS: TRC1$(21) = TN$
+	OT(16) = Y%: DT(16) = Y%: OT(17) = OT(3) / OT(2): DT(17) = DT(3) / DT(2)
+	OT(18) = OT(5) / OT(4): DT(18) = DT(5) / DT(4)
+	OT(20) = OT(11): DT(20) = DT(11)
+	IF OT(15) <> 0 THEN OT(21) = OT(14) / OT(15) ELSE OT(21) = 0
+	IF DT(15) <> 0 THEN DT(21) = DT(14) / DT(15) ELSE DT(21) = 999
+	OT(19) = OT(20) / Y%: DT(19) = DT(20) / Y%
+	IF OT(2) > TRC(1) THEN TRC(1) = OT(2): TRC$(1) = TN$
+	IF OT(3) > TRC(2) THEN TRC(2) = OT(3): TRC$(2) = TN$
+	IF OT(17) > TRC(3) AND UCASE$(UP$) = "Y" THEN TRC(3) = OT(17): TRC$(3) = TN$
+	IF OT(15) > TRC(4) THEN TRC(4) = OT(15): TRC$(4) = TN$
+	IF OT(14) > TRC(5) THEN TRC(5) = OT(14): TRC$(5) = TN$
+	IF OT(21) > TRC(6) AND UCASE$(UP$) = "Y" THEN TRC(6) = OT(21): TRC$(6) = TN$
+	IF OT(4) > TRC(7) THEN TRC(7) = OT(4): TRC$(7) = TN$
+	IF OT(5) > TRC(8) THEN TRC(8) = OT(5): TRC$(8) = TN$
+	IF OT(18) > TRC(9) AND UCASE$(UP$) = "Y" THEN TRC(9) = OT(18): TRC$(9) = TN$
+	IF OT(13) > TRC(10) THEN TRC(10) = OT(13): TRC$(10) = TN$
+	IF OT(6) - OT(13) > TRC(11) THEN TRC(11) = OT(6) - OT(13): TRC$(11) = TN$
+	IF OT(6) > TRC(12) THEN TRC(12) = OT(6): TRC$(12) = TN$
+	IF OT(6) / Y% > TRC(13) AND UCASE$(UP$) = "Y" THEN TRC(13) = OT(6) / Y%: TRC$(13) = TN$
+	IF OT(7) < TRC(14) AND UCASE$(UP$) = "Y" THEN TRC(14) = OT(7): TRC$(14) = TN$
+	IF OT(8) > TRC(15) THEN TRC(15) = OT(8): TRC$(15) = TN$
+	IF OT(9) > TRC(16) THEN TRC(16) = OT(9): TRC$(16) = TN$
+	IF OT(10) > TRC(17) THEN TRC(17) = OT(10): TRC$(17) = TN$
+	IF OT(12) < TRC(18) AND UCASE$(UP$) = "Y" THEN TRC(18) = OT(12): TRC$(18) = TN$
+	IF OT(11) > TRC(19) THEN TRC(19) = OT(11): TRC$(19) = TN$
+	IF OT(11) / Y% > TRC(20) AND UCASE$(UP$) = "Y" THEN TRC(20) = OT(11) / Y%: TRC$(20) = TN$
+	IF WN > TRC(21) THEN TRC(21) = WN: TRC$(21) = TN$
+	IF DT(2) < TRC1(1) THEN TRC1(1) = DT(2): TRC1$(1) = TN$
+	IF DT(3) < TRC1(2) THEN TRC1(2) = DT(3): TRC1$(2) = TN$
+	IF DT(17) < TRC1(3) AND UCASE$(UP$) = "Y" THEN TRC1(3) = DT(17): TRC1$(3) = TN$
+	IF DT(15) < TRC1(4) THEN TRC1(4) = DT(15): TRC1$(4) = TN$
+	IF DT(14) < TRC1(5) THEN TRC1(5) = DT(14): TRC1$(5) = TN$
+	IF DT(21) < TRC1(6) AND DT(15) <> 0 AND UCASE$(UP$) = "Y" THEN TRC1(6) = DT(21): TRC1$(6) = TN$
+	IF DT(4) < TRC1(7) THEN TRC1(7) = DT(4): TRC1$(7) = TN$
+	IF DT(5) < TRC1(8) THEN TRC1(8) = DT(5): TRC1$(8) = TN$
+	IF DT(18) < TRC1(9) AND UCASE$(UP$) = "Y" THEN TRC1(9) = DT(18): TRC1$(9) = TN$
+	IF DT(13) < TRC1(10) THEN TRC1(10) = DT(13): TRC1$(10) = TN$
+	IF DT(6) - DT(13) < TRC1(11) THEN TRC1(11) = DT(6) - DT(13): TRC1$(11) = TN$
+	IF DT(6) < TRC1(12) THEN TRC1(12) = DT(6): TRC1$(12) = TN$
+	IF DT(6) / Y% < TRC1(13) AND UCASE$(UP$) = "Y" THEN TRC1(13) = DT(6) / Y%: TRC1$(13) = TN$
+	IF DT(7) > TRC1(14) AND UCASE$(UP$) = "Y" THEN TRC1(14) = DT(7): TRC1$(14) = TN$
+	IF DT(8) < TRC1(15) THEN TRC1(15) = DT(8): TRC1$(15) = TN$
+	IF DT(9) < TRC1(16) THEN TRC1(16) = DT(9): TRC1$(16) = TN$
+	IF DT(10) < TRC1(17) THEN TRC1(17) = DT(10): TRC1$(17) = TN$
+	IF DT(12) > TRC1(18) AND UCASE$(UP$) = "Y" THEN TRC1(18) = DT(12): TRC1$(18) = TN$
+	IF DT(11) < TRC1(19) THEN TRC1(19) = DT(11): TRC1$(19) = TN$
+	IF DT(11) / Y% < TRC1(20) AND UCASE$(UP$) = "Y" THEN TRC1(20) = DT(11) / Y%: TRC1$(20) = TN$
+	IF LS > TRC1(21) THEN TRC1(21) = LS: TRC1$(21) = TN$
 
 1030 RETURN
 
 900 L = LEN(H1$(XW)): WT$ = ""
-    FOR X = 1 TO L
-    A = ASC(MID$(H1$(XW), X, 1))
-    WT$ = WT$ + CHR$(A): NEXT X
-    FOR X = 1 TO 30
-    IF Z1$(X) <> WT$ THEN 945
-    IF O1(X) = WN AND O2(X) = LS THEN 948
+	FOR X = 1 TO L
+	A = ASC(MID$(H1$(XW), X, 1))
+	WT$ = WT$ + CHR$(A): NEXT X
+	FOR X = 1 TO 30
+	IF Z1$(X) <> WT$ THEN 945
+	IF O1(X) = WN AND O2(X) = LS THEN 948
+	 O1(X) = WN
+	O2(X) = LS
+	O4(X) = CW
+	O5(X) = CL
+	IF O1(X) + O2(X) = 0 THEN
+	  O3(X) = 0
+	ELSE
+	  O3(X) = O1(X) / (O1(X) + O2(X))
+	END IF
+	 IF O4(X) + O5(X) = 0 THEN
+	  O6(X) = 0
+	ELSE
+	  O6(X) = O4(X) / (O4(X) + O5(X))
+	END IF
 
-    O1(X) = WN
-    O2(X) = LS
-    O4(X) = CW
-    O5(X) = CL
-    IF O1(X) + O2(X) = 0 THEN
-       O3(X) = 0
-    ELSE
-       O3(X) = O1(X) / (O1(X) + O2(X))
-    END IF
-
-
-    IF O4(X) + O5(X) = 0 THEN
-       O6(X) = 0
-    ELSE
-       O6(X) = O4(X) / (O4(X) + O5(X))
-    END IF
 945 NEXT X
+	 GOSUB 811
+	GOSUB 3100
 
-    GOSUB 811
-    GOSUB 3100
 948 RETURN
 
 950 FOR X = AA TO ZZ - 1: FOR Y = X + 1 TO ZZ: IF O1(X) - O2(X) > O1(Y) - O2(Y) THEN 985
-    IF O1(X) - O2(X) = O1(Y) - O2(Y) AND O1(X) <= O1(Y) AND O1(X) > O2(X) THEN 985
-    IF O1(X) - O2(X) = O1(Y) - O2(Y) AND O1(X) >= O1(Y) AND O1(X) < O2(X) THEN 985
-    SWAP Z1$(X), Z1$(Y)
-    SWAP O1(X), O1(Y)
-    SWAP O2(X), O2(Y)
-    SWAP O3(X), O3(Y)
-    SWAP O4(X), O4(Y)
-    SWAP O5(X), O5(Y)
-    SWAP O6(X), O6(Y)
+	IF O1(X) - O2(X) = O1(Y) - O2(Y) AND O1(X) <= O1(Y) AND O1(X) > O2(X) THEN 985
+	IF O1(X) - O2(X) = O1(Y) - O2(Y) AND O1(X) >= O1(Y) AND O1(X) < O2(X) THEN 985
+	SWAP Z1$(X), Z1$(Y)
+	SWAP O1(X), O1(Y)
+	SWAP O2(X), O2(Y)
+	SWAP O3(X), O3(Y)
+	SWAP O4(X), O4(Y)
+	SWAP O5(X), O5(Y)
+	SWAP O6(X), O6(Y)
+
 985 NEXT Y: NEXT X
+
 991 RETURN
 
+3100 'CLS:PRINT "CHECKING ";H1$(XW);" STATS"
+	FOR X = 0 TO 14: COLOR 14: PRINT "CHECKING STATS OF "; : COLOR 15: PRINT N$(X)
+	IF S(X, 22) <= LD(20, 1) THEN 3320
+	LD(20, 1) = S(X, 22): LD(20, 2) = 0: Z2$(20) = N$(X): Z3$(20) = TN$
+	FOR Z = 1 TO 19: FOR Z1 = Z + 1 TO 20: IF LD(Z, 1) >= LD(Z1, 1) THEN 3317
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
 
-3100 REM:CLS:PRINT "CHECKING ";H1$(XW);" STATS"
-     FOR X = 0 TO 14: COLOR 14: PRINT "CHECKING STATS OF "; : COLOR 15: PRINT N$(X)
-     IF S(X, 22) <= LD(20, 1) THEN 3320
-     LD(20, 1) = S(X, 22): LD(20, 2) = 0: Z2$(20) = N$(X): Z3$(20) = TN$
-     FOR Z = 1 TO 19: FOR Z1 = Z + 1 TO 20: IF LD(Z, 1) >= LD(Z1, 1) THEN 3317
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
 3317 NEXT Z1: NEXT Z
+
 3320 IF S(X, 12) <= LD(40, 1) THEN 3340
-     LD(40, 1) = S(X, 12): LD(40, 2) = 0: Z2$(40) = N$(X): Z3$(40) = TN$
-     FOR Z = 21 TO 39: FOR Z1 = Z + 1 TO 40: IF LD(Z, 1) >= LD(Z1, 1) THEN 3337
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+	LD(40, 1) = S(X, 12): LD(40, 2) = 0: Z2$(40) = N$(X): Z3$(40) = TN$
+	FOR Z = 21 TO 39: FOR Z1 = Z + 1 TO 40: IF LD(Z, 1) >= LD(Z1, 1) THEN 3337
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3337 NEXT Z1: NEXT Z
+
 3340 IF S(X, 19) <= LD(60, 1) THEN 3360
-     LD(60, 1) = S(X, 19): LD(60, 2) = S(X, 1): Z2$(60) = N$(X): Z3$(60) = TN$
-     FOR Z = 41 TO 59: FOR Z1 = Z + 1 TO 60: IF LD(Z, 1) >= LD(Z1, 1) THEN 3357
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+	LD(60, 1) = S(X, 19): LD(60, 2) = S(X, 1): Z2$(60) = N$(X): Z3$(60) = TN$
+	FOR Z = 41 TO 59: FOR Z1 = Z + 1 TO 60: IF LD(Z, 1) >= LD(Z1, 1) THEN 3357
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3357 NEXT Z1: NEXT Z
+
 3360 IF S(X, 20) <= LD(80, 1) THEN 3380
-     LD(80, 1) = S(X, 20): LD(80, 2) = S(X, 3): Z2$(80) = N$(X): Z3$(80) = TN$
-     FOR Z = 61 TO 79: FOR Z1 = Z + 1 TO 80: IF LD(Z, 1) >= LD(Z1, 1) THEN 3377
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+	LD(80, 1) = S(X, 20): LD(80, 2) = S(X, 3): Z2$(80) = N$(X): Z3$(80) = TN$
+	FOR Z = 61 TO 79: FOR Z1 = Z + 1 TO 80: IF LD(Z, 1) >= LD(Z1, 1) THEN 3377
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3377 NEXT Z1: NEXT Z
+
 3380 IF S(X, 15) <= LD(90, 1) THEN 3400
-     LD(90, 1) = S(X, 15): LD(90, 2) = S(X, 7): Z2$(90) = N$(X): Z3$(90) = TN$
-     FOR Z = 81 TO 89: FOR Z1 = Z + 1 TO 90: IF LD(Z, 1) >= LD(Z1, 1) THEN 3397
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+	LD(90, 1) = S(X, 15): LD(90, 2) = S(X, 7): Z2$(90) = N$(X): Z3$(90) = TN$
+	FOR Z = 81 TO 89: FOR Z1 = Z + 1 TO 90: IF LD(Z, 1) >= LD(Z1, 1) THEN 3397
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3397 NEXT Z1: NEXT Z
+
 3400 IF S(X, 7) <= LD(100, 1) THEN 3420
-     LD(100, 1) = S(X, 7): LD(100, 2) = 0: Z2$(100) = N$(X): Z3$(100) = TN$
-     FOR Z = 91 TO 99: FOR Z1 = Z + 1 TO 100: IF LD(Z, 1) >= LD(Z1, 1) THEN 3417
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+	LD(100, 1) = S(X, 7): LD(100, 2) = 0: Z2$(100) = N$(X): Z3$(100) = TN$
+	FOR Z = 91 TO 99: FOR Z1 = Z + 1 TO 100: IF LD(Z, 1) >= LD(Z1, 1) THEN 3417
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3417 NEXT Z1: NEXT Z
+
 3420 IF S(X, 16) <= LD(110, 1) THEN 3440
-     LD(110, 1) = S(X, 16): LD(110, 2) = S(X, 8): Z2$(110) = N$(X): Z3$(110) = TN$
-     FOR Z = 101 TO 109: FOR Z1 = Z + 1 TO 110: IF LD(Z, 1) >= LD(Z1, 1) THEN 3437
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+	LD(110, 1) = S(X, 16): LD(110, 2) = S(X, 8): Z2$(110) = N$(X): Z3$(110) = TN$
+	FOR Z = 101 TO 109: FOR Z1 = Z + 1 TO 110: IF LD(Z, 1) >= LD(Z1, 1) THEN 3437
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3437 NEXT Z1: NEXT Z
-3440 REM:FOR Z=111 TO 120
-     IF S(X, 8) <= LD(120, 1) THEN 3460
-     LD(120, 1) = S(X, 8): LD(120, 2) = S(X, 8): Z2$(120) = N$(X): Z3$(120) = TN$
-     FOR Z = 111 TO 119: FOR Z1 = Z + 1 TO 120: IF LD(Z, 1) >= LD(Z1, 1) THEN 3457
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3440 'FOR Z=111 TO 120
+	IF S(X, 8) <= LD(120, 1) THEN 3460
+	LD(120, 1) = S(X, 8): LD(120, 2) = S(X, 8): Z2$(120) = N$(X): Z3$(120) = TN$
+	FOR Z = 111 TO 119: FOR Z1 = Z + 1 TO 120: IF LD(Z, 1) >= LD(Z1, 1) THEN 3457
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3457 NEXT Z1: NEXT Z
-3460 REM:FOR Z=121 TO 130
-     IF S(X, 21) <= LD(130, 1) THEN 3480
-     LD(130, 1) = S(X, 21): LD(130, 2) = W1(X): Z2$(130) = N$(X): Z3$(130) = TN$
-     FOR Z = 121 TO 129: FOR Z1 = Z + 1 TO 130: IF LD(Z, 1) >= LD(Z1, 1) THEN 3477
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3460 'FOR Z=121 TO 130
+	IF S(X, 21) <= LD(130, 1) THEN 3480
+	LD(130, 1) = S(X, 21): LD(130, 2) = W1(X): Z2$(130) = N$(X): Z3$(130) = TN$
+	FOR Z = 121 TO 129: FOR Z1 = Z + 1 TO 130: IF LD(Z, 1) >= LD(Z1, 1) THEN 3477
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3477 NEXT Z1: NEXT Z
-3480 REM:FOR Z=131 TO 140
-     IF W0(X) <= LD(140, 1) THEN 3500
-     LD(140, 1) = W0(X): LD(140, 2) = 0: Z2$(140) = N$(X): Z3$(140) = TN$
-     FOR Z = 131 TO 139: FOR Z1 = Z + 1 TO 140: IF LD(Z, 1) >= LD(Z1, 1) THEN 3497
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3480 'FOR Z=131 TO 140
+	IF W0(X) <= LD(140, 1) THEN 3500
+	LD(140, 1) = W0(X): LD(140, 2) = 0: Z2$(140) = N$(X): Z3$(140) = TN$
+	FOR Z = 131 TO 139: FOR Z1 = Z + 1 TO 140: IF LD(Z, 1) >= LD(Z1, 1) THEN 3497
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3497 NEXT Z1: NEXT Z
-3500 REM:FOR Z=141 TO 150
-     IF S(X, 18) <= LD(150, 1) THEN 3520
-     LD(150, 1) = S(X, 18): LD(150, 2) = 0: Z2$(150) = N$(X): Z3$(150) = TN$
-     FOR Z = 141 TO 149: FOR Z1 = Z + 1 TO 150: IF LD(Z, 1) >= LD(Z1, 1) THEN 3517
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3500 'FOR Z=141 TO 150
+	IF S(X, 18) <= LD(150, 1) THEN 3520
+	LD(150, 1) = S(X, 18): LD(150, 2) = 0: Z2$(150) = N$(X): Z3$(150) = TN$
+	FOR Z = 141 TO 149: FOR Z1 = Z + 1 TO 150: IF LD(Z, 1) >= LD(Z1, 1) THEN 3517
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3517 NEXT Z1: NEXT Z
-3520 REM:FOR Z=151 TO 160
-     IF S(X, 10) / 60 <= LD(160, 1) THEN 3540
-     LD(160, 1) = S(X, 10) / 60: LD(160, 2) = 0: Z2$(160) = N$(X): Z3$(160) = TN$
-     FOR Z = 151 TO 159: FOR Z1 = Z + 1 TO 160: IF LD(Z, 1) >= LD(Z1, 1) THEN 3537
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3520 'FOR Z=151 TO 160
+	IF S(X, 10) / 60 <= LD(160, 1) THEN 3540
+	LD(160, 1) = S(X, 10) / 60: LD(160, 2) = 0: Z2$(160) = N$(X): Z3$(160) = TN$
+	FOR Z = 151 TO 159: FOR Z1 = Z + 1 TO 160: IF LD(Z, 1) >= LD(Z1, 1) THEN 3537
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3537 NEXT Z1: NEXT Z
-3540 REM:FOR Z=161 TO 170
-     IF S(X, 13) <= LD(170, 1) THEN 3560
-     LD(170, 1) = S(X, 13): LD(170, 2) = S(X, 5): Z2$(170) = N$(X): Z3$(170) = TN$
-     FOR Z = 161 TO 169: FOR Z1 = Z + 1 TO 170: IF LD(Z, 1) >= LD(Z1, 1) THEN 3557
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3540 'FOR Z=161 TO 170
+	IF S(X, 13) <= LD(170, 1) THEN 3560
+	LD(170, 1) = S(X, 13): LD(170, 2) = S(X, 5): Z2$(170) = N$(X): Z3$(170) = TN$
+	FOR Z = 161 TO 169: FOR Z1 = Z + 1 TO 170: IF LD(Z, 1) >= LD(Z1, 1) THEN 3557
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3557 NEXT Z1: NEXT Z
-3560 REM:FOR Z=171 TO 180
-     IF S(X, 5) <= LD(180, 1) THEN 3580
-     LD(180, 1) = S(X, 5): LD(18, 2) = 0: Z2$(180) = N$(X): Z3$(180) = TN$
-     FOR Z = 171 TO 179: FOR Z1 = Z + 1 TO 180: IF LD(Z, 1) >= LD(Z1, 1) THEN 3577
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3560 'FOR Z=171 TO 180
+	IF S(X, 5) <= LD(180, 1) THEN 3580
+	LD(180, 1) = S(X, 5): LD(18, 2) = 0: Z2$(180) = N$(X): Z3$(180) = TN$
+	FOR Z = 171 TO 179: FOR Z1 = Z + 1 TO 180: IF LD(Z, 1) >= LD(Z1, 1) THEN 3577
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3577 NEXT Z1: NEXT Z
-3580 REM:FOR Z=181 TO 190
-     IF S(X, 17) <= LD(190, 1) THEN 3600
-     LD(190, 1) = S(X, 17): LD(190, 2) = 0: Z2$(190) = N$(X): Z3$(190) = TN$
-     FOR Z = 181 TO 189: FOR Z1 = Z + 1 TO 190: IF LD(Z, 1) >= LD(Z1, 1) THEN 3597
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3580 'FOR Z=181 TO 190
+	IF S(X, 17) <= LD(190, 1) THEN 3600
+	LD(190, 1) = S(X, 17): LD(190, 2) = 0: Z2$(190) = N$(X): Z3$(190) = TN$
+	FOR Z = 181 TO 189: FOR Z1 = Z + 1 TO 190: IF LD(Z, 1) >= LD(Z1, 1) THEN 3597
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3597 NEXT Z1: NEXT Z
-3600 REM:FOR Z=191 TO 200
-     IF S(X, 9) <= LD(200, 1) THEN 3620
-     LD(200, 1) = S(X, 9): LD(200, 2) = 0: Z2$(200) = N$(X): Z3$(200) = TN$
-     FOR Z = 191 TO 199: FOR Z1 = Z + 1 TO 200: IF LD(Z, 1) >= LD(Z1, 1) THEN 3617
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3600 'FOR Z=191 TO 200
+	IF S(X, 9) <= LD(200, 1) THEN 3620
+	LD(200, 1) = S(X, 9): LD(200, 2) = 0: Z2$(200) = N$(X): Z3$(200) = TN$
+	FOR Z = 191 TO 199: FOR Z1 = Z + 1 TO 200: IF LD(Z, 1) >= LD(Z1, 1) THEN 3617
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3617 NEXT Z1: NEXT Z
-3620 REM:FOR Z=201 TO 210
-     IF S(X, 2) <= LD(210, 1) THEN 3640
-     LD(210, 1) = S(X, 2): LD(210, 2) = 0: Z2$(210) = N$(X): Z3$(210) = TN$
-     FOR Z = 201 TO 209: FOR Z1 = Z + 1 TO 210: IF LD(Z, 1) >= LD(Z1, 1) THEN 3637
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3620 'FOR Z=201 TO 210
+	IF S(X, 2) <= LD(210, 1) THEN 3640
+	LD(210, 1) = S(X, 2): LD(210, 2) = 0: Z2$(210) = N$(X): Z3$(210) = TN$
+	FOR Z = 201 TO 209: FOR Z1 = Z + 1 TO 210: IF LD(Z, 1) >= LD(Z1, 1) THEN 3637
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3637 NEXT Z1: NEXT Z
-3640 REM:FOR Z=211 TO 220
-     IF S(X, 4) <= LD(220, 1) THEN 3660
-     LD(220, 1) = S(X, 4): LD(220, 2) = 0: Z2$(220) = N$(X): Z3$(220) = TN$
-     FOR Z = 211 TO 219: FOR Z1 = Z + 1 TO 220: IF LD(Z, 1) >= LD(Z1, 1) THEN 3657
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3640 'FOR Z=211 TO 220
+	IF S(X, 4) <= LD(220, 1) THEN 3660
+	LD(220, 1) = S(X, 4): LD(220, 2) = 0: Z2$(220) = N$(X): Z3$(220) = TN$
+	FOR Z = 211 TO 219: FOR Z1 = Z + 1 TO 220: IF LD(Z, 1) >= LD(Z1, 1) THEN 3657
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3657 NEXT Z1: NEXT Z
-3660 REM:FOR Z=221 TO 230
-     IF S(X, 14) <= LD(230, 1) THEN 3680
-     LD(230, 1) = S(X, 14): LD(230, 2) = 0: Z2$(230) = N$(X): Z3$(230) = TN$
-     FOR Z = 221 TO 229: FOR Z1 = Z + 1 TO 230: IF LD(Z, 1) >= LD(Z1, 1) THEN 3677
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3660 'FOR Z=221 TO 230
+	IF S(X, 14) <= LD(230, 1) THEN 3680
+	LD(230, 1) = S(X, 14): LD(230, 2) = 0: Z2$(230) = N$(X): Z3$(230) = TN$
+	FOR Z = 221 TO 229: FOR Z1 = Z + 1 TO 230: IF LD(Z, 1) >= LD(Z1, 1) THEN 3677
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3677 NEXT Z1: NEXT Z
-3680 REM:FOR Z=231 TO 240
-     IF S(X, 6) <= LD(240, 1) THEN 3690
-     LD(240, 1) = S(X, 6): LD(240, 2) = 0: Z2$(240) = N$(X): Z3$(240) = TN$
-     FOR Z = 231 TO 239: FOR Z1 = Z + 1 TO 240: IF LD(Z, 1) >= LD(Z1, 1) THEN 3697
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3680 'FOR Z=231 TO 240
+	IF S(X, 6) <= LD(240, 1) THEN 3690
+	LD(240, 1) = S(X, 6): LD(240, 2) = 0: Z2$(240) = N$(X): Z3$(240) = TN$
+	FOR Z = 231 TO 239: FOR Z1 = Z + 1 TO 240: IF LD(Z, 1) >= LD(Z1, 1) THEN 3697
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3697 NEXT Z1: NEXT Z
-3690 REM:FOR Z=241 TO 250
-     IF S(X, 24) <= LD(250, 1) THEN 3700
-     LD(250, 1) = S(X, 24): LD(250, 2) = 0: Z2$(250) = N$(X): Z3$(250) = TN$
-     FOR Z = 241 TO 249: FOR Z1 = Z + 1 TO 250: IF LD(Z, 1) >= LD(Z1, 1) THEN 3698
-     SWAP Z2$(Z1), Z2$(Z)
-     SWAP Z3$(Z1), Z3$(Z)
-     FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
+3690 'FOR Z=241 TO 250
+	IF S(X, 24) <= LD(250, 1) THEN 3700
+	LD(250, 1) = S(X, 24): LD(250, 2) = 0: Z2$(250) = N$(X): Z3$(250) = TN$
+	FOR Z = 241 TO 249: FOR Z1 = Z + 1 TO 250: IF LD(Z, 1) >= LD(Z1, 1) THEN 3698
+	SWAP Z2$(Z1), Z2$(Z)
+	SWAP Z3$(Z1), Z3$(Z)
+	FOR M = 1 TO 2: SWAP LD(Z1, M), LD(Z, M): NEXT
+
 3698 NEXT Z1: NEXT Z
+
 3700 NEXT X
-     REM:FOR X=1 TO 40
-     IF OT(19) <= OL(40, 19) THEN 3820
-     FOR M = 1 TO 20: OL(40, M) = OT(M): NEXT: OL$(40) = TN$
-     FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF OL(X, 19) >= OL(X1, 19) THEN 3817
-     SWAP OL$(X1), OL$(X)
-     FOR M = 1 TO 20: J = OL(X1, M): OL(X1, M) = OL(X, M): OL(X, M) = J: NEXT
+	'FOR X=1 TO 40
+	IF OT(19) <= OL(40, 19) THEN 3820
+	FOR M = 1 TO 20: OL(40, M) = OT(M): NEXT: OL$(40) = TN$
+	FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF OL(X, 19) >= OL(X1, 19) THEN 3817
+	SWAP OL$(X1), OL$(X)
+	FOR M = 1 TO 20: J = OL(X1, M): OL(X1, M) = OL(X, M): OL(X, M) = J: NEXT
+
 3817 NEXT X1: NEXT X
-3820 REM:FOR X=1 TO 15
-     IF DT(19) >= DL(40, 19) THEN 3840
-     FOR M = 1 TO 20: DL(40, M) = DT(M): NEXT: DL$(40) = TN$
-     FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF DL(X, 19) <= DL(X1, 19) THEN 3837
-     SWAP DL$(X1), DL$(X)
-     FOR M = 1 TO 20: J = DL(X1, M): DL(X1, M) = DL(X, M): DL(X, M) = J: NEXT
+
+3820 'FOR X=1 TO 15
+	IF DT(19) >= DL(40, 19) THEN 3840
+	FOR M = 1 TO 20: DL(40, M) = DT(M): NEXT: DL$(40) = TN$
+	FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF DL(X, 19) <= DL(X1, 19) THEN 3837
+	SWAP DL$(X1), DL$(X)
+	FOR M = 1 TO 20: J = DL(X1, M): DL(X1, M) = DL(X, M): DL(X, M) = J: NEXT
+
 3837 NEXT X1: NEXT X
+
 3840 RETURN
 
-4000 IF UCASE$(LEFT$(D$(1), 1)) <> "A" AND UCASE$(LEFT$(D$(1), 1)) <> "B" THEN 4011
-     CLS : PRINT "INSERT DISK WITH LEAGUE LEADER FILES IN DRIVE "; D$(2)
-     LOCATE 23, 1: PRINT "PRESS ANY KEY TO CONTINUE";
-4002 I$ = INKEY$: IF I$ = "" THEN 4002
-4011 CLS
-     PRINT : OPEN D$(1) + CN$(NC) + ".LDR" FOR OUTPUT AS #2
-     PRINT "    POSTING NEW "; CN$(NC); " CONFERENCE LEADERS"
-     FOR X = 1 TO 30: WRITE #2, Z1$(X), O1(X), O2(X), O3(X), O4(X), O5(X), O6(X): NEXT
-     FOR X = 1 TO 250
-     WRITE #2, Z2$(X), Z3$(X), LD(X, 1), LD(X, 2): NEXT X
-     FOR X = 1 TO 40: WRITE #2, OL$(X): FOR Y = 1 TO 20: WRITE #2, OL(X, Y): NEXT: NEXT
-     FOR X = 1 TO 40: WRITE #2, DL$(X): FOR Y = 1 TO 20: WRITE #2, DL(X, Y): NEXT: NEXT
-     CLOSE 2
+4000 CLS
+	PRINT : OPEN D$(1) + CN$(NC) + ".LDR" FOR OUTPUT AS #2
+	PRINT "    POSTING NEW "; CN$(NC); " CONFERENCE LEADERS"
+	FOR X = 1 TO 30: WRITE #2, Z1$(X), O1(X), O2(X), O3(X), O4(X), O5(X), O6(X): NEXT
+	FOR X = 1 TO 250
+	WRITE #2, Z2$(X), Z3$(X), LD(X, 1), LD(X, 2): NEXT X
+	FOR X = 1 TO 40: WRITE #2, OL$(X): FOR Y = 1 TO 20: WRITE #2, OL(X, Y): NEXT: NEXT
+	FOR X = 1 TO 40: WRITE #2, DL$(X): FOR Y = 1 TO 20: WRITE #2, DL(X, Y): NEXT: NEXT
+CLOSE 2
+	  RETURN
 
+4010 CLS
+	PRINT : OPEN D$(1) + WE$ + ".NLD" FOR OUTPUT AS #2
+	PRINT "    POSTING NEW "; WE$; " LEADERS"
+	FOR X = 1 TO 30: WRITE #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X): NEXT
+	FOR X = 1 TO 250
+	WRITE #2, NZ2$(X), NZ3$(X), NLD(X, 1), NLD(X, 2): NEXT X
+	FOR X = 1 TO 40: WRITE #2, NOL$(X): FOR Y = 1 TO 20: WRITE #2, NOL(X, Y): NEXT: NEXT
+	FOR X = 1 TO 40: WRITE #2, NDL$(X): FOR Y = 1 TO 20: WRITE #2, NDL(X, Y): NEXT: NEXT
+CLOSE 2
+	  FOR Z = 1 TO NRT - 1
+	FOR Z1 = Z + 1 TO NRT
+	IF PT(Z, 1) >= PT(Z1, 1) THEN 4022
+	SWAP PT$(Z1), PT$(Z)
+	FOR MN = 1 TO 4
+	SWAP PT(Z1, MN), PT(Z, MN)
+	NEXT MN
 
-     RETURN
-
-4010 IF UCASE$(LEFT$(D$(1), 1)) <> "A" AND UCASE$(LEFT$(D$(1), 1)) <> "B" THEN 4020
-     CLS : PRINT "INSERT DISK WITH LEAGUE LEADER FILES IN DRIVE "; D$(2)
-     LOCATE 23, 1: PRINT "PRESS ANY KEY TO CONTINUE";
-4012 I$ = INKEY$: IF I$ = "" THEN 4012
-4020 CLS
-     PRINT : OPEN D$(1) + WE$ + ".NLD" FOR OUTPUT AS #2
-     PRINT "    POSTING NEW "; WE$; " LEADERS"
-     FOR X = 1 TO 30: WRITE #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X): NEXT
-     FOR X = 1 TO 250
-     WRITE #2, NZ2$(X), NZ3$(X), NLD(X, 1), NLD(X, 2): NEXT X
-     FOR X = 1 TO 40: WRITE #2, NOL$(X): FOR Y = 1 TO 20: WRITE #2, NOL(X, Y): NEXT: NEXT
-     FOR X = 1 TO 40: WRITE #2, NDL$(X): FOR Y = 1 TO 20: WRITE #2, NDL(X, Y): NEXT: NEXT
-     CLOSE 2
-
-
-     FOR Z = 1 TO NRT - 1
-     FOR Z1 = Z + 1 TO NRT
-     IF PT(Z, 1) >= PT(Z1, 1) THEN 4022
-     SWAP PT$(Z1), PT$(Z)
-     FOR MN = 1 TO 4
-     SWAP PT(Z1, MN), PT(Z, MN)
-     NEXT MN
 4022 NEXT Z1: NEXT Z
-     OPEN D$(1) + WE$ + ".POL" FOR OUTPUT AS #2
-     PRINT "POSTING "; WE$; " POLL"
-     WRITE #2, NRT
-     FOR X = 1 TO 1200
-     WRITE #2, PT$(X), PT(X, 1), PT(X, 2), PT(X, 3), PT(X, 4)
-     NEXT
-     CLOSE 2
-
-   OPEN D$(1) + "RECORDS.CBB" FOR OUTPUT AS #1
-   FOR I = 1 TO 25
-   PRINT #1, BRC(I)
-   PRINT #1, BRC$(I, 0)
-   PRINT #1, BRC$(I, 1)
-   NEXT
-   FOR I = 1 TO 21
-   PRINT #1, TRC(I)
-   PRINT #1, TRC$(I)
-   NEXT
-   FOR I = 1 TO 21
-   PRINT #1, TRC1(I)
-   PRINT #1, TRC1$(I)
-   NEXT
-   CLOSE 1
-
-     RETURN
-
-
-
-
+OPEN D$(1) + WE$ + ".POL" FOR OUTPUT AS #2
+	PRINT "POSTING "; WE$; " POLL"
+	WRITE #2, NRT
+	FOR X = 1 TO 1200
+	WRITE #2, PT$(X), PT(X, 1), PT(X, 2), PT(X, 3), PT(X, 4)
+	NEXT
+CLOSE 2
+OPEN D$(1) + "RECORDS.CBB" FOR OUTPUT AS #1
+	FOR I = 1 TO 25
+	PRINT #1, BRC(I)
+	PRINT #1, BRC$(I, 0)
+	PRINT #1, BRC$(I, 1)
+	NEXT
+	FOR I = 1 TO 21
+	PRINT #1, TRC(I)
+	PRINT #1, TRC$(I)
+	NEXT
+	FOR I = 1 TO 21
+	PRINT #1, TRC1(I)
+	PRINT #1, TRC1$(I)
+	NEXT
+CLOSE 1
+	  RETURN
+	
 
 5005 L = LEN(TN$): WX$ = "": FOR X = 1 TO (L - 3): A = ASC(MID$(TN$, X, 1))
+
 5006 WT$ = WT$ + CHR$(A): NEXT X
+
 5007 TN$ = WT$: RETURN
 
 5500 FOR I = 1 TO Y%
+
 5501 GOSUB 5600
+
 5505 FOR EC = 1 TO 30
-     IF O$(I) = H1$(EC) THEN 5510
+	IF O$(I) = H1$(EC) THEN 5510
+
 5506 NEXT EC
+
 5507 IF O%(I) > T%(I) THEN WN = WN + 1
+
 5508 IF O%(I) < T%(I) THEN LS = LS + 1
+
 5509 GOTO 5520
+
 5510 IF O%(I) > T%(I) THEN CW = CW + 1: WN = WN + 1
+
 5511 IF O%(I) < T%(I) THEN CL = CL + 1: LS = LS + 1
+
 5520 EC = 0
-     NEXT I
-
-     'STRENGTH OF SCHEDULE
-     PW = 0: SS = 0
-     FOR I = 1 TO Y%
-     SS = AP%(I, 1) + SS
-     NEXT
-     SS = SS / Y%
-
-     'INDIVIDUAL GAME POWER RATINGS
-     GL = 0: PW = 0
-     FOR I = 1 TO Y%
-     RAT = O%(I) - T%(I) + AP%(I, 1)
-     IF LEFT$(H$(I), 1) = "H" THEN RAT = RAT - 4.5
-     IF LEFT$(H$(I), 1) = "A" THEN RAT = RAT + 4.5
-     PW = PW + RAT
-     NEXT
-     IF Y% > 4 THEN 9805
-     GL = 5 - Y%
-     PW = PW + GL * AP%(1, 0)
+	NEXT I
+	  'STRENGTH OF SCHEDULE
+	PW = 0: SS = 0
+	FOR I = 1 TO Y%
+	SS = AP%(I, 1) + SS
+	NEXT
+	SS = SS / Y%
+	  'INDIVIDUAL GAME POWER RATINGS
+	GL = 0: PW = 0
+	FOR I = 1 TO Y%
+	RAT = O%(I) - T%(I) + AP%(I, 1)
+	IF LEFT$(H$(I), 1) = "H" THEN RAT = RAT - 4.5
+	IF LEFT$(H$(I), 1) = "A" THEN RAT = RAT + 4.5
+	PW = PW + RAT
+	NEXT
+	IF Y% > 4 THEN 9805
+	GL = 5 - Y%
+	PW = PW + GL * AP%(1, 0)
 
 9805 PW = PW / (Y% + GL)
-     NRT = NRT + 1
-     PT$(NRT) = H1$(XW)
-     PT(NRT, 1) = PW
-     PT(NRT, 2) = WN
-     PT(NRT, 3) = LS
-     PT(NRT, 4) = SS
+	NRT = NRT + 1
+	PT$(NRT) = H1$(XW)
+	PT(NRT, 1) = PW
+	PT(NRT, 2) = WN
+	PT(NRT, 3) = LS
+	PT(NRT, 4) = SS
 
 5530 RETURN
 
 5600 FOR P = 4 TO 11: IF MID$(O$(I), P, 1) = " " OR MID$(O$(I), P, 1) = "." THEN MID$(O$(I), P, 1) = "_"
+
 5601 NEXT P
+
 5602 FOR P = 12 TO 14: IF MID$(O$(I), P, 2) = "ST" THEN MID$(O$(I), 9, 1) = "_": MID$(O$(I), 10, 2) = "ST"
+
 5603 NEXT P
+
 5604 QQ = 8: FOR P = 11 TO 4 STEP -1: IF MID$(O$(I), P, 1) = "_" THEN QQ = P - 4: GOTO 5606
+
 5605 GOTO 5608
+
 5606 NEXT P
+
 5608 f$ = MID$(O$(I), 4, QQ): R$ = f$ + "." + LEFT$(O$(I), 2)
+
 5609 O$(I) = R$
+
 5610 RETURN
 
 4605 JJ = 4
-     LOCATE 6, 8: COLOR 15, 1
-     PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
-     FOR II = 1 TO JJ: LOCATE 6 + II, 8
-     PRINT " º"; STRING$(61, 32); "º "; : NEXT
-     LOCATE 7 + JJ, 8
-     PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
-     RETURN
+	LOCATE 6, 8: COLOR 15, 1
+	PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
+	FOR II = 1 TO JJ: LOCATE 6 + II, 8
+	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	LOCATE 7 + JJ, 8
+	PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
+	RETURN
 
 4500 LOCATE 10, 8
-     GOSUB 4605
-     LOCATE , 14: PRINT "NO LEAGUE FILES WERE FOUND"
-     LOCATE , 14: PRINT "PRESS ANY KEY TO RETURN TO MAIN MENU"
-3805 I$ = INKEY$: IF I$ = "" THEN 3805
-     GOTO 2900
+	GOSUB 4605
+	LOCATE , 14: PRINT "NO LEAGUE FILES WERE FOUND"
+	LOCATE , 14: PRINT "PRESS ANY KEY TO RETURN TO MAIN MENU"
+3805 I$ = GetKeyPress$
+	GOTO 2905
 
 9131 H1$(XW) = RIGHT$(H1$(XW), 2) + " " + LEFT$(H1$(XW), LEN(H1$(XW)) - 3): GOSUB 9900: RETURN
-9900 FOR XX = 4 TO 11: IF MID$(H1$(XW), XX, 1) = " " OR MID$(H1$(XW), XX, 1) = "." THEN MID$(H1$(XW), XX, 1) = "_"
-     NEXT XX
-     FOR XX = 12 TO 14: IF MID$(H1$(XW), XX, 2) = "ST" THEN MID$(H1$(XW), 9, 1) = "_": MID$(H1$(XW), 10, 2) = "ST"
-     NEXT XX
-     QQ = 8: FOR XX = 11 TO 4 STEP -1: IF MID$(H1$(XW), XX, 1) = "_" THEN QQ = XX - 4: GOTO 9906
-     GOTO 9907
-9906 NEXT XX
-9907 G$ = H1$(XW): H1$(XW) = RIGHT$(H1$(XW), LEN(H1$(XW)) - 3): YR$ = LEFT$(G$, 2)
-     IF LEN(H1$(XW)) > 8 THEN H1$(XW) = LEFT$(H1$(XW), 8)
-     H1$(XW) = H1$(XW) + "." + YR$: RETURN
 
+9900 FOR XX = 4 TO 11: IF MID$(H1$(XW), XX, 1) = " " OR MID$(H1$(XW), XX, 1) = "." THEN MID$(H1$(XW), XX, 1) = "_"
+	NEXT XX
+	FOR XX = 12 TO 14: IF MID$(H1$(XW), XX, 2) = "ST" THEN MID$(H1$(XW), 9, 1) = "_": MID$(H1$(XW), 10, 2) = "ST"
+	NEXT XX
+	QQ = 8: FOR XX = 11 TO 4 STEP -1: IF MID$(H1$(XW), XX, 1) = "_" THEN QQ = XX - 4: GOTO 9906
+	GOTO 9907
+
+9906 NEXT XX
+
+9907 G$ = H1$(XW): H1$(XW) = RIGHT$(H1$(XW), LEN(H1$(XW)) - 3): YR$ = LEFT$(G$, 2)
+	IF LEN(H1$(XW)) > 8 THEN H1$(XW) = LEFT$(H1$(XW), 8)
+	H1$(XW) = H1$(XW) + "." + YR$: RETURN
 
 2800 CLS : PRINT "CHECKING "; H1$(XW); " STATS AGAINST NATIONAL LEADERS"
-     FOR X = 0 TO 14: COLOR 14: PRINT "CHECKING STATS OF "; : COLOR 15: PRINT N$(X)
-     IF S(X, 22) <= NLD(20, 1) THEN 4320
-     NLD(20, 1) = S(X, 22): NLD(20, 2) = 0: NZ2$(20) = N$(X): NZ3$(20) = TN$
-     FOR Z = 1 TO 19: FOR Z1 = Z + 1 TO 20: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4317
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	FOR X = 0 TO 14: COLOR 14: PRINT "CHECKING STATS OF "; : COLOR 15: PRINT N$(X)
+	IF S(X, 22) <= NLD(20, 1) THEN 4320
+	NLD(20, 1) = S(X, 22): NLD(20, 2) = 0: NZ2$(20) = N$(X): NZ3$(20) = TN$
+	FOR Z = 1 TO 19: FOR Z1 = Z + 1 TO 20: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4317
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4317 NEXT Z1: NEXT Z
+
 4320 IF S(X, 12) <= NLD(40, 1) THEN 4340
-     NLD(40, 1) = S(X, 12): NLD(40, 2) = 0: NZ2$(40) = N$(X): NZ3$(40) = TN$
-     FOR Z = 21 TO 39: FOR Z1 = Z + 1 TO 40: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4337
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	NLD(40, 1) = S(X, 12): NLD(40, 2) = 0: NZ2$(40) = N$(X): NZ3$(40) = TN$
+	FOR Z = 21 TO 39: FOR Z1 = Z + 1 TO 40: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4337
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4337 NEXT Z1: NEXT Z
+
 4340 IF S(X, 19) <= NLD(60, 1) THEN 4360
-     NLD(60, 1) = S(X, 19): NLD(60, 2) = S(X, 1): NZ2$(60) = N$(X): NZ3$(60) = TN$
-     FOR Z = 41 TO 59: FOR Z1 = Z + 1 TO 60: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4357
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	NLD(60, 1) = S(X, 19): NLD(60, 2) = S(X, 1): NZ2$(60) = N$(X): NZ3$(60) = TN$
+	FOR Z = 41 TO 59: FOR Z1 = Z + 1 TO 60: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4357
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4357 NEXT Z1: NEXT Z
+
 4360 IF S(X, 20) <= NLD(80, 1) THEN 4380
-     NLD(80, 1) = S(X, 20): NLD(80, 2) = S(X, 3): NZ2$(80) = N$(X): NZ3$(80) = TN$
-     FOR Z = 61 TO 79: FOR Z1 = Z + 1 TO 80: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4377
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	NLD(80, 1) = S(X, 20): NLD(80, 2) = S(X, 3): NZ2$(80) = N$(X): NZ3$(80) = TN$
+	FOR Z = 61 TO 79: FOR Z1 = Z + 1 TO 80: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4377
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4377 NEXT Z1: NEXT Z
+
 4380 IF S(X, 15) <= NLD(90, 1) THEN 4400
-     NLD(90, 1) = S(X, 15): NLD(90, 2) = S(X, 7): NZ2$(90) = N$(X): NZ3$(90) = TN$
-     FOR Z = 81 TO 89: FOR Z1 = Z + 1 TO 90: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4397
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	NLD(90, 1) = S(X, 15): NLD(90, 2) = S(X, 7): NZ2$(90) = N$(X): NZ3$(90) = TN$
+	FOR Z = 81 TO 89: FOR Z1 = Z + 1 TO 90: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4397
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4397 NEXT Z1: NEXT Z
+
 4400 IF S(X, 7) <= NLD(100, 1) THEN 4420
-     NLD(100, 1) = S(X, 7): NLD(100, 2) = 0: NZ2$(100) = N$(X): NZ3$(100) = TN$
-     FOR Z = 91 TO 99: FOR Z1 = Z + 1 TO 100: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4417
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	NLD(100, 1) = S(X, 7): NLD(100, 2) = 0: NZ2$(100) = N$(X): NZ3$(100) = TN$
+	FOR Z = 91 TO 99: FOR Z1 = Z + 1 TO 100: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4417
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4417 NEXT Z1: NEXT Z
+
 4420 IF S(X, 16) <= NLD(110, 1) THEN 4440
-     NLD(110, 1) = S(X, 16): NLD(110, 2) = S(X, 8): NZ2$(110) = N$(X): NZ3$(110) = TN$
-     FOR Z = 101 TO 109: FOR Z1 = Z + 1 TO 110: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4437
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+	NLD(110, 1) = S(X, 16): NLD(110, 2) = S(X, 8): NZ2$(110) = N$(X): NZ3$(110) = TN$
+	FOR Z = 101 TO 109: FOR Z1 = Z + 1 TO 110: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4437
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4437 NEXT Z1: NEXT Z
-4440 REM:FOR Z=111 TO 120
-     IF S(X, 8) <= NLD(120, 1) THEN 4460
-     NLD(120, 1) = S(X, 8): NLD(120, 2) = S(X, 8): NZ2$(120) = N$(X): NZ3$(120) = TN$
-     FOR Z = 111 TO 119: FOR Z1 = Z + 1 TO 120: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4457
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4440 'FOR Z=111 TO 120
+	IF S(X, 8) <= NLD(120, 1) THEN 4460
+	NLD(120, 1) = S(X, 8): NLD(120, 2) = S(X, 8): NZ2$(120) = N$(X): NZ3$(120) = TN$
+	FOR Z = 111 TO 119: FOR Z1 = Z + 1 TO 120: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4457
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4457 NEXT Z1: NEXT Z
-4460 REM:FOR Z=121 TO 130
-     IF S(X, 21) <= NLD(130, 1) THEN 4480
-     NLD(130, 1) = S(X, 21): NLD(130, 2) = W1(X): NZ2$(130) = N$(X): NZ3$(130) = TN$
-     FOR Z = 121 TO 129: FOR Z1 = Z + 1 TO 130: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4477
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4460 'FOR Z=121 TO 130
+	IF S(X, 21) <= NLD(130, 1) THEN 4480
+	NLD(130, 1) = S(X, 21): NLD(130, 2) = W1(X): NZ2$(130) = N$(X): NZ3$(130) = TN$
+	FOR Z = 121 TO 129: FOR Z1 = Z + 1 TO 130: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4477
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4477 NEXT Z1: NEXT Z
-4480 REM:FOR Z=131 TO 140
-     IF W0(X) <= NLD(140, 1) THEN 4502
-     NLD(140, 1) = W0(X): NLD(140, 2) = 0: NZ2$(140) = N$(X): NZ3$(140) = TN$
-     FOR Z = 131 TO 139: FOR Z1 = Z + 1 TO 140: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4497
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4480 'FOR Z=131 TO 140
+	IF W0(X) <= NLD(140, 1) THEN 4502
+	NLD(140, 1) = W0(X): NLD(140, 2) = 0: NZ2$(140) = N$(X): NZ3$(140) = TN$
+	FOR Z = 131 TO 139: FOR Z1 = Z + 1 TO 140: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4497
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4497 NEXT Z1: NEXT Z
-4502 REM:FOR Z=141 TO 150
-     IF S(X, 18) <= NLD(150, 1) THEN 4520
-     NLD(150, 1) = S(X, 18): NLD(150, 2) = 0: NZ2$(150) = N$(X): NZ3$(150) = TN$
-     FOR Z = 141 TO 149: FOR Z1 = Z + 1 TO 150: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4517
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4502 'FOR Z=141 TO 150
+	IF S(X, 18) <= NLD(150, 1) THEN 4520
+	NLD(150, 1) = S(X, 18): NLD(150, 2) = 0: NZ2$(150) = N$(X): NZ3$(150) = TN$
+	FOR Z = 141 TO 149: FOR Z1 = Z + 1 TO 150: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4517
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4517 NEXT Z1: NEXT Z
-4520 REM:FOR Z=151 TO 160
-     IF S(X, 10) / 60 <= NLD(160, 1) THEN 4540
-     NLD(160, 1) = S(X, 10) / 60: NLD(160, 2) = 0: NZ2$(160) = N$(X): NZ3$(160) = TN$
-     FOR Z = 151 TO 159: FOR Z1 = Z + 1 TO 160: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4537
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4520 'FOR Z=151 TO 160
+	IF S(X, 10) / 60 <= NLD(160, 1) THEN 4540
+	NLD(160, 1) = S(X, 10) / 60: NLD(160, 2) = 0: NZ2$(160) = N$(X): NZ3$(160) = TN$
+	FOR Z = 151 TO 159: FOR Z1 = Z + 1 TO 160: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4537
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4537 NEXT Z1: NEXT Z
-4540 REM:FOR Z=161 TO 170
-     IF S(X, 13) <= NLD(170, 1) THEN 4560
-     NLD(170, 1) = S(X, 13): NLD(170, 2) = S(X, 5): NZ2$(170) = N$(X): NZ3$(170) = TN$
-     FOR Z = 161 TO 169: FOR Z1 = Z + 1 TO 170: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4557
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4540 'FOR Z=161 TO 170
+	IF S(X, 13) <= NLD(170, 1) THEN 4560
+	NLD(170, 1) = S(X, 13): NLD(170, 2) = S(X, 5): NZ2$(170) = N$(X): NZ3$(170) = TN$
+	FOR Z = 161 TO 169: FOR Z1 = Z + 1 TO 170: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4557
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4557 NEXT Z1: NEXT Z
-4560 REM:FOR Z=171 TO 180
-     IF S(X, 5) <= NLD(180, 1) THEN 4580
-     NLD(180, 1) = S(X, 5): NLD(18, 2) = 0: NZ2$(180) = N$(X): NZ3$(180) = TN$
-     FOR Z = 171 TO 179: FOR Z1 = Z + 1 TO 180: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4577
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4560 'FOR Z=171 TO 180
+	IF S(X, 5) <= NLD(180, 1) THEN 4580
+	NLD(180, 1) = S(X, 5): NLD(18, 2) = 0: NZ2$(180) = N$(X): NZ3$(180) = TN$
+	FOR Z = 171 TO 179: FOR Z1 = Z + 1 TO 180: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4577
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4577 NEXT Z1: NEXT Z
-4580 REM:FOR Z=181 TO 190
-     IF S(X, 17) <= NLD(190, 1) THEN 4600
-     NLD(190, 1) = S(X, 17): NLD(190, 2) = 0: NZ2$(190) = N$(X): NZ3$(190) = TN$
-     FOR Z = 181 TO 189: FOR Z1 = Z + 1 TO 190: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4597
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4580 'FOR Z=181 TO 190
+	IF S(X, 17) <= NLD(190, 1) THEN 4600
+	NLD(190, 1) = S(X, 17): NLD(190, 2) = 0: NZ2$(190) = N$(X): NZ3$(190) = TN$
+	FOR Z = 181 TO 189: FOR Z1 = Z + 1 TO 190: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4597
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4597 NEXT Z1: NEXT Z
-4600 REM:FOR Z=191 TO 200
-     IF S(X, 9) <= NLD(200, 1) THEN 4620
-     NLD(200, 1) = S(X, 9): NLD(200, 2) = 0: NZ2$(200) = N$(X): NZ3$(200) = TN$
-     FOR Z = 191 TO 199: FOR Z1 = Z + 1 TO 200: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4617
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4600 'FOR Z=191 TO 200
+	IF S(X, 9) <= NLD(200, 1) THEN 4620
+	NLD(200, 1) = S(X, 9): NLD(200, 2) = 0: NZ2$(200) = N$(X): NZ3$(200) = TN$
+	FOR Z = 191 TO 199: FOR Z1 = Z + 1 TO 200: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4617
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4617 NEXT Z1: NEXT Z
-4620 REM:FOR Z=201 TO 210
-     IF S(X, 2) <= NLD(210, 1) THEN 4640
-     NLD(210, 1) = S(X, 2): NLD(210, 2) = 0: NZ2$(210) = N$(X): NZ3$(210) = TN$
-     FOR Z = 201 TO 209: FOR Z1 = Z + 1 TO 210: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4637
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4620 'FOR Z=201 TO 210
+	IF S(X, 2) <= NLD(210, 1) THEN 4640
+	NLD(210, 1) = S(X, 2): NLD(210, 2) = 0: NZ2$(210) = N$(X): NZ3$(210) = TN$
+	FOR Z = 201 TO 209: FOR Z1 = Z + 1 TO 210: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4637
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4637 NEXT Z1: NEXT Z
-4640 REM:FOR Z=211 TO 220
-     IF S(X, 4) <= NLD(220, 1) THEN 4660
-     NLD(220, 1) = S(X, 4): NLD(220, 2) = 0: NZ2$(220) = N$(X): NZ3$(220) = TN$
-     FOR Z = 211 TO 219: FOR Z1 = Z + 1 TO 220: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4657
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4640 'FOR Z=211 TO 220
+	IF S(X, 4) <= NLD(220, 1) THEN 4660
+	NLD(220, 1) = S(X, 4): NLD(220, 2) = 0: NZ2$(220) = N$(X): NZ3$(220) = TN$
+	FOR Z = 211 TO 219: FOR Z1 = Z + 1 TO 220: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4657
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4657 NEXT Z1: NEXT Z
-4660 REM:FOR Z=221 TO 230
-     IF S(X, 14) <= NLD(230, 1) THEN 4680
-     NLD(230, 1) = S(X, 14): NLD(230, 2) = 0: NZ2$(230) = N$(X): NZ3$(230) = TN$
-     FOR Z = 221 TO 229: FOR Z1 = Z + 1 TO 230: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4677
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4660 'FOR Z=221 TO 230
+	IF S(X, 14) <= NLD(230, 1) THEN 4680
+	NLD(230, 1) = S(X, 14): NLD(230, 2) = 0: NZ2$(230) = N$(X): NZ3$(230) = TN$
+	FOR Z = 221 TO 229: FOR Z1 = Z + 1 TO 230: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4677
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4677 NEXT Z1: NEXT Z
-4680 REM:FOR Z=231 TO 240
-     IF S(X, 6) <= NLD(240, 1) THEN 4690
-     NLD(240, 1) = S(X, 6): NLD(240, 2) = 0: NZ2$(240) = N$(X): NZ3$(240) = TN$
-     FOR Z = 231 TO 239: FOR Z1 = Z + 1 TO 240: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4697
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4680 'FOR Z=231 TO 240
+	IF S(X, 6) <= NLD(240, 1) THEN 4690
+	NLD(240, 1) = S(X, 6): NLD(240, 2) = 0: NZ2$(240) = N$(X): NZ3$(240) = TN$
+	FOR Z = 231 TO 239: FOR Z1 = Z + 1 TO 240: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4697
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4697 NEXT Z1: NEXT Z
-4690 REM:FOR Z=241 TO 250
-     IF S(X, 24) <= NLD(250, 1) THEN 4700
-     NLD(250, 1) = S(X, 24): NLD(250, 2) = 0: NZ2$(250) = N$(X): NZ3$(250) = TN$
-     FOR Z = 241 TO 249: FOR Z1 = Z + 1 TO 250: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4698
-     SWAP NZ2$(Z1), NZ2$(Z)
-     SWAP NZ3$(Z1), NZ3$(Z)
-     FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
+4690 'FOR Z=241 TO 250
+	IF S(X, 24) <= NLD(250, 1) THEN 4700
+	NLD(250, 1) = S(X, 24): NLD(250, 2) = 0: NZ2$(250) = N$(X): NZ3$(250) = TN$
+	FOR Z = 241 TO 249: FOR Z1 = Z + 1 TO 250: IF NLD(Z, 1) >= NLD(Z1, 1) THEN 4698
+	SWAP NZ2$(Z1), NZ2$(Z)
+	SWAP NZ3$(Z1), NZ3$(Z)
+	FOR M = 1 TO 2: SWAP NLD(Z1, M), NLD(Z, M): NEXT
+
 4698 NEXT Z1: NEXT Z
+
 4700 NEXT X
-     REM:FOR X=1 TO 40
-     IF OT(19) <= NOL(40, 19) THEN 4820
-     FOR M = 1 TO 20: NOL(40, M) = OT(M): NEXT: NOL$(40) = TN$
-     FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF NOL(X, 19) >= NOL(X1, 19) THEN 4817
-     SWAP NOL$(X1), NOL$(X)
-     FOR M = 1 TO 20: J = NOL(X1, M): NOL(X1, M) = NOL(X, M): NOL(X, M) = J: NEXT
+	'FOR X=1 TO 40
+	IF OT(19) <= NOL(40, 19) THEN 4820
+	FOR M = 1 TO 20: NOL(40, M) = OT(M): NEXT: NOL$(40) = TN$
+	FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF NOL(X, 19) >= NOL(X1, 19) THEN 4817
+	SWAP NOL$(X1), NOL$(X)
+	FOR M = 1 TO 20: J = NOL(X1, M): NOL(X1, M) = NOL(X, M): NOL(X, M) = J: NEXT
+
 4817 NEXT X1: NEXT X
-4820 REM:FOR X=1 TO 15
-     IF DT(19) >= NDL(40, 19) THEN 4840
-     FOR M = 1 TO 20: NDL(40, M) = DT(M): NEXT: NDL$(40) = TN$
-     FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF NDL(X, 19) <= NDL(X1, 19) THEN 4847
-     SWAP NDL$(X1), NDL$(X)
-     FOR M = 1 TO 20: J = NDL(X1, M): NDL(X1, M) = NDL(X, M): NDL(X, M) = J: NEXT
+
+4820 'FOR X=1 TO 15
+	IF DT(19) >= NDL(40, 19) THEN 4840
+	FOR M = 1 TO 20: NDL(40, M) = DT(M): NEXT: NDL$(40) = TN$
+	FOR X = 1 TO 39: FOR X1 = 1 + X TO 40: IF NDL(X, 19) <= NDL(X1, 19) THEN 4847
+	SWAP NDL$(X1), NDL$(X)
+	FOR M = 1 TO 20: J = NDL(X1, M): NDL(X1, M) = NDL(X, M): NDL(X, M) = J: NEXT
+
 4847 NEXT X1: NEXT X
+
 4840 RETURN
 
+
 SUB GETKEY ()
-    LOCATE 24, 1: PRINT "PRESS ANY KEY TO CONTINUE";
-1240 I$ = INKEY$: IF I$ = "" THEN 1240
+LOCATE 24, 1: PRINT "PRESS ANY KEY TO CONTINUE";
+1240 I$ = GetKeyPress$
 END SUB
 
+
+'$INCLUDE: 'KeyInput.BM'
+'$INCLUDE: 'QPProEqu.BM'

@@ -1,7 +1,13 @@
-REM: THIS FILE BUILDS A TEMPLATE TO BE USED WITH POWERRAT.BAS
-10 REM **************** REVISED NOVEMBER 1, 1988 ****************************
-20 DIM A$(13),A(13,6),Q$(250),X(13,6), DF(13),P$(13),RS(13,13),T1%(20)
-30 DIM W$(11),N$(13),V$(500)
+'$INCLUDE: 'KeyInput.BI'
+
+' THIS FILE BUILDS A TEMPLATE TO BE USED WITH POWERRAT.BAS
+
+10 ' **************** REVISED NOVEMBER 1, 1988 ****************************
+
+20DIM A$(13),A(13,6),Q$(250),X(13,6), DF(13),P$(13),RS(13,13),T1%(20)
+
+30DIM W$(11),N$(13),V$(500)
+
 40 OPEN "DEV.BAS" FOR INPUT AS #2:INPUT #2,D$(0):CLOSE 2
 
 yn$ = "81"
@@ -15,19 +21,21 @@ FIELD #1,53+I*43 AS X$,15 AS Q$(I*15+20),2 AS Q$(I*15+21),2 AS Q$(I*15+22),2 AS 
 AS Q$(I*15+33),2 AS Q$(I*15+34),655-53-43-I*43 AS X$
 NEXT
 GET #1,T1
-   A$=Q$(0)
+	A$=Q$(0)
+
 9005 IF RIGHT$(A$,1)=" " THEN A$=LEFT$(A$,LEN(A$)-1):GOTO 9005
-     SP=CVI(Q$(1)):DA=CVI(Q$(2)):V1%=CVI(Q$(3)):V2%=CVI(Q$(4))
-     FOR I=0 TO 4:L%(I)=CVI(Q$(I+5)):NEXT
-     FOR I=0 TO 9:T%(I)=CVI(Q$(I+10)):NEXT
-     FOR I=0 TO 13
-     A$(I)=Q$(I*15+20)
+	SP=CVI(Q$(1)):DA=CVI(Q$(2)):V1%=CVI(Q$(3)):V2%=CVI(Q$(4))
+	FOR I=0 TO 4:L%(I)=CVI(Q$(I+5)):NEXT
+	FOR I=0 TO 9:T%(I)=CVI(Q$(I+10)):NEXT
+	FOR I=0 TO 13
+	A$(I)=Q$(I*15+20)
+
 9007 IF RIGHT$(A$(I),1)=" " THEN A$(I)=LEFT$(A$(I),LEN(A$(I))-1):GOTO 9007
-     FOR I1=0 TO 6
-     A(I,I1)=CVI(Q$(I*15+I1+21))
-     X(I,I1)=CVI(Q$(I*15+I1+28))
-     NEXT:NEXT
-     CLOSE 1
+	FOR I1=0 TO 6
+	A(I,I1)=CVI(Q$(I*15+I1+21))
+	X(I,I1)=CVI(Q$(I*15+I1+28))
+	NEXT:NEXT
+CLOSE 1
 
 OPEN D$(0)+"COLBBTMS."+YN$ AS #1 LEN=566
 FIELD #1,15 AS Q$(0),40 AS Q$(1),15 AS Q$(2),4 AS Q$(3)
@@ -38,28 +46,27 @@ FIELD #1, 522 AS X$,2 AS Q$(228),2 AS Q$(229),2 AS Q$(230),2 AS Q$(231),2 AS Q$(
 Q$(245),2 AS Q$(246),2 AS Q$(247),2 AS Q$(248),2 AS Q$(249)
 NEXT
 GET #1, T1
-     C$ = Q$(0)
-     S$ = Q$(1)
-     A1$ = Q$(2)
-     ATT = CVL(Q$(3))
-
-     FOR I=0 TO 13
-     DF(I) = CVI(Q$(I*16+4))
-     P$(I) = Q$(I*16+5)
-     FOR I1=0 TO 13
-     RS(I, I1) = CVI(Q$(I*16+I1+6))
-     NEXT:NEXT
-     FOR I = 0 TO 20
-     T1%(I) = CVI(Q$(228+I))
-     NEXT
-     CK = CVI(Q$(249))
-     CLOSE 1
+	C$ = Q$(0)
+	S$ = Q$(1)
+	A1$ = Q$(2)
+	ATT = CVL(Q$(3))
+	  FOR I=0 TO 13
+	DF(I) = CVI(Q$(I*16+4))
+	P$(I) = Q$(I*16+5)
+	FOR I1=0 TO 13
+	RS(I, I1) = CVI(Q$(I*16+I1+6))
+	NEXT:NEXT
+	FOR I = 0 TO 20
+	T1%(I) = CVI(Q$(228+I))
+	NEXT
+	CK = CVI(Q$(249))
+CLOSE 1
 IF CK <> 999 THEN
-   C$="":S$="":A1$="":ATT=0
-   FOR I = 0 TO 13:DF(I) = 5:P$(I) = ""
-   FOR I1 = 0 TO 13:RS(I,I1)=0
-   NEXT:NEXT
-   FOR I=0 TO 20:T1%(I)=0:NEXT
+	C$="":S$="":A1$="":ATT=0
+	FOR I = 0 TO 13:DF(I) = 5:P$(I) = ""
+	FOR I1 = 0 TO 13:RS(I,I1)=0
+	NEXT:NEXT
+	FOR I=0 TO 20:T1%(I)=0:NEXT
 END IF
 
 mid$(a$,1) = "80"
@@ -69,4 +76,4 @@ close 2
 
 next t1
 
-
+'$INCLUDE: 'KeyInput.BM'
