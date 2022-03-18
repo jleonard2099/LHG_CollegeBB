@@ -1,29 +1,29 @@
 # LH Games Courtside College Basketball
 
-# Game Description
+## Game Description
 Each player contributes as they did in real life * Stats Compiler * you determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more 
 
-# About Project
+## About Project
 With permission from Lance Haffner himself, this effort is being made to bring his original source code from the DOS world into the modern world. This is due in part to cross-platform compilers for BASIC. But this effort restores his original vision for a cross-platform sports sim empire, also opening the door for any manner of improvements to accuracy and portability.
 
 Several functions from the original code were linked from Crescent Software libraries. To make a faster route to compilation of the code, most of these were re-written as copycats (where code was not available or ASM routines were used). Functions which relied on packing color into 1 byte were updated to use FG/BG separately. This is in anticipation of future work that will aim to reduce as many of these routines as possible
 
-# About LH Games
+## About LH Games
 Since 1983 Lance Haffner Games has been publishing the finest quality text-based computer sports games. Recognized for their statistical accuracy; national media outlets have used Haffner's games to play matchups between great teams of the century. The Ft. Worth Star-Telegram, WTVF-TV (Nashville), The Nashville Banner, and ESPN have used Lance Haffner's games to simulate real and "what if" matchups using current teams and great teams from the past.
 
 LH Games were some of the premier simulators of the 80's. They were a staple of of the mail order days and  served as one of the earliest computer sports simulation. Available for several platforms at the time thanks to their use of BASIC, they fast became known for their impressive accuracy and surprisingly quick speed. Not only that, they allowed very detailed and thorough team, conference and season management - yet somehow maintained an entertaining feel with gameplay that was never overly detailed. 
 
-# Visuals
+## Visuals
 ![college basketball box art](cbb-box.jpg)
 ![college basketball in action](cbb-action.jpg)
 	
-# Installation
+## Installation
 No installation required. Pre-compiled binaries and required reference files are in /bin.
 
-# Usage
+## Usage
 Run Hello.exe to start with the main game menu.
 
-# Support
+## Support
 Contact me at my [profile page](https://github.com/jleonard2099/jleonard2099/tree/main) for now.
 See future revisions to this for possible links to bug trackers / etc. as they are considered.
 
