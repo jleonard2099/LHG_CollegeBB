@@ -41,17 +41,17 @@ COMMON SHARED E%(), Y3 AS LONG
 
 SUB BOXTOP ()
 	IF N<>2 THEN COLOR TR%(N,0),TR%(N,1):PRINT "@ ";B$(N):PRINT:COLOR 14,0
-	FOR I=0 TO 1:PRINT B$(I) TAB(17) STR$(S(I,1)) TAB(20) STR$(S(I,2));
-	IF S(0,1)+S(0,2)=S(1,1)+S(1,2) THEN PRINT TAB(23) STR$(S(I,3));
-	IF S(0,1)+S(0,2)<> S(1,1)+S(1,2) THEN PRINT TAB(23) "- ";S(I,0): GOTO 8513
-	IF S(0,1)+S(0,2)+S(0,3)=S(1,1)+S(1,2)+S(1,3) THEN PRINT TAB(26) STR$(S(I,4));
-	IF S(0,1)+S(0,2)+S(0,3)<>S(1,1)+S(1,2)+S(1,3) THEN PRINT TAB(26) "- ";S(I,0):GOTO 8513
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)=S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT TAB(29) STR$(S(I,5));
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)<> S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT TAB(29) "- "; STR$(S(I,0)):GOTO 8513
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN LPRINT TAB(32) STR$(S(I,6));
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN PRINT TAB(32) "- ";STR$(S(I,0)):GOTO 8513
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT TAB(35) STR$(S(I,7)) TAB(38) STR$(S(I,0)):GOTO 8513
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT TAB(35) "- ";STR$(S(I,0)):GOTO 8513
+	FOR I=0 TO 1:PRINT B$(I); TAB(17); STR$(S(I,1)); TAB(20); STR$(S(I,2));
+	IF S(0,1)+S(0,2)=S(1,1)+S(1,2) THEN PRINT TAB(23); STR$(S(I,3));
+	IF S(0,1)+S(0,2)<> S(1,1)+S(1,2) THEN PRINT TAB(23); "- ";S(I,0): GOTO 8513
+	IF S(0,1)+S(0,2)+S(0,3)=S(1,1)+S(1,2)+S(1,3) THEN PRINT TAB(26); STR$(S(I,4));
+	IF S(0,1)+S(0,2)+S(0,3)<>S(1,1)+S(1,2)+S(1,3) THEN PRINT TAB(26); "- ";S(I,0):GOTO 8513
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)=S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT TAB(29); STR$(S(I,5));
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)<> S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT TAB(29); "- "; STR$(S(I,0)):GOTO 8513
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN LPRINT TAB(32); STR$(S(I,6));
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN PRINT TAB(32); "- ";STR$(S(I,0)):GOTO 8513
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT TAB(35); STR$(S(I,7)); TAB(38); STR$(S(I,0)):GOTO 8513
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT TAB(35); "- ";STR$(S(I,0)):GOTO 8513
 
 8513 NEXT I
 END SUB
@@ -419,25 +419,25 @@ OPEN P$(1) + NM$ FOR OUTPUT AS #2
 	NEXT
 	IF N<>2 THEN PRINT #2, "@ ";B$(N):PRINT #2,
 	FOR I=0 TO 1
-	PRINT #2, B$(I) TAB(17) STR$(S(I,1)) TAB(20) STR$(S(I,2));
-	IF S(0,1)+S(0,2)=S(1,1)+S(1,2) THEN PRINT #2, TAB(23) STR$(S(I,3));
-	IF S(0,1)+S(0,2)<>S(1,1)+S(1,2) THEN PRINT #2, TAB(23) "- ";S(I,0):GOTO 8963
-	IF S(0,1)+S(0,2)+S(0,3)=S(1,1)+S(1,2)+S(1,3) THEN PRINT #2, TAB(26) STR$(S(I,4));
-	IF S(0,1)+S(0,2)+S(0,3)<>S(1,1)+S(1,2)+S(1,3) THEN PRINT #2, TAB(26) "- ";S(I,0):GOTO 8963
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)=S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT #2, TAB(29) STR$(S(I,5));
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)<>S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT #2, TAB(29) "- "; STR$(S(I,0)):GOTO 8963
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN PRINT #2, TAB(32) STR$(S(I,6));
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN PRINT #2, TAB(32) "- ";STR$(S(I,0)):GOTO 8963
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT #2, TAB(35) STR$(S(I,7)) TAB(38) STR$(S(I,0)):GOTO 8963
-	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT #2, TAB(35) "- ";STR$(S(I,0)):GOTO 8963
+	PRINT #2, B$(I); TAB(17); STR$(S(I,1)); TAB(20); STR$(S(I,2));
+	IF S(0,1)+S(0,2)=S(1,1)+S(1,2) THEN PRINT #2, TAB(23); STR$(S(I,3));
+	IF S(0,1)+S(0,2)<>S(1,1)+S(1,2) THEN PRINT #2, TAB(23); "- ";S(I,0):GOTO 8963
+	IF S(0,1)+S(0,2)+S(0,3)=S(1,1)+S(1,2)+S(1,3) THEN PRINT #2, TAB(26); STR$(S(I,4));
+	IF S(0,1)+S(0,2)+S(0,3)<>S(1,1)+S(1,2)+S(1,3) THEN PRINT #2, TAB(26); "- ";S(I,0):GOTO 8963
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)=S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT #2, TAB(29); STR$(S(I,5));
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)<>S(1,1)+S(1,2)+S(1,3)+S(1,4) THEN PRINT #2, TAB(29); "- "; STR$(S(I,0)):GOTO 8963
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN PRINT #2, TAB(32); STR$(S(I,6));
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5) THEN PRINT #2, TAB(32); "- ";STR$(S(I,0)):GOTO 8963
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)=S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT #2, TAB(35); STR$(S(I,7)); TAB(38); STR$(S(I,0)):GOTO 8963
+	IF S(0,1)+S(0,2)+S(0,3)+S(0,4)+S(0,5)+S(0,6)<>S(1,1)+S(1,2)+S(1,3)+S(1,4)+S(1,5)+S(1,6) THEN PRINT #2, TAB(35); "- ";STR$(S(I,0)):GOTO 8963
 
 8963 NEXT I
 	FOR I=0 TO 1:PRINT #2,:PRINT #2, B$(I)
-	PRINT #2, "NAME" TAB(14) " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+	PRINT #2, "NAME" TAB(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
 	FOR I1=0 TO 13
 	IF AA$(I,I1)="XXX" THEN 8970
 	PRINT #2, AA$(I,I1); TAB(14);
-	IF ZZ(I,I1)=0 THEN PRINT #2, TAB(15) "DNP";:GOTO 8968
+	IF ZZ(I,I1)=0 THEN PRINT #2, TAB(15); "DNP";:GOTO 8968
 	PRINT #2, USING "##";INT(ZZ(I,I1)/60);:PRINT #2, ":";
 	IF ZZ(I,I1)-INT(ZZ(I,I1)/60)*60>9 THEN PRINT #2, USING "##";ZZ(I,I1)-INT(ZZ(I,I1)/60)*60; ELSE PRINT #2, "0";:PRINT #2, USING "#";ZZ(I,I1)-INT(ZZ(I,I1)/60)*60;
 
@@ -450,11 +450,11 @@ OPEN P$(1) + NM$ FOR OUTPUT AS #2
 	V9(10)=V9(10)+ZZ(I,I1)
 
 8970 NEXT I1:IF V9(3)=0 THEN V9(3)=1
-	PRINT #2,:PRINT #2, "TOTALS"; TAB(14) INT(V9(10)/60) TAB(21);:PRINT #2, USING"##";V9(0);:PRINT #2, "-";:PRINT #2, USING "###";V9(1);
-	PRINT #2, TAB(28) USING "##";V9(13);:PRINT #2, "-";:PRINT #2, USING "##";V9(14);
-	PRINT #2, TAB(35) USING "##";V9(2);:PRINT #2, "-";:PRINT #2, USING "##";V9(3);
-	PRINT #2, TAB(42) USING "##  ## ### ##  ##  ##  ##  ##";V9(11),V9(4),V9(5),V9(6),V9(7),V9(8),V9(9),V9(12)
-	PRINT #2, TAB(22) INT(((V9(0)/V9(1))*100)+.5);"%";TAB(35) INT(((V9(2)/V9(3))*100)+.5);"%":PRINT #2,:PRINT #2,"TOTAL TURNOVERS -"T0(I):PRINT #2,"TOTAL REBOUNDS  -"R3(I)
+	PRINT #2,:PRINT #2, "TOTALS"; TAB(14); INT(V9(10)/60); TAB(21);:PRINT #2, USING"##";V9(0);:PRINT #2, "-";:PRINT #2, USING "###";V9(1);
+	PRINT #2, TAB(28); USING "##";V9(13);:PRINT #2, "-";:PRINT #2, USING "##";V9(14);
+	PRINT #2, TAB(35); USING "##";V9(2);:PRINT #2, "-";:PRINT #2, USING "##";V9(3);
+	PRINT #2, TAB(42); USING "##  ## ### ##  ##  ##  ##  ##";V9(11),V9(4),V9(5),V9(6),V9(7),V9(8),V9(9),V9(12)
+	PRINT #2, TAB(22); INT(((V9(0)/V9(1))*100)+.5);"%";TAB(35); INT(((V9(2)/V9(3))*100)+.5);"%":PRINT #2,:PRINT #2,"TOTAL TURNOVERS -"T0(I):PRINT #2,"TOTAL REBOUNDS  -"R3(I)
 	FOR I2=0 TO 14:V9(I2)=0:NEXT I2
 	NEXT I
 	PRINT #2, CHR$(12):CLOSE 2
