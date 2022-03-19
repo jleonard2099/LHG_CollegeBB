@@ -93,7 +93,7 @@ Open D$(1) + LH$ + ".TMS" For Input As #2
 Close 2
 
 	For XW = 1 To 40
-	If H1$(XW) = Chr$(42) Then Exit For
+	If H1$(XW) = Chr$(42) Then _Continue
 	Print "DELETING "; H1$(XW); " STATS"
 	Kill D$(1) + H1$(XW)
 	Kill D$(1) + H1$(XW) + "R"

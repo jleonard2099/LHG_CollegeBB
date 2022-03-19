@@ -1,9 +1,8 @@
-$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
 _Title "Courtside College Basketball"
-'$EXEICON: 'lhg-ccb.ico'
+'$EXEICON: 'lhg_ccb.ico'
 '_ICON
 
 DefInt A-Z
@@ -155,7 +154,158 @@ For I = 0 To 1
     Next I1
 Next I
 
-Call INITIALIZE
+'Call INITIALIZE
+
+NL% = 1
+PA% = -1
+TR%(0, 0) = 15: TR%(0, 1) = 1
+TR%(1, 0) = 15: TR%(1, 1) = 1
+Open "DEV.BAS" For Input As #2
+Input #2, p$(0)
+Input #2, p$(1)
+Close 2
+
+Open "DEFAULT" For Input As #1
+Input #1, U5
+Input #1, X3%
+Input #1, C7
+Input #1, N
+Input #1, NF%
+Input #1, U6
+Input #1, CM%
+Input #1, TB%
+Input #1, TF%
+Input #1, N7%
+Input #1, PB%
+Close 1
+
+If Not _FileExists("TICKER") Then TMT = 0: GoTo 5
+Open "TICKER" For Input As #2
+For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
+Input #2, SX%(I, I1, I2): Next: Next: Next
+For I = 1 To 32: For I1 = 0 To 1: Input #2, SX$(I, I1): Next: Next
+For I = 1 To 32: Input #2, ST%(I): Next
+Close 2
+TMT = 1
+
+5 If Not _FileExists("GAME82") Then 6
+
+Open "GAME82" For Input As #2
+Input #2, FF$
+For I = 0 To 2: Input #2, AP%(I): Next
+Close 2
+Open p$(0) + FF$ For Random As #1 Len = 48
+For X = 0 To 18
+    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+Next
+Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+Get #1, AP%(0) + AP%(2)
+For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
+For X = 0 To 1: YN$(X) = Q$(20 + X): Next
+VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
+Close 1
+AP = 1
+
+6 If Not _FileExists("TOURNEY") Then 10
+Open "TOURNEY" For Input As #2
+Input #2, FF$
+For I = 0 To 2: Input #2, AP%(I): Next
+Close 2
+
+If AP%(2) = AP%(1) Then Kill "TOURNEY": End
+Open p$(0) + FF$ + ".TOU" As #1 Len = 90
+For X = 0 To 14
+    Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+Next
+Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+Get #1, AP%(0) + AP%(2)
+VS% = CVI(Q$(16)): HS% = CVI(Q$(17))
+VT$ = Q$(18): W$ = Q$(19)
+For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
+For X = 0 To 3: YN$(X) = Q$(20 + X): Next
+For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
+Close 1
+AP = 1: TOU = 1
+
+10 T = 1200: H = 1
+X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D "
+C7$(0) = "NO SHOT CLOCK    ": C7$(1) = "45 SEC SHOT CLOCK": C7$(2) = "35 SEC SHOT CLOCK"
+
+Data "NORMAL"
+Data "AGGRESSIVE"
+Data "SAFE"
+Data "QUICK OFFENSE (LAST 3 MIN)"
+Data "DELAY OFFENSE (LAST 3 MIN)"
+Data "MILK CLOCK TO 15 SEC (IF USING SHOT CLOCK)"
+Data "STALL-ONLY REAL GOOD SHOT (MUST BE WITHIN 10 POINTS)"
+Data "TOTAL STALL (LAST 3 MIN)"
+Data "HOLD BALL VS PASSIVE ZONE (MUST BE AHEAD, WITH NO SHOT CLOCK)"
+Data "SHOOT ONLY THREE POINTERS (LAST 3 MIN)"
+For I = 0 To 9: Read O$(I): Next
+
+TS$(0) = "N": TS$(1) = "Y"
+CM$(0) = "COACH AND SELECT SHOTS           "
+CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+U5$(0) = "HUMAN OPPONENT           "
+U5$(1) = "COMPUTER IS VISITING TEAM"
+U5$(2) = "COMPUTER IS HOME TEAM    "
+U5$(3) = "COMPUTER VS COMPUTER     "
+LC$(0) = "@ TEAM 1    "
+LC$(1) = "HOME COURT ADVANTAGE"
+LC$(2) = "NEUTRAL SITE        "
+TB$(0) = "SHOOT 1+1": TB$(1) = "SHOOT 2  "
+PB$(0) = "VERBOSE        "
+PB$(1) = "HAFFNER CLASSIC"
+
+Data "SOLID MAN TO MAN"
+Data "PRESSURE MAN TO MAN"
+Data "PASSIVE 2-3 ZONE"
+Data "1-3-1 TRAPPING ZONE"
+Data "FULL COURT MAN TO MAN PRESS/SOLID MAN TO MAN"
+Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/SOLID MAN TO MAN"
+Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/PRESSURE MAN TO MAN"
+Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE"
+Data "PASSIVE 2-2-1 ZONE PRESS/SOLID MAN TO MAN"
+Data "PASSIVE 2-2-1 ZONE PRESS/PRESSURE MAN TO MAN"
+Data "TRAPPING 1-2-1-1 ZONE PRESS/SOLID MAN TO MAN"
+Data "TRAPPING 1-2-1-1 ZONE PRESS/PRESSURE MAN TO MAN"
+Data "TRAPPING 1-2-1-1 ZONE PRESS/2-3 ZONE  "
+Data "TRAPPING 1-2-1-1 ZONE PRESS/1-3-1 TRAPPING ZONE"
+Data "FULL COURT M-M DENIAL & FOUL (LAST 3 MIN WHEN DOWN)"
+For I = 0 To 14: Read D$(I): Next I
+
+Data "NORMAL                            "
+Data "AGGRESSIVE                        "
+Data "SAFE                              "
+Data "QUICK OFFENSE (LAST 3 MIN)        "
+Data "DELAY OFFENSE (LAST 3 MIN)        "
+Data "MILK CLOCK TO 15 SEC-IF USING S.C."
+Data "STALL-GOOD SHOT-MUST BE WITHIN 10 "
+Data "TOTAL STALL (LAST 3 MIN)          "
+Data "HOLD BALL VS PASS.ZN-AHEAD-NO S.C."
+Data "SHOOT ONLY THREES (LAST 3 MIN)    "
+For I = 0 To 9: Read OB$(I): Next
+
+Data "SOLID MAN TO MAN                  "
+Data "PRESSURE MAN TO MAN               "
+Data "PASSIVE 2-3 ZONE                  "
+Data "1-3-1 TRAPPING ZONE               "
+Data "FULL COURT M-M PRESS/SOLID M-M    "
+Data "M-M (RUN & JUMP) PRESS/SOLID M-M  "
+Data "M-M (RUN & JMP) PRESS/PRESSURE M-M"
+Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE "
+Data "PASSIVE 2-2-1 ZONE PRESS/SOLID M-M"
+Data "PASSIVE 2-2-1 ZN PRSS/PRESSURE M-M"
+Data "TRAP 1-2-1-1 ZONE PRESS/SOLID M-M "
+Data "TRAP 1-2-1-1 ZN PRESS/PRESSURE M-M"
+Data "TRAP 1-2-1-1 ZONE PRESS/2-3 ZONE  "
+Data "TRAP 1-2-1-1 ZN PRSS/1-3-1 TRAP ZN"
+Data "DENIAL & FOUL-LAST 3 MIN WHEN DOWN"
+For I = 0 To 14: Read DB$(I): Next I
+
+
 
 If AP = 1 Then Call AUTOSETUP
 If AP = 1 And TOU = 0 Then 51
@@ -3417,141 +3567,9 @@ Sub AUTOSETUP ()
 
 1305 End Sub
 
+
+
 Sub INITIALIZE ()
-    NL% = 1
-    PA% = -1
-    TR%(0, 0) = 15: TR%(0, 1) = 1
-    TR%(1, 0) = 15: TR%(1, 1) = 1
-    Open "DEV.BAS" For Input As #2: Input #2, p$(0): Input #2, p$(1): Close 2
-
-    Open "DEFAULT" For Input As #1
-    Input #1, U5: Input #1, X3%: Input #1, C7: Input #1, N: Input #1, NF%: Input #1, U6: Input #1, CM%: Input #1, TB%: Input #1, TF%: Input #1, N7%: Input #1, PB%: Close 1
-
-    If Not _FileExists("TICKER") Then TMT = 0: GoTo 5
-    Open "TICKER" For Input As #2
-    For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
-    Input #2, SX%(I, I1, I2): Next: Next: Next
-    For I = 1 To 32: For I1 = 0 To 1: Input #2, SX$(I, I1): Next: Next
-    For I = 1 To 32: Input #2, ST%(I): Next
-    Close 2
-    TMT = 1
-
-    5 If Not _FileExists("GAME82") Then 6
-
-    Open "GAME82" For Input As #2
-    Input #2, FF$
-    For I = 0 To 2: Input #2, AP%(I): Next
-    Close 2
-    Open p$(0) + FF$ For Random As #1 Len = 48
-    For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-    Next
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-    Get #1, AP%(0) + AP%(2)
-    For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
-    For X = 0 To 1: YN$(X) = Q$(20 + X): Next
-    VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
-    Close 1
-    AP = 1
-
-    6 If Not _FileExists("TOURNEY") Then 10
-    Open "TOURNEY" For Input As #2
-    Input #2, FF$
-    For I = 0 To 2: Input #2, AP%(I): Next
-    Close 2
-
-    If AP%(2) = AP%(1) Then Kill "TOURNEY": End
-    Open p$(0) + FF$ + ".TOU" As #1 Len = 90
-    For X = 0 To 14
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-    Next
-    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-    Get #1, AP%(0) + AP%(2)
-    VS% = CVI(Q$(16)): HS% = CVI(Q$(17))
-    VT$ = Q$(18): W$ = Q$(19)
-    For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
-    For X = 0 To 3: YN$(X) = Q$(20 + X): Next
-    For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
-    Close 1
-    AP = 1: TOU = 1
-
-    10 T = 1200: H = 1
-    X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D "
-    C7$(0) = "NO SHOT CLOCK    ": C7$(1) = "45 SEC SHOT CLOCK": C7$(2) = "35 SEC SHOT CLOCK"
-
-    Data "NORMAL"
-    Data "AGGRESSIVE"
-    Data "SAFE"
-    Data "QUICK OFFENSE (LAST 3 MIN)"
-    Data "DELAY OFFENSE (LAST 3 MIN)"
-    Data "MILK CLOCK TO 15 SEC (IF USING SHOT CLOCK)"
-    Data "STALL-ONLY REAL GOOD SHOT (MUST BE WITHIN 10 POINTS)"
-    Data "TOTAL STALL (LAST 3 MIN)"
-    Data "HOLD BALL VS PASSIVE ZONE (MUST BE AHEAD, WITH NO SHOT CLOCK)"
-    Data "SHOOT ONLY THREE POINTERS (LAST 3 MIN)"
-    For I = 0 To 9: Read O$(I): Next
-
-    TS$(0) = "N": TS$(1) = "Y"
-    CM$(0) = "COACH AND SELECT SHOTS           "
-    CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-    U5$(0) = "HUMAN OPPONENT           "
-    U5$(1) = "COMPUTER IS VISITING TEAM"
-    U5$(2) = "COMPUTER IS HOME TEAM    "
-    U5$(3) = "COMPUTER VS COMPUTER     "
-    LC$(0) = "@ TEAM 1    "
-    LC$(1) = "HOME COURT ADVANTAGE"
-    LC$(2) = "NEUTRAL SITE        "
-    TB$(0) = "SHOOT 1+1": TB$(1) = "SHOOT 2  "
-    PB$(0) = "VERBOSE        "
-    PB$(1) = "HAFFNER CLASSIC"
-
-    Data "SOLID MAN TO MAN"
-    Data "PRESSURE MAN TO MAN"
-    Data "PASSIVE 2-3 ZONE"
-    Data "1-3-1 TRAPPING ZONE"
-    Data "FULL COURT MAN TO MAN PRESS/SOLID MAN TO MAN"
-    Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/SOLID MAN TO MAN"
-    Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/PRESSURE MAN TO MAN"
-    Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE"
-    Data "PASSIVE 2-2-1 ZONE PRESS/SOLID MAN TO MAN"
-    Data "PASSIVE 2-2-1 ZONE PRESS/PRESSURE MAN TO MAN"
-    Data "TRAPPING 1-2-1-1 ZONE PRESS/SOLID MAN TO MAN"
-    Data "TRAPPING 1-2-1-1 ZONE PRESS/PRESSURE MAN TO MAN"
-    Data "TRAPPING 1-2-1-1 ZONE PRESS/2-3 ZONE  "
-    Data "TRAPPING 1-2-1-1 ZONE PRESS/1-3-1 TRAPPING ZONE"
-    Data "FULL COURT M-M DENIAL & FOUL (LAST 3 MIN WHEN DOWN)"
-    For I = 0 To 14: Read D$(I): Next I
-
-    Data "NORMAL                            "
-    Data "AGGRESSIVE                        "
-    Data "SAFE                              "
-    Data "QUICK OFFENSE (LAST 3 MIN)        "
-    Data "DELAY OFFENSE (LAST 3 MIN)        "
-    Data "MILK CLOCK TO 15 SEC-IF USING S.C."
-    Data "STALL-GOOD SHOT-MUST BE WITHIN 10 "
-    Data "TOTAL STALL (LAST 3 MIN)          "
-    Data "HOLD BALL VS PASS.ZN-AHEAD-NO S.C."
-    Data "SHOOT ONLY THREES (LAST 3 MIN)    "
-    For I = 0 To 9: Read OB$(I): Next
-
-    Data "SOLID MAN TO MAN                  "
-    Data "PRESSURE MAN TO MAN               "
-    Data "PASSIVE 2-3 ZONE                  "
-    Data "1-3-1 TRAPPING ZONE               "
-    Data "FULL COURT M-M PRESS/SOLID M-M    "
-    Data "M-M (RUN & JUMP) PRESS/SOLID M-M  "
-    Data "M-M (RUN & JMP) PRESS/PRESSURE M-M"
-    Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE "
-    Data "PASSIVE 2-2-1 ZONE PRESS/SOLID M-M"
-    Data "PASSIVE 2-2-1 ZN PRSS/PRESSURE M-M"
-    Data "TRAP 1-2-1-1 ZONE PRESS/SOLID M-M "
-    Data "TRAP 1-2-1-1 ZN PRESS/PRESSURE M-M"
-    Data "TRAP 1-2-1-1 ZONE PRESS/2-3 ZONE  "
-    Data "TRAP 1-2-1-1 ZN PRSS/1-3-1 TRAP ZN"
-    Data "DENIAL & FOUL-LAST 3 MIN WHEN DOWN"
-    For I = 0 To 14: Read DB$(I): Next I
 
 End Sub
 
