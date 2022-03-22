@@ -216,21 +216,59 @@ Sub box0 (ULRow%, ULCol%, LRRow%, LRCol%, Char%, Colr%)
     '4 = single line horizontally, double line vertically
     'If Char% is assigned to any other value, that ASCII character will be used for the entire box.
 
+    Select Case Char%
+        Case 1:
+            ulCorner$ = Chr$(218)
+            horizontal$ = Chr$(196)
+            urCorner$ = Chr$(191)
+            vertical$ = Chr$(179)
+            llCorner$ = Chr$(192)
+            lrCorner$ = Chr$(217)
+        Case 2:
+            ulCorner$ = Chr$(201)
+            horizontal$ = Chr$(205)
+            urCorner$ = Chr$(187)
+            vertical$ = Chr$(186)
+            llCorner$ = Chr$(200)
+            lrCorner$ = Chr$(188)
+        Case 3:
+            ulCorner$ = Chr$(201)
+            horizontal$ = Chr$(205)
+            urCorner$ = Chr$(187)
+            vertical$ = Chr$(179)
+            llCorner$ = Chr$(200)
+            lrCorner$ = Chr$(188)
+        Case 4:
+            ulCorner$ = Chr$(218)
+            horizontal$ = Chr$(196)
+            urCorner$ = Chr$(191)
+            vertical$ = Chr$(186)
+            llCorner$ = Chr$(192)
+            lrCorner$ = Chr$(217)
+        Case Else:
+            ulCorner$ = Chr$(Char%)
+            horizontal$ = Chr$(Char%)
+            urCorner$ = Chr$(Char%)
+            vertical$ = Chr$(Char%)
+            llCorner$ = Chr$(Char%)
+            lrCorner$ = Chr$(Char%)
+    End Select
+
     Color 15, 1
 
     ' Prints the top of the box
     Locate ULRow%, ULCol%
-    Print Chr$(201) + String$(LRCol% - ULCol%, 205) + Chr$(187)
+    Print ulCorner$ + String$(LRCol% - ULCol%, Asc(horizontal$)) + urCorner$
 
     ' Print the sides of the box
     For currentRow = (ULRow% + 1) To (LRRow% - 1) Step 1
         Locate currentRow, ULCol%
-        Print Chr$(186) + Space$(LRCol% - ULCol%) + Chr$(186)
+        Print vertical$ + Space$(LRCol% - ULCol%) + vertical$
     Next
 
     'Print the bottom line of the box
     Locate LRRow%, ULCol%
-    Print Chr$(200) + String$(LRCol% - ULCol%, 205) + Chr$(188)
+    Print llCorner$ + String$(LRCol% - ULCol%, Asc(horizontal$)) + lrCorner$
 
     Color Colr%,
 

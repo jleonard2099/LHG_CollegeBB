@@ -880,7 +880,7 @@ SUB PBP ()
 	COLOR vg%(7), vh%(7): PRINT G1$
 	COLOR vg%(8), vh%(8): PRINT H1$
 	COLOR 15, 0
-	U! = TIMER: WHILE TIMER < U! + U6: WEND
+	_Delay U6
 
 2247 REM
 END SUB
