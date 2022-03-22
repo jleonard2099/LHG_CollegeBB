@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
@@ -90,32 +91,34 @@ Dim G9%(1), F5%(1, 8), W%(1, 13, 1), IY(1), O0%(1), V$(500), Z2(13, 13) As Singl
 Dim NG%(18), NG1%(18), AP%(2), HF%(1, 6), DP(2, 4), FY%(2), OF%(1), TM%(1, 13)
 Dim O%(100), HT%(100), HO$(100), H$(100), SX%(32, 1, 14), ST%(32)
 Dim R$(14), paths$(1), X$(3), C7$(2), TS$(1), CM$(1), U5$(3), LC$(2), TB$(1)
-Dim TR%(1, 9), Y$(1), PS$(4)
-Dim P5(14), P4(14)
+Dim Y$(1), PS$(4)
 Dim YN1$(3), TP%(1), TF%(1), Q$(250), O$(9), V%(500)
-Dim vg%(8), vh%(8), L%(1, 4), YN$(5), PB$(1), N%(16, 16, 3), N$(16, 16, 3)
+Dim L%(1, 4), YN$(5), PB$(1), N%(16, 16, 3), N$(16, 16, 3)
 
-Common Shared A1$, B1$, C1$, D1$, E1$, G1$, H1$, J$, vg%(), vh%()
+Common Shared A1$, B1$, C1$, D1$, E1$, G1$, H1$, J$
 Common Shared F1$
 Common Shared AP%(), N, W%()
 Common Shared AP, U5, HT%, G9, EG%, TMT, H, T As Single, TE As Single, SX$(), SX%(), R$(), TS%, ST%, ST%()
 Common Shared APT%(), CRD() As Long, SITE$()
 Common Shared BU%, YN$, y2 As Long, R0 As Single, CT
 Common Shared DB$(), OB$(), OF%(), NF%
-Common Shared DK%, PZ%, FT%, X3%, XX%, FB%, F As Single, PB%, NL%
+Common Shared DK%, PZ%, FT%, X3%, XX%, FB%, F As Single, PB%
 Common Shared DP(), X$(), C7$(), O$(), TS$(), CM$(), U5$(), LC$()
 Common Shared E%(), Y3 As Long
 Common Shared F3S%, J8%, F3, BO%, V$(), V%(), NT, X0%, X1%, TP%(), LC%, FO, PB$
 Common Shared FF$, NG1%(), YN1$(), YN$(), NG%(), VT$, W$, W1$, VT1$
-Common Shared I, TR%(), F5%(), P9, L%()
-Common Shared TB$(), PB$(), J, MJ, P5(), P4(), PS$(), TM%(), CZ%(), PR%(), IN, M5
+Common Shared I, F5%(), P9, L%()
+Common Shared TB$(), PB$(), J, MJ, PS$(), TM%(), CZ%(), PR%(), IN, M5
 Common Shared TB%, TF%, N7%, TOU, TF$, N$(), N%(), PA%, HF%(), S2
 Common Shared W1(), Y$(), Q$(), X, D, CTO%, XM, C1
 Common Shared Z2() As Single, W2(), W0(), Z1() As Single, Z() As Single, W3(), O%(), HO$(), HT%(), H$(), Q
 Common Shared X8, C7, DY, S9, D$(), JJ, G9%(), XS, CM%
 Common Shared paths$(), B$()
-Common Shared AA$(), FY%(), B%(), U$, PASS%, displayPause As Single, PT%, p, B
+Common Shared AA$(), FY%(), B%(), U$, PASS%, U6 As Single, PT%, p, B
 
+'Play-by-Play
+Dim Shared NL%, vg%(8), vh%(8)
+Common Shared vg%(), vh%()
 
 'QuarterTotal
 Dim Shared V9(14), QQ(1, 8, 13, 14), QR(1, 7, 14)
@@ -151,16 +154,20 @@ Common Shared S(), DT%(), D2(), P7()
 Dim Shared P$(1)
 Dim Shared A(1, 13, 24) As Single, C(1, 13, 6), DF(1, 13), RS(1, 13, 13)
 Dim Shared D1(1), S1(1), V1%(1), V2%(1)
-Dim PO$(1, 13), T2%(1, 20)
+Dim PO$(1, 13), T2%(1, 20), TR%(1, 9)
 Dim C$(1), S$(1), A1$(1), ATT(1) As Long
 Common Shared A() As Single, C(), DF(), RS()
 Common Shared D1(), S1(), V1%(), V2%()
-Common Shared PO$(), T2%()
+Common Shared PO$(), T2%(), TR%()
 Common Shared C$(), S$(), A1$(), ATT() As Long
 
+'???
+Dim Shared P4(14), P5(14)
+Common Shared P4(), P5()
 
 Clear
 Randomize Timer
+
 NL% = 1
 PA% = -1
 TR%(0, 0) = 15: TR%(0, 1) = 1
@@ -360,7 +367,9 @@ GoTo 30
 GoTo 24
 50 If B$(0) = "" Or B$(1) = "" Then 24
 
-
+'---------------------------------------
+'      Start of Actual Game Play
+'---------------------------------------
 Cls: Color 3: JJ = 6
 SN = 1: Locate 6, 8: Color TR%(1, 0), TR%(1, 1)
 Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
@@ -1499,13 +1508,16 @@ Call GETAKEY(I$)
 If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
 If DRIVE% >= 67 Then 8637
 Color 15, 0
-Cls: I = 1: Call DRAWBOX
-U$ = "INSERT COURTSIDE GAME DISK #2 IN DRIVE"
-Locate , (80 - Len(U$)) / 2
-Print U$
-Call HITKEY
+
+'Cls: I = 1: Call DRAWBOX
+
+'U$ = "INSERT COURTSIDE GAME DISK #2 IN DRIVE"
+'Locate , (80 - Len(U$)) / 2
+'Print U$
+'Call HITKEY
 Color 15, 0
-8637 Color 15, 0: Cls
+8637 Color 15, 0
+Cls
 Run "COLHOOP.EXE"
 
 
@@ -3067,13 +3079,13 @@ Sub LOADSTATS
     For I = 0 To 1
         Cls
         Call DRAWBOX
-        U$ = "ENTER STATS DISK FOR " + B$(I)
-        Locate , (80 - Len(U$)) / 2
-        Print U$
-        Print
-        If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 64
-        Locate , 12: Print "HIT ANY KEY TO CONTINUE";
-        63 I$ = InKey$: If I$ = "" Then 63
+        'U$ = "ENTER STATS DISK FOR " + B$(I)
+        'Locate , (80 - Len(U$)) / 2
+        'Print U$
+        'Print
+        'If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 64
+        'Locate , 12: Print "HIT ANY KEY TO CONTINUE";
+        '63 I$ = InKey$: If I$ = "" Then 63
         64 Color 15, 0
         Y$(I) = B$(I)
         Q = I
@@ -3456,8 +3468,6 @@ Sub LINEUPS ()
     If FA%(P9, J) > 0 Then FA%(P9, J) = 0
     Return
 
-
-
     90 CV% = 0: For IP% = 0 To Z
         If B%(P9, IP%, 18) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then CV% = CV% + 1
     Next
@@ -3477,7 +3487,10 @@ End Sub
 
 
 Sub OFFENSE ()
-    OFFENSE:
+    'This label was not being referenced anywhere else
+    'All it was doing for a modern compiler was confusing
+    'the call references with the Subroutine name.
+    '    OFFENSE:
     109 Color TR%(P9, 0), TR%(P9, 1): Cls
     Print ; Tab(33); "OFFENSIVE STYLE": Print
     For I = 0 To 9
@@ -4099,13 +4112,13 @@ Sub SAVESTATS
     If AP = 1 Then 6355
     6325 I$ = InKey$: If I$ = "" Then 6325
     If UCase$(I$) = "N" Then C% = 1: GoTo 6355
-    Cls: Print " INSERT STATS DISK FOR ";: Color TR%(Q, 0), TR%(Q, 1): Print B$(Q);
-    Color 15, 0: Print " AND HIT RETURN TWICE": Print
-    Print " MUST BE FORMATTED IBM-PC DISK"
-    If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 6355
-    6340 I$ = InKey$: If I$ = "" Then 6340
-    Print: Print " HIT RETURN ONCE"
-    6350 I$ = InKey$: If I$ = "" Then 6350
+    'Cls: Print " INSERT STATS DISK FOR ";: Color TR%(Q, 0), TR%(Q, 1): Print B$(Q);
+    'Color 15, 0: Print " AND HIT RETURN TWICE": Print
+    'Print " MUST BE FORMATTED IBM-PC DISK"
+    'If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 6355
+    '6340 I$ = InKey$: If I$ = "" Then 6340
+    'Print: Print " HIT RETURN ONCE"
+    '6350 I$ = InKey$: If I$ = "" Then 6350
     6355 If C% = 1 Then 6290
     Y$(Q) = B$(Q): Call STATCONVERT(Q, QQ): FG$ = Mid$(B$(Q), 4, QQ): R$ = FG$ + "." + Left$(B$(Q), 2)
     If Not _FileExists(P$(1) + R$) Then 6185
