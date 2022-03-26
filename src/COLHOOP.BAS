@@ -1,3 +1,4 @@
+
 $Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
@@ -35,6 +36,7 @@ DECLARE SUB FILEBOX
 DECLARE SUB FOULHARD ()
 DECLARE SUB FOULSAFE ()
 DECLARE SUB FRAME ()
+DECLARE SUB GETAKEY (I$)
 DECLARE SUB GETATEAM (I1, YN$)
 DECLARE SUB HORN ()
 DECLARE SUB LASTFIVEMENU ()
@@ -80,9 +82,6 @@ DECLARE SUB WINDEX ()
 DECLARE SUB ZEROCHECK ()
 DECLARE SUB ZONECHANGE ()
 
-
-'DIM IY(1), PC%(1), O0%(1), TF$
-
 Dim Shared AP, B, C1, C7, DY, CT, D, FO, F3, G9, H, I, IN, J, JJ
 Dim Shared M5, MJ, N, NT, p, P9, Q, S2, S9, TMT, TOU, U5, XM, XS
 
@@ -112,45 +111,73 @@ Dim Shared A(1, 13, 24) As Single
 Dim Shared Z(15) As Single, Z1(15) As Single, Z2(13, 13) As Single
 Dim Shared F As Single, R0 As Single
 Dim Shared T As Single, TE As Single
-Dim Shared U6 As Single
+Dim Shared displayPause As Single
 Dim Shared ATT(1) As Long, CRD(100) As Long
 Dim Shared Y2 As Long, Y3 As Long
 
 
-'------------------------------
-'   SETUP / INITIALIZE GAME
-'------------------------------
-Clear
+'----------------------------------------
+'           GAME CODE
+'----------------------------------------
 
-Randomize Timer
-
+'Initialize variables
+'--------------------
 NL% = 1
 PA% = -1
 TR%(0, 0) = 15: TR%(0, 1) = 1
 TR%(1, 0) = 15: TR%(1, 1) = 1
+
 Data L,1,1,1,1,1,1,H,H,2,2,2,2,2,F
 For I = 0 To 14: Read R$(I): Next
 Data 0,1,1,2,2,2,-1,-1,-1,-1,-2,-3
-For I = 0 To 1: For I1 = 1 To 6: Read HF%(I, I1): Next: Next
+For I = 0 To 1
+    For I1 = 1 To 6
+        Read HF%(I, I1)
+    Next
+Next
 Data 1,4,2,5,15,29,22,36,7,9,7,12
-For I = 0 To 2: For I1 = 1 To 4: Read DP(I, I1): Next: Next
+For I = 0 To 2
+    For I1 = 1 To 4
+        Read DP(I, I1)
+    Next
+Next
 Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
-For I = 0 To 4: For I1 = 0 To 3: Read D8(I, I1): Next: Next
+For I = 0 To 4
+    For I1 = 0 To 3
+        Read D8(I, I1)
+    Next
+Next
+
+' Setup Game
+'--------------------
+Clear
+
+Randomize Timer
+
 Open "DEV.BAS" For Input As #2: Input #2, p$(0): Input #2, p$(1): Close 2
 Open "DEFAULT" For Input As #1
-Input #1, U5: Input #1, X3%: Input #1, C7: Input #1, N: Input #1, NF%: Input #1, U6: Input #1, CM%: Input #1, TB%: Input #1, TF%: Input #1, N7%: Input #1, PB%: Close 1
+Input #1, U5: Input #1, X3%: Input #1, C7: Input #1, N: Input #1, NF%: Input #1, displayPause: Input #1, CM%: Input #1, TB%: Input #1, TF%: Input #1, N7%: Input #1, PB%: Close 1
 
 If Not _FileExists("TICKER") Then TMT = 0: GoTo 5
 Open "TICKER" For Input As #2
-For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
-Input #2, SX%(I, I1, I2): Next: Next: Next
-For I = 1 To 32: For I1 = 0 To 1: Input #2, SX$(I, I1): Next: Next
+For I = 1 To 32
+    For I1 = 0 To 1
+        For I2 = 1 To 14
+            Input #2, SX%(I, I1, I2)
+        Next
+    Next
+Next
+For I = 1 To 32
+    For I1 = 0 To 1
+        Input #2, SX$(I, I1)
+    Next:
+Next
 For I = 1 To 32: Input #2, ST%(I): Next
 Close 2
 TMT = 1
 
-5 If Not _FileExists("GAME82") Then 6
 
+5 If Not _FileExists("GAME82") Then 6
 Open "GAME82" For Input As #2
 Input #2, FF$
 For I = 0 To 2: Input #2, AP%(I): Next
@@ -187,6 +214,7 @@ For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
 For X = 0 To 3: YN$(X) = Q$(20 + X): Next
 For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
 Close 1
+
 AP1 = 1: TOU = 1
 
 10 T = 1200: H = 1: T1(1) = 5: T1(0) = 5: X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D "
@@ -258,21 +286,29 @@ Data "TRAP 1-2-1-1 ZONE PRESS/2-3 ZONE  "
 Data "TRAP 1-2-1-1 ZN PRSS/1-3-1 TRAP ZN"
 Data "DENIAL & FOUL-LAST 3 MIN WHEN DOWN"
 For I = 0 To 14: Read DB$(I): Next I
-For I = 0 To 1: For I1 = 0 To 4: B1(I, I1) = -1
-Next I1: Next I
+For I = 0 To 1
+    For I1 = 0 To 4
+        B1(I, I1) = -1
+    Next I1
+Next I
 
 DRIVE% = GetDrive%
 If AP1 = 1 Then Call AUTOSETUP
 If AP1 = 1 And TOU = 0 Then 51
 
 24 Cls: Color 2: Print ; Tab(29); "SELECT OPENING OPTIONS": Print
+
 25 Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print U5$(U5)
 Locate 3, 2: Color 14: Print "(2) ";: Color 15: Print "VISITING TEAM: ";: Color TR%(0, 0), TR%(0, 1): Print B$(0): Color , 0
 Locate 4, 2: Color 14: Print "(3) ";: Color 15: Print "HOME TEAM: ";: Color TR%(1, 0), TR%(1, 1): Print B$(1): Color , 0
+
 28 Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; TS$(X3%)
+
 29 Locate 6, 2: Color 14: Print "(5) ";: Color 15: Print C7$(C7)
+
 30 Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "LOCATION: "; LC$(N)
-Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; U6
+Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; displayPause
+
 32 Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print "START GAME"
 Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "FOULS TO DISQUALIFY: "; NF%
 Locate 11, 2: Color 14: Print "(0) ";: Color 15: Print "SAVE SETTINGS"
@@ -288,7 +324,9 @@ Locate , 2: Print "       3 PT SHOT WAS ADOPTED IN 1986-87"
 Locate , 2: Print "       2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED IN 1990-91"
 Locate , 2: Print "       3 FT WHEN FOULED ON A 3 PT ATT ADOPTED IN 1990-91"
 Locate , 2: Print "       35 SEC SHOT CLOCK WAS ADOPTED IN 1993-94"
-35 Color 7: I$ = InKey$: If I$ = "" Then 35
+
+35 Color 7
+I$ = GetKeyPress$
 If I$ = Chr$(27) Then Run "HELLO.EXE"
 I = Val(I$)
 If UCase$(I$) = "A" Then I = 11
@@ -300,29 +338,46 @@ If I < 0 Or I > 15 Then 35
 If I = 0 Then I = 10
 
 On I GOTO 38, 40, 41, 42, 44, 46, 48, 50, 45, 43, 47, 33, 34, 39, 22
+
 22 PB% = 1 - PB%: GoTo 32
+
 33 CM% = 1 - CM%: GoTo 32
+
 34 TF% = 1 - TF%: GoTo 32
+
 38 U5 = U5 + 1: If U5 > 3 Then U5 = 0
 GoTo 25
+
 39 N7% = 1 - N7%: GoTo 32
+
 40 P9 = 0: Call SELECTID: GoTo 24
+
 41 P9 = 1: Call SELECTID: GoTo 24
+
 42 X3% = 1 - X3%: GoTo 28
+
 43 Open "DEFAULT" For Output As #1
-Print #1, U5: Print #1, X3%: Print #1, C7: Print #1, N: Print #1, NF%: Print #1, U6: Print #1, CM%: Print #1, TB%: Print #1, TF%: Print #1, N7%: Print #1, PB%
-Close 1: GoTo 32
+Print #1, U5: Print #1, X3%: Print #1, C7: Print #1, N: Print #1, NF%: Print #1, displayPause: Print #1, CM%: Print #1, TB%: Print #1, TF%: Print #1, N7%: Print #1, PB%
+Close 1
+
+GoTo 32
+
 44 C7 = C7 + 1: If C7 > 2 Then C7 = 0
 GoTo 29
+
 45 NF% = NF% + 1: If NF% > 6 Then NF% = 5
 GoTo 32
+
 46 N = N + 1: If N > 2 Then N = 1
 GoTo 30
+
 47 TB% = 1 - TB%: GoTo 32
-48 Locate 8, 32: Input U6: If U6 < 0 Then 48
+
+48 Locate 8, 32: Input displayPause: If displayPause < 0 Then 48
 GoTo 24
 
 50 If B$(0) = "" Or B$(1) = "" Then 24
+
 
 '---------------------------------------
 '      Start of Actual Game Play
@@ -335,7 +390,7 @@ Locate 6, 8
 Color TR%(1, 0), TR%(1, 1)
 
 'Print box top
-Print " " + Chr$(201); String$(61, 196); Chr$(187) + " ";
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 JJ = 6
@@ -346,7 +401,7 @@ Next
 Locate 7 + JJ, 8
 
 'Print box bottom
-Print " " + Chr$(200); String$(61, 196); Chr$(188) + " ";
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
 Locate 7, 11
 
@@ -362,11 +417,17 @@ If UCase$(TT$) = "P" And Left$(ST$, 2) <> "12" Then HR = HR + 12
 TM = HR * 60 + MIN
 ST% = Int(TM / 30 - 18)
 Call EDITCX
+
 51 FY%(2) = Int(((FY%(1) + FY%(0)) / 2) + .5)
-For I = 0 To 1: For I1 = 0 To 13: TM%(I, I1) = 1200: Next: Next
+For I = 0 To 1
+    For I1 = 0 To 13
+        TM%(I, I1) = 1200
+    Next
+Next
 If U5 = 1 Then CT = 0: GoTo 55
 If U5 = 2 Then U5 = 1: CT = 1: GoTo 55
 If U5 = 3 Then U5 = 2
+
 55 Call LOADSTATS
 GoTo 900
 
@@ -388,12 +449,12 @@ X = 0
 If H = 2 Then U$ = "END OF HALF"
 'Could call SELECTPBP here but there would be a delay
 If H = 2 And PB% = 0 Then Call PBP
-If H = 2 And PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$
+If H = 2 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$
 
 If H > 3 Then U$ = "END OF OVERTIME" + Str$(H - 3)
 'Could call SELECTPBP here but there would be a delay
 If H > 3 And PB% = 0 Then Call PBP
-If H > 3 And PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$
+If H > 3 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$
 
 GoSub 178
 
@@ -405,15 +466,18 @@ GoSub 159
 If H = 3 Then U$ = "END OF REGULATION"
 'Could call SELECTPBP here but there would be a delay
 If H = 3 And PB% = 0 Then Call PBP
-If H = 3 And PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$
+If H = 3 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$
 
 Locate 2, 31: Print "END OF REGULATION"
 If S(0, 0) = S(1, 0) And PB% = 0 Then U$ = "OVERTIME !!!": Call PBP
 If S(0, 0) = S(1, 0) And PB% = 1 Then Call WINDEX: Print "OVERTIME !!!": Call DELAY
 If S(0, 0) = S(1, 0) Then 190
 
-Call HITKEY: GoTo 8400
-
+'Call HITKEY: GoTo 8400
+If AP1 = 1 Xor U5 = 2 Then
+    I$ = GetKeyPress
+End If
+GoTo 8400
 
 175 If U5 = 1 Then P9 = CT: Call COMCOACH
 If U5 = 2 Then P9 = 0: Call COMCOACH: P9 = 1: Call COMCOACH
@@ -427,7 +491,9 @@ Return
 Call MAINSCREEN
 For I = 0 To 1
     For I1 = 0 To 13: TM%(I, I1) = 300: FA%(I, I1) = 0
-Next: Next: B = -1
+    Next
+Next
+B = -1
 Call DEADBALLOPTIONS
 Call SCOREBOARD
 GoTo 250
@@ -436,6 +502,7 @@ GoTo 250
 For P9 = 0 To 1
     If U5 = 1 And P9 = CT Or U5 = 2 Then Call SETSTAMINA: Call COMCOACH: GoTo 243
     Call SETSTAMINA: Call LINEUPS: Call FOULSAFE
+
 243 GoSub 819: Next P9
 
 GoSub 159
@@ -447,8 +514,8 @@ GoSub 3000
 Call LASTSHOT: If T <= 0 Then 170
 GoSub 1033
 
-If U6 = 0 And (H = 1 Or H = 3) Then PA% = D: GoTo 300
-If U6 = 0 And (H <> 1 Or H > 3) Then p = PA%: D = 1 - p: PA% = 1 - PA%: GoTo 300
+If displayPause = 0 And (H = 1 Or H = 3) Then PA% = D: GoTo 300
+If displayPause = 0 And (H <> 1 Or H > 3) Then p = PA%: D = 1 - p: PA% = 1 - PA%: GoTo 300
 
 If (H = 1 Or H = 3) And PB% = 0 Then U$ = B$(p) + " GETS THE JUMP": PA% = D: Call PBP
 If (H = 1 Or H = 3) And PB% = 1 Then Call WINDEX: Print B$(p) + " GETS THE JUMP": PA% = D: Call DELAY
@@ -458,6 +525,7 @@ If (H <> 1 And H <> 3 Or H > 3) And PB% = 1 Then p = PA%: D = 1 - p: PA% = 1 - P
 GoTo 300
 
 COMPFIVE:
+
 RN = Int(Rnd(1) * 100) + 1
 R0 = S(p, 0) - S(D, 0)
 If T >= 3 And T <= 5 And X3% = 0 And R0 < 3 Then I1% = 5
@@ -473,14 +541,16 @@ GoTo 281
 LASTFIVE:
 If U5 = 2 Or U5 = 1 And p = CT Then GoTo COMPFIVE
 Call LASTFIVEMENU
-280 I$ = InKey$: If I$ = "" Then 280
+
+280 I$ = GetKeyPress$
 I1% = Val(I$): If I1% < 0 Or I1% > 5 Then 280
 If I1% = 3 And T1(P9) <= 0 Then 280
 If (I1% = 1 Or I1% = 4) And X3% = 0 Then 280
+
 Color 15, 0
 Call SCOREBOARD
-281 B = Int(Rnd(1) * 5)
 
+281 B = Int(Rnd(1) * 5)
 RN = Int(Rnd(1) * 100) + 1
 If I1% = 0 And RN <= 50 Or I1% = 1 And RN <= 33 Then U$ = "LONG PASS DOWN COURT": Call PBP: Call DELAY: U$ = "IT'S INTERCEPTED...GAME OVER!!": Call PBP: GoTo TIMEEXP
 If I1% = 2 Then I3% = Int(Rnd(1) * 45) + 45: U$ = AA$(p, B1(p, B)) + " HAS THE BALL": Call PBP: U$ = "HE PUTS IT UP FROM" + Str$(I3%) + " FEET": Call PBP: Call DELAY: If RN = 61 Then U$ = "GOOD!!": Call PBP: GoSub BASKET: GoTo TIMEEXP
@@ -518,7 +588,7 @@ Locate 8, 8
 Color TR%(p, 0), TR%(p, 1)
 
 'Print box top
-Print " " + Chr$(201); String$(61, 196); Chr$(187) + " ";
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 JJ = 8
@@ -529,7 +599,7 @@ Next
 
 'Print box bottom
 Locate 9 + JJ, 8
-Print " " + Chr$(200); String$(61, 196); Chr$(188) + " ";
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
 Locate 10, 15
 Print B$(p); " HALF COURT OPTION"
@@ -537,8 +607,10 @@ Locate 12, 14
 Locate , 14: Print Using "TIME REMAINING #.#"; T
 Locate , 14: Print "0 - SHOOT A 2"
 Locate , 14: Print "1 - SHOOT A 3"
-290 I$ = InKey$: If I$ = "" Then 290
+
+290 I$ = GetKeyPress$
 I2% = Val(I$): If I2% < 0 Or I2% > 1 Then 290
+
 If I2% = 1 And X3% = 0 Then I2% = 0
 Color 15, 0
 Call SCOREBOARD
@@ -579,27 +651,32 @@ If (D2(D) = 1 Or D2(D) = 3) And P7(D) = 0 Then X0% = 50: X1% = -1: Call PRDFAT
 If D2(D) = 2 And P7(D) = 0 Then X0% = 100: X1% = 1: Call PRDFAT: Call PRPFAT
 If D2(D) = 1 And P7(D) = 0 Then X0% = 25: X1% = -1: Call PRPFAT
 GoTo 400
+
 350 PASS% = PASS% + 1: P6 = 0: A4 = 0: D6 = 0: A6 = 1: F = 0: X = 0
 If (D2(D) = 1 Or D2(D) = 3) And PASS% = 2 And P7(D) > 0 Then X0% = 50: X1% = -1: Call PRDFAT
 If D2(D) = 2 And P7(D) > 0 And PASS% = 2 Then X0% = 100: X1% = 1: Call PRDFAT: Call PRPFAT
 If D2(D) = 1 And P7(D) > 0 And PASS% = 2 Then X0% = 25: X1% = -1: Call PRPFAT
 GoTo 400
+
 359 J8% = 0: If X3% = 0 Then P3 = 1: P6 = 1: GoTo 537
 S = Int(Rnd(1) * 100) + 1: W%(p, B1(p, B), 1) = W%(p, B1(p, B), 1) + 1: A(p, B1(p, B), 7) = A(p, B1(p, B), 7) + 1
 PT% = 3: Call MAKEPBP: Call PBP
 GoTo 9030
-361 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "3 PT FG MISSED BY "; AA$(p, B1(p, B)): Call DELAY
+
+361 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "3 PT FG MISSED BY "; AA$(p, B1(p, B)): Call DELAY
 If PB% = 0 Then PT% = 5: TP% = 1: Call MAKEPBP: Call PBP
 GoSub 1033: T = T - 4: TE = 4: Call PLAYINGTIME: GoSub SHTCLK
 If T <= 0 Then TE = T: Call PLAYINGTIME: TP% = 0: GoTo 170
 Call MAINSCREEN: GoTo 670
-363 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "3 PT FG GOOD BY "; AA$(p, B1(p, B)); " !!!": Call DELAY
+
+363 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "3 PT FG GOOD BY "; AA$(p, B1(p, B)); " !!!": Call DELAY
 If PB% = 0 Then PT% = 4: Call MAKEPBP: Call PBP
+
 369 If XX% = 1 Then XX% = 0: S(p, H) = S(p, H) + 2: S(p, 0) = S(p, 0) + 2: W%(p, B1(p, B), 1) = W%(p, B1(p, B), 1) - 1: GoTo 364
 S(p, H) = S(p, H) + 3: S(p, 0) = S(p, 0) + 3: W%(p, B1(p, B), 0) = W%(p, B1(p, B), 0) + 1
+
 364 A(p, B1(p, B), 8) = A(p, B1(p, B), 8) + 1
 GoSub 1054: Call MAINSCREEN: GoTo 562
-
 
 400 A4 = 0: D6 = 0: P3 = 0: B = Int(Rnd(1) * 5)
 Call BALLDISTRIBUTE
@@ -617,6 +694,7 @@ GoTo LAYUP
 
 DENIAL:
 If Int(Rnd(1) * 100) + 1 <= 10 Then 448
+
 RN = Int(Rnd(1) * 100) + 1
 R0 = Int(Rnd(1) * 100) + 1
 IN = 99
@@ -625,7 +703,7 @@ U$ = "DESIGNATED FOULER (0-4)"
 Call SELECTPBP
 If U5 = 1 And D = CT Or U5 = 2 Then DF% = Int(Rnd(1) * 5): GoTo 431
 
-430 I$ = InKey$: If I$ = "" Then 430
+430 I$ = GetKeyPress$
 DF% = Val(I$): If DF% < 0 Or DF% > 4 Then 430
 If PASS% > 1 Then 434
 
@@ -635,17 +713,21 @@ CY = 7 + DP(0, 4)
 If RN <= CY Then GoSub ADJ: GoTo 515
 CY = CY + F5%(p, 4) + DP(1, 4)
 If RN <= CY Then GoSub ADJ: GoTo 435
+
 432 U$ = "PASS TO " + AA$(p, B1(p, B)): Call SELECTPBP
+
 434 If Int(Rnd(1) * 100) + 1 <= 5 Then IN% = 1
+
 RN = Int(Rnd(1) * 100) + 1
 If RN <= 80 Then TE = Int(Rnd(1) * 3) + 1: T = T - TE: Call PLAYINGTIME: GoSub SHTCLK
 If RN > 80 And RN <= 90 Then TE = Int(Rnd(1) * 3) + 8: T = T - TE: Call PLAYINGTIME: GoSub SHTCLK
 If RN > 90 Then TE = Int(Rnd(1) * 3) + 5: T = T - TE: Call PLAYINGTIME: GoSub SHTCLK
+
 RN = Int(Rnd(1) * 100) + 1
 If RN <= 80 Then W5 = DF%: GoTo 439
 If RN > 80 Then GoSub 630: GoTo 566
-439 GoSub 631: GoTo 566
 
+439 GoSub 631: GoTo 566
 
 428 '*** FULL COURT PRESS ***
 If P7(D) = 1 Then X0% = 50: X1% = -1: Call PRDFAT
@@ -689,6 +771,7 @@ If P7(D) = 2 And PASS% = 1 And R0 <= A(p, B1(p, BU%), 4) * 4 Then GoTo GDSHOT
 If P7(D) = 3 And PASS% = 1 And R0 <= 14 Then GoTo GDSHOT
 If P7(D) = 4 And PASS% = 1 And R0 <= 30 Then GoTo GDSHOT
 If P7(D) = 5 Then 432
+
 437 P6 = 0: R0 = Int(Rnd(1) * 3) + 1: J8% = 0: F3S% = Int(Rnd(1) * 7) + 3
 If A(p, B1(p, B), 0) > 60 And R0 = 1 Then F = 24
 If A(p, B1(p, B), 0) > 60 And R0 = 2 Then F = 30
@@ -698,27 +781,36 @@ If A(p, B1(p, B), 0) <= 60 And R0 = 2 Then F = Int(A(p, B1(p, B), 0) * .5 + .5)
 If A(p, B1(p, B), 0) <= 60 And R0 = 3 Then F = Int(A(p, B1(p, B), 0) * .6 + .5)
 PZ% = 1
 If Int(Rnd(1) * 150) + 1 = 40 Then GoTo TIEUP
+
 444 X = 0
 If PZ% = 2 And Int(Rnd(1) * 100) + 1 <= 50 Then PZ% = 3: P6 = 1
 GoTo 520
+
 445 If OF%(p) = 4 Then 437
 If H <= 2 Then 450
+
 446 P6 = 1
 Call SHOTPERCENT
+
 447 PZ% = Int(Rnd(1) * 3) + 5
 GoTo 444
+
 450 If H = 2 And T <= 120 Or H > 2 Then 446
 If A(p, B1(p, B), 3) - A(p, B1(p, B), 7) - A(p, B1(p, B), 11) - A(p, B1(p, B), 12) <= 0 Then 437
 GoTo 446
+
 453 A4 = 0: If H = 2 And T <= 120 Or H > 2 Then 456
 If H > 2 Then 456
 If A(p, B1(p, B), 3) - A(p, B1(p, B), 7) - A(p, B1(p, B), 11) - A(p, B1(p, B), 12) <= 0 Then 437
+
 456 Call SHOTPERCENT: A4 = Int(Rnd(1) * 28) + 1
 R0 = Int(Rnd(1) * 9) + 1
 I2 = Int(Rnd(1) * 5)
 If FA%(p, B1(p, B)) <= -5 Then 460
 If R0 <= A(p, B1(p, I2), 4) Then F = A(p, B1(p, B), 0) + D1(D) + A4 + TF%(p) + TF%(D): TF%(p) = 0: TF%(D) = 0: PZ% = 2: P6 = 1: GoTo 444
+
 460 GoTo 445
+
 461 If (OF%(p) = 8 Or OF%(p) = 7) And D2(D) = 2 Then 465
 If R0 <= D8(4, D2(D)) Then 512
 If R0 <= D8(4, D2(D)) + 1 Then 511
@@ -732,6 +824,7 @@ If OF%(p) = 4 Or OF%(p) = 7 Then OY% = Int((D8(3, D2(D)) / 2) + .5) * -1
 If OF%(p) = 1 Then OY% = 7
 If OF%(p) = 2 Then OY% = -7
 If R0 <= CY + OY% Then 435
+
 465 R0 = Int(Rnd(1) * 100) + 1
 If C7 = 2 Then GS% = 39 + Int(((FY%(2) - 58) * .8) + .5)
 If C7 = 1 Then GS% = 39 + Int(((FY%(2) - 52) * .8) + .5)
@@ -749,13 +842,17 @@ If R0 > GS% Then 437
 R0 = Int(Rnd(1) * 100)
 If R0 <= D8(1, D2(D)) Then 453
 GoTo 445
+
 511 X = 0: GoTo 580
+
 512 Call LASTSHOT: GoSub 1033
 Call MAINSCREEN: X = 88: GoTo 565
+
 513 If P7(D) > 0 And PASS% = 1 Then 508
 Call LASTSHOT
+
 508 GoSub 1033: A(p, B1(p, B), 23) = A(p, B1(p, B), 23) + 1
-If U6 = 0 Then 505
+If displayPause = 0 Then 505
 U$ = "BALL STOLEN BY " + AA$(D, B1(D, P9)) + "!"
 If PB% = 1 Then Call WINDEX: Print U$: Call DELAY: GoTo 505
 
@@ -788,6 +885,7 @@ If RN = 19 Then U$ = AA$(D, B1(D, P9)) + " POKES IT LOOSE!"
 If RN = 20 Then U$ = AA$(D, B1(D, P9)) + " STRIPS IT CLEAN!"
 
 Call PBP
+
 505 A(D, B1(D, P9), 13) = A(D, B1(D, P9), 13) + 1: T0(p) = T0(p) + 1
 Call MAINSCREEN
 C1 = 2: P9 = D: If T <= 0 Then 170
@@ -808,13 +906,14 @@ If PASS% = 1 And P7(p) > 0 And P7(p) <> 3 And RN <= 40 Then GoTo LAYUP
 GoTo 300
 
 515 Call LASTSHOT
+
 517 GoSub 1033
 R0 = Int(Rnd(1) * 25) + 1
 If R0 = 13 Then GoTo TIEUP
 A(p, B1(p, B), 23) = A(p, B1(p, B), 23) + 1: T0(p) = T0(p) + 1
 If SV% <> 1 Then PT% = 1: Call MAKEPBP
 SV% = 0
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "TURNOVER BY "; B$(p): Call DELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "TURNOVER BY "; B$(p): Call DELAY
 If PB% = 0 Then Call PBP
 U$ = "BALL OUT OF BOUNDS TO " + B$(D)
 GoSub 729
@@ -832,7 +931,7 @@ PZ% = 10
 GoTo 447
 
 GDSHOTDES:
-If U6 = 0 Then 529
+If displayPause = 0 Then 529
 
 RN = Int(Rnd(1) * 100) + 1
 If RN <= 25 Then U$ = AA$(p, B1(p, B)) + " BREAKS IN TO FRONT COURT"
@@ -852,7 +951,7 @@ GoTo 529
 520 If J8% = 1 Then PZ% = 4
 Call LASTSHOT: If T <= 0 Then 170
 If PZ% = 4 And F3S% <= 0 Then F3S% = 3
-If U6 = 0 Then 529
+If displayPause = 0 Then 529
 If PZ% = 10 Then GoTo GDSHOTDES
 If F > 70 And FB% = 1 And PASS% = 1 Then PT% = 6: PZ% = 8: Call MAKEPBP: Call PBP: GoTo 529
 If AA$(p, B1(p, B)) <> PB$ And PB$ = "" Then U$ = "PASS TO " + AA$(p, B1(p, B)): Call PBP
@@ -862,7 +961,8 @@ If X8 <= 0 Then U$ = "SHOT CLOCK HAS EXPIRED!": SV% = 1: GoTo 515
 PB$ = AA$(p, B1(p, B))
 YY$ = "HE"
 On PZ% GOTO 521, 522, 523, 524, 525, 526, 527
-521 If U6 = 0 Then 601
+
+521 If displayPause = 0 Then 601
 
 RN = Int(Rnd(1) * 12) + 1
 If RN = 1 Then U$ = YY$ + "'S HEAVILY GUARDED"
@@ -877,16 +977,20 @@ If RN = 9 Then U$ = YY$ + " HAS NOWHERE TO GO"
 If RN = 10 Then U$ = YY$ + " HAS A HAND IN HIS FACE"
 If RN = 11 Then U$ = YY$ + "'S WATCHED BY " + AA$(D, B1(D, B))
 If RN = 12 Then U$ = YY$ + "'S WORKING ON " + AA$(D, B1(D, B))
+
 601 Call PBP: GoTo 529
 
 522 U$ = YY$ + " WORKS FREE INSIDE": Call PBP: U$ = "HE HAS AN OPEN SHOT": Call SHOTSTRING: Call PBP: P6 = 1: GoTo 529
-523 If U6 = 0 Then 529
+
+523 If displayPause = 0 Then 529
 P6 = 1
+
 RN = Int(Rnd(1) * 100) + 1
 If B = 4 And RN <= 25 Then U$ = YY$ + " MAKES A MOVE DOWN LOW": Call PBP: GoTo 602
 If B = 4 And RN <= 50 Then U$ = YY$ + " POSITIONS HIMSELF DOWN LOW": Call PBP: GoTo 602
 If B = 4 And RN <= 75 Then U$ = YY$ + " POSTS UP UNDERNEATH": Call PBP: GoTo 602
 If B = 4 Then U$ = YY$ + " BACKS IN AGAINST " + AA$(D, B1(D, 4)): Call PBP
+
 602 If B = 4 Then U$ = "HE HAS A GOOD SHOT INSIDE": Call SHOTSTRING: Call PBP: GoTo 529
 If (B = 3 Or B = 2) And RN <= 17 Then U$ = YY$ + " DRIVES THE BASELINE": Call PBP: GoTo 603
 If (B = 3 Or B = 2) And RN <= 34 Then U$ = YY$ + " PENETRATES THE LANE": Call PBP: GoTo 603
@@ -894,45 +998,54 @@ If (B = 3 Or B = 2) And RN <= 50 Then U$ = YY$ + " MOVES INSIDE": Call PBP: GoTo
 If (B = 3 Or B = 2) And RN <= 67 Then U$ = YY$ + " DRIVES THE LANE": Call PBP: GoTo 603
 If (B = 3 Or B = 2) And RN <= 84 Then U$ = YY$ + " MOVES INTO THE PAINT": Call PBP: GoTo 603
 If (B = 3 Or B = 2) Then U$ = YY$ + " DRIVES UNDERNEATH": Call PBP
+
 603 If (B = 3 Or B = 2) Then U$ = "HE'S GOT A GOOD SHOT UNDERNEATH": Call SHOTSTRING: Call PBP: GoTo 529
 If (B = 0 Or B = 1) And RN <= 25 Then U$ = YY$ + " DRIVES THE LANE": Call PBP: GoTo 604
 If (B = 0 Or B = 1) And RN <= 50 Then U$ = YY$ + " DRIVES THROUGH THE KEY": Call PBP: U$ = "HE'S INTO THE LANE": Call PBP: GoTo 604
 If (B = 0 Or B = 1) And RN <= 75 Then U$ = YY$ + " DRIVES TO THE BASKET": Call PBP: GoTo 604
 U$ = YY$ + " DRIVES THROUGH AN OPENING": Call PBP
+
 604 U$ = "HE HAS A GOOD SHOT CLOSE IN": Call SHOTSTRING: Call PBP
 GoTo 529
 
 524 U$ = "HE'S OPEN FROM 3-POINT RANGE!"
 U$ = U$ + Str$(F3S%) + "*"
 Call PBP: P6 = 1: GoTo 529
+
 525 U$ = "HE'S OPEN FROM MEDIUM RANGE"
 Call SHOTSTRING
 Call PBP: P6 = 1: GoTo 529
+
 526 U$ = "HE'S OPEN FROM MEDIUM RANGE"
 Call SHOTSTRING
 Call PBP: P6 = 1: GoTo 529
+
 527 U$ = "HE'S OPEN FROM MEDIUM RANGE"
 Call SHOTSTRING
 Call PBP: P6 = 1: GoTo 529
 
 529 If F <= 0 Then F = 1
 If F >= 100 Then F = 99
-If U6 = 0 Then 607
+If displayPause = 0 Then 607
 If PB% = 1 Then Call WINDEX: Print "PASS TO "; AA$(p, B1(p, B)); " OF "; B$(p)
 If PB% = 1 And PZ% <> 4 Then Locate 10: Print "SHOT % "; F;
 If PB% = 1 And PZ% = 4 Then Locate 10: Print "3 PT SHOT % "; F3S%;: Print " *";: GoTo 528
 If PB% = 1 And PZ% >= 2 And PZ% <= 8 Then Print "*";
-607 If U6 = 0 Or PB% = 1 Then 528
+
+607 If displayPause = 0 Or PB% = 1 Then 528
 If PZ% <> 4 Then Locate 8, 41: Print Using "SHOT % ###   "; F;
 If PZ% = 4 Then Locate 8, 41: Print Using "SHOT % ###"; F3S%;: Print " *";: GoTo 528
 If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
-528 Print: If PB% = 1 And U6 <> 0 Then Call DELAY
+
+528 Print: If PB% = 1 And displayPause <> 0 Then Call DELAY
 If U5 <> 0 Or CM% = 1 Then 949
-530 I$ = InKey$: If I$ = "" Then 530
+
+530 I$ = GetKeyPress$
 If UCase$(I$) = "T" Then Call TICKER: Call SCOREBOARD: GoTo 529
 If UCase$(I$) = "D" Then Call ZONECHANGE: Call SCOREBOARD: GoTo 529
 P6 = Val(I$): If P6 < 1 Or P6 > 4 Then P6 = 0
 If P6 = 4 Then FT% = 1
+
 532 If Val(I$) = 3 And (U5 = 0 Or U5 = 1 And p = CT) And H >= 4 And T < 240 Then P6 = 3
 If Val(I$) = 2 And (U5 = 0 Or U5 = 1 And D = CT) And T1(p) > 0 Then P6 = 2
 P3 = P6: If P6 = 2 And T1(p) = 0 Then 530
@@ -943,6 +1056,7 @@ If U5 = 1 And p = CT And J8% = 1 Or U5 = 2 And J8% = 1 Then P6 = 4
 If U5 = 1 And p = CT And H >= 2 And T < 30 And S(D, 0) - S(p, 0) = 3 Or U5 = 2 And H >= 2 And T < 30 And S(D, 0) - S(p, 0) = 3 Then P6 = 4
 If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
 On P6 + 1 GOTO 350, 537, 640, 584, 359
+
 537 ' *** SHOOT !!! ***
 PT% = 3
 Call MAKEPBP
@@ -950,24 +1064,28 @@ Call PBP
 S = 0: SS = 0: R0 = Int(Rnd(1) * 100) + 1: A(p, B1(p, B), 7) = A(p, B1(p, B), 7) + 1
 GG = S(D, 0) - S(p, 0): If H > 1 And T <= 30 And GG = 2 Or H > 1 And T <= 30 And GG = 0 Or H > 1 And T <= 30 And GG = -2 Then 540
 If R0 <= A(p, B1(p, B), 16) + F5%(D, 7) Then A(p, B1(p, B), 7) = A(p, B1(p, B), 7) - 1: GoSub 1033: LT = 0: GoTo 589
+
 540 S = Int(Rnd(1) * 100) + 1
 R0 = F * ((DY / 100) + (.03 * X3%))
 If H > 1 And T < 30 And GG = 2 Or H > 1 And T < 30 And GG = 0 Or H > 1 And T < 30 And GG = -2 Then 542
 If S <= R0 Then GoSub 1033: LT = 0: GoTo 610
+
 542 If S <= F Then LT = 0: GoTo 553
 R0 = Int(Rnd(1) * 100) + 1
 LT = 0: GoTo 548
-545 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "SHOT MISSED BY "; AA$(p, B1(p, B)): Call DELAY
+
+545 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "SHOT MISSED BY "; AA$(p, B1(p, B)): Call DELAY
 If PB% = 0 Then PT% = 8: Call MAKEPBP: Call PBP
 
 546 GoSub 1033: T = T - 4: TE = 4
 Call PLAYINGTIME: GoSub SHTCLK
 If T <= 0 Then TE = T: Call PLAYINGTIME: GoTo 170
 Call MAINSCREEN: LT = 0: GoTo 670
+
 548 I2 = Int(Rnd(1) * 5) + 1
 I3 = Int(Rnd(1) * 5)
 If I2 > A(D, B1(D, I3), 6) Then 545
-If U6 = 0 Then 554
+If displayPause = 0 Then 554
 If PB% = 1 Then Call WINDEX: Print "SHOT BLOCKED BY "; AA$(D, B1(D, I3)): Call DELAY: GoTo 554
 
 RN = Int(Rnd(1) * 100) + 1
@@ -980,16 +1098,20 @@ If RN <= 35 Then U$ = "SHOT BLOCKED CLEANLY BY " + AA$(D, B1(D, I3)) + "!!": GoT
 If RN <= 70 Then U$ = "SHOT BLOCKED BY " + AA$(D, B1(D, I3)) + "!!": GoTo 549
 If RN <= 90 Then U$ = "SHOT REJECTED BY " + AA$(D, B1(D, I3)) + "!!": GoTo 549
 U$ = "SHOT SWATTED OUT BY " + AA$(D, B1(D, I3)) + "!!": GoTo 549
+
 549 Call PBP
 
 554 A(D, B1(D, I3), 15) = A(D, B1(D, I3), 15) + 1: X = 98: GoTo 546
+
 553 If DK% = 1 And PB% = 0 Then PT% = 2: Call MAKEPBP: U$ = "STUFF BY ": DK% = 0: GoTo 559
 If DK% = 1 And PB% = 1 Then U$ = "STUFF BY ": DK% = 0: GoTo 559
 If PB% = 0 And PZ% = 8 Then PT% = 7: Call MAKEPBP: Call PBP: PZ% = 0: GoTo 560
 U$ = "BASKET BY "
+
 559 U$ = U$ + AA$(p, B1(p, B)) + " !!!"
-'--- Why would we not just call SELECTPBP here???
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call DELAY: GoTo 560
+'--- Why would we not call SELECTPBP here???
+'essentially if PB% = 0 then we're not printing it!
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call DELAY: GoTo 560
 
 RN = Int(Rnd(1) * 100) + 1
 If RN <= 50 Then 561
@@ -1017,37 +1139,45 @@ If RN = 19 Then U$ = "BULLSEYE!"
 If RN = 20 Then U$ = "HE SCORES!"
 If RN = 21 Then U$ = "HE HAS IT!"
 If RN = 22 Then U$ = "HE CONNECTS!"
+
 561 If PB% = 0 Then Call PBP
+
 560 S(p, H) = S(p, H) + 2
 S(p, 0) = S(p, 0) + 2
 GoSub 1054
 Call MAINSCREEN
 A(p, B1(p, B), 8) = A(p, B1(p, B), 8) + 1
+
 562 U$ = B$(D) + " BALL O.B. AFTER SCORE"
-If PB% = 1 And U6 <> 0 Then Locate 9, 1: Print U$
+If PB% = 1 And displayPause <> 0 Then Locate 9, 1: Print U$
 If PB% = 0 Then GoSub 871: Call PBP
 Call DELAY: GoSub 1033: T = T - 4: TE = 4: Call PLAYINGTIME: GoSub SHTCLK
 If T <= 0 Then TE = T: Call PLAYINGTIME: GoTo 170
 Call MAINSCREEN: GoSub 3000: Call STOPPAGE: Call PRESSGUARD: GoTo 300
+
 565 GoSub 630: LT = 4
+
 566 GoTo 9065
+
 567 If T <= 0 Then 170
 Call DEADBALLOPTIONS: GoSub BADPR
-If N7% = 0 And PB% = 0 Or N7% = 0 And U6 = 0 Then Call WINDEX: U$ = B$(p) + " BALL O.B. AFTER FOUL": Call PBP: GoSub 871: GoTo 350
+If N7% = 0 And PB% = 0 Or N7% = 0 And displayPause = 0 Then Call WINDEX: U$ = B$(p) + " BALL O.B. AFTER FOUL": Call PBP: GoSub 871: GoTo 350
 If N7% = 0 And PB% = 1 Then Call WINDEX: Print B$(p) + " BALL O.B. AFTER FOUL": Call DELAY: GoSub 871: GoTo 350
 GoTo 8000
 
-570 If U6 = 0 Then 571
+570 If displayPause = 0 Then 571
 If PB% = 0 Then U$ = "1+1 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: GoTo 571
                   
 Call WINDEX: Print B$(p)
 Print "1+1 FT: "; AA$(p, B1(p, B)); " "; A(p, B1(p, B), 1); " %"
           
+
 571 X = 50: Call DEADBALLOPTIONS: GoSub BADPR: X = 0
-If U6 = 0 Then 572
+If displayPause = 0 Then 572
 If PB% = 0 Then U$ = "1+1 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: GoTo 572
 
 Call WINDEX: Print B$(p): Print "1+1 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+
 572 For F3 = 1 To 2
     A(p, B1(p, B), 9) = A(p, B1(p, B), 9) + 1
     S = Int(Rnd(1) * 100) + 1
@@ -1069,6 +1199,7 @@ GoSub 871
 Call DELAY
 Call STOPPAGE
 Call PRESSGUARD: GoTo 300
+
 580 Call LASTSHOT: GoSub 1033: GoSub 3000: GoSub 630: B = W5: If P2(D) > 6 Then 570
 If T <= 0 Then 170
 U$ = "OFFENSIVE FOUL"
@@ -1082,15 +1213,19 @@ T0(D) = T0(D) + 1
 Call MAINSCREEN
 Call DEADBALLOPTIONS: GoSub BADPR
 Call PRESSGUARD: GoTo 300
+
 584 IN = 99
 Call LASTSHOT: If T <= 0 Then 170
 C1 = 2: P9 = D
 U$ = "DESIGNATED FOULER (0-4)"
 Call SELECTPBP
 If U5 = 1 And D = CT Or U5 = 2 Then W5 = Int(Rnd(1) * 5): GoTo 588
-586 I$ = InKey$: If I$ = "" Then 586
+
+586 I$ = GetKeyPress$
 W5 = Val(I$): If W5 < 0 Or W5 > 4 Then 586
+
 588 GoSub 631: GoTo 566
+
 589 T = T - 4: TE = 4
 Call PLAYINGTIME: GoSub SHTCLK
 Call MAINSCREEN: GoSub 630
@@ -1105,10 +1240,11 @@ Print B$(p)
 Print "2 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
 
 591 X = 50: Call DEADBALLOPTIONS: GoSub BADPR: X = 0: A(p, B1(p, B), 9) = A(p, B1(p, B), 9) + 2
-If U6 = 0 Then 592
+If displayPause = 0 Then 592
 If PB% = 0 Then U$ = "2 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: GoTo 592
 Call WINDEX: Print B$(p)
 Print "2 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+
 592 For F3 = 1 To 2: S = Int(Rnd(1) * 100) + 1
     FX% = A(p, B1(p, B), 1)
     If FA%(p, B1(p, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
@@ -1119,6 +1255,7 @@ Print "2 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
 Next F3: LT = 0
 If T <= 0 Then TE = T: Call PLAYINGTIME: GoTo 170
 If S > FX% Then 650
+
 598 GoSub 3000
 
 U$ = B$(p) + " BALL O.B. AFTER SCORE"
@@ -1127,12 +1264,14 @@ GoSub 871
 Call DELAY
 Call STOPPAGE: B = 6: X = 0
 Call PRESSGUARD: GoTo 300
+
 599 A(p, B1(p, B), 10) = A(p, B1(p, B), 10) + 1
-If U6 <> 0 Then U$ = "FREE THROW IS GOOD": Call PBP
+If displayPause <> 0 Then U$ = "FREE THROW IS GOOD": Call PBP
 S(p, H) = S(p, H) + 1: S(p, 0) = S(p, 0) + 1
 Call MAINSCREEN
 Return
-600 If U6 <> 0 Then U$ = "FREE THROW IS MISSED": Call PBP
+
+600 If displayPause <> 0 Then U$ = "FREE THROW IS MISSED": Call PBP
 Return
 
 610 T = T - 4: TE = 4: Call PLAYINGTIME: GoSub SHTCLK: Call MAINSCREEN: GoSub 1054
@@ -1141,16 +1280,16 @@ If DK% = 1 And PB% = 1 Then Call WINDEX: Print "STUFF BY " + AA$(p, B1(p, B)): C
 If PZ% = 8 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call PBP: GoTo 617
 F3 = 1
 If PB% = 0 Then U$ = "BASKET GOOD BY " + AA$(p, B1(p, B)): Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(p, B1(p, B)): Call DELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(p, B1(p, B)): Call DELAY
 
 617 U$ = "... AND HE'S FOULED !!!": GoSub 729: Call DELAY: F3 = 1
 S(p, H) = S(p, H) + 2: S(p, 0) = S(p, 0) + 2: A(p, B1(p, B), 8) = A(p, B1(p, B), 8) + 1: Call MAINSCREEN: GoSub 630
 
-619 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print B$(p): Print "1 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+619 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print B$(p): Print "1 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
 If PB% = 0 Then U$ = AA$(p, B1(p, B)) + " WILL SHOOT 1": Call PBP
 X = 50: Call DEADBALLOPTIONS: GoSub BADPR: X = 0
 A(p, B1(p, B), 9) = A(p, B1(p, B), 9) + 1: S = Int(Rnd(1) * 100) + 1
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print B$(p): Print "1 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print B$(p): Print "1 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
 FX% = A(p, B1(p, B), 1)
 If FA%(p, B1(p, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 If S <= FX% And PB% = 0 Then GoSub 599
@@ -1167,12 +1306,14 @@ Call STOPPAGE: B = 6
 X = 0: Call PRESSGUARD: GoTo 300
 
 630 GoSub 1065
+
 631 A(D, B1(D, W5), 12) = A(D, B1(D, W5), 12) + 1: P2(D) = P2(D) + 1: Call MAINSCREEN
 If A(D, B1(D, W5), 3) - A(D, B1(D, W5), 7) - A(D, B1(D, W5), 11) - A(D, B1(D, W5), 12) = 0 Then A(D, B1(D, W5), 3) = A(D, B1(D, W5), 3) + 1
 If A(D, B1(D, W5), 12) < NF% Then GoSub 638
 If A(D, B1(D, W5), 12) >= NF% Then GoSub 1000: GoSub 635
 Return
-635 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5)): Call DELAY
+
+635 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5)): Call DELAY
 If PB% = 0 Then U$ = "FOUL CALLED ON " + AA$(D, B1(D, W5)): Call PBP
 If IN% = 1 Then U$ = "FOUL IS RULED INTENTIONAL!": GoSub 729: Call DELAY
 U$ = "AND HE HAS JUST FOULED OUT !!!"
@@ -1181,7 +1322,8 @@ Call DELAY
 If P2(D) > 6 Then X = 50
 If U5 = 0 Or U5 = 1 And D <> CT Then P9 = D: C1 = 1: Call LINEUPS: Call FOULSAFE: Call DEADBALLOPTIONS: GoSub BADPR: Call SCOREBOARD
 Call CLOCKOVER: X = 0: Return
-638 If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5)): Call DELAY: Print "HE HAS "; A(D, B1(D, W5), 12): Call DELAY
+
+638 If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "FOUL ON "; AA$(D, B1(D, W5)): Call DELAY: Print "HE HAS "; A(D, B1(D, W5), 12): Call DELAY
 If PB% = 0 Then U$ = "FOUL NUMBER" + Str$(A(D, B1(D, W5), 12)) + " CALLED ON " + AA$(D, B1(D, W5)): Call PBP
 Call DELAY
 Return
@@ -1189,27 +1331,37 @@ Return
 640 PB$ = "": If T1(p) <= 0 Then 648
 T1(p) = T1(p) - 1
 Call SCOREBOARD
+
 RN = Int(Rnd(1) * 100)
 If RN <= 8 Then TF%(p) = 10
 If RN > 8 And RN <= 16 Then TF%(p) = 5
+
 RN = Int(Rnd(1) * 100)
 If RN <= 8 Then TF%(D) = -10
 If RN > 8 And RN <= 16 Then TF%(D) = -5
 T = T + M5: TE = -M5: Call PLAYINGTIME
 If C7 >= 1 Then X8 = X8 + M5
 '
-For I = 0 To 1: For I1 = 0 To 1
-    PR%(I, I1) = 0
-Next: Next
+For I = 0 To 1
+    For I1 = 0 To 1
+        PR%(I, I1) = 0
+    Next
+Next
+
 U$ = "TIME OUT " + B$(p)
 Call SELECTPBP
 Call DELAY: Call DEADBALLOPTIONS
-For I = 0 To 1: For I1 = 0 To 13: FA%(I, I1) = FA%(I, I1) + 1
-    If FA%(I, I1) > 0 Then FA%(I, I1) = 0
-Next: Next
+For I = 0 To 1
+    For I1 = 0 To 13
+        FA%(I, I1) = FA%(I, I1) + 1
+        If FA%(I, I1) > 0 Then FA%(I, I1) = 0
+    Next
+Next
+
 648 If A6 = 0 Then Call PRESSGUARD: GoTo 300
 GoTo 350
 WHOLAY:
+
 RN = Int(Rnd(1) * 100) + 1
 If RN <= 38 Then B = 0
 If RN > 38 And RN <= 75 Then B = 1
@@ -1222,6 +1374,7 @@ For I = 0 To 1
     If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
 Next
 Return
+
 650 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GoSub 1033: S = 0
 R0 = Int(Rnd(1) * 100) + 1
 If H > 1 And T < 30 And S(D, 0) - S(p, 0) = 2 And R0 <= 12 Or H > 1 And T < 30 And S(p, 0) - S(D, 0) = 0 And R0 <= 12 Then Call OFFREBOUND: GoTo 760
@@ -1229,9 +1382,8 @@ R0 = Int(Rnd(1) * 100) + 1
 If R0 <= 11 Then FF% = 1: GoTo 707
 If R0 <= 19 Then Call OFFREBOUND: GoTo 760
 Call DEFREBOUND: GoTo 800
+
 670 A6 = 1: P6 = 0: A4 = 0: D6 = 0: GoSub 1033: GoTo 700
-
-
 
 700 S = 0: A4 = 0: D6 = 0: R0 = Int(Rnd(1) * 100) + 1
 GG = S(D, 0) - S(p, 0)
@@ -1242,31 +1394,37 @@ If R0 <= DY Then FF% = 1: GoTo 707
 If R0 <= 17 Then 750
 If R0 <= 19 Then 730
 If R0 <= 20 Then 740
+
 707 TP% = 0
 GoTo 770
-710 If U6 = 0 Then 713
+
+710 If displayPause = 0 Then 713
 If PB% = 1 Then Call WINDEX: Print AA$(D, B1(D, B)); " HAS THE DEF RB FOR": Print B$(D); " AND IS FOULED !!!": Call DELAY: GoTo 713
 U$ = AA$(D, B1(D, B)) + " HAS THE DEF RB": Call PBP
 U$ = "HE'S FOULED !!!": Call PBP
+
 713 R3(D) = R3(D) + 1: A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1: Call MAINSCREEN: GoSub 3000: GoTo 565
+
 720 U$ = AA$(p, B1(p, B)) + " HAS THE OFF RB"
 If PB% = 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(p): Call DELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR "; B$(p): Call DELAY
 U$ = "HE'S FOULED !!!"
 GoSub 729
 A(p, B1(p, B), 11) = A(p, B1(p, B), 11) + 1: A(p, B1(p, B), 24) = A(p, B1(p, B), 24) + 1
 R3(p) = R3(p) + 1: Call MAINSCREEN: GoTo 565
+
 725 If X = 98 Then 700
 T0(p) = T0(p) + 1
 U$ = "OFFENSIVE GOAL TENDING"
-If PB% = 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call DELAY
+Call SELECTPBP
+
 U$ = "BALL O.B. TO " + B$(D)
 GoSub 729
 Call DELAY
 GoSub 3000: Call DEADBALLOPTIONS: GoSub BADPR: GoTo 300
+
 729 If PB% = 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Print U$: Call DELAY
+If PB% = 1 And displayPause <> 0 Then Print U$: Call DELAY
 Return
 
 730 If X = 99 Then 700
@@ -1274,35 +1432,36 @@ Call OFFREBOUND
 A(p, B1(p, B), 7) = A(p, B1(p, B), 7) + 1: A(p, B1(p, B), 8) = A(p, B1(p, B), 8) + 1
 A(p, B1(p, B), 11) = A(p, B1(p, B), 11) + 1: R3(p) = R3(p) + 1: S(p, H) = S(p, H) + 2
 S(p, 0) = S(p, 0) + 2: Call MAINSCREEN
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "TIPPED IN BY "; AA$(p, B1(p, B)): Print "   BASKET GOOD !!!": Call DELAY
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "TIPPED IN BY "; AA$(p, B1(p, B)): Print "   BASKET GOOD !!!": Call DELAY
 If PB% = 0 Then U$ = AA$(p, B1(p, B)) + " TIPS IT IN!!": Call PBP
 GoSub 3000
 U$ = B$(p) + " BALL O.B. AFTER SCORE": GoSub 871
 GoSub 729: Call DELAY
 Call STOPPAGE: Call PRESSGUARD
 GoTo 300
+
 740 If X = 99 Then 700
 U$ = "DEFENSIVE GOAL TENDING"
-If PB% = 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call DELAY
+Call SELECTPBP
 If TP% = 1 Then TP% = 0: GoTo 369
 GoTo 560
+
 750 R0 = Int(Rnd(1) * 100) + 1: If R0 <= 35 Then 752
 R3(D) = R3(D) + 1: Call MAINSCREEN
 U$ = "RB KNOCKED O.B. TO " + B$(D)
-If PB% = 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call DELAY
+Call SELECTPBP
 Call DELAY: Call DEADBALLOPTIONS: GoSub BADPR: GoSub 3000: C1 = 2: P9 = p: GoTo 300
+
 752 R3(p) = R3(p) + 1: Call MAINSCREEN
 U$ = "RB KNOCKED O.B. TO " + B$(p)
-If PB% = 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call DELAY
+Call SELECTPBP
 Call DELAY: Call DEADBALLOPTIONS: GoSub BADPR: LT = 4: GoTo 520
+
 760 If FF% = 1 Then FF% = 0: GoTo 720
 A(p, B1(p, B), 24) = A(p, B1(p, B), 24) + 1: A(p, B1(p, B), 11) = A(p, B1(p, B), 11) + 1: R3(p) = R3(p) + 1: Call MAINSCREEN
 U$ = AA$(p, B1(p, B)) + " HAS THE OFF RB"
-If PB% = 0 And U6 <> 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(p): Call DELAY
+If PB% = 0 And displayPause <> 0 Then Call PBP
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(p): Call DELAY
 If T <= 0 Then 170
 R0 = Int(Rnd(1) * 130) + 1
 PB$ = AA$(p, B1(p, B))
@@ -1310,9 +1469,9 @@ If R0 = 32 Then GoTo RBTIEUP
 R0 = Int(Rnd(1) * 10) + 1: Call SHOTPERCENT
 If H > 2 Or H = 2 And T <= 120 Then 765
 If A(p, B1(p, B), 3) - A(p, B1(p, B), 7) - A(p, B1(p, B), 11) - A(p, B1(p, B), 12) <= 0 Then F = Int(F * .6 + .5)
+
 765 If R0 <= 8 Then PZ% = 9: P6 = 1: GoTo 537
 GoTo 520
-
 
 770 RB = 0
 For I = 0 To 9: RB(I) = 0: Next
@@ -1337,8 +1496,10 @@ If D2(D) = 1 Then XQ = Int((RB * .12) + .5)
 If D2(D) = 2 Then XQ = Int((RB * .1) + .5)
 If D2(D) = 3 Then XQ = Int((RB * .14) + .5)
 If CZ%(p) = 1 Then XQ = Int((RB * .17) + .5)
+
 RN = Rnd(1) * RB
 If RN <= ORB + XQ Then GoTo OREB
+
 RN = Rnd(1) * DRB
 For B = 5 To 9
     If RN <= RB(B) Then B = B - 5: GoTo 800
@@ -1346,6 +1507,7 @@ For B = 5 To 9
 Next
 B = Int(Rnd(1) * 5): GoTo 800
 OREB:
+
 RN = Rnd(1) * ORB
 For B = 0 To 4
     If RN <= RB(B) Then 760
@@ -1354,12 +1516,11 @@ Next
 B = Int(Rnd(1) * 5)
 GoTo 760
 
-
 800 If FF% = 1 Then FF% = 0: GoTo 710
 A(D, B1(D, B), 11) = A(D, B1(D, B), 11) + 1: R3(D) = R3(D) + 1: Call MAINSCREEN
 U$ = AA$(D, B1(D, B)) + " HAS THE DEF RB"
-If PB% = 0 And U6 <> 0 Then Call PBP
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(D): Call DELAY
+If PB% = 0 And displayPause <> 0 Then Call PBP
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Print "FOR " + B$(D): Call DELAY
 PB$ = AA$(D, B1(D, B))
 C1 = 2: P9 = D: GoSub 3000: FB% = 1
 PB$ = AA$(p, B1(p, B))
@@ -1373,7 +1534,9 @@ For I = 0 To 13
     M8 = 100 - A(P9, I, 19)
     If M8 = 0 Then 821
     M9 = 100 / M8
+
 821 A(P9, I, 16) = Int((A(P9, I, 16) * M9) + .5): Next I
+
 822 Return
 
 871 Locate 8, 41: Print "            ": Return
@@ -1383,9 +1546,9 @@ If C7 = 1 Then X8 = 45
 If C7 = 2 Then X8 = 35
 GoTo 240
 
-
 949 If H >= 2 And T <= 240 And S(p, 0) - S(D, 0) > 0 And U5 = 1 And p = CT Then 951
 If U5 = 2 Or U5 = 1 And D = CT Then 980
+
 951 If T <= 1 Or C7 >= 1 And X8 <= 7 Then P6 = 1: GoTo 532
 If T <= 8 And S(p, 0) - S(D, 0) <= -3 And H >= 2 Then P6 = 1: GoTo 532
 If T <= 20 And S(p, 0) - S(D, 0) <= -5 And H >= 2 Then P6 = 1: GoTo 532
@@ -1397,18 +1560,20 @@ If (U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And p = CT Or 
 If (U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And p = CT Or U5 = 2) And T <= 840 And T >= 720 And H = 2 And T1(p) >= 3 Then P6 = 2: CTO% = 1: GoTo 532
 If (U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And p = CT Or U5 = 2) And T <= 300 And T >= 180 And H = 2 And T1(p) >= 2 Then P6 = 2: CTO% = 1: GoTo 532
 GoTo 532
+
 980 If (U5 = 1 Or U5 = 0) And CM% <> 1 Then 530
 GoTo 951
-
 
 1000 M9 = 0
 For I3 = 0 To 13
     If I3 = B1(D, W5) Or AA$(D, I3) = "XXX" Or B%(D, I3, 18) <> 0 Then 1002
     M9 = M9 + 1
+
 1002 Next
 For I3 = 0 To 13
     If I3 = B1(D, W5) Or AA$(D, I3) = "XXX" Or B%(D, I3, 18) <> 0 Then 1003
     If A(D, I3, 0) <= A(D, B1(D, W5), 0) Then A(D, I3, 3) = A(D, I3, 3) + Int((A(D, B1(D, W5), 3) / M9) + .5)
+
 1003 Next I3
 Return
 
@@ -1418,11 +1583,13 @@ If C7 = 2 Then X8 = 35
 LS = 4
 If T < 46 And X8 >= T Or H > 2 And T = 300 Then Locate 5, 5: Print "     "
 If T < 6 And LS = 4 And LT <> 4 Then F = 5
+
 1034 Return
 
 1054 R0 = Int(Rnd(1) * 3) + 1: I2 = Int(Rnd(1) * 5)
 If R0 <= A(p, B1(p, I2), 4) And AA$(p, B1(p, B)) <> AA$(p, B1(p, I2)) Then 1060
 If A(p, B1(p, I2), 4) > 3 And R0 < A(p, B1(p, I2), 4) - 3 And AA$(p, B1(p, B)) <> AA$(p, B1(p, I2)) Then 1060
+
 1058 Return
 
 1060 W5 = 0
@@ -1435,6 +1602,7 @@ For M8 = 0 To 4
     W5 = W5 + A(p, B1(p, M8), 4)
     If R0 <= W5 Then 1062
 Next
+
 1062 I2 = M8
 If AA$(p, B1(p, B)) = AA$(p, B1(p, I2)) Then 1060
 A(p, B1(p, I2), 14) = A(p, B1(p, I2), 14) + 1
@@ -1444,6 +1612,7 @@ GoTo 1058
 For M8 = 0 To 4: W5 = W5 + A(D, B1(D, M8), 17)
     If M9 <= W5 Then 1069
 Next M8
+
 1069 If M8 < 0 Or M8 > 4 Then M8 = Int(Rnd(1) * 5)
 W5 = M8: Return
 
@@ -1462,12 +1631,13 @@ Call PBP
 RBTIEUP:
 R0 = Int(Rnd(1) * 100) + 1
 P9 = Int(Rnd(1) * 5)
-If PB% = 1 And U6 <> 0 Then Call WINDEX: Print "JUMP BALL!": Call DELAY: GoTo 5005
+If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print "JUMP BALL!": Call DELAY: GoTo 5005
 If R0 <= 25 Then U$ = AA$(p, B1(p, B)) + " IS TIED UP BY " + AA$(D, B1(D, P9))
 If R0 > 25 And R0 <= 50 Then U$ = AA$(D, B1(D, P9)) + " TIES UP " + AA$(p, B1(p, B))
 If R0 > 50 And R0 <= 75 Then U$ = "HELD BALL!"
 If R0 > 75 Then U$ = "JUMP BALL!"
 Call PBP
+
 5005 U$ = "POSSESSION ARROW TO " + B$(PA%)
 GoSub 729
 Call DELAY
@@ -1503,7 +1673,6 @@ If SPECIAL = 1 Then
     Call BOX2SPC(NM$)
 End If
 
-
 8500 GoSub 8650
 Cls
 If X = 1 Then 8532
@@ -1514,6 +1683,7 @@ Call BOXSCREEN
 If H > 2 Then EG% = 1
 Call TICKER: EG% = 0
 If H = 2 Then Call FOULHARD: Return
+
 8532 GoSub 8655
 Color 15, 0
 Cls: I = 1: Call DRAWBOX
@@ -1522,8 +1692,10 @@ Locate , (80 - Len(U$)) / 2
 Print U$
 Color 15, 0
 If AP1 = 1 And U5 = 2 Then 8535
-8533 I$ = InKey$: If I$ = "" Then 8533
+
+I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 8500
+
 8535 Color 15, 0
 Cls: I = 1: Call DRAWBOX
 U$ = "SAVE STATS (YN)"
@@ -1531,16 +1703,18 @@ Locate , (80 - Len(U$)) / 2
 Print U$
 Color 15, 0
 If AP1 = 1 Then 9506
-Call GETAKEY(I$)
+I$ = GetKeyPress$
 If UCase$(I$) <> "Y" Then 9507
+
 9506 Call SAVESTATS
+
 9507 Color 15, 0:
 Cls: I = 1: Call DRAWBOX
 U$ = "PLAY ANOTHER GAME (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
 If AP1 = 1 Then 8637
-Call GETAKEY(I$)
+I$ = GetKeyPress$
 If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
 If DRIVE% >= 67 Then 8637
 Color 15, 0
@@ -1552,33 +1726,40 @@ Color 15, 0
 'Print U$
 'Call HITKEY
 Color 15, 0
+
 8637 Color 15, 0
 Cls
 Run "COLHOOP.EXE"
-
 
 8650 Cls
 Color 14: Print "(0) ";: Color 15: Print "STATS TO SCREEN": Print
 Color 14: Print "(1) ";: Color 15: Print "STATS TO PRINTER": Print
 Color 14: Print "(2) ";: Color 15: Print "STATS TO TEXT FILE"
 If AP1 = 1 And U5 = 2 Then X = 2: Call FILEBOX: Return
-8651 I$ = InKey$: If I$ = "" Then 8651
+
+I$ = GetKeyPress$
 X = Val(I$)
 If X = 1 Then Call PRINTBOX
 If X = 2 Then Call FILEBOX
+
 8655 If X >= 1 Then X = 0
 Return
+
 8660 If X = 0 Then Cls
 Return
-8670 If X = 0 Then Call HITKEY
+
+8670 If X = 0 Then
+    If AP1 = 1 Xor U5 = 2 Then
+        I$ = GetKeyPress
+    End If
+End If
 Return
-
-
 
 9030 I2 = Int(Rnd(1) * 50) + 1: If I2 = 43 And TF% = 1 And S > F3S% Then A(p, B1(p, B), 7) = A(p, B1(p, B), 7) - 1: W%(p, B1(p, B), 1) = W%(p, B1(p, B), 1) - 1: GoSub 1033: GoTo 9055
 If I2 = 43 And TF% = 1 And S <= F3S% Then 9040
 If S > F3S% Then 361
 GoTo 363
+
 9040 T = T - 4: TE = 4: Call PLAYINGTIME: GoSub SHTCLK: Call MAINSCREEN: GoSub 1054
 U$ = "3 PT BASKET GOOD BY " + AA$(p, B1(p, B))
 Call SELECTPBP
@@ -1588,15 +1769,18 @@ GoSub 729
 F3 = 1
 S(p, H) = S(p, H) + 3: S(p, 0) = S(p, 0) + 3: A(p, B1(p, B), 8) = A(p, B1(p, B), 8) + 1: W%(p, B1(p, B), 0) = W%(p, B1(p, B), 0) + 1: Call MAINSCREEN: GoSub 630
 GoTo 619
+
 9055 T = T - 4: TE = 4: Call PLAYINGTIME: GoSub SHTCLK: Call MAINSCREEN: GoSub 630
-If U6 = 0 Then 9056
+If displayPause = 0 Then 9056
 If PB% = 0 Then U$ = "3 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: Call DELAY: GoTo 9056
 Call WINDEX: Print B$(p): Print "3 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+
 9056 X = 50: Call DEADBALLOPTIONS: GoSub BADPR: X = 0: A(p, B1(p, B), 9) = A(p, B1(p, B), 9) + 3
-If U6 = 0 Then 9057
+If displayPause = 0 Then 9057
 If PB% = 0 Then U$ = "3 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: GoTo 9057
 Call WINDEX: Print B$(p)
 Print "3 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+
 9057 For F3 = 1 To 3: S = Int(Rnd(1) * 100) + 1
     FX% = A(p, B1(p, B), 1)
     If FA%(p, B1(p, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
@@ -1608,18 +1792,22 @@ Next F3: LT = 0
 If T <= 0 Then TE = T: Call PLAYINGTIME: GoTo 170
 If S > FX% Then 650
 GoTo 598
+
 9065 If IN% = 1 Then 9070
 If TB% = 1 And P2(D) >= 10 Then 9070
 If P2(D) > 6 Then 570
 GoTo 567
-9070 If U6 = 0 Then 9071
+
+9070 If displayPause = 0 Then 9071
 If PB% = 0 Then U$ = "2 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: Call DELAY: GoTo 9071
 Call WINDEX: Print B$(p): Print "2 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+
 9071 X = 50: Call DEADBALLOPTIONS: GoSub BADPR: X = 0
-If U6 = 0 Then 9072
+If displayPause = 0 Then 9072
 If PB% = 0 Then U$ = "2 FT: " + AA$(p, B1(p, B)) + Str$(A(p, B1(p, B), 1)) + " %": Call PBP: GoTo 9072
 Call WINDEX: Print B$(p)
 Print "2 FT: "; AA$(p, B1(p, B)); "   "; A(p, B1(p, B), 1); " %"
+
 9072 For F3 = 1 To 2: A(p, B1(p, B), 9) = A(p, B1(p, B), 9) + 1: S = Int(Rnd(1) * 100) + 1
     FX% = A(p, B1(p, B), 1)
     If FA%(p, B1(p, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
@@ -1642,6 +1830,9 @@ Call PRESSGUARD
 GoTo 300
 
 
+'------------------------------
+'   DISABLEPLAYER Subroutine
+'------------------------------
 Sub DISABLEPLAYER ()
     Color 15, 0
     Cls: I = P9
@@ -1655,7 +1846,7 @@ Sub DISABLEPLAYER ()
     Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
     Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
     Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
-    9202 I$ = InKey$: If I$ = "" Then 9202
+    I$ = GetKeyPress$
     If UCase$(I$) <> "Y" Then 9210
     DX% = 0: Cls: Print "TEAM ROSTER FOR ";: Color TR%(P9, 0), TR%(P9, 1): Print B$(P9): Color 15, 0
     Print "# NAME          POS   GP"
@@ -1671,7 +1862,7 @@ Sub DISABLEPLAYER ()
     Next
     9203 Locate 19, 1: Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
     Print "YOU MUST HAVE AT LEAST 8 ACTIVE PLAYERS"
-    9205 I$ = InKey$: If I$ = "" Then 9205
+    I$ = GetKeyPress$
     If UCase$(I$) = "Z" Then 9210
     I1 = Val(I$)
     If UCase$(I$) = "A" Then I1 = 10
@@ -1681,8 +1872,13 @@ Sub DISABLEPLAYER ()
     If B%(P9, I1, 18) = 0 And DX% < 4 Then B%(P9, I1, 18) = -1: DX% = DX% + 1: Locate 3 + I1, 3: Color TR%(P9, 0), TR%(P9, 1): Print AA$(P9, I1): Color 15, 0: GoTo 9203
     If B%(P9, I1, 18) = -1 Then B%(P9, I1, 18) = 0: DX% = DX% - 1: Locate 3 + I1, 2: Color 15, 0: Print " "; AA$(P9, I1): GoTo 9203
     GoTo 9203
+
 9210 End Sub
 
+
+'------------------------------
+'      DRAWBOX Subroutine
+'------------------------------
 Sub DRAWBOX ()
     Locate 6, 8
     Color TR%(I, 0), TR%(I, 1)
@@ -1703,6 +1899,10 @@ Sub DRAWBOX ()
     Locate 7
 End Sub
 
+
+'------------------------------
+'      GETATEAM Subroutine
+'------------------------------
 Sub GETATEAM (I1, YN$)
     Open p$(0) + "BASK." + YN$ For Random As #1 Len = 655
 FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
@@ -1724,8 +1924,10 @@ FIELD #1, 53 + I * 43 AS X$, 15 AS Q$(I * 15 + 20), 2 AS Q$(I * 15 + 21), 2 AS Q
         For I4 = 0 To 6
             A(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
             C(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
-    Next: Next
+        Next
+    Next
     Close 1
+
     FY%(P9) = 2 * TR%(P9, 3) - TR%(P9, 4)
     9016 CNT% = 0: CNTX% = 0
     If TR%(P9, 5) = 0 Then 9018
@@ -1760,21 +1962,28 @@ Q$(245),2 AS Q$(246),2 AS Q$(247),2 AS Q$(248),2 AS Q$(249)
         PO$(P9, I) = Q$(I * 16 + 5)
         For I1 = 0 To 13
             RS(P9, I, I1) = CVI(Q$(I * 16 + I1 + 6))
-    Next: Next
+        Next
+    Next
     For I = 0 To 20
         T2%(P9, I) = CVI(Q$(228 + I))
     Next
     CK = CVI(Q$(249))
     Close 1
+
     If CK <> 999 Then
         C$(P9) = "": S$(P9) = "": A1$(P9) = "": ATT(P9) = 0
         For I = 0 To 13: DF(P9, I) = 5: PO$(P9, I) = ""
             For I1 = 0 To 13: RS(P9, I, I1) = 0
-        Next: Next
+            Next
+        Next
         For I = 0 To 20: T2%(P9, I) = 0: Next
     End If
 End Sub
 
+
+'------------------------------
+'      HORN Subroutine
+'------------------------------
 Sub HORN ()
     For PP = 1 To 70
         Sound 50, .05
@@ -1785,9 +1994,13 @@ Sub HORN ()
     Next
 End Sub
 
+
+'------------------------------
+'      MAKEPBP Subroutine
+'------------------------------
 Sub MAKEPBP ()
     1400 'PLAY BY PLAY
-    If U6 = 0 Then 1495
+    If displayPause = 0 Then 1495
     RN = Int(Rnd(1) * 100) + 1
     On PT% GOTO 1410, 1420, 1430, 1440, 1445, 1450, 1460, 1470, 1480, 1490
     U$ = AA$(p, B1(p, B))
@@ -1880,7 +2093,7 @@ Sub MAKEPBP ()
     If RN > 85 Then U$ = U$ + " TURNS AND SHOOTS"
     GoTo 1495
     1432 Rem:INSIDE W/ASSIST
-                                                 
+
     If RN <= 10 Then U$ = "HE CUTS TO THE BASKET": Call PBP: U$ = "TAKES IT UP": GoSub 1428: GoTo 1495
     If RN <= 20 Then U$ = "HE TAKES IT TO THE HOLE": GoSub 1428: GoTo 1495
     If RN <= 30 Then U$ = "HE TAKES IT TO THE HOOP": GoSub 1428: GoTo 1495
@@ -1900,24 +2113,24 @@ Sub MAKEPBP ()
     If B = 4 And RN <= 58 Then U$ = "HE TAKES IT TO THE HOOP": GoSub 1425: GoTo 1495
     If B = 4 And RN <= 70 Then U$ = "HE TAKES THE SHOT": GoTo 1495
     If B = 4 And RN <= 72 Then U$ = "HE CURLS OFF A PICK IN THE PAINT": Call PBP: U$ = "TAKES IT UP": GoSub 1425: GoTo 1495
-                                                       
-                                                               
+
+
     If B = 4 And RN <= 74 Then U$ = "HE MAKES A NICE SPIN MOVE": Call PBP: U$ = "AND SOARS TO THE HOOP": GoSub 1425: GoTo 1495
     If B = 4 Then U$ = "HE TAKES IT UP STRONG": GoSub 1425: GoTo 1495
     If (B = 2 Or B = 3) And RN <= 16 Then U$ = "HE TAKES IT UP": GoSub 1426: GoTo 1495
     If (B = 2 Or B = 3) And RN <= 32 Then U$ = "HE SPINS FREE": Call PBP: U$ = "SHOOTS": GoSub 1426: GoTo 1495
-                                                  
+
     If (B = 2 Or B = 3) And RN <= 48 Then U$ = "HE GETS LOOSE IN THE PAINT": Call PBP: U$ = "TAKES IT UP": GoSub 1426: GoTo 1495
-                                                       
+
     If (B = 2 Or B = 3) And RN <= 64 Then U$ = "HE PUTS IT UP": GoTo 1495
     If (B = 2 Or B = 3) And RN <= 67 Then U$ = "HE CURLS OFF A PICK IN THE PAINT": Call PBP: U$ = "TAKES IT UP": GoSub 1426: GoTo 1495
-                                                       
+
     If (B = 2 Or B = 3) And RN <= 69 Then U$ = "HE MAKES A NICE SPIN MOVE": Call PBP: U$ = "AND SOARS TO THE HOOP": GoSub 1426: GoTo 1495
-                                                                 
+
                                                                        
     If (B = 2 Or B = 3) And RN <= 71 Then U$ = "HE DRIVES THE BASELINE": Call PBP: U$ = "SPINS RIGHT AND GOES UP": GoSub 1426: GoTo 1495
     If (B = 2 Or B = 3) And RN = 72 Then U$ = "HE SLICES IN THE HOLE": Call PBP: U$ = "UNDERHAND SCOOP SHOT": GoTo 1495
-                                                    
+
     If (B = 2 Or B = 3) And RN = 73 Then U$ = "STRONG CUT ALONG THE BASELINE": Call PBP: U$ = "DOUBLE PUMP REVERSE LAYUP": GoTo 1495
                                                          
                                                              
@@ -2464,7 +2677,6 @@ Sub MAKEPBP ()
 
     If RN = 55 Then U$ = PB$ + " PUMP FAKES A SHOT": Call PBP: U$ = "HE BOUNCES IT TO " + V$
 
-
     If RN = 56 Then U$ = PB$ + " WITH A FOOT FAKE": Call PBP: U$ = "HE SPINS AND DUMPS IT TO " + V$
     If RN = 57 Then U$ = PB$ + " CUTS ACROSS THE LANE": Call PBP: U$ = "HE DISHES INSIDE TO " + V$
 
@@ -2477,11 +2689,13 @@ Sub MAKEPBP ()
 1495 End Sub
 
 
-
+'------------------------------
+'      PBP Subroutine
+'------------------------------
 Sub PBP ()
     i$ = InKey$
     If UCase$(i$) = "Q" Then End
-    2245 If U6 = 0 Or PB% = 1 Then 2247
+    2245 If displayPause = 0 Or PB% = 1 Then 2247
     While Len(U$) < 38
         U$ = U$ + " "
     Wend
@@ -2526,10 +2740,18 @@ Sub PBP ()
     2247 '
 End Sub
 
+
+'------------------------------
+'    SHOTSTRING Subroutine
+'------------------------------
 Sub SHOTSTRING ()
     U$ = U$ + Str$(Int(F + .5)) + "*"
 End Sub
 
+
+'------------------------------
+'      TEAMSETUP Subroutine
+'------------------------------
 Sub TEAMSETUP ()
 
     'TEAM SETUP INITIALIZES THE TEAM DATA FILES, LEAGUE ADJUSTMENTS
@@ -2558,6 +2780,9 @@ Sub TEAMSETUP ()
 End Sub
 
 
+'------------------------------
+'      TICKER Subroutine
+'------------------------------
 Sub TICKER ()
     2850 '*** TICKER ***
     If AP1 = 1 And U5 = 2 Then 2884
@@ -2686,24 +2911,20 @@ Sub TICKER ()
     2882 If Left$(SX$(32, 0), 3) = "XXX" Then 2883
     Locate 23, 61: X = 32: GoSub 2885: Print Left$(SX$(32, 0), 13);: Locate , 75: Print Using "### "; SX%(32, 0, TS%);: Print R$(TS%)
     Locate , 61: Print Left$(SX$(32, 1), 13);: Locate , 75: Print Using "### #"; SX%(32, 1, TS%);
-    2883 Call GETAKEY(I$)
+    2883 I$ = GetKeyPress$
     GoTo 2884
     2885 TS% = TE + (ST% - ST%(X)) * 3
     If TS% < 0 Then TS% = 0
     If TS% > 14 Then TS% = 14
     If EG% = 1 Then TS% = 14
     Return
+
 2884 End Sub
 
-Sub GETAKEY (I$)
-    4092 I$ = InKey$: If I$ = "" Then 4092
-End Sub
 
-Sub HITKEY
-    4091 If AP1 = 1 And U5 = 2 Then 4093
-    Call GETAKEY(I$)
-4093 End Sub
-
+'------------------------------
+'      PRINTBOX Subroutine
+'------------------------------
 Sub PRINTBOX
     8900 If N <> 2 Then LPrint "@ "; B$(N): LPrint
     For I = 0 To 1
@@ -2720,7 +2941,8 @@ Sub PRINTBOX
         If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then LPrint ; Tab(35); "- "; Str$(S(I, 0)): GoTo 8913
     8913 Next I
     For I = 0 To 1: LPrint: LPrint B$(I)
-        LPrint "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO": For I1 = 0 To 13
+        LPrint "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+        For I1 = 0 To 13
             If AA$(I, I1) = "XXX" Then 8920
             LPrint AA$(I, I1); Tab(14);
             If ZZ(I, I1) = 0 Then LPrint ; Tab(15); "DNP";: GoTo 8918
@@ -2731,16 +2953,22 @@ Sub PRINTBOX
             V9(6) = V9(6) + A(I, I1, 12)
             V9(7) = V9(7) + A(I, I1, 14): V9(8) = V9(8) + A(I, I1, 15): V9(9) = V9(9) + A(I, I1, 13): V9(11) = V9(11) + A(I, I1, 24): V9(12) = V9(12) + A(I, I1, 23)
             V9(10) = V9(10) + ZZ(I, I1)
-        8920 Next I1: If V9(3) = 0 Then V9(3) = 1
+        8920 Next I1
+        If V9(3) = 0 Then V9(3) = 1
         LPrint: LPrint "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);: LPrint Using "##"; V9(0);: LPrint "-";: LPrint Using "###"; V9(1);
         LPrint ; Tab(28);: LPrint Using "##"; V9(13);: LPrint "-";: LPrint Using "##"; V9(14);
         LPrint ; Tab(35);: LPrint Using "##"; V9(2);: LPrint "-";: LPrint Using "##"; V9(3);
         LPrint ; Tab(42);: LPrint Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
-        LPrint ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": LPrint: LPrint "TOTAL TURNOVERS -"; T0(I): LPrint "TOTAL REBOUNDS  -"; R3(I): For I2 = 0 To 14: V9(I2) = 0: Next I2
+        LPrint ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": LPrint: LPrint "TOTAL TURNOVERS -"; T0(I): LPrint "TOTAL REBOUNDS  -"; R3(I)
+        For I2 = 0 To 14: V9(I2) = 0: Next I2
     Next I
     LPrint Chr$(12)
 End Sub
 
+
+'------------------------------
+'      FILEBOX Subroutine
+'------------------------------
 Sub FILEBOX
     If AP1 = 1 Then
         NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
@@ -2783,12 +3011,17 @@ Sub FILEBOX
         Print #2, ; Tab(28);: Print Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
         Print #2, ; Tab(35);: Print Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
         Print #2, ; Tab(42);: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
-        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I): Print #2, "TOTAL REBOUNDS  -"; R3(I): For I2 = 0 To 14: V9(I2) = 0: Next I2
+        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I): Print #2, "TOTAL REBOUNDS  -"; R3(I)
+        For I2 = 0 To 14: V9(I2) = 0: Next I2
     Next I
-    Print #2, Chr$(12): Close 2
+    Print #2, Chr$(12)
+    Close 2
 End Sub
 
 
+'------------------------------
+'    STAMINASORT Subroutine
+'------------------------------
 Sub STAMINASORT
     8800 M = 13
     L = 12
@@ -2804,8 +3037,13 @@ Sub STAMINASORT
     GoTo 8803
     8812 If S7 = 0 Then 8813
     L = S7 - 1: GoTo 8802
+
 8813 End Sub
 
+
+'------------------------------
+'    REBOUNDSORT Subroutine
+'------------------------------
 Sub REBOUNDSORT
     8825 M = 4
     L = 3
@@ -2822,8 +3060,13 @@ Sub REBOUNDSORT
     8837 If S7 = 0 Then 8838
     L = S7 - 1
     GoTo 8827
+
 8838 End Sub
 
+
+'------------------------------
+'    COMCOACH Subroutine
+'------------------------------
 Sub COMCOACH
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
@@ -2873,11 +3116,16 @@ Sub COMCOACH
 
 8799 End Sub
 
+
+'------------------------------
+'    TOURNEY Subroutine
+'------------------------------
 Sub TOURNEY
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
     Open p$(0) + FF$ + ".TOU" As #1 Len = 90
     Y2 = LOF(1)
     Close 1
+
     NT = Y2 / 90
     For I = 1 To NT
         Open p$(0) + FF$ + ".TOU" As #1 Len = 90
@@ -2894,6 +3142,7 @@ Sub TOURNEY
         For X = 0 To 3: YN1$(X) = Q$(20 + X): Next
         For X = 1 To 3: NG1%(X + 14) = CVI(Q$(X + 23)): Next
         Close 1
+
         If NG1%(15) <> NG%(15) Or NG%(15) = 17 Then 6108
 
         If S(0, 0) > S(1, 0) And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: GoSub 6105
@@ -2941,9 +3190,15 @@ Sub TOURNEY
     LSet Q$(18) = VT1$: LSet Q$(19) = W1$
     Put #1, I
     Close 1
+
     Return
+
 6106 End Sub
 
+
+'------------------------------
+'    STATCONVERT Subroutine
+'------------------------------
 Sub STATCONVERT (Q, QQ)
     For XX = 4 To 11
         If Mid$(B$(Q), XX, 1) = " " Or Mid$(B$(Q), XX, 1) = "." Then Mid$(B$(Q), XX, 1) = "_"
@@ -2956,10 +3211,13 @@ Sub STATCONVERT (Q, QQ)
         If Mid$(B$(Q), XX, 1) = "_" Then QQ = XX - 4: GoTo 6615
         GoTo 6620
     6615 Next XX
+
 6620 End Sub
 
 
-
+'------------------------------
+'    TICKERCHECK Subroutine
+'------------------------------
 Sub TICKERCHECK ()
     If AP <> 1 Or AP%(2) > 31 Then 2581
     If H = 1 And T <= 960 And SX%(AP%(2) + 1, 0, 1) = -1 Then SX%(AP%(2) + 1, 0, 1) = S(0, 0): SX%(AP%(2) + 1, 1, 1) = S(1, 0): GoTo 2581
@@ -2977,6 +3235,10 @@ Sub TICKERCHECK ()
     2581 '
 End Sub
 
+
+'------------------------------
+'    MAINSCREEN Subroutine
+'------------------------------
 Sub MAINSCREEN ()
     'M A I N   S C R E E N
     Call TICKERCHECK
@@ -3000,7 +3262,7 @@ Sub MAINSCREEN ()
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
     Color 14, 0: Locate 6, 37: Print Using " :##"; X8
     If C7 = 0 Or T < 45 And X8 >= T And C7 = 1 Or T < 35 And X8 >= T And C7 = 2 Or (C7 = 1 Or C7 = 2) And H > 2 And T = 300 Then Locate 6, 37: Print " :  "
-    If U6 = 0 Then 2172
+    If displayPause = 0 Then 2172
     Locate 9, 41
     Color TR%(D, 0), TR%(D, 1): Print "DEF-"; DB$(DT%(D))
     Locate , 41: Color TR%(p, 0), TR%(p, 1): Print "OFF-"; OB$(OF%(p))
@@ -3055,6 +3317,10 @@ Sub MAINSCREEN ()
     2172 '
 End Sub
 
+
+'------------------------------
+'    SCOREBOARD Subroutine
+'------------------------------
 Sub SCOREBOARD ()
     '*** SCREEN UPDATING ***
     Cls
@@ -3092,8 +3358,15 @@ Sub SCOREBOARD ()
     Locate , 41: Color 14: Print "(D)  ";: Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
     Locate 7, 1
     Color 9, 0: Print String$(38, 205); Chr$(203); String$(38, 205)
-    Locate 8, 1: For I = 1 To 8: Locate , 39: Print Chr$(186): Next
-    Locate 17, 1: Color TR%(0, 0), TR%(0, 1): Print B$(0);
+    Locate 8, 1
+    For I = 1 To 8
+        Locate , 39
+        Print Chr$(186)
+    Next
+    Locate 17, 1
+    Color TR%(0, 0), TR%(0, 1)
+    Print B$(0);
+
     Print Using " [##"; Z5(0);: Print "-";: Print Using "##]"; Z6(0)
     Color 14, 0: Print "# NAME         FG FT RB CX EF PA PT  F"
     For I1 = 0 To 4
@@ -3140,12 +3413,17 @@ Sub SCOREBOARD ()
         Print Using "#"; A(1, B1(1, I1), 12)
         Color 15
     Next I1
-    Color 9, 0: For I = 1 To 9: Locate 14 + I, 39: Print Chr$(186): Next
+    Color 9, 0
+    For I = 1 To 9: Locate 14 + I, 39: Print Chr$(186): Next
     Color 9, 0
     Locate 16, 1: Print String$(79, 205)
     Locate 16, 39: Print Chr$(206): Color 7, 0
 End Sub
 
+
+'------------------------------
+'    COLCNG Subroutine
+'------------------------------
 Sub COLCNG ()
     If TR%(1, 0) = 15 And TR%(1, 1) = 4 Then TR%(1, 0) = 4: TR%(1, 1) = 7
     If TR%(1, 0) = 15 And TR%(1, 1) = 1 Then TR%(1, 0) = 1: TR%(1, 1) = 7
@@ -3154,19 +3432,16 @@ Sub COLCNG ()
     If TR%(1, 0) = 4 And TR%(1, 1) = 7 Then TR%(1, 0) = 15: TR%(1, 1) = 4
 End Sub
 
+
+'------------------------------
+'    LOADSTATS Subroutine
+'------------------------------
 Sub LOADSTATS
     If TR%(1, 0) = TR%(0, 0) And TR%(1, 1) = TR%(0, 1) Then Call COLCNG
     Color 15, 0
     For I = 0 To 1
         Cls
         Call DRAWBOX
-        'U$ = "ENTER STATS DISK FOR " + B$(I)
-        'Locate , (80 - Len(U$)) / 2
-        'Print U$
-        'Print
-        'If UCase$(Left$(P$(1), 1)) <> "A" And UCase$(Left$(P$(1), 1)) <> "B" Then 64
-        'Locate , 12: Print "HIT ANY KEY TO CONTINUE";
-        '63 I$ = InKey$: If I$ = "" Then 63
         64 Color 15, 0
         Y$(I) = B$(I)
         Q = I
@@ -3182,10 +3457,14 @@ Sub LOADSTATS
         For I1 = 1 To 100: Input #2, HT%(I1): Next
         For I1 = 1 To 100: Input #2, HO$(I1): Next
         For I1 = 1 To 100
-        For I2 = 0 To 1: Input #2, APT%(I1, I2): Next: Next
+            For I2 = 0 To 1
+                Input #2, APT%(I1, I2)
+            Next
+        Next
         For I1 = 1 To 100: Input #2, CRD(I1): Next I1
         For I1 = 1 To 100: Input #2, SITE$(I1): Next I1
         Close 2
+
         For I1 = 1 To YY%
             If O%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
             If O%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
@@ -3194,8 +3473,13 @@ Sub LOADSTATS
     Next
 End Sub
 
+
+'------------------------------
+'    OFFREBOUND Subroutine
+'------------------------------
 Sub OFFREBOUND ()
-    RB = 0: For I = 0 To 4: RB(I) = 0
+    RB = 0
+    For I = 0 To 4: RB(I) = 0
         XZ = A(p, B1(p, I), 21)
         If H > 2 Or H = 2 And T <= 120 Then 793
         If A(p, B1(p, I), 3) - A(p, B1(p, I), 7) - A(p, B1(p, I), 11) - A(p, B1(p, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
@@ -3208,10 +3492,16 @@ Sub OFFREBOUND ()
         RB(B + 1) = RB(B + 1) + RB(B)
     Next
     B = Int(Rnd(1) * 5)
+
 794 End Sub
 
+
+'------------------------------
+'    DEFREBOUND Subroutine
+'------------------------------
 Sub DEFREBOUND ()
-    RB = 0: For I = 0 To 4: RB(I) = 0
+    RB = 0
+    For I = 0 To 4: RB(I) = 0
         XZ = A(1 - p, B1(1 - p, I), 2)
         If H > 2 Or H = 2 And T <= 120 Then 798
         If A(1 - p, B1(1 - p, I), 3) - A(1 - p, B1(1 - p, I), 7) - A(1 - p, B1(1 - p, I), 11) - A(1 - p, B1(1 - p, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
@@ -3224,9 +3514,15 @@ Sub DEFREBOUND ()
         RB(B + 1) = RB(B + 1) + RB(B)
     Next
     B = Int(Rnd(1) * 5)
+
 799 End Sub
 
+
+'------------------------------
+'    EDITCX Subroutine
+'------------------------------
 Sub EDITCX ()
+
     9300 If AP1 = 1 And U5 = 2 Then 9499
     Color 15, 0: Cls
     Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
@@ -3239,15 +3535,19 @@ Sub EDITCX ()
     Print
     Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
     Print "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
-    9301 I$ = InKey$: If I$ = "" Then 9301
+
+    9301 I$ = GetKeyPress$
     I = Val(I$): If I < 0 Or I > 2 Then 9301
     If I = 2 Then 9499
     Cls
-    TX = 0: For I1 = 0 To 13: TX = TX + A(I, I1, 3): Next
+    TX = 0
+    For I1 = 0 To 13: TX = TX + A(I, I1, 3): Next
     For I1 = 0 To 13: A(I, I1, 3) = A(I, I1, 3) / TX * 100: Next
+
     9305 Locate 2, 1: Print "CONTRIBUTION RATINGS FOR ";: Color TR%(I, 0), TR%(I, 1): Print B$(I): Color 15, 0
     Print: Print " #  PLAYER             CX"
-    TY% = 0: For I1 = 0 To 13: TY% = TY% + A(I, I1, 3)
+    TY% = 0
+    For I1 = 0 To 13: TY% = TY% + A(I, I1, 3)
         If B%(I, I1, 18) = -1 Then Color TR%(I, 0), TR%(I, 1)
         Print Using "## "; I1 + 1;: Print AA$(I, I1);: Locate , 24: Print Using "##"; A(I, I1, 3)
         Color 15, 0
@@ -3259,26 +3559,38 @@ Sub EDITCX ()
     9306 Locate 22, 1: Print "                                                    ": GoTo 9305
     9310 If TY% = 100 Then 9320
     Locate 22, 1: Print "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
-    9311 I$ = InKey$: If I$ = "" Then 9311
+    I$ = GetKeyPress$
     GoTo 9306
     9320 For I1 = 0 To 13: A(I, I1, 3) = A(I, I1, 3) / 100 * TX: Next
     GoTo 9300
     9499 X = 0
 End Sub
 
+
+'------------------------------
+'    DELAY Subroutine
+'------------------------------
 Sub DELAY ()
     'We don't really need the If statement here
-    If U6 <> 0 Then
-        _Delay U6
-    End If
+    'If displayPause <> 0 Then
+    _Delay displayPause
+    'End If
 End Sub
 
+
+'------------------------------
+'    CLEARPBP Subroutine
+'------------------------------
 Sub CLEARPBP ()
-    If U6 = 0 Or PB% = 1 Then 9750
+    If displayPause = 0 Or PB% = 1 Then 9750
     NL% = 1: A1$ = "": B1$ = "": C1$ = "": D1$ = "": E1$ = "": F1$ = "": G1$ = "": H1$ = "": J$ = ""
     9750 '
 End Sub
 
+
+'------------------------------
+'    ZONECHANGE Subroutine
+'------------------------------
 Sub ZONECHANGE ()
     If U5 = 1 And CT = D Or U5 = 2 Then 8155
     If DT%(D) <> 2 Or DT%(D) <> 7 Or DT%(D) <> 12 Then 8155
@@ -3292,7 +3604,7 @@ Sub ZONECHANGE ()
     Locate , 14: Print "0 - SOLID MAN TO MAN"
     Locate , 14: Print "1 - PRESSURE MAN TO MAN"
     Locate , 14: Print "2 - 1-3-1 TRAPPING ZONE"
-    8103 I$ = InKey$: If I$ = "" Then 8103
+    8103 I$ = GetKeyPress$
     I1 = Val(I$): If I1 < 0 Or I1 > 2 Then 8103
     If I1 = 2 Then I1 = 3
     If DT%(D) <= 3 Then DT%(D) = I1
@@ -3317,7 +3629,9 @@ Sub ZONECHANGE ()
 End Sub
 
 
-
+'------------------------------
+'    DEFENSEMENU Subroutine
+'------------------------------
 Sub DEFENSEMENU ()
     110 Cls
     Print ; Tab(33); "DEFENSIVE STYLE": Print
@@ -3332,7 +3646,7 @@ Sub DEFENSEMENU ()
     Next
     Print
     Locate 19, 5: Print "SELECT DEFENSIVE STYLE FOR "; B$(P9)
-    107 I$ = InKey$: If I$ = "" Then 107
+    107 I$ = GetKeyPress$
     I1 = Val(I$)
     If UCase$(I$) = "A" Then I1 = 10
     If UCase$(I$) = "B" Then I1 = 11
@@ -3340,6 +3654,7 @@ Sub DEFENSEMENU ()
     If UCase$(I$) = "D" Then I1 = 13
     If UCase$(I$) = "E" Then I1 = 14
     If I1 < 0 Or I1 > 14 Then 107
+
     DT%(P9) = I1
     If DT%(P9) <= 3 Then P7(P9) = 0
     If DT%(P9) = 4 Then P7(P9) = 1
@@ -3347,7 +3662,7 @@ Sub DEFENSEMENU ()
     If DT%(P9) > 6 And DT%(P9) <= 10 Then P7(P9) = 3
     If DT%(P9) > 9 And DT%(P9) < 14 Then P7(P9) = 4
     If DT%(P9) = 14 Then P7(P9) = 5
-    If DT%(P9) = 14 And (H < 2 Or H >= 2 And T > 180) Then Beep: Locate 23, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT": Call GETAKEY(I$): GoTo 110
+    If DT%(P9) = 14 And (H < 2 Or H >= 2 And T > 180) Then Beep: Locate 23, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT": I$ = GetKeyPress$: GoTo 110
     If DT%(P9) = 0 Or DT%(P9) = 4 Or DT%(P9) = 5 Or DT%(P9) = 8 Or DT%(P9) = 10 Then D2(P9) = 0
     If DT%(P9) = 1 Or DT%(P9) = 6 Or DT%(P9) = 9 Or DT%(P9) = 11 Then D2(P9) = 1
     If DT%(P9) = 2 Or DT%(P9) = 7 Or DT%(P9) = 12 Then D2(P9) = 2
@@ -3355,6 +3670,10 @@ Sub DEFENSEMENU ()
     Color 15, 0
 End Sub
 
+
+'------------------------------
+'    SETSTAMINA Subroutine
+'------------------------------
 Sub SETSTAMINA ()
     SQ% = 0
     For I = 0 To 13
@@ -3366,7 +3685,8 @@ Sub SETSTAMINA ()
         118 If TR%(P9, 5) <> 0 And C(P9, I, 0) <> 0 And B%(P9, I, 18) = 0 Then A(P9, I, 3) = Int(A(P9, I, 3) / SQ% * S9 + .5)
         112 If A(P9, I, 3) < 1 Then A(P9, I, 3) = 1
     Next I
-    SQ% = 0: For I = 0 To 13
+    SQ% = 0
+    For I = 0 To 13
         113 If B%(P9, I, 18) = 0 Then SQ% = SQ% + A(P9, I, 3)
     Next
     For I = 0 To 13
@@ -3376,6 +3696,10 @@ Sub SETSTAMINA ()
     115 If S9 > 114 Then DY = (114 / S9) * DY: DY = Int(DY + .5)
 End Sub
 
+
+'------------------------------
+'       FRAME Subroutine
+'------------------------------
 Sub FRAME ()
     SN = 1
     Locate 8, 8
@@ -3383,7 +3707,7 @@ Sub FRAME ()
     Color TR%(TS%, 0), TR%(TS%, 1)
 
     'Print box top
-    Print " " + Chr$(201); String$(61, 196); Chr$(187) + " ";
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
     'Print box sides
     For II = 1 To JJ
@@ -3393,11 +3717,15 @@ Sub FRAME ()
 
     'Print box bottom
     Locate 9 + JJ, 8
-    Print " " + Chr$(200); String$(61, 196); Chr$(188) + " ";
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
     Locate 10, 15
 End Sub
 
+
+'------------------------------
+'   COMPUTERSUB Subroutine
+'------------------------------
 Sub COMPUTERSUB ()
     930 If H >= 2 And T <= 60 And X3% = 1 And (S(P9, 0) - S(1 - P9, 0) = -3 Or S(P9, 0) - S(1 - P9, 0) = -6) Then OF%(P9) = 9
     M1 = 0: M2 = 0: M3 = 0: M4 = 0
@@ -3418,8 +3746,13 @@ Sub COMPUTERSUB ()
     937 Next
     If M3 >= 1 And 5 - M3 < 14 - M1 Or H = 2 And T < 120 And XS = 0 And G9%(P9) = 0 Or M4 >= 1 And M2 < 13 Or CTO% = 1 Then CTO% = 0: XM = 1: Call COMCOACH: GoTo 940
     939 If H = 2 And T <= 120 Then G9%(P9) = 1
+
 940 End Sub
 
+
+'------------------------------
+'    FATIGUE Subroutine
+'------------------------------
 Sub FATIGUE ()
     'COMPUTER DEFENSE FOR FATIGUE
     FD% = 0: FQ% = 0
@@ -3430,8 +3763,12 @@ Sub FATIGUE ()
     If FD% < -15 Or FQ% = 1 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
 End Sub
 
+
+'------------------------------
+'    AUTOSETUP Subroutine
+'------------------------------
 Sub AUTOSETUP ()
-    X3% = NG%(3): U5 = NG%(8): NF% = NG%(5): C7 = NG%(7): N = NG%(2): U6 = NG%(4) / 10: CM% = NG%(9)
+    X3% = NG%(3): U5 = NG%(8): NF% = NG%(5): C7 = NG%(7): N = NG%(2): displayPause = NG%(4) / 10: CM% = NG%(9)
     ST% = NG%(12)
     TB% = NG%(6): TF% = NG%(10): N7% = NG%(14)
     For P9 = 0 To 1: I1 = NG%(P9): YN$ = YN$(P9)
@@ -3454,7 +3791,10 @@ Sub AUTOSETUP ()
             For I2 = 0 To 3
                 Input #2, N$(I, I1, I2): ' SEED SLOT NAME
                 Input #2, N%(I, I1, I2): ' REGION, SEED NUMBER, MODE PLAY/TM#
-    Next: Next: Next
+            Next
+        Next
+    Next
+
     Close 2
 
     TOU = 0
@@ -3463,13 +3803,15 @@ Sub AUTOSETUP ()
             'PRINT LEN(YN$(0)),LEN(YN$(1)),LEN( N$(I,I1,1) )
             If NG%(0) = N%(I, I1, 0) And YN$(0) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then TOU = 1: GoTo 1305
             If NG%(1) = N%(I, I1, 0) And YN$(1) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then TOU = 1: GoTo 1305
-    Next: Next
+        Next
+    Next
+
 1305 End Sub
 
-Sub INITIALIZE ()
-End Sub
 
-
+'------------------------------
+'    LINEUPS Subroutine
+'------------------------------
 Sub LINEUPS ()
     Cls
     Color TR%(P9, 0), TR%(P9, 1): Print B$(P9);: Color 15, 0: Print " TEAM ROSTER    COACH: "; C$(P9);
@@ -3530,11 +3872,14 @@ Sub LINEUPS ()
     For I = 0 To 4
         Locate I + 20, 1
         Color 2, 0: Print Using "# "; I;: Color 15: Print "ENTER "; PS$(I); " # ";
-        72 I$ = InKey$: If I$ = "" Then 72
+        72 I$ = GetKeyPress$
         Call ALPHANUM(I$, J)
         If J < 0 Or J > 13 Or A(P9, J, 12) >= NF% Or AA$(P9, J) = "XXX" Or B%(P9, J, 18) <> 0 Then 72
-        For I2 = 0 To 4: If B1(P9, I2) = J Then 72
+
+        For I2 = 0 To 4
+            If B1(P9, I2) = J Then 72
         Next I2
+
         B1(P9, I) = J
         Z = J
         GoSub 90
@@ -3544,9 +3889,11 @@ Sub LINEUPS ()
         Color 15, 0
     Next
 
-    73 Locate 25, 1: Color 12, 0: Print "# TO CHANGE (0-4) 6=NONE";
+    73 Locate 25, 1
+    Color 12, 0
+    Print "# TO CHANGE (0-4) 6=NONE";
     Locate 1, 1
-    74 I$ = InKey$: If I$ = "" Then 74
+    I$ = GetKeyPress$
     I1 = Val(I$): If I1 = 6 Then 100
     If I1 < 0 Or I1 > 4 Then 73
     If X = 50 And I1 = B And P9 = p Then Locate 20, 29: Color 14, 0: Print AA$(P9, B1(P9, I1)); " IS AT THE FT LINE": GoTo 73
@@ -3555,11 +3902,14 @@ Sub LINEUPS ()
     Locate I1 + 20, 1: Print "                          ";
     B1(P9, I1) = -1
     Locate , 1: Color 2: Print Using "# "; I1;: Color 15: Print "ENTER "; PS$(I1); " # ";
-    75 I$ = InKey$: If I$ = "" Then 75
+
+    75 I$ = GetKeyPress$
     Call ALPHANUM(I$, J)
     If J < 0 Or J > 13 Or A(P9, J, 12) >= NF% Or AA$(P9, J) = "XXX" Or B%(P9, J, 18) <> 0 Then 75
-    For I2 = 0 To 4: If B1(P9, I2) = J Then 75
+    For I2 = 0 To 4
+        If B1(P9, I2) = J Then 75
     Next I2
+
     B1(P9, I1) = J: Z = J: GoSub FATIGUE: GoSub 90: Print AA$(P9, J);: Locate J + 3 - CV%, 3: Color TR%(P9, 0), TR%(P9, 1): Print Left$(AA$(P9, J), 12): Color 15, 0
     GoTo 73
 
@@ -3569,7 +3919,8 @@ Sub LINEUPS ()
     If FA%(P9, J) > 0 Then FA%(P9, J) = 0
     Return
 
-    90 CV% = 0: For IP% = 0 To Z
+    90 CV% = 0
+    For IP% = 0 To Z
         If B%(P9, IP%, 18) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then CV% = CV% + 1
     Next
     Return
@@ -3587,6 +3938,9 @@ Sub LINEUPS ()
 End Sub
 
 
+'------------------------------
+'    OFFENSE Subroutine
+'------------------------------
 Sub OFFENSE ()
     'This label was not being referenced anywhere else
     'All it was doing for a modern compiler was confusing
@@ -3599,24 +3953,25 @@ Sub OFFENSE ()
     Next
     Print
     Locate 14, 5: Print "SELECT OFFENSIVE STYLE FOR "; B$(P9)
-    106 I$ = InKey$: If I$ = "" Then 106
+    106 I$ = GetKeyPress$
     I1 = Val(I$): If I1 < 0 Or I1 > 9 Then 106
-    If (I1 = 3 Or I1 = 4 Or I1 = 7 Or I1 = 9) And (H < 2 Or H >= 2 And T > 180) Then Beep: Locate 18, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT": Call GETAKEY(I$): GoTo 109
-                              
-    If I1 = 8 And D2(1 - P9) <> 2 Then Beep: Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE": Call GETAKEY(I$): GoTo 109
-                              
-    If I1 = 4 And S(P9, 0) - S(1 - P9, 0) > -11 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": Call GETAKEY(I$): GoTo 109
-                              
-    If I1 = 9 And X3% = 0 Then Beep: Locate 18, 1: Print "NOT USING 3 POINT SHOT": Call GETAKEY(I$): GoTo 109
-                              
-    If I1 = 5 And C7 = 0 Then Beep: Locate 18, 1: Print "NOT USING SHOT CLOCK": Call GETAKEY(I$): GoTo 109
-                              
-    If I1 = 7 And S(P9, 0) - S(1 - P9, 0) <= 0 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": Call GETAKEY(I$): GoTo 109
+
+    If (I1 = 3 Or I1 = 4 Or I1 = 7 Or I1 = 9) And (H < 2 Or H >= 2 And T > 180) Then Beep: Locate 18, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT": I$ = GetKeyPress$: GoTo 109
+
+    If I1 = 8 And D2(1 - P9) <> 2 Then Beep: Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE": I$ = GetKeyPress$: GoTo 109
+
+    If I1 = 4 And S(P9, 0) - S(1 - P9, 0) > -11 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": I$ = GetKeyPress$: GoTo 109
+
+    If I1 = 9 And X3% = 0 Then Beep: Locate 18, 1: Print "NOT USING 3 POINT SHOT": I$ = GetKeyPress$: GoTo 109
+
+    If I1 = 5 And C7 = 0 Then Beep: Locate 18, 1: Print "NOT USING SHOT CLOCK": I$ = GetKeyPress$: GoTo 109
+
+    If I1 = 7 And S(P9, 0) - S(1 - P9, 0) <= 0 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": I$ = GetKeyPress$: GoTo 109
     OF%(P9) = I1
     CZ%(P9) = 0
     If H < 2 Or H >= 2 And T > 120 Then GoTo DEFENSE
     Print "CRASH OFFENSIVE BOARDS (LAST 2 MIN) (YN)";
-    111 I$ = InKey$: If I$ = "" Then 111
+    I$ = GetKeyPress$
     If UCase$(I$) = "Y" Then CZ%(P9) = 1
 
     DEFENSE:
@@ -3624,40 +3979,62 @@ Sub OFFENSE ()
 End Sub
 
 
+'------------------------------
+'    FOULSAFE Subroutine
+'------------------------------
 Sub FOULSAFE ()
-    1200 Cls: Color 15: A = 0: S2 = 1: S3 = 1: SW = 0: For ZZ = 0 To 4
+    1200 Cls: Color 15: A = 0: S2 = 1: S3 = 1: SW = 0
+    For ZZ = 0 To 4
         If A(P9, B1(P9, ZZ), 22) = 50 Then A = A + 1: If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
         If A(P9, B1(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then Locate S2 + 3, 1: Print S2; "-"; AA$(P9, B1(P9, ZZ)): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
-    Next ZZ: If SW = 0 Then 1214
+    Next ZZ
+    If SW = 0 Then 1214
     A = 1: Print: Print "Z - CONTINUE"
-    1206 I$ = InKey$: If I$ = "" Then 1206
+
+    1206 I$ = GetKeyPress$
     If UCase$(I$) = "Z" And MJ = 0 Then 1214
     If UCase$(I$) = "Z" And MJ = 25 Then 1230
     P6 = Val(I$): If P6 < 1 Or P6 > (S2 + 1) Then 1206
+
     A = P6: If P6 = P5(P6) Then A(P9, B1(P9, P4(A)), 17) = A(P9, B1(P9, P4(A)), 17) * 3: A(P9, B1(P9, P4(A)), 22) = 0: Locate P5(A) + 3, 20: Print AA$(P9, B1(P9, P4(A))); " WILL NOW PLAY NORMAL DEFENSE!": Call STEALADJ: D1(P9) = D1(P9) - 1: A = A + 1: MJ = 25: GoTo 1206
-                                                                     
-    1214 A = 0: S2 = 1: For ZZ = 0 To 4
+
+    1214 A = 0: S2 = 1
+    For ZZ = 0 To 4
         If H <= 1 And A(P9, B1(P9, ZZ), 12) >= NF% - 3 And A(P9, B1(P9, ZZ), 22) = 0 Or A(P9, B1(P9, ZZ), 12) = NF% - 1 And A(P9, B1(P9, ZZ), 22) = 0 Then A = A + 1: If S2 = 1 Then Cls: Print: Print "THE FOLLOWING PLAYER(S) CAN ME MADE TO PLAY SAFE IF YOU WISH": Print
         If A = 0 And ZZ > 3 Then 1230
         If S2 = A And S2 < 6 Then Print S2; "- "; AA$(P9, B1(P9, ZZ)): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
     Next ZZ
     A = 1: Print: Print "Z - CONTINUE"
-    1220 I$ = InKey$: If I$ = "" Then 1220
+    1220 I$ = GetKeyPress$
     If UCase$(I$) = "Z" Then 1230
     P6 = Val(I$): If P6 < 1 Or P6 > (S2 + 1) Then 1220
+
     A = P6: If P6 = P5(P6) Then A(P9, B1(P9, P4(A)), 17) = Int((A(P9, B1(P9, P4(A)), 17) + 1) / 3): A(P9, B1(P9, P4(A)), 22) = 50: Locate P5(A) + 3, 20: Print AA$(P9, B1(P9, P4(A))); " WILL NOW PLAY SAFE!": Call STEALADJ: D1(P9) = D1(P9) + 1: A = A + 1: S3 = S3 + 1: GoTo 1220
     1230 MJ = 0
     FO = 99: If H = 1 And T = 1200 Then FO = 0
 End Sub
 
+
+'------------------------------
+'    FOULHARD Subroutine
+'------------------------------
 Sub FOULHARD ()
-    For I = 0 To 1: For I1 = 0 To 13
-        If A(I, I1, 22) = 50 Then A(I, I1, 22) = 0: A(I, I1, 17) = A(I, I1, 17) * 3: D1(I) = D1(I) - 1: MJ = 50
+    For I = 0 To 1
+        For I1 = 0 To 13
+            If A(I, I1, 22) = 50 Then A(I, I1, 22) = 0: A(I, I1, 17) = A(I, I1, 17) * 3: D1(I) = D1(I) - 1: MJ = 50
         Next I1
-        If MJ = 50 Then MJ = 0: F5%(I, 0) = 0: For I1 = 0 To 4: F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17): Next I1
+        If MJ = 50 Then
+            MJ = 0
+            F5%(I, 0) = 0
+            For I1 = 0 To 4: F5%(I, 0) = F5%(I, 0) + A(I, B1(I, I1), 17): Next I1
+        End If
     Next I
 End Sub
 
+
+'------------------------------
+'    STEALADJ Subroutine
+'------------------------------
 Sub STEALADJ ()
     For I = 0 To 1
         F5%(I, 0) = 0
@@ -3669,6 +4046,10 @@ Sub STEALADJ ()
     Next I
 End Sub
 
+
+'------------------------------
+'    ALPHANUM Subroutine
+'------------------------------
 Sub ALPHANUM (I$, J)
     J = Val(I$)
     If UCase$(I$) = "A" Then J = 10
@@ -3678,6 +4059,10 @@ Sub ALPHANUM (I$, J)
     If UCase$(I$) = "E" Then J = 14
 End Sub
 
+
+'------------------------------
+'    BOXSCREEN Subroutine
+'------------------------------
 Sub BOXSCREEN ()
     For I = 0 To 1: Color TR%(I, 0), TR%(I, 1)
         Print B$(I): Color 14, 0
@@ -3718,10 +4103,19 @@ Sub BOXSCREEN ()
         Color 14: Print "TOTAL TURNOVERS -";: Color 15: Print T0(I)
         Color 14: Print "TOTAL REBOUNDS  -";: Color 15: Print R3(I)
         For I2 = 0 To 14: V9(I2) = 0: Next I2
-        Call HITKEY: Cls
+        'Call HITKEY: Cls
+        If AP1 = 1 Xor U5 = 2 Then
+            I$ = GetKeyPress
+        End If
+        Cls
+
     Next I
 End Sub
 
+
+'------------------------------
+'    SHOTPERCENT Subroutine
+'------------------------------
 Sub SHOTPERCENT ()
     FX% = A(p, B1(p, B), 0) + TP%(D) + TP%(p)
     TP%(D) = 0: TP%(p) = 0
@@ -3743,6 +4137,10 @@ Sub SHOTPERCENT ()
     925 '
 End Sub
 
+
+'------------------------------
+'    THREEFT Subroutine
+'------------------------------
 Sub THREEFT ()
     A(p, B1(p, B), 10) = A(p, B1(p, B), 10) + 1
     RN = Int(Rnd(1) * 100) + 1
@@ -3758,16 +4156,24 @@ Sub THREEFT ()
     Call MAINSCREEN
 End Sub
 
+
+'------------------------------
+'    MADEFT Subroutine
+'------------------------------
 Sub MADEFT ()
     A(p, B1(p, B), 10) = A(p, B1(p, B), 10) + 1
-    If U6 <> 0 Then Locate F3 + 9, 1: Call DELAY: Print F3; " GOOD"
+    If displayPause <> 0 Then Locate F3 + 9, 1: Call DELAY: Print F3; " GOOD"
     S(p, H) = S(p, H) + 1: S(p, 0) = S(p, 0) + 1
     Call MAINSCREEN
     Call DELAY
 End Sub
 
+
+'------------------------------
+'    MISSFT Subroutine
+'------------------------------
 Sub MISSFT ()
-    If U6 = 0 Then 3699
+    If displayPause = 0 Then 3699
     Call DELAY
     Locate F3 + 9, 1
     Print F3; " MISSED"
@@ -3775,6 +4181,10 @@ Sub MISSFT ()
     3699 '
 End Sub
 
+
+'------------------------------
+'    BADFT Subroutine
+'------------------------------
 Sub BADFT ()
     If F3 = 1 Then U$ = "FIRST FREE THROW IS MISSED"
     If F3 = 2 Then U$ = "SECOND FREE THROW IS MISSED"
@@ -3782,6 +4192,10 @@ Sub BADFT ()
     Call PBP
 End Sub
 
+
+'------------------------------
+'    PRELOAD Subroutine
+'------------------------------
 Sub PRELOAD ()
     1100 NT = 0
     Open p$(0) + "BASK." + YN$ For Random As #1 Len = 655
@@ -3796,9 +4210,14 @@ Sub PRELOAD ()
         V$(NT) = Q$(0): V%(NT) = I1
     1105 Next I1
     Close 1
+
     Call TEAMSELECT
 End Sub
 
+
+'------------------------------
+'    TEAMSELECT Subroutine
+'------------------------------
 Sub TEAMSELECT ()
     1102 SELECTION% = 1
     Count% = NT
@@ -3826,8 +4245,13 @@ Sub TEAMSELECT ()
     If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 20
     I1 = V%(SELECTION%)
     Call GETATEAM(I1, YN$)
+
 21 End Sub
 
+
+'------------------------------
+'    SELECT ID Subroutine
+'------------------------------
 Sub SELECTID ()
     56 Color 15, 0
     Cls
@@ -3836,7 +4260,7 @@ Sub SELECTID ()
     Color 15, 4
 
     'Print box top
-    Print " " + Chr$(201); String$(61, 196); Chr$(187) + " ";
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
     'Print box sides
     JJ = 9
@@ -3847,7 +4271,7 @@ Sub SELECTID ()
     Locate 7 + JJ, 8
 
     'Print box bottom
-    Print " " + Chr$(200); String$(61, 196); Chr$(188) + " ";
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
     Locate 7, 32
     Locate , 12: Print "ENTER DISK ID: ": Print
@@ -3865,13 +4289,17 @@ Sub SELECTID ()
     For I = 1 To 500: V$(I) = "": Next
     Call PRELOAD
     60 If BO% = 1 Then BO% = 0: GoTo 56
-    58 Locate 2, 33: Color TR%(P9, 0), TR%(P9, 1): Print B$(P9): Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";: I$ = InKey$: If I$ = "" Then 58
+    58 Locate 2, 33: Color TR%(P9, 0), TR%(P9, 1): Print B$(P9): Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";: I$ = GetKeyPress$
     If UCase$(I$) = "Y" Then 56
     Color 15, 0
     Call TEAMSETUP
     Call DISABLEPLAYER
 End Sub
 
+
+'------------------------------
+'    PRDFAT Subroutine
+'------------------------------
 Sub PRDFAT ()
     'FATIGUE DUE TO PRESSURE DEFENSE ON THE DEFENSE
     For I = 0 To 4
@@ -3883,6 +4311,10 @@ Sub PRDFAT ()
     Next
 End Sub
 
+
+'------------------------------
+'    PRPFAT Subroutine
+'------------------------------
 Sub PRPFAT ()
     'FATIGUE AGAINST OFFENSIVE PLAYERS SUBJECT TO PRESS
     For I = 0 To 4
@@ -3894,6 +4326,10 @@ Sub PRPFAT ()
     Next
 End Sub
 
+
+'------------------------------
+'    WHOGESTBALL Subroutine
+'------------------------------
 Sub WHOGETSBALL ()
     1040 cnt% = 0
     1041 cnt% = cnt% + 1
@@ -3915,6 +4351,10 @@ Sub WHOGETSBALL ()
     1047 '
 End Sub
 
+
+'------------------------------
+'  BALLDISTRIBUTE Subroutine
+'------------------------------
 Sub BALLDISTRIBUTE ()
     R0 = Int(Rnd(1) * 100) + 1
     If U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And p = CT Or U5 = 2 Then Call WHOGETSBALL: GoTo 427
@@ -3937,10 +4377,10 @@ Sub BALLDISTRIBUTE ()
     If S9 <= 150 And R0 <= 60 Then 424
     If S9 > 150 And R0 <= 67 Then 424
     423 B = Int(Rnd(1) * 5): GoTo 427
-    424 If U6 <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call PBP
-    If U6 <> 0 And PB% = 1 Then
-        'IF AP=1 AND U5=2 OR U6=0 THEN 425
-        If U6 = 0 Then 425
+    424 If displayPause <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call PBP
+    If displayPause <> 0 And PB% = 1 Then
+        'IF AP=1 AND U5=2 OR displayPause=0 THEN 425
+        If displayPause = 0 Then 425
         For I = 8 To 15
             Locate I, 1
             Call BLANKLINE
@@ -3949,53 +4389,70 @@ Sub BALLDISTRIBUTE ()
         Print "PASS TO CHOICE (0-4)"
         Call DELAY
     End If
-    425 I$ = InKey$: If I$ = "" Then 425
+    425 I$ = GetKeyPress$
     If UCase$(I$) = "T" Then Call TICKER: Call SCOREBOARD: GoTo 425
-                             
+
     B = Val(I$): If B < 0 Or B > 4 Then 424
+
 427 End Sub
 
+
+'------------------------------
+'    PLAYINGTIME Subroutine
+'------------------------------
 Sub PLAYINGTIME ()
     Rem:*** INCREMENT MINUTES ***
-    For I3 = 0 To 1: For I4 = 0 To 4
-        ZZ(I3, B1(I3, I4)) = ZZ(I3, B1(I3, I4)) + TE
-    Next: Next
+    For I3 = 0 To 1
+        For I4 = 0 To 4
+            ZZ(I3, B1(I3, I4)) = ZZ(I3, B1(I3, I4)) + TE
+        Next
+    Next
 End Sub
 
+
+'------------------------------
+'    CLOCKOVER Subroutine
+'------------------------------
 Sub CLOCKOVER ()
-                         
     If T <= 0 Then TE = T: Call PLAYINGTIME: T = 0
 End Sub
 
+
+'------------------------------
+'    BLANKLINE Subroutine
+'------------------------------
 Sub BLANKLINE ()
     Print "                                      "
 End Sub
 
+
+'------------------------------
+'    CLEARPBPBOX Subroutine
+'------------------------------
 Sub CLEARPBPBOX ()
-    Rem:IF AP=1 AND U5=2 OR U6=0 THEN 4096
-    If U6 = 0 Then 4096
+    Rem:IF AP=1 AND U5=2 OR displayPause=0 THEN 4096
+    If displayPause = 0 Then 4096
     For I = 8 To 15: Locate I, 1: Call BLANKLINE: Next I
-                          
+
     4096 Locate 10
 End Sub
 
+
+'------------------------------
+'  DEADBALLOPTIONS Subroutine
+'------------------------------
 Sub DEADBALLOPTIONS ()
     220 PB$ = ""
     Call CLEARPBP
     If U5 = 2 Then P9 = 0: Call COMPUTERSUB: Call FATIGUE: P9 = 1: Call COMPUTERSUB: Call FATIGUE
-                    
-                        
-                    
-                
+
     If U5 = 1 Then P9 = CT: Call COMPUTERSUB: Call FATIGUE
-                    
-                
+
     FO = 0
     XM = 0
     Call CLEARPBPBOX
     If U5 = 2 Then S2 = 0: P9 = p: C1 = 2: Call CLOCKOVER: Call STEALADJ: GoTo 222
-                  
-                           
+
     Locate 9, 1: Color 14, 0
     Print "<ENTER>-CONTINUE"
     Print "1-SUB "; B$(p)
@@ -4004,38 +4461,35 @@ Sub DEADBALLOPTIONS ()
     Print "4-CHANGE STRATEGY "; B$(D)
     Print "5-TIME OUT "; B$(p)
     Print "6-TIME OUT "; B$(D)
-    221 I$ = InKey$: If I$ = "" Then 221
+    221 I$ = GetKeyPress$
+
     P3 = Val(I$)
     If P3 < 1 Or P3 > 6 Or U5 = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And T1(p) <= 0) And p = CT Or U5 = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And T1(D) <= 0) And D = CT Then S2 = 0: P9 = p: C1 = 2: Call CLOCKOVER: Call STEALADJ: GoTo 227
-
-                           
     If P3 = 5 And T1(p) <= 0 Or P3 = 6 And T1(D) <= 0 Then 221
+
     If P3 = 1 Then S2 = p
     If P3 = 2 Then S2 = D
-                         
-                
+
     If P3 = 3 Then P9 = p: Call OFFENSE: Call SCOREBOARD: GoTo 220
-                         
-                
+
     If P3 = 4 Then P9 = D: Call OFFENSE: Call SCOREBOARD: GoTo 220
     If P3 = 5 Then T1(p) = T1(p) - 1: Call RESETFATIGUE: Call SCOREBOARD: GoTo 220
-                     
-                             
+
     If P3 = 6 Then T1(D) = T1(D) - 1: Call RESETFATIGUE: Call SCOREBOARD: GoTo 220
-                     
-                             
-                   
-                
+
     C1 = 1: P9 = S2: Call LINEUPS: Call FOULSAFE: P9 = p: LC% = 1: GoTo 220
     227 If LC% = 1 Then LC% = 0: Call CLOCKOVER: Call SCOREBOARD
-                  
-                   
-    Rem:IF AP=1 AND U5=2 OR U6=0 THEN 222
-    If U6 = 0 Then 222
+
+    Rem:IF AP=1 AND U5=2 OR displayPause=0 THEN 222
+    If displayPause = 0 Then 222
     For I = 8 To 15: Locate I, 1: Call BLANKLINE: Next I
+
 222 End Sub
 
 
+'------------------------------
+'    LASTFIVEMENU Subroutine
+'------------------------------
 Sub LASTFIVEMENU ()
     Locate 8, 8
     Color TR%(p, 0), TR%(p, 1)
@@ -4067,16 +4521,31 @@ Sub LASTFIVEMENU ()
     Locate , 14: Print "5 - WORK DOWN THE FLOOR FOR A 2      3.0 - 5.0"
 End Sub
 
+
+'------------------------------
+'    RESETFATIGUE Subroutine
+'------------------------------
 Sub RESETFATIGUE ()
-    295 For I = 0 To 1: For I1 = 0 To 1: PR%(I, I1) = 0: Next: Next
-    For I = 0 To 1: For I1 = 0 To 13: FA%(I, I1) = FA%(I, I1) + 1
-        If FA%(I, I1) > 0 Then FA%(I, I1) = 0
-    Next: Next
+    295 For I = 0 To 1
+        For I1 = 0 To 1
+            PR%(I, I1) = 0
+        Next
+    Next
+    For I = 0 To 1
+        For I1 = 0 To 13
+            FA%(I, I1) = FA%(I, I1) + 1
+            If FA%(I, I1) > 0 Then FA%(I, I1) = 0
+        Next
+    Next
 End Sub
 
+
+'------------------------------
+'    WINDEX Subroutine
+'------------------------------
 Sub WINDEX ()
-    'IF AP=1 AND U5=2 OR U6=0 THEN 4090
-    If U6 > 0 Then
+    'IF AP=1 AND U5=2 OR displayPause=0 THEN 4090
+    If displayPause > 0 Then
         For I = 8 To 15
             Locate I, 1
             Print "                                      ";
@@ -4086,6 +4555,9 @@ Sub WINDEX ()
 End Sub
 
 
+'------------------------------
+'      BOXTOP Subroutine
+'------------------------------
 Sub BOXTOP ()
     If N <> 2 Then Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N): Print: Color 14, 0
     For I = 0 To 1: Print B$(I); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2));
@@ -4102,49 +4574,54 @@ Sub BOXTOP ()
     8513 Next I
 End Sub
 
+
+'------------------------------
+'    STOPAGE Subroutine
+'------------------------------
 Sub STOPPAGE ()
     810 Call CLEARPBP
     If U5 = 0 Then 811
     If U5 = 2 Then P9 = 0: Call COMPUTERSUB: Call FATIGUE: P9 = 1: Call COMPUTERSUB: Call FATIGUE
-                    
-                        
-                    
-                
+
     If U5 = 1 Then P9 = CT: Call COMPUTERSUB: Call FATIGUE
-                    
-                
+
     XM = 0
     811 If U5 = 2 Then S2 = 0: P9 = p: C1 = 2: Call CLOCKOVER: GoTo 820
-                            
+
     If PB% = 0 Then Call CLEARPBPBOX
-    If PB% = 1 And U6 <> 0 Then Locate 11, 1
+    If PB% = 1 And displayPause <> 0 Then Locate 11, 1
     Color 14, 0
     Print "<ENTER>-CONTINUE"
     Print "1-TIME OUT "; B$(p)
     Print "2-TIME OUT "; B$(D)
     Print "3-CHANGE STRATEGY "; B$(p)
     Print "4-CHANGE STRATEGY "; B$(D)
-    813 I$ = InKey$: If I$ = "" Then 813
+
+    813 I$ = GetKeyPress$
     P3 = Val(I$): If P3 < 1 Or P3 > 4 Then S2 = 0: P9 = p: C1 = 2: Call CLOCKOVER: GoTo 818
-                            
     If P3 = 1 And T1(p) <= 0 Or P3 = 2 And T1(D) <= 0 Or (P3 = 1 Or P3 = 3) And p = CT And U5 = 1 Or (P3 = 2 Or P3 = 4) And D = CT And U5 = 1 Then 813
-                         
-                
+
     If P3 = 3 Then P9 = p: Call OFFENSE: Call SCOREBOARD: GoTo 810
-                         
-                
+
     If P3 = 4 Then P9 = D: Call OFFENSE: Call SCOREBOARD: GoTo 810
-    For I = 0 To 1: For I1 = 0 To 1
-        PR%(I, I1) = 0
-    Next: Next
+    For I = 0 To 1
+        For I1 = 0 To 1
+            PR%(I, I1) = 0
+        Next
+    Next
+
     If P3 = 1 Then T1(p) = T1(p) - 1: Color 14, 0: Call SCOREBOARD: Call DEADBALLOPTIONS
-                   
-                        
+
     If P3 = 2 Then T1(D) = T1(D) - 1: Color 14, 0: Call SCOREBOARD: Call DEADBALLOPTIONS
-                   
+
     818 Call CLEARPBPBOX
+
 820 End Sub
 
+
+'------------------------------
+'    LASTSHOT Subroutine
+'------------------------------
 Sub LASTSHOT ()
     210 M5 = 0: If T <= 2 Or IN = 99 Then M5 = 1: GoTo 214
     If T > 2 And T <= 4 Then M5 = 2
@@ -4156,20 +4633,31 @@ Sub LASTSHOT ()
 End Sub
     
 
+'------------------------------
+'    ZEROCHECK Subroutine
+'------------------------------
 Sub ZEROCHECK ()
     215 If T <= .001 Then TE = T: Call PLAYINGTIME: T = 0
     If X8 <= 0 Then X8 = X8 - X8: T = T - X8: TE = X8: Call PLAYINGTIME
     Call MAINSCREEN
 End Sub
 
+
+'------------------------------
+'    SELECTPBP Subroutine
+'------------------------------
 Sub SELECTPBP ()
     If PB% = 0 Then Call PBP
-    If PB% = 1 And U6 <> 0 Then Call WINDEX: Print U$: Call DELAY
+    If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call DELAY
 End Sub
 
+
+'------------------------------
+'    PRESSGUARD Subroutine
+'------------------------------
 Sub PRESSGUARD ()
     260 Call WINDEX
-    If U6 = 0 Then 264
+    If displayPause = 0 Then 264
     If P7(D) > 0 Then U$ = B$(D) + " IS PRESSING": Call SELECTPBP
     264 If P7(D) = 0 Or P7(D) > 2 Then 263
     If U5 = 2 Or U5 = 1 And p = CT Then
@@ -4188,23 +4676,41 @@ Sub PRESSGUARD ()
     Locate , 14: Print "#   NAME"; Tab(35); "PA"; Tab(38); "FA"
     Locate , 14: Print "0 - "; AA$(p, B1(p, 0)); Tab(35); A(p, B1(p, 0), 4); Tab(38); Abs(FA%(p, B1(p, 0)))
     Locate , 14: Print "1 - "; AA$(p, B1(p, 1)); Tab(35); A(p, B1(p, 1), 4); Tab(38); Abs(FA%(p, B1(p, 1)))
-    262 I$ = InKey$: If I$ = "" Then 262
+
+    262 I$ = GetKeyPress$
     I1 = Val(I$): If I1 < 0 Or I1 > 1 Then 262
-    BU% = I1: Color 15, 0
+
+    BU% = I1
+    Color 15, 0
     Call SCOREBOARD
+
 263 End Sub
 
+
+'------------------------------
+'    SAVESTATS Subroutine
+'------------------------------
 Sub SAVESTATS
     6000 If Not _FileExists("GAME82") Then 6035
     Open "GAME82" For Input As #2
     Input #2, FF$
     For I = 0 To 2: Input #2, AP%(I): Next: Close 2
+
     If AP%(2) > 31 Then 6011
     For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X): Next
     Open "TICKER" For Output As #2
-    For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
-    Print #2, SX%(I, I1, I2): Next: Next: Next
-    For I = 1 To 32: For I1 = 0 To 1: Print #2, SX$(I, I1): Next: Next
+    For I = 1 To 32
+        For I1 = 0 To 1
+            For I2 = 1 To 14
+                Print #2, SX%(I, I1, I2):
+            Next
+        Next
+    Next
+    For I = 1 To 32
+        For I1 = 0 To 1
+            Print #2, SX$(I, I1)
+        Next
+    Next
     For I = 1 To 32: Print #2, ST%(I): Next
     Close 2
 
@@ -4267,8 +4773,11 @@ Sub SAVESTATS
     H% = N
     For PX = 0 To 1
         For J = 0 To 13
-            A(PX, J, 16) = ZZ(PX, J): A(PX, J, 17) = A(PX, J, 23): A(PX, J, 18) = A(PX, J, 24)
-    Next: Next
+            A(PX, J, 16) = ZZ(PX, J)
+            A(PX, J, 17) = A(PX, J, 23)
+            A(PX, J, 18) = A(PX, J, 24)
+        Next
+    Next
     For PX = 0 To 1
         For I = 0 To 13
             For J = 1 To 12
@@ -4289,7 +4798,8 @@ Sub SAVESTATS
     Print U$
     Color 15, 0
     If AP1 = 1 Then 6355
-    6325 I$ = InKey$: If I$ = "" Then 6325
+
+    6325 I$ = GetKeyPress$
     If UCase$(I$) = "N" Then C% = 1: GoTo 6355
 
     6355 If C% = 1 Then 6290
@@ -4316,7 +4826,12 @@ Sub SAVESTATS
         Z(0) = Z(0) + A(Q, I, 10)
         TG = TG + A(Q, I, 10)
     Next I
-    For I = 0 To 1: V9(I) = 0: For I1 = 0 To 13: V9(I) = V9(I) + A(I, I1, 5): Next: Next
+    For I = 0 To 1
+        V9(I) = 0
+        For I1 = 0 To 13
+            V9(I) = V9(I) + A(I, I1, 5)
+        Next
+    Next
     Z(15) = Z(15) + R3(Q) - V9(Q): Z1(15) = Z1(15) + R3(1 - Q) - V9(1 - Q)
     Z(5) = Z(5) + R3(Q): Z1(5) = Z1(5) + R3(1 - Q): Z(11) = Z(11) + T0(Q): Z1(11) = Z1(11) + T0(1 - Q)
     For J = 0 To 13: Z(13) = Z(13) + W0(Q, J): Z(14) = Z(14) + W1(Q, J)
@@ -4349,7 +4864,8 @@ Sub SAVESTATS
     For I = 1 To 100
         For I1 = 0 To 1
             Input #1, APT%(I, I1)
-    Next: Next
+        Next
+    Next
     For I = 1 To 100: Input #1, CRD(I): Next I
     For I = 1 To 100: Input #1, SITE$(I): Next I
     Close #1
@@ -4394,25 +4910,38 @@ Sub SAVESTATS
     For I = 1 To 100
         For I1 = 0 To 1
             Print #1, APT%(I, I1)
-    Next: Next
+        Next
+    Next
     For I = 1 To 100: Print #1, CRD(I): Next I
     For I = 1 To 100: Print #1, SITE$(I): Next I
     Close #1
+
     For I = 1 To 100
         O%(I) = 0: HT%(I) = 0: HO$(I) = "": H$(I) = "": CRD(I) = 0: SITE$(I) = ""
         For I1 = 0 To 1
             APT%(I, I1) = 0
         Next
     Next I
-    For J = 0 To 13: For K = 0 To 13
-    Z2(J, K) = 0: Next K: Next J
+
+    For J = 0 To 13
+        For K = 0 To 13
+            Z2(J, K) = 0
+        Next K
+    Next J
+
     For L = 0 To 15: Z(L) = 0: Z1(L) = 0: Next L
+
     6290 Q = Q + 1: Z(12) = 0
     If Q < 2 Then 6115
     If AP1 = 1 And AD <> 1 Then 6292
     If AD = 1 Then End
+
 6292 End Sub
 
+
+'------------------------------
+'    EVENTS Subroutine
+'------------------------------
 Sub EVENTS (COUNT, SPECIAL)
     If Not _FileExists("EVENTS.BOX") Then 8450
     Open "EVENTS.BOX" For Input As #1
@@ -4442,8 +4971,13 @@ Sub EVENTS (COUNT, SPECIAL)
     COUNT = COUNT + 1
     SPECIAL = 1
     Return
+
 8450 End Sub
 
+
+'------------------------------
+'    BOX2SPC Subroutine
+'------------------------------
 Sub BOX2SPC (NM$)
     Open p$(1) + NM$ For Output As #2
     If H - 3 > E%(1) Then Print #2, Using "MORE THAN ## OVERTIMES"; E%(1)
@@ -4504,6 +5038,10 @@ Sub BOX2SPC (NM$)
     Print #2, Chr$(12): Close 2
 End Sub
 
+
+'------------------------------
+'    QUARTERTOTAL Subroutine
+'------------------------------
 Sub QUARTERTOTAL ()
 
     For I = 0 To 1
@@ -4627,6 +5165,9 @@ Sub QUARTERTOTAL ()
 End Sub
 
 
+'------------------------------
+'    AICOMCOACH Subroutine
+'------------------------------
 Sub AICOMCOACH
     If P9 = 0 Then I6 = 1
     If P9 = 1 Then I6 = 0
@@ -4704,6 +5245,9 @@ Sub AICOMCOACH
 End Sub
 
 
+'------------------------------
+'   RECORDSCHECK Subroutine
+'------------------------------
 Sub RECORDSCHECK ()
     Dim RC$(50, 4), REC(50, 2) As Single, TRC$(125, 3), TREC(125, 2) As Single
     Dim V8(1, 14)
@@ -5489,7 +6033,6 @@ Sub RECORDSCHECK ()
             End If
         Next I2
 
-
         ' TEAM FIELD GOAL PERCENTAGES
         For I1 = 0 To 14: V8(I, I1) = 0: V8(1 - I, I1) = 0: Next
         For I2 = 0 To 1
@@ -6101,7 +6644,6 @@ Sub RECORDSCHECK ()
             TRC$(87, 3) = Date$
         End If
 
-
         If V8(I, 11) + V8(1 - I, 11) > TREC(88, 0) Then
             TREC(88, 0) = V8(I, 11) + V8(1 - I, 11)
             TREC(88, 1) = V8(I, 11)
@@ -6396,7 +6938,6 @@ Sub RECORDSCHECK ()
             TRC$(123, 2) = B$(1 - I)
             TRC$(123, 3) = Date$
         30 End If
-
 
         If V8(I, 12) + V8(1 - I, 12) > TREC(124, 0) Then
             TREC(124, 0) = V8(I, 12) + V8(1 - I, 12)

@@ -76,7 +76,7 @@ OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, P$(0): INPUT #1, P$(1): CLOSE 1
 
 CALL box0(5, 15, 15, 65, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(ITEM$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -400,7 +400,7 @@ CLOSE 2
 
 350 ' *** SAVE SCHEDULE FILE ***
 
-351 IF _FILEXIST(P$(0) + F$ + ".SCD") THEN KILL P$(0) + F$ + ".SCD"
+351 IF _FILEEXISTS(P$(0) + F$ + ".SCD") THEN KILL P$(0) + F$ + ".SCD"
 	 OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
 	FOR X = 0 TO 18
 	FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
@@ -693,7 +693,7 @@ CLOSE 1
 	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
 	
 _MouseShow "DEFAULT"
-206  MAMenu VARPTR(VV$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+206  MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF EXITCODE% = 27 THEN BO% = 1: RETURN
@@ -868,27 +868,27 @@ CLOSE 1
 	GOTO 4500
 
 4011 LOCATE 10, 8
-	CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
+	CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
 	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
+	CALL CSMsgBox("", 0, Pass)
 	GOTO 10
 
 4010 LOCATE 10, 8
-	CALL CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Cnf)
+	CALL CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
 	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
+	CALL CSMsgBox("", 0, Pass)
 	GOTO 4500
 
 4020 LOCATE 10, 8
-	CALL CSMsgBox("NO BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Cnf)
+	CALL CSMsgBox("NO BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
 	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
+	CALL CSMsgBox("", 0, Pass)
 	GOTO 4500
 
 4060 LOCATE 10, 8
 	CALL CSMsgBox("BOXSCORE DOES NOT EXIST PRESS ANY KEY TO RETURN TO MAIN MENU", 23, Cnf)
 	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
+	CALL CSMsgBox("", 0, Pass)
 	RETURN
 
 4500 'BOXSCORE MAINTENANCE
@@ -911,7 +911,7 @@ CLOSE 1
 CALL box0(5, 15, 12, 65, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(ITEM$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -1049,7 +1049,7 @@ DO
 
 		CALL CSMsgBox("REVISED BOXSCORE HAS BEEN SAVED...PRESS ANY KEY TO CONTINUE", 31, Cnf)
 		I$ = GetKeyPress$
-		CALL CSMsgBox("", 0, Cnf)
+		CALL CSMsgBox("", 0, Pass)
 
 	END IF
 
@@ -1064,9 +1064,9 @@ RETURN
 
 4400 LOCATE 10, 8
 
-	CALL CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
+	CALL CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
 	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
+	CALL CSMsgBox("", 0, Pass)
 	GOTO 2900
 
 4700 LOCATE 10, 8

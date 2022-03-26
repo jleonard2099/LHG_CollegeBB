@@ -2,7 +2,7 @@
 '$INCLUDE: 'QPProEqu.BI'
 
 DEFINT A-Z
-DECLARE FUNCTION FnExt$ (X$, Length)
+DECLARE FUNCTION PadRight$ (X$, Length)
 DECLARE SUB TITLE ()
 
 DIM D$(3), item$(18)
@@ -42,7 +42,7 @@ CALL Comline(N, A$(), 10)     ' Get what was typed on the command line
 
 CALL box0(7, 24, 17, 57, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -72,9 +72,9 @@ _MouseHide
 
 520 LOCATE , 31: PRINT "C:\COLBB\TEAMS"
 	LOCATE 7, 1: QPrint "Path for Teams ", 30, -1
-	LOCATE , 16: QPrint FnExt$(D$(0), 30), FG, BG, -1
+	LOCATE , 16: QPrint PadRight$(D$(0), 30), FG, BG, -1
 	LOCATE 9, 1: QPrint "Path for Stats ", 30, -1
-	LOCATE , 16: QPrint FnExt$(D$(1), 30), FG, BG, -1
+	LOCATE , 16: QPrint PadRight$(D$(1), 30), FG, BG, -1
 
 GetDiv1:
 	LOCATE 7, 16                         'location of beginning of field
@@ -82,22 +82,22 @@ GetDiv1:
 	CALL TextIn(D$(0), Max, NumOnly, CapsOn, XCode, Colr)        'get input
 	IF XCode = 1 GOTO GetDiv1:           'can't back up any more, stay here
 	IF XCode = 2 GOTO Done               'all done entering data
-	D$(0) = QPTRIM$(D$(0))
+	D$(0) = _TRIM$(D$(0))
 GetDiv2:
 	LOCATE 9, 16                         'location of beginning of field
 	CapsOn = 0: NumOnly = 0: Max = 30    'specify field parameters
 	CALL TextIn(D$(1), Max, NumOnly, CapsOn, XCode, Colr)        'get input
 	IF XCode = 1 GOTO GetDiv1:           'can't back up any more, stay here
 	IF XCode = 2 GOTO Done               'all done entering data
-	D$(1) = QPTRIM$(D$(1))
+	D$(1) = _TRIM$(D$(1))
 
 Done:
 	LOCATE 23, 1
 	PRINT "Is this okay? (Yes/No) ";
 	X$ = ""
-	CALL YesNoB(X$, XCode, Colr)
+	CALL YesNoB(X$, XCode, FG, BG)
 	LOCATE , 1
-	ClearEOL 30
+	ClearEOL 14, 1
 	IF XCode = 1 GOTO GetDiv2
 	IF X$ = "N" GOTO GetDiv1
 	IF X$ <> "Y" GOTO Done               'insist on either Y or N or up-arrow
@@ -132,7 +132,7 @@ Done:
 CALL box0(7, 26, 14, 57, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -162,7 +162,7 @@ _MouseHide
 
 CALL box0(7, 24, 13, 58, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -210,7 +210,7 @@ CALL box0(7, 40, 15, 66, 2, 31)
 	LOCATE , 10: PRINT "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
 	
 _MouseShow "DEFAULT"
-20   MAMenu VARPTR(item$(1)), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20   MAMenu item$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF ExitCode% = 27 THEN 1
@@ -234,9 +234,9 @@ _MouseHide
 	IF SELECTION% = 12 THEN CLS : END
 
 
-FUNCTION FnExt$ (X$, Length) 
+FUNCTION PadRight$ (X$, Length) 
 'Essentially this pads space to the right of the string
-	X$ = X$ + SPACE$(Length - LEN(X$))  'for display only
+	PadRight$ = X$ + SPACE$(Length - LEN(X$))  'for display only
 END FUNCTION
 
 SUB TITLE ()

@@ -2,359 +2,359 @@
 '$INCLUDE: 'QPProEqu.BI'
 DECLARE SUB TITLE ()
 
-DIM D$(2), TT$(20), TB$(25)
-DIM TRC(21), TRC$(21)
-DIM TRC1(21), TRC1$(21)
-DIM BRC(25), BRC$(25, 1), item$(8)
+Dim D$(2), TT$(20), TB$(25)
+Dim TRC(21), TRC$(21)
+Dim TRC1(21), TRC1$(21)
+Dim BRC(25), BRC$(25, 1), item$(8)
 
-DATA GAMES PLAYED,FIELD GOALS ATTEMPTED, FIELD GOALS MADE, FIELD GOAL %, 3-FIELD GOALS ATTEMPTED, 3-FIELD GOALS MADE, 3-FIELD GOAL %
-DATA FREE THROWS ATTEMPTED, FREE THROWS MADE, FREE THROW %, MINUTES PLAYED, POINTS, SCORING AVERAGE, HI-GAME, OFFENSIVE REBOUNDS
-DATA DEFENSIVE REBOUNDS, TOTAL REBOUNDS, REBOUNDS PER GAME, PERSONAL FOULS, STEALS, ASSISTS, BLOCKS, TURNOVERS, MINUTES PER GAME, MVP VOTING
-FOR I = 1 TO 25: READ TB$(I): NEXT
+Data GAMES PLAYED,FIELD GOALS ATTEMPTED,FIELD GOALS MADE,FIELD GOAL %,3-FIELD GOALS ATTEMPTED,3-FIELD GOALS MADE,3-FIELD GOAL %
+Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,MINUTES PLAYED,POINTS,SCORING AVERAGE,HI-GAME,OFFENSIVE REBOUNDS
+Data DEFENSIVE REBOUNDS,TOTAL REBOUNDS,REBOUNDS PER GAME,PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,MINUTES PER GAME,MVP VOTING
+For I = 1 To 25: Read TB$(I): Next
 
-DATA FIELD GOALS ATTEMPTED, FIELD GOALS MADE, FIELD GOAL %, 3-FIELD GOALS ATTEMPTED, 3-FIELD GOALS MADE, 3-FIELD GOAL %
-DATA FREE THROWS ATTEMPTED, FREE THROWS MADE, FREE THROW %, OFFENSIVE REBOUNDS, DEFENSIVE REBOUNDS, TOTAL REBOUNDS, REBOUNDS PER GAME
-DATA PERSONAL FOULS, STEALS, ASSISTS, BLOCKS, TURNOVERS, POINTS, POINTS PER GAME
+Data FIELD GOALS ATTEMPTED,FIELD GOALS MADE,FIELD GOAL %,3-FIELD GOALS ATTEMPTED,3-FIELD GOALS MADE,3-FIELD GOAL %
+Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,OFFENSIVE REBOUNDS,DEFENSIVE REBOUNDS,TOTAL REBOUNDS,REBOUNDS PER GAME
+Data PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,POINTS,POINTS PER GAME
 
-FOR I = 1 TO 20: READ TT$(I): NEXT
-OPEN "DEV.BAS" FOR INPUT AS #2
-FOR I = 0 TO 1
-INPUT #2, D$(I)
-NEXT
-CLOSE 2
+For I = 1 To 20: Read TT$(I): Next
+Open "DEV.BAS" For Input As #2
+For I = 0 To 1
+    Input #2, D$(I)
+Next
+Close 2
 
-2300   CALL TITLE
-	 item$(1) = "VIEW SEASON RECORDS      "
-	 item$(2) = "PRINT SEASON RECORDS     "
-	 item$(3) = "DELETE SEASON RECORDS    "
-	 item$(4) = "VIEW SINGLE GAME RECORDS "
-	 item$(5) = "PRINT SINGLE GAME RECORDS"
-	 item$(6) = "DELETE GAME RECORDS      "
-	 item$(7) = "RETURN TO GAME MENU      "
-	SELECTION% = 1
-	Count% = 7
-	Start% = 1
-	SCANCODE% = 7
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Spacing% = 1
-	Row% = 8
-	Column% = 25
+2300 Call TITLE
+item$(1) = "VIEW SEASON RECORDS      "
+item$(2) = "PRINT SEASON RECORDS     "
+item$(3) = "DELETE SEASON RECORDS    "
+item$(4) = "VIEW SINGLE GAME RECORDS "
+item$(5) = "PRINT SINGLE GAME RECORDS"
+item$(6) = "DELETE GAME RECORDS      "
+item$(7) = "RETURN TO GAME MENU      "
+SELECTION% = 1
+Count% = 7
+Start% = 1
+SCANCODE% = 7
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Spacing% = 1
+Row% = 8
+Column% = 25
 
-CALL box0(7, 24, 15, 50, 2, 31)
-	
+Call box0(7, 24, 15, 50, 2, 31)
+    
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
-	COLOR , 0
-	IF SCANCODE% = 27 OR SELECTION% = 7 THEN 1
-	IF SELECTION% = 1 THEN 3115
-	IF SELECTION% = 2 THEN 3200
-	IF SELECTION% = 3 THEN 2500
-	IF SELECTION% = 4 THEN RUN "RECORDS.EXE 1"
-	IF SELECTION% = 5 THEN RUN "RECORDS.EXE 2"
-	IF SELECTION% = 6 THEN 2600
+Color , 0
+If SCANCODE% = 27 Or SELECTION% = 7 Then 15
+If SELECTION% = 1 Then 3115
+If SELECTION% = 2 Then 3200
+If SELECTION% = 3 Then 2500
+If SELECTION% = 4 Then Run "RECORDS.EXE 1"
+If SELECTION% = 5 Then Run "RECORDS.EXE 2"
+If SELECTION% = 6 Then 2600
 
-	CLS
-	
-15 RUN "HELLO.EXE 2"
+Cls
+    
+15 Run "HELLO.EXE 2"
 
-2500 IF _FILEEXISTS(D$(1) + "RECORDS.CBB") THEN KILL D$(1) + "RECORDS.CBB"
-	GOTO 2300
+2500 If _FileExists(D$(1) + "RECORDS.CBB") Then Kill D$(1) + "RECORDS.CBB"
+GoTo 2300
 
-2600 IF _FILEEXISTS(D$(1) + "RECORDS.GAM") THEN KILL D$(1) + "RECORDS.GAM"
-	GOTO 2300
+2600 If _FileExists(D$(1) + "RECORDS.GAM") Then Kill D$(1) + "RECORDS.GAM"
+GoTo 2300
 
-2099 CLS
+2099 Cls
 
-2095 RUN "HELLO.EXE 3"
+2095 Run "HELLO.EXE 3"
 
-3115 IF NOT _FILEEXISTS(D$(1) + "RECORDS.CBB") THEN 5025
-OPEN D$(1) + "RECORDS.CBB" FOR INPUT AS #1
-	 FOR I = 1 TO 25
-	INPUT #1, BRC(I)
-	INPUT #1, BRC$(I, 0)
-	INPUT #1, BRC$(I, 1)
-	NEXT
-	FOR I = 1 TO 21
-	INPUT #1, TRC(I)
-	INPUT #1, TRC$(I)
-	IF TRC(I) = 19999 THEN TRC(I) = 0: TRC$(I) = ""
-	NEXT
-	FOR I = 1 TO 21
-	INPUT #1, TRC1(I)
-	INPUT #1, TRC1$(I)
-	IF TRC1(I) = 19999 THEN TRC1(I) = 0: TRC1$(I) = ""
-	NEXT
-CLOSE 1
-	  GOSUB 5000
-	COLOR 15: LOCATE 2, 23: PRINT "******* INDIVIDUAL PLAYER RECORDS *******"
-	PRINT
-	LOCATE , 4: PRINT "CATEGORY                PLAYER           TEAM            RECORD"
-	COLOR 7
-	LOCATE , 4: PRINT TB$(1); TAB(28); BRC$(1, 0); TAB(42); BRC$(1, 1); TAB(62); USING "####"; BRC(1)
-	LOCATE , 4: PRINT TB$(2); TAB(28); BRC$(2, 0); TAB(42); BRC$(2, 1); TAB(62); USING "####"; BRC(2)
-	LOCATE , 4: PRINT TB$(3); TAB(28); BRC$(3, 0); TAB(42); BRC$(3, 1); TAB(62); USING "####"; BRC(3)
-	LOCATE , 4: PRINT TB$(4); TAB(28); BRC$(4, 0); TAB(42); BRC$(4, 1); TAB(62); USING "##.#"; BRC(4) * 100
-	LOCATE , 4: PRINT TB$(5); TAB(28); BRC$(5, 0); TAB(42); BRC$(5, 1); TAB(62); USING "####"; BRC(5)
-	LOCATE , 4: PRINT TB$(6); TAB(28); BRC$(6, 0); TAB(42); BRC$(6, 1); TAB(62); USING "####"; BRC(6)
-	LOCATE , 4: PRINT TB$(7); TAB(28); BRC$(7, 0); TAB(42); BRC$(7, 1); TAB(62); USING "##.#"; BRC(7) * 100
-	LOCATE , 4: PRINT TB$(8); TAB(28); BRC$(8, 0); TAB(42); BRC$(8, 1); TAB(62); USING "####"; BRC(8)
-	LOCATE , 4: PRINT TB$(9); TAB(28); BRC$(9, 0); TAB(42); BRC$(9, 1); TAB(62); USING "####"; BRC(9)
-	LOCATE , 4: PRINT TB$(10); TAB(28); BRC$(10, 0); TAB(42); BRC$(10, 1); TAB(62); USING "##.#"; BRC(10) * 100
-	LOCATE , 4: PRINT TB$(11); TAB(28); BRC$(11, 0); TAB(42); BRC$(11, 1); TAB(62); USING "####"; BRC(11)
-	LOCATE , 4: PRINT TB$(12); TAB(28); BRC$(12, 0); TAB(42); BRC$(12, 1); TAB(62); USING "####"; BRC(12)
-	LOCATE , 4: PRINT TB$(13); TAB(28); BRC$(13, 0); TAB(42); BRC$(13, 1); TAB(62); USING "####"; BRC(13)
-	GOSUB 3500
-	GOSUB 5000
-	COLOR 15: LOCATE 2, 23: PRINT "******* INDIVIDUAL PLAYER RECORDS *******"
-	PRINT
-	LOCATE , 4: PRINT "CATEGORY                PLAYER           TEAM            RECORD"
-	COLOR 7
-	LOCATE , 4: PRINT TB$(14); TAB(28); BRC$(14, 0); TAB(42); BRC$(14, 1); TAB(62); USING "####"; BRC(14)
-	LOCATE , 4: PRINT TB$(15); TAB(28); BRC$(15, 0); TAB(42); BRC$(15, 1); TAB(62); USING "####"; BRC(15)
-	LOCATE , 4: PRINT TB$(16); TAB(28); BRC$(16, 0); TAB(42); BRC$(16, 1); TAB(62); USING "####"; BRC(16)
-	LOCATE , 4: PRINT TB$(17); TAB(28); BRC$(17, 0); TAB(42); BRC$(17, 1); TAB(62); USING "####"; BRC(17)
-	LOCATE , 4: PRINT TB$(18); TAB(28); BRC$(18, 0); TAB(42); BRC$(18, 1); TAB(62); USING "##.#"; BRC(18)
-	LOCATE , 4: PRINT TB$(19); TAB(28); BRC$(19, 0); TAB(42); BRC$(19, 1); TAB(62); USING "####"; BRC(19)
-	LOCATE , 4: PRINT TB$(20); TAB(28); BRC$(20, 0); TAB(42); BRC$(20, 1); TAB(62); USING "####"; BRC(20)
-	LOCATE , 4: PRINT TB$(21); TAB(28); BRC$(21, 0); TAB(42); BRC$(21, 1); TAB(62); USING "####"; BRC(21)
-	LOCATE , 4: PRINT TB$(22); TAB(28); BRC$(22, 0); TAB(42); BRC$(22, 1); TAB(62); USING "####"; BRC(22)
-	LOCATE , 4: PRINT TB$(23); TAB(28); BRC$(23, 0); TAB(42); BRC$(23, 1); TAB(62); USING "####"; BRC(23)
-	LOCATE , 4: PRINT TB$(24); TAB(28); BRC$(24, 0); TAB(42); BRC$(24, 1); TAB(62); USING "##.#"; BRC(24)
-	LOCATE , 4: PRINT TB$(25); TAB(28); BRC$(25, 0); TAB(42); BRC$(25, 1); TAB(62); USING "####"; BRC(25)
-	GOSUB 3500
-	GOSUB 5100
-	COLOR 15: LOCATE 2, 23: PRINT "*******  OFFENSIVE TEAM RECORDS *******"
-	PRINT
-	LOCATE , 4: PRINT "CATEGORY                        TEAM             RECORD            "
-	COLOR 14
-	LOCATE , 4: PRINT TT$(1); TAB(33); TRC$(1); TAB(53); USING "####"; TRC(1)
-	LOCATE , 4: PRINT TT$(2); TAB(33); TRC$(2); TAB(53); USING "####"; TRC(2)
-	LOCATE , 4: PRINT TT$(3); TAB(33); TRC$(3); TAB(53); USING "##.#"; TRC(3) * 100
-	LOCATE , 4: PRINT TT$(4); TAB(33); TRC$(4); TAB(53); USING "####"; TRC(4)
-	LOCATE , 4: PRINT TT$(5); TAB(33); TRC$(5); TAB(53); USING "####"; TRC(5)
-	LOCATE , 4: PRINT TT$(6); TAB(33); TRC$(6); TAB(53); USING "##.#"; TRC(6) * 100
-	LOCATE , 4: PRINT TT$(7); TAB(33); TRC$(7); TAB(53); USING "####"; TRC(7)
-	LOCATE , 4: PRINT TT$(8); TAB(33); TRC$(8); TAB(53); USING "####"; TRC(8)
-	LOCATE , 4: PRINT TT$(9); TAB(33); TRC$(9); TAB(53); USING "##.#"; TRC(9) * 100
-	LOCATE , 4: PRINT TT$(10); TAB(33); TRC$(10); TAB(53); USING "####"; TRC(10)
-	LOCATE , 4: PRINT TT$(11); TAB(33); TRC$(11); TAB(53); USING "####"; TRC(11)
-	LOCATE , 4: PRINT TT$(12); TAB(33); TRC$(12); TAB(53); USING "####"; TRC(12)
-	LOCATE , 4: PRINT TT$(13); TAB(33); TRC$(13); TAB(53); USING "##.#"; TRC(13)
-	LOCATE , 4: PRINT TT$(14); TAB(33); TRC$(14); TAB(53); USING "####"; TRC(14)
-	LOCATE , 4: PRINT TT$(15); TAB(33); TRC$(15); TAB(53); USING "####"; TRC(15)
-	COLOR 7
-	GOSUB 3500
-	GOSUB 5100
-	COLOR 15: LOCATE 2, 23: PRINT "*******  OFFENSIVE TEAM RECORDS *******"
-	PRINT
-	LOCATE , 4: PRINT "CATEGORY                        TEAM             RECORD            "
-	COLOR 14
-	LOCATE , 4: PRINT TT$(16); TAB(33); TRC$(16); TAB(53); USING "####"; TRC(16)
-	LOCATE , 4: PRINT TT$(17); TAB(33); TRC$(17); TAB(53); USING "####"; TRC(17)
-	LOCATE , 4: PRINT TT$(18); TAB(33); TRC$(18); TAB(53); USING "####"; TRC(18)
-	LOCATE , 4: PRINT TT$(19); TAB(33); TRC$(19); TAB(52); USING "#####"; TRC(19)
-	LOCATE , 4: PRINT TT$(20); TAB(33); TRC$(20); TAB(52); USING "###.#"; TRC(20)
-	LOCATE , 4: PRINT "WINS"; TAB(33); TRC$(21); TAB(53); USING "####"; TRC(21)
-	COLOR 7
-	GOSUB 3500
-	GOSUB 5000
-	COLOR 14: LOCATE 2, 23: PRINT "*******  DEFENSIVE TEAM RECORDS *******"
-	PRINT
-	LOCATE , 4: PRINT "CATEGORY                        TEAM             RECORD            "
-	COLOR 15
-	LOCATE , 4: PRINT TT$(1); TAB(33); TRC1$(1); TAB(53); USING "####"; TRC1(1)
-	LOCATE , 4: PRINT TT$(2); TAB(33); TRC1$(2); TAB(53); USING "####"; TRC1(2)
-	LOCATE , 4: PRINT TT$(3); TAB(33); TRC1$(3); TAB(53); USING "##.#"; TRC1(3) * 100
-	LOCATE , 4: PRINT TT$(4); TAB(33); TRC1$(4); TAB(53); USING "####"; TRC1(4)
-	LOCATE , 4: PRINT TT$(5); TAB(33); TRC1$(5); TAB(53); USING "####"; TRC1(5)
-	LOCATE , 4: PRINT TT$(6); TAB(33); TRC1$(6); TAB(53); USING "##.#"; TRC1(6) * 100
-	LOCATE , 4: PRINT TT$(7); TAB(33); TRC1$(7); TAB(53); USING "####"; TRC1(7)
-	LOCATE , 4: PRINT TT$(8); TAB(33); TRC1$(8); TAB(53); USING "####"; TRC1(8)
-	LOCATE , 4: PRINT TT$(9); TAB(33); TRC1$(9); TAB(53); USING "##.#"; TRC1(9) * 100
-	LOCATE , 4: PRINT TT$(10); TAB(33); TRC1$(10); TAB(53); USING "####"; TRC1(10)
-	LOCATE , 4: PRINT TT$(11); TAB(33); TRC1$(11); TAB(53); USING "####"; TRC1(11)
-	LOCATE , 4: PRINT TT$(12); TAB(33); TRC1$(12); TAB(53); USING "####"; TRC1(12)
-	LOCATE , 4: PRINT TT$(13); TAB(33); TRC1$(13); TAB(53); USING "##.#"; TRC1(13)
-	LOCATE , 4: PRINT TT$(14); TAB(33); TRC1$(14); TAB(53); USING "####"; TRC1(14)
-	LOCATE , 4: PRINT TT$(15); TAB(33); TRC1$(15); TAB(53); USING "####"; TRC1(15)
-	COLOR 7
-	GOSUB 3500
-	GOSUB 5000
-	COLOR 14: LOCATE 2, 23: PRINT "*******  DEFENSIVE TEAM RECORDS *******"
-	PRINT
-	LOCATE , 4: PRINT "CATEGORY                        TEAM             RECORD            "
-	COLOR 15
-	LOCATE , 4: PRINT TT$(16); TAB(33); TRC1$(16); TAB(53); USING "####"; TRC1(16)
-	LOCATE , 4: PRINT TT$(17); TAB(33); TRC1$(17); TAB(53); USING "####"; TRC1(17)
-	LOCATE , 4: PRINT TT$(18); TAB(33); TRC1$(18); TAB(53); USING "####"; TRC1(18)
-	LOCATE , 4: PRINT TT$(19); TAB(33); TRC1$(19); TAB(52); USING "#####"; TRC1(19)
-	LOCATE , 4: PRINT TT$(20); TAB(33); TRC1$(20); TAB(52); USING "###.#"; TRC1(20)
-	LOCATE , 4: PRINT "LOSSES"; TAB(33); TRC1$(21); TAB(53); USING "####"; TRC1(21)
-	COLOR 7
-	GOSUB 3500
-	GOTO 2300
+3115 If Not _FileExists(D$(1) + "RECORDS.CBB") Then 5025
+Open D$(1) + "RECORDS.CBB" For Input As #1
+For I = 1 To 25
+    Input #1, BRC(I)
+    Input #1, BRC$(I, 0)
+    Input #1, BRC$(I, 1)
+Next
+For I = 1 To 21
+    Input #1, TRC(I)
+    Input #1, TRC$(I)
+    If TRC(I) = 19999 Then TRC(I) = 0: TRC$(I) = ""
+Next
+For I = 1 To 21
+    Input #1, TRC1(I)
+    Input #1, TRC1$(I)
+    If TRC1(I) = 19999 Then TRC1(I) = 0: TRC1$(I) = ""
+Next
+Close 1
+GoSub 5000
+Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
+Print
+Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
+Color 7
+Locate , 4: Print TB$(1); Tab(28); BRC$(1, 0); Tab(42); BRC$(1, 1); Tab(62); Using "####"; BRC(1)
+Locate , 4: Print TB$(2); Tab(28); BRC$(2, 0); Tab(42); BRC$(2, 1); Tab(62); Using "####"; BRC(2)
+Locate , 4: Print TB$(3); Tab(28); BRC$(3, 0); Tab(42); BRC$(3, 1); Tab(62); Using "####"; BRC(3)
+Locate , 4: Print TB$(4); Tab(28); BRC$(4, 0); Tab(42); BRC$(4, 1); Tab(62); Using "##.#"; BRC(4) * 100
+Locate , 4: Print TB$(5); Tab(28); BRC$(5, 0); Tab(42); BRC$(5, 1); Tab(62); Using "####"; BRC(5)
+Locate , 4: Print TB$(6); Tab(28); BRC$(6, 0); Tab(42); BRC$(6, 1); Tab(62); Using "####"; BRC(6)
+Locate , 4: Print TB$(7); Tab(28); BRC$(7, 0); Tab(42); BRC$(7, 1); Tab(62); Using "##.#"; BRC(7) * 100
+Locate , 4: Print TB$(8); Tab(28); BRC$(8, 0); Tab(42); BRC$(8, 1); Tab(62); Using "####"; BRC(8)
+Locate , 4: Print TB$(9); Tab(28); BRC$(9, 0); Tab(42); BRC$(9, 1); Tab(62); Using "####"; BRC(9)
+Locate , 4: Print TB$(10); Tab(28); BRC$(10, 0); Tab(42); BRC$(10, 1); Tab(62); Using "##.#"; BRC(10) * 100
+Locate , 4: Print TB$(11); Tab(28); BRC$(11, 0); Tab(42); BRC$(11, 1); Tab(62); Using "####"; BRC(11)
+Locate , 4: Print TB$(12); Tab(28); BRC$(12, 0); Tab(42); BRC$(12, 1); Tab(62); Using "####"; BRC(12)
+Locate , 4: Print TB$(13); Tab(28); BRC$(13, 0); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC(13)
+GoSub 3500
+GoSub 5000
+Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
+Print
+Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
+Color 7
+Locate , 4: Print TB$(14); Tab(28); BRC$(14, 0); Tab(42); BRC$(14, 1); Tab(62); Using "####"; BRC(14)
+Locate , 4: Print TB$(15); Tab(28); BRC$(15, 0); Tab(42); BRC$(15, 1); Tab(62); Using "####"; BRC(15)
+Locate , 4: Print TB$(16); Tab(28); BRC$(16, 0); Tab(42); BRC$(16, 1); Tab(62); Using "####"; BRC(16)
+Locate , 4: Print TB$(17); Tab(28); BRC$(17, 0); Tab(42); BRC$(17, 1); Tab(62); Using "####"; BRC(17)
+Locate , 4: Print TB$(18); Tab(28); BRC$(18, 0); Tab(42); BRC$(18, 1); Tab(62); Using "##.#"; BRC(18)
+Locate , 4: Print TB$(19); Tab(28); BRC$(19, 0); Tab(42); BRC$(19, 1); Tab(62); Using "####"; BRC(19)
+Locate , 4: Print TB$(20); Tab(28); BRC$(20, 0); Tab(42); BRC$(20, 1); Tab(62); Using "####"; BRC(20)
+Locate , 4: Print TB$(21); Tab(28); BRC$(21, 0); Tab(42); BRC$(21, 1); Tab(62); Using "####"; BRC(21)
+Locate , 4: Print TB$(22); Tab(28); BRC$(22, 0); Tab(42); BRC$(22, 1); Tab(62); Using "####"; BRC(22)
+Locate , 4: Print TB$(23); Tab(28); BRC$(23, 0); Tab(42); BRC$(23, 1); Tab(62); Using "####"; BRC(23)
+Locate , 4: Print TB$(24); Tab(28); BRC$(24, 0); Tab(42); BRC$(24, 1); Tab(62); Using "##.#"; BRC(24)
+Locate , 4: Print TB$(25); Tab(28); BRC$(25, 0); Tab(42); BRC$(25, 1); Tab(62); Using "####"; BRC(25)
+GoSub 3500
+GoSub 5100
+Color 15: Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
+Print
+Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
+Color 14
+Locate , 4: Print TT$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC(1)
+Locate , 4: Print TT$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC(2)
+Locate , 4: Print TT$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC(3) * 100
+Locate , 4: Print TT$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC(4)
+Locate , 4: Print TT$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC(5)
+Locate , 4: Print TT$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC(6) * 100
+Locate , 4: Print TT$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC(7)
+Locate , 4: Print TT$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC(8)
+Locate , 4: Print TT$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC(9) * 100
+Locate , 4: Print TT$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC(10)
+Locate , 4: Print TT$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC(11)
+Locate , 4: Print TT$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC(12)
+Locate , 4: Print TT$(13); Tab(33); TRC$(13); Tab(53); Using "##.#"; TRC(13)
+Locate , 4: Print TT$(14); Tab(33); TRC$(14); Tab(53); Using "####"; TRC(14)
+Locate , 4: Print TT$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC(15)
+Color 7
+GoSub 3500
+GoSub 5100
+Color 15: Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
+Print
+Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
+Color 14
+Locate , 4: Print TT$(16); Tab(33); TRC$(16); Tab(53); Using "####"; TRC(16)
+Locate , 4: Print TT$(17); Tab(33); TRC$(17); Tab(53); Using "####"; TRC(17)
+Locate , 4: Print TT$(18); Tab(33); TRC$(18); Tab(53); Using "####"; TRC(18)
+Locate , 4: Print TT$(19); Tab(33); TRC$(19); Tab(52); Using "#####"; TRC(19)
+Locate , 4: Print TT$(20); Tab(33); TRC$(20); Tab(52); Using "###.#"; TRC(20)
+Locate , 4: Print "WINS"; Tab(33); TRC$(21); Tab(53); Using "####"; TRC(21)
+Color 7
+GoSub 3500
+GoSub 5000
+Color 14: Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
+Print
+Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
+Color 15
+Locate , 4: Print TT$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1(1)
+Locate , 4: Print TT$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1(2)
+Locate , 4: Print TT$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1(3) * 100
+Locate , 4: Print TT$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1(4)
+Locate , 4: Print TT$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1(5)
+Locate , 4: Print TT$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1(6) * 100
+Locate , 4: Print TT$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1(7)
+Locate , 4: Print TT$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1(8)
+Locate , 4: Print TT$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1(9) * 100
+Locate , 4: Print TT$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1(10)
+Locate , 4: Print TT$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1(11)
+Locate , 4: Print TT$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1(12)
+Locate , 4: Print TT$(13); Tab(33); TRC1$(13); Tab(53); Using "##.#"; TRC1(13)
+Locate , 4: Print TT$(14); Tab(33); TRC1$(14); Tab(53); Using "####"; TRC1(14)
+Locate , 4: Print TT$(15); Tab(33); TRC1$(15); Tab(53); Using "####"; TRC1(15)
+Color 7
+GoSub 3500
+GoSub 5000
+Color 14: Locate 2, 23: Print "*******  DEFENSIVE TEAM RECORDS *******"
+Print
+Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
+Color 15
+Locate , 4: Print TT$(16); Tab(33); TRC1$(16); Tab(53); Using "####"; TRC1(16)
+Locate , 4: Print TT$(17); Tab(33); TRC1$(17); Tab(53); Using "####"; TRC1(17)
+Locate , 4: Print TT$(18); Tab(33); TRC1$(18); Tab(53); Using "####"; TRC1(18)
+Locate , 4: Print TT$(19); Tab(33); TRC1$(19); Tab(52); Using "#####"; TRC1(19)
+Locate , 4: Print TT$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1(20)
+Locate , 4: Print "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1(21)
+Color 7
+GoSub 3500
+GoTo 2300
 
-3200 IF NOT _FILEEXISTS(D$(1) + "RECORDS.CBB") THEN 5025
-OPEN D$(1) + "RECORDS.CBB" FOR INPUT AS #1
-	 FOR I = 1 TO 25
-	INPUT #1, BRC(I)
-	INPUT #1, BRC$(I, 0)
-	INPUT #1, BRC$(I, 1)
-	NEXT
-	FOR I = 1 TO 21
-	INPUT #1, TRC(I)
-	INPUT #1, TRC$(I)
-	IF TRC(I) = 19999 THEN TRC(I) = 0: TRC$(I) = ""
-	NEXT
-	FOR I = 1 TO 21
-	INPUT #1, TRC1(I)
-	INPUT #1, TRC1$(I)
-	IF TRC1(I) = 19999 THEN TRC1(I) = 0: TRC1$(I) = ""
-	NEXT
-CLOSE 1
-	  ' PRINT RECORDS
-	LPRINT TAB(23); "******* INDIVIDUAL PLAYER RECORDS *******"
-	LPRINT
-	LPRINT "CATEGORY                PLAYER           TEAM            RECORD"
-	LPRINT TB$(1); TAB(28); BRC$(1, 0); TAB(42); BRC$(1, 1); TAB(62); USING "####"; BRC(1)
-	LPRINT TB$(2); TAB(28); BRC$(2, 0); TAB(42); BRC$(2, 1); TAB(62); USING "####"; BRC(2)
-	LPRINT TB$(3); TAB(28); BRC$(3, 0); TAB(42); BRC$(3, 1); TAB(62); USING "####"; BRC(3)
-	LPRINT TB$(4); TAB(28); BRC$(4, 0); TAB(42); BRC$(4, 1); TAB(62); USING "##.#"; BRC(4) * 100
-	LPRINT TB$(5); TAB(28); BRC$(5, 0); TAB(42); BRC$(5, 1); TAB(62); USING "####"; BRC(5)
-	LPRINT TB$(6); TAB(28); BRC$(6, 0); TAB(42); BRC$(6, 1); TAB(62); USING "####"; BRC(6)
-	LPRINT TB$(7); TAB(28); BRC$(7, 0); TAB(42); BRC$(7, 1); TAB(62); USING "##.#"; BRC(7) * 100
-	LPRINT TB$(8); TAB(28); BRC$(8, 0); TAB(42); BRC$(8, 1); TAB(62); USING "####"; BRC(8)
-	LPRINT TB$(9); TAB(28); BRC$(9, 0); TAB(42); BRC$(9, 1); TAB(62); USING "####"; BRC(9)
-	LPRINT TB$(10); TAB(28); BRC$(10, 0); TAB(42); BRC$(10, 1); TAB(62); USING "##.#"; BRC(10) * 100
-	LPRINT TB$(11); TAB(28); BRC$(11, 0); TAB(42); BRC$(11, 1); TAB(62); USING "####"; BRC(11)
-	LPRINT TB$(12); TAB(28); BRC$(12, 0); TAB(42); BRC$(12, 1); TAB(62); USING "####"; BRC(12)
-	LPRINT TB$(13); TAB(28); BRC$(13, 0); TAB(42); BRC$(13, 1); TAB(62); USING "####"; BRC(13)
-	LPRINT TB$(14); TAB(28); BRC$(14, 0); TAB(42); BRC$(14, 1); TAB(62); USING "####"; BRC(14)
-	LPRINT TB$(15); TAB(28); BRC$(15, 0); TAB(42); BRC$(15, 1); TAB(62); USING "####"; BRC(15)
-	LPRINT TB$(16); TAB(28); BRC$(16, 0); TAB(42); BRC$(16, 1); TAB(62); USING "####"; BRC(16)
-	LPRINT TB$(17); TAB(28); BRC$(17, 0); TAB(42); BRC$(17, 1); TAB(62); USING "####"; BRC(17)
-	LPRINT TB$(18); TAB(28); BRC$(18, 0); TAB(42); BRC$(18, 1); TAB(62); USING "##.#"; BRC(18)
-	LPRINT TB$(19); TAB(28); BRC$(19, 0); TAB(42); BRC$(19, 1); TAB(62); USING "####"; BRC(19)
-	LPRINT TB$(20); TAB(28); BRC$(20, 0); TAB(42); BRC$(20, 1); TAB(62); USING "####"; BRC(20)
-	LPRINT TB$(21); TAB(28); BRC$(21, 0); TAB(42); BRC$(21, 1); TAB(62); USING "####"; BRC(21)
-	LPRINT TB$(22); TAB(28); BRC$(22, 0); TAB(42); BRC$(22, 1); TAB(62); USING "####"; BRC(22)
-	LPRINT TB$(23); TAB(28); BRC$(23, 0); TAB(42); BRC$(23, 1); TAB(62); USING "####"; BRC(23)
-	LPRINT TB$(24); TAB(28); BRC$(24, 0); TAB(42); BRC$(24, 1); TAB(62); USING "##.#"; BRC(24)
-	LPRINT TB$(25); TAB(28); BRC$(25, 0); TAB(42); BRC$(25, 1); TAB(62); USING "####"; BRC(25)
-	LPRINT
-	LPRINT TAB(23); "*******  OFFENSIVE TEAM RECORDS *******"
-	LPRINT
-	LPRINT "CATEGORY                        TEAM             RECORD            "
-	LPRINT TT$(1); TAB(33); TRC$(1); TAB(53); USING "####"; TRC(1)
-	LPRINT TT$(2); TAB(33); TRC$(2); TAB(53); USING "####"; TRC(2)
-	LPRINT TT$(3); TAB(33); TRC$(3); TAB(53); USING "##.#"; TRC(3) * 100
-	LPRINT TT$(4); TAB(33); TRC$(4); TAB(53); USING "####"; TRC(4)
-	LPRINT TT$(5); TAB(33); TRC$(5); TAB(53); USING "####"; TRC(5)
-	LPRINT TT$(6); TAB(33); TRC$(6); TAB(53); USING "##.#"; TRC(6) * 100
-	LPRINT TT$(7); TAB(33); TRC$(7); TAB(53); USING "####"; TRC(7)
-	LPRINT TT$(8); TAB(33); TRC$(8); TAB(53); USING "####"; TRC(8)
-	LPRINT TT$(9); TAB(33); TRC$(9); TAB(53); USING "##.#"; TRC(9) * 100
-	LPRINT TT$(10); TAB(33); TRC$(10); TAB(53); USING "####"; TRC(10)
-	LPRINT TT$(11); TAB(33); TRC$(11); TAB(53); USING "####"; TRC(11)
-	LPRINT TT$(12); TAB(33); TRC$(12); TAB(53); USING "####"; TRC(12)
-	LPRINT TT$(13); TAB(33); TRC$(13); TAB(53); USING "##.#"; TRC(13)
-	LPRINT TT$(14); TAB(33); TRC$(14); TAB(53); USING "####"; TRC(14)
-	LPRINT TT$(15); TAB(33); TRC$(15); TAB(53); USING "####"; TRC(15)
-	LPRINT TT$(16); TAB(33); TRC$(16); TAB(53); USING "####"; TRC(16)
-	LPRINT TT$(17); TAB(33); TRC$(17); TAB(53); USING "####"; TRC(17)
-	LPRINT TT$(18); TAB(33); TRC$(18); TAB(53); USING "####"; TRC(18)
-	LPRINT TT$(19); TAB(33); TRC$(19); TAB(52); USING "#####"; TRC(19)
-	LPRINT TT$(20); TAB(33); TRC$(20); TAB(52); USING "###.#"; TRC(20)
-	LPRINT "WINS"; TAB(33); TRC$(21); TAB(53); USING "####"; TRC(21)
-	LPRINT
-	LPRINT TAB(23); "*******  DEFENSIVE TEAM RECORDS *******"
-	LPRINT
-	LPRINT "CATEGORY                        TEAM             RECORD            "
-	LPRINT TT$(1); TAB(33); TRC1$(1); TAB(53); USING "####"; TRC1(1)
-	LPRINT TT$(2); TAB(33); TRC1$(2); TAB(53); USING "####"; TRC1(2)
-	LPRINT TT$(3); TAB(33); TRC1$(3); TAB(53); USING "##.#"; TRC1(3) * 100
-	LPRINT TT$(4); TAB(33); TRC1$(4); TAB(53); USING "####"; TRC1(4)
-	LPRINT TT$(5); TAB(33); TRC1$(5); TAB(53); USING "####"; TRC1(5)
-	LPRINT TT$(6); TAB(33); TRC1$(6); TAB(53); USING "##.#"; TRC1(6) * 100
-	LPRINT TT$(7); TAB(33); TRC1$(7); TAB(53); USING "####"; TRC1(7)
-	LPRINT TT$(8); TAB(33); TRC1$(8); TAB(53); USING "####"; TRC1(8)
-	LPRINT TT$(9); TAB(33); TRC1$(9); TAB(53); USING "##.#"; TRC1(9) * 100
-	LPRINT TT$(10); TAB(33); TRC1$(10); TAB(53); USING "####"; TRC1(10)
-	LPRINT TT$(11); TAB(33); TRC1$(11); TAB(53); USING "####"; TRC1(11)
-	LPRINT TT$(12); TAB(33); TRC1$(12); TAB(53); USING "####"; TRC1(12)
-	LPRINT TT$(13); TAB(33); TRC1$(13); TAB(53); USING "##.#"; TRC1(13)
-	LPRINT TT$(14); TAB(33); TRC1$(14); TAB(53); USING "####"; TRC1(14)
-	LPRINT TT$(15); TAB(33); TRC1$(15); TAB(53); USING "####"; TRC1(15)
-	LPRINT TT$(16); TAB(33); TRC1$(16); TAB(53); USING "####"; TRC1(16)
-	LPRINT TT$(17); TAB(33); TRC1$(17); TAB(53); USING "####"; TRC1(17)
-	LPRINT TT$(18); TAB(33); TRC1$(18); TAB(53); USING "####"; TRC1(18)
-	LPRINT TT$(19); TAB(33); TRC1$(19); TAB(52); USING "#####"; TRC1(19)
-	LPRINT TT$(20); TAB(33); TRC1$(20); TAB(52); USING "###.#"; TRC1(20)
-	LPRINT "LOSSES"; TAB(33); TRC1$(21); TAB(53); USING "####"; TRC1(21)
-	LPRINT CHR$(12)
-	GOTO 2300
+3200 If Not _FileExists(D$(1) + "RECORDS.CBB") Then 5025
+Open D$(1) + "RECORDS.CBB" For Input As #1
+For I = 1 To 25
+    Input #1, BRC(I)
+    Input #1, BRC$(I, 0)
+    Input #1, BRC$(I, 1)
+Next
+For I = 1 To 21
+    Input #1, TRC(I)
+    Input #1, TRC$(I)
+    If TRC(I) = 19999 Then TRC(I) = 0: TRC$(I) = ""
+Next
+For I = 1 To 21
+    Input #1, TRC1(I)
+    Input #1, TRC1$(I)
+    If TRC1(I) = 19999 Then TRC1(I) = 0: TRC1$(I) = ""
+Next
+Close 1
+' PRINT RECORDS
+LPrint Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
+LPrint
+LPrint "CATEGORY                PLAYER           TEAM            RECORD"
+LPrint TB$(1); Tab(28); BRC$(1, 0); Tab(42); BRC$(1, 1); Tab(62); Using "####"; BRC(1)
+LPrint TB$(2); Tab(28); BRC$(2, 0); Tab(42); BRC$(2, 1); Tab(62); Using "####"; BRC(2)
+LPrint TB$(3); Tab(28); BRC$(3, 0); Tab(42); BRC$(3, 1); Tab(62); Using "####"; BRC(3)
+LPrint TB$(4); Tab(28); BRC$(4, 0); Tab(42); BRC$(4, 1); Tab(62); Using "##.#"; BRC(4) * 100
+LPrint TB$(5); Tab(28); BRC$(5, 0); Tab(42); BRC$(5, 1); Tab(62); Using "####"; BRC(5)
+LPrint TB$(6); Tab(28); BRC$(6, 0); Tab(42); BRC$(6, 1); Tab(62); Using "####"; BRC(6)
+LPrint TB$(7); Tab(28); BRC$(7, 0); Tab(42); BRC$(7, 1); Tab(62); Using "##.#"; BRC(7) * 100
+LPrint TB$(8); Tab(28); BRC$(8, 0); Tab(42); BRC$(8, 1); Tab(62); Using "####"; BRC(8)
+LPrint TB$(9); Tab(28); BRC$(9, 0); Tab(42); BRC$(9, 1); Tab(62); Using "####"; BRC(9)
+LPrint TB$(10); Tab(28); BRC$(10, 0); Tab(42); BRC$(10, 1); Tab(62); Using "##.#"; BRC(10) * 100
+LPrint TB$(11); Tab(28); BRC$(11, 0); Tab(42); BRC$(11, 1); Tab(62); Using "####"; BRC(11)
+LPrint TB$(12); Tab(28); BRC$(12, 0); Tab(42); BRC$(12, 1); Tab(62); Using "####"; BRC(12)
+LPrint TB$(13); Tab(28); BRC$(13, 0); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC(13)
+LPrint TB$(14); Tab(28); BRC$(14, 0); Tab(42); BRC$(14, 1); Tab(62); Using "####"; BRC(14)
+LPrint TB$(15); Tab(28); BRC$(15, 0); Tab(42); BRC$(15, 1); Tab(62); Using "####"; BRC(15)
+LPrint TB$(16); Tab(28); BRC$(16, 0); Tab(42); BRC$(16, 1); Tab(62); Using "####"; BRC(16)
+LPrint TB$(17); Tab(28); BRC$(17, 0); Tab(42); BRC$(17, 1); Tab(62); Using "####"; BRC(17)
+LPrint TB$(18); Tab(28); BRC$(18, 0); Tab(42); BRC$(18, 1); Tab(62); Using "##.#"; BRC(18)
+LPrint TB$(19); Tab(28); BRC$(19, 0); Tab(42); BRC$(19, 1); Tab(62); Using "####"; BRC(19)
+LPrint TB$(20); Tab(28); BRC$(20, 0); Tab(42); BRC$(20, 1); Tab(62); Using "####"; BRC(20)
+LPrint TB$(21); Tab(28); BRC$(21, 0); Tab(42); BRC$(21, 1); Tab(62); Using "####"; BRC(21)
+LPrint TB$(22); Tab(28); BRC$(22, 0); Tab(42); BRC$(22, 1); Tab(62); Using "####"; BRC(22)
+LPrint TB$(23); Tab(28); BRC$(23, 0); Tab(42); BRC$(23, 1); Tab(62); Using "####"; BRC(23)
+LPrint TB$(24); Tab(28); BRC$(24, 0); Tab(42); BRC$(24, 1); Tab(62); Using "##.#"; BRC(24)
+LPrint TB$(25); Tab(28); BRC$(25, 0); Tab(42); BRC$(25, 1); Tab(62); Using "####"; BRC(25)
+LPrint
+LPrint Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
+LPrint
+LPrint "CATEGORY                        TEAM             RECORD            "
+LPrint TT$(1); Tab(33); TRC$(1); Tab(53); Using "####"; TRC(1)
+LPrint TT$(2); Tab(33); TRC$(2); Tab(53); Using "####"; TRC(2)
+LPrint TT$(3); Tab(33); TRC$(3); Tab(53); Using "##.#"; TRC(3) * 100
+LPrint TT$(4); Tab(33); TRC$(4); Tab(53); Using "####"; TRC(4)
+LPrint TT$(5); Tab(33); TRC$(5); Tab(53); Using "####"; TRC(5)
+LPrint TT$(6); Tab(33); TRC$(6); Tab(53); Using "##.#"; TRC(6) * 100
+LPrint TT$(7); Tab(33); TRC$(7); Tab(53); Using "####"; TRC(7)
+LPrint TT$(8); Tab(33); TRC$(8); Tab(53); Using "####"; TRC(8)
+LPrint TT$(9); Tab(33); TRC$(9); Tab(53); Using "##.#"; TRC(9) * 100
+LPrint TT$(10); Tab(33); TRC$(10); Tab(53); Using "####"; TRC(10)
+LPrint TT$(11); Tab(33); TRC$(11); Tab(53); Using "####"; TRC(11)
+LPrint TT$(12); Tab(33); TRC$(12); Tab(53); Using "####"; TRC(12)
+LPrint TT$(13); Tab(33); TRC$(13); Tab(53); Using "##.#"; TRC(13)
+LPrint TT$(14); Tab(33); TRC$(14); Tab(53); Using "####"; TRC(14)
+LPrint TT$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC(15)
+LPrint TT$(16); Tab(33); TRC$(16); Tab(53); Using "####"; TRC(16)
+LPrint TT$(17); Tab(33); TRC$(17); Tab(53); Using "####"; TRC(17)
+LPrint TT$(18); Tab(33); TRC$(18); Tab(53); Using "####"; TRC(18)
+LPrint TT$(19); Tab(33); TRC$(19); Tab(52); Using "#####"; TRC(19)
+LPrint TT$(20); Tab(33); TRC$(20); Tab(52); Using "###.#"; TRC(20)
+LPrint "WINS"; Tab(33); TRC$(21); Tab(53); Using "####"; TRC(21)
+LPrint
+LPrint Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
+LPrint
+LPrint "CATEGORY                        TEAM             RECORD            "
+LPrint TT$(1); Tab(33); TRC1$(1); Tab(53); Using "####"; TRC1(1)
+LPrint TT$(2); Tab(33); TRC1$(2); Tab(53); Using "####"; TRC1(2)
+LPrint TT$(3); Tab(33); TRC1$(3); Tab(53); Using "##.#"; TRC1(3) * 100
+LPrint TT$(4); Tab(33); TRC1$(4); Tab(53); Using "####"; TRC1(4)
+LPrint TT$(5); Tab(33); TRC1$(5); Tab(53); Using "####"; TRC1(5)
+LPrint TT$(6); Tab(33); TRC1$(6); Tab(53); Using "##.#"; TRC1(6) * 100
+LPrint TT$(7); Tab(33); TRC1$(7); Tab(53); Using "####"; TRC1(7)
+LPrint TT$(8); Tab(33); TRC1$(8); Tab(53); Using "####"; TRC1(8)
+LPrint TT$(9); Tab(33); TRC1$(9); Tab(53); Using "##.#"; TRC1(9) * 100
+LPrint TT$(10); Tab(33); TRC1$(10); Tab(53); Using "####"; TRC1(10)
+LPrint TT$(11); Tab(33); TRC1$(11); Tab(53); Using "####"; TRC1(11)
+LPrint TT$(12); Tab(33); TRC1$(12); Tab(53); Using "####"; TRC1(12)
+LPrint TT$(13); Tab(33); TRC1$(13); Tab(53); Using "##.#"; TRC1(13)
+LPrint TT$(14); Tab(33); TRC1$(14); Tab(53); Using "####"; TRC1(14)
+LPrint TT$(15); Tab(33); TRC1$(15); Tab(53); Using "####"; TRC1(15)
+LPrint TT$(16); Tab(33); TRC1$(16); Tab(53); Using "####"; TRC1(16)
+LPrint TT$(17); Tab(33); TRC1$(17); Tab(53); Using "####"; TRC1(17)
+LPrint TT$(18); Tab(33); TRC1$(18); Tab(53); Using "####"; TRC1(18)
+LPrint TT$(19); Tab(33); TRC1$(19); Tab(52); Using "#####"; TRC1(19)
+LPrint TT$(20); Tab(33); TRC1$(20); Tab(52); Using "###.#"; TRC1(20)
+LPrint "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1(21)
+LPrint Chr$(12)
+GoTo 2300
 
-3500 COLOR 15: LOCATE 22, 30: PRINT "HIT ANY KEY TO CONTINUE"
+3500 Color 15: Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
 3501 I$ = GetKeyPress$
-	FOR I = 4 TO 21: LOCATE I, 4
-	PRINT "                                                                        "
-	NEXT
+For I = 4 To 21: Locate I, 4
+    Print "                                                                        "
+Next
 
-3502 RETURN
+3502 Return
 
-3750 LOCATE 23, 1: PRINT "PRESS ANY KEY TO CONTINUE";
+3750 Locate 23, 1: Print "PRESS ANY KEY TO CONTINUE";
 3751 I$ = GetKeyPress$
-	RETURN
+Return
 
-5000 COLOR 0, 0: CLS : J = 20
+5000 Color 0, 0: Cls: J = 20
 
-5001 LOCATE 1, 1: COLOR 15, 4: PRINT " Ö"; STRING$(73, 196); "· ";
-	FOR II = 1 TO J: COLOR 15, 4: LOCATE 1 + II, 1: PRINT " º"; STRING$(73, 32); "º "; : COLOR 7, 4: PRINT STRING$(2, 177): NEXT
+5001 Locate 1, 1: Color 15, 4: Print " Ö"; String$(73, 196); "· ";
+For II = 1 To J: Color 15, 4: Locate 1 + II, 1: Print " º"; String$(73, 32); "º ";: Color 7, 4: Print String$(2, 177): Next
 
-5002 COLOR 15, 4: LOCATE 2 + J, 1: PRINT " Ó"; STRING$(73, 196); "½ "; : COLOR 7, 4: PRINT STRING$(2, 177)
-	LOCATE , 3: PRINT STRING$(77, 177)
+5002 Color 15, 4: Locate 2 + J, 1: Print " Ó"; String$(73, 196); "½ ";: Color 7, 4: Print String$(2, 177)
+Locate , 3: Print String$(77, 177)
 
-5003 RETURN
+5003 Return
 
-5100 COLOR 0, 0: CLS : J = 20
+5100 Color 0, 0: Cls: J = 20
 
-5101 LOCATE 1, 1: COLOR 15, 1: PRINT " Ö"; STRING$(73, 196); "· ";
-	FOR II = 1 TO J: COLOR 15, 1: LOCATE 1 + II, 1: PRINT " º"; STRING$(73, 32); "º "; : COLOR 7, 1: PRINT STRING$(2, 177): NEXT
+5101 Locate 1, 1: Color 15, 1: Print " Ö"; String$(73, 196); "· ";
+For II = 1 To J: Color 15, 1: Locate 1 + II, 1: Print " º"; String$(73, 32); "º ";: Color 7, 1: Print String$(2, 177): Next
 
-5102 COLOR 15, 1: LOCATE 2 + J, 1: PRINT " Ó"; STRING$(73, 196); "½ "; : COLOR 7, 1: PRINT STRING$(2, 177)
-	LOCATE , 3: PRINT STRING$(77, 177)
+5102 Color 15, 1: Locate 2 + J, 1: Print " Ó"; String$(73, 196); "½ ";: Color 7, 1: Print String$(2, 177)
+Locate , 3: Print String$(77, 177)
 
-5103 RETURN
+5103 Return
 
-5200 COLOR 0, 0: CLS : J = 20
+5200 Color 0, 0: Cls: J = 20
 
-5201 LOCATE 1, 1: COLOR 15, 3: PRINT " Ö"; STRING$(73, 196); "· ";
-	FOR II = 1 TO J: COLOR 15, 3: LOCATE 1 + II, 1: PRINT " º"; STRING$(73, 32); "º "; : COLOR 7, 3: PRINT STRING$(2, 177): NEXT
+5201 Locate 1, 1: Color 15, 3: Print " Ö"; String$(73, 196); "· ";
+For II = 1 To J: Color 15, 3: Locate 1 + II, 1: Print " º"; String$(73, 32); "º ";: Color 7, 3: Print String$(2, 177): Next
 
-5202 COLOR 15, 3: LOCATE 2 + J, 1: PRINT " Ó"; STRING$(73, 196); "½ "; : COLOR 7, 3: PRINT STRING$(2, 177)
-	LOCATE , 3: PRINT STRING$(77, 177)
+5202 Color 15, 3: Locate 2 + J, 1: Print " Ó"; String$(73, 196); "½ ";: Color 7, 3: Print String$(2, 177)
+Locate , 3: Print String$(77, 177)
 
-5203 RETURN
+5203 Return
 
-5025 CALL TITLE
-	LOCATE 9, 30: PRINT "ERROR::: UNABLE TO LOCATE RECORDS"
-	GOSUB 3751
-	GOTO 2099
+5025 Call TITLE
+Locate 9, 30: Print "ERROR::: UNABLE TO LOCATE RECORDS"
+GoSub 3751
+GoTo 2099
 
-SUB TITLE ()
-	COLOR , 0: KEY OFF: CLS
-	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 23: COLOR 12
-	PRINT "COURTSIDE COLLEGE BASKETBALL V4.0"
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997"; TAB(70); LEFT$(TIME$, 5);
-	LOCATE 3, 1: COLOR 2, 0
-	COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-	  PRINT "     FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR SportGames@AOL.COM"
-	COLOR 10
-END SUB
+Sub TITLE ()
+    Color , 0: KEY Off: Cls
+    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12
+    Print "COURTSIDE COLLEGE BASKETBALL V4.0"
+    Locate 24, 1: Print Tab(80);: Locate , 1
+    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997"; Tab(70); Left$(Time$, 5);
+    Locate 3, 1: Color 2, 0
+    Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+    Print "     FOR TECHNICAL SUPPORT, CALL (800) 477-7032 OR SportGames@AOL.COM"
+    Color 10
+End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

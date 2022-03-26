@@ -311,7 +311,7 @@ END
 
 makeleague:
 CLOSE
-there = _FILEXIST(fil$)
+there = _FILEEXISTS(fil$)
 IF there = 0 THEN
 Source$ = "EMPTY.TDB"
 dest$ = fil$

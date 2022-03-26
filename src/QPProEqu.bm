@@ -1113,7 +1113,7 @@ End Sub
 '-----------------------------------
 ' MMenuVert Copycat Subroutine
 '-----------------------------------
-Sub MMenuVert (menuItems$(), Selected%, Start%, ScanCode%, ItemBGColor%, ItemFGColor%, HighlightFGColor%, HighlightBGColor%, NumRows%, Row%, Column%)
+Sub MMenuVert (menuItems$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemBGColor%, HighlightFGColor%, HighlightBGColor%, NumRows%, Row%, Column%)
     'Selected%
     ' which element to put at the top of the menu
 

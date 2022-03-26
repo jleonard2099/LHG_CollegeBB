@@ -5,835 +5,840 @@ DECLARE SUB TITLE ()
 DECLARE SUB CATEGORIES ()
 DECLARE SUB BUILDSTATS ()
 
-DIM A$(15), A(15, 14), W0(15), W1(15), Z(15), Z1(15), Z1$(40), GM(40), GM1(40)
-DIM AL$(600), W0L(600), W1L(600), TT(40, 15), TT1(40, 15), TT$(40, 15), TT1$(40, 15)
-DIM TMA$(600), TP$(31), TP1$(39), ZA$(40)
-DIM D$(1), item$(4)
-COMMON SHARED Z1$(), D$(), A$(), A(), W0(), W1(), JB, AL$(), TMA$(), GMA(), Z(), Z1()
+Dim A$(15), A(15, 14), W0(15), W1(15), Z(15), Z1(15), Z1$(40), GM(40), GM1(40)
+Dim AL$(600), W0L(600), W1L(600), TT(40, 15), TT1(40, 15), TT$(40, 15), TT1$(40, 15)
+Dim TMA$(600), TP$(31), TP1$(39), ZA$(40)
+Dim D$(1), item$(4)
+Common Shared Z1$(), D$(), A$(), A(), W0(), W1(), JB, AL$(), TMA$(), GMA(), Z(), Z1()
 
-COMMON SHARED Y, TS, TT(), TT$(), GM(), TBN, K1, AL(), TTS, TT1(), TT1$(), GM1()
-COMMON SHARED W0L(), W1L(), F$
+Common Shared Y, TS, TT(), TT$(), GM(), TBN, K1, AL(), TTS, TT1(), TT1$(), GM1()
+Common Shared W0L(), W1L(), F$
 
-CLS
+Cls
 
-REDIM TMM(600) AS STRING * 15, TPP(600) AS STRING * 15, TYP(600)
-REDIM AL(600, 14), GMA(600)
-	 K = 0: K1 = 0: PK = 0: PK1 = 0: JB = 0: JP = 0: TBN = 0: TPN = 0: YY = 0: TMR = 1280: TS = 0: PV = 0
+ReDim TMM(600) As String * 15, TPP(600) As String * 15, TYP(600)
+ReDim AL(600, 14), GMA(600)
+K = 0: K1 = 0: PK = 0: PK1 = 0: JB = 0: JP = 0: TBN = 0: TPN = 0: YY = 0: TMR = 1280: TS = 0: PV = 0
 
-OPEN "DEV.BAS" FOR INPUT AS #2: FOR I = 0 TO 1: INPUT #2, D$(I): NEXT: CLOSE 2
+Open "DEV.BAS" For Input As #2: For I = 0 To 1: Input #2, D$(I): Next: Close 2
 
-DATA GAMES, MINUTES, FIELD GOALS MADE, FIELD GOAL ATTEMPS, F.G. PCT. (3.65 FGM/GAME),THREE POINTS MADE, THREE POINT ATTEMPTS, 3FG (.30 3FGM/GAME),FREE THROWS MADE, FREE THROWS ATTEMPTED, F.T. PCT. (1.52 FTM/GAME)
-DATA POINTS, SCORING AVERAGE, HI-GAME, OFFENSIVE REBOUNDS, DEFENSIVE REBOUNDS, TOTAL REBOUNDS, AVERAGE REBOUNDS PER GAME, FOULS, ASSISTS, BLOCKED SHOTS, STEALS, TURNOVERS
-DATA POINTS/48 MINUTES, REBOUNDS/48 MINUTES,FOULS/48 MINUTES,ASSISTS/48 MINUTES,BLOCKS/48 MINUTES,STEALS/48 MINUTES,TURNOVERS/48 MINUTES,MINUTES/GAME,GO TO MAIN MENU
-FOR I = 0 TO 31: READ TP$(I): NEXT
-DATA FIELD GOAL ATTEMPTS, FIELD GOALS MADE, F.G. PCT., THREE POINT ATTEMPTS, THREE POINTS MADE, THREE POINT PERCENTAGE, FREE THROWS ATTEMPTED, FREE THROWS MADE, FREE THROW PERCENTAGE, OFFENSIVE REBOUNDS
-DATA DEFENSIVE REBOUNDS, TOTAL REBOUNDS, REBOUNDS PER GAME, FOULS, ASSISTS, BLOCKS, STEALS, TURNOVERS, POINTS PER GAME
-DATA OPP. FIELD GOAL ATTEMPTS, OPP. FIELD GOALS MADE, OPP. FIELD GOAL PERCENTAGE,OPP. THREE POINTERS ATTEMPTED, OPP. THREE POINTERS MADE, OPP. THREE POINT PERCENTAGE, OPP. FREE THROWS ATTEMPTED, OPP. FREE THROWS MADE,OPP. FREE THROW PERCENTAGE
-DATA OPP. OFFENSIVE REBOUNDS, OPP. DEFENSIVE REBOUNDS, OPP. TOTAL REBOUNDS, OPP. REBOUNDS PER GAME, OPP. FOULS, OPP. ASSISTS, OPP. BLOCKS, OPP. STEALS,OPP. TURNOVERS, OPP. POINTS PER GAME, RETURN TO MAIN MENU
+Data GAMES,MINUTES,FIELD GOALS MADE,FIELD GOAL ATTEMPS,F.G. PCT. (3.65 FGM/GAME),THREE POINTS MADE,THREE POINT ATTEMPTS,3FG (.30 3FGM/GAME),FREE THROWS MADE,FREE THROWS ATTEMPTED,F.T. PCT. (1.52 FTM/GAME)
+Data POINTS,SCORING AVERAGE,HI-GAME,OFFENSIVE REBOUNDS,DEFENSIVE REBOUNDS,TOTAL REBOUNDS,AVERAGE REBOUNDS PER GAME,FOULS,ASSISTS,BLOCKED SHOTS,STEALS,TURNOVERS
+Data POINTS/48 MINUTES,REBOUNDS/48 MINUTES,FOULS/48 MINUTES,ASSISTS/48 MINUTES,BLOCKS/48 MINUTES,STEALS/48 MINUTES,TURNOVERS/48 MINUTES,MINUTES/GAME,GO TO MAIN MENU
+For I = 0 To 31: Read TP$(I): Next
+Data FIELD GOAL ATTEMPTS,FIELD GOALS MADE,F.G. PCT.,THREE POINT ATTEMPTS,THREE POINTS MADE,THREE POINT PERCENTAGE,FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW PERCENTAGE,OFFENSIVE REBOUNDS
+Data DEFENSIVE REBOUNDS,TOTAL REBOUNDS,REBOUNDS PER GAME,FOULS,ASSISTS,BLOCKS,STEALS,TURNOVERS,POINTS PER GAME
+Data OPP. FIELD GOAL ATTEMPTS,OPP. FIELD GOALS MADE,OPP. FIELD GOAL PERCENTAGE,OPP. THREE POINTERS ATTEMPTED,OPP. THREE POINTERS MADE,OPP. THREE POINT PERCENTAGE,OPP. FREE THROWS ATTEMPTED,OPP. FREE THROWS MADE,OPP. FREE THROW PERCENTAGE
+Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. REBOUNDS PER GAME,OPP. FOULS,OPP. ASSISTS,OPP. BLOCKS,OPP. STEALS,OPP. TURNOVERS,OPP. POINTS PER GAME,RETURN TO MAIN MENU
 
-FOR I = 0 TO 38: READ TP1$(I): NEXT
+For I = 0 To 38: Read TP1$(I): Next
 
-5  CALL TITLE
-	item$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
-	item$(2) = "RETURN TO LEAGUE LEADER MENU    "
-	SELECTION% = 1
-	Count% = 2
-	Start% = 1
-	SCANCODE% = 2
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Spacing% = 1
-	Row% = 8
-	Column% = 25
+5 Call TITLE
+item$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
+item$(2) = "RETURN TO LEAGUE LEADER MENU    "
+SELECTION% = 1
+Count% = 2
+Start% = 1
+SCANCODE% = 2
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Spacing% = 1
+Row% = 8
+Column% = 25
 
-CALL box0(7, 24, 10, 57, 2, 31)
+Call box0(7, 24, 10, 57, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
-	COLOR , 0
-	IF SCANCODE% = 27 OR SELECTION% = 2 THEN RUN "HELLO.EXE  3"
+Color , 0
+If SCANCODE% = 27 Or SELECTION% = 2 Then Run "HELLO.EXE  3"
 
-2500 FOR X = 1 TO 40
-	Z1$(X) = "XXX"
-	NEXT
-	Spec$ = D$(1) + "*.TMS": GOSUB 1440
-	LG$ = F$
-OPEN D$(1) + F$ + ".TMS" FOR INPUT AS #2
-	INPUT #2, LG$
-	INPUT #2, D1$: INPUT #2, D2$
-	FOR X = 1 TO 30
-	INPUT #2, Z1$(X)
-	NEXT
-CLOSE 2
-	CLS
-	CALL BUILDSTATS
+2500 For X = 1 To 40
+    Z1$(X) = "XXX"
+Next
+Spec$ = D$(1) + "*.TMS": GoSub 1440
+LG$ = F$
+Open D$(1) + F$ + ".TMS" For Input As #2
+Input #2, LG$
+Input #2, D1$: Input #2, D2$
+For X = 1 To 30
+    Input #2, Z1$(X)
+Next
+Close 2
+Cls
+Call BUILDSTATS
 
-70 CALL TITLE
-	item$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
-	item$(2) = "VIEW TEAM TOTALS                "
-	item$(3) = "RETURN TO LEAGUE LEADER MENU    "
-	SELECTION% = 1
-	Count% = 3
-	Start% = 1
-	SCANCODE% = 3
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Spacing% = 1
-	Row% = 8
-	Column% = 25
+70 Call TITLE
+item$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
+item$(2) = "VIEW TEAM TOTALS                "
+item$(3) = "RETURN TO LEAGUE LEADER MENU    "
+SELECTION% = 1
+Count% = 3
+Start% = 1
+SCANCODE% = 3
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Spacing% = 1
+Row% = 8
+Column% = 25
 
-CALL box0(7, 24, 11, 57, 2, 31)
-	
+Call box0(7, 24, 11, 57, 2, 31)
+    
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
-	COLOR , 0
-	IF SCANCODE% = 27 OR SELECTION% = 3 THEN 5
-	IF SELECTION% = 1 THEN 80
-	IF SELECTION% = 2 THEN 2880
+Color , 0
+If SCANCODE% = 27 Or SELECTION% = 3 Then 5
+If SELECTION% = 1 Then 80
+If SELECTION% = 2 Then 2880
 
-80 COLOR , 0: CLS : PRINT : PRINT : PRINT : PRINT : J = 20: ZZ = 1
-	'
-	LOCATE 2, 4: COLOR 15, 4: PRINT " Ö"; STRING$(66, 196); "· ";
-	FOR II = 1 TO J: LOCATE 2 + II, 4: PRINT " º"; STRING$(66, 32); "º "; : NEXT
-	LOCATE 3 + J, 4: PRINT " Ó"; STRING$(66, 196); "½ "; : LOCATE 10, 15
+80 Color , 0: Cls: Print: Print: Print: Print: J = 20: ZZ = 1
+'
+Locate 2, 4: Color 15, 4: Print " Ö"; String$(66, 196); "· ";
+For II = 1 To J: Locate 2 + II, 4: Print " º"; String$(66, 32); "º ";: Next
+Locate 3 + J, 4: Print " Ó"; String$(66, 196); "½ ";: Locate 10, 15
 
-200 FOR I = 0 TO 15: COLOR 14: LOCATE I + 3, 8: PRINT USING "##"; I; : PRINT " "; : COLOR 0: PRINT TP$(I); : COLOR 14: PRINT TAB(40); USING "##"; I + 16; : PRINT " "; : COLOR 0: PRINT TP$(I + 16): NEXT
-	PRINT : LOCATE , 23: INPUT "SELECT NUMBER TO VIEW"; B9
-	IF B9 > 31 THEN 200
-	IF B9 = 0 THEN X = 1: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 1 THEN X = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 420
-	IF B9 = 2 THEN X = 3: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 3 THEN X = 2: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 4 THEN X = 3: X1 = 2: stpl = 0: PPP = 0: GOSUB 5000: GOTO 450
-	IF B9 = 5 THEN stpl = 0: PPP = 0: GOSUB 5000: GOTO 660
-	IF B9 = 6 THEN stpl = 0: PPP = 0: GOSUB 5000: GOTO 680
-	IF B9 = 7 THEN stpl = 0: PPP = 0: GOSUB 5000: GOTO 480
-	IF B9 = 8 THEN X = 5: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 9 THEN X = 4: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 10 THEN X = 5: X1 = 4: stpl = 0: PPP = 0: GOSUB 5000: GOTO 950
-	IF B9 = 11 THEN X = 3: X1 = 5: stpl = 0: PPP = 0: GOSUB 5000: GOTO 500
-	IF B9 = 12 THEN X = 3: X1 = 5: X2 = 1: stpl = 0: PPP = 0: GOSUB 5000: GOTO 580
-	IF B9 = 13 THEN X = 14: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 14 THEN X = 13: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 15 THEN X = 6: X1 = 13: stpl = 0: PPP = 0: GOSUB 5000: GOTO 620
-	IF B9 = 16 THEN X = 6: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 17 THEN X = 6: X1 = 1: stpl = 0: PPP = 0: GOSUB 5000: GOTO 640
-	IF B9 = 18 THEN X = 7: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 19 THEN X = 9: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 20 THEN X = 10: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 21 THEN X = 8: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 22 THEN X = 12: stpl = 0: PPP = 0: GOSUB 5000: GOTO 400
-	IF B9 = 23 THEN X = 3: X1 = 5: X2 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 520
-	IF B9 = 24 THEN X = 6: X1 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 540
-	IF B9 = 25 THEN X = 7: X1 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 540
-	IF B9 = 26 THEN X = 9: X1 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 540
-	IF B9 = 27 THEN X = 10: X1 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 540
-	IF B9 = 28 THEN X = 8: X1 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 540
-	IF B9 = 29 THEN X = 12: X1 = 11: stpl = 0: PPP = 0: GOSUB 5000: GOTO 540
-	IF B9 = 30 THEN X = 11: X1 = 1: stpl = 0: PPP = 0: GOSUB 5000: GOTO 560
-	IF B9 = 31 THEN 70
+200 For I = 0 To 15: Color 14: Locate I + 3, 8: Print Using "##"; I;: Print " ";: Color 0: Print TP$(I);: Color 14: Print Tab(40); Using "##"; I + 16;: Print " ";: Color 0: Print TP$(I + 16): Next
+Print: Locate , 23: Input "SELECT NUMBER TO VIEW"; B9
+If B9 > 31 Then 200
+If B9 = 0 Then X = 1: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 1 Then X = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 420
+If B9 = 2 Then X = 3: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 3 Then X = 2: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 4 Then X = 3: X1 = 2: stpl = 0: PPP = 0: GoSub 5000: GoTo 450
+If B9 = 5 Then stpl = 0: PPP = 0: GoSub 5000: GoTo 660
+If B9 = 6 Then stpl = 0: PPP = 0: GoSub 5000: GoTo 680
+If B9 = 7 Then stpl = 0: PPP = 0: GoSub 5000: GoTo 480
+If B9 = 8 Then X = 5: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 9 Then X = 4: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 10 Then X = 5: X1 = 4: stpl = 0: PPP = 0: GoSub 5000: GoTo 950
+If B9 = 11 Then X = 3: X1 = 5: stpl = 0: PPP = 0: GoSub 5000: GoTo 500
+If B9 = 12 Then X = 3: X1 = 5: X2 = 1: stpl = 0: PPP = 0: GoSub 5000: GoTo 580
+If B9 = 13 Then X = 14: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 14 Then X = 13: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 15 Then X = 6: X1 = 13: stpl = 0: PPP = 0: GoSub 5000: GoTo 620
+If B9 = 16 Then X = 6: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 17 Then X = 6: X1 = 1: stpl = 0: PPP = 0: GoSub 5000: GoTo 640
+If B9 = 18 Then X = 7: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 19 Then X = 9: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 20 Then X = 10: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 21 Then X = 8: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 22 Then X = 12: stpl = 0: PPP = 0: GoSub 5000: GoTo 400
+If B9 = 23 Then X = 3: X1 = 5: X2 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 520
+If B9 = 24 Then X = 6: X1 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 540
+If B9 = 25 Then X = 7: X1 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 540
+If B9 = 26 Then X = 9: X1 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 540
+If B9 = 27 Then X = 10: X1 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 540
+If B9 = 28 Then X = 8: X1 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 540
+If B9 = 29 Then X = 12: X1 = 11: stpl = 0: PPP = 0: GoSub 5000: GoTo 540
+If B9 = 30 Then X = 11: X1 = 1: stpl = 0: PPP = 0: GoSub 5000: GoTo 560
+If B9 = 31 Then 70
 
-400 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) = 0 THEN 409 ELSE 405
+400 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) = 0 Then 409 Else GoTo 405
 
-405 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X)
+    405 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X)
 
-409 NEXT I
-	GOSUB 5200
-	TVN = 1: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+409 Next I
+GoSub 5200
+TVN = 1: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-420 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) = 0 THEN 429 ELSE 425
+420 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) = 0 Then 429 Else GoTo 425
 
-425 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) + 30) / 60
+    425 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) + 30) / 60
 
-429 NEXT I
-	GOSUB 5200
-	TVN = 1: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+429 Next I
+GoSub 5200
+TVN = 1: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-450 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) < GMA(I) * 3.65 THEN 459 ELSE 455
+450 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) < GMA(I) * 3.65 Then 459 Else GoTo 455
 
-455 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1): GOTO 459
+    455 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1): GoTo 459
 
-459 NEXT I
-	GOSUB 5200
-	TVN = 2: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+459 Next I
+GoSub 5200
+TVN = 2: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-480 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF W0L(I) < GMA(I) * .3 THEN 489 ELSE 485
+480 Cls: PPP = 0
+For I = 1 To JB
+    If W0L(I) < GMA(I) * .3 Then 489 Else GoTo 485
 
-485 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I) / W1L(I): GOTO 489
+    485 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I) / W1L(I): GoTo 489
 
-489 NEXT I
-	GOSUB 5200
-	TVN = 2: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+489 Next I
+GoSub 5200
+TVN = 2: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-500 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF (AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 THEN 509 ELSE 505
+500 Cls: PPP = 0
+For I = 1 To JB
+    If (AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Then 509 Else GoTo 505
 
-505 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) * 2) + AL(I, X1) + W0L(I): GOTO 509
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = 0
+    505 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X) * 2) + AL(I, X1) + W0L(I): GoTo 509
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = 0
 
-509 NEXT I
-	GOSUB 5200
-	TVN = 1: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+509 Next I
+GoSub 5200
+TVN = 1: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-520 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF (AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 OR AL(I, X2) = 0 THEN 529 ELSE 525
+520 Cls: PPP = 0
+For I = 1 To JB
+    If (AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0 Then 529 Else GoTo 525
 
-525 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (((AL(I, X) * 2) + AL(I, X1) + W0L(I))) * 48 / ((AL(I, X2) + 30) / 60)
+    525 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (((AL(I, X) * 2) + AL(I, X1) + W0L(I))) * 48 / ((AL(I, X2) + 30) / 60)
 
-529 NEXT I
-	GOSUB 5200
-	TVN = 3: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+529 Next I
+GoSub 5200
+TVN = 3: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-540 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) = 0 OR AL(I, X1) = 0 THEN 549 ELSE 545
+540 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) = 0 Or AL(I, X1) = 0 Then 549 Else GoTo 545
 
-545 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X)) * 48 / ((AL(I, X1) + 30) / 60)
+    545 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (AL(I, X)) * 48 / ((AL(I, X1) + 30) / 60)
 
-549 NEXT I
-	GOSUB 5200
-	TVN = 3: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+549 Next I
+GoSub 5200
+TVN = 3: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-560 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) = 0 OR AL(I, X1) = 0 THEN 569 ELSE 565
+560 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) = 0 Or AL(I, X1) = 0 Then 569 Else GoTo 565
 
-565 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) + 30) / 60) / AL(I, X1)
+    565 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) + 30) / 60) / AL(I, X1)
 
-569 NEXT I
-	GOSUB 5200
-	TVN = 3: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+569 Next I
+GoSub 5200
+TVN = 3: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-580 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF (AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 OR AL(I, X2) = 0 THEN 589 ELSE 585
+580 Cls: PPP = 0
+For I = 1 To JB
+    If (AL(I, X) * 2) + AL(I, X1) + W0L(I) = 0 Or AL(I, X2) = 0 Then 589 Else GoTo 585
 
-585 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) * 2) + AL(I, X1) + W0L(I)) / AL(I, X2)
+    585 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((AL(I, X) * 2) + AL(I, X1) + W0L(I)) / AL(I, X2)
 
-589 NEXT I
-	GOSUB 5200
-	TVN = 3: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+589 Next I
+GoSub 5200
+TVN = 3: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-620 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) - AL(I, X1) = 0 THEN 629 ELSE 625
+620 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) - AL(I, X1) = 0 Then 629 Else GoTo 625
 
-625 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) - AL(I, X1)
+    625 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) - AL(I, X1)
 
-629 NEXT I
-	GOSUB 5200
-	TVN = 1: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+629 Next I
+GoSub 5200
+TVN = 1: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-640 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) = 0 THEN 644 ELSE 642
+640 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) = 0 Then 644 Else GoTo 642
 
-642 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
+    642 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1)
 
-644 NEXT I
-	GOSUB 5200
-	TVN = 3: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+644 Next I
+GoSub 5200
+TVN = 3: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-660 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF W0L(I) = 0 THEN 669 ELSE 665
+660 Cls: PPP = 0
+For I = 1 To JB
+    If W0L(I) = 0 Then 669 Else GoTo 665
 
-665 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I)
+    665 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I)
 
-669 NEXT I
-	GOSUB 5200
-	TVN = 1: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+669 Next I
+GoSub 5200
+TVN = 1: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-680 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF W1L(I) = 0 THEN 689 ELSE 685
+680 Cls: PPP = 0
+For I = 1 To JB
+    If W1L(I) = 0 Then 689 Else GoTo 685
 
-685 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W1L(I)
+    685 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W1L(I)
 
-689 NEXT I
-	GOSUB 5200
-	TVN = 1: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+689 Next I
+GoSub 5200
+TVN = 1: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-700 COLOR 14, 0: CLS : PRINT "     PLAYER                  TEAM                     "; TP$(B9)
-	FOR W = 1 TO QW
-	IF W = 20 OR W = 40 OR W = 60 OR W = 80 OR W = 100 OR W = 120 OR W = 140 OR W = 160 OR W = 180 OR W = 200 THEN GOSUB 731: GOSUB 743
-	IF W = 220 OR W = 240 OR W = 260 OR W = 280 OR W = 300 OR W = 320 OR W = 340 OR W = 360 OR W = 380 OR W = 400 THEN GOSUB 731: GOSUB 743
-	IF W = 420 OR W = 440 OR W = 460 OR W = 480 OR W = 500 OR W = 520 OR W = 540 OR W = 560 OR W = 580 OR W = 600 THEN GOSUB 731: GOSUB 743
-	IF W = 620 OR W = 640 OR W = 660 THEN GOSUB 731: GOSUB 743
-	IF TVN = 1 THEN 709
-	IF TVN = 2 THEN 708
-	IF TVN = 3 THEN 707
+700 Color 14, 0: Cls: Print "     PLAYER                  TEAM                     "; TP$(B9)
+For W = 1 To QW
+    If W = 20 Or W = 40 Or W = 60 Or W = 80 Or W = 100 Or W = 120 Or W = 140 Or W = 160 Or W = 180 Or W = 200 Then GoSub 731: GoSub 743
+    If W = 220 Or W = 240 Or W = 260 Or W = 280 Or W = 300 Or W = 320 Or W = 340 Or W = 360 Or W = 380 Or W = 400 Then GoSub 731: GoSub 743
+    If W = 420 Or W = 440 Or W = 460 Or W = 480 Or W = 500 Or W = 520 Or W = 540 Or W = 560 Or W = 580 Or W = 600 Then GoSub 731: GoSub 743
+    If W = 620 Or W = 640 Or W = 660 Then GoSub 731: GoSub 743
+    If TVN = 1 Then 709
+    If TVN = 2 Then 708
+    If TVN = 3 Then 707
 
-707 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TPP$(W); : COLOR 15: PRINT TAB(25); TMM$(W); : COLOR 15: PRINT TAB(58); USING "###.#"; TYP(W): GOTO 710
+    707 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using "###.#"; TYP(W): GoTo 710
 
-708 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TPP$(W); : COLOR 15: PRINT TAB(25); TMM$(W); : COLOR 15: PRINT TAB(58); USING ".###"; TYP(W): GOTO 710
+    708 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using ".###"; TYP(W): GoTo 710
 
-709 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TPP$(W); : COLOR 15: PRINT TAB(25); TMM$(W); : COLOR 15: PRINT TAB(58); USING "#####"; TYP(W)
+    709 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using "#####"; TYP(W)
 
-710 NEXT W
-	LOCATE 22: COLOR 15: PRINT "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+710 Next W
+Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 712 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 80
-	LOCATE 22: PRINT "                                                                "
-	LOCATE 22: COLOR 14: PRINT "VIEW AGAIN (Y/N)"
+If I$ = Chr$(27) Then 80
+Locate 22: Print "                                                                "
+Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
 716 I$ = GetKeyPress$
-	IF I$ = "Y" THEN 700
-	IF I$ = "N" THEN 719
+If I$ = "Y" Then 700
+If I$ = "N" Then 719
 
-719 GOTO 80
+719 GoTo 80
 
-731 LOCATE 22: COLOR 15: PRINT "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+731 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 732 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 80
-	RETURN
+If I$ = Chr$(27) Then 80
+Return
 
-743 CLS : COLOR 14: PRINT "     PLAYER                  TEAM                     "; TP$(B9)
-	RETURN
+743 Cls: Color 14: Print "     PLAYER                  TEAM                     "; TP$(B9)
+Return
 
-850 LPRINT CHR$(15)
-	WIDTH "LPT1:1", 130
-	COLOR 14, 0: CLS : LPRINT "     PLAYER                  TEAM                     "; TP$(B9)
-	FOR W = 1 TO LG
-	IF W = 50 OR W = 100 OR W = 150 OR W = 200 THEN GOSUB 943
-	IF W = 250 OR W = 300 OR W = 350 OR W = 400 THEN GOSUB 943
-	IF W = 450 OR W = 500 OR W = 550 OR W = 600 THEN GOSUB 943
-	IF W = 650 OR W = 700 OR W = 750 OR W = 800 THEN GOSUB 943
-	IF W = 850 OR W = 900 THEN GOSUB 943
-	IF TVN = 1 THEN 909
-	IF TVN = 2 THEN 908
-	IF TVN = 3 THEN 907
+850 LPrint Chr$(15)
+'This is not supported by QB64
+'WIDTH "LPT1:1", 130
+Color 14, 0: Cls: LPrint "     PLAYER                  TEAM                     "; TP$(B9)
+For W = 1 To LG
+    If W = 50 Or W = 100 Or W = 150 Or W = 200 Then GoSub 943
+    If W = 250 Or W = 300 Or W = 350 Or W = 400 Then GoSub 943
+    If W = 450 Or W = 500 Or W = 550 Or W = 600 Then GoSub 943
+    If W = 650 Or W = 700 Or W = 750 Or W = 800 Then GoSub 943
+    If W = 850 Or W = 900 Then GoSub 943
+    If TVN = 1 Then 909
+    If TVN = 2 Then 908
+    If TVN = 3 Then 907
 
-907 LPRINT USING "###"; W; : LPRINT " "; : LPRINT TPP$(W); : LPRINT TAB(25); TMM$(W); : LPRINT TAB(58); USING "###.#"; TYP(W): GOTO 910
+    907 LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using "###.#"; TYP(W): GoTo 910
 
-908 LPRINT USING "###"; W; : LPRINT " "; : LPRINT TPP$(W); : LPRINT TAB(25); TMM$(W); : LPRINT TAB(58); USING ".###"; TYP(W): GOTO 910
+    908 LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using ".###"; TYP(W): GoTo 910
 
-909 LPRINT USING "###"; W; : LPRINT " "; : LPRINT TPP$(W); : LPRINT TAB(25); TMM$(W); : LPRINT TAB(58); USING "#####"; TYP(W)
+    909 LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using "#####"; TYP(W)
 
-910 NEXT W
-	LPRINT CHR$(18)
-	WIDTH "LPT1:1", 80
-	GOTO 70
+910 Next W
+LPrint Chr$(18)
+'This is not supported in QB64
+'WIDTH "LPT1:1", 80
+GoTo 70
 
-943 LPRINT CHR$(12)
-	LPRINT "     PLAYER                  TEAM                     "; TP$(XX)
-	RETURN
+943 LPrint Chr$(12)
+LPrint "     PLAYER                  TEAM                     "; TP$(XX)
+Return
 
-950 CLS : PPP = 0
-	FOR I = 1 TO JB
-	IF AL(I, X) < GMA(I) * 1.52 THEN 959 ELSE 955
+950 Cls: PPP = 0
+For I = 1 To JB
+    If AL(I, X) < GMA(I) * 1.52 Then 959 Else GoTo 955
 
-955 PPP = PPP + 1: LOCATE 1, 5: PRINT "CHANGING PLAYER "; PPP
-	TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1): GOTO 959
+    955 PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
+    TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = AL(I, X) / AL(I, X1): GoTo 959
 
-959 NEXT I
-	GOSUB 5200
-	TVN = 2: QW = PPP: GOSUB 8000
-	IF PV = 1 THEN 700
-	IF PV = 2 THEN 850
+959 Next I
+GoSub 5200
+TVN = 2: QW = PPP: GoSub 8000
+If PV = 1 Then 700
+If PV = 2 Then 850
 
-2880 COLOR , 0: CLS : PRINT : PRINT : PRINT : PRINT : J = 21: ZZ = 3
-	'
-	LOCATE 1, 4: COLOR 15, 6: PRINT " Ö"; STRING$(66, 196); "· ";
-	FOR II = 1 TO J: LOCATE 1 + II, 4: PRINT " º"; STRING$(66, 32); "º "; : NEXT
-	LOCATE 2 + J, 4: PRINT " Ó"; STRING$(66, 196); "½ "; : LOCATE 10, 15
-	FOR I = 0 TO 19: LOCATE I + 2, 8: COLOR 11: PRINT USING "##"; I; : PRINT " "; : COLOR 0: PRINT TP1$(I): NEXT
-	FOR I = 20 TO 38: LOCATE I - 18, 38: COLOR 11: PRINT USING "##"; I; : PRINT " "; : COLOR 0: PRINT TP1$(I): NEXT
+2880 Color , 0: Cls: Print: Print: Print: Print: J = 21: ZZ = 3
+'
+Locate 1, 4: Color 15, 6: Print " Ö"; String$(66, 196); "· ";
+For II = 1 To J: Locate 1 + II, 4: Print " º"; String$(66, 32); "º ";: Next
+Locate 2 + J, 4: Print " Ó"; String$(66, 196); "½ ";: Locate 10, 15
+For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
+For I = 20 To 38: Locate I - 18, 38: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
 
-3050 COLOR 14: LOCATE 22, 23: INPUT "SELECT NUMBER TO VIEW"; B9
-	IF B9 > 38 THEN 3050
-	IF B9 = 0 THEN X = 1: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 1 THEN X = 2: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 2 THEN X = 2: X1 = 1: stpl = 0: GOSUB 5000: GOTO 3510
-	IF B9 = 3 THEN X = 14: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 4 THEN X = 13: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 5 THEN X = 13: X1 = 14: stpl = 0: GOSUB 5000: GOTO 3510
-	IF B9 = 6 THEN X = 3: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 7 THEN X = 4: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 8 THEN X = 4: X1 = 3: stpl = 0: GOSUB 5000: GOTO 3510
-	IF B9 = 9 THEN X = 12: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 10 THEN X = 5: X1 = 12: stpl = 0: GOSUB 5000: GOTO 3520
-	IF B9 = 11 THEN X = 5: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 12 THEN X = 5: stpl = 0: GOSUB 5000: GOTO 3530
-	IF B9 = 13 THEN X = 6: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 14 THEN X = 8: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 15 THEN X = 9: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 16 THEN X = 7: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 17 THEN X = 11: stpl = 0: GOSUB 5000: GOTO 3500
-	IF B9 = 18 THEN X = 2: X1 = 13: X2 = 4: stpl = 0: GOSUB 5000: GOTO 3540
-	IF B9 = 19 THEN X = 1: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 20 THEN X = 2: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 21 THEN X = 2: X1 = 1: stpl = 0: GOSUB 5000: GOTO 3610
-	IF B9 = 22 THEN X = 14: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 23 THEN X = 13: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 24 THEN X = 13: X1 = 14: stpl = 0: GOSUB 5000: GOTO 3610
-	IF B9 = 25 THEN X = 3: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 26 THEN X = 4: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 27 THEN X = 4: X1 = 3: stpl = 0: GOSUB 5000: GOTO 3610
-	IF B9 = 28 THEN X = 12: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 29 THEN X = 5: X1 = 12: stpl = 0: GOSUB 5000: GOTO 3620
-	IF B9 = 30 THEN X = 5: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 31 THEN X = 5: stpl = 0: GOSUB 5000: GOTO 3630
-	IF B9 = 32 THEN X = 6: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 33 THEN X = 8: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 34 THEN X = 9: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 35 THEN X = 7: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 36 THEN X = 11: stpl = 0: GOSUB 5000: GOTO 3600
-	IF B9 = 37 THEN X = 2: X1 = 13: X2 = 4: stpl = 0: GOSUB 5000: GOTO 3640
-	IF B9 = 38 THEN GOTO 70
+3050 Color 14: Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
+If B9 > 38 Then 3050
+If B9 = 0 Then X = 1: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 1 Then X = 2: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 2 Then X = 2: X1 = 1: stpl = 0: GoSub 5000: GoTo 3510
+If B9 = 3 Then X = 14: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 4 Then X = 13: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 5 Then X = 13: X1 = 14: stpl = 0: GoSub 5000: GoTo 3510
+If B9 = 6 Then X = 3: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 7 Then X = 4: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 8 Then X = 4: X1 = 3: stpl = 0: GoSub 5000: GoTo 3510
+If B9 = 9 Then X = 12: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 10 Then X = 5: X1 = 12: stpl = 0: GoSub 5000: GoTo 3520
+If B9 = 11 Then X = 5: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 12 Then X = 5: stpl = 0: GoSub 5000: GoTo 3530
+If B9 = 13 Then X = 6: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 14 Then X = 8: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 15 Then X = 9: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 16 Then X = 7: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 17 Then X = 11: stpl = 0: GoSub 5000: GoTo 3500
+If B9 = 18 Then X = 2: X1 = 13: X2 = 4: stpl = 0: GoSub 5000: GoTo 3540
+If B9 = 19 Then X = 1: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 20 Then X = 2: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 21 Then X = 2: X1 = 1: stpl = 0: GoSub 5000: GoTo 3610
+If B9 = 22 Then X = 14: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 23 Then X = 13: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 24 Then X = 13: X1 = 14: stpl = 0: GoSub 5000: GoTo 3610
+If B9 = 25 Then X = 3: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 26 Then X = 4: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 27 Then X = 4: X1 = 3: stpl = 0: GoSub 5000: GoTo 3610
+If B9 = 28 Then X = 12: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 29 Then X = 5: X1 = 12: stpl = 0: GoSub 5000: GoTo 3620
+If B9 = 30 Then X = 5: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 31 Then X = 5: stpl = 0: GoSub 5000: GoTo 3630
+If B9 = 32 Then X = 6: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 33 Then X = 8: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 34 Then X = 9: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 35 Then X = 7: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 36 Then X = 11: stpl = 0: GoSub 5000: GoTo 3600
+If B9 = 37 Then X = 2: X1 = 13: X2 = 4: stpl = 0: GoSub 5000: GoTo 3640
+If B9 = 38 Then GoTo 70
 
-3500 CLS : FOR I = 1 TO TS
-		TMM$(I) = TT$(I, X): TYP(I) = TT(I, X): NEXT
-	GOSUB 5500
-	TVN = 1: QW = TS
-	IF PV = 1 THEN 3650
-	IF PV = 2 THEN 3850
+3500 Cls: For I = 1 To TS
+TMM$(I) = TT$(I, X): TYP(I) = TT(I, X): Next
+GoSub 5500
+TVN = 1: QW = TS
+If PV = 1 Then 3650
+If PV = 2 Then 3850
 
-3510 CLS : FOR I = 1 TO TS
-	IF TT(I, X1) = 0 THEN 3513 ELSE 3512
+3510 Cls: For I = 1 To TS
+    If TT(I, X1) = 0 Then 3513 Else GoTo 3512
 
-3512 TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) / TT(I, X1): GOTO 3514
+    3512 TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) / TT(I, X1): GoTo 3514
 
-3513 TMM$(I) = TT$(I, X): TYP(I) = 0
+    3513 TMM$(I) = TT$(I, X): TYP(I) = 0
 
-3514 NEXT
-	GOSUB 5500
-	TVN = 2: QW = TS
-	IF PV = 1 THEN 3650
-	IF PV = 2 THEN 3850
+3514 Next
+GoSub 5500
+TVN = 2: QW = TS
+If PV = 1 Then 3650
+If PV = 2 Then 3850
 
-3520 CLS : FOR I = 1 TO TS
-		TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) - TT(I, X1): NEXT
-	GOSUB 5500
-	TVN = 1: QW = TS
-	IF PV = 1 THEN 3650
-	IF PV = 2 THEN 3850
+3520 Cls: For I = 1 To TS
+TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) - TT(I, X1): Next
+GoSub 5500
+TVN = 1: QW = TS
+If PV = 1 Then 3650
+If PV = 2 Then 3850
 
-3530 CLS : FOR I = 1 TO TS
-		TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) / GM(I): NEXT
-	GOSUB 5500
-	TVN = 3: QW = TS
-	IF PV = 1 THEN 3650
-	IF PV = 2 THEN 3850
+3530 Cls: For I = 1 To TS
+TMM$(I) = TT$(I, X): TYP(I) = TT(I, X) / GM(I): Next
+GoSub 5500
+TVN = 3: QW = TS
+If PV = 1 Then 3650
+If PV = 2 Then 3850
 
-3540 CLS : FOR I = 1 TO TS
-		TMM$(I) = TT$(I, X): TYP(I) = ((TT(I, X) * 2) + TT(I, X1) + TT(I, X2)) / GM(I): NEXT
-	GOSUB 5500
-	TVN = 3: QW = TS
-	IF PV = 1 THEN 3650
-	IF PV = 2 THEN 3850
+3540 Cls: For I = 1 To TS
+TMM$(I) = TT$(I, X): TYP(I) = ((TT(I, X) * 2) + TT(I, X1) + TT(I, X2)) / GM(I): Next
+GoSub 5500
+TVN = 3: QW = TS
+If PV = 1 Then 3650
+If PV = 2 Then 3850
 
-3600 CLS : FOR I = 1 TO TTS
-		TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X): NEXT
-	GOSUB 5600
-	TVN = 1: QW = TTS
-	IF PV = 1 THEN 4650
-	IF PV = 2 THEN 4850
+3600 Cls: For I = 1 To TTS
+TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X): Next
+GoSub 5600
+TVN = 1: QW = TTS
+If PV = 1 Then 4650
+If PV = 2 Then 4850
 
-3610 CLS : FOR I = 1 TO TTS
-	IF TT1(I, X1) = 0 THEN 3613 ELSE 3612
+3610 Cls: For I = 1 To TTS
+    If TT1(I, X1) = 0 Then 3613 Else GoTo 3612
 
-3612 TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / TT1(I, X1): GOTO 3614
+    3612 TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / TT1(I, X1): GoTo 3614
 
-3613 TMM$(I) = TT1$(I, X): TYP(I) = 0
+    3613 TMM$(I) = TT1$(I, X): TYP(I) = 0
 
-3614 NEXT
-	GOSUB 5600
-	TVN = 2: QW = TTS
-	IF PV = 1 THEN 4650
-	IF PV = 2 THEN 4850
+3614 Next
+GoSub 5600
+TVN = 2: QW = TTS
+If PV = 1 Then 4650
+If PV = 2 Then 4850
 
-3620 CLS : FOR I = 1 TO TTS
-		TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) - TT1(I, X1): NEXT
-	GOSUB 5600
-	TVN = 1: QW = TTS
-	IF PV = 1 THEN 4650
-	IF PV = 2 THEN 4850
+3620 Cls: For I = 1 To TTS
+TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) - TT1(I, X1): Next
+GoSub 5600
+TVN = 1: QW = TTS
+If PV = 1 Then 4650
+If PV = 2 Then 4850
 
-3630 CLS : FOR I = 1 TO TTS
-		TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / GM1(I): NEXT
-	GOSUB 5600
-	TVN = 3: QW = TTS
-	IF PV = 1 THEN 4650
-	IF PV = 2 THEN 4850
+3630 Cls: For I = 1 To TTS
+TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / GM1(I): Next
+GoSub 5600
+TVN = 3: QW = TTS
+If PV = 1 Then 4650
+If PV = 2 Then 4850
 
-3640 CLS : FOR I = 1 TO TTS
-		TMM$(I) = TT1$(I, X): TYP(I) = ((TT1(I, X) * 2) + TT1(I, X1) + TT1(I, X2)) / GM1(I): NEXT
-	GOSUB 5600
-	TVN = 3: QW = TTS
-	IF PV = 1 THEN 4650
-	IF PV = 2 THEN 4850
+3640 Cls: For I = 1 To TTS
+TMM$(I) = TT1$(I, X): TYP(I) = ((TT1(I, X) * 2) + TT1(I, X1) + TT1(I, X2)) / GM1(I): Next
+GoSub 5600
+TVN = 3: QW = TTS
+If PV = 1 Then 4650
+If PV = 2 Then 4850
 
-3650 COLOR 14, 0: CLS : : PRINT "     TEAM                     "; TP1$(B9)
-	FOR W = 1 TO QW
-	IF W = 20 OR W = 40 THEN GOSUB 3731: GOSUB 3743
-	IF TVN = 1 THEN 3709
-	IF TVN = 2 THEN 3708
-	IF TVN = 3 THEN 3707
+3650 Color 14, 0: Cls:: Print "     TEAM                     "; TP1$(B9)
+For W = 1 To QW
+    If W = 20 Or W = 40 Then GoSub 3731: GoSub 3743
+    If TVN = 1 Then 3709
+    If TVN = 2 Then 3708
+    If TVN = 3 Then 3707
 
-3707 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING "###.#"; TYP(W): GOTO 3710
+    3707 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP(W): GoTo 3710
 
-3708 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING ".###"; TYP(W): GOTO 3710
+    3708 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP(W): GoTo 3710
 
-3709 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(32); USING "#####"; TYP(W)
+    3709 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP(W)
 
-3710 NEXT W
-	LOCATE 22: COLOR 15: PRINT "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+3710 Next W
+Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 3712 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 2880
-	LOCATE 22: PRINT "                                                                "
-	LOCATE 22: COLOR 14: PRINT "VIEW AGAIN (Y/N)"
+If I$ = Chr$(27) Then 2880
+Locate 22: Print "                                                                "
+Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
 3716 I$ = GetKeyPress$
-	IF I$ = "Y" THEN 3650
-	IF I$ = "N" THEN 3719
+If I$ = "Y" Then 3650
+If I$ = "N" Then 3719
 
-3719 GOTO 2880
+3719 GoTo 2880
 
-3731 LOCATE 22: COLOR 15: PRINT "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+3731 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 3732 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 2880
-	RETURN
+If I$ = Chr$(27) Then 2880
+Return
 
-3743 CLS : COLOR 14: PRINT "     TEAM                     "; TP1$(B9)
-	RETURN
+3743 Cls: Color 14: Print "     TEAM                     "; TP1$(B9)
+Return
 
-3850 LPRINT CHR$(15)
-	WIDTH "LPT1:1", 130
-	LPRINT "     TEAM                     "; TP1$(B9)
-	FOR W = 1 TO QW
-	IF TVN = 1 THEN 3909
-	IF TVN = 2 THEN 3908
-	IF TVN = 3 THEN 3907
+3850 LPrint Chr$(15)
+'This is not supported in QB64
+'WIDTH "LPT1:1", 130
+LPrint "     TEAM                     "; TP1$(B9)
+For W = 1 To QW
+    If TVN = 1 Then 3909
+    If TVN = 2 Then 3908
+    If TVN = 3 Then 3907
 
-3907 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING "###.#"; TYP(W): GOTO 3710
+    3907 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP(W): GoTo 3710
 
-3908 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING ".###"; TYP(W): GOTO 3710
+    3908 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP(W): GoTo 3710
 
-3909 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(32); USING "#####"; TYP(W)
-	NEXT W
-	LPRINT CHR$(12)
-	LPRINT CHR$(18)
-	WIDTH "LPT1:1", 80
-	GOTO 70
+    3909 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP(W)
+Next W
+LPrint Chr$(12)
+LPrint Chr$(18)
+'This is not supported in QB64
+'WIDTH "LPT1:1", 80
+GoTo 70
 
-4650 COLOR 14, 0: CLS : PRINT "     TEAM                     "; TP1$(B9)
-	FOR W = 1 TO QW
-	IF W = 20 OR W = 40 THEN GOSUB 4731: GOSUB 4743
-	IF TVN = 1 THEN 4709
-	IF TVN = 2 THEN 4708
-	IF TVN = 3 THEN 4707
+4650 Color 14, 0: Cls: Print "     TEAM                     "; TP1$(B9)
+For W = 1 To QW
+    If W = 20 Or W = 40 Then GoSub 4731: GoSub 4743
+    If TVN = 1 Then 4709
+    If TVN = 2 Then 4708
+    If TVN = 3 Then 4707
 
-4707 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING "###.#"; TYP(W): GOTO 4710
+    4707 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP(W): GoTo 4710
 
-4708 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING ".###"; TYP(W): GOTO 4710
+    4708 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP(W): GoTo 4710
 
-4709 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(32); USING "#####"; TYP(W)
+    4709 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP(W)
 
-4710 NEXT W
-	LOCATE 22: COLOR 15: PRINT "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+4710 Next W
+Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 4712 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 2880
-	LOCATE 22: PRINT "                                                                "
-	LOCATE 22: COLOR 14: PRINT "VIEW AGAIN (Y/N)"
+If I$ = Chr$(27) Then 2880
+Locate 22: Print "                                                                "
+Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
 4716 I$ = GetKeyPress$
-	IF I$ = "Y" THEN 4650
-	IF I$ = "N" THEN 4719
+If I$ = "Y" Then 4650
+If I$ = "N" Then 4719
 
-4719 GOTO 2880
+4719 GoTo 2880
 
-4731 LOCATE 22: COLOR 15: PRINT "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+4731 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 4732 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN 2880
-	RETURN
+If I$ = Chr$(27) Then 2880
+Return
 
-4743 CLS : COLOR 14: PRINT "     TEAM                     "; TP1$(B9)
-	RETURN
+4743 Cls: Color 14: Print "     TEAM                     "; TP1$(B9)
+Return
 
-4850 LPRINT CHR$(15)
-	WIDTH "LPT1:1", 130
-	LPRINT "     TEAM                     "; TP1$(B9)
-	FOR W = 1 TO QW
-	IF TVN = 1 THEN 4909
-	IF TVN = 2 THEN 4908
-	IF TVN = 3 THEN 4907
+4850 LPrint Chr$(15)
+'WIDTH "LPT1:1", 130
+LPrint "     TEAM                     "; TP1$(B9)
+For W = 1 To QW
+    If TVN = 1 Then 4909
+    If TVN = 2 Then 4908
+    If TVN = 3 Then 4907
 
-4907 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING "###.#"; TYP(W): GOTO 4710
+    4907 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP(W): GoTo 4710
 
-4908 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(33); USING ".###"; TYP(W): GOTO 4710
+    4908 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP(W): GoTo 4710
 
-4909 COLOR 12: PRINT USING "###"; W; : PRINT " "; : COLOR 3: PRINT TMM$(W); : COLOR 15: PRINT TAB(32); USING "#####"; TYP(W)
-	NEXT W
-	LPRINT CHR$(12)
-	LPRINT CHR$(18)
-	WIDTH "LPT1:1", 80
-	GOTO 70
+    4909 Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP(W)
+Next W
+LPrint Chr$(12)
+LPrint Chr$(18)
+'This is not supported in QB64
+'WIDTH "LPT1:1", 80
+GoTo 70
 
-5000 J = 6: GOSUB 5007: COLOR 3: LOCATE , 30: PRINT "SELECT OPTION:"
-	LOCATE , 30: COLOR 15: PRINT "H"; : COLOR 7: PRINT "IGHEST TO LOWEST"
-	LOCATE , 30: COLOR 15: PRINT "L"; : COLOR 7: PRINT "OWEST TO HIGHEST"
-	LOCATE , 30: COLOR 15: PRINT "R"; : COLOR 7: PRINT "E-SELECT CATEGORY"
+5000 J = 6: GoSub 5007: Color 3: Locate , 30: Print "SELECT OPTION:"
+Locate , 30: Color 15: Print "H";: Color 7: Print "IGHEST TO LOWEST"
+Locate , 30: Color 15: Print "L";: Color 7: Print "OWEST TO HIGHEST"
+Locate , 30: Color 15: Print "R";: Color 7: Print "E-SELECT CATEGORY"
 5002 I$ = GetKeyPress$
-	IF I$ = "H" THEN GOSUB 7000: GOTO 5015
-	IF I$ = "L" THEN GOSUB 7000: GOTO 5016
-	IF I$ = "R" THEN GOTO 5017
-	IF I$ <> "H" AND I$ <> "L" AND I$ <> "R" THEN 5002
+If I$ = "H" Then GoSub 7000: GoTo 5015
+If I$ = "L" Then GoSub 7000: GoTo 5016
+If I$ = "R" Then GoTo 5017
+If I$ <> "H" And I$ <> "L" And I$ <> "R" Then 5002
 
 5007 '
-	LOCATE 8, 8: COLOR 15, 1: PRINT " Ö"; STRING$(57, 196); "· ";
-	FOR II = 1 TO J: LOCATE 8 + II, 8: PRINT " º"; STRING$(57, 32); "º "; : NEXT
-	LOCATE 9 + J, 8: PRINT " Ó"; STRING$(57, 196); "½ "; : LOCATE 10, 15: RETURN
+Locate 8, 8: Color 15, 1: Print " Ö"; String$(57, 196); "· ";
+For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(57, 32); "º ";: Next
+Locate 9 + J, 8: Print " Ó"; String$(57, 196); "½ ";: Locate 10, 15: Return
 
-5015 JX = 1: GOTO 5030
+5015 JX = 1: GoTo 5030
 
-5016 JX = 2: GOTO 5030
+5016 JX = 2: GoTo 5030
 
-5017 IF ZZ = 1 GOTO 80
-	IF ZZ = 3 GOTO 2880
+5017 If ZZ = 1 GoTo 80
+If ZZ = 3 GoTo 2880
 
-5030 RETURN
+5030 Return
 
-5200 FOR I = 2 TO PPP: stpl = stpl + 1: LOCATE 5, 5: PRINT "sorting player "; stpl
-	FOR J = PPP TO I STEP -1
-	IF JX = 1 THEN 5264
-	IF JX = 2 THEN 5265
+5200 For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    For J = PPP To I Step -1
+        If JX = 1 Then 5264
+        If JX = 2 Then 5265
 
-5264   IF TYP(J - 1) < TYP(J) THEN SWAP TPP$(J - 1), TPP$(J): SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
-	 GOTO 5266
+        5264 If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        GoTo 5266
 
-5265   IF TYP(J - 1) > TYP(J) THEN SWAP TPP$(J - 1), TPP$(J): SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
+        5265 If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
 
-5266  NEXT J
-	NEXT I
-	RETURN
-	FOR I = 2 TO PPP: stpl = stpl + 1: LOCATE 5, 5: PRINT "sorting player "; stpl
-	FOR J = PPP TO I STEP -1
-	IF JX = 1 THEN 5414
-	IF JX = 2 THEN 5415
+    5266 Next J
+Next I
+Return
+For I = 2 To PPP: stpl = stpl + 1: Locate 5, 5: Print "sorting player "; stpl
+    For J = PPP To I Step -1
+        If JX = 1 Then 5414
+        If JX = 2 Then 5415
 
-5414  IF TYP(J - 1) < TYP(J) THEN SWAP TPP$(J - 1), TPP$(J): SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
-		GOTO 5416
+        5414 If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        GoTo 5416
 
-5415  IF TYP(J - 1) > TYP(J) THEN SWAP TPP$(J - 1), TPP$(J): SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
+        5415 If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
 
-5416 NEXT J
-	NEXT I
-	RETURN
+    5416 Next J
+Next I
+Return
 
-5500 FOR I = 2 TO TS: stpl = stpl + 1: LOCATE 5, 5: PRINT "sorting team "; stpl
-	FOR J = TS TO I STEP -1
-	IF JX = 1 THEN 5505
-	IF JX = 2 THEN 5506
+5500 For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+    For J = TS To I Step -1
+        If JX = 1 Then 5505
+        If JX = 2 Then 5506
 
-5505  IF TYP(J - 1) < TYP(J) THEN SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
-	 GOTO 5507
+        5505 If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        GoTo 5507
 
-5506  IF TYP(J - 1) > TYP(J) THEN SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
+        5506 If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
 
-5507 NEXT J
-	NEXT I
-	RETURN
+    5507 Next J
+Next I
+Return
 
-5600 FOR I = 2 TO TTS: stpl = stpl + 1: LOCATE 5, 5: PRINT "sorting team "; stpl
-	FOR J = TTS TO I STEP -1
-	IF JX = 1 THEN 5615
-	IF JX = 2 THEN 5616
+5600 For I = 2 To TTS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
+    For J = TTS To I Step -1
+        If JX = 1 Then 5615
+        If JX = 2 Then 5616
 
-5615  IF TYP(J - 1) < TYP(J) THEN SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
-	 GOTO 5617
+        5615 If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+        GoTo 5617
 
-5616  IF TYP(J - 1) > TYP(J) THEN SWAP TMM$(J - 1), TMM$(J): SWAP TYP(J - 1), TYP(J)
+        5616 If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
 
-5617 NEXT J
-	NEXT I
-	RETURN
+    5617 Next J
+Next I
+Return
 
-7000 PRINT : PRINT : PRINT : PRINT : PRINT : J = 4: GOSUB 7007: COLOR 12: LOCATE , 30: PRINT "SELECT OPTION:"
-	LOCATE , 30: COLOR 14: PRINT "P"; : COLOR 7: PRINT "RINT"
-	LOCATE , 30: COLOR 14: PRINT "V"; : COLOR 7: PRINT "IEW"
-	LOCATE , 30: COLOR 14: PRINT "R"; : COLOR 7: PRINT "E-SELECT OPTION"
+7000 Print: Print: Print: Print: Print: J = 4: GoSub 7007: Color 12: Locate , 30: Print "SELECT OPTION:"
+Locate , 30: Color 14: Print "P";: Color 7: Print "RINT"
+Locate , 30: Color 14: Print "V";: Color 7: Print "IEW"
+Locate , 30: Color 14: Print "R";: Color 7: Print "E-SELECT OPTION"
 7002 I$ = GetKeyPress$
-	IF I$ = "P" THEN PV = 2: GOTO 7015
-	IF I$ = "V" THEN PV = 1: GOTO 7015
-	IF I$ = "R" THEN GOTO 5017
-	IF I$ <> "P" AND I$ <> "V" AND I$ <> "R" THEN 7002
+If I$ = "P" Then PV = 2: GoTo 7015
+If I$ = "V" Then PV = 1: GoTo 7015
+If I$ = "R" Then GoTo 5017
+If I$ <> "P" And I$ <> "V" And I$ <> "R" Then 7002
 
 7007 '
-	LOCATE 9, 15: COLOR 15, 0: PRINT " Ö"; STRING$(40, 196); "· ";
-	FOR II = 1 TO J: LOCATE 9 + II, 15: PRINT " º"; STRING$(40, 32); "º "; : NEXT
-	LOCATE 10 + J, 15: PRINT " Ó"; STRING$(40, 196); "½ ": LOCATE 10, 10
+Locate 9, 15: Color 15, 0: Print " Ö"; String$(40, 196); "· ";
+For II = 1 To J: Locate 9 + II, 15: Print " º"; String$(40, 32); "º ";: Next
+Locate 10 + J, 15: Print " Ó"; String$(40, 196); "½ ": Locate 10, 10
 
-7015 RETURN
+7015 Return
 
-8000 COLOR , 0: CLS : IF PV = 1 THEN 8015
-	PRINT : PRINT : PRINT : PRINT : PRINT : J = 2: GOSUB 8007
-	LOCATE , 25: COLOR 1: PRINT "MAXIMUM = "; QW
-	LOCATE , 25: INPUT "ENTER LENGTH OF LIST"; LG
-	IF LG > QW THEN 8000
-	GOTO 8015
+8000 Color , 0: Cls: If PV = 1 Then 8015
+Print: Print: Print: Print: Print: J = 2: GoSub 8007
+Locate , 25: Color 1: Print "MAXIMUM = "; QW
+Locate , 25: Input "ENTER LENGTH OF LIST"; LG
+If LG > QW Then 8000
+GoTo 8015
 
 8007 '
-	LOCATE 10, 20: COLOR 4, 15: PRINT " Ö"; STRING$(30, 196); "· ";
-	FOR II = 1 TO J: LOCATE 10 + II, 20: PRINT " º"; STRING$(30, 32); "º "; : NEXT
-	LOCATE 11 + J, 20: PRINT " Ó"; STRING$(30, 196); "½ ": LOCATE 11
+Locate 10, 20: Color 4, 15: Print " Ö"; String$(30, 196); "· ";
+For II = 1 To J: Locate 10 + II, 20: Print " º"; String$(30, 32); "º ";: Next
+Locate 11 + J, 20: Print " Ó"; String$(30, 196); "½ ": Locate 11
 
-8015 RETURN
+8015 Return
 
 1440 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-	Count% = DirCount%
-	IF Count% = 0 THEN 4600
-REDIM F$(0 TO Count%)
-	FOR X = 1 TO Count%
-	F$(X) = SPACE$(12)
-	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+Count% = DirCount%
+If Count% = 0 Then 4600
+ReDim F$(0 To Count%)
+For X = 1 To Count%
+    F$(X) = Space$(12)
+Next
+F$(0) = Spec$
+Call ReadFile(F$())
+'CALL SortStr(VARPTR(F$(1)), Count%, 0)
 
-1445 CLS
-	COLOR , 1
-	CLS
-	LOCATE , 28
-	COLOR 14
-	PRINT "SELECT LEAGUE": COLOR 15
-	SELECTION% = 1
-	Start% = 1
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Rows% = 20
-	Columns% = 4
-	Spacing% = 6
-	Row% = 4
-	Column% = 1
-	LOCATE 25, 1
-	COLOR 14
-	PRINT "ENTER"; : COLOR 15
-	PRINT "-SELECTS LEAGUE";
+1445 Cls
+Color , 1
+Cls
+Locate , 28
+Color 14
+Print "SELECT LEAGUE": Color 15
+SELECTION% = 1
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Locate 25, 1
+Color 14
+Print "ENTER";: Color 15
+Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
 MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-	IF ExitCode% = 27 THEN 5
-	F$ = F$(SELECTION%)
-	LOCATE 2, 33: PRINT F$
-LOCATE , 33: PRINT "ANY CHANGE (YN)";
-	COLOR 15, 0
+If ExitCode% = 27 Then 5
+F$ = F$(SELECTION%)
+Locate 2, 33: Print F$
+Locate , 33: Print "ANY CHANGE (YN)";
+Color 15, 0
 3912 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 1445
+If UCase$(I$) = "Y" Then 1445
 
-3913 F$ = QPRTRIM$(F$)
-	F$ = LEFT$(F$, LEN(F$) - 4)
-	LG$ = F$
-	RETURN
+3913 F$ = RTrim$(F$)
+F$ = Left$(F$, Len(F$) - 4)
+LG$ = F$
+Return
 
-4600 LOCATE 10, 8
-	PRINT "NO LEAGUE FILES WERE FOUND"
-	PRINT "PRESS ANY KEY TO RETURN TO MAIN MENU"
-	CALL GETKEY
-	GOTO 5
+4600 Locate 10, 8
+Print "NO LEAGUE FILES WERE FOUND"
+Print "PRESS ANY KEY TO RETURN TO MAIN MENU"
+I$ = GetKeyPress$
+GoTo 5
 
-SUB BUILDSTATS ()
+Sub BUILDSTATS ()
 
-11 FOR KK = 1 TO 30: YY = YY + 1
-IF Z1$(KK) = "*" OR Z1$(KK) = "XXX" OR Z1$(KK) = "" THEN 60
+    11 For KK = 1 To 30: YY = YY + 1
+        If Z1$(KK) = "*" Or Z1$(KK) = "XXX" Or Z1$(KK) = "" Then 60
 
-10 PRINT "CONVERTING STAT FILE OF "; Z1$(KK)
-	IF NOT _FILEEXISTS(D$(1) + Z1$(KK)) THEN 60
-OPEN D$(1) + Z1$(KK) FOR INPUT AS #1
-	INPUT #1, B$
-	FOR I = 0 TO 13: INPUT #1, A$(I)
-	FOR J = 0 TO 13: INPUT #1, A(I, J): NEXT: INPUT #1, W0(I): INPUT #1, W1(I): NEXT
-	FOR L = 0 TO 15: INPUT #1, Z(L): NEXT
-	FOR L = 0 TO 15: INPUT #1, Z1(L): NEXT
-CLOSE #1
-OPEN D$(1) + Z1$(KK) + "S" FOR INPUT AS #1
-	INPUT #1, Y
-CLOSE #1
-	TS = TS + 1: FOR I = 0 TO 14: TT(TS, I) = Z(I): TT$(TS, I) = B$: GM(TS) = Y: NEXT
-	TTS = TTS + 1: FOR I = 0 TO 14: TT1(TTS, I) = Z1(I): TT1$(TTS, I) = B$: GM1(TTS) = Y: NEXT
-	FOR I = 0 TO 14
-	IF A$(I) = "XXX" THEN 35
+        10 Print "CONVERTING STAT FILE OF "; Z1$(KK)
+        If Not _FileExists(D$(1) + Z1$(KK)) Then 60
+        Open D$(1) + Z1$(KK) For Input As #1
+        Input #1, B$
+        For I = 0 To 13: Input #1, A$(I)
+        For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
+        For L = 0 To 15: Input #1, Z(L): Next
+        For L = 0 To 15: Input #1, Z1(L): Next
+        Close #1
+        Open D$(1) + Z1$(KK) + "S" For Input As #1
+        Input #1, Y
+        Close #1
+        TS = TS + 1: For I = 0 To 14: TT(TS, I) = Z(I): TT$(TS, I) = B$: GM(TS) = Y: Next
+        TTS = TTS + 1: For I = 0 To 14: TT1(TTS, I) = Z1(I): TT1$(TTS, I) = B$: GM1(TTS) = Y: Next
+        For I = 0 To 14
+            If A$(I) = "XXX" Then 35
 
-33 JB = JB + 1: AL$(JB) = A$(I): TBN = TBN + 1: TMA$(TBN) = B$: GMA(JB) = Y
-	K1 = 0: FOR I1 = 0 TO 13: K1 = K1 + 1: AL(JB, K1) = A(I, I1)
+            33 JB = JB + 1: AL$(JB) = A$(I): TBN = TBN + 1: TMA$(TBN) = B$: GMA(JB) = Y
+            K1 = 0: For I1 = 0 To 13: K1 = K1 + 1: AL(JB, K1) = A(I, I1)
 
-35 NEXT I1
-	W0L(JB) = W0(I): W1L(JB) = W1(I)
-	NEXT I
+            35 Next I1
+            W0L(JB) = W0(I): W1L(JB) = W1(I)
+        Next I
 
-60 NEXT KK
-	PRINT "SAVING LEADER FILES . . . . PLEASE WAIT"
-OPEN D$(1) + F$ + ".LDS" FOR OUTPUT AS #1
-	WRITE #1, JB, TS, TTS
-	FOR I = 1 TO 600: WRITE #1, AL$(I), TMA$(I), GMA(I): COLOR 14: LOCATE 18, 45: TMR = TMR - 1: PRINT USING "#####"; TMR
-	FOR I1 = 1 TO 14: WRITE #1, AL(I, I1): NEXT I1: WRITE #1, W0L(I): WRITE #1, W1L(I): COLOR 14: LOCATE 18, 45: TMR = TMR - 1: PRINT USING "#####"; TMR: NEXT I
-	FOR I = 1 TO 40: FOR I1 = 0 TO 14: WRITE #1, TT(I, I1), TT$(I, I1): NEXT: COLOR 14: LOCATE 18, 45: TMR = TMR - 1: PRINT USING "#####"; TMR: WRITE #1, GM(I): NEXT
-	FOR I = 1 TO 40: FOR I1 = 0 TO 14: WRITE #1, TT1(I, I1), TT1$(I, I1): NEXT: COLOR 14: LOCATE 18, 45: TMR = TMR - 1: PRINT USING "#####"; TMR: WRITE #1, GM1(I): NEXT
-CLOSE #1
-END SUB
+    60 Next KK
+    Print "SAVING LEADER FILES . . . . PLEASE WAIT"
+    Open D$(1) + F$ + ".LDS" For Output As #1
+    Write #1, JB, TS, TTS
+    For I = 1 To 600: Write #1, AL$(I), TMA$(I), GMA(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR
+    For I1 = 1 To 14: Write #1, AL(I, I1): Next I1: Write #1, W0L(I): Write #1, W1L(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Next I
+    For I = 1 To 40: For I1 = 0 To 14: Write #1, TT(I, I1), TT$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM(I): Next
+    For I = 1 To 40: For I1 = 0 To 14: Write #1, TT1(I, I1), TT1$(I, I1): Next: Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Write #1, GM1(I): Next
+    Close #1
+End Sub
 
-SUB TITLE ()
-	COLOR , 0: KEY OFF: CLS
-	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 23: COLOR 12
-	PRINT "COURTSIDE COLLEGE BASKETBALL V4.0"
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; TAB(70); LEFT$(TIME$, 5);
-	LOCATE 3, 1: COLOR 2, 0
-	COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-	  PRINT "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
-	COLOR 10
-END SUB
+Sub TITLE ()
+    Color , 0: KEY Off: Cls
+    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12
+    Print "COURTSIDE COLLEGE BASKETBALL V4.0"
+    Locate 24, 1: Print Tab(80);: Locate , 1
+    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
+    Locate 3, 1: Color 2, 0
+    Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+    Print "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
+    Color 10
+End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

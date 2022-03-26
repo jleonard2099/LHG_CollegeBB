@@ -3,568 +3,568 @@
 
 DECLARE SUB TITLE ()
 
-DIM O%(100), O$(100), T%(100), P%(100), Q$(500), VV$(500)
-DIM Z2(14, 14), Z(15), Z1(15), VV%(500)
-DIM A$(14), D$(1), L%(4)
-DIM A(14, 24)
-DIM H$(100), CP$(25)
-DIM W0(14), W1(14), AP%(100, 1), CRD(100), SITE$(100)
-	CP% = 1
-	DATA NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
-	DATA NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
-	FOR I = 0 TO 25: READ CP$(I): NEXT
-OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, D$(0): INPUT #1, D$(1): CLOSE 1
+Dim O%(100), O$(100), T%(100), P%(100), Q$(500), VV$(500)
+Dim Z2(14, 14), Z(15), Z1(15), VV%(500)
+Dim A$(14), D$(1), L%(4)
+Dim A(14, 24)
+Dim H$(100), CP$(25)
+Dim W0(14), W1(14), AP%(100, 1), CRD(100), SITE$(100)
+CP% = 1
+Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
+Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
+For I = 0 To 25: Read CP$(I): Next
+Open "DEV.BAS" For Input As #1: Input #1, D$(0): Input #1, D$(1): Close 1
 
-45 COLOR 15, 0: CLS
-	CALL TITLE
-		GOSUB 3056
-	GOSUB 6585
-		Z$ = MID$(B$, 4, QQ) + "." + LEFT$(B$, 2)
+45 Color 15, 0: Cls
+Call TITLE
+GoSub 3056
+GoSub 6585
+Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-90 IF UCASE$(Z$) = "END" THEN RUN "HELLO.EXE 4"
-	'*** READ IN TEAM STATS ***
-	IF NOT _FILEEXISTS(D$(1) + Z$) THEN 5025
-	PX = 0
-	P%(0) = 0: P%(1) = 0: L% = 0: W% = 0: X% = 0
-	HW% = 0: VW% = 0: NW% = 0: HL% = 0: VL% = 0: NL% = 0
-OPEN D$(1) + Z$ + "S" FOR INPUT AS #2
-	INPUT #2, Y%
-	FOR I = 1 TO 100: INPUT #2, O%(I): NEXT I
-	FOR I = 1 TO 100: INPUT #2, O$(I): NEXT I
-	FOR I = 1 TO 100: INPUT #2, T%(I): NEXT I
-	FOR I = 1 TO 100: INPUT #2, H$(I): NEXT I
-	FOR I = 1 TO 100
-	FOR I1 = 0 TO 1: INPUT #2, AP%(I, I1): NEXT: NEXT
-	FOR I = 1 TO 100: INPUT #2, CRD(I): NEXT I
-	FOR I = 1 TO 100: INPUT #2, SITE$(I): NEXT I
-CLOSE #2
-	FOR I = 1 TO Y%
-	IF O%(I) > T%(I) THEN W% = W% + 1
-	IF O%(I) > T%(I) AND LEFT$(H$(I), 1) = "H" THEN HW% = HW% + 1
-	IF O%(I) > T%(I) AND LEFT$(H$(I), 1) = "V" THEN VW% = VW% + 1
-	IF O%(I) > T%(I) AND LEFT$(H$(I), 1) = "N" THEN NW% = NW% + 1
-	IF O%(I) < T%(I) THEN L% = L% + 1
-	IF O%(I) < T%(I) AND LEFT$(H$(I), 1) = "H" THEN HL% = HL% + 1
-	IF O%(I) < T%(I) AND LEFT$(H$(I), 1) = "V" THEN VL% = VL% + 1
-	IF O%(I) < T%(I) AND LEFT$(H$(I), 1) = "N" THEN NL% = NL% + 1
-	IF O%(I) = T%(I) THEN X% = X% + 1
-	P%(0) = P%(0) + O%(I): P%(1) = P%(1) + T%(I)
-	NEXT
-OPEN D$(1) + Z$ FOR INPUT AS #1
-	INPUT #1, B$
-	FOR I = 0 TO 13: INPUT #1, A$(I)
-	FOR J = 0 TO 13: INPUT #1, A(I, J): NEXT: INPUT #1, W0(I): INPUT #1, W1(I): NEXT
-	FOR L = 0 TO 15: INPUT #1, Z(L): NEXT
-	FOR L = 0 TO 15: INPUT #1, Z1(L): NEXT
-CLOSE #1
-	FOR I = 0 TO 13
-	IF A(I, 0) <> 0 THEN A(I, 14) = A(I, 10) / A(I, 0): A(I, 20) = (A(I, 2) * 2 + A(I, 4) + W0(I)) / A(I, 0): A(I, 21) = A(I, 5) / A(I, 0)
-	A(I, 22) = A(I, 2) * 2 + A(I, 4) + W0(I)
-	A(I, 23) = A(I, 5) - A(I, 12)
-	IF A(I, 1) <> 0 THEN A(I, 15) = A(I, 2) / A(I, 1)
-	A(I, 18) = W0(I): A(I, 19) = W1(I)
-	IF A(I, 19) <> 0 THEN A(I, 16) = A(I, 18) / A(I, 19)
-	IF A(I, 3) <> 0 THEN A(I, 17) = A(I, 4) / A(I, 3)
-	NEXT
-	GOSUB 815
+90 If UCase$(Z$) = "END" Then Run "HELLO.EXE 4"
+'*** READ IN TEAM STATS ***
+If Not _FileExists(D$(1) + Z$) Then 5025
+PX = 0
+P%(0) = 0: P%(1) = 0: L% = 0: W% = 0: X% = 0
+HW% = 0: VW% = 0: NW% = 0: HL% = 0: VL% = 0: NL% = 0
+Open D$(1) + Z$ + "S" For Input As #2
+Input #2, Y%
+For I = 1 To 100: Input #2, O%(I): Next I
+For I = 1 To 100: Input #2, O$(I): Next I
+For I = 1 To 100: Input #2, T%(I): Next I
+For I = 1 To 100: Input #2, H$(I): Next I
+For I = 1 To 100
+For I1 = 0 To 1: Input #2, AP%(I, I1): Next: Next
+For I = 1 To 100: Input #2, CRD(I): Next I
+For I = 1 To 100: Input #2, SITE$(I): Next I
+Close #2
+For I = 1 To Y%
+    If O%(I) > T%(I) Then W% = W% + 1
+    If O%(I) > T%(I) And Left$(H$(I), 1) = "H" Then HW% = HW% + 1
+    If O%(I) > T%(I) And Left$(H$(I), 1) = "V" Then VW% = VW% + 1
+    If O%(I) > T%(I) And Left$(H$(I), 1) = "N" Then NW% = NW% + 1
+    If O%(I) < T%(I) Then L% = L% + 1
+    If O%(I) < T%(I) And Left$(H$(I), 1) = "H" Then HL% = HL% + 1
+    If O%(I) < T%(I) And Left$(H$(I), 1) = "V" Then VL% = VL% + 1
+    If O%(I) < T%(I) And Left$(H$(I), 1) = "N" Then NL% = NL% + 1
+    If O%(I) = T%(I) Then X% = X% + 1
+    P%(0) = P%(0) + O%(I): P%(1) = P%(1) + T%(I)
+Next
+Open D$(1) + Z$ For Input As #1
+Input #1, B$
+For I = 0 To 13: Input #1, A$(I)
+For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
+For L = 0 To 15: Input #1, Z(L): Next
+For L = 0 To 15: Input #1, Z1(L): Next
+Close #1
+For I = 0 To 13
+    If A(I, 0) <> 0 Then A(I, 14) = A(I, 10) / A(I, 0): A(I, 20) = (A(I, 2) * 2 + A(I, 4) + W0(I)) / A(I, 0): A(I, 21) = A(I, 5) / A(I, 0)
+    A(I, 22) = A(I, 2) * 2 + A(I, 4) + W0(I)
+    A(I, 23) = A(I, 5) - A(I, 12)
+    If A(I, 1) <> 0 Then A(I, 15) = A(I, 2) / A(I, 1)
+    A(I, 18) = W0(I): A(I, 19) = W1(I)
+    If A(I, 19) <> 0 Then A(I, 16) = A(I, 18) / A(I, 19)
+    If A(I, 3) <> 0 Then A(I, 17) = A(I, 4) / A(I, 3)
+Next
+GoSub 815
 125 I$ = GetKeyPress$
-	RETURN
+Return
 
-142 CALL TITLE
-	COLOR , 1
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	COLOR 15, 1: PRINT "SCHEDULE ";
-	COLOR 14: PRINT "[Pg UP]  ";
-	COLOR 15: PRINT "MORE STATS ";
-	COLOR 14: PRINT "[Pg DN]  ";
-	COLOR 15: PRINT "NEW TEAM ";
-	COLOR 14: PRINT "[ESC]  ";
-	COLOR 15: PRINT "SORT ";
-	COLOR 14: PRINT "<-,-> and [ENTER] ";
-	LOCATE 25, 1
-	COLOR 15: PRINT "PRINT "; : COLOR 14: PRINT "[P]  ";
-	COLOR 15: PRINT "DELETE STATS "; : COLOR 14: PRINT "[D]                    ";
-	COLOR 12, 0: LOCATE 2, 1: PRINT "SORT BY: "; CP$(CP%); TAB(40);
-	LOCATE 3, 1: COLOR 2, 0
-	COLOR 14: PRINT B$
-	PRINT "NAME"; TAB(15);
-	PRINT " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
-	FOR I = 0 TO 13
-	IF A$(I) = "XXX" THEN 165
-	COLOR 7
-	IF I / 2 = INT(I / 2) THEN COLOR 15
-	PRINT LEFT$(A$(I), 13); TAB(15);
-	PRINT USING "## "; A(I, 0);
-	IF A(I, 10) > 0 THEN LOCATE , 18: PRINT USING "####"; INT((A(I, 10) + 30) / 60); : LOCATE , 24: PRINT USING "##"; INT(((A(I, 10) / 60) / A(I, 0)) + .5);
-	LOCATE , 28: PRINT USING "#### ####"; A(I, 2); A(I, 1); : LOCATE , 38
-	IF A(I, 1) = 0 THEN PRINT ".---"; : GOTO 160
-	IF A(I, 2) = A(I, 1) THEN PRINT "1.00"; : GOTO 160
-	IF A(I, 2) = 0 THEN PRINT ".000"; : GOTO 160
-	PRINT USING ".###"; A(I, 2) / A(I, 1);
+142 Call TITLE
+Color , 1
+Locate 24, 1: Print Tab(80);: Locate , 1
+Color 15, 1: Print "SCHEDULE ";
+Color 14: Print "[Pg UP]  ";
+Color 15: Print "MORE STATS ";
+Color 14: Print "[Pg DN]  ";
+Color 15: Print "NEW TEAM ";
+Color 14: Print "[ESC]  ";
+Color 15: Print "SORT ";
+Color 14: Print "<-,-> and [ENTER] ";
+Locate 25, 1
+Color 15: Print "PRINT ";: Color 14: Print "[P]  ";
+Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                    ";
+Color 12, 0: Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+Locate 3, 1: Color 2, 0
+Color 14: Print B$
+Print "NAME"; Tab(15);
+Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
+For I = 0 To 13
+    If A$(I) = "XXX" Then 165
+    Color 7
+    If I / 2 = Int(I / 2) Then Color 15
+    Print Left$(A$(I), 13); Tab(15);
+    Print Using "## "; A(I, 0);
+    If A(I, 10) > 0 Then Locate , 18: Print Using "####"; Int((A(I, 10) + 30) / 60);: Locate , 24: Print Using "##"; Int(((A(I, 10) / 60) / A(I, 0)) + .5);
+    Locate , 28: Print Using "#### ####"; A(I, 2); A(I, 1);: Locate , 38
+    If A(I, 1) = 0 Then Print ".---";: GoTo 160
+    If A(I, 2) = A(I, 1) Then Print "1.00";: GoTo 160
+    If A(I, 2) = 0 Then Print ".000";: GoTo 160
+    Print Using ".###"; A(I, 2) / A(I, 1);
 
-160 LOCATE , 44: PRINT USING "#### ####"; W0(I); W1(I); : LOCATE , 54
-	IF W1(I) = 0 THEN PRINT ".---"; : GOTO 161
-	IF W1(I) = W0(I) THEN PRINT "1.00"; : GOTO 161
-	IF W0(I) = 0 THEN PRINT ".000"; : GOTO 161
-	PRINT USING ".###"; W0(I) / W1(I);
+    160 Locate , 44: Print Using "#### ####"; W0(I); W1(I);: Locate , 54
+    If W1(I) = 0 Then Print ".---";: GoTo 161
+    If W1(I) = W0(I) Then Print "1.00";: GoTo 161
+    If W0(I) = 0 Then Print ".000";: GoTo 161
+    Print Using ".###"; W0(I) / W1(I);
 
-161 LOCATE , 60: PRINT USING "#### ####"; A(I, 4); A(I, 3); : LOCATE , 70
-	IF A(I, 3) = 0 THEN PRINT ".---": GOTO 165
-	IF A(I, 3) = A(I, 4) THEN PRINT "1.00": GOTO 165
-	IF A(I, 4) = 0 THEN PRINT ".000": GOTO 165
-	PRINT USING ".###"; A(I, 4) / A(I, 3)
+    161 Locate , 60: Print Using "#### ####"; A(I, 4); A(I, 3);: Locate , 70
+    If A(I, 3) = 0 Then Print ".---": GoTo 165
+    If A(I, 3) = A(I, 4) Then Print "1.00": GoTo 165
+    If A(I, 4) = 0 Then Print ".000": GoTo 165
+    Print Using ".###"; A(I, 4) / A(I, 3)
 
-165 NEXT
-	COLOR 12: PRINT : PRINT "TOTALS"; : LOCATE , 15
-	PRINT USING "##"; Y%;
-	LOCATE , 28: PRINT USING "#### ####"; Z(2); Z(1);
-	IF Z(1) <> 0 THEN LOCATE , 38: PRINT USING ".###"; Z(2) / Z(1);
-	LOCATE , 44: PRINT USING "#### ####"; Z(13); Z(14);
-	IF Z(14) <> 0 THEN LOCATE , 54: PRINT USING ".###"; Z(13) / Z(14);
-	LOCATE , 60: PRINT USING "#### ####"; Z(4); Z(3);
-	IF Z(3) <> 0 THEN LOCATE , 70: PRINT USING ".###"; Z(4) / Z(3)
-	COLOR 12: LOCATE , 15: PRINT USING "##"; Y%;
-	LOCATE , 28: PRINT USING "#### ####"; Z1(2); Z1(1);
-	IF Z1(1) <> 0 THEN LOCATE , 38: PRINT USING ".###"; Z1(2) / Z1(1);
-	LOCATE , 44: PRINT USING "#### ####"; Z1(13); Z1(14);
-	IF Z1(14) <> 0 THEN LOCATE , 54: PRINT USING ".###"; Z1(13) / Z1(14);
-	LOCATE , 60: PRINT USING "#### ####"; Z1(4); Z1(3);
-	IF Z1(3) <> 0 THEN LOCATE , 70: PRINT USING ".###"; Z1(4) / Z1(3)
+165 Next
+Color 12: Print: Print "TOTALS";: Locate , 15
+Print Using "##"; Y%;
+Locate , 28: Print Using "#### ####"; Z(2); Z(1);
+If Z(1) <> 0 Then Locate , 38: Print Using ".###"; Z(2) / Z(1);
+Locate , 44: Print Using "#### ####"; Z(13); Z(14);
+If Z(14) <> 0 Then Locate , 54: Print Using ".###"; Z(13) / Z(14);
+Locate , 60: Print Using "#### ####"; Z(4); Z(3);
+If Z(3) <> 0 Then Locate , 70: Print Using ".###"; Z(4) / Z(3)
+Color 12: Locate , 15: Print Using "##"; Y%;
+Locate , 28: Print Using "#### ####"; Z1(2); Z1(1);
+If Z1(1) <> 0 Then Locate , 38: Print Using ".###"; Z1(2) / Z1(1);
+Locate , 44: Print Using "#### ####"; Z1(13); Z1(14);
+If Z1(14) <> 0 Then Locate , 54: Print Using ".###"; Z1(13) / Z1(14);
+Locate , 60: Print Using "#### ####"; Z1(4); Z1(3);
+If Z1(3) <> 0 Then Locate , 70: Print Using ".###"; Z1(4) / Z1(3)
 
-230 GOSUB 125
-	IF I$ = CHR$(0) + "Q" THEN CP% = 14: GOTO 235
-	IF I$ = CHR$(0) + "I" THEN CLS : GOTO 915
-	IF UCASE$(I$) = "D" THEN GOSUB 485: GOTO 230
-	IF I$ = CHR$(0) + "M" THEN GOSUB 650: GOTO 230: 'RIGHT
-	IF I$ = CHR$(0) + "K" THEN GOSUB 660: GOTO 230: 'LEFT
-	IF UCASE$(I$) = "P" THEN GOSUB 875: GOSUB 530: GOTO 230
-	IF I$ = CHR$(13) THEN GOSUB 600: GOTO 142
-	IF I$ = CHR$(27) THEN 45
-	GOTO 230
+230 GoSub 125
+If I$ = Chr$(0) + "Q" Then CP% = 14: GoTo 235
+If I$ = Chr$(0) + "I" Then Cls: GoTo 915
+If UCase$(I$) = "D" Then GoSub 485: GoTo 230
+If I$ = Chr$(0) + "M" Then GoSub 650: GoTo 230: 'RIGHT
+If I$ = Chr$(0) + "K" Then GoSub 660: GoTo 230: 'LEFT
+If UCase$(I$) = "P" Then GoSub 875: GoSub 530: GoTo 230
+If I$ = Chr$(13) Then GoSub 600: GoTo 142
+If I$ = Chr$(27) Then 45
+GoTo 230
 
-650 CP% = CP% + 1: IF CP% > 12 THEN CP% = 1
-	LOCATE 2, 1: PRINT "SORT BY: "; CP$(CP%); TAB(40);
-	RETURN
+650 CP% = CP% + 1: If CP% > 12 Then CP% = 1
+Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+Return
 
-660 CP% = CP% - 1: IF CP% < 1 THEN CP% = 12
-	LOCATE 2, 1: PRINT "SORT BY: "; CP$(CP%); TAB(40);
-	RETURN
+660 CP% = CP% - 1: If CP% < 1 Then CP% = 12
+Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+Return
 
-235 CLS
-	CALL TITLE
-	COLOR , 1
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	LOCATE 24, 1: COLOR 14, 1
-	COLOR 15: PRINT "MORE STATS ";
-	COLOR 14: PRINT "[Pg UP]  ";
-	COLOR 15: PRINT "SELECT NEW TEAM ";
-	COLOR 14: PRINT "[ESC]  ";
-	COLOR 15: PRINT "SORT ";
-	COLOR 14: PRINT "<-,-> and [ENTER]  ";
-	COLOR 15: PRINT "PRINT ";
-	COLOR 14: PRINT "[P]";
-	LOCATE 25, 1
-	COLOR 15: PRINT "DELETE STATS "; : COLOR 14: PRINT "[D]                     ";
-	COLOR 12, 0: LOCATE 2, 1: PRINT "SORT BY: "; CP$(CP%); TAB(40);
-	LOCATE 3, 1: COLOR 2, 0
-	COLOR 14: PRINT B$; : LOCATE , 15
-	PRINT "               OFF  DEF  TOT": PRINT "NAME"; TAB(15);
-	PRINT " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
-	FOR I = 0 TO 13
-	IF A$(I) = "XXX" THEN 266
-	COLOR 7
-	IF I / 2 = INT(I / 2) THEN COLOR 15
-	PRINT LEFT$(A$(I), 13); : LOCATE , 15
-	PRINT USING "####"; A(I, 2) * 2 + A(I, 4) + W0(I);
-	IF A(I, 0) > 0 THEN LOCATE , 21: PRINT USING "##.#"; (A(I, 2) * 2 + A(I, 4) + W0(I)) / A(I, 0);
-	LOCATE , 26: PRINT USING "## #### #### ####"; A(I, 13); A(I, 12); A(I, 5) - A(I, 12); A(I, 5);
-	IF A(I, 0) > 0 THEN LOCATE , 45: PRINT USING "##.#"; A(I, 5) / A(I, 0);
-	LOCATE , 51: PRINT USING "### ####  ###  ###  ###"; A(I, 6); A(I, 8); A(I, 9); A(I, 7); A(I, 11)
+235 Cls
+Call TITLE
+Color , 1
+Locate 24, 1: Print Tab(80);: Locate , 1
+Locate 24, 1: Color 14, 1
+Color 15: Print "MORE STATS ";
+Color 14: Print "[Pg UP]  ";
+Color 15: Print "SELECT NEW TEAM ";
+Color 14: Print "[ESC]  ";
+Color 15: Print "SORT ";
+Color 14: Print "<-,-> and [ENTER]  ";
+Color 15: Print "PRINT ";
+Color 14: Print "[P]";
+Locate 25, 1
+Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                     ";
+Color 12, 0: Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+Locate 3, 1: Color 2, 0
+Color 14: Print B$;: Locate , 15
+Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
+Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+For I = 0 To 13
+    If A$(I) = "XXX" Then 266
+    Color 7
+    If I / 2 = Int(I / 2) Then Color 15
+    Print Left$(A$(I), 13);: Locate , 15
+    Print Using "####"; A(I, 2) * 2 + A(I, 4) + W0(I);
+    If A(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (A(I, 2) * 2 + A(I, 4) + W0(I)) / A(I, 0);
+    Locate , 26: Print Using "## #### #### ####"; A(I, 13); A(I, 12); A(I, 5) - A(I, 12); A(I, 5);
+    If A(I, 0) > 0 Then Locate , 45: Print Using "##.#"; A(I, 5) / A(I, 0);
+    Locate , 51: Print Using "### ####  ###  ###  ###"; A(I, 6); A(I, 8); A(I, 9); A(I, 7); A(I, 11)
 
-266 NEXT I
-	PRINT "TEAM"; : LOCATE , 39: PRINT USING "####"; Z(15)
-	COLOR 12: PRINT "TOTALS";
-	LOCATE , 14: PRINT USING "##### ###.#"; Z(10); Z(10) / Y%;
-	LOCATE , 29: PRINT USING "#### #### ####  ##.#"; Z(12); Z(5) - Z(12) - Z(15); Z(5); Z(5) / Y%;
-	PRINT USING " #### #### #### #### ####"; Z(6); Z(8); Z(9); Z(7); Z(11)
-	LOCATE , 14: PRINT USING "##### ###.#"; Z1(10); Z1(10) / Y%;
-	LOCATE , 29: PRINT USING "#### #### ####  ##.#"; Z1(12); Z1(5) - Z1(12) - Z1(15); Z1(5); Z1(5) / Y%;
-	PRINT USING " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11): COLOR 3
+266 Next I
+Print "TEAM";: Locate , 39: Print Using "####"; Z(15)
+Color 12: Print "TOTALS";
+Locate , 14: Print Using "##### ###.#"; Z(10); Z(10) / Y%;
+Locate , 29: Print Using "#### #### ####  ##.#"; Z(12); Z(5) - Z(12) - Z(15); Z(5); Z(5) / Y%;
+Print Using " #### #### #### #### ####"; Z(6); Z(8); Z(9); Z(7); Z(11)
+Locate , 14: Print Using "##### ###.#"; Z1(10); Z1(10) / Y%;
+Locate , 29: Print Using "#### #### ####  ##.#"; Z1(12); Z1(5) - Z1(12) - Z1(15); Z1(5); Z1(5) / Y%;
+Print Using " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11): Color 3
 370 I$ = GetKeyPress$
-	IF I$ = CHR$(0) + "I" THEN CLS : CP% = 1: GOTO 142
-	IF I$ = CHR$(0) + "M" THEN GOSUB 655: GOTO 370: 'RIGHT
-	IF UCASE$(I$) = "D" THEN GOSUB 485: GOTO 370
-	IF I$ = CHR$(0) + "K" THEN GOSUB 665: GOTO 370: 'LEFT
-	IF I$ = CHR$(13) THEN GOSUB 600: GOTO 235
-	IF I$ = CHR$(27) THEN 45
-	IF UCASE$(I$) = "P" THEN GOSUB 875: GOSUB 530: GOTO 370
-	GOTO 370
+If I$ = Chr$(0) + "I" Then Cls: CP% = 1: GoTo 142
+If I$ = Chr$(0) + "M" Then GoSub 655: GoTo 370: 'RIGHT
+If UCase$(I$) = "D" Then GoSub 485: GoTo 370
+If I$ = Chr$(0) + "K" Then GoSub 665: GoTo 370: 'LEFT
+If I$ = Chr$(13) Then GoSub 600: GoTo 235
+If I$ = Chr$(27) Then 45
+If UCase$(I$) = "P" Then GoSub 875: GoSub 530: GoTo 370
+GoTo 370
 
-655 CP% = CP% + 1: IF CP% > 25 THEN CP% = 14
-	LOCATE 2, 1: PRINT "SORT BY: "; CP$(CP%); TAB(40);
-	RETURN
+655 CP% = CP% + 1: If CP% > 25 Then CP% = 14
+Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+Return
 
-665 CP% = CP% - 1: IF CP% < 14 THEN CP% = 25
-	LOCATE 2, 1: PRINT "SORT BY: "; CP$(CP%); TAB(40);
-	RETURN
-	CLS : CALL TITLE: PRINT "RESET STATS TO 0 ? (YN)"; :
+665 CP% = CP% - 1: If CP% < 14 Then CP% = 25
+Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+Return
+Cls: Call TITLE: Print "RESET STATS TO 0 ? (YN)";:
 455 I$ = GetKeyPress$
-	IF UCASE$(I$) <> "Y" THEN 45
-	PRINT : PRINT "ARE YOU SURE ? (YN) ";
+If UCase$(I$) <> "Y" Then 45
+Print: Print "ARE YOU SURE ? (YN) ";
 470 I$ = GetKeyPress$
-	IF UCASE$(I$) = "N" THEN X = FRE(0): RUN
+    IF UCASE$(I$) = "N" THEN RUN 'X = FRE(0)
 
-485 KILL D$(1) + Z$
-	KILL D$(1) + Z$ + "S"
-	RETURN
-	CLS
-	RUN
+485 Kill D$(1) + Z$
+Kill D$(1) + Z$ + "S"
+Return
+Cls
+Run
 
-530 LPRINT "STATISTICS SUMMARY FOR "; B$
-	LPRINT "NAME"; TAB(15);
-	LPRINT " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
-	FOR I = 0 TO 13
-	LPRINT LEFT$(A$(I), 13); TAB(15);
-	LPRINT USING "## "; A(I, 0);
-	IF A(I, 10) > 0 THEN LPRINT TAB(18); USING "####"; INT((A(I, 10) + 30) / 60); : LPRINT TAB(24); USING "##"; INT(((A(I, 10) / 60) / A(I, 0)) + .5);
-	LPRINT TAB(28); USING "#### ####"; A(I, 2); A(I, 1);
-	LPRINT TAB(38);
-	IF A(I, 1) = 0 THEN LPRINT ".---"; : GOTO 531
-	IF A(I, 2) = A(I, 1) THEN LPRINT "1.00"; : GOTO 531
-	IF A(I, 2) = 0 THEN LPRINT ".000"; : GOTO 531
-	LPRINT USING ".###"; A(I, 2) / A(I, 1);
+530 LPrint "STATISTICS SUMMARY FOR "; B$
+LPrint "NAME"; Tab(15);
+LPrint " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
+For I = 0 To 13
+    LPrint Left$(A$(I), 13); Tab(15);
+    LPrint Using "## "; A(I, 0);
+    If A(I, 10) > 0 Then LPrint Tab(18); Using "####"; Int((A(I, 10) + 30) / 60);: LPrint Tab(24); Using "##"; Int(((A(I, 10) / 60) / A(I, 0)) + .5);
+    LPrint Tab(28); Using "#### ####"; A(I, 2); A(I, 1);
+    LPrint Tab(38);
+    If A(I, 1) = 0 Then LPrint ".---";: GoTo 531
+    If A(I, 2) = A(I, 1) Then LPrint "1.00";: GoTo 531
+    If A(I, 2) = 0 Then LPrint ".000";: GoTo 531
+    LPrint Using ".###"; A(I, 2) / A(I, 1);
 
-531 LPRINT TAB(44); USING "#### ####"; W0(I); W1(I); : LPRINT TAB(54);
-	IF W1(I) = 0 THEN LPRINT ".---"; : GOTO 532
-	IF W1(I) = W0(I) THEN LPRINT "1.00"; : GOTO 532
-	IF W0(I) = 0 THEN LPRINT ".000"; : GOTO 532
-	LPRINT USING ".###"; W0(I) / W1(I);
+    531 LPrint Tab(44); Using "#### ####"; W0(I); W1(I);: LPrint Tab(54);
+    If W1(I) = 0 Then LPrint ".---";: GoTo 532
+    If W1(I) = W0(I) Then LPrint "1.00";: GoTo 532
+    If W0(I) = 0 Then LPrint ".000";: GoTo 532
+    LPrint Using ".###"; W0(I) / W1(I);
 
-532 LPRINT TAB(60); USING "#### ####"; A(I, 4); A(I, 3); : LPRINT TAB(70);
-	IF A(I, 3) = 0 THEN LPRINT ".---": GOTO 533
-	IF A(I, 3) = A(I, 4) THEN LPRINT "1.00": GOTO 533
-	IF A(I, 4) = 0 THEN LPRINT ".000": GOTO 533
-	LPRINT USING ".###"; A(I, 4) / A(I, 3)
+    532 LPrint Tab(60); Using "#### ####"; A(I, 4); A(I, 3);: LPrint Tab(70);
+    If A(I, 3) = 0 Then LPrint ".---": GoTo 533
+    If A(I, 3) = A(I, 4) Then LPrint "1.00": GoTo 533
+    If A(I, 4) = 0 Then LPrint ".000": GoTo 533
+    LPrint Using ".###"; A(I, 4) / A(I, 3)
 
-533 NEXT
-	LPRINT : LPRINT "TOTALS"; TAB(15);
-	LPRINT USING "##"; Y%;
-	LPRINT TAB(28); USING "#### ####"; Z(2); Z(1);
-	IF Z(1) <> 0 THEN LPRINT TAB(38); USING ".###"; Z(2) / Z(1);
-	LPRINT TAB(44); USING "#### ####"; Z(13); Z(14);
-	IF Z(14) <> 0 THEN LPRINT TAB(54); USING ".###"; Z(13) / Z(14);
-	LPRINT TAB(60); USING "#### ####"; Z(4); Z(3);
-	IF Z(3) <> 0 THEN LPRINT TAB(70); USING ".###"; Z(4) / Z(3)
-	LPRINT TAB(15); USING "##"; Y%;
-	LPRINT TAB(28); USING "#### ####"; Z1(2); Z1(1);
-	IF Z1(1) <> 0 THEN LPRINT TAB(38); USING ".###"; Z1(2) / Z1(1);
-	LPRINT TAB(44); USING "#### ####"; Z1(13); Z1(14);
-	IF Z1(14) <> 0 THEN LPRINT TAB(54); USING ".###"; Z1(13) / Z1(14);
-	LPRINT TAB(60); USING "#### ####"; Z1(4); Z1(3);
-	IF Z1(3) <> 0 THEN LPRINT TAB(70); USING ".###"; Z1(4) / Z1(3)
-	LPRINT
-	LPRINT TAB(15);
-	LPRINT "               OFF  DEF  TOT": LPRINT TAB(15);
-	LPRINT " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
-	FOR I = 0 TO 13
-	LPRINT LEFT$(A$(I), 13); : LPRINT TAB(15);
-	LPRINT USING "####"; A(I, 2) * 2 + A(I, 4) + W0(I);
-	IF A(I, 0) > 0 THEN LPRINT TAB(21); USING "##.#"; (A(I, 2) * 2 + A(I, 4) + W0(I)) / A(I, 0);
-	LPRINT TAB(26); USING "## #### #### ####"; A(I, 13); A(I, 12); A(I, 5) - A(I, 12); A(I, 5);
-	IF A(I, 0) > 0 THEN LPRINT TAB(45); USING "##.#"; A(I, 5) / A(I, 0);
-	LPRINT TAB(51); USING "### ####  ###  ###  ###"; A(I, 6); A(I, 8); A(I, 9); A(I, 7); A(I, 11)
-	NEXT I
-	LPRINT "TEAM"; : LPRINT TAB(39); USING "####"; Z(15)
-	LPRINT : LPRINT "TOTALS";
-	LPRINT TAB(14); USING "##### ###.#"; Z(10); Z(10) / Y%;
-	LPRINT TAB(29); USING "#### #### ####  ##.#"; Z(12); Z(5) - Z(12) - Z(15); Z(5); Z(5) / Y%;
-	LPRINT USING " #### #### #### #### ####"; Z(6); Z(8); Z(9); Z(7); Z(11)
-	LPRINT TAB(14); USING "##### ###.#"; Z1(10); Z1(10) / Y%;
-	LPRINT TAB(29); USING "#### #### ####  ##.#"; Z1(12); Z1(5) - Z1(12) - Z1(15); Z1(5); Z1(5) / Y%;
-	LPRINT USING " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11)
-	LPRINT CHR$(12)
-	RETURN
+533 Next
+LPrint: LPrint "TOTALS"; Tab(15);
+LPrint Using "##"; Y%;
+LPrint Tab(28); Using "#### ####"; Z(2); Z(1);
+If Z(1) <> 0 Then LPrint Tab(38); Using ".###"; Z(2) / Z(1);
+LPrint Tab(44); Using "#### ####"; Z(13); Z(14);
+If Z(14) <> 0 Then LPrint Tab(54); Using ".###"; Z(13) / Z(14);
+LPrint Tab(60); Using "#### ####"; Z(4); Z(3);
+If Z(3) <> 0 Then LPrint Tab(70); Using ".###"; Z(4) / Z(3)
+LPrint Tab(15); Using "##"; Y%;
+LPrint Tab(28); Using "#### ####"; Z1(2); Z1(1);
+If Z1(1) <> 0 Then LPrint Tab(38); Using ".###"; Z1(2) / Z1(1);
+LPrint Tab(44); Using "#### ####"; Z1(13); Z1(14);
+If Z1(14) <> 0 Then LPrint Tab(54); Using ".###"; Z1(13) / Z1(14);
+LPrint Tab(60); Using "#### ####"; Z1(4); Z1(3);
+If Z1(3) <> 0 Then LPrint Tab(70); Using ".###"; Z1(4) / Z1(3)
+LPrint
+LPrint Tab(15);
+LPrint "               OFF  DEF  TOT": LPrint Tab(15);
+LPrint " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+For I = 0 To 13
+    LPrint Left$(A$(I), 13);: LPrint Tab(15);
+    LPrint Using "####"; A(I, 2) * 2 + A(I, 4) + W0(I);
+    If A(I, 0) > 0 Then LPrint Tab(21); Using "##.#"; (A(I, 2) * 2 + A(I, 4) + W0(I)) / A(I, 0);
+    LPrint Tab(26); Using "## #### #### ####"; A(I, 13); A(I, 12); A(I, 5) - A(I, 12); A(I, 5);
+    If A(I, 0) > 0 Then LPrint Tab(45); Using "##.#"; A(I, 5) / A(I, 0);
+    LPrint Tab(51); Using "### ####  ###  ###  ###"; A(I, 6); A(I, 8); A(I, 9); A(I, 7); A(I, 11)
+Next I
+LPrint "TEAM";: LPrint Tab(39); Using "####"; Z(15)
+LPrint: LPrint "TOTALS";
+LPrint Tab(14); Using "##### ###.#"; Z(10); Z(10) / Y%;
+LPrint Tab(29); Using "#### #### ####  ##.#"; Z(12); Z(5) - Z(12) - Z(15); Z(5); Z(5) / Y%;
+LPrint Using " #### #### #### #### ####"; Z(6); Z(8); Z(9); Z(7); Z(11)
+LPrint Tab(14); Using "##### ###.#"; Z1(10); Z1(10) / Y%;
+LPrint Tab(29); Using "#### #### ####  ##.#"; Z1(12); Z1(5) - Z1(12) - Z1(15); Z1(5); Z1(5) / Y%;
+LPrint Using " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11)
+LPrint Chr$(12)
+Return
 
 600 'SORT BASED ON CATEGORY
-	IF CP% = 1 THEN SG% = 0
-	IF CP% = 2 THEN SG% = 10
-	IF CP% = 3 THEN SG% = 14
-	IF CP% = 4 THEN SG% = 2
-	IF CP% = 5 THEN SG% = 1
-	IF CP% = 6 THEN SG% = 15
-	IF CP% = 7 THEN SG% = 18
-	IF CP% = 8 THEN SG% = 19
-	IF CP% = 9 THEN SG% = 16
-	IF CP% = 10 THEN SG% = 4
-	IF CP% = 11 THEN SG% = 3
-	IF CP% = 12 THEN SG% = 17
-	IF CP% = 14 THEN SG% = 22
-	IF CP% = 15 THEN SG% = 20
-	IF CP% = 17 THEN SG% = 12
-	IF CP% = 16 THEN SG% = 13
-	IF CP% = 18 THEN SG% = 23
-	IF CP% = 19 THEN SG% = 5
-	IF CP% = 20 THEN SG% = 21
-	IF CP% = 21 THEN SG% = 6
-	IF CP% = 22 THEN SG% = 8
-	IF CP% = 23 THEN SG% = 9
-	IF CP% = 24 THEN SG% = 7
-	IF CP% = 25 THEN SG% = 11
-	FOR Z = 0 TO 12
-	FOR Z1 = Z + 1 TO 13
-	IF A(Z, SG%) >= A(Z1, SG%) THEN 605
-	FOR I = 0 TO 24: SWAP A(Z, I), A(Z1, I): NEXT
-	SWAP W0(Z), W0(Z1)
-	SWAP W1(Z), W1(Z1)
-	SWAP A$(Z), A$(Z1)
+If CP% = 1 Then SG% = 0
+If CP% = 2 Then SG% = 10
+If CP% = 3 Then SG% = 14
+If CP% = 4 Then SG% = 2
+If CP% = 5 Then SG% = 1
+If CP% = 6 Then SG% = 15
+If CP% = 7 Then SG% = 18
+If CP% = 8 Then SG% = 19
+If CP% = 9 Then SG% = 16
+If CP% = 10 Then SG% = 4
+If CP% = 11 Then SG% = 3
+If CP% = 12 Then SG% = 17
+If CP% = 14 Then SG% = 22
+If CP% = 15 Then SG% = 20
+If CP% = 17 Then SG% = 12
+If CP% = 16 Then SG% = 13
+If CP% = 18 Then SG% = 23
+If CP% = 19 Then SG% = 5
+If CP% = 20 Then SG% = 21
+If CP% = 21 Then SG% = 6
+If CP% = 22 Then SG% = 8
+If CP% = 23 Then SG% = 9
+If CP% = 24 Then SG% = 7
+If CP% = 25 Then SG% = 11
+For Z = 0 To 12
+    For Z1 = Z + 1 To 13
+        If A(Z, SG%) >= A(Z1, SG%) Then 605
+        For I = 0 To 24: Swap A(Z, I), A(Z1, I): Next
+        Swap W0(Z), W0(Z1)
+        Swap W1(Z), W1(Z1)
+        Swap A$(Z), A$(Z1)
 
-605 NEXT Z1: NEXT Z
-	RETURN
+605 Next Z1: Next Z
+Return
 
-815 CALL TITLE: COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 31: COLOR 14
-	Y = LEN(B$): Y = INT((80 - Y) / 2): LOCATE , Y: PRINT B$
-	LOCATE 25, 1: PRINT TAB(80); : LOCATE , 1
-	LOCATE 2, 1
-	COLOR , 0
-	FOR I = 1 TO Y%
-	COLOR 7
-	IF I / 2 = INT(I / 2) THEN COLOR 15
-	IF I > 54 THEN 860
-	IF I > 36 THEN 827
-	IF I > 18 THEN 826
-	PRINT USING "###"; O%(I);
-	PRINT TAB(5); LEFT$(O$(I), 14);
-	PRINT TAB(20); USING "###"; T%(I);
-	PRINT TAB(24); H$(I)
-	GOTO 830
+815 Call TITLE: Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
+Y = Len(B$): Y = Int((80 - Y) / 2): Locate , Y: Print B$
+Locate 25, 1: Print Tab(80);: Locate , 1
+Locate 2, 1
+Color , 0
+For I = 1 To Y%
+    Color 7
+    If I / 2 = Int(I / 2) Then Color 15
+    If I > 54 Then 860
+    If I > 36 Then 827
+    If I > 18 Then 826
+    Print Using "###"; O%(I);
+    Print Tab(5); Left$(O$(I), 14);
+    Print Tab(20); Using "###"; T%(I);
+    Print Tab(24); H$(I)
+    GoTo 830
 
-826 LOCATE I - 17, 27: PRINT USING "###"; O%(I);
-	PRINT TAB(31); LEFT$(O$(I), 14);
-	PRINT TAB(46); USING "###"; T%(I);
-	PRINT TAB(50); H$(I)
-	GOTO 830
+    826 Locate I - 17, 27: Print Using "###"; O%(I);
+    Print Tab(31); Left$(O$(I), 14);
+    Print Tab(46); Using "###"; T%(I);
+    Print Tab(50); H$(I)
+    GoTo 830
 
-827 LOCATE I - 35, 53: PRINT USING "###"; O%(I);
-	PRINT TAB(57); LEFT$(O$(I), 14);
-	PRINT TAB(72); USING "###"; T%(I);
-	PRINT TAB(76); H$(I)
+    827 Locate I - 35, 53: Print Using "###"; O%(I);
+    Print Tab(57); Left$(O$(I), 14);
+    Print Tab(72); Using "###"; T%(I);
+    Print Tab(76); H$(I)
 
-830 NEXT I
-	PRINT
+830 Next I
+Print
 
-860 LOCATE 21, 27
-	COLOR 14: PRINT "OVERALL RECORD "; : COLOR 15: PRINT "("; W%; "-"; L%; ")"
-	LOCATE , 27: COLOR 14: PRINT "HOME RECORD    "; : COLOR 15: PRINT "("; HW%; "-"; HL%; ")"
-	LOCATE , 27: COLOR 14: PRINT "ROAD RECORD    "; : COLOR 15: PRINT "("; VW%; "-"; VL%; ")"
-	LOCATE , 27: COLOR 14: PRINT "NEUTRAL RECORD "; : COLOR 15: PRINT "("; NW%; "-"; NL%; ")";
-	COLOR 3
-	LOCATE 25, 1
-	COLOR 15, 1: PRINT "INDIVIDUAL STATS ";
-	COLOR 14: PRINT "[Pg DN]  ";
-	COLOR 15: PRINT "SELECT ANOTHER TEAM ";
-	COLOR 14: PRINT "[ESC]  ";
-	COLOR 15: PRINT "PRINT STATS ";
-	COLOR 14: PRINT "[P]";
-	LOCATE 3, 1
+860 Locate 21, 27
+Color 14: Print "OVERALL RECORD ";: Color 15: Print "("; W%; "-"; L%; ")"
+Locate , 27: Color 14: Print "HOME RECORD    ";: Color 15: Print "("; HW%; "-"; HL%; ")"
+Locate , 27: Color 14: Print "ROAD RECORD    ";: Color 15: Print "("; VW%; "-"; VL%; ")"
+Locate , 27: Color 14: Print "NEUTRAL RECORD ";: Color 15: Print "("; NW%; "-"; NL%; ")";
+Color 3
+Locate 25, 1
+Color 15, 1: Print "INDIVIDUAL STATS ";
+Color 14: Print "[Pg DN]  ";
+Color 15: Print "SELECT ANOTHER TEAM ";
+Color 14: Print "[ESC]  ";
+Color 15: Print "PRINT STATS ";
+Color 14: Print "[P]";
+Locate 3, 1
 870 I$ = GetKeyPress$
-	IF I$ = CHR$(0) + "Q" THEN COLOR , 0: CLS : GOTO 915
-	IF UCASE$(I$) = "D" THEN GOSUB 485: GOTO 870
-	IF I$ = CHR$(27) THEN 45
-	IF UCASE$(I$) = "P" THEN GOSUB 875: GOSUB 530: GOTO 870
-	GOTO 870
+If I$ = Chr$(0) + "Q" Then Color , 0: Cls: GoTo 915
+If UCase$(I$) = "D" Then GoSub 485: GoTo 870
+If I$ = Chr$(27) Then 45
+If UCase$(I$) = "P" Then GoSub 875: GoSub 530: GoTo 870
+GoTo 870
 
-915 COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 31: COLOR 14
-	Y = LEN(B$): Y = INT((80 - Y) / 2): LOCATE , Y: PRINT B$
-	LOCATE 25, 1: PRINT TAB(80); : LOCATE , 1
-	LOCATE 2, 1
-	COLOR , 0
-	FOR I = 1 TO Y%
-	COLOR 7
-	IF I / 2 = INT(I / 2) THEN COLOR 15
-	IF I < 55 THEN 930
-	IF I > 72 THEN 926
-	PRINT USING "###"; O%(I);
-	PRINT TAB(5); LEFT$(O$(I), 14);
-	PRINT TAB(20); USING "###"; T%(I);
-	PRINT TAB(24); H$(I)
-	GOTO 930
+915 Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
+Y = Len(B$): Y = Int((80 - Y) / 2): Locate , Y: Print B$
+Locate 25, 1: Print Tab(80);: Locate , 1
+Locate 2, 1
+Color , 0
+For I = 1 To Y%
+    Color 7
+    If I / 2 = Int(I / 2) Then Color 15
+    If I < 55 Then 930
+    If I > 72 Then 926
+    Print Using "###"; O%(I);
+    Print Tab(5); Left$(O$(I), 14);
+    Print Tab(20); Using "###"; T%(I);
+    Print Tab(24); H$(I)
+    GoTo 930
 
-926 LOCATE I - 71, 27: PRINT USING "###"; O%(I);
-	PRINT TAB(31); LEFT$(O$(I), 14);
-	PRINT TAB(46); USING "###"; T%(I);
-	PRINT TAB(50); H$(I)
-	GOTO 930
+    926 Locate I - 71, 27: Print Using "###"; O%(I);
+    Print Tab(31); Left$(O$(I), 14);
+    Print Tab(46); Using "###"; T%(I);
+    Print Tab(50); H$(I)
+    GoTo 930
 
-930 NEXT I
-	PRINT
-	LOCATE 21, 27
-	COLOR 14: PRINT "OVERALL RECORD "; : COLOR 15: PRINT "("; W%; "-"; L%; ")"
-	LOCATE , 27: COLOR 14: PRINT "HOME RECORD    "; : COLOR 15: PRINT "("; HW%; "-"; HL%; ")"
-	LOCATE , 27: COLOR 14: PRINT "ROAD RECORD    "; : COLOR 15: PRINT "("; VW%; "-"; VL%; ")"
-	LOCATE , 27: COLOR 14: PRINT "NEUTRAL RECORD "; : COLOR 15: PRINT "("; NW%; "-"; NL%; ")";
-	COLOR 3
-	LOCATE 25, 1
-	COLOR 15, 1: PRINT "INDIVIDUAL STATS ";
-	COLOR 14: PRINT "[Pg DN]  ";
-	COLOR 15: PRINT "SELECT ANOTHER TEAM ";
-	COLOR 14: PRINT "[ESC]  ";
-	COLOR 15: PRINT "PRINT STATS ";
-	COLOR 14: PRINT "[P]";
-	LOCATE 3, 1
+930 Next I
+Print
+Locate 21, 27
+Color 14: Print "OVERALL RECORD ";: Color 15: Print "("; W%; "-"; L%; ")"
+Locate , 27: Color 14: Print "HOME RECORD    ";: Color 15: Print "("; HW%; "-"; HL%; ")"
+Locate , 27: Color 14: Print "ROAD RECORD    ";: Color 15: Print "("; VW%; "-"; VL%; ")"
+Locate , 27: Color 14: Print "NEUTRAL RECORD ";: Color 15: Print "("; NW%; "-"; NL%; ")";
+Color 3
+Locate 25, 1
+Color 15, 1: Print "INDIVIDUAL STATS ";
+Color 14: Print "[Pg DN]  ";
+Color 15: Print "SELECT ANOTHER TEAM ";
+Color 14: Print "[ESC]  ";
+Color 15: Print "PRINT STATS ";
+Color 14: Print "[P]";
+Locate 3, 1
 970 I$ = GetKeyPress$
-	IF I$ = CHR$(0) + "Q" THEN COLOR , 0: CLS : GOTO 142
-	IF I$ = CHR$(0) + "I" THEN COLOR , 0: CLS : GOTO 815
-	IF UCASE$(I$) = "D" THEN GOSUB 485: GOTO 970
-	IF I$ = CHR$(27) THEN 45
-	IF UCASE$(I$) = "P" THEN GOSUB 875: GOSUB 530: GOTO 970
-	GOTO 970
+If I$ = Chr$(0) + "Q" Then Color , 0: Cls: GoTo 142
+If I$ = Chr$(0) + "I" Then Color , 0: Cls: GoTo 815
+If UCase$(I$) = "D" Then GoSub 485: GoTo 970
+If I$ = Chr$(27) Then 45
+If UCase$(I$) = "P" Then GoSub 875: GoSub 530: GoTo 970
+GoTo 970
 
-875 LPRINT "SCHEDULE RESULTS FOR "; B$
-	LPRINT
-	FOR I = 1 TO 28
-	LPRINT USING "###"; O%(I);
-	LPRINT TAB(5); LEFT$(O$(I), 14);
-	LPRINT TAB(20); USING "###"; T%(I);
-	LPRINT TAB(24); H$(I); TAB(27);
-	IF I + 28 > Y% THEN LPRINT : GOTO 880
-	LPRINT USING "###"; O%(I + 28);
-	LPRINT TAB(31); LEFT$(O$(I + 28), 14);
-	LPRINT TAB(46); USING "###"; T%(I + 28);
-	LPRINT TAB(50); H$(I + 28); TAB(53);
-	IF I + 56 > Y% THEN LPRINT : GOTO 880
-	LPRINT USING "###"; O%(I + 56);
-	LPRINT TAB(57); LEFT$(O$(I + 56), 14);
-	LPRINT TAB(72); USING "###"; T%(I + 56);
-	LPRINT TAB(76); H$(I + 56)
+875 LPrint "SCHEDULE RESULTS FOR "; B$
+LPrint
+For I = 1 To 28
+    LPrint Using "###"; O%(I);
+    LPrint Tab(5); Left$(O$(I), 14);
+    LPrint Tab(20); Using "###"; T%(I);
+    LPrint Tab(24); H$(I); Tab(27);
+    If I + 28 > Y% Then LPrint: GoTo 880
+    LPrint Using "###"; O%(I + 28);
+    LPrint Tab(31); Left$(O$(I + 28), 14);
+    LPrint Tab(46); Using "###"; T%(I + 28);
+    LPrint Tab(50); H$(I + 28); Tab(53);
+    If I + 56 > Y% Then LPrint: GoTo 880
+    LPrint Using "###"; O%(I + 56);
+    LPrint Tab(57); Left$(O$(I + 56), 14);
+    LPrint Tab(72); Using "###"; T%(I + 56);
+    LPrint Tab(76); H$(I + 56)
 
-880 NEXT I
-	LPRINT
-	LPRINT TAB(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-	LPRINT TAB(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-	LPRINT TAB(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-	LPRINT TAB(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
-	LPRINT CHR$(12)
-	RETURN
+880 Next I
+LPrint
+LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
+LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
+LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
+LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+LPrint Chr$(12)
+Return
 
-3056 COLOR 15, 0
-	JJ = 6
-	SN = 1: LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
-	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-	PRINT
-	LOCATE , 12: PRINT "ESC TO RETURN TO MAIN MENU"
+3056 Color 15, 0
+JJ = 6
+SN = 1: Locate 6, 8: Color 15, 4
+Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " º"; String$(61, 32); "º ";: Next
+Locate 7 + JJ, 8
+Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Locate , 12: Print "ENTER DISK ID: ": Print
+Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+Print
+Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
 3057 I$ = GetKeyPress$
-	IF I$ = CHR$(27) THEN Z$ = "END": GOTO 90
-	IF I$ = CHR$(13) THEN GOSUB 1102: GOTO 3060
-	LOCATE 7, 27: PRINT I$
-	LOCATE 7, 28: LINE INPUT NY$
-	NY$ = I$ + NY$
-	COLOR 15, 0
+If I$ = Chr$(27) Then Z$ = "END": GoTo 90
+If I$ = Chr$(13) Then GoSub 1102: GoTo 3060
+Locate 7, 27: Print I$
+Locate 7, 28: Line Input NY$
+NY$ = I$ + NY$
+Color 15, 0
 
-	IF NY$ = "" THEN GOSUB 1102: GOTO 3060
-	YN$ = NY$
-	FOR I = 1 TO 500: VV$(I) = "": NEXT
-	GOSUB 1100
+If NY$ = "" Then GoSub 1102: GoTo 3060
+YN$ = NY$
+For I = 1 To 500: VV$(I) = "": Next
+GoSub 1100
 
-3060 IF BO% = 1 THEN BO% = 0: GOTO 3056
+3060 If BO% = 1 Then BO% = 0: GoTo 3056
 
-3058 LOCATE 2, 33: COLOR T%(0), T%(1): PRINT A$
-	COLOR 15, 4: LOCATE , 33: PRINT "ANY CHANGE (YN)";
-	I$=GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 3056
-	COLOR 15, 0
-	RETURN
+3058 Locate 2, 33: Color T%(0), T%(1): Print A$
+Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
+I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 3056
+Color 15, 0
+Return
 
-1100 OPEN D$(0) + "BASK." + YN$ FOR RANDOM AS #1 LEN = 655
-	Y = LOF(1)
-	FIELD #1, 15 AS Q$(0), 640 AS X$
-	FOR I1 = 1 TO Y / 655
-	GET #1, I1
-	VV$(I1) = Q$(0): VV%(I1) = I1
-	NEXT
-CLOSE 1
-	NTMS = Y / 655
+1100 Open D$(0) + "BASK." + YN$ For Random As #1 Len = 655
+Y = LOF(1)
+Field #1, 15 As Q$(0), 640 As X$
+For I1 = 1 To Y / 655
+    Get #1, I1
+    VV$(I1) = Q$(0): VV%(I1) = I1
+Next
+Close 1
+NTMS = Y / 655
 
 1102 SELECTION% = 1
-	Count% = NTMS
-	Start% = 1
-	FileFGColr% = 15:FileBGColr% = 4
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Rows% = 20
-	Columns% = 4
-	Spacing% = 6
-	Row% = 4
-	Column% = 1
-	COLOR , 4: CLS : LOCATE , 33: COLOR 14
-	PRINT "TEAM SELECTION": COLOR 15
-	LOCATE 25, 1: COLOR 14: PRINT "ESC"; : COLOR 15
-	PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
-	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
-	
+Count% = NTMS
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 4
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Color , 4: Cls: Locate , 33: Color 14
+Print "TEAM SELECTION": Color 15
+Locate 25, 1: Color 14: Print "ESC";: Color 15
+Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+    
 _MouseShow "DEFAULT"
-20   MAMenu VARPTR(VV$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-	IF EXITCODE% = 27 THEN BO% = 1: RETURN
-	IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
-	IF EXITCODE% = -79 THEN Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GOTO 20
-	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NTMS THEN Start% = NTMS
-	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 20
-	T1 = VV%(SELECTION%)
+If EXITCODE% = 27 Then BO% = 1: Return
+If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 20
+If EXITCODE% = -79 Then Start% = NTMS: EXITCODE% = 3: SELECTION% = NTMS: GoTo 20
+If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
+If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > NTMS Then Start% = NTMS
+If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 20
+T1 = VV%(SELECTION%)
 
-9000 OPEN D$(0) + "BASK." + YN$ FOR RANDOM AS #1 LEN = 655
+9000 Open D$(0) + "BASK." + YN$ For Random As #1 Len = 655
 FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
 AS Q$(19), 602 AS X$
-FOR I = 0 TO 13
+For I = 0 To 13
 FIELD #1, 53 + I * 43 AS X$, 15 AS Q$(I * 15 + 20), 2 AS Q$(I * 15 + 21), 2 AS Q$(I * 15 + 22), 2 AS Q$(I * 15 + 23), 2 AS Q$(I * 15 + 24), 2 AS Q$(I * 15 + 25), 2 AS Q$(I * 15 + 26), 2 AS Q$(I * 15 + 27), 2 AS Q$(I * 15 + 28), 2 AS Q$(I * 15 + 29) _
 , 2 AS Q$(I * 15 + 30), 2 AS Q$(I * 15 + 31), 2 AS Q$(I * 15 + 32), 2 AS Q$(I * 15 + 33), 2 AS Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 AS X$
-NEXT
-GET #1, T1
-	A$ = Q$(0)
+Next
+Get #1, T1
+A$ = Q$(0)
 
-9005 IF RIGHT$(A$, 1) = " " THEN A$ = LEFT$(A$, LEN(A$) - 1): GOTO 9005
-	B$ = A$
-	SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
-	FOR I = 0 TO 4: L%(I) = CVI(Q$(I + 5)): NEXT
-	FOR I = 0 TO 9: T%(I) = CVI(Q$(I + 10)): NEXT
-CLOSE 1
-	B$ = A$
-	RETURN
+9005 If Right$(A$, 1) = " " Then A$ = Left$(A$, Len(A$) - 1): GoTo 9005
+B$ = A$
+SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
+For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+Close 1
+B$ = A$
+Return
 
-6585 FOR XX = 4 TO 11: IF MID$(B$, XX, 1) = " " OR MID$(B$, XX, 1) = "." THEN MID$(B$, XX, 1) = "_"
-	NEXT XX
-	FOR XX = 12 TO 14: IF MID$(B$, XX, 2) = "ST" THEN MID$(B$, 9, 1) = "_": MID$(B$, 10, 2) = "ST"
-	NEXT XX
-	QQ = 8: FOR XX = 11 TO 4 STEP -1: IF MID$(B$, XX, 1) = "_" THEN QQ = XX - 4: GOTO 6615
-	GOTO 6620
+6585 For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+Next XX
+For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+Next XX
+QQ = 8: For XX = 11 To 4 Step -1: If Mid$(B$, XX, 1) = "_" Then QQ = XX - 4: GoTo 6615
+    GoTo 6620
 
-6615 NEXT XX
+6615 Next XX
 
-6620 RETURN
+6620 Return
 
-4500 COLOR 15, 0: LOCATE 24, 1: PRINT "PRESS ANY KEY TO CONTINUE";
+4500 Color 15, 0: Locate 24, 1: Print "PRESS ANY KEY TO CONTINUE";
 4501 I$ = GetKeyPress$
-	RETURN
+Return
 
-5025 CLS : PRINT "ERROR::: UNABLE TO LOCATE COMPILED STATS FILE"
-	GOTO 45
+5025 Cls: Print "ERROR::: UNABLE TO LOCATE COMPILED STATS FILE"
+GoTo 45
 
-895 COLOR 7: LOCATE 24, 1: PRINT "ANY KEY TO CONTINUE";
+895 Color 7: Locate 24, 1: Print "ANY KEY TO CONTINUE";
 896 I$ = GetKeyPress$
-	RETURN
+Return
 
-SUB TITLE ()
-	COLOR , 0: KEY OFF: CLS
-	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 23: COLOR 12
-	PRINT "COURTSIDE COLLEGE BASKETBALL V4.0"
-	LOCATE 3, 1: COLOR 2, 0
-END SUB
+Sub TITLE ()
+    Color , 0: KEY Off: Cls
+    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12
+    Print "COURTSIDE COLLEGE BASKETBALL V4.0"
+    Locate 3, 1: Color 2, 0
+End Sub
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

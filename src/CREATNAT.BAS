@@ -2,239 +2,239 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-DEFINT A-Z
-DECLARE FUNCTION FnExt$ (X$, Length)
+DefInt A-Z
+DECLARE FUNCTION PadRight$ (X$, Length)
 
-DIM Z1$(40), Z2$(40), Z1%(40), D$(2)
-DIM Q$(15), VV$(200), V%(200), T%(34), L%(13), ITEM$(3)
-DIM Y AS LONG
+Dim Z1$(40), Z2$(40), Z1%(40), D$(2)
+Dim Q$(15), VV$(200), V%(200), T%(34), L%(13), ITEM$(3)
+Dim Y As Long
 
 FG = 0
 BG = 7
-Colr = OneColor%(FG, BG)             'pack FG and BG into a single byte
+Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
 
-OPEN "DEV.BAS" FOR INPUT AS #2
-	FOR I = 0 TO 1
-	INPUT #2, D$(I)
-	NEXT
-CLOSE 2
+Open "DEV.BAS" For Input As #2
+For I = 0 To 1
+    Input #2, D$(I)
+Next
+Close 2
 
-CLS
+Cls
 
-50 FOR X = 1 TO 40
-	Z1$(X) = "XXX": Z2$(X) = "XXX": Z1%(X) = -1
-	NEXT
+50 For X = 1 To 40
+    Z1$(X) = "XXX": Z2$(X) = "XXX": Z1%(X) = -1
+Next
 
-60 CALL TITLE
-	item$(1) = "ADD / DELETE /REVIEW CONFERENCES"
-	item$(2) = "CREATE / DEFINE LEAGUE & MEMBERS"
-	item$(3) = "RETURN TO STANDINGS/LEADERS MENU"
-	SELECTION% = 1
-	Count% = 3
-	Start% = 1
-	SCANCODE% = 3
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Spacing% = 1
-	Row% = 8
-	Column% = 25
+60 Call TITLE
+ITEM$(1) = "ADD / DELETE /REVIEW CONFERENCES"
+ITEM$(2) = "CREATE / DEFINE LEAGUE & MEMBERS"
+ITEM$(3) = "RETURN TO STANDINGS/LEADERS MENU"
+SELECTION% = 1
+Count% = 3
+Start% = 1
+SCANCODE% = 3
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Spacing% = 1
+Row% = 8
+Column% = 25
 
-CALL box0(7, 24, 11, 57, 2, 31)	
+Call box0(7, 24, 11, 57, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert VARPTR(item$(1)), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
-	COLOR , 0
-	IF SCANCODE% = 27 THEN RUN "HELLO.EXE 3"
-	I1 = SELECTION%
-	IF I1 = 1 THEN 4000
-	IF I1 = 3 THEN RUN "HELLO.EXE 3"
+Color , 0
+If SCANCODE% = 27 Then Run "HELLO.EXE 3"
+I1 = SELECTION%
+If I1 = 1 Then 4000
+If I1 = 3 Then Run "HELLO.EXE 3"
 
-130 COLOR 15, 0: CLS
-	JJ = 7
-	LOCATE 6, 8: COLOR 15, 1
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-	LOCATE , 12: PRINT "ENTER NAME FOR LEAGUE: ": PRINT
-	LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-	LOCATE , 12: PRINT "SPACES. TO EXIT, JUST HIT 'ENTER'"
-	LOCATE , 12: PRINT "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
-	LOCATE 7, 37: INPUT LG$
-	IF LG$ = "" THEN 60
-	LG$ = LEFT$(LG$, 8)
-	LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
+130 Color 15, 0: Cls
+JJ = 7
+Locate 6, 8: Color 15, 1
+Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " º"; String$(61, 32); "º ";: Next
+Locate 7 + JJ, 8
+Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Locate , 12: Print "ENTER NAME FOR LEAGUE: ": Print
+Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+Locate , 12: Print "SPACES. TO EXIT, JUST HIT 'ENTER'"
+Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
+Locate 7, 37: Input LG$
+If LG$ = "" Then 60
+LG$ = Left$(LG$, 8)
+Locate 13, 12: Print "ANY CHANGE (YN) "
 
-22  I$=GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 130
+22 I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 130
 
-220 COLOR 14, 0
-	CLS
-	PRINT
-	PRINT "  "; LG$: PRINT : COLOR 12
+220 Color 14, 0
+Cls
+Print
+Print "  "; LG$: Print: Color 12
 
-230 FOR I = 1 TO 10
-	COLOR 2: PRINT USING "## "; I; : COLOR 15: PRINT Z1$(I);
-	LOCATE , 21: COLOR 2: PRINT USING "## "; I + 10; : COLOR 15: PRINT Z1$(I + 10);
-	LOCATE , 41: COLOR 2: PRINT USING "## "; I + 20; : COLOR 15: PRINT Z1$(I + 20);
-	LOCATE , 61: COLOR 2: PRINT USING "## "; I + 30; : COLOR 15: PRINT Z1$(I + 30)
-	NEXT I
+230 For I = 1 To 10
+    Color 2: Print Using "## "; I;: Color 15: Print Z1$(I);
+    Locate , 21: Color 2: Print Using "## "; I + 10;: Color 15: Print Z1$(I + 10);
+    Locate , 41: Color 2: Print Using "## "; I + 20;: Color 15: Print Z1$(I + 20);
+    Locate , 61: Color 2: Print Using "## "; I + 30;: Color 15: Print Z1$(I + 30)
+Next I
 
-240 LOCATE 19, 1
-	COLOR 14: PRINT "(1) "; : COLOR 15: PRINT "ADD A CONFERENCE"
-	COLOR 14: PRINT "(2) "; : COLOR 15: PRINT "REMOVE A CONFERENCE"
-	COLOR 14: PRINT "(3) "; : COLOR 15: PRINT "END AND SAVE LEAGUE"
+240 Locate 19, 1
+Color 14: Print "(1) ";: Color 15: Print "ADD A CONFERENCE"
+Color 14: Print "(2) ";: Color 15: Print "REMOVE A CONFERENCE"
+Color 14: Print "(3) ";: Color 15: Print "END AND SAVE LEAGUE"
 250 I$ = GetKeyPress$
 
-260 IF I$ = "3" THEN 950
+260 If I$ = "3" Then 950
 
-270 LOCATE 20, 30: PRINT "SLOT # (1-40) ";
+270 Locate 20, 30: Print "SLOT # (1-40) ";
 
-280 N = 1: INPUT B
+280 N = 1: Input B
 
-290 IF B < 1 OR B > 40 THEN 270
+290 If B < 1 Or B > 40 Then 270
 
-300 IF I$ = "2" THEN Z1$(B) = "XXX": GOTO 220
+300 If I$ = "2" Then Z1$(B) = "XXX": GoTo 220
 
-310 GOSUB 1440
+310 GoSub 1440
 
 390 Z1$(B) = F$
 
-400 GOTO 220
+400 GoTo 220
 
-950 CLS
+950 Cls
 
-970  OPEN D$(1) + LG$ + ".CON" FOR OUTPUT AS #2
-	PRINT #2, LG$
-	FOR X = 1 TO 40
-	PRINT #2, Z1$(X)
-	NEXT
-CLOSE 2
-	GOTO 50
+970 Open D$(1) + LG$ + ".CON" For Output As #2
+Print #2, LG$
+For X = 1 To 40
+    Print #2, Z1$(X)
+Next
+Close 2
+GoTo 50
 
-1195 CLS
-	RUN "HELLO.EXE 3"
-	END
+1195 Cls
+Run "HELLO.EXE 3"
+End
 
 1440 Spec$ = D$(1) + "*.LIB"
-	null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-	Count% = DirCount%
-	IF Count% = 0 THEN 4600
-REDIM F$(0 TO Count%)
-	FOR X = 1 TO Count%
-	  F$(X) = SPACE$(12)
-	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count, 0)
+null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+Count% = DirCount%
+If Count% = 0 Then 4600
+ReDim F$(0 To Count%)
+For X = 1 To Count%
+    F$(X) = Space$(12)
+Next
+F$(0) = Spec$
+Call ReadFile(F$())
+'CALL SortStr(VARPTR(F$(1)), Count, 0)
 
-1445 CLS
-	COLOR , 1
-	CLS
-	LOCATE , 28
-	COLOR 14
-	PRINT "SELECT CONFERENCE": COLOR 15
-	SELECTION% = 1
-	Start% = 1
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Rows% = 20
-	Columns% = 4
-	Spacing% = 6
-	Row% = 4
-	Column% = 1
-	LOCATE 25, 1
-	COLOR 14
-	PRINT "ENTER"; : COLOR 15
-	PRINT "-SELECTS CONFERENCE";
+1445 Cls
+Color , 1
+Cls
+Locate , 28
+Color 14
+Print "SELECT CONFERENCE": Color 15
+SELECTION% = 1
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Locate 25, 1
+Color 14
+Print "ENTER";: Color 15
+Print "-SELECTS CONFERENCE";
 
 _MouseShow "DEFAULT"
 MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-	IF ExitCode% = 27 THEN 220
-	F$ = F$(SELECTION%)
-	LOCATE 2, 33: PRINT F$
-LOCATE , 33: PRINT "ANY CHANGE (YN)";
-	COLOR 15, 0
+If ExitCode% = 27 Then 220
+F$ = F$(SELECTION%)
+Locate 2, 33: Print F$
+Locate , 33: Print "ANY CHANGE (YN)";
+Color 15, 0
 3912 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 1445
+If UCase$(I$) = "Y" Then 1445
 
 3913 F$ = RTrim$(F$)
-	F$ = LEFT$(F$, LEN(F$) - 4)
-	RETURN
+F$ = Left$(F$, Len(F$) - 4)
+Return
 
-2060 CLS : PRINT "ERROR:: UNABLE TO READ TEAM FILE": PRINT
+2060 Cls: Print "ERROR:: UNABLE TO READ TEAM FILE": Print
 
-2720 BO% = 1: RETURN
+2720 BO% = 1: Return
 
 4000 Spec$ = D$(1) + "*.CON"
-	null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-	Count% = DirCount%
-	IF Count% = 0 THEN 4500
-	REDIM F$(0 TO Count%)
-	FOR X = 1 TO Count%
-	  F$(X) = SPACE$(12)
-	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count, 0)
+null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+Count% = DirCount%
+If Count% = 0 Then 4500
+ReDim F$(0 To Count%)
+For X = 1 To Count%
+    F$(X) = Space$(12)
+Next
+F$(0) = Spec$
+Call ReadFile(F$())
+'CALL SortStr(VARPTR(F$(1)), Count, 0)
 
-1310 CLS
-	COLOR , 1
-	CLS
-	LOCATE , 28
-	COLOR 14
-	PRINT "SELECT LEAGUE TO SCHEDULE": COLOR 15
-	SELECTION% = 1
-	Start% = 1
-	FileFGColr% = 15:FileBGColr% = 1
-	HiLiteFGColr% = 0:HiLiteBGColr% = 7
-	Rows% = 20
-	Columns% = 4
-	Spacing% = 6
-	Row% = 4
-	Column% = 1
-	LOCATE 25, 1
-	COLOR 14
-	PRINT "ENTER"; : COLOR 15
-	PRINT "-SELECTS TEAM";
+1310 Cls
+Color , 1
+Cls
+Locate , 28
+Color 14
+Print "SELECT LEAGUE TO SCHEDULE": Color 15
+SELECTION% = 1
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Locate 25, 1
+Color 14
+Print "ENTER";: Color 15
+Print "-SELECTS TEAM";
 
 _MouseShow "DEFAULT"
 MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-	IF ExitCode% = 27 THEN 60
-	F$ = F$(SELECTION%)
-	LOCATE 2, 33: PRINT F$
-LOCATE , 33: PRINT "ANY CHANGE (YN)";
-	COLOR 15, 0
+If ExitCode% = 27 Then 60
+F$ = F$(SELECTION%)
+Locate 2, 33: Print F$
+Locate , 33: Print "ANY CHANGE (YN)";
+Color 15, 0
 3910 I$ = GetKeyPress$
-	IF UCASE$(I$) = "Y" THEN 1310
+If UCase$(I$) = "Y" Then 1310
 
 3911 F$ = RTrim$(F$)
-	LG$ = LEFT$(F$, LEN(F$) - 4)
-	 OPEN D$(1) + LG$ + ".CON" FOR INPUT AS #2
-	INPUT #2, LG$
-	FOR X = 1 TO 40
-	INPUT #2, Z1$(X)
-	NEXT
-CLOSE 2
-	COLOR 15, 1
-	GOTO 220
+LG$ = Left$(F$, Len(F$) - 4)
+Open D$(1) + LG$ + ".CON" For Input As #2
+Input #2, LG$
+For X = 1 To 40
+    Input #2, Z1$(X)
+Next
+Close 2
+Color 15, 1
+GoTo 220
 
-4500 LOCATE 10, 8
-	CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
-	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
-	GOTO 50
+4500 Locate 10, 8
+    CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+    I$ = GetKeyPress$
+    CALL CSMsgBox("", 0, Pass)
+    GOTO 50
 
 4600 LOCATE 10, 8
-	CALL CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Cnf)
-	I$ = GetKeyPress$
-	CALL CSMsgBox("", 0, Cnf)
-	GOTO 50
+    CALL CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+    I$ = GetKeyPress$
+    CALL CSMsgBox("", 0, Pass)
+    GOTO 50
 
 
 SUB GETKEY ()
@@ -243,22 +243,22 @@ LOCATE 24, 1: PRINT "PRESS ANY KEY TO CONTINUE";
 END SUB
 
 
-FUNCTION FnExt$ (X$, Length) 
+FUNCTION PadRight$ (X$, Length) 
 'Essentially this pads space to the right of the string
-	X$ = X$ + SPACE$(Length - LEN(X$))  'for display only
+    PadRight$ = X$ + SPACE$(Length - LEN(X$))  'for display only
 END FUNCTION
 
 
 SUB TITLE ()
-	COLOR , 0: KEY OFF: CLS
-	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 24: COLOR 12
-	PRINT "COURTSIDE COLLEGE BASKETBALL V4.0"
-	LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-	PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; TAB(70); LEFT$(TIME$, 5);
-	LOCATE 3, 1: COLOR 2, 0
-	COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-	  PRINT "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
-	COLOR 10
+    COLOR , 0: KEY OFF: CLS
+    COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 24: COLOR 12
+    PRINT "COURTSIDE COLLEGE BASKETBALL V4.0"
+    LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
+    PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; TAB(70); LEFT$(TIME$, 5);
+    LOCATE 3, 1: COLOR 2, 0
+    COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+      PRINT "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
+    COLOR 10
 END SUB
 
 

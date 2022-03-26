@@ -11,9 +11,9 @@ Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
 Dim J As Single
 
 Open "DEV.BAS" For Input As #2
-	For I = 0 To 1
-		Input #2, D$(I)
-	Next
+For I = 0 To 1
+    Input #2, D$(I)
+Next
 Close #2
 
 Cls
@@ -26,7 +26,7 @@ Count% = DirCount%
 If Count% = 0 Then GoTo 100
 ReDim F$(0 To Count%)
 For X = 1 To Count%
-	F$(X) = Space$(12)
+    F$(X) = Space$(12)
 Next
 F$(0) = Spec$
 Call ReadFile(F$())
@@ -43,8 +43,8 @@ Print "SELECT LEAGUE TO ERASE"
 Color 15
 SELECTION% = 1
 Start% = 1
-FileFGColr% = 0:FileBGColr% = 7
-HiLiteFGColr% = 0:HiLiteBGColr% = 7
+FileFGColr% = 0: FileBGColr% = 7
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Rows% = 20
 Columns% = 4
 Spacing% = 6
@@ -72,7 +72,7 @@ Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then GoTo 75
-	
+    
 F$ = RTrim$(F$)
 WE$ = Left$(F$, Len(F$) - 4)
 LH$ = Left$(WE$, 8)
@@ -86,23 +86,23 @@ Call CSMsgBox("", 0, Pass)
 If I$ <> "Y" Then GoTo 75
 
 Open D$(1) + LH$ + ".TMS" For Input As #2
-	Input #2, LG$, D1$, D2$, D3$, D4$
-	For XW = 1 To 40
-		Input #2, H1$(XW)
-	Next
+Input #2, LG$, D1$, D2$, D3$, D4$
+For XW = 1 To 40
+    Input #2, H1$(XW)
+Next
 Close 2
 
-	For XW = 1 To 40
-	If H1$(XW) = Chr$(42) Then _Continue
-	Print "DELETING "; H1$(XW); " STATS"
-	Kill D$(1) + H1$(XW)
-	Kill D$(1) + H1$(XW) + "R"
-	Kill D$(1) + H1$(XW) + "S"
-	Kill D$(1) + H1$(XW) + "D"
+For XW = 1 To 40
+    If H1$(XW) = Chr$(42) Then _Continue
+    Print "DELETING "; H1$(XW); " STATS"
+    Kill D$(1) + H1$(XW)
+    Kill D$(1) + H1$(XW) + "R"
+    Kill D$(1) + H1$(XW) + "S"
+    Kill D$(1) + H1$(XW) + "D"
 Next
-	
+    
 Cls
-	
+    
 GoTo 50
 
 'MsgBox:
