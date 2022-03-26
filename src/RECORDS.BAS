@@ -1,4 +1,5 @@
 '$INCLUDE: 'KeyInput.BI'
+'$INCLUDE: 'QPProEqu.BI'
 
 Dim REC(50, 2), RC$(50, 4), TREC(125, 2), TRC$(125, 3), A$(5)
 Dim HALF$(2), QTR$(6), P$(1)
@@ -31,7 +32,7 @@ For I = 0 To 125
 Next
 Close 1
 
-CALL Comline(N, A$(), 10)
+Call Comline(N, A$(), 10)
 ' Get what was typed on the command line
 If A$(1) = "2" Then 200
 
@@ -1531,3 +1532,5 @@ Close 2
 300 Run "HELLO.EXE 3"
 
 '$INCLUDE: 'KeyInput.BM'
+'$INCLUDE: 'QPProEqu.BM'
+

@@ -1,13 +1,15 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-Cls: TMR = 930
-Dim A$(62), A(72, 11), W0(62), W1(62)
-Dim AR$(62), AR(62, 11), W0R(62), W1R(62), D$(1)
-ReDim ARS(15, 62, 15), W0S(15, 62), W1S(15, 62), TT(62)
+Cls
+TMR = 930
+Dim A$(62) ', A(72, 11), W0(62), W1(62)
+'Dim AR$(62), AR(62, 11), W0R(62), W1R(62), TT(62)
+ReDim ARS(15, 62, 15), W0S(15, 62), W1S(15, 62), D$(1)
 
 Open "DEV.BAS" For Input As #1
-For I = 0 To 1: Input #1, D$(I)
+For I = 0 To 1
+    Input #1, D$(I)
 Next
 Close #1
 

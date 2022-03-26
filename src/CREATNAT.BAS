@@ -6,8 +6,8 @@ DefInt A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 
 Dim Z1$(40), Z2$(40), Z1%(40), D$(2)
-Dim Q$(15), VV$(200), V%(200), T%(34), L%(13), ITEM$(3)
-Dim Y As Long
+'Dim Q$(15), VV$(200), V%(200), T%(34), L%(13), item$(3)
+'Dim Y As Long
 
 FG = 0
 BG = 7
@@ -26,9 +26,9 @@ Cls
 Next
 
 60 Call TITLE
-ITEM$(1) = "ADD / DELETE /REVIEW CONFERENCES"
-ITEM$(2) = "CREATE / DEFINE LEAGUE & MEMBERS"
-ITEM$(3) = "RETURN TO STANDINGS/LEADERS MENU"
+item$(1) = "ADD / DELETE /REVIEW CONFERENCES"
+item$(2) = "CREATE / DEFINE LEAGUE & MEMBERS"
+item$(3) = "RETURN TO STANDINGS/LEADERS MENU"
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -41,7 +41,7 @@ Column% = 25
 
 Call box0(7, 24, 11, 57, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -225,41 +225,41 @@ Color 15, 1
 GoTo 220
 
 4500 Locate 10, 8
-    CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-    I$ = GetKeyPress$
-    CALL CSMsgBox("", 0, Pass)
-    GOTO 50
+Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+I$ = GetKeyPress$
+Call CSMsgBox("", 0, Pass)
+GoTo 50
 
-4600 LOCATE 10, 8
-    CALL CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-    I$ = GetKeyPress$
-    CALL CSMsgBox("", 0, Pass)
-    GOTO 50
-
-
-SUB GETKEY ()
-LOCATE 24, 1: PRINT "PRESS ANY KEY TO CONTINUE";
-1240 I$ = GetKeyPress$
-END SUB
+4600 Locate 10, 8
+Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+I$ = GetKeyPress$
+Call CSMsgBox("", 0, Pass)
+GoTo 50
 
 
-FUNCTION PadRight$ (X$, Length) 
-'Essentially this pads space to the right of the string
-    PadRight$ = X$ + SPACE$(Length - LEN(X$))  'for display only
-END FUNCTION
+Sub GETKEY ()
+    Locate 24, 1: Print "PRESS ANY KEY TO CONTINUE";
+    1240 I$ = GetKeyPress$
+End Sub
 
 
-SUB TITLE ()
-    COLOR , 0: KEY OFF: CLS
-    COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 24: COLOR 12
-    PRINT "COURTSIDE COLLEGE BASKETBALL V4.0"
-    LOCATE 24, 1: PRINT TAB(80); : LOCATE , 1
-    PRINT "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; TAB(70); LEFT$(TIME$, 5);
-    LOCATE 3, 1: COLOR 2, 0
-    COLOR 15: PRINT "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-      PRINT "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
-    COLOR 10
-END SUB
+Function PadRight$ (X$, Length)
+    'Essentially this pads space to the right of the string
+    PadRight$ = X$ + Space$(Length - Len(X$)) 'for display only
+End Function
+
+
+Sub TITLE ()
+    Color , 0: KEY Off: Cls
+    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 24: Color 12
+    Print "COURTSIDE COLLEGE BASKETBALL V4.0"
+    Locate 24, 1: Print Tab(80);: Locate , 1
+    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
+    Locate 3, 1: Color 2, 0
+    Color 15: Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
+    Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
+    Color 10
+End Sub
 
 
 '$INCLUDE: 'KeyInput.BM'

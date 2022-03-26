@@ -1,18 +1,22 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-Dim item$(3), D$(1), AR$(1), A$(14)
-Dim T%(100), G$(4), G%(4, 10), B$(26), B%(26, 11)
-Dim TR%(12), GR$(4), GR%(4, 10), BR$(26), BR%(26, 11)
-Dim H1(100), O1$(100), V1(100), L1$(100), WG1$(100), LG1$(100), P1(100)
-Dim H(100), O$(100), V(100), L$(100), WG$(100), LG$(100), P(100)
-Dim VV$(500), VV%(500), Q$(500), A%(17), APR%(1, 120), CRDR(120), SITER$(120)
+Dim item$(3), D$(1), A$(14)
+'Dim AR$(1), G$(4), G%(4, 10), B%(26, 11)
+Dim T%(100), B$(26)
+'Dim TR%(12), GR$(4), GR%(4, 10), BR$(26), BR%(26, 11)
+'Dim H1(100), O1$(100), V1(100), L1$(100), WG1$(100), LG1$(100), P1(100)
+Dim O$(100)
+'Dim H(100), V(100), L$(100), WG$(100), LG$(100), P(100)
+Dim VV$(500), VV%(500), Q$(500)
+'Dim A%(17), APR%(1, 120), CRDR(120), SITER$(120)
 Dim APRD%(100, 1), CRDRD(100), SITERD$(100)
 Dim AP%(100, 1), CRD(100), SITE$(100)
-Dim O%(100), P%(100), H$(100), L%(4)
-Dim Z2(14, 14), Z(15), Z1(15), A(14, 14), W0(15), W1(15)
-Dim ORD%(100), ORD$(100), TRD%(100), PRD%(100), HRD$(100)
-Dim ZRD2(14, 14), ZRD(15), ZRD1(15), ARD$(14), ARD(14, 14), W0RD(15), W1RD(15)
+Dim O%(100), H$(100), L%(4)
+'Dim P%(100), Z2(14, 14), PRD%(100), ZRD2(14, 14)
+Dim Z(15), Z1(15), A(14, 14), W0(15), W1(15)
+Dim ORD%(100), ORD$(100), TRD%(100), HRD$(100)
+Dim ZRD(15), ZRD1(15), ARD$(14), ARD(14, 14), W0RD(15), W1RD(15)
 
 Open "DEV.BAS" For Input As #1: For I = 0 To 1: Input #1, D$(I): Next: Close #1
 

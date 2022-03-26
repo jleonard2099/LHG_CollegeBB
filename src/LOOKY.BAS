@@ -4,15 +4,18 @@
 DECLARE SUB TITLE ()
 
 Dim O%(100), O$(100), T%(100), P%(100), Q$(500), VV$(500)
-Dim Z2(14, 14), Z(15), Z1(15), VV%(500)
+'Dim Z2(14, 14)
+Dim Z(15), Z1(15), VV%(500)
 Dim A$(14), D$(1), L%(4)
 Dim A(14, 24)
 Dim H$(100), CP$(25)
 Dim W0(14), W1(14), AP%(100, 1), CRD(100), SITE$(100)
 CP% = 1
+
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
 For I = 0 To 25: Read CP$(I): Next
+
 Open "DEV.BAS" For Input As #1: Input #1, D$(0): Input #1, D$(1): Close 1
 
 45 Color 15, 0: Cls
@@ -212,7 +215,7 @@ Cls: Call TITLE: Print "RESET STATS TO 0 ? (YN)";:
 If UCase$(I$) <> "Y" Then 45
 Print: Print "ARE YOU SURE ? (YN) ";
 470 I$ = GetKeyPress$
-    IF UCASE$(I$) = "N" THEN RUN 'X = FRE(0)
+If UCase$(I$) = "N" Then Run 'X = FRE(0)
 
 485 Kill D$(1) + Z$
 Kill D$(1) + Z$ + "S"

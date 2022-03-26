@@ -4,11 +4,12 @@
 
 DefInt A-Z
 
-Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)
-Dim H1$(40), PS$(40), D$(2), Z4$(40)
-Dim BA$(40), DFT(40, 20) As Single, ER$(40), OFT(40, 20) As Single
-Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
-Dim J As Single
+'Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)
+Dim H1$(40), D$(2), Z4$(40)
+'Dim PS$(40)
+'Dim BA$(40), DFT(40, 20) As Single, ER$(40), OFT(40, 20) As Single
+'Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
+'Dim J As Single
 
 4 Open "DEV.BAS" For Input As #2
 For I = 0 To 1
@@ -58,7 +59,7 @@ _MouseShow "DEFAULT"
 MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
-If ExitCode% = 27 Then 99
+If ExitCode% = 27 Then 103
 F$ = F$(SELECTION%)
 Locate 2, 33: Print F$
 Locate , 33: Print "ANY CHANGE (YN)";
@@ -72,49 +73,49 @@ LH$ = Left$(WE$, 8)
 
 15 Cls
 Locate 10, 8
-    CALL CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
-    I$ = GetKeyPress$
-    CALL CSMsgBox("", 0, Pass)
-    IF I$ <> "Y" THEN 1310
+Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+I$ = GetKeyPress$
+Call CSMsgBox("", 0, Pass)
+If I$ <> "Y" Then 1310
 
-30 OPEN D$(1) + LH$ + ".CON" FOR INPUT AS #2
-    INPUT #2, LG$
-    FOR X = 1 TO 40
-    INPUT #2, Z4$(X)
-    NEXT
-CLOSE 2
-    FOR X = 1 TO 40
-    IF Z4$(X) = "XXX" THEN 75
-OPEN D$(1) + Z4$(X) + ".TMS" FOR INPUT AS #2
-    INPUT #2, LG$, D1$, D2$
-    FOR XW = 1 TO 30
+30 Open D$(1) + LH$ + ".CON" For Input As #2
+Input #2, LG$
+For X = 1 To 40
+    Input #2, Z4$(X)
+Next
+Close 2
+For X = 1 To 40
+    If Z4$(X) = "XXX" Then 75
+    Open D$(1) + Z4$(X) + ".TMS" For Input As #2
+    Input #2, LG$, D1$, D2$
+    For XW = 1 To 30
 
-35 INPUT #2, H1$(XW)
-    NEXT
-CLOSE 2
+        35 Input #2, H1$(XW)
+    Next
+    Close 2
 
-71 FOR XW = 1 TO 30
-    IF H1$(XW) = CHR$(42) THEN 74
+    71 For XW = 1 To 30
+        If H1$(XW) = Chr$(42) Then 74
 
-801 PRINT "DELETING "; H1$(XW); " STATS"
-    KILL (D$(1) + H1$(XW))
-    KILL (D$(1) + H1$(XW) + "S")
+        801 Print "DELETING "; H1$(XW); " STATS"
+        Kill (D$(1) + H1$(XW))
+        Kill (D$(1) + H1$(XW) + "S")
 
-74 NEXT
+    74 Next
 
-75 NEXT
-    CLS
-    GOTO 4000
+75 Next
+Cls
+GoTo 4000
 
-CLS
+Cls
 
-103 RUN "HELLO.EXE"
+103 Run "HELLO.EXE"
 
-4500 LOCATE 10, 8
-    CALL CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-    I$ = GetKeyPress$
-    CALL CSMsgBox("", 0, Pass)
-    GOTO 99
+4500 Locate 10, 8
+Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+I$ = GetKeyPress$
+Call CSMsgBox("", 0, Pass)
+GoTo 103
 
 
 '$INCLUDE: 'KeyInput.BM'

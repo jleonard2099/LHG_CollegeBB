@@ -4,11 +4,12 @@
 
 DefInt A-Z
 
-Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)
-Dim H1$(40), PS$(40), D$(2)
-Dim BA$(40), DFT(40, 20) As Single, ER$(40), OFT(40, 20) As Single
-Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
-Dim J As Single
+'Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)
+Dim H1$(40), D$(2)
+'Dim PS$(40),BA$(40)
+'Dim DFT(40, 20) As Single, ER$(40), OFT(40, 20) As Single
+'Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
+'Dim J As Single
 
 Open "DEV.BAS" For Input As #2
 For I = 0 To 1

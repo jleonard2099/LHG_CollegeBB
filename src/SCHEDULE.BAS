@@ -10,7 +10,7 @@ DECLARE SUB TITLE ()
 Dim VV$(500), V%(500), TE$(1), TF$(1)
 Dim Q$(375), AP%(1), T%(9)
 Dim Z1$(30), Z1%(30), Z2$(30)
-Dim H$(20), V$(20), MO$(3), ITEM$(11)
+Dim H$(20), V$(20), MO$(3), item$(11)
 Dim HS%(1700), VS%(1700), LO$(1), P$(2), E%(13)
 Dim TS$(1), SC$(2), U5$(4), CM$(1), LC$(2)
 Dim Y As Long, U6 As Single, M As Long
@@ -57,15 +57,15 @@ LC$(2) = "NEUTRAL SITE        "
 CM$(0) = "COACH AND SELECT SHOTS           "
 CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 Call TITLE
-ITEM$(1) = "ENTER A NEW SCHEDULE                             "
-ITEM$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
-ITEM$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
-ITEM$(4) = "EXTRACT A CONFERENCE SCHEDULE FROM MAIN SCHEDULE "
-ITEM$(5) = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE "
-ITEM$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE                "
-ITEM$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE          "
-ITEM$(8) = "BOXSCORE MAINTENANCE / SAVE BOXSCORE PARAMETERS  "
-ITEM$(9) = "EXIT AUTO SCHEDULER TO COURTSIDE MAIN MENU       "
+item$(1) = "ENTER A NEW SCHEDULE                             "
+item$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
+item$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
+item$(4) = "EXTRACT A CONFERENCE SCHEDULE FROM MAIN SCHEDULE "
+item$(5) = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE "
+item$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE                "
+item$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE          "
+item$(8) = "BOXSCORE MAINTENANCE / SAVE BOXSCORE PARAMETERS  "
+item$(9) = "EXIT AUTO SCHEDULER TO COURTSIDE MAIN MENU       "
 SELECTION% = 1
 Count% = 9
 Start% = 1
@@ -78,7 +78,7 @@ Column% = 16
 Call box0(5, 15, 15, 65, 2, 31)
     
 _MouseShow "DEFAULT"
-MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -895,12 +895,12 @@ Return
 
 4500 'BOXSCORE MAINTENANCE
 Call TITLE
-ITEM$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
-ITEM$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
-ITEM$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
-ITEM$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
-ITEM$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
-ITEM$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
+item$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
+item$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
+item$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
+item$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
+item$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
+item$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
 SELECTION% = 1
 Count% = 6
 Start% = 1
@@ -913,7 +913,7 @@ Column% = 16
 Call box0(5, 15, 12, 65, 2, 31)
     
 _MouseShow "DEFAULT"
-MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -1048,7 +1048,7 @@ Do
         Next
         Close 1
 
-        Call CSMsgBox("REVISED BOXSCORE HAS BEEN SAVED...PRESS ANY KEY TO CONTINUE", 31, Cnf)
+        Call CSMsgBox("REVISED BOXSCORE HAS BEEN SAVED...PRESS ANY KEY TO CONTINUE", 31, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
 
@@ -1085,6 +1085,163 @@ Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
 Return
 
+1300 Cls: Color , 1: Locate 1, 1: Print Tab(80);: Locate , 33: Color 14
+Print "AUTO SCHEDULER"
+Locate 25, 1: Print Tab(80);: Locate , 1: Print "(C) SHANNON LYNN 1990 V3.0";
+Locate 5, 1: Color , 0
+Color 15: Print "(1) ";: Color 14: Print "6 TEAM, 30 GAME SCHEDULE"
+Color 15: Print "(2) ";: Color 14: Print "7 TEAM, 42 GAME SCHEDULE"
+Color 15: Print "(3) ";: Color 14: Print "8 TEAM, 56 GAME SCHEDULE"
+Color 15: Print "(4) ";: Color 14: Print "9 TEAM, 72 GAME SCHEDULE"
+Color 15: Print "(5) ";: Color 14: Print "10 TEAM, 90 GAME SCHEDULE"
+Color 15: Print "(6) ";: Color 14: Print "11 TEAM, 88 GAME SCHEDULE"
+Color 15: Print "(7) ";: Color 14: Print "12 TEAM  96 GAME SCHEDULE"
+Color 15: Print "(8) ";: Color 14: Print "13 TEAM 117 GAME SCHEDULE"
+Color 15: Print "(9) ";: Color 14: Print "16 TEAM 128 GAME SCHEDULE"
+Color 15: Print "(0) ";: Color 14: Print "RETURN TO COURTSIDE MAIN MENU"
+1305 I$ = GetKeyPress$
+D3% = Val(I$)
+If I$ = Chr$(27) Then D3% = 0
+If D3% < 0 Or D3% > 9 Then 1305
+If D3% = 0 Then 10
+Spec$ = P$(1) + "*.LIB"
+null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+Count% = DirCount%
+If Count% = 0 Then 4011
+ReDim F$(0 To Count%)
+For X = 1 To Count%
+    F$(X) = Space$(12)
+Next
+F$(0) = Spec$
+Call ReadFile(F$())
+'CALL SortStr(VARPTR(F$(1)), Count, 0)
+
+1311 Cls
+Color , 1
+Cls
+Locate , 28
+Color 14
+Print "SELECT CONFERENCE TO SCHEDULE": Color 15
+SELECTION% = 1
+Start% = 1
+FileFGColr% = 15: FileBGColr% = 1
+HiLiteFGColr% = 0: HiLiteBGColr% = 7
+Rows% = 20
+Columns% = 4
+Spacing% = 6
+Row% = 4
+Column% = 1
+Locate 25, 1
+Color 14
+Print "ENTER";: Color 15
+Print "-SELECTS CONFERENCE";
+
+_MouseShow "DEFAULT"
+1320 MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+_MouseHide
+
+If EXITCODE% = 27 Then 1300
+If EXITCODE% = -71 Then Start% = 1: EXITCODE% = 3: SELECTION% = 1: GoTo 1320
+If EXITCODE% = -79 Then Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GoTo 1320
+If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
+If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > Count% Then Start% = Count%
+If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 1320
+F$ = F$(SELECTION%)
+Locate 2, 33: Print F$
+Locate , 33: Print "ANY CHANGE (YN)";
+Color 15, 0
+3911 I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 1311
+Open P$(1) + F$ For Input As #2
+X1 = 0
+Input #2, LG%
+Input #2, LG$
+Input #2, D1$: Input #2, D2$
+For X = 1 To 30
+    Input #2, D1$: Input #2, LG%: Input #2, D2$
+    If D1$ = "XXX" Or D1$ = "" Then 3913
+    X1 = X1 + 1
+    Z1$(X1) = D1$: Z1%(X1) = LG%: Z2$(X1) = D2$
+
+3913 Next
+Close 2
+If D3% = 1 Then F$ = "6TM.SCX"
+If D3% = 2 Then F$ = "7TM.SCX"
+If D3% = 3 Then F$ = "8TM.SCX"
+If D3% = 4 Then F$ = "9TM.SCX"
+If D3% = 5 Then F$ = "10TM.SCX"
+If D3% = 6 Then F$ = "11TM.SCX"
+If D3% = 7 Then F$ = "12TM.SCX"
+If D3% = 8 Then F$ = "13TM.SCX"
+If D3% = 9 Then F$ = "16TM.SCX"
+Open F$ For Random As #1 Len = 48
+Y = LOF(1)
+AP%(0) = Y / 48
+BS% = Int((AP%(0) - 1) / 20)
+For X = 0 To 18
+    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+Next
+Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+For I = 1 To AP%(0)
+    Get #1, I
+    For X = 0 To 18: NG%(I, X) = CVI(Q$(X + 1)): Next
+    For X = 0 To 1: YN$(I, X) = Q$(20 + X): Next
+    VS%(I) = CVI(Q$(22)): HS%(I) = CVI(Q$(23))
+Next
+Close 1
+GoSub 900
+GoSub 4100
+For I = 1 To AP%(0)
+    Print "GAME"; I
+    Print NG%(I, 0), YN$(I, 0)
+    Print NG%(I, 1), YN$(I, 1)
+    X = NG%(I, 0): NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X)
+    '    IF D3% < 7 THEN X = NG%(I, 0): NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X)
+    '    IF D3% = 7 AND NG%(I, 0) <= 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): GOTO 3915
+    '    IF D3% = 7 AND NG%(I, 0) > 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = Z1%(X + 9): YN$(I, 0) = Z2$(X + 9)
+    '3915 IF D3% = 7 AND NG%(I, 1) <= 6 THEN X = NG%(I, 1): PRINT X: NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X): GOTO 3916
+    '     IF D3% = 7 AND NG%(I, 1) > 6 THEN X = NG%(I, 1): PRINT X: NG%(I, 1) = Z1%(X + 9): YN$(I, 1) = Z2$(X + 9)
+
+    3916 Print "GAME"; I
+    Print NG%(I, 0), YN$(I, 0)
+    Print NG%(I, 1), YN$(I, 1)
+Next
+Open P$(0) + F$ + ".SCD" For Random As #1 Len = 48
+Y = LOF(1) / 48
+For X = 0 To 18
+    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+Next
+Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+For I = 1 To AP%(0)
+    For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(I, X)): Next
+    For X = 0 To 1: LSet Q$(20 + X) = YN$(I, X): Next
+    LSet Q$(22) = MKI$(VS%(I)): LSet Q$(23) = MKI$(HS%(I))
+    Put #1, I + Y
+Next
+Close 1
+D3% = 1: GoTo 601
+
+4100 Color 15, 0: Cls
+JJ = 7
+Locate 6, 8: Color 15, 1
+Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " º"; String$(61, 32); "º ";: Next
+Locate 7 + JJ, 8
+Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
+Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
+Locate , 12: Print "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
+Locate 7, 37: Input F$
+If F$ = "" Then 21
+Locate 13, 12: Print "ANY CHANGE (YN) "
+23 I$ = GetKeyPress$
+If UCase$(I$) = "Y" Then 4100
+Color 15, 0
+Return
+
+
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 33: Color 14
@@ -1094,161 +1251,6 @@ Sub TITLE ()
     Locate 5, 1: Color , 0
 End Sub
 
-1300 CLS : COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 33: COLOR 14
-    PRINT "AUTO SCHEDULER"
-    LOCATE 25, 1: PRINT TAB(80); : LOCATE , 1: PRINT "(C) SHANNON LYNN 1990 V3.0";
-    LOCATE 5, 1: COLOR , 0
-    COLOR 15: PRINT "(1) "; : COLOR 14: PRINT "6 TEAM, 30 GAME SCHEDULE"
-    COLOR 15: PRINT "(2) "; : COLOR 14: PRINT "7 TEAM, 42 GAME SCHEDULE"
-    COLOR 15: PRINT "(3) "; : COLOR 14: PRINT "8 TEAM, 56 GAME SCHEDULE"
-    COLOR 15: PRINT "(4) "; : COLOR 14: PRINT "9 TEAM, 72 GAME SCHEDULE"
-    COLOR 15: PRINT "(5) "; : COLOR 14: PRINT "10 TEAM, 90 GAME SCHEDULE"
-    COLOR 15: PRINT "(6) "; : COLOR 14: PRINT "11 TEAM, 88 GAME SCHEDULE"
-    COLOR 15: PRINT "(7) "; : COLOR 14: PRINT "12 TEAM  96 GAME SCHEDULE"
-    COLOR 15: PRINT "(8) "; : COLOR 14: PRINT "13 TEAM 117 GAME SCHEDULE"
-    COLOR 15: PRINT "(9) "; : COLOR 14: PRINT "16 TEAM 128 GAME SCHEDULE"
-    COLOR 15: PRINT "(0) "; : COLOR 14: PRINT "RETURN TO COURTSIDE MAIN MENU"
-1305 I$ = GetKeyPress$
-    D3% = VAL(I$)
-    IF I$ = CHR$(27) THEN D3% = 0
-    IF D3% < 0 OR D3% > 9 THEN 1305
-    IF D3% = 0 THEN 10
-    Spec$ = P$(1) + "*.LIB"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
-    IF Count% = 0 THEN 4011
-REDIM F$(0 TO Count%)
-    FOR X = 1 TO Count%
-      F$(X) = SPACE$(12)
-    NEXT
-    F$(0) = Spec$
-    CALL ReadFile(F$())
-    'CALL SortStr(VARPTR(F$(1)), Count, 0)
-
-1311 CLS
-    COLOR , 1
-    CLS
-    LOCATE , 28
-    COLOR 14
-    PRINT "SELECT CONFERENCE TO SCHEDULE": COLOR 15
-    SELECTION% = 1
-    Start% = 1
-    FileFGColr% = 15:FileBGColr% = 1
-    HiLiteFGColr% = 0:HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    LOCATE 25, 1
-    COLOR 14
-    PRINT "ENTER"; : COLOR 15
-    PRINT "-SELECTS CONFERENCE";
-
-_MouseShow "DEFAULT"
-1320 MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-_MouseHide
-
-    IF EXITCODE% = 27 THEN 1300
-    IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 1320
-    IF EXITCODE% = -79 THEN Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GOTO 1320
-    IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-    IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > Count% THEN Start% = Count%
-    IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 1320
-    F$ = F$(SELECTION%)
-    LOCATE 2, 33: PRINT F$
-LOCATE , 33: PRINT "ANY CHANGE (YN)";
-    COLOR 15, 0
-3911 I$ = GetKeyPress$
-    IF UCASE$(I$) = "Y" THEN 1311
-OPEN P$(1) + F$ FOR INPUT AS #2
-    X1 = 0
-    INPUT #2, LG%
-    INPUT #2, LG$
-    INPUT #2, D1$: INPUT #2, D2$
-    FOR X = 1 TO 30
-    INPUT #2, D1$:INPUT #2, LG%:INPUT #2, D2$
-    IF D1$ = "XXX" OR D1$ = "" THEN 3913
-    X1 = X1 + 1
-    Z1$(X1) = D1$: Z1%(X1) = LG%: Z2$(X1) = D2$
-
-3913 NEXT
-     CLOSE 2
-    IF D3% = 1 THEN F$ = "6TM.SCX"
-    IF D3% = 2 THEN F$ = "7TM.SCX"
-    IF D3% = 3 THEN F$ = "8TM.SCX"
-    IF D3% = 4 THEN F$ = "9TM.SCX"
-    IF D3% = 5 THEN F$ = "10TM.SCX"
-    IF D3% = 6 THEN F$ = "11TM.SCX"
-    IF D3% = 7 THEN F$ = "12TM.SCX"
-    IF D3% = 8 THEN F$ = "13TM.SCX"
-    IF D3% = 9 THEN F$ = "16TM.SCX"
-     OPEN F$ FOR RANDOM AS #1 LEN = 48
-    Y = LOF(1)
-    AP%(0) = Y / 48
-    BS% = INT((AP%(0) - 1) / 20)
-    FOR X = 0 TO 18
-    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
-    NEXT
-    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
-    FOR I = 1 TO AP%(0)
-    GET #1, I
-    FOR X = 0 TO 18: NG%(I, X) = CVI(Q$(X + 1)): NEXT
-    FOR X = 0 TO 1: YN$(I, X) = Q$(20 + X): NEXT
-    VS%(I) = CVI(Q$(22)): HS%(I) = CVI(Q$(23))
-    NEXT
-CLOSE 1
-    GOSUB 900
-    GOSUB 4100
-    FOR I = 1 TO AP%(0)
-    PRINT "GAME"; I
-    PRINT NG%(I, 0), YN$(I, 0)
-    PRINT NG%(I, 1), YN$(I, 1)
-    X = NG%(I, 0): NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X)
-'    IF D3% < 7 THEN X = NG%(I, 0): NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X)
-'    IF D3% = 7 AND NG%(I, 0) <= 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = Z1%(X): YN$(I, 0) = Z2$(X): GOTO 3915
-'    IF D3% = 7 AND NG%(I, 0) > 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = Z1%(X + 9): YN$(I, 0) = Z2$(X + 9)
-'3915 IF D3% = 7 AND NG%(I, 1) <= 6 THEN X = NG%(I, 1): PRINT X: NG%(I, 1) = Z1%(X): YN$(I, 1) = Z2$(X): GOTO 3916
-'     IF D3% = 7 AND NG%(I, 1) > 6 THEN X = NG%(I, 1): PRINT X: NG%(I, 1) = Z1%(X + 9): YN$(I, 1) = Z2$(X + 9)
-
-3916 PRINT "GAME"; I
-    PRINT NG%(I, 0), YN$(I, 0)
-    PRINT NG%(I, 1), YN$(I, 1)
-    NEXT
-     OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
-    Y = LOF(1) / 48
-    FOR X = 0 TO 18
-    FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
-    NEXT
-    FIELD #1, 38 AS X$, 2 AS Q$(22), 2 AS Q$(23), 3 AS Q$(20), 3 AS Q$(21)
-    FOR I = 1 TO AP%(0)
-    FOR X = 0 TO 18: LSET Q$(X + 1) = MKI$(NG%(I, X)): NEXT
-    FOR X = 0 TO 1: LSET Q$(20 + X) = YN$(I, X): NEXT
-    LSET Q$(22) = MKI$(VS%(I)): LSET Q$(23) = MKI$(HS%(I))
-    PUT #1, I + Y
-    NEXT
-CLOSE 1
-    D3% = 1:GOTO 601
-
-4100 COLOR 15, 0: CLS
-    JJ = 7
-    LOCATE 6, 8: COLOR 15, 1
-    PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-    PRINT " º"; STRING$(61, 32); "º "; : NEXT
-    LOCATE 7 + JJ, 8
-    PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
-    LOCATE , 12: PRINT "ENTER NAME FOR SCHEDULE: ": PRINT
-    LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-    LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
-    LOCATE , 12: PRINT "WILL AUTOMATICALLY ADD .SCD"
-    LOCATE , 12: PRINT "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
-    LOCATE 7, 37: INPUT F$
-    IF F$ = "" THEN 21
-    LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
-23 I$ = GetKeyPress$
-    IF UCASE$(I$) = "Y" THEN 4100
-    COLOR 15, 0
-RETURN
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

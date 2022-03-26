@@ -1,11 +1,10 @@
-
-$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
 _Title "Courtside College Basketball"
 '$EXEICON: 'lhg_ccb.ico'
 '_ICON
+_AllowFullScreen
 
 DefInt A-Z
 DECLARE SUB AICOMCOACH

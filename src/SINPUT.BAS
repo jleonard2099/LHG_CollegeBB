@@ -2,18 +2,27 @@
 
 5 PX = 0
 Open "UDEV.BAS" For Input As #1
-Input #1, D$(0): Input #1, D$(1): Close #1
+Input #1, D$(0)
+Input #1, D$(1)
+Close #1
 
-15 Dim W0(14), W1(14), A$(14), A(14, 14), Z2(14, 14), Z(15), Z1(15), Q$(500), V$(500)
-Color 7, 0: KEY Off: On Error GoTo 0
-Cls: GoSub 2200
+15 Dim W0(14), W1(14), A$(14), Z2(14, 14), Z(15), Z1(15), Q$(500), V$(500)
+'Dim A(14, 14)
+Color 7, 0
+KEY Off
+On Error GoTo 0
+Cls
+GoSub 2200
+
 If UCase$(Left$(D$(1), 1)) = "C" Then 55
 
 55 Cls: GoSub 2200
 
-65 Color 15: Print "C";: Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
+65 Color 15: Print "C";
+Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
 Print
-Color 15: Print "R";: Color 3: Print "ETURN TO MAIN MENU"
+Color 15: Print "R";
+Color 3: Print "ETURN TO MAIN MENU"
 
 75 I$ = GetKeyPress$
 85 If UCase$(I$) <> "R" Then Q = 1

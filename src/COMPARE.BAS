@@ -4,16 +4,17 @@
 DECLARE SUB TITLE ()
 
 Dim Q$(377), T%(34), B$(14), OP%(100), OP$(100), HP%(100), HP$(100)
-Dim VV$(500), A$(15), A(15, 14), Z(15), Z1(15), W0(15), W1(15), AA$(15, 1), PS$(15), V%(500)
-Dim D$(1), ITEM$(4), L%(6), T$(0), A1(13, 6), X1(13, 6)
+Dim VV$(500), A$(15), A(15, 14), Z(15), Z1(15), W0(15), W1(15), PS$(15), V%(500)
+Dim D$(1), item$(4), L%(6), T$(0), A1(13, 6), X1(13, 6)
 Dim RS(13, 13), P$(13), DF(13), t1%(20)
+'Dim AA$(15, 1)
 
 Open "DEV.BAS" For Input As #2: For I = 0 To 1: Input #2, D$(I): Next
 Close #2
 
 10 Call TITLE
-ITEM$(1) = "VIEW/PRINT STATISTICAL COMPARISONS"
-ITEM$(2) = "RETURN TO COURTSIDE MENU          "
+item$(1) = "VIEW/PRINT STATISTICAL COMPARISONS"
+item$(2) = "RETURN TO COURTSIDE MENU          "
 SELECTION% = 1
 Count% = 2
 Start% = 1
@@ -26,7 +27,7 @@ Column% = 24
 Call box0(8, 23, 11, 58, 2, 31)
     
 _MouseShow "DEFAULT"
-MMenuVert ITEM$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
