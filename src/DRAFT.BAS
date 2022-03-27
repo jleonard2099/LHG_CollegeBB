@@ -1,10 +1,16 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
+
+_Title "Courtside College Basketball - Team Draft"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 
 Dim Q$(500), A$(1, 13), A(1, 13, 6), X(1, 13, 6), V$(500)
 Dim S$(1), A1$(1), ATT(1), DF(1, 13), P$(1, 13), RS(1, 13, 13)
-Dim T1%(1, 20), CK(1), C$(1), V%(500), YN$(1), T1N(1), item$(6)
+Dim T1%(1, 20), CK(1), C$(1), V%(500), YN$(1), T1N(1), menuItems$(6)
 Dim T%(1, 9), L%(1, 4), T$(1), SP(1), DA(1), V1%(1), V2%(1)
 Dim D$(1), TR%(1, 13, 12), Y As Long
 Open "DEV.BAS" For Input As #1: Input #1, D$(0): Close 1
@@ -24,9 +30,9 @@ Open "DEV.BAS" For Input As #1: Input #1, D$(0): Close 1
             X(I, I1, I2) = 0
 Next: Next: Next
 Call TITLE
-item$(1) = "DRAFT A NEW TEAM         "
-item$(2) = "DRAFT TO AN EXISTING TEAM"
-item$(3) = "EXIT TO MAIN MENU        "
+menuItems$(1) = "DRAFT A NEW TEAM         "
+menuItems$(2) = "DRAFT TO AN EXISTING TEAM"
+menuItems$(3) = "EXIT TO MAIN MENU        "
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -39,7 +45,7 @@ Column% = 25
 
 Call box0(7, 24, 11, 50, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -569,6 +575,10 @@ Put #1, T: Close 1
 
 9821 Return
 
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 22: Color 12

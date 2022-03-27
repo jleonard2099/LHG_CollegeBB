@@ -1,9 +1,14 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Stats Viewer"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 
-Dim O%(100), O$(100), T%(100), P%(100), Q$(500), VV$(500)
+Dim O%(100), O$(100), T%(100), P%(100), Q$(500), teamItems$(500)
 'Dim Z2(14, 14)
 Dim Z(15), Z1(15), VV%(500)
 Dim A$(14), D$(1), L%(4)
@@ -471,7 +476,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: VV$(I) = "": Next
+For I = 1 To 500: teamItems$(I) = "": Next
 GoSub 1100
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056
@@ -488,7 +493,7 @@ Y = LOF(1)
 Field #1, 15 As Q$(0), 640 As X$
 For I1 = 1 To Y / 655
     Get #1, I1
-    VV$(I1) = Q$(0): VV%(I1) = I1
+    teamItems$(I1) = Q$(0): VV%(I1) = I1
 Next
 Close 1
 NTMS = Y / 655
@@ -510,7 +515,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-20 MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -562,6 +567,11 @@ GoTo 45
 896 I$ = GetKeyPress$
 Return
 
+
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12

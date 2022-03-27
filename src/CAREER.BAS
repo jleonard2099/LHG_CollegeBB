@@ -1,12 +1,17 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Career Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 Dim A$(62), A(62, 14), W0(62), W1(62), Z(15), Z1(15)
 'Dim ZR(15), Z1R(15), W0R(72), W1R(62), AR(62, 15)
 Dim AR$(62), BLYR(21), BL(21), BL$(21)
 Dim W0S(15, 62), W1S(15, 62), T%(34), Q$(500), L%(4)
-Dim item$(9), VV%(500), p$(2)
-ReDim VV$(500), ars(15, 62, 15)
+Dim menuItems$(9), VV%(500), p$(2)
+ReDim teamItems$(500), ars(15, 62, 15)
 
 1 Cls: CH = 0: TMR = 945: TMR1 = 1875: NB = -1: NP = -1
 
@@ -17,12 +22,12 @@ Print "COURTSIDE COLLEGE BASKETBALL: CAREER STATS"
 Locate 24, 1: Print Tab(80);: Locate , 1
 Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 Locate 4, 1: Color 1, 0
-item$(1) = "CREATE AND MERGE INITIAL STAT FILE"
-item$(2) = "MERGE / UPDATE CAREER FILES       "
-item$(3) = "VIEW CAREER FILE                  "
-item$(4) = "PRINT CAREER FILE                 "
-item$(5) = "VIEW / PRINT CAREER RECORDS       "
-item$(6) = "EXIT TO MAIN MENU                 "
+menuItems$(1) = "CREATE AND MERGE INITIAL STAT FILE"
+menuItems$(2) = "MERGE / UPDATE CAREER FILES       "
+menuItems$(3) = "VIEW CAREER FILE                  "
+menuItems$(4) = "PRINT CAREER FILE                 "
+menuItems$(5) = "VIEW / PRINT CAREER RECORDS       "
+menuItems$(6) = "EXIT TO MAIN MENU                 "
 SELECTION% = 1
 Count% = 6
 Start% = 1
@@ -35,7 +40,7 @@ Column% = 25
 
 Call box0(7, 24, 14, 59, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -515,7 +520,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: VV$(I) = "": Next
+For I = 1 To 500: teamItems$(I) = "": Next
 GoSub 1100
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056
@@ -532,7 +537,7 @@ Y1 = LOF(1)
 Field #1, 15 As Q$(0), 640 As X$
 For I1 = 1 To Y1 / 655
     Get #1, I1
-    VV$(I1) = Q$(0): VV%(I1) = I1
+    teamItems$(I1) = Q$(0): VV%(I1) = I1
 Next
 Close 1
 NTMS = Y1 / 655
@@ -554,7 +559,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-120 MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+120 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return

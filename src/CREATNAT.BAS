@@ -2,11 +2,17 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Create National Org"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DefInt A-Z
+
 DECLARE FUNCTION PadRight$ (X$, Length)
 
 Dim Z1$(40), Z2$(40), Z1%(40), D$(2)
-'Dim Q$(15), VV$(200), V%(200), T%(34), L%(13), item$(3)
+'Dim Q$(15), teamItems$(200), V%(200), T%(34), L%(13), menuItems$(3)
 'Dim Y As Long
 
 FG = 0
@@ -26,9 +32,9 @@ Cls
 Next
 
 60 Call TITLE
-item$(1) = "ADD / DELETE /REVIEW CONFERENCES"
-item$(2) = "CREATE / DEFINE LEAGUE & MEMBERS"
-item$(3) = "RETURN TO STANDINGS/LEADERS MENU"
+menuItems$(1) = "ADD / DELETE /REVIEW CONFERENCES"
+menuItems$(2) = "CREATE / DEFINE LEAGUE & MEMBERS"
+menuItems$(3) = "RETURN TO STANDINGS/LEADERS MENU"
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -41,7 +47,7 @@ Column% = 25
 
 Call box0(7, 24, 11, 57, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -237,18 +243,19 @@ Call CSMsgBox("", 0, Pass)
 GoTo 50
 
 
-Sub GETKEY ()
-    Locate 24, 1: Print "PRESS ANY KEY TO CONTINUE";
-    1240 I$ = GetKeyPress$
-End Sub
-
-
+'------------------------------
+'      PadRight Function
+'------------------------------
+' Pads string to the right with spaces
 Function PadRight$ (X$, Length)
-    'Essentially this pads space to the right of the string
     PadRight$ = X$ + Space$(Length - Len(X$)) 'for display only
 End Function
 
 
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 24: Color 12

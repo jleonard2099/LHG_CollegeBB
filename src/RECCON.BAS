@@ -1,11 +1,17 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
+
+_Title "Courtside College Basketball - Manage Records"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 
 Dim D$(2), TT$(20), TB$(25)
 Dim TRC(21), TRC$(21)
 Dim TRC1(21), TRC1$(21)
-Dim BRC(25), BRC$(25, 1), item$(8)
+Dim BRC(25), BRC$(25, 1), menuItems$(8)
 
 Data GAMES PLAYED,FIELD GOALS ATTEMPTED,FIELD GOALS MADE,FIELD GOAL %,3-FIELD GOALS ATTEMPTED,3-FIELD GOALS MADE,3-FIELD GOAL %
 Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,MINUTES PLAYED,POINTS,SCORING AVERAGE,HI-GAME,OFFENSIVE REBOUNDS
@@ -24,13 +30,13 @@ Next
 Close 2
 
 2300 Call TITLE
-item$(1) = "VIEW SEASON RECORDS      "
-item$(2) = "PRINT SEASON RECORDS     "
-item$(3) = "DELETE SEASON RECORDS    "
-item$(4) = "VIEW SINGLE GAME RECORDS "
-item$(5) = "PRINT SINGLE GAME RECORDS"
-item$(6) = "DELETE GAME RECORDS      "
-item$(7) = "RETURN TO GAME MENU      "
+menuItems$(1) = "VIEW SEASON RECORDS      "
+menuItems$(2) = "PRINT SEASON RECORDS     "
+menuItems$(3) = "DELETE SEASON RECORDS    "
+menuItems$(4) = "VIEW SINGLE GAME RECORDS "
+menuItems$(5) = "PRINT SINGLE GAME RECORDS"
+menuItems$(6) = "DELETE GAME RECORDS      "
+menuItems$(7) = "RETURN TO GAME MENU      "
 SELECTION% = 1
 Count% = 7
 Start% = 1
@@ -44,7 +50,7 @@ Column% = 25
 Call box0(7, 24, 15, 50, 2, 31)
     
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -88,6 +94,7 @@ For I = 1 To 21
     If TRC1(I) = 19999 Then TRC1(I) = 0: TRC1$(I) = ""
 Next
 Close 1
+
 GoSub 5000
 Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
 Print
@@ -108,7 +115,8 @@ Locate , 4: Print TB$(12); Tab(28); BRC$(12, 0); Tab(42); BRC$(12, 1); Tab(62); 
 Locate , 4: Print TB$(13); Tab(28); BRC$(13, 0); Tab(42); BRC$(13, 1); Tab(62); Using "####"; BRC(13)
 GoSub 3500
 GoSub 5000
-Color 15: Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
+Color 15
+Locate 2, 23: Print "******* INDIVIDUAL PLAYER RECORDS *******"
 Print
 Locate , 4: Print "CATEGORY                PLAYER           TEAM            RECORD"
 Color 7
@@ -126,7 +134,8 @@ Locate , 4: Print TB$(24); Tab(28); BRC$(24, 0); Tab(42); BRC$(24, 1); Tab(62); 
 Locate , 4: Print TB$(25); Tab(28); BRC$(25, 0); Tab(42); BRC$(25, 1); Tab(62); Using "####"; BRC(25)
 GoSub 3500
 GoSub 5100
-Color 15: Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
+Color 15
+Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
 Print
 Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 Color 14
@@ -148,7 +157,8 @@ Locate , 4: Print TT$(15); Tab(33); TRC$(15); Tab(53); Using "####"; TRC(15)
 Color 7
 GoSub 3500
 GoSub 5100
-Color 15: Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
+Color 15
+Locate 2, 23: Print "*******  OFFENSIVE TEAM RECORDS *******"
 Print
 Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 Color 14
@@ -297,7 +307,8 @@ LPrint "LOSSES"; Tab(33); TRC1$(21); Tab(53); Using "####"; TRC1(21)
 LPrint Chr$(12)
 GoTo 2300
 
-3500 Color 15: Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
+3500 Color 15
+Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
 3501 I$ = GetKeyPress$
 For I = 4 To 21: Locate I, 4
     Print "                                                                        "
@@ -344,6 +355,10 @@ Locate 9, 30: Print "ERROR::: UNABLE TO LOCATE RECORDS"
 GoSub 3751
 GoTo 2099
 
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12

@@ -7,10 +7,10 @@ DEFINT A-Z
 DECLARE SUB TITLE ()
 'DECLARE SUB QEdit (array$(), Ky$, Action, Ed AS EditInfo)
 
-DIM VV$(500), V%(500), TE$(1), TF$(1)
+DIM teamItems$(500), V%(500), TE$(1), TF$(1)
 DIM Q$(375), AP%(1), T%(9)
 DIM Z1$(30), Z1%(30), Z2$(30)
-DIM H$(20), V$(20), MO$(3), item$(11)
+DIM H$(20), V$(20), MO$(3), menuItems$(11)
 DIM HS%(1700), VS%(1700), LO$(1), P$(2), E%(13)
 DIM TS$(1), SC$(2), U5$(4), CM$(1), LC$(2)
 DIM Y AS LONG, U6 AS SINGLE, M AS LONG
@@ -55,15 +55,15 @@ OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, P$(0): INPUT #1, P$(1): CLOSE 1
 	CM$(0) = "COACH AND SELECT SHOTS           "
 	CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 	 CALL TITLE
-	item$(1) = "ENTER A NEW SCHEDULE                             "
-	item$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
-	item$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
-	item$(4) = "EXTRACT A CONFERENCE SCHEDULE FROM MAIN SCHEDULE "
-	item$(5) = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE "
-	item$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE                "
-	item$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE          "
-	item$(8) = "BOXSCORE MAINTENANCE / SAVE BOXSCORE PARAMETERS  "
-	item$(9) = "EXIT AUTO SCHEDULER TO COURTSIDE MAIN MENU       "
+	menuItems$(1) = "ENTER A NEW SCHEDULE                             "
+	menuItems$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
+	menuItems$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
+	menuItems$(4) = "EXTRACT A CONFERENCE SCHEDULE FROM MAIN SCHEDULE "
+	menuItems$(5) = "CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE "
+	menuItems$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE                "
+	menuItems$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE          "
+	menuItems$(8) = "BOXSCORE MAINTENANCE / SAVE BOXSCORE PARAMETERS  "
+	menuItems$(9) = "EXIT AUTO SCHEDULER TO COURTSIDE MAIN MENU       "
 	  SELECTION% = 1
 	Count% = 9
 	Start% = 1
@@ -76,7 +76,7 @@ OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, P$(0): INPUT #1, P$(1): CLOSE 1
 
 CALL box0(5, 15, 15, 65, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -311,7 +311,7 @@ LOCATE 1, 33: COLOR 14: PRINT "AUTO SCHEDULER"
 	LOCATE 7, 27: INPUT NY$
 	IF NY$ = "" THEN GOSUB 1102: GOTO 182
 	YN$ = NY$
-	FOR II = 1 TO 500: VV$(II) = "": NEXT
+	FOR II = 1 TO 500: teamItems$(II) = "": NEXT
 	GOSUB 1100
 
 182 IF BO% = 1 THEN BO% = 0: GOTO 181
@@ -488,7 +488,7 @@ CLOSE 1: NS% = 0: TS% = 0
 	LOCATE 7, 27: INPUT NY$
 	IF NY$ = "" THEN GOSUB 1102: GOTO 730
 	YN$ = NY$
-	FOR I = 1 TO 500: VV$(I) = "": NEXT
+	FOR I = 1 TO 500: teamItems$(I) = "": NEXT
 	GOSUB 1100
 
 730 IF BO% = 1 THEN BO% = 0: GOTO 725
@@ -670,7 +670,7 @@ OPEN P$(0) + "BASK." + YN$ FOR RANDOM AS #1 LEN = 655
 	FOR I1 = 1 TO Y / 655
 	GET #1, I1
 	NT = NT + 1
-	VV$(I1) = Q$(0): V%(I1) = I1
+	teamItems$(I1) = Q$(0): V%(I1) = I1
 	NEXT
 CLOSE 1
 	NT = Y / 655
@@ -693,7 +693,7 @@ CLOSE 1
 	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
 	
 _MouseShow "DEFAULT"
-206  MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+206  MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF EXITCODE% = 27 THEN BO% = 1: RETURN
@@ -893,12 +893,12 @@ CLOSE 1
 
 4500 'BOXSCORE MAINTENANCE
 	CALL TITLE
-	item$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
-	item$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
-	item$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
-	item$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
-	item$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
-	item$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
+	menuItems$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
+	menuItems$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
+	menuItems$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "
+	menuItems$(4) = "DELETE ALL USER SAVED, & SPECIAL BOXSCORES       "
+	menuItems$(5) = "DELETE ALL BOXSCORES (SCHEDULE, USER, &  SPECIAL)"
+	menuItems$(6) = "RETURN TO MAIN AUTO SCHEDULER MENU               "
 	  SELECTION% = 1
 	Count% = 6
 	Start% = 1
@@ -911,7 +911,7 @@ CLOSE 1
 CALL box0(5, 15, 12, 65, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0

@@ -1,7 +1,12 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-'Dim VV$(500), A$(11), A(11, 6), T(34)
+_Title "Courtside College Basketball - Tournament"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
+'Dim teamItems$(500), A$(11), A(11, 6), T(34)
 Dim Q$(375), YN$(500, 3), AP%(1), NG%(500, 17), NGG(500)
 Dim SC$(2), D$(1), TS$(1), U5$(3), LC$(2), CM$(1), TE$(1), TF$(1)
 ReDim MON%(500), DY%(500), yr%(500), H$(500), V$(500), HS%(500), VS%(500)

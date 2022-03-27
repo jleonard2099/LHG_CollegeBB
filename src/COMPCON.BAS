@@ -1,6 +1,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Update Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 Dim O1(30), Z1$(30), W0(15), W1(15), DL$(40), OL$(40), OL(40, 20), DL(40, 20), N$(14)
 Dim O3(30), O4(30), O5(30), O6(30)
 Dim O2(30), Z2$(250), Z3$(250), O%(100), O$(100), T%(100), H1$(40)
@@ -625,12 +630,6 @@ QQ = 8: For XX = 11 To 4 Step -1: If Mid$(H1$(XW), XX, 1) = "_" Then QQ = XX - 4
 9907 G$ = H1$(XW): H1$(XW) = Right$(H1$(XW), Len(H1$(XW)) - 3): YR$ = Left$(G$, 2)
 If Len(H1$(XW)) > 8 Then H1$(XW) = Left$(H1$(XW), 8)
 H1$(XW) = H1$(XW) + "." + YR$: Return
-
-
-Sub GETKEY ()
-    Locate 24, 1: Print "PRESS ANY KEY TO CONTINUE";
-    1240 I$ = GetKeyPress$
-End Sub
 
 
 '$INCLUDE: 'KeyInput.BM'

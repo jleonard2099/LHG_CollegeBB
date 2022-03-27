@@ -7,15 +7,15 @@ DECLARE SUB TITLE ()
 
 20DIM A$(13), A(13, 6), Q$(250), X(13, 6), DF(13), P$(13), RS(13, 13), T1%(20)
 
-30DIM W$(11), N$(13), V$(500), L%(4), T%(9), D$(1), item$(7)
+30DIM W$(11), N$(13), V$(500), L%(4), T%(9), D$(1), menuItems$(7)
 
 40 OPEN "DEV.BAS" FOR INPUT AS #2: INPUT #2, D$(0): CLOSE 2
 
 100 CALL TITLE
-	item$(1) = "CHANGE OR EDIT AN EXISTING TEAM"
-	item$(2) = "PRINT A TEAM ROSTER            "
-	item$(3) = "VIEW A TEAM ROSTER             "
-	item$(4) = "EXIT TO MAIN MENU              "
+	menuItems$(1) = "CHANGE OR EDIT AN EXISTING TEAM"
+	menuItems$(2) = "PRINT A TEAM ROSTER            "
+	menuItems$(3) = "VIEW A TEAM ROSTER             "
+	menuItems$(4) = "EXIT TO MAIN MENU              "
 	SELECTION% = 1
 	Count% = 4
 	Start% = 1
@@ -28,7 +28,7 @@ DECLARE SUB TITLE ()
 
 CALL box0(7, 24, 12, 56, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0

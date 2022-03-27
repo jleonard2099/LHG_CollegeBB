@@ -1,6 +1,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Update Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 Dim O1(30), Z1$(30), NZ1$(30)
 Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
 Dim W0(15), W1(15)
@@ -948,12 +953,6 @@ For X = 1 To 39: For X1 = 1 + X To 40: If NDL(X, 19) <= NDL(X1, 19) Then 4847
 4847 Next X1: Next X
 
 4840 Return
-
-
-Sub GETKEY ()
-    Locate 24, 1: Print "PRESS ANY KEY TO CONTINUE";
-    1240 I$ = GetKeyPress$
-End Sub
 
 
 '$INCLUDE: 'KeyInput.BM'

@@ -1,6 +1,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Manage Conference"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DefInt A-Z
 
 DECLARE FUNCTION PadRight$ (X$, Length)
@@ -24,7 +29,7 @@ Dim B(1, 2)
 'Dim A$(1), A1$(1, 6), A2$(1, 5), A3$(1, 2), A4$(1, 2), A5$(1, 2), A6$(1, 2)
 
 Dim Q$(300), D$(1), T%(9)
-Dim VV$(500), V%(500), item$(3)
+Dim teamItems$(500), V%(500), menuItems$(3)
 'Dim L%(4)
 Dim Y As Long
 
@@ -42,9 +47,9 @@ Cls
 
 50 For X = 1 To 30: Z1$(X) = "XXX": Next
 Call TITLE
-item$(2) = "ADD / REVIEW CONFERENCE MEMBERS "
-item$(1) = "CREATE / DEFINE NEW CONFERENCES "
-item$(3) = "RETURN TO STANDINGS/LEADERS MENU"
+menuItems$(2) = "ADD / REVIEW CONFERENCE MEMBERS "
+menuItems$(1) = "CREATE / DEFINE NEW CONFERENCES "
+menuItems$(3) = "RETURN TO STANDINGS/LEADERS MENU"
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -57,7 +62,7 @@ Column% = 25
 
 Call box0(7, 24, 11, 57, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -131,7 +136,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 3102: GoTo 182
 YN$ = NY$
-For I = 1 To 500: VV$(I) = "": Next
+For I = 1 To 500: teamItems$(I) = "": Next
 GoSub 3100
 
 182 If BO% = 1 Then BO% = 0: GoTo 181
@@ -271,7 +276,7 @@ Field #1, 15 As Q$(0), 640 As X$
 For I1 = 1 To Y / 655
     Get #1, I1
     NT = NT + 1
-    VV$(I1) = Q$(0): V%(I1) = I1
+    teamItems$(I1) = Q$(0): V%(I1) = I1
 Next
 Close 1
 NT = Y / 655
@@ -294,7 +299,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-20 MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -338,11 +343,19 @@ Locate , 15: Print "PRESS ANY KEY TO RETURN TO MAIN MENU"
 3805 I$ = GetKeyPress$
 GoTo 1195
 
+'------------------------------
+'      PadRight Function
+'------------------------------
+' Pads string to the right with spaces
 Function PadRight$ (X$, Length)
-    'Essentially this pads space to the right of the string
     PadRight$ = X$ + Space$(Length - Len(X$)) 'for display only
 End Function
 
+
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 24: Color 12

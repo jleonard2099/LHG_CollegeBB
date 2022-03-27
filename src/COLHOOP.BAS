@@ -1,9 +1,9 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-_Title "Courtside College Basketball"
-'$EXEICON: 'lhg_ccb.ico'
-'_ICON
+_Title "Courtside College Basketball - HOOPS!"
+$ExeIcon:'./lhg_ccb.ico'
+_Icon
 _AllowFullScreen
 
 DefInt A-Z
@@ -1832,6 +1832,7 @@ GoTo 300
 '------------------------------
 '   DISABLEPLAYER Subroutine
 '------------------------------
+' ...explanation...
 Sub DISABLEPLAYER ()
     Color 15, 0
     Cls: I = P9
@@ -1878,6 +1879,7 @@ Sub DISABLEPLAYER ()
 '------------------------------
 '      DRAWBOX Subroutine
 '------------------------------
+' ...explanation...
 Sub DRAWBOX ()
     Locate 6, 8
     Color TR%(I, 0), TR%(I, 1)
@@ -1902,6 +1904,7 @@ End Sub
 '------------------------------
 '      GETATEAM Subroutine
 '------------------------------
+' ...explanation...
 Sub GETATEAM (I1, YN$)
     Open p$(0) + "BASK." + YN$ For Random As #1 Len = 655
 FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
@@ -1983,6 +1986,7 @@ End Sub
 '------------------------------
 '      HORN Subroutine
 '------------------------------
+' ...explanation...
 Sub HORN ()
     For PP = 1 To 70
         Sound 50, .05
@@ -1997,6 +2001,7 @@ End Sub
 '------------------------------
 '      MAKEPBP Subroutine
 '------------------------------
+' ...explanation...
 Sub MAKEPBP ()
     1400 'PLAY BY PLAY
     If displayPause = 0 Then 1495
@@ -2691,6 +2696,7 @@ Sub MAKEPBP ()
 '------------------------------
 '      PBP Subroutine
 '------------------------------
+' ...explanation...
 Sub PBP ()
     i$ = InKey$
     If UCase$(i$) = "Q" Then End
@@ -2743,6 +2749,7 @@ End Sub
 '------------------------------
 '    SHOTSTRING Subroutine
 '------------------------------
+' ...explanation...
 Sub SHOTSTRING ()
     U$ = U$ + Str$(Int(F + .5)) + "*"
 End Sub
@@ -2751,6 +2758,7 @@ End Sub
 '------------------------------
 '      TEAMSETUP Subroutine
 '------------------------------
+' ...explanation...
 Sub TEAMSETUP ()
 
     'TEAM SETUP INITIALIZES THE TEAM DATA FILES, LEAGUE ADJUSTMENTS
@@ -2782,6 +2790,7 @@ End Sub
 '------------------------------
 '      TICKER Subroutine
 '------------------------------
+' ...explanation...
 Sub TICKER ()
     2850 '*** TICKER ***
     If AP1 = 1 And U5 = 2 Then 2884
@@ -2924,6 +2933,7 @@ Sub TICKER ()
 '------------------------------
 '      PRINTBOX Subroutine
 '------------------------------
+' ...explanation...
 Sub PRINTBOX
     8900 If N <> 2 Then LPrint "@ "; B$(N): LPrint
     For I = 0 To 1
@@ -2968,6 +2978,7 @@ End Sub
 '------------------------------
 '      FILEBOX Subroutine
 '------------------------------
+' ...explanation...
 Sub FILEBOX
     If AP1 = 1 Then
         NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
@@ -3021,6 +3032,7 @@ End Sub
 '------------------------------
 '    STAMINASORT Subroutine
 '------------------------------
+' ...explanation...
 Sub STAMINASORT
     8800 M = 13
     L = 12
@@ -3043,6 +3055,7 @@ Sub STAMINASORT
 '------------------------------
 '    REBOUNDSORT Subroutine
 '------------------------------
+' ...explanation...
 Sub REBOUNDSORT
     8825 M = 4
     L = 3
@@ -3066,6 +3079,7 @@ Sub REBOUNDSORT
 '------------------------------
 '    COMCOACH Subroutine
 '------------------------------
+' ...explanation...
 Sub COMCOACH
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
@@ -3119,6 +3133,7 @@ Sub COMCOACH
 '------------------------------
 '    TOURNEY Subroutine
 '------------------------------
+' ...explanation...
 Sub TOURNEY
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
     Open p$(0) + FF$ + ".TOU" As #1 Len = 90
@@ -3198,6 +3213,7 @@ Sub TOURNEY
 '------------------------------
 '    STATCONVERT Subroutine
 '------------------------------
+' ...explanation...
 Sub STATCONVERT (Q, QQ)
     For XX = 4 To 11
         If Mid$(B$(Q), XX, 1) = " " Or Mid$(B$(Q), XX, 1) = "." Then Mid$(B$(Q), XX, 1) = "_"
@@ -3217,6 +3233,7 @@ Sub STATCONVERT (Q, QQ)
 '------------------------------
 '    TICKERCHECK Subroutine
 '------------------------------
+' ...explanation...
 Sub TICKERCHECK ()
     If AP <> 1 Or AP%(2) > 31 Then 2581
     If H = 1 And T <= 960 And SX%(AP%(2) + 1, 0, 1) = -1 Then SX%(AP%(2) + 1, 0, 1) = S(0, 0): SX%(AP%(2) + 1, 1, 1) = S(1, 0): GoTo 2581
@@ -3238,6 +3255,7 @@ End Sub
 '------------------------------
 '    MAINSCREEN Subroutine
 '------------------------------
+' ...explanation...
 Sub MAINSCREEN ()
     'M A I N   S C R E E N
     Call TICKERCHECK
@@ -3320,6 +3338,7 @@ End Sub
 '------------------------------
 '    SCOREBOARD Subroutine
 '------------------------------
+' ...explanation...
 Sub SCOREBOARD ()
     '*** SCREEN UPDATING ***
     Cls
@@ -3423,6 +3442,7 @@ End Sub
 '------------------------------
 '    COLCNG Subroutine
 '------------------------------
+' ...explanation...
 Sub COLCNG ()
     If TR%(1, 0) = 15 And TR%(1, 1) = 4 Then TR%(1, 0) = 4: TR%(1, 1) = 7
     If TR%(1, 0) = 15 And TR%(1, 1) = 1 Then TR%(1, 0) = 1: TR%(1, 1) = 7
@@ -3435,6 +3455,7 @@ End Sub
 '------------------------------
 '    LOADSTATS Subroutine
 '------------------------------
+' ...explanation...
 Sub LOADSTATS
     If TR%(1, 0) = TR%(0, 0) And TR%(1, 1) = TR%(0, 1) Then Call COLCNG
     Color 15, 0
@@ -3476,6 +3497,7 @@ End Sub
 '------------------------------
 '    OFFREBOUND Subroutine
 '------------------------------
+' ...explanation...
 Sub OFFREBOUND ()
     RB = 0
     For I = 0 To 4: RB(I) = 0
@@ -3498,6 +3520,7 @@ Sub OFFREBOUND ()
 '------------------------------
 '    DEFREBOUND Subroutine
 '------------------------------
+' ...explanation...
 Sub DEFREBOUND ()
     RB = 0
     For I = 0 To 4: RB(I) = 0
@@ -3520,6 +3543,7 @@ Sub DEFREBOUND ()
 '------------------------------
 '    EDITCX Subroutine
 '------------------------------
+' ...explanation...
 Sub EDITCX ()
 
     9300 If AP1 = 1 And U5 = 2 Then 9499
@@ -3569,6 +3593,7 @@ End Sub
 '------------------------------
 '    DELAY Subroutine
 '------------------------------
+' ...explanation...
 Sub DELAY ()
     'We don't really need the If statement here
     'If displayPause <> 0 Then
@@ -3580,6 +3605,7 @@ End Sub
 '------------------------------
 '    CLEARPBP Subroutine
 '------------------------------
+' ...explanation...
 Sub CLEARPBP ()
     If displayPause = 0 Or PB% = 1 Then 9750
     NL% = 1: A1$ = "": B1$ = "": C1$ = "": D1$ = "": E1$ = "": F1$ = "": G1$ = "": H1$ = "": J$ = ""
@@ -3590,6 +3616,7 @@ End Sub
 '------------------------------
 '    ZONECHANGE Subroutine
 '------------------------------
+' ...explanation...
 Sub ZONECHANGE ()
     If U5 = 1 And CT = D Or U5 = 2 Then 8155
     If DT%(D) <> 2 Or DT%(D) <> 7 Or DT%(D) <> 12 Then 8155
@@ -3631,6 +3658,7 @@ End Sub
 '------------------------------
 '    DEFENSEMENU Subroutine
 '------------------------------
+' ...explanation...
 Sub DEFENSEMENU ()
     110 Cls
     Print ; Tab(33); "DEFENSIVE STYLE": Print
@@ -3673,6 +3701,7 @@ End Sub
 '------------------------------
 '    SETSTAMINA Subroutine
 '------------------------------
+' ...explanation...
 Sub SETSTAMINA ()
     SQ% = 0
     For I = 0 To 13
@@ -3699,6 +3728,7 @@ End Sub
 '------------------------------
 '       FRAME Subroutine
 '------------------------------
+' ...explanation...
 Sub FRAME ()
     SN = 1
     Locate 8, 8
@@ -3725,6 +3755,7 @@ End Sub
 '------------------------------
 '   COMPUTERSUB Subroutine
 '------------------------------
+' ...explanation...
 Sub COMPUTERSUB ()
     930 If H >= 2 And T <= 60 And X3% = 1 And (S(P9, 0) - S(1 - P9, 0) = -3 Or S(P9, 0) - S(1 - P9, 0) = -6) Then OF%(P9) = 9
     M1 = 0: M2 = 0: M3 = 0: M4 = 0
@@ -3752,6 +3783,7 @@ Sub COMPUTERSUB ()
 '------------------------------
 '    FATIGUE Subroutine
 '------------------------------
+' ...explanation...
 Sub FATIGUE ()
     'COMPUTER DEFENSE FOR FATIGUE
     FD% = 0: FQ% = 0
@@ -3766,6 +3798,7 @@ End Sub
 '------------------------------
 '    AUTOSETUP Subroutine
 '------------------------------
+' ...explanation...
 Sub AUTOSETUP ()
     X3% = NG%(3): U5 = NG%(8): NF% = NG%(5): C7 = NG%(7): N = NG%(2): displayPause = NG%(4) / 10: CM% = NG%(9)
     ST% = NG%(12)
@@ -3811,6 +3844,7 @@ Sub AUTOSETUP ()
 '------------------------------
 '    LINEUPS Subroutine
 '------------------------------
+' ...explanation...
 Sub LINEUPS ()
     Cls
     Color TR%(P9, 0), TR%(P9, 1): Print B$(P9);: Color 15, 0: Print " TEAM ROSTER    COACH: "; C$(P9);
@@ -3940,6 +3974,7 @@ End Sub
 '------------------------------
 '    OFFENSE Subroutine
 '------------------------------
+' ...explanation...
 Sub OFFENSE ()
     'This label was not being referenced anywhere else
     'All it was doing for a modern compiler was confusing
@@ -3981,6 +4016,7 @@ End Sub
 '------------------------------
 '    FOULSAFE Subroutine
 '------------------------------
+' ...explanation...
 Sub FOULSAFE ()
     1200 Cls: Color 15: A = 0: S2 = 1: S3 = 1: SW = 0
     For ZZ = 0 To 4
@@ -4017,6 +4053,7 @@ End Sub
 '------------------------------
 '    FOULHARD Subroutine
 '------------------------------
+' ...explanation...
 Sub FOULHARD ()
     For I = 0 To 1
         For I1 = 0 To 13
@@ -4034,6 +4071,7 @@ End Sub
 '------------------------------
 '    STEALADJ Subroutine
 '------------------------------
+' ...explanation...
 Sub STEALADJ ()
     For I = 0 To 1
         F5%(I, 0) = 0
@@ -4049,6 +4087,7 @@ End Sub
 '------------------------------
 '    ALPHANUM Subroutine
 '------------------------------
+' ...explanation...
 Sub ALPHANUM (I$, J)
     J = Val(I$)
     If UCase$(I$) = "A" Then J = 10
@@ -4062,6 +4101,7 @@ End Sub
 '------------------------------
 '    BOXSCREEN Subroutine
 '------------------------------
+' ...explanation...
 Sub BOXSCREEN ()
     For I = 0 To 1: Color TR%(I, 0), TR%(I, 1)
         Print B$(I): Color 14, 0
@@ -4115,6 +4155,7 @@ End Sub
 '------------------------------
 '    SHOTPERCENT Subroutine
 '------------------------------
+' ...explanation...
 Sub SHOTPERCENT ()
     FX% = A(p, B1(p, B), 0) + TP%(D) + TP%(p)
     TP%(D) = 0: TP%(p) = 0
@@ -4140,6 +4181,7 @@ End Sub
 '------------------------------
 '    THREEFT Subroutine
 '------------------------------
+' ...explanation...
 Sub THREEFT ()
     A(p, B1(p, B), 10) = A(p, B1(p, B), 10) + 1
     RN = Int(Rnd(1) * 100) + 1
@@ -4159,6 +4201,7 @@ End Sub
 '------------------------------
 '    MADEFT Subroutine
 '------------------------------
+' ...explanation...
 Sub MADEFT ()
     A(p, B1(p, B), 10) = A(p, B1(p, B), 10) + 1
     If displayPause <> 0 Then Locate F3 + 9, 1: Call DELAY: Print F3; " GOOD"
@@ -4171,6 +4214,7 @@ End Sub
 '------------------------------
 '    MISSFT Subroutine
 '------------------------------
+' ...explanation...
 Sub MISSFT ()
     If displayPause = 0 Then 3699
     Call DELAY
@@ -4184,6 +4228,7 @@ End Sub
 '------------------------------
 '    BADFT Subroutine
 '------------------------------
+' ...explanation...
 Sub BADFT ()
     If F3 = 1 Then U$ = "FIRST FREE THROW IS MISSED"
     If F3 = 2 Then U$ = "SECOND FREE THROW IS MISSED"
@@ -4195,6 +4240,7 @@ End Sub
 '------------------------------
 '    PRELOAD Subroutine
 '------------------------------
+' ...explanation...
 Sub PRELOAD ()
     1100 NT = 0
     Open p$(0) + "BASK." + YN$ For Random As #1 Len = 655
@@ -4217,6 +4263,7 @@ End Sub
 '------------------------------
 '    TEAMSELECT Subroutine
 '------------------------------
+' ...explanation...
 Sub TEAMSELECT ()
     1102 SELECTION% = 1
     Count% = NT
@@ -4251,6 +4298,7 @@ Sub TEAMSELECT ()
 '------------------------------
 '    SELECT ID Subroutine
 '------------------------------
+' ...explanation...
 Sub SELECTID ()
     56 Color 15, 0
     Cls
@@ -4299,6 +4347,7 @@ End Sub
 '------------------------------
 '    PRDFAT Subroutine
 '------------------------------
+' ...explanation...
 Sub PRDFAT ()
     'FATIGUE DUE TO PRESSURE DEFENSE ON THE DEFENSE
     For I = 0 To 4
@@ -4314,6 +4363,7 @@ End Sub
 '------------------------------
 '    PRPFAT Subroutine
 '------------------------------
+' ...explanation...
 Sub PRPFAT ()
     'FATIGUE AGAINST OFFENSIVE PLAYERS SUBJECT TO PRESS
     For I = 0 To 4
@@ -4329,6 +4379,7 @@ End Sub
 '------------------------------
 '    WHOGESTBALL Subroutine
 '------------------------------
+' ...explanation...
 Sub WHOGETSBALL ()
     1040 cnt% = 0
     1041 cnt% = cnt% + 1
@@ -4354,6 +4405,7 @@ End Sub
 '------------------------------
 '  BALLDISTRIBUTE Subroutine
 '------------------------------
+' ...explanation...
 Sub BALLDISTRIBUTE ()
     R0 = Int(Rnd(1) * 100) + 1
     If U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And p = CT Or U5 = 2 Then Call WHOGETSBALL: GoTo 427
@@ -4399,6 +4451,7 @@ Sub BALLDISTRIBUTE ()
 '------------------------------
 '    PLAYINGTIME Subroutine
 '------------------------------
+' ...explanation...
 Sub PLAYINGTIME ()
     Rem:*** INCREMENT MINUTES ***
     For I3 = 0 To 1
@@ -4412,6 +4465,7 @@ End Sub
 '------------------------------
 '    CLOCKOVER Subroutine
 '------------------------------
+' ...explanation...
 Sub CLOCKOVER ()
     If T <= 0 Then TE = T: Call PLAYINGTIME: T = 0
 End Sub
@@ -4420,6 +4474,7 @@ End Sub
 '------------------------------
 '    BLANKLINE Subroutine
 '------------------------------
+' ...explanation...
 Sub BLANKLINE ()
     Print "                                      "
 End Sub
@@ -4428,6 +4483,7 @@ End Sub
 '------------------------------
 '    CLEARPBPBOX Subroutine
 '------------------------------
+' ...explanation...
 Sub CLEARPBPBOX ()
     Rem:IF AP=1 AND U5=2 OR displayPause=0 THEN 4096
     If displayPause = 0 Then 4096
@@ -4440,6 +4496,7 @@ End Sub
 '------------------------------
 '  DEADBALLOPTIONS Subroutine
 '------------------------------
+' ...explanation...
 Sub DEADBALLOPTIONS ()
     220 PB$ = ""
     Call CLEARPBP
@@ -4489,6 +4546,7 @@ Sub DEADBALLOPTIONS ()
 '------------------------------
 '    LASTFIVEMENU Subroutine
 '------------------------------
+' ...explanation...
 Sub LASTFIVEMENU ()
     Locate 8, 8
     Color TR%(p, 0), TR%(p, 1)
@@ -4524,6 +4582,7 @@ End Sub
 '------------------------------
 '    RESETFATIGUE Subroutine
 '------------------------------
+' ...explanation...
 Sub RESETFATIGUE ()
     295 For I = 0 To 1
         For I1 = 0 To 1
@@ -4542,6 +4601,7 @@ End Sub
 '------------------------------
 '    WINDEX Subroutine
 '------------------------------
+' ...explanation...
 Sub WINDEX ()
     'IF AP=1 AND U5=2 OR displayPause=0 THEN 4090
     If displayPause > 0 Then
@@ -4557,6 +4617,7 @@ End Sub
 '------------------------------
 '      BOXTOP Subroutine
 '------------------------------
+' ...explanation...
 Sub BOXTOP ()
     If N <> 2 Then Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N): Print: Color 14, 0
     For I = 0 To 1: Print B$(I); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2));
@@ -4577,6 +4638,7 @@ End Sub
 '------------------------------
 '    STOPAGE Subroutine
 '------------------------------
+' ...explanation...
 Sub STOPPAGE ()
     810 Call CLEARPBP
     If U5 = 0 Then 811
@@ -4621,6 +4683,7 @@ Sub STOPPAGE ()
 '------------------------------
 '    LASTSHOT Subroutine
 '------------------------------
+' ...explanation...
 Sub LASTSHOT ()
     210 M5 = 0: If T <= 2 Or IN = 99 Then M5 = 1: GoTo 214
     If T > 2 And T <= 4 Then M5 = 2
@@ -4635,6 +4698,7 @@ End Sub
 '------------------------------
 '    ZEROCHECK Subroutine
 '------------------------------
+' ...explanation...
 Sub ZEROCHECK ()
     215 If T <= .001 Then TE = T: Call PLAYINGTIME: T = 0
     If X8 <= 0 Then X8 = X8 - X8: T = T - X8: TE = X8: Call PLAYINGTIME
@@ -4645,6 +4709,7 @@ End Sub
 '------------------------------
 '    SELECTPBP Subroutine
 '------------------------------
+' ...explanation...
 Sub SELECTPBP ()
     If PB% = 0 Then Call PBP
     If PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$: Call DELAY
@@ -4654,6 +4719,7 @@ End Sub
 '------------------------------
 '    PRESSGUARD Subroutine
 '------------------------------
+' ...explanation...
 Sub PRESSGUARD ()
     260 Call WINDEX
     If displayPause = 0 Then 264
@@ -4689,6 +4755,7 @@ Sub PRESSGUARD ()
 '------------------------------
 '    SAVESTATS Subroutine
 '------------------------------
+' ...explanation...
 Sub SAVESTATS
     6000 If Not _FileExists("GAME82") Then 6035
     Open "GAME82" For Input As #2
@@ -4941,6 +5008,7 @@ Sub SAVESTATS
 '------------------------------
 '    EVENTS Subroutine
 '------------------------------
+' ...explanation...
 Sub EVENTS (COUNT, SPECIAL)
     If Not _FileExists("EVENTS.BOX") Then 8450
     Open "EVENTS.BOX" For Input As #1
@@ -4977,6 +5045,7 @@ Sub EVENTS (COUNT, SPECIAL)
 '------------------------------
 '    BOX2SPC Subroutine
 '------------------------------
+' ...explanation...
 Sub BOX2SPC (NM$)
     Open p$(1) + NM$ For Output As #2
     If H - 3 > E%(1) Then Print #2, Using "MORE THAN ## OVERTIMES"; E%(1)
@@ -5041,6 +5110,7 @@ End Sub
 '------------------------------
 '    QUARTERTOTAL Subroutine
 '------------------------------
+' ...explanation...
 Sub QUARTERTOTAL ()
 
     For I = 0 To 1
@@ -5167,6 +5237,7 @@ End Sub
 '------------------------------
 '    AICOMCOACH Subroutine
 '------------------------------
+' ...explanation...
 Sub AICOMCOACH
     If P9 = 0 Then I6 = 1
     If P9 = 1 Then I6 = 0
@@ -5247,6 +5318,7 @@ End Sub
 '------------------------------
 '   RECORDSCHECK Subroutine
 '------------------------------
+' ...explanation...
 Sub RECORDSCHECK ()
     Dim RC$(50, 4), REC(50, 2) As Single, TRC$(125, 3), TREC(125, 2) As Single
     Dim V8(1, 14)

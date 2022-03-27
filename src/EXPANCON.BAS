@@ -1,6 +1,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Expanded Leaders"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 'DECLARE SUB CATEGORIES ()
 DECLARE SUB BUILDSTATS ()
@@ -10,15 +15,16 @@ Dim Z1$(40), GM(40), GM1(40)
 Dim AL$(600), W0L(600), W1L(600), TT(40, 15), TT1(40, 15), TT$(40, 15), TT1$(40, 15)
 Dim TMA$(600), TP$(31), TP1$(39)
 'Dim ZA$(40)
-Dim D$(1), item$(4)
+Dim D$(1), menuItems$(4)
 Dim Shared Z1$, D$, A$, A, W0, W1, JB, AL$, TMA$, GMA, Z, Z1
 Dim Shared Y, TS, TT, TT$, GM, TBN, K1, AL, TTS, TT1, TT1$, GM1
 Dim Shared W0L, W1L, F$
 
-Cls
-
 ReDim TMM(600) As String * 15, TPP(600) As String * 15, TYP(600)
 ReDim AL(600, 14), GMA(600)
+
+Cls
+
 K = 0: K1 = 0: PK = 0: PK1 = 0: JB = 0: JP = 0: TBN = 0: TPN = 0: YY = 0: TMR = 1280: TS = 0: PV = 0
 
 Open "DEV.BAS" For Input As #2: For I = 0 To 1: Input #2, D$(I): Next: Close 2
@@ -35,8 +41,8 @@ Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. RE
 For I = 0 To 38: Read TP1$(I): Next
 
 5 Call TITLE
-item$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
-item$(2) = "RETURN TO LEAGUE LEADER MENU    "
+menuItems$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
+menuItems$(2) = "RETURN TO LEAGUE LEADER MENU    "
 SELECTION% = 1
 Count% = 2
 Start% = 1
@@ -49,7 +55,7 @@ Column% = 25
 
 Call box0(7, 24, 10, 57, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -71,9 +77,9 @@ Cls
 Call BUILDSTATS
 
 70 Call TITLE
-item$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
-item$(2) = "VIEW TEAM TOTALS                "
-item$(3) = "RETURN TO LEAGUE LEADER MENU    "
+menuItems$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
+menuItems$(2) = "VIEW TEAM TOTALS                "
+menuItems$(3) = "RETURN TO LEAGUE LEADER MENU    "
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -87,7 +93,7 @@ Column% = 25
 Call box0(7, 24, 11, 57, 2, 31)
 
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -789,6 +795,11 @@ Print "PRESS ANY KEY TO RETURN TO MAIN MENU"
 I$ = GetKeyPress$
 GoTo 5
 
+
+'------------------------------
+'      BUILDSTATS Subroutine
+'------------------------------
+' ...explanation...
 Sub BUILDSTATS ()
 
     11 For KK = 1 To 30: YY = YY + 1
@@ -829,6 +840,11 @@ Sub BUILDSTATS ()
     Close #1
 End Sub
 
+
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12

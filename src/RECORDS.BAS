@@ -1,8 +1,14 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Game Records"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 Dim REC(50, 2), RC$(50, 4), TREC(125, 2), TRC$(125, 3), A$(5)
 Dim HALF$(2), QTR$(6), P$(1)
+
 HALF$(1) = " (1ST HALF)": HALF$(2) = " (2ND HALF)"
 QTR$(3) = " (1ST OT)"
 QTR$(4) = " (2ND OT)"
@@ -552,7 +558,8 @@ Print TRC$(45, 2);: Print Using " (###)"; TREC(45, 2);: Print ", " + TRC$(45, 3)
 I$ = GetKeyPress$
 If I$ = Chr$(27) Then Run "RECCON.EXE"
 
-Cls: Color 12
+Cls
+Color 12
 Print "                            TEAM RECORDS"
 Print
 
@@ -1533,4 +1540,3 @@ Close 2
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
-

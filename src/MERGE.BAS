@@ -1,14 +1,19 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
-Dim item$(3), D$(1), A$(14)
+_Title "Courtside College Basketball - Merge Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
+Dim menuItems$(3), D$(1), A$(14)
 'Dim AR$(1), G$(4), G%(4, 10), B%(26, 11)
 Dim T%(100), B$(26)
 'Dim TR%(12), GR$(4), GR%(4, 10), BR$(26), BR%(26, 11)
 'Dim H1(100), O1$(100), V1(100), L1$(100), WG1$(100), LG1$(100), P1(100)
 Dim O$(100)
 'Dim H(100), V(100), L$(100), WG$(100), LG$(100), P(100)
-Dim VV$(500), VV%(500), Q$(500)
+Dim teamItems$(500), VV%(500), Q$(500)
 'Dim A%(17), APR%(1, 120), CRDR(120), SITER$(120)
 Dim APRD%(100, 1), CRDRD(100), SITERD$(100)
 Dim AP%(100, 1), CRD(100), SITE$(100)
@@ -20,14 +25,17 @@ Dim ZRD(15), ZRD1(15), ARD$(14), ARD(14, 14), W0RD(15), W1RD(15)
 
 Open "DEV.BAS" For Input As #1: For I = 0 To 1: Input #1, D$(I): Next: Close #1
 
-1 Cls: Color , 1: Locate 1, 1: Print Tab(80);: Locate , 26: Color 0
+1 Cls
+Color , 1
+Locate 1, 1: Print Tab(80);
+Locate , 26: Color 0
 Print "COURTSIDE COLLEGE BASKETBALL: MERGE"
 Locate 24, 1: Print Tab(80);: Locate , 1
 Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
 Locate 4, 1: Color 1, 0
-item$(1) = "MERGE STATISTICAL FILES           "
-item$(2) = "ALIGN STATISTICAL FILES           "
-item$(3) = "EXIT TO MAIN MENU                 "
+menuItems$(1) = "MERGE STATISTICAL FILES           "
+menuItems$(2) = "ALIGN STATISTICAL FILES           "
+menuItems$(3) = "EXIT TO MAIN MENU                 "
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -40,7 +48,7 @@ Column% = 25
 
 Call box0(7, 24, 11, 59, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -320,7 +328,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: VV$(I) = "": Next
+For I = 1 To 500: teamItems$(I) = "": Next
 GoSub 1101
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056
@@ -337,7 +345,7 @@ Y = LOF(1)
 Field #1, 15 As Q$(0), 640 As X$
 For I1 = 1 To Y / 655
     Get #1, I1
-    VV$(I1) = Q$(0): VV%(I1) = I1
+    teamItems$(I1) = Q$(0): VV%(I1) = I1
 Next
 Close 1
 NTMS = Y / 655
@@ -360,7 +368,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-20 MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return

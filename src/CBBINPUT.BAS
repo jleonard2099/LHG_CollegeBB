@@ -1,5 +1,10 @@
 '$INCLUDE: 'KeyInput.BI'
 
+_Title "Courtside College Basketball - Ratings Input"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 1 Dim Q$(400), E0(16), XX(13), X(14, 6), T%(9), L%(9), A(14, 19), DF(13), RS(13, 13)
 Dim D$(1), QQ(3)
 Open "DEV.BAS" For Input As #2: Input #2, D$(0): Close 2

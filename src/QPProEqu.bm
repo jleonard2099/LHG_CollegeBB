@@ -56,8 +56,8 @@ End Function
 '-----------------------------------
 ' FileSize Copycat Function
 '-----------------------------------
-Function FileSize& (FileName$)
-    Open FileName$ For Binary As #1
+Function FileSize& (sourceFile$)
+    Open sourceFile$ For Binary As #1
     FileSize& = LOF(1)
     Close #1
 End Function

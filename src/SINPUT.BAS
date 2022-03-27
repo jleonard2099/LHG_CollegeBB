@@ -1,5 +1,10 @@
 '$INCLUDE: 'KeyInput.BI'
 
+_Title "Courtside College Basketball - Stats Input"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 5 PX = 0
 Open "UDEV.BAS" For Input As #1
 Input #1, D$(0)

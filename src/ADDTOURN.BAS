@@ -2,6 +2,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Create Tournament"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DefInt A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 DECLARE SUB TITLE ()
@@ -15,11 +20,11 @@ Dim N$(16, 16, 3): ' TEAM NAMES FOR EACH SEED SLOT
 Dim R$(16): ' REGIONAL NAMES
 Dim D$(3), U6 As Single, Y As Long
 Dim OP%(14): ' TOURNAMENT DEFAULTS
-Dim Q$(300), VV$(500), V%(500), NG%(300, 17), H$(300), V$(300), HS%(300), VS%(300)
+Dim Q$(300), teamItems$(500), V%(500), NG%(300, 17), H$(300), V$(300), HS%(300), VS%(300)
 Dim YN$(300, 3), L%(4)
 Dim N%(16, 16, 3): ' REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 Dim C%(1): ' 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
-Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), item$(17), T%(9)
+Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), menuItems$(17), T%(9)
 Dim Shared R, TC, NG%, OP%, V$, H$, YN$, F$, Q$, C%, D$
 
 
@@ -47,12 +52,12 @@ OP%(14) = 0
 '--------------------
 '   MENU OPTIONS
 '--------------------
-item$(1) = "CREATE TOURNAMENT SEEDS      "
-item$(2) = "EDIT EXISTING SEEDS          "
-item$(3) = "VIEW BRACKETS / SEEDS        "
-item$(4) = "RESET A TOURNAMENT           "
-item$(5) = "PLAY TOURNAMENT GAMES        "
-item$(6) = "RETURN TO COURTSIDE MAIN MENU"
+menuItems$(1) = "CREATE TOURNAMENT SEEDS      "
+menuItems$(2) = "EDIT EXISTING SEEDS          "
+menuItems$(3) = "VIEW BRACKETS / SEEDS        "
+menuItems$(4) = "RESET A TOURNAMENT           "
+menuItems$(5) = "PLAY TOURNAMENT GAMES        "
+menuItems$(6) = "RETURN TO COURTSIDE MAIN MENU"
 SELECTION% = 1
 Count% = 6
 Start% = 1
@@ -65,7 +70,7 @@ Column% = 25
 
 Call box0(9, 24, 16, 54, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -298,7 +303,7 @@ For NR = 1 To R
     Locate 7, 27: Input NY$
     If NY$ = "" Then GoSub 1102: GoTo 182
     YN$ = NY$
-    For I = 1 To 500: VV$(I) = "": Next
+    For I = 1 To 500: teamItems$(I) = "": Next
     Cls
     If UCase$(Left$(D$(0), 1)) = "C" Then 210
     GoSub 4505
@@ -384,7 +389,7 @@ Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 For I = 1 To R
     If R$(I) = "" Then R$(I) = "TO BE NAMED"
-    item$(I) = R$(I)
+    menuItems$(I) = R$(I)
 Next
 SELECTION% = 1
 Count% = R + 1
@@ -395,11 +400,11 @@ HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Spacing% = 1
 Row% = 4
 Column% = 32
-item$(R + 1) = "SAVE AND EXIT"
+menuItems$(R + 1) = "SAVE AND EXIT"
 Call box0(3, 31, 3 + R + 2, 48, 2, 15)
     
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -2661,7 +2666,7 @@ For I1 = 1 To Y / 655
         If Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then 1103
     Next I2
     NT = NT + 1
-    VV$(NT) = Q$(0): V%(NT) = I1
+    teamItems$(NT) = Q$(0): V%(NT) = I1
 
 1103 Next I1
 Close 1
@@ -2681,7 +2686,7 @@ Column% = 1
 Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
 _MouseShow "DEFAULT"
-MAMenu VV$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -2819,15 +2824,19 @@ Call CSMsgBox("", 0, Pass)
 GoTo 10
 
 
+'------------------------------
+'      PadRight Function
+'------------------------------
+' Pads string to the right with spaces
 Function PadRight$ (X$, Length)
-    'Essentially this pads space to the right of the string
     PadRight$ = X$ + Space$(Length - Len(X$)) 'for display only
 End Function
 
 
 '------------------------------
-'       TITLE Subroutine
+'      TITLE Subroutine
 '------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 16: Color 12

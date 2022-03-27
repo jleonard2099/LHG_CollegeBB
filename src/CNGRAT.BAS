@@ -1,22 +1,27 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Change Team"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 
 10 ' **************** REVISED NOVEMBER 1, 1988 ****************************
 
 20 Dim A$(13), A(13, 6), Q$(250), X(13, 6), DF(13), P$(13), RS(13, 13), T1%(20)
 
-30 Dim V$(500), L%(4), T%(9), D$(1), item$(7)
+30 Dim V$(500), L%(4), T%(9), D$(1), menuItems$(7)
 'Dim W$(11), N$(13)
 
 40 Open "DEV.BAS" For Input As #2: Input #2, D$(0): Close 2
 
 100 Call TITLE
-item$(1) = "CHANGE OR EDIT AN EXISTING TEAM"
-item$(2) = "PRINT A TEAM ROSTER            "
-item$(3) = "VIEW A TEAM ROSTER             "
-item$(4) = "EXIT TO MAIN MENU              "
+menuItems$(1) = "CHANGE OR EDIT AN EXISTING TEAM"
+menuItems$(2) = "PRINT A TEAM ROSTER            "
+menuItems$(3) = "VIEW A TEAM ROSTER             "
+menuItems$(4) = "EXIT TO MAIN MENU              "
 SELECTION% = 1
 Count% = 4
 Start% = 1
@@ -30,7 +35,7 @@ Column% = 25
 Call box0(7, 24, 12, 56, 2, 31)
     
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -581,6 +586,10 @@ Put #1, T1: Close 1
 
 10010 Return
 
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 23: Color 12

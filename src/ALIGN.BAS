@@ -1,5 +1,10 @@
 '$INCLUDE: 'KeyInput.BI'
 
+_Title "Courtside College Basketball - Align Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 1 Cls
 
 5 Dim Z(15), Z1(15), A$(15), A(15, 14), W0(15), W1(15)

@@ -2,6 +2,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - View Brackets/Seeding"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DefInt A-Z
 DECLARE SUB TITLE ()
 DECLARE SUB CHAMPIONSHIP ()
@@ -19,17 +24,17 @@ Dim YN$(300, 3), AP%(1), A$(9)
 Dim N%(17, 17, 3): ' REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 Dim C%(1): ' 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
 'Dim U6 As Single
-'Dim VV$(500), V%(500), L%(4)
-'Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), item$(18), T%(9)
+'Dim teamItems$(500), V%(500), L%(4)
+'Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), menuItems$(18), T%(9)
 
 Open "DEV.BAS" For Input As #1
 Input #1, D$(0)
 Close 1
 
 10 Call TITLE
-item$(1) = "VIEW BRACKETS            "
-item$(2) = "VIEW SEEDINGS            "
-item$(3) = "RETURN TO TOURNAMENT MENU"
+menuItems$(1) = "VIEW BRACKETS            "
+menuItems$(2) = "VIEW SEEDINGS            "
+menuItems$(3) = "RETURN TO TOURNAMENT MENU"
 SELECTION% = 1
 Count% = 3
 Start% = 1
@@ -42,7 +47,7 @@ Column% = 25
 
 Call box0(9, 24, 13, 50, 2, 31)
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -146,7 +151,7 @@ Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 For I = 1 To R
     If R$(I) = "" Then R$(I) = "TO BE NAMED"
-    item$(I) = R$(I)
+    menuItems$(I) = R$(I)
 Next
 SELECTION% = 1
 Count% = R + 2
@@ -157,12 +162,12 @@ HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Spacing% = 1
 Row% = 4
 Column% = 32
-item$(R + 1) = "CHAMPIONSHIP BRACKET"
-item$(R + 2) = "EXIT                "
+menuItems$(R + 1) = "CHAMPIONSHIP BRACKET"
+menuItems$(R + 2) = "EXIT                "
 Call box0(3, 31, 3 + R + 3, 52, 2, 15)
     
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 Color , 0
@@ -873,6 +878,10 @@ Call CSMsgBox("", 0, Pass)
 GoTo 10
 
 
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 0: KEY Off: Cls
     Color , 1: Locate 1, 1: Print Tab(80);: Locate , 16: Color 12
@@ -884,6 +893,7 @@ Sub TITLE ()
     Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
     Color 10
 End Sub
+
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'

@@ -2,6 +2,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - Delete Org Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DefInt A-Z
 
 'Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)

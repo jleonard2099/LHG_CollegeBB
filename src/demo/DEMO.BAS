@@ -1,11 +1,16 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - DEMO"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DEFINT A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 DECLARE SUB TITLE ()
 
-DIM D$(3), item$(18)
+DIM D$(3), menuItems$(18)
 DIM A$(1 TO 15)
 
 OPEN "DEV.BAS" FOR INPUT AS #1
@@ -21,15 +26,15 @@ CALL Comline(N, A$(), 10)     ' Get what was typed on the command line
 	IF A$(1) = "4" THEN A$(1) = "": GOTO 750
 
 1  CALL TITLE
-	item$(1) = "PLAY DEMO GAME                  "
-	item$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
-	item$(3) = "REPLAY STATISTICS AND REPORTS   "
-	item$(4) = "LEADERS / STANDINGS / RECORDS   "
-	item$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
-	item$(6) = "TOURNAMENT PLAY                 "
-	item$(7) = "HARD DRIVE INSTALLATION         "
-	item$(8) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-	item$(9) = "EXIT TO DOS                     "
+	menuItems$(1) = "PLAY DEMO GAME                  "
+	menuItems$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
+	menuItems$(3) = "REPLAY STATISTICS AND REPORTS   "
+	menuItems$(4) = "LEADERS / STANDINGS / RECORDS   "
+	menuItems$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
+	menuItems$(6) = "TOURNAMENT PLAY                 "
+	menuItems$(7) = "HARD DRIVE INSTALLATION         "
+	menuItems$(8) = "CONFIGURE DRIVES FOR TEAMS,STATS"
+	menuItems$(9) = "EXIT TO DOS                     "
 	SELECTION% = 1
 	Count% = 9
 	Start% = 1
@@ -42,7 +47,7 @@ CALL Comline(N, A$(), 10)     ' Get what was typed on the command line
 
 CALL box0(7, 24, 17, 57, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -114,12 +119,12 @@ Done:
 	 GOTO 1
 
 700 CALL TITLE
-	item$(1) = "INPUT A NEW TEAM              "
-	item$(2) = "EDIT AN EXISTING TEAM         "
-	item$(3) = "PRINT TEAM ROSTER / REPORT    "
-	item$(4) = "VIEW TEAM ROSTER / REPORT     "
-	item$(5) = "DRAFT TO NEW / EXISTING TEAM  "
-	item$(6) = "RETURN TO MAIN MENU           "
+	menuItems$(1) = "INPUT A NEW TEAM              "
+	menuItems$(2) = "EDIT AN EXISTING TEAM         "
+	menuItems$(3) = "PRINT TEAM ROSTER / REPORT    "
+	menuItems$(4) = "VIEW TEAM ROSTER / REPORT     "
+	menuItems$(5) = "DRAFT TO NEW / EXISTING TEAM  "
+	menuItems$(6) = "RETURN TO MAIN MENU           "
 	SELECTION% = 1
 	Count% = 6
 	Start% = 1
@@ -132,7 +137,7 @@ Done:
 CALL box0(7, 26, 14, 57, 2, 31)
 	
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -145,11 +150,11 @@ _MouseHide
 	IF SELECTION% = 6 THEN 1
 
 750 CALL TITLE
-	item$(1) = "VIEW / PRINT COMPILED STATISTICS "
-	item$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
-	item$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
-	item$(4) = "MERGE SEPARATE STATISTICAL FILES "
-	item$(5) = "RETURN TO COURTSIDE MAIN MENU    "
+	menuItems$(1) = "VIEW / PRINT COMPILED STATISTICS "
+	menuItems$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
+	menuItems$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
+	menuItems$(4) = "MERGE SEPARATE STATISTICAL FILES "
+	menuItems$(5) = "RETURN TO COURTSIDE MAIN MENU    "
 	SELECTION% = 1
 	Count% = 5
 	Start% = 1
@@ -162,7 +167,7 @@ _MouseHide
 
 CALL box0(7, 24, 13, 58, 2, 31)	
 _MouseShow "DEFAULT"
-MMenuVert item$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
 
 	COLOR , 0
@@ -174,18 +179,18 @@ _MouseHide
 	IF SELECTION% = 5 THEN 1
 
 800 CALL TITLE
-	item$(1) = "CREATE/ EDIT A CONFERENCE"
-	item$(2) = "UPDATE STATS/ STANDINGS  "
-	item$(3) = "VIEW/ PRINT REPORTS      "
-	item$(4) = "HEAD-TO-HEAD STATS       "
-	item$(5) = "RECORD BOOKS             "
-	item$(6) = "EXPANDED LEADERS         "
-	item$(7) = "CREATE/ EDIT ORGANIZATION"
-	item$(8) = "UPDATE POLL/ STATS       "
-	item$(9) = "VIEW/ PRINT REPORTS      "
-	item$(10) = "RECORD BOOKS             "
-	item$(11) = "RETURN TO COURTSIDE MENU "
-	item$(12) = "EXIT TO DOS              "
+	menuItems$(1) = "CREATE/ EDIT A CONFERENCE"
+	menuItems$(2) = "UPDATE STATS/ STANDINGS  "
+	menuItems$(3) = "VIEW/ PRINT REPORTS      "
+	menuItems$(4) = "HEAD-TO-HEAD STATS       "
+	menuItems$(5) = "RECORD BOOKS             "
+	menuItems$(6) = "EXPANDED LEADERS         "
+	menuItems$(7) = "CREATE/ EDIT ORGANIZATION"
+	menuItems$(8) = "UPDATE POLL/ STATS       "
+	menuItems$(9) = "VIEW/ PRINT REPORTS      "
+	menuItems$(10) = "RECORD BOOKS             "
+	menuItems$(11) = "RETURN TO COURTSIDE MENU "
+	menuItems$(12) = "EXIT TO DOS              "
 	SELECTION% = 1
 	Count% = 12
 	Start% = 1
@@ -210,7 +215,7 @@ CALL box0(7, 40, 15, 66, 2, 31)
 	LOCATE , 10: PRINT "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
 	
 _MouseShow "DEFAULT"
-20   MAMenu item$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20   MAMenu menuItems$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF ExitCode% = 27 THEN 1
@@ -234,11 +239,19 @@ _MouseHide
 	IF SELECTION% = 12 THEN CLS : END
 
 
-FUNCTION PadRight$ (X$, Length) 
-'Essentially this pads space to the right of the string
-	PadRight$ = X$ + SPACE$(Length - LEN(X$))  'for display only
-END FUNCTION
+'------------------------------
+'      PadRight Function
+'------------------------------
+' Pads string to the right with spaces
+Function PadRight$ (X$, Length)
+    PadRight$ = X$ + Space$(Length - Len(X$)) 'for display only
+End Function
 
+
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 SUB TITLE ()
 	COLOR , 0: KEY OFF: CLS
 	COLOR , 1: LOCATE 1, 1: PRINT TAB(80); : LOCATE , 24: COLOR 12

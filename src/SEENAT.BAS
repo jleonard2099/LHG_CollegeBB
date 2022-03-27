@@ -1,6 +1,11 @@
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
+_Title "Courtside College Basketball - National Stats"
+''$ExeIcon:'./lhg_ccb.ico'
+'_Icon
+_AllowFullScreen
+
 DECLARE SUB TITLE ()
 
 Dim T$(30), O1(30), O2(30), P(60)
@@ -646,10 +651,14 @@ For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
 Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";: Locate 10, 15: Return
 
 
+'------------------------------
+'      TITLE Subroutine
+'------------------------------
+' Displays window title / game copyright
 Sub TITLE ()
     Color , 2
     Locate 1, 1: Print Tab(80);: Locate , 26: Color 0
-    Print "HAT TRICK HOCKEY STATISTICS"
+    Print "COURTSIDE COLLEGE BASKETBALL STATISTICS"
     Locate 24, 1: Print Tab(80);: Locate , 1
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
     Locate 4, 1: Color 2, 0
