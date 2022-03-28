@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
@@ -35,7 +36,6 @@ DECLARE SUB FILEBOX
 DECLARE SUB FOULHARD ()
 DECLARE SUB FOULSAFE ()
 DECLARE SUB FRAME ()
-DECLARE SUB GETAKEY (I$)
 DECLARE SUB GETATEAM (I1, YN$)
 DECLARE SUB HORN ()
 DECLARE SUB LASTFIVEMENU ()
@@ -119,33 +119,6 @@ Dim Shared Y2 As Long, Y3 As Long
 '           GAME CODE
 '----------------------------------------
 
-'Initialize variables
-'--------------------
-NL% = 1
-PA% = -1
-TR%(0, 0) = 15: TR%(0, 1) = 1
-TR%(1, 0) = 15: TR%(1, 1) = 1
-
-Data L,1,1,1,1,1,1,H,H,2,2,2,2,2,F
-For I = 0 To 14: Read R$(I): Next
-Data 0,1,1,2,2,2,-1,-1,-1,-1,-2,-3
-For I = 0 To 1
-    For I1 = 1 To 6
-        Read HF%(I, I1)
-    Next
-Next
-Data 1,4,2,5,15,29,22,36,7,9,7,12
-For I = 0 To 2
-    For I1 = 1 To 4
-        Read DP(I, I1)
-    Next
-Next
-Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
-For I = 0 To 4
-    For I1 = 0 To 3
-        Read D8(I, I1)
-    Next
-Next
 
 ' Setup Game
 '--------------------
@@ -216,8 +189,50 @@ Close 1
 
 AP1 = 1: TOU = 1
 
-10 T = 1200: H = 1: T1(1) = 5: T1(0) = 5: X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D "
+10 T = 1200
+H = 1
+T1(1) = 5
+T1(0) = 5
+X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D "
 C7$(0) = "NO SHOT CLOCK    ": C7$(1) = "45 SEC SHOT CLOCK": C7$(2) = "35 SEC SHOT CLOCK"
+
+For I = 0 To 1
+    For I1 = 0 To 4
+        B1(I, I1) = -1
+    Next I1
+Next I
+
+If AP1 = 1 Then Call AUTOSETUP
+If AP1 = 1 And TOU = 0 Then 51
+
+'Initialize variables
+'--------------------
+NL% = 1
+PA% = -1
+TR%(0, 0) = 15: TR%(0, 1) = 1
+TR%(1, 0) = 15: TR%(1, 1) = 1
+
+Data L,1,1,1,1,1,1,H,H,2,2,2,2,2,F
+For I = 0 To 14: Read R$(I): Next
+Data 0,1,1,2,2,2,-1,-1,-1,-1,-2,-3
+For I = 0 To 1
+    For I1 = 1 To 6
+        Read HF%(I, I1)
+    Next
+Next
+Data 1,4,2,5,15,29,22,36,7,9,7,12
+For I = 0 To 2
+    For I1 = 1 To 4
+        Read DP(I, I1)
+    Next
+Next
+Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
+For I = 0 To 4
+    For I1 = 0 To 3
+        Read D8(I, I1)
+    Next
+Next
+
 Data "NORMAL"
 Data "AGGRESSIVE"
 Data "SAFE"
@@ -229,19 +244,7 @@ Data "TOTAL STALL (LAST 3 MIN)"
 Data "HOLD BALL VS PASSIVE ZONE (MUST BE AHEAD, WITH NO SHOT CLOCK)"
 Data "SHOOT ONLY THREE POINTERS (LAST 3 MIN)"
 For I = 0 To 9: Read O$(I): Next
-TS$(0) = "N": TS$(1) = "Y"
-CM$(0) = "COACH AND SELECT SHOTS           "
-CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-U5$(0) = "HUMAN OPPONENT           "
-U5$(1) = "COMPUTER IS VISITING TEAM"
-U5$(2) = "COMPUTER IS HOME TEAM    "
-U5$(3) = "COMPUTER VS COMPUTER     "
-LC$(0) = "@ TEAM 1    "
-LC$(1) = "HOME COURT ADVANTAGE"
-LC$(2) = "NEUTRAL SITE        "
-TB$(0) = "SHOOT 1+1": TB$(1) = "SHOOT 2  "
-PB$(0) = "VERBOSE        "
-PB$(1) = "HAFFNER CLASSIC"
+
 Data "SOLID MAN TO MAN"
 Data "PRESSURE MAN TO MAN"
 Data "PASSIVE 2-3 ZONE"
@@ -257,7 +260,10 @@ Data "TRAPPING 1-2-1-1 ZONE PRESS/PRESSURE MAN TO MAN"
 Data "TRAPPING 1-2-1-1 ZONE PRESS/2-3 ZONE  "
 Data "TRAPPING 1-2-1-1 ZONE PRESS/1-3-1 TRAPPING ZONE"
 Data "FULL COURT M-M DENIAL & FOUL (LAST 3 MIN WHEN DOWN)"
-For I = 0 To 14: Read D$(I): Next I
+For I = 0 To 14
+    Read D$(I)
+Next I
+
 Data "NORMAL                            "
 Data "AGGRESSIVE                        "
 Data "SAFE                              "
@@ -268,7 +274,10 @@ Data "STALL-GOOD SHOT-MUST BE WITHIN 10 "
 Data "TOTAL STALL (LAST 3 MIN)          "
 Data "HOLD BALL VS PASS.ZN-AHEAD-NO S.C."
 Data "SHOOT ONLY THREES (LAST 3 MIN)    "
-For I = 0 To 9: Read OB$(I): Next
+For I = 0 To 9
+    Read OB$(I)
+Next
+
 Data "SOLID MAN TO MAN                  "
 Data "PRESSURE MAN TO MAN               "
 Data "PASSIVE 2-3 ZONE                  "
@@ -284,16 +293,29 @@ Data "TRAP 1-2-1-1 ZN PRESS/PRESSURE M-M"
 Data "TRAP 1-2-1-1 ZONE PRESS/2-3 ZONE  "
 Data "TRAP 1-2-1-1 ZN PRSS/1-3-1 TRAP ZN"
 Data "DENIAL & FOUL-LAST 3 MIN WHEN DOWN"
-For I = 0 To 14: Read DB$(I): Next I
-For I = 0 To 1
-    For I1 = 0 To 4
-        B1(I, I1) = -1
-    Next I1
+For I = 0 To 14
+    Read DB$(I)
 Next I
 
-DRIVE% = GetDrive%
-If AP1 = 1 Then Call AUTOSETUP
-If AP1 = 1 And TOU = 0 Then 51
+TS$(0) = "N": TS$(1) = "Y"
+
+CM$(0) = "COACH AND SELECT SHOTS           "
+CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+
+U5$(0) = "HUMAN OPPONENT           "
+U5$(1) = "COMPUTER IS VISITING TEAM"
+U5$(2) = "COMPUTER IS HOME TEAM    "
+U5$(3) = "COMPUTER VS COMPUTER     "
+
+LC$(0) = "@ TEAM 1    "
+LC$(1) = "HOME COURT ADVANTAGE"
+LC$(2) = "NEUTRAL SITE        "
+TB$(0) = "SHOOT 1+1": TB$(1) = "SHOOT 2  "
+PB$(0) = "VERBOSE        "
+PB$(1) = "HAFFNER CLASSIC"
+
+
+
 
 24 Cls: Color 2: Print ; Tab(29); "SELECT OPENING OPTIONS": Print
 
@@ -439,22 +461,29 @@ Return
     D2(I) = 0
     P7(I) = 0
 Next
+
 T = 0
 Call QUARTERTOTAL
 H = H + 1
 T = 1200
 XS = 1
 X = 0
-If H = 2 Then U$ = "END OF HALF"
-'Could call SELECTPBP here but there would be a delay
-If H = 2 And PB% = 0 Then Call PBP
-If H = 2 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$
 
-If H > 3 Then U$ = "END OF OVERTIME" + Str$(H - 3)
-'Could call SELECTPBP here but there would be a delay
-If H > 3 And PB% = 0 Then Call PBP
-If H > 3 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$
+If H = 2 Then
+    U$ = "END OF HALF"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: If displayPause > 0 Then Call WINDEX: Print U$
+    End Select
+End If
 
+If H > 3 Then
+    U$ = "END OF OVERTIME" + Str$(H - 3)
+    Select Case PB%
+        Case 0: Color 7, 0: Print U$
+        Case 1: If displayPause > 0 Then Call WINDEX: Print U$
+    End Select
+End If
 GoSub 178
 
 If H < 3 And U5 <> 0 Then GoSub 175
@@ -462,15 +491,24 @@ If H < 3 Then P2(0) = 0: P2(1) = 0: GoSub 159: Print: B = -1: Call DEADBALLOPTIO
 
 GoSub 159
 
-If H = 3 Then U$ = "END OF REGULATION"
-'Could call SELECTPBP here but there would be a delay
-If H = 3 And PB% = 0 Then Call PBP
-If H = 3 And PB% = 1 And displayPause <> 0 Then Call WINDEX: Print U$
-
+If H = 3 Then
+    U$ = "END OF REGULATION"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: If displayPause > 0 Then Call WINDEX: Print U$
+    End Select
+End If
 Locate 2, 31: Print "END OF REGULATION"
-If S(0, 0) = S(1, 0) And PB% = 0 Then U$ = "OVERTIME !!!": Call PBP
-If S(0, 0) = S(1, 0) And PB% = 1 Then Call WINDEX: Print "OVERTIME !!!": Call DELAY
-If S(0, 0) = S(1, 0) Then 190
+
+'If scores are tied, it's Overtime!
+If S(0, 0) = S(1, 0) Then
+    U$ = "OVERTIME !!!"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: Call WINDEX: Print U$: Call DELAY
+    End Select
+    GoTo 190
+End If
 
 'Call HITKEY: GoTo 8400
 If AP1 = 1 Xor U5 = 2 Then
@@ -482,8 +520,13 @@ GoTo 8400
 If U5 = 2 Then P9 = 0: Call COMCOACH: P9 = 1: Call COMCOACH
 Return
 
-178 If H = 2 And PB% = 0 Then U$ = "HALFTIME!": Call PBP: GoSub 8515
-If H = 2 And PB% = 1 Then Call WINDEX: Print "HALFTIME!": Call DELAY: GoSub 8515
+178 If H = 2 Then
+    U$ = "HALFTIME!"
+    Select Case PB%
+        Case 0: Color 7, 0: Call WINDEX: Print U$: GoSub 8515
+        Case 1: Call WINDEX: Print U$: Call DELAY: GoSub 8515
+    End Select
+End If
 Return
 
 190 T1(0) = T1(0) + 1: T1(1) = T1(1) + 1: T = 300
@@ -2068,7 +2111,7 @@ Sub MAKEPBP ()
     If RN = 35 Then U$ = "HE MAKES IT HAMMER TIME!!!"
     If RN = 36 Then U$ = AA$(p, B1(p, B)) + " WITH THE 2-HANDED SLAM!!!"
     If RN = 37 Then U$ = AA$(p, B1(p, B)) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
-                             
+
                                             
     If RN = 38 Then U$ = "HE JAMS IT HOME!!!"
     If RN = 39 Then U$ = "HE HAMMERS IT HOME!"
@@ -2705,6 +2748,7 @@ Sub PBP ()
         U$ = U$ + " "
     Wend
     U$ = Left$(U$, 38)
+
     Locate 8, 1
     If NL% = 1 Then A1$ = U$: vg%(1) = TR%(p, 0): vh%(1) = TR%(p, 1)
     If NL% = 2 Then B1$ = U$: vg%(2) = TR%(p, 0): vh%(2) = TR%(p, 1)
@@ -3279,6 +3323,7 @@ Sub MAINSCREEN ()
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
     Color 14, 0: Locate 6, 37: Print Using " :##"; X8
     If C7 = 0 Or T < 45 And X8 >= T And C7 = 1 Or T < 35 And X8 >= T And C7 = 2 Or (C7 = 1 Or C7 = 2) And H > 2 And T = 300 Then Locate 6, 37: Print " :  "
+
     If displayPause = 0 Then 2172
     Locate 9, 41
     Color TR%(D, 0), TR%(D, 1): Print "DEF-"; DB$(DT%(D))
@@ -4604,12 +4649,12 @@ End Sub
 ' ...explanation...
 Sub WINDEX ()
     'IF AP=1 AND U5=2 OR displayPause=0 THEN 4090
-    If displayPause > 0 Then
-        For I = 8 To 15
-            Locate I, 1
-            Print "                                      ";
-        Next I
-    End If
+    '    If displayPause > 0 Then
+    For I = 8 To 15
+        Locate I, 1
+        Print Space$(38);
+    Next I
+    '   End If
     Locate 8, 1
 End Sub
 
