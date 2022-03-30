@@ -61,7 +61,7 @@ Contact me directly if interested in contributing. Only considering people who s
 - I am responsible for maintaining / updating most of the code and will spend equal effort to code cleanup as to code improvement.
 - Jason Lamb, for lending his expertise in BASIC to helping me learn some standards and rewriting the menu functions.
 - Lance Haffner, for his hard work over 2 decades giving people endless hours of playable sports games and making dreams come true.
-- [Lance Haffner Sports Sims](https://www.facebook.com/groups/115923978469802) Facebook group found Philip Lupi, for his hard work keeping Lance's games alive and active with fans old and new.
+- [Lance Haffner Sports Sims](https://www.facebook.com/groups/115923978469802) Facebook group admin Philip Lupi, for his hard work keeping Lance's games alive and active with fans old and new.
 - [Manual images created by Cool Clips](http://search.coolclips.com/)
 - [Game icons created by Joseph Gan (Icon-Icons)](https://icon-icons.com/users/XHgnBHIfJk0ZlajSy0A0x/icon-sets/)
 - [Basketball-court icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/basketball-court)
