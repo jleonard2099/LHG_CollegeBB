@@ -10,7 +10,7 @@ DEFINT A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 DECLARE SUB TITLE ()
 
-DIM D$(3), menuItems$(18)
+DIM D$(3), menuItems$(13)
 DIM A$(1 TO 15)
 
 OPEN "DEV.BAS" FOR INPUT AS #1
@@ -26,6 +26,7 @@ CALL Comline(N, A$(), 10)     ' Get what was typed on the command line
 	IF A$(1) = "4" THEN A$(1) = "": GOTO 750
 
 1  CALL TITLE
+	ERASE menuItems$
 	menuItems$(1) = "PLAY DEMO GAME                  "
 	menuItems$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
 	menuItems$(3) = "REPLAY STATISTICS AND REPORTS   "
@@ -119,6 +120,7 @@ Done:
 	 GOTO 1
 
 700 CALL TITLE
+	ERASE menuItems$
 	menuItems$(1) = "INPUT A NEW TEAM              "
 	menuItems$(2) = "EDIT AN EXISTING TEAM         "
 	menuItems$(3) = "PRINT TEAM ROSTER / REPORT    "
@@ -150,6 +152,7 @@ _MouseHide
 	IF SELECTION% = 6 THEN 1
 
 750 CALL TITLE
+	ERASE menuItems$
 	menuItems$(1) = "VIEW / PRINT COMPILED STATISTICS "
 	menuItems$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
 	menuItems$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
@@ -179,6 +182,7 @@ _MouseHide
 	IF SELECTION% = 5 THEN 1
 
 800 CALL TITLE
+	ERASE menuItems$
 	menuItems$(1) = "CREATE/ EDIT A CONFERENCE"
 	menuItems$(2) = "UPDATE STATS/ STANDINGS  "
 	menuItems$(3) = "VIEW/ PRINT REPORTS      "

@@ -1,3 +1,4 @@
+$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
@@ -10,7 +11,7 @@ DefInt A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 DECLARE SUB TITLE ()
 
-Dim D$(3), menuItems$(18)
+Dim D$(3), menuItems$(15)
 Dim A$(1 To 15)
 
 Open "DEV.BAS" For Input As #1
@@ -26,6 +27,7 @@ If A$(1) = "3" Then A$(1) = "": GoTo 800
 If A$(1) = "4" Then A$(1) = "": GoTo 750
 
 1 Call TITLE
+Erase menuItems$
 menuItems$(1) = "PLAY SINGLE GAME                "
 menuItems$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
 menuItems$(3) = "REPLAY STATISTICS AND REPORTS   "
@@ -46,7 +48,6 @@ Row% = 8
 Column% = 25
 
 Call box0(7, 24, 17, 57, 2, 31)
-    
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -59,7 +60,7 @@ If SELECTION% = 3 Then 750
 If SELECTION% = 4 Then 800
 If SELECTION% = 5 Then Run "SCHEDULE.EXE"
 If SELECTION% = 6 Then Run "ADDTOURN.EXE"
-'If SELECTION% = 7 Then Run "INSTALL.EXE"
+If SELECTION% = 7 Then 1
 If SELECTION% = 8 Then 505
 If SELECTION% = 9 Then Cls: End
 
@@ -120,12 +121,13 @@ If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 GoTo 1
 
 700 Call TITLE
-menuItems$(1) = "INPUT A NEW TEAM              "
-menuItems$(2) = "EDIT AN EXISTING TEAM         "
-menuItems$(3) = "PRINT TEAM ROSTER / REPORT    "
-menuItems$(4) = "VIEW TEAM ROSTER / REPORT     "
-menuItems$(5) = "DRAFT TO NEW / EXISTING TEAM  "
-menuItems$(6) = "RETURN TO MAIN MENU           "
+Erase menuItems$
+menuItems$(1) = "INPUT A NEW TEAM             "
+menuItems$(2) = "EDIT AN EXISTING TEAM        "
+menuItems$(3) = "PRINT TEAM ROSTER / REPORT   "
+menuItems$(4) = "VIEW TEAM ROSTER / REPORT    "
+menuItems$(5) = "DRAFT TO NEW / EXISTING TEAM "
+menuItems$(6) = "RETURN TO MAIN MENU          "
 SELECTION% = 1
 Count% = 6
 Start% = 1
@@ -151,6 +153,7 @@ If SELECTION% = 5 Then Run "DRAFT.EXE"
 If SELECTION% = 6 Then 1
 
 750 Call TITLE
+Erase menuItems$
 menuItems$(1) = "VIEW / PRINT COMPILED STATISTICS "
 menuItems$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
 menuItems$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
@@ -181,6 +184,7 @@ If SELECTION% = 4 Then Run "MERGE.EXE"
 If SELECTION% = 5 Then 1
 
 800 Call TITLE
+Erase menuItems$
 menuItems$(1) = "CREATE/ EDIT A CONFERENCE"
 menuItems$(2) = "UPDATE STATS/ STANDINGS  "
 menuItems$(3) = "VIEW/ PRINT REPORTS      "
@@ -196,17 +200,18 @@ menuItems$(12) = "DELETE ORGANIZATION STATS"
 menuItems$(13) = "RETURN TO COURTSIDE MENU "
 menuItems$(14) = "EXIT TO DOS              "
 SELECTION% = 1
-Count% = 12
+Count% = 14
 Start% = 1
 FileFGColr% = 15: FileBGColr% = 1
 HiLiteFGColr% = 0: HiLiteBGColr% = 7
-Rows% = 6
+Rows% = 7
 Columns% = 2
 Spacing% = 4
 Row% = 9
 Column% = 12
-Call box0(7, 11, 15, 37, 2, 31)
-Call box0(7, 40, 15, 66, 2, 31)
+
+Call box0(7, 11, 16, 37, 2, 31)
+Call box0(7, 40, 16, 66, 2, 31)
 Color 15, 0
 Locate 8, 14: Print "COLLEGE CONFERENCE"
 Locate 8, 41: Print "NATIONAL ORGANIZATION"
@@ -266,7 +271,7 @@ Sub TITLE ()
     Color 15
     Print
     Print "            PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
-    Print "          TECHNICAL SUPPORT, CALL (800) 477-7032 EMAIL AT ecciLR@AOL.COM"
+    Print "          TECHNICAL SUPPORT, CALL (800) 477-7032 EMAIL AT SportGames@AOL.COM"
     Color 10
 End Sub
 

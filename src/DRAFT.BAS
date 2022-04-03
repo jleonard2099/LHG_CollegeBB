@@ -10,7 +10,7 @@ DECLARE SUB TITLE ()
 
 Dim Q$(500), A$(1, 13), A(1, 13, 6), X(1, 13, 6), V$(500)
 Dim S$(1), A1$(1), ATT(1), DF(1, 13), P$(1, 13), RS(1, 13, 13)
-Dim T1%(1, 20), CK(1), C$(1), V%(500), YN$(1), T1N(1), menuItems$(6)
+Dim T1%(1, 20), CK(1), C$(1), V%(500), YN$(1), T1N(1), menuItems$(4)
 Dim T%(1, 9), L%(1, 4), T$(1), SP(1), DA(1), V1%(1), V2%(1)
 Dim D$(1), TR%(1, 13, 12), Y As Long
 Open "DEV.BAS" For Input As #1: Input #1, D$(0): Close 1

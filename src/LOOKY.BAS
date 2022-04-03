@@ -476,7 +476,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 1100
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056

@@ -29,7 +29,7 @@ Dim B(1, 2)
 'Dim A$(1), A1$(1, 6), A2$(1, 5), A3$(1, 2), A4$(1, 2), A5$(1, 2), A6$(1, 2)
 
 Dim Q$(300), D$(1), T%(9)
-Dim teamItems$(500), V%(500), menuItems$(3)
+Dim teamItems$(500), V%(500), menuItems$(4)
 'Dim L%(4)
 Dim Y As Long
 
@@ -47,8 +47,8 @@ Cls
 
 50 For X = 1 To 30: Z1$(X) = "XXX": Next
 Call TITLE
-menuItems$(2) = "ADD / REVIEW CONFERENCE MEMBERS "
 menuItems$(1) = "CREATE / DEFINE NEW CONFERENCES "
+menuItems$(2) = "ADD / REVIEW CONFERENCE MEMBERS "
 menuItems$(3) = "RETURN TO STANDINGS/LEADERS MENU"
 SELECTION% = 1
 Count% = 3
@@ -136,7 +136,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 3102: GoTo 182
 YN$ = NY$
-For I = 1 To 500: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 3100
 
 182 If BO% = 1 Then BO% = 0: GoTo 181

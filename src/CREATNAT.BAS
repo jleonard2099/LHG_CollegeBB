@@ -12,7 +12,8 @@ DefInt A-Z
 DECLARE FUNCTION PadRight$ (X$, Length)
 
 Dim Z1$(40), Z2$(40), Z1%(40), D$(2)
-'Dim Q$(15), teamItems$(200), V%(200), T%(34), L%(13), menuItems$(3)
+'Dim Q$(15), teamItems$(200), V%(200), T%(34), L%(13)
+Dim menuItems$(4)
 'Dim Y As Long
 
 FG = 0

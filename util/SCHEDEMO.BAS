@@ -10,7 +10,7 @@ DECLARE SUB TITLE ()
 DIM teamItems$(500), V%(500), TE$(1), TF$(1)
 DIM Q$(375), AP%(1), T%(9)
 DIM Z1$(30), Z1%(30), Z2$(30)
-DIM H$(20), V$(20), MO$(3), menuItems$(11)
+DIM H$(20), V$(20), MO$(3), menuItems$(10)
 DIM HS%(1700), VS%(1700), LO$(1), P$(2), E%(13)
 DIM TS$(1), SC$(2), U5$(4), CM$(1), LC$(2)
 DIM Y AS LONG, U6 AS SINGLE, M AS LONG
@@ -54,7 +54,9 @@ OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, P$(0): INPUT #1, P$(1): CLOSE 1
 	LC$(2) = "NEUTRAL SITE        "
 	CM$(0) = "COACH AND SELECT SHOTS           "
 	CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-	 CALL TITLE
+	
+	CALL TITLE
+	ERASE menuItems$
 	menuItems$(1) = "ENTER A NEW SCHEDULE                             "
 	menuItems$(2) = "RETRIEVE/EDIT/PLAY AN EXISTING SCHEDULE          "
 	menuItems$(3) = "EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE "
@@ -488,7 +490,7 @@ CLOSE 1: NS% = 0: TS% = 0
 	LOCATE 7, 27: INPUT NY$
 	IF NY$ = "" THEN GOSUB 1102: GOTO 730
 	YN$ = NY$
-	FOR I = 1 TO 500: teamItems$(I) = "": NEXT
+	ERASE teamItems$
 	GOSUB 1100
 
 730 IF BO% = 1 THEN BO% = 0: GOTO 725
@@ -893,6 +895,7 @@ CLOSE 1
 
 4500 'BOXSCORE MAINTENANCE
 	CALL TITLE
+	ERASE menuItems$
 	menuItems$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
 	menuItems$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
 	menuItems$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "

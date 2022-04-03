@@ -25,7 +25,8 @@ Dim N%(17, 17, 3): ' REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 Dim C%(1): ' 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
 'Dim U6 As Single
 'Dim teamItems$(500), V%(500), L%(4)
-'Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), menuItems$(18), T%(9)
+'Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), T%(9)
+Dim menuItems$(4)
 
 Open "DEV.BAS" For Input As #1
 Input #1, D$(0)

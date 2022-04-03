@@ -10,7 +10,7 @@ Dim A$(62), A(62, 14), W0(62), W1(62), Z(15), Z1(15)
 'Dim ZR(15), Z1R(15), W0R(72), W1R(62), AR(62, 15)
 Dim AR$(62), BLYR(21), BL(21), BL$(21)
 Dim W0S(15, 62), W1S(15, 62), T%(34), Q$(500), L%(4)
-Dim menuItems$(9), VV%(500), p$(2)
+Dim menuItems$(7), VV%(500), p$(2)
 ReDim teamItems$(500), ars(15, 62, 15)
 
 1 Cls: CH = 0: TMR = 945: TMR1 = 1875: NB = -1: NP = -1
@@ -520,7 +520,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 1100
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056

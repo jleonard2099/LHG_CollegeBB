@@ -11,7 +11,7 @@ DECLARE SUB TITLE ()
 Dim O%(100), O$(100), TR%(100), H$(100), Z1$(40), HW(50), AW(50), HL(50), AL(50), R1(50), R2(50), R3(50), R4(50)
 Dim Q$(377), B%(14, 19), B$(14), A$(14, 1), teamItems$(500), VV%(500), Z2$(40)
 Dim TM1$(40), OPP$(100), ZA$(40), Z1%(40), Z3$(40)
-Dim TAW(40), DV$(4), THW(40), menuItems$(2), THL(40), TAL(40), TR3(40), TR4(40), D$(1)
+Dim TAW(40), DV$(4), THW(40), menuItems$(3), THL(40), TAL(40), TR3(40), TR4(40), D$(1)
 Dim TR1(40), TR2(40), QQ$(1), T%(9), L%(4)
 
 Cls
@@ -477,7 +477,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 1101
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056

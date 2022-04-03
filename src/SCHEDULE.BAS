@@ -15,7 +15,7 @@ DECLARE SUB TITLE ()
 Dim teamItems$(500), V%(500), TE$(1), TF$(1)
 Dim Q$(375), AP%(1), T%(9)
 Dim Z1$(30), Z1%(30), Z2$(30)
-Dim H$(20), V$(20), MO$(3), menuItems$(11)
+Dim H$(20), V$(20), MO$(3), menuItems$(10)
 Dim HS%(1700), VS%(1700), LO$(1), P$(2), E%(13)
 Dim TS$(1), SC$(2), U5$(4), CM$(1), LC$(2)
 Dim Y As Long, U6 As Single, M As Long
@@ -93,9 +93,9 @@ D3% = SELECTION% - 1
 'D3% = 0 ENTER A NEW SCHEDULE
 'D3% = 1 LOAD/EDIT EXISTING SCHEDULE
 'D3% = 2 EXTRACT A TEAM'S SCHEDULE
-'D3% = 3 NO LONGER AVAILABLE
-'D3% = 4 MAIN MENU
-On SELECTION% GOTO 20, 600, 600, 600, 600, 600, 1300, 4500
+On SELECTION% GOTO 20, 600, 600, 600, 600, 600, 1300, 4500, 15
+
+15 RUN "HELLO.EXE"
 
 20 AP%(0) = 0: NS% = 0: TS% = 0
 
@@ -495,7 +495,7 @@ Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 730
 YN$ = NY$
-For I = 1 To 500: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 1100
 
 730 If BO% = 1 Then BO% = 0: GoTo 725
@@ -900,6 +900,7 @@ Return
 
 4500 'BOXSCORE MAINTENANCE
 Call TITLE
+	ERASE menuItems$
 menuItems$(1) = "SET PARAMETERS TO SAVE SPECIAL EVENTS BOXSCORES  "
 menuItems$(2) = "ACCESS USER SAVED AND SPECIAL EVENTS BOXSCORES   "
 menuItems$(3) = "DELETE ALL SCHEDULE GENERATED BOXSCORES          "

@@ -12,7 +12,7 @@ DECLARE SUB TITLE ()
 
 20 Dim A$(13), A(13, 6), Q$(250), X(13, 6), DF(13), P$(13), RS(13, 13), T1%(20)
 
-30 Dim V$(500), L%(4), T%(9), D$(1), menuItems$(7)
+30 Dim V$(500), L%(4), T%(9), D$(1), menuItems$(5)
 'Dim W$(11), N$(13)
 
 40 Open "DEV.BAS" For Input As #2: Input #2, D$(0): Close 2

@@ -303,7 +303,7 @@ For NR = 1 To R
     Locate 7, 27: Input NY$
     If NY$ = "" Then GoSub 1102: GoTo 182
     YN$ = NY$
-    For I = 1 To 500: teamItems$(I) = "": Next
+    ERASE teamItems$
     Cls
     If UCase$(Left$(D$(0), 1)) = "C" Then 210
     GoSub 4505

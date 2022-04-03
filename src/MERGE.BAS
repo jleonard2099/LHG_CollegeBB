@@ -6,7 +6,7 @@ _Title "Courtside College Basketball - Merge Stats"
 '_Icon
 _AllowFullScreen
 
-Dim menuItems$(3), D$(1), A$(14)
+Dim menuItems$(4), D$(1), A$(14)
 'Dim AR$(1), G$(4), G%(4, 10), B%(26, 11)
 Dim T%(100), B$(26)
 'Dim TR%(12), GR$(4), GR%(4, 10), BR$(26), BR%(26, 11)
@@ -328,7 +328,7 @@ Color 15, 0
 
 If NY$ = "" Then GoSub 1102: GoTo 3060
 YN$ = NY$
-For I = 1 To 500: teamItems$(I) = "": Next
+ERASE teamItems$
 GoSub 1101
 
 3060 If BO% = 1 Then BO% = 0: GoTo 3056
