@@ -1,7 +1,7 @@
 # LH Games Courtside College Basketball
 
 ## Game Description
-Each player contributes as they did in real life * Stats Compiler * you determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more 
+**Each player contributes as they did in real life! * Stats Compiler * You determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more!**
 
 ## About Project
 With permission from Lance Haffner himself, this effort is being made to bring his original source code from the DOS world into the modern world. This is due in part to cross-platform compilers for BASIC. But this effort restores his original vision for a cross-platform sports sim empire, also opening the door for any manner of improvements to accuracy and portability.
