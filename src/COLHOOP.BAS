@@ -14,6 +14,8 @@ DECLARE SUB AUTOSETUP ()
 DECLARE SUB BADFT ()
 DECLARE SUB BALLDISTRIBUTE ()
 DECLARE SUB BLANKLINE ()
+DECLARE SUB BOX2FILE
+DECLARE SUB BOX2PRINTER
 DECLARE SUB BOX2SPC (NM$)
 DECLARE SUB BOXSCREEN ()
 DECLARE SUB BOXTOP ()
@@ -32,7 +34,6 @@ DECLARE SUB DRAWBOX ()
 DECLARE SUB EDITCX()
 DECLARE SUB EVENTS (COUNT, SPECIAL)
 DECLARE SUB FATIGUE ()
-DECLARE SUB FILEBOX
 DECLARE SUB FOULHARD ()
 DECLARE SUB FOULSAFE ()
 DECLARE SUB FRAME ()
@@ -53,7 +54,6 @@ DECLARE SUB PLAYINGTIME ()
 DECLARE SUB PRDFAT ()
 DECLARE SUB PRELOAD ()
 DECLARE SUB PRESSGUARD ()
-DECLARE SUB PRINTBOX
 DECLARE SUB PRPFAT ()
 DECLARE SUB QUARTERTOTAL ()
 DECLARE SUB REBOUNDSORT
@@ -101,7 +101,8 @@ Dim Shared vg%(8), vh%(8), W%(1, 13, 1)
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, FF$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
 
-Dim Shared A1$(1), AA$(1, 13), B$(1), C$(1), C7$(2), CM$(1), D$(15), DB$(14)
+Dim Shared C7$(2) 'C7$(3) would allow for the 30-second shot clock option
+Dim Shared A1$(1), AA$(1, 13), B$(1), C$(1), CM$(1), D$(15), DB$(14)
 Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 3), O$(9), OB$(9), p$(1)
 Dim Shared PB$(1), PO$(1, 13), PS$(4), Q$(250), R$(14), S$(1), SITE$(100), SX$(32, 2)
 Dim Shared TB$(1), TS$(1), U5$(3), V$(500), X$(3), Y$(1), YN$(5), YN1$(3)
@@ -193,8 +194,14 @@ AP1 = 1: TOU = 1
 H = 1
 T1(1) = 5
 T1(0) = 5
-X$(0) = "A ": X$(1) = "B ": X$(2) = "C ": X$(3) = "D "
-C7$(0) = "NO SHOT CLOCK    ": C7$(1) = "45 SEC SHOT CLOCK": C7$(2) = "35 SEC SHOT CLOCK"
+X$(0) = "A "
+X$(1) = "B "
+X$(2) = "C "
+X$(3) = "D "
+C7$(0) = "NO SHOT CLOCK    "
+C7$(1) = "45 SEC SHOT CLOCK"
+C7$(2) = "35 SEC SHOT CLOCK"
+'C7$(3) = "30 SEC SHOT CLOCK"
 
 For I = 0 To 1
     For I1 = 0 To 4
@@ -345,6 +352,16 @@ Locate , 2: Print "       3 PT SHOT WAS ADOPTED IN 1986-87"
 Locate , 2: Print "       2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED IN 1990-91"
 Locate , 2: Print "       3 FT WHEN FOULED ON A 3 PT ATT ADOPTED IN 1990-91"
 Locate , 2: Print "       35 SEC SHOT CLOCK WAS ADOPTED IN 1993-94"
+
+'Locate 17, 2: Print "NOTE::"
+'Locate , 2: Print "       1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
+'Locate , 2: Print "       45 SEC SHOT CLOCK WAS ADOPTED IN 1984-85, BUT NOT USED IN"
+'Locate , 2: Print "       45 SEC SHOT CLOCK ADOPTED 1984-85, BUT NOT FOR POST-SEASON"
+'Locate , 2: Print "       3 PT SHOT ADOPTED IN 1986-87"
+'Locate , 2: Print "       2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED 1990-91"
+'Locate , 2: Print "       3 FT WHEN FOULED ON A 3 PT ATT ADOPTED 1990-91"
+'Locate , 2: Print "       35 SEC SHOT CLOCK ADOPTED 1993-94"
+'Locate , 2: Print "       30 SEC SHOT CLOCK ADOPTED 2015-16"
 
 35 Color 7
 I$ = GetKeyPress$
@@ -1586,6 +1603,7 @@ For I = 0 To 13
 900 If AP1 = 1 Then N = NG%(2)
 If C7 = 1 Then X8 = 45
 If C7 = 2 Then X8 = 35
+'If C7 = 3 Then X8 = 30
 GoTo 240
 
 949 If H >= 2 And T <= 240 And S(p, 0) - S(D, 0) > 0 And U5 = 1 And p = CT Then 951
@@ -1610,23 +1628,31 @@ GoTo 951
 For I3 = 0 To 13
     If I3 = B1(D, W5) Or AA$(D, I3) = "XXX" Or B%(D, I3, 18) <> 0 Then 1002
     M9 = M9 + 1
-
 1002 Next
+
 For I3 = 0 To 13
     If I3 = B1(D, W5) Or AA$(D, I3) = "XXX" Or B%(D, I3, 18) <> 0 Then 1003
     If A(D, I3, 0) <= A(D, B1(D, W5), 0) Then A(D, I3, 3) = A(D, I3, 3) + Int((A(D, B1(D, W5), 3) / M9) + .5)
-
 1003 Next I3
 Return
 
-1033 If C7 = 0 Then 1034
-X8 = 45
-If C7 = 2 Then X8 = 35
-LS = 4
-If T < 46 And X8 >= T Or H > 2 And T = 300 Then Locate 5, 5: Print "     "
-If T < 6 And LS = 4 And LT <> 4 Then F = 5
 
-1034 Return
+1033 If C7 > 0 Then
+
+    Select Case C7
+        Case 1: X8 = 45
+        Case 2: X8 = 35
+            'Case 3: X8 = 30
+    End Select
+
+    LS = 4
+    If T < 46 And X8 >= T Or H > 2 And T = 300 Then Locate 5, 5: Print "     "
+    If T < 6 And LS = 4 And LT <> 4 Then F = 5
+
+End If
+
+Return
+
 
 1054 R0 = Int(Rnd(1) * 3) + 1: I2 = Int(Rnd(1) * 5)
 If R0 <= A(p, B1(p, I2), 4) And AA$(p, B1(p, B)) <> AA$(p, B1(p, I2)) Then 1060
@@ -1709,7 +1735,7 @@ Else
 End If
 Call RECORDSCHECK
 Call EVENTS(COUNT, SPECIAL)
-     
+
 If SPECIAL = 1 Then
     NM$ = "BOX" + Mid$(Str$(COUNT), 2, Len(Str$(COUNT))) + ".SPC"
     Call BOX2SPC(NM$)
@@ -1720,15 +1746,19 @@ Cls
 If X = 1 Then 8532
 Call BOXTOP
 
-8515 GoSub 8670: GoSub 8660
+8515 GoSub 8670
+GoSub 8660
 Call BOXSCREEN
+
 If H > 2 Then EG% = 1
 Call TICKER: EG% = 0
 If H = 2 Then Call FOULHARD: Return
 
 8532 GoSub 8655
 Color 15, 0
-Cls: I = 1: Call DRAWBOX
+Cls
+I = 1
+Call DRAWBOX
 U$ = "DISPLAY STATS AGAIN (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
@@ -1739,7 +1769,9 @@ I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 8500
 
 8535 Color 15, 0
-Cls: I = 1: Call DRAWBOX
+Cls
+I = 1
+Call DRAWBOX
 U$ = "SAVE STATS (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
@@ -1750,24 +1782,16 @@ If UCase$(I$) <> "Y" Then 9507
 
 9506 Call SAVESTATS
 
-9507 Color 15, 0:
-Cls: I = 1: Call DRAWBOX
+9507 Color 15, 0
+Cls
+I = 1
+Call DRAWBOX
 U$ = "PLAY ANOTHER GAME (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
 If AP1 = 1 Then 8637
 I$ = GetKeyPress$
 If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
-If DRIVE% >= 67 Then 8637
-Color 15, 0
-
-'Cls: I = 1: Call DRAWBOX
-
-'U$ = "INSERT COURTSIDE GAME DISK #2 IN DRIVE"
-'Locate , (80 - Len(U$)) / 2
-'Print U$
-'Call HITKEY
-Color 15, 0
 
 8637 Color 15, 0
 Cls
@@ -1777,12 +1801,12 @@ Run "COLHOOP.EXE"
 Color 14: Print "(0) ";: Color 15: Print "STATS TO SCREEN": Print
 Color 14: Print "(1) ";: Color 15: Print "STATS TO PRINTER": Print
 Color 14: Print "(2) ";: Color 15: Print "STATS TO TEXT FILE"
-If AP1 = 1 And U5 = 2 Then X = 2: Call FILEBOX: Return
+If AP1 = 1 And U5 = 2 Then X = 2: Call BOX2FILE: Return
 
 I$ = GetKeyPress$
 X = Val(I$)
-If X = 1 Then Call PRINTBOX
-If X = 2 Then Call FILEBOX
+If X = 1 Then Call BOX2PRINTER
+If X = 2 Then Call BOX2FILE
 
 8655 If X >= 1 Then X = 0
 Return
@@ -2974,12 +2998,98 @@ Sub TICKER ()
 2884 End Sub
 
 
+
 '------------------------------
-'      PRINTBOX Subroutine
+'      BOX2FILE Subroutine
 '------------------------------
-' ...explanation...
-Sub PRINTBOX
+' Prints BoxScore to file
+Sub BOX2FILE
+    If AP1 = 1 Then
+        NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
+        GoTo 8951
+    End If
+
+    Cls
+
+    Input "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
+
+    8951 Open p$(1) + NM$ For Output As #2
+
+    If N <> 2 Then Print #2, "@ "; B$(N): Print #2,
+
+    For I = 0 To 1
+        Print #2, B$(I); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2));
+        If S(0, 1) + S(0, 2) = S(1, 1) + S(1, 2) Then Print #2, ; Tab(23); Str$(S(I, 3));
+        If S(0, 1) + S(0, 2) <> S(1, 1) + S(1, 2) Then Print #2, ; Tab(23); "- "; S(I, 0): GoTo 8963
+        If S(0, 1) + S(0, 2) + S(0, 3) = S(1, 1) + S(1, 2) + S(1, 3) Then Print #2, ; Tab(26); Str$(S(I, 4));
+        If S(0, 1) + S(0, 2) + S(0, 3) <> S(1, 1) + S(1, 2) + S(1, 3) Then Print #2, ; Tab(26); "- "; S(I, 0): GoTo 8963
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, ; Tab(29); Str$(S(I, 5));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, ; Tab(29); "- "; Str$(S(I, 0)): GoTo 8963
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, ; Tab(32); Str$(S(I, 6));
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, ; Tab(32); "- "; Str$(S(I, 0)): GoTo 8963
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then Print #2, ; Tab(35); Str$(S(I, 7)); Tab(38); Str$(S(I, 0)): GoTo 8963
+        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then Print #2, ; Tab(35); "- "; Str$(S(I, 0)): GoTo 8963
+    8963 Next I
+
+    For I = 0 To 1: Print #2,: Print #2, B$(I)
+        Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+        For I1 = 0 To 13
+            If AA$(I, I1) = "XXX" Then 8970
+
+            Print #2, AA$(I, I1); Tab(14);
+
+            If ZZ(I, I1) = 0 Then Print #2, ; Tab(15); "DNP";: GoTo 8968
+
+            Print #2, Using "##"; Int(ZZ(I, I1) / 60);: Print #2, ":";
+
+            If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+
+            8968 Print #2, ; Tab(21);: Print #2, Using "##"; A(I, I1, 8);
+            Print #2, "-";: Print #2, Using "##"; A(I, I1, 7);: Print #2, Using "  ##"; W%(I, I1, 0);: Print #2, "-";: Print #2, Using "##"; W%(I, I1, 1);: Print #2, Using "  ##"; A(I, I1, 10);: Print #2, "-";: Print #2, Using "##"; A(I, I1, 9);
+            Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24), A(I, I1, 11), A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0), A(I, I1, 12), A(I, I1, 14), A(I, I1, 15), A(I, I1, 13), A(I, I1, 23)
+
+            V9(0) = V9(0) + A(I, I1, 8)
+            V9(1) = V9(1) + A(I, I1, 7)
+            V9(2) = V9(2) + A(I, I1, 10)
+            V9(3) = V9(3) + A(I, I1, 9)
+            V9(4) = V9(4) + A(I, I1, 11)
+            V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+            V9(13) = V9(13) + W%(I, I1, 0): V9(14) = V9(14) + W%(I, I1, 1)
+            V9(6) = V9(6) + A(I, I1, 12)
+            V9(7) = V9(7) + A(I, I1, 14)
+            V9(8) = V9(8) + A(I, I1, 15)
+            V9(9) = V9(9) + A(I, I1, 13)
+            V9(11) = V9(11) + A(I, I1, 24)
+            V9(12) = V9(12) + A(I, I1, 23)
+            V9(10) = V9(10) + ZZ(I, I1)
+
+        8970 Next I1
+
+        If V9(3) = 0 Then V9(3) = 1
+
+        Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);: Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
+        Print #2, ; Tab(28);: Print Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
+        Print #2, ; Tab(35);: Print Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
+        Print #2, ; Tab(42);: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
+        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I): Print #2, "TOTAL REBOUNDS  -"; R3(I)
+
+        For I2 = 0 To 14: V9(I2) = 0: Next I2
+
+    Next I
+
+    Print #2, Chr$(12)
+
+    Close 2
+End Sub
+
+
+'------------------------------
+'      BOX2PRINTER Subroutine
+'------------------------------
+' Prints BoxScore to printer
+Sub BOX2PRINTER
     8900 If N <> 2 Then LPrint "@ "; B$(N): LPrint
+
     For I = 0 To 1
         LPrint B$(I); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2));
         If S(0, 1) + S(0, 2) = S(1, 1) + S(1, 2) Then LPrint ; Tab(23); Str$(S(I, 3));
@@ -2993,44 +3103,83 @@ Sub PRINTBOX
         If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then LPrint ; Tab(35); Str$(S(I, 7)); Tab(38); Str$(S(I, 0)): GoTo 8913
         If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then LPrint ; Tab(35); "- "; Str$(S(I, 0)): GoTo 8913
     8913 Next I
+
     For I = 0 To 1: LPrint: LPrint B$(I)
         LPrint "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+
         For I1 = 0 To 13
             If AA$(I, I1) = "XXX" Then 8920
+
             LPrint AA$(I, I1); Tab(14);
+
             If ZZ(I, I1) = 0 Then LPrint ; Tab(15); "DNP";: GoTo 8918
+
             LPrint Using "##"; Int(ZZ(I, I1) / 60);: LPrint ":";: If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then LPrint Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else LPrint "0";: LPrint Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+
             8918 LPrint ; Tab(21);: LPrint Using "##"; A(I, I1, 8);: LPrint "-";: LPrint Using "##"; A(I, I1, 7);: LPrint Using "  ##"; W%(I, I1, 0);: LPrint "-";: LPrint Using "##"; W%(I, I1, 1);: LPrint Using "  ##"; A(I, I1, 10);: LPrint "-";: LPrint Using "##"; A(I, I1, 9);
+
             LPrint Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24), A(I, I1, 11), A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0), A(I, I1, 12), A(I, I1, 14), A(I, I1, 15), A(I, I1, 13), A(I, I1, 23)
-            V9(0) = V9(0) + A(I, I1, 8): V9(1) = V9(1) + A(I, I1, 7): V9(2) = V9(2) + A(I, I1, 10): V9(3) = V9(3) + A(I, I1, 9): V9(4) = V9(4) + A(I, I1, 11): V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0): V9(13) = V9(13) + W%(I, I1, 0): V9(14) = V9(14) + W%(I, I1, 1)
+
+            V9(0) = V9(0) + A(I, I1, 8)
+            V9(1) = V9(1) + A(I, I1, 7)
+            V9(2) = V9(2) + A(I, I1, 10)
+            V9(3) = V9(3) + A(I, I1, 9)
+            V9(4) = V9(4) + A(I, I1, 11)
+            V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0)
+            V9(13) = V9(13) + W%(I, I1, 0)
+            V9(14) = V9(14) + W%(I, I1, 1)
             V9(6) = V9(6) + A(I, I1, 12)
-            V9(7) = V9(7) + A(I, I1, 14): V9(8) = V9(8) + A(I, I1, 15): V9(9) = V9(9) + A(I, I1, 13): V9(11) = V9(11) + A(I, I1, 24): V9(12) = V9(12) + A(I, I1, 23)
+            V9(7) = V9(7) + A(I, I1, 14)
+            V9(8) = V9(8) + A(I, I1, 15)
+            V9(9) = V9(9) + A(I, I1, 13)
+            V9(11) = V9(11) + A(I, I1, 24)
+            V9(12) = V9(12) + A(I, I1, 23)
             V9(10) = V9(10) + ZZ(I, I1)
         8920 Next I1
+
         If V9(3) = 0 Then V9(3) = 1
+
         LPrint: LPrint "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);: LPrint Using "##"; V9(0);: LPrint "-";: LPrint Using "###"; V9(1);
         LPrint ; Tab(28);: LPrint Using "##"; V9(13);: LPrint "-";: LPrint Using "##"; V9(14);
         LPrint ; Tab(35);: LPrint Using "##"; V9(2);: LPrint "-";: LPrint Using "##"; V9(3);
         LPrint ; Tab(42);: LPrint Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
         LPrint ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": LPrint: LPrint "TOTAL TURNOVERS -"; T0(I): LPrint "TOTAL REBOUNDS  -"; R3(I)
+
         For I2 = 0 To 14: V9(I2) = 0: Next I2
+
     Next I
+
     LPrint Chr$(12)
+
 End Sub
 
 
 '------------------------------
-'      FILEBOX Subroutine
+'    BOX2SPC Subroutine
 '------------------------------
-' ...explanation...
-Sub FILEBOX
-    If AP1 = 1 Then
-        NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
-        GoTo 8951
-    End If
-    Cls
-    Input "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
-    8951 Open p$(1) + NM$ For Output As #2
+' Creates box score file for
+' the event that any "special"
+' (SPC) milestones were reached
+Sub BOX2SPC (NM$)
+    Open p$(1) + NM$ For Output As #2
+    If H - 3 > E%(1) Then Print #2, Using "MORE THAN ## OVERTIMES"; E%(1)
+    If S(1, 0) + S(0, 0) > E%(2) Then Print #2, Using "MORE THAN ### COMBINED POINTS"; E%(2)
+    If R3(0) + R3(1) > E%(3) Then Print #2, Using "MORE THAN ### COMBINED REBOUNDS"; E%(3)
+    If S(0, 0) > E%(4) Then Print #2, B$(0);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
+    If S(1, 0) > E%(4) Then Print #2, B$(1);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
+    If R3(0) > E%(5) Then Print #2, B$(0);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
+    If R3(1) > E%(5) Then Print #2, B$(1);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
+
+    For I = 0 To 1
+        For I1 = 0 To 13
+            If A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) Then Print #2, AA$(I, I1);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(6)
+            If A(I, I1, 11) > E%(7) Then Print #2, AA$(I, I1);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(7)
+            If A(I, I1, 14) > E%(8) Then Print #2, AA$(I, I1);: Print #2, Using " HAD MORE THAN ### ASSISTS"; E%(8)
+            If A(I, I1, 15) > E%(9) Then Print #2, AA$(I, I1);: Print #2, Using " BLOCKED MORE THAN ### SHOTS"; E%(9)
+            If A(I, I1, 13) > E%(10) Then Print #2, AA$(I, I1);: Print #2, Using " HAD MORE THAN ### STEALS"; E%(10)
+            If W%(I, I1, 0) > E%(11) Then Print #2, AA$(I, I1);: Print #2, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
+        Next
+    Next
     If N <> 2 Then Print #2, "@ "; B$(N): Print #2,
     For I = 0 To 1
         Print #2, B$(I); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2));
@@ -3049,7 +3198,7 @@ Sub FILEBOX
         Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
         For I1 = 0 To 13
             If AA$(I, I1) = "XXX" Then 8970
-            Print #2, AA$(I, I1); Tab(14);
+            Print #2, AA$(I, I1); Tab(14)
             If ZZ(I, I1) = 0 Then Print #2, ; Tab(15); "DNP";: GoTo 8968
             Print #2, Using "##"; Int(ZZ(I, I1) / 60);: Print #2, ":";
             If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
@@ -3062,15 +3211,15 @@ Sub FILEBOX
             V9(10) = V9(10) + ZZ(I, I1)
         8970 Next I1: If V9(3) = 0 Then V9(3) = 1
         Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);: Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
-        Print #2, ; Tab(28);: Print Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
-        Print #2, ; Tab(35);: Print Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
-        Print #2, ; Tab(42);: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
+        Print #2, Tab(28); Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
+        Print #2, ; Tab(35); Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
+        Print #2, ; Tab(42); Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
         Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I): Print #2, "TOTAL REBOUNDS  -"; R3(I)
         For I2 = 0 To 14: V9(I2) = 0: Next I2
     Next I
-    Print #2, Chr$(12)
-    Close 2
+    Print #2, Chr$(12): Close 2
 End Sub
+
 
 
 '------------------------------
@@ -4146,18 +4295,25 @@ End Sub
 '------------------------------
 '    BOXSCREEN Subroutine
 '------------------------------
-' ...explanation...
+' Prints BoxScore to Screen
 Sub BOXSCREEN ()
     For I = 0 To 1: Color TR%(I, 0), TR%(I, 1)
         Print B$(I): Color 14, 0
         Print "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
+
         For I1 = 0 To 13
             If AA$(I, I1) = "XXX" Or ZZ(I, I1) = 0 Then 8529
-            Color 15: Print AA$(I, I1); Tab(14)
+
+            Color 15
+
+            Print AA$(I, I1); Tab(14);
+
             If ZZ(I, I1) <> 0 Then Print Using "##"; Int(ZZ(I, I1) / 60);: Print ":";: If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then Print Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else Print "0";: Print Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
             Locate , 21: Print Using "##"; A(I, I1, 8);: Print "-";: Print Using "##"; A(I, I1, 7);: Print Using "  ##"; W%(I, I1, 0);: Print "-";: Print Using "##"; W%(I, I1, 1);: Print Using "  ##"; A(I, I1, 10);: Print "-";: Print Using "##"; A(I, I1, 9);
             Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24), A(I, I1, 11), A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0), A(I, I1, 12), A(I, I1, 14), A(I, I1, 15), A(I, I1, 13), A(I, I1, 23);
+
             If ZZ(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
+
             V9(0) = V9(0) + A(I, I1, 8)
             V9(1) = V9(1) + A(I, I1, 7)
             V9(2) = V9(2) + A(I, I1, 10)
@@ -4174,26 +4330,37 @@ Sub BOXSCREEN ()
             V9(12) = V9(12) + A(I, I1, 23)
             V9(10) = V9(10) + ZZ(I, I1)
         8529 Next I1
+
         If V9(3) = 0 Then V9(3) = 1
-        Print: Color 14: Print "TOTALS";: Color 15: Print ; Tab(14); Int(V9(10) / 60);: Locate , 21: Print Using "##"; V9(0);: Print "-";: Print Using "###"; V9(1);
+        Print
+        Color 14
+        Print "TOTALS";
+        Color 15
+        Print ; Tab(14); Int(V9(10) / 60);
+        Locate , 21: Print Using "##"; V9(0);: Print "-";: Print Using "###"; V9(1);
         Locate , 28: Print Using "##"; V9(13);: Print "-";: Print Using "##"; V9(14);
         Locate , 35: Print Using "##"; V9(2);: Print "-";: Print Using "##"; V9(3);
         Locate , 42: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
+
         Print ; Tab(22);
         If V9(1) <> 0 Then Print Int(((V9(0) / V9(1)) * 100) + .5); "%";
+
         Print ; Tab(35);
         If V9(3) <> 0 Then Print Int(((V9(2) / V9(3)) * 100) + .5); "%"
+        
         Print
         Color 14: Print "TOTAL TURNOVERS -";: Color 15: Print T0(I)
         Color 14: Print "TOTAL REBOUNDS  -";: Color 15: Print R3(I)
+
         For I2 = 0 To 14: V9(I2) = 0: Next I2
-        'Call HITKEY: Cls
+
         If AP1 = 1 Xor U5 = 2 Then
             I$ = GetKeyPress
         End If
         Cls
 
     Next I
+    
 End Sub
 
 
@@ -5086,70 +5253,6 @@ Sub EVENTS (COUNT, SPECIAL)
 
 8450 End Sub
 
-
-'------------------------------
-'    BOX2SPC Subroutine
-'------------------------------
-' ...explanation...
-Sub BOX2SPC (NM$)
-    Open p$(1) + NM$ For Output As #2
-    If H - 3 > E%(1) Then Print #2, Using "MORE THAN ## OVERTIMES"; E%(1)
-    If S(1, 0) + S(0, 0) > E%(2) Then Print #2, Using "MORE THAN ### COMBINED POINTS"; E%(2)
-    If R3(0) + R3(1) > E%(3) Then Print #2, Using "MORE THAN ### COMBINED REBOUNDS"; E%(3)
-    If S(0, 0) > E%(4) Then Print #2, B$(0);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
-    If S(1, 0) > E%(4) Then Print #2, B$(1);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
-    If R3(0) > E%(5) Then Print #2, B$(0);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
-    If R3(1) > E%(5) Then Print #2, B$(1);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
-
-    For I = 0 To 1
-        For I1 = 0 To 13
-            If A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0) > E%(6) Then Print #2, AA$(I, I1);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(6)
-            If A(I, I1, 11) > E%(7) Then Print #2, AA$(I, I1);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(7)
-            If A(I, I1, 14) > E%(8) Then Print #2, AA$(I, I1);: Print #2, Using " HAD MORE THAN ### ASSISTS"; E%(8)
-            If A(I, I1, 15) > E%(9) Then Print #2, AA$(I, I1);: Print #2, Using " BLOCKED MORE THAN ### SHOTS"; E%(9)
-            If A(I, I1, 13) > E%(10) Then Print #2, AA$(I, I1);: Print #2, Using " HAD MORE THAN ### STEALS"; E%(10)
-            If W%(I, I1, 0) > E%(11) Then Print #2, AA$(I, I1);: Print #2, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
-        Next
-    Next
-    If N <> 2 Then Print #2, "@ "; B$(N): Print #2,
-    For I = 0 To 1
-        Print #2, B$(I); Tab(17); Str$(S(I, 1)); Tab(20); Str$(S(I, 2));
-        If S(0, 1) + S(0, 2) = S(1, 1) + S(1, 2) Then Print #2, ; Tab(23); Str$(S(I, 3));
-        If S(0, 1) + S(0, 2) <> S(1, 1) + S(1, 2) Then Print #2, ; Tab(23); "- "; S(I, 0): GoTo 8963
-        If S(0, 1) + S(0, 2) + S(0, 3) = S(1, 1) + S(1, 2) + S(1, 3) Then Print #2, ; Tab(26); Str$(S(I, 4));
-        If S(0, 1) + S(0, 2) + S(0, 3) <> S(1, 1) + S(1, 2) + S(1, 3) Then Print #2, ; Tab(26); "- "; S(I, 0): GoTo 8963
-        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, ; Tab(29); Str$(S(I, 5));
-        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) Then Print #2, ; Tab(29); "- "; Str$(S(I, 0)): GoTo 8963
-        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, ; Tab(32); Str$(S(I, 6));
-        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) Then Print #2, ; Tab(32); "- "; Str$(S(I, 0)): GoTo 8963
-        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) = S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then Print #2, ; Tab(35); Str$(S(I, 7)); Tab(38); Str$(S(I, 0)): GoTo 8963
-        If S(0, 1) + S(0, 2) + S(0, 3) + S(0, 4) + S(0, 5) + S(0, 6) <> S(1, 1) + S(1, 2) + S(1, 3) + S(1, 4) + S(1, 5) + S(1, 6) Then Print #2, ; Tab(35); "- "; Str$(S(I, 0)): GoTo 8963
-    8963 Next I
-    For I = 0 To 1: Print #2,: Print #2, B$(I)
-        Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
-        For I1 = 0 To 13
-            If AA$(I, I1) = "XXX" Then 8970
-            Print #2, AA$(I, I1); Tab(14)
-            If ZZ(I, I1) = 0 Then Print #2, ; Tab(15); "DNP";: GoTo 8968
-            Print #2, Using "##"; Int(ZZ(I, I1) / 60);: Print #2, ":";
-            If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
-            8968 Print #2, ; Tab(21);: Print #2, Using "##"; A(I, I1, 8);
-            Print #2, "-";: Print #2, Using "##"; A(I, I1, 7);: Print #2, Using "  ##"; W%(I, I1, 0);: Print #2, "-";: Print #2, Using "##"; W%(I, I1, 1);: Print #2, Using "  ##"; A(I, I1, 10);: Print #2, "-";: Print #2, Using "##"; A(I, I1, 9);
-            Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A(I, I1, 24), A(I, I1, 11), A(I, I1, 8) * 2 + A(I, I1, 10) + W%(I, I1, 0), A(I, I1, 12), A(I, I1, 14), A(I, I1, 15), A(I, I1, 13), A(I, I1, 23)
-            V9(0) = V9(0) + A(I, I1, 8): V9(1) = V9(1) + A(I, I1, 7): V9(2) = V9(2) + A(I, I1, 10): V9(3) = V9(3) + A(I, I1, 9): V9(4) = V9(4) + A(I, I1, 11): V9(5) = V9(5) + (A(I, I1, 8) * 2) + A(I, I1, 10) + W%(I, I1, 0): V9(13) = V9(13) + W%(I, I1, 0): V9(14) = V9(14) + W%(I, I1, 1)
-            V9(6) = V9(6) + A(I, I1, 12)
-            V9(7) = V9(7) + A(I, I1, 14): V9(8) = V9(8) + A(I, I1, 15): V9(9) = V9(9) + A(I, I1, 13): V9(11) = V9(11) + A(I, I1, 24): V9(12) = V9(12) + A(I, I1, 23)
-            V9(10) = V9(10) + ZZ(I, I1)
-        8970 Next I1: If V9(3) = 0 Then V9(3) = 1
-        Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);: Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
-        Print #2, Tab(28); Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
-        Print #2, ; Tab(35); Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
-        Print #2, ; Tab(42); Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
-        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I): Print #2, "TOTAL REBOUNDS  -"; R3(I)
-        For I2 = 0 To 14: V9(I2) = 0: Next I2
-    Next I
-    Print #2, Chr$(12): Close 2
-End Sub
 
 
 '------------------------------
