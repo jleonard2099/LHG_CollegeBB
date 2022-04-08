@@ -15,20 +15,33 @@ DECLARE SUB SETTINGS ()
 DECLARE SUB SORTGAMES ()
 DECLARE SUB WRITEGAME ()
 
-Dim NN%(16): ' NUMBER OF TEAMS IN A REGION, UP TO 16 REGIONS
-Dim N$(16, 16, 3): ' TEAM NAMES FOR EACH SEED SLOT
-Dim R$(16): ' REGIONAL NAMES
-Dim D$(3), U6 As Single, Y As Long
-Dim OP%(14): ' TOURNAMENT DEFAULTS
-Dim Q$(300), teamItems$(500), V%(500), NG%(300, 17), H$(300), V$(300), HS%(300), VS%(300)
-Dim YN$(300, 3), L%(4)
-Dim N%(16, 16, 3): ' REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-Dim C%(1): ' 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
+Dim NN%(16) 'Number of Teams Per Region (up to 16 Regions)
+Dim R$(16) ' Region Names
+
+Dim N$(16, 16, 3) ' Team Names for Each Seed Slot
+
+Dim teamItems$(500)
+
 Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), menuItems$(17), T%(9)
-Dim Shared R, TC, NG%, OP%, V$, H$, YN$, F$, Q$, C%, D$
+Dim L%(4), V%(500)
+Dim N%(16, 16, 3) ' REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
+Dim C%(1) ' 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
+
+Dim U6 As Single, Y As Long
+
+Dim Shared OP%(14), NG%(300, 17) ' TOURNAMENT DEFAULTS
+Dim Shared HS%(300), VS%(300)
+Dim Shared D$(3) 'File Paths
+Dim Shared H$(300), V$(300), Q$(300), YN$(300, 3)
+Dim Shared F$
+Dim Shared TC
+
+'Unsure about these - are they needed for other modules?
+Dim Shared R
 
 
-TS$(0) = "N": TS$(1) = "Y": SC$(0) = "NO SHOT CLOCK": SC$(1) = "45 SEC CLOCK ": SC$(2) = "35 SEC CLOCK "
+TS$(0) = "N": TS$(1) = "Y"
+SC$(0) = "NO SHOT CLOCK": SC$(1) = "45 SEC CLOCK ": SC$(2) = "35 SEC CLOCK " ':SC$(3) = "30 SEC CLOCK"
 HC$(1) = "Y": HC$(2) = "N"
 TF$(0) = "N": TF$(1) = "Y"
 TE$(0) = "SHOOT 1+1": TE$(1) = "SHOOT 2  "
@@ -85,8 +98,13 @@ If Q = 1 Or Q = 3 Then 610
 'GLOBAL SETUP TOURNEY DEFAULTS
 
 20 Cls
-Color , 4: Locate 1, 1: Print Tab(80);: Locate , 19: Color 0
-Print "SELECT GENERAL TOURNAMENT OPTIONS"
+
+Color , 4
+Locate 1, 1: Print Tab(80);
+
+Color 0
+Locate , 19: Print "SELECT GENERAL TOURNAMENT OPTIONS"
+
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 
 154 Locate 5, 2: Color 14: Print "(1) ";: Color 15: Print "3-POINT SHOT: "; TS$(OP%(3))
@@ -100,12 +118,15 @@ Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 162 Locate 9, 2: Color 14: Print "(5) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(OP%(6))
 
 164 Locate 10, 2: Color 14: Print "(6) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(OP%(10))
+
 Locate 11, 2: Color 14: Print "(7) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(OP%(14))
 
 163 Locate 12, 2: Color 14: Print "(8) ";: Color 15: Print "ACCEPT SETTINGS"
+
 165 I$ = GetKeyPress$
 If I$ = Chr$(27) Then 10
 I = Val(I$): If I < 1 Or I > 8 Then 165
+
 If I = 1 Then OP%(3) = 1 - OP%(3): GoTo 154
 If I = 2 Then OP%(7) = OP%(7) + 1
 If OP%(7) > 2 Then OP%(7) = 0
@@ -118,14 +139,16 @@ If I = 5 Then OP%(6) = 1 - OP%(6): GoTo 154
 If I = 6 Then OP%(10) = 1 - OP%(10): GoTo 154
 If I = 7 Then OP%(14) = 1 - OP%(14): GoTo 154
     
+' -- Why does having CAPS LOCK on break this???
 Color 15, 1
 FG = 0
 BG = 7
 Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
 Cls
-    
-Color , 6: Locate 1, 1: Print Tab(80);: Locate , 22: Color 15
-Print "TOURNAMENT  - GENERAL INFORMATION"
+Color , 6
+Locate 1, 1: Print Tab(80);
+Color 15
+Locate , 22: Print "TOURNAMENT  - GENERAL INFORMATION"
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 Locate 7, 1: QPrint "FILE NAME (8 CHARACTERS) ", 14, 1, -1
 Locate , 26: QPrint PadRight$(F$, 8), FG, BG, -1
@@ -143,6 +166,7 @@ Call TextIn(F$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
 If XCode = 1 GoTo GETDIV1: 'can't back up any more, stay here
 If XCode = 2 GoTo Done 'all done entering data
 F$ = _Trim$(F$)
+
 GetDiv2:
 Locate 9, 20 'location of beginning of field
 CapsOn = 0: NumOnly = 0: Max = 40 'specify field parameters
@@ -150,6 +174,7 @@ Call TextIn(FF$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
 If XCode = 1 GoTo GETDIV1: 'can't back up any more, stay here
 If XCode = 2 GoTo Done 'all done entering data
 FF$ = _Trim$(FF$)
+
 GetDiv3:
 Locate 11, 40 'location of beginning of field
 CapsOn = 0: NumOnly = 0: Max = 1 'specify field parameters
@@ -174,18 +199,18 @@ Call YesNoB(X$, XCode, FG, BG)
 Locate , 1
 ClearEOL 14, 1
 If XCode = 1 GoTo GETDIV4
+
 If X$ = Chr$(27) Then 10
 If X$ = "N" GoTo GETDIV1
 If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 If UCase$(C$) = "Y" Then C%(0) = 1 Else C%(0) = 0
 C%(1) = C%(0)
-If F$ = "" Then
 
+If F$ = "" Then
     Locate 10
     Call CSMsgBox("TOUNAMENT FILE NAME IS BLANK PRESS ANY KEY TO CONTINUE SELECTING", 28, Pass)
     I$ = GetKeyPress$
     Call CSMsgBox("", 0, Pass)
-
     GoTo GETDIV1
 End If
 
@@ -303,7 +328,7 @@ For NR = 1 To R
     Locate 7, 27: Input NY$
     If NY$ = "" Then GoSub 1102: GoTo 182
     YN$ = NY$
-    ERASE teamItems$
+    Erase teamItems$
     Cls
     If UCase$(Left$(D$(0), 1)) = "C" Then 210
     GoSub 4505
@@ -325,7 +350,7 @@ For NR = 1 To R
     N%(NR, B, 3) = T%(1)
     '    LOCATE , 23: PRINT "(C)OMPUTER OR (H)UMAN CONTROL";
     '
-    391 I$ = GetKeyPress$
+    '391 I$ = GetKeyPress$
     '    IF UCASE$(I$) <> "C" AND UCASE$(I$) <> "H" THEN 391
     '    IF UCASE$(I$) = "C" THEN N%(NR, B, 1) = 1 ELSE N%(NR, B, 1) = 0
     N%(NR, B, 1) = 1
@@ -2697,11 +2722,11 @@ If EXITCODE% = -79 Then Start% = NT: SELECTION% = NT: GoTo 1106
 If Start% < 1 Then Start% = 1: SELECTION% = Start%
 If Start% > NT Then Start% = NT: SELECTION% = Start%
 If EXITCODE% = -81 Or EXITCODE% = -73 Then 1106
+
 D = V%(SELECTION%)
 Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  LEFT/RIGHT ARROW  UP/DOWN ARROW  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 Open D$(0) + "BASK." + YN$ For Random As #1 Len = 655
-FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
-AS Q$(19), 602 AS X$
+Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 Get #1, D
 A$ = Q$(0)
 
@@ -5228,6 +5253,7 @@ Sub WRITEGAME ()
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
     Next
+
     Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)

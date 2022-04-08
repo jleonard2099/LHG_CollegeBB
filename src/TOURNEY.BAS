@@ -10,7 +10,9 @@ _AllowFullScreen
 Dim Q$(375), YN$(500, 3), AP%(1), NG%(500, 17), NGG(500)
 Dim SC$(2), D$(1), TS$(1), U5$(3), LC$(2), CM$(1), TE$(1), TF$(1)
 ReDim MON%(500), DY%(500), yr%(500), H$(500), V$(500), HS%(500), VS%(500)
+
 Open "DEV.BAS" For Input As #1: Input #1, D$(0): Close 1
+
 U5$(0) = "HUMAN OPPONENT            "
 U5$(1) = "COMPUTER IS VISITING TEAM "
 U5$(2) = "COMPUTER IS HOME TEAM     "
@@ -26,18 +28,30 @@ TF$(0) = "N": TF$(1) = "Y"
 10 Spec$ = D$(0) + "*.TOU"
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
-If Count% = 0 Then 6500
-ReDim F$(0 To Count%)
-For X = 1 To Count%
-    F$(X) = Space$(12)
-Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), Count%, 0)
-nf% = Count%
 
-6500 '
-Color 7, 0: Cls
+If Count% > 0 Then
+	ReDim F$(0 To Count%)
+
+	For X = 1 To Count%
+		F$(X) = Space$(12)
+	Next
+
+	F$(0) = Spec$
+	Call ReadFile(F$())
+	'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+	nf% = Count%
+Else
+	'This was added to handle if no TOU files are available
+	'Original game would just try to push ahead anyway
+	Locate 10
+    Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, Pass)
+    I$ = GetKeyPress$
+    Call CSMsgBox("", 0, Pass)
+	RUN "ADDTOURN.EXE"
+End If
+
+Color 7, 0
+Cls
 NG%(0, 8) = 0
 NG%(0, 3) = 1
 NG%(0, 7) = 0
@@ -45,10 +59,12 @@ NG%(0, 2) = 1
 NG%(0, 5) = 5
 YN$(0, 0) = ""
 YN$(0, 1) = ""
+
 For I = 1 To 500
     V$(I) = "": NG%(I, 13) = 0
     H$(I) = ""
 Next
+
 YN$(0, 3) = "10-01-91"
 YN$(0, 2) = "07:30P"
 TS$(0) = "N": TS$(1) = "Y"

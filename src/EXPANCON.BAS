@@ -7,21 +7,20 @@ _Title "Courtside College Basketball - Expanded Leaders"
 _AllowFullScreen
 
 DECLARE SUB TITLE ()
-'DECLARE SUB CATEGORIES ()
 DECLARE SUB BUILDSTATS ()
 
-'Dim A$(15), A(15, 14), W0(15), W1(15), Z(15), Z1(15)
-Dim Z1$(40), GM(40), GM1(40)
-Dim AL$(600), W0L(600), W1L(600), TT(40, 15), TT1(40, 15), TT$(40, 15), TT1$(40, 15)
-Dim TMA$(600), TP$(31), TP1$(39)
-'Dim ZA$(40)
-Dim D$(1), menuItems$(4)
-Dim Shared Z1$, D$, A$, A, W0, W1, JB, AL$, TMA$, GMA, Z, Z1
-Dim Shared Y, TS, TT, TT$, GM, TBN, K1, AL, TTS, TT1, TT1$, GM1
-Dim Shared W0L, W1L, F$
+Dim TP$(31), TP1$(39)
+Dim menuItems$(4)
+Dim Shared A$(15), AL$(600), D$(1), TMA$(600), TT$(40, 15), TT1$(40, 15), Z1$(40)
 
-ReDim TMM(600) As String * 15, TPP(600) As String * 15, TYP(600)
-ReDim AL(600, 14), GMA(600)
+Dim Shared GM(40), GM1(40), TT(40, 15), TT1(40, 15)
+Dim Shared W0(15), W1(15), W0L(600), W1L(600), Z(15), Z1(15)
+
+Dim Shared JB, TS, TTS, TMR
+
+ReDim TMM(600) As String * 15, TPP(600) As String * 15
+ReDim AL(600, 14), TYP(600)
+ReDim Shared GMA(600)
 
 Cls
 
@@ -41,7 +40,7 @@ Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. RE
 For I = 0 To 38: Read TP1$(I): Next
 
 5 Call TITLE
-ERASE menuItems$
+Erase menuItems$
 menuItems$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
 menuItems$(2) = "RETURN TO LEAGUE LEADER MENU    "
 SELECTION% = 1
@@ -78,7 +77,7 @@ Cls
 Call BUILDSTATS
 
 70 Call TITLE
-ERASE menuItems$
+Erase menuItems$
 menuItems$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
 menuItems$(2) = "VIEW TEAM TOTALS                "
 menuItems$(3) = "RETURN TO LEAGUE LEADER MENU    "

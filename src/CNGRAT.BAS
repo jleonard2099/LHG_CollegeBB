@@ -42,10 +42,16 @@ Color , 0
 D1 = SELECTION%
 If SCANCODE% = 27 Then D1 = 4
 
-901 If RN = 4 And D% >= 67 Then Run "HELLO.EXE 2"
-If RN = 4 Then Cls: Run "HELLO.EXE 2"
+'If RN = 4 Then Cls: Run "HELLO.EXE 2"
+'If RN = 4 And D% >= 67 Then Run "HELLO.EXE 2"
 If D1 < 1 Or D1 > 4 Then 100
-On D1 GOTO 56, 56, 56, 880
+'On D1 GOTO 56, 56, 56, 880
+
+If D1 = 4 Then
+	Cls
+	Run "HELLO.EXE 2"
+	End
+End If
 
 56 Color 15, 0: Cls
 JJ = 6
@@ -218,59 +224,72 @@ Locate , 12: Print "IS THIS CORRECT (YN)"
 If UCase$(I$) <> "N" Then NID% = 1: GoSub 9800: GoTo 100
 GoTo 300
 
-620 Cls: LPrint "TEAM ROSTER FOR "; A$
-
-630 LPrint: LPrint "AVG SHOTS PER GAME = "; T%(3); "      DEF FG ADJ = "; DA
-
-640 LPrint "OPP PCT OF 3FG ATT ADJ = "; V2%; "  OPP 3FG PCT ADJ = "; V1%: LPrint
+'Send team roster to default printer
+620 Cls
+LPrint "TEAM ROSTER FOR "; A$
+LPrint
+LPrint "AVG SHOTS PER GAME = "; T%(3); "      DEF FG ADJ = "; DA
+LPrint "OPP PCT OF 3FG ATT ADJ = "; V2%; "  OPP 3FG PCT ADJ = "; V1%
+LPrint
 LPrint "DEF STEAL ADJ "; L%(0)
 LPrint "OFF TURNOVER ADJ "; L%(1)
 LPrint "DEF TURNOVER ADJ "; L%(2)
 LPrint "OFF FOUL ADJ "; L%(3)
 LPrint
+LPrint "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
+LPrint
 
-650 LPrint "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%": LPrint
-
-660 For I = 0 To 13
-    If A$(I) = "XXX" Then 670
+For I = 0 To 13
+    If A$(I) <> "XXX" Then
     LPrint A$(I); Tab(15);
     LPrint Using "### ### ### ### ### "; A(I, 0); A(I, 1); X(I, 4); A(I, 2); A(I, 3);
     LPrint Using "## ## ## ## ## ### ###"; A(I, 4); A(I, 5); A(I, 6); X(I, 5); X(I, 6); X(I, 3); X(I, 2)
+	End If
+Next I
 
-670 Next I
-
-680 LPrint: LPrint "FG- FIELD GOAL %                 B- BLOCK SHOT RATING"
-
-690 LPrint "FT- FREE THROW %                FC- FOUL COMMIT RATING"
-
-700 LPrint "RB- REBOUNDING RATING           FD- FOUL DRAWING RATING"
-
-710 LPrint "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"
+LPrint
+LPrint "FG- FIELD GOAL %                 B- BLOCK SHOT RATING"
+LPrint "FT- FREE THROW %                FC- FOUL COMMIT RATING"
+LPrint "RB- REBOUNDING RATING           FD- FOUL DRAWING RATING"
+LPrint "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"
 LPrint "PS- PASSING RATING            3FG%- THREE POINT GOAL %"
-
-730 LPrint " D- DEFENSIVE RATING"
+LPrint " D- DEFENSIVE RATING"
 Return
 
-720 Cls: Print "TEAM ROSTER FOR ";: Color T%(0), T%(1): Print A$;: Color 14, 0
-Print "    AVG SHOTS PER GAME = ";: Color 15, 0
-Print T%(3);: Color 14, 0
-Print " DEF FG ADJ = ";: Color 15, 0: Print DA
+'Send team roster to screen
+720 Cls
+Print "TEAM ROSTER FOR ";
+Color T%(0), T%(1)
+Print A$;
+Color 14, 0
+Print "    AVG SHOTS PER GAME = ";
+Color 15, 0
+Print T%(3);
+Color 14, 0
+Print " DEF FG ADJ = ";
+Color 15, 0: Print DA
 Color 14, 0: Print "OPP PCT OF 3FG ATT ADJ = ";
-Color 15, 0: Print V2%;: Color 14, 0: Print "  OPP 3FG PCT ADJ = ";
+Color 15, 0: Print V2%;
+Color 14, 0: Print "  OPP 3FG PCT ADJ = ";
 Color 15, 0: Print V1%;
-Color 14, 0: Print "   DEF STEAL ADJ ";: Color 15, 0: Print L%(0)
-Color 14, 0: Print "OFF TURNOVER ADJ ";: Color 15, 0: Print L%(1);
-Color 14, 0: Print "    DEF TURNOVER ADJ ";: Color 15, 0: Print L%(2);
-Color 14, 0: Print "    OFF FOUL ADJ ";: Color 15, 0: Print L%(3)
+Color 14, 0: Print "   DEF STEAL ADJ ";
+Color 15, 0: Print L%(0)
+Color 14, 0: Print "OFF TURNOVER ADJ ";
+Color 15, 0: Print L%(1);
+Color 14, 0: Print "    DEF TURNOVER ADJ ";
+Color 15, 0: Print L%(2);
+Color 14, 0: Print "    OFF FOUL ADJ ";
+Color 15, 0: Print L%(3)
 Print
-Color 2, 0: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%": Color 15, 0
+Color 2, 0: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
+Color 15, 0
 For I = 0 To 13
-    If A$(I) = "XXX" Then 675
+    If A$(I) <> "XXX" Then 
     Print A$(I); Tab(16);
     Print Using "### ### ### ### ### "; A(I, 0); A(I, 1); X(I, 4); A(I, 2); A(I, 3);
     Print Using "## ## ## ### ##  ###  ###"; A(I, 4); A(I, 5); A(I, 6); X(I, 5); X(I, 6); X(I, 3); X(I, 2)
-
-675 Next I
+	End If
+Next I
 Print " B- BLOCK SHOT RATING           FC- FOUL COMMIT RATING"
 Print "RB- REBOUNDING RATING           FD- FOUL DRAWING RATING"
 Print "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"
@@ -279,52 +298,62 @@ I$ = GetKeyPress$
 Return
     
 
-800 Cls: Color T%(0), T%(1): Print A$: Color 14, 0
+800 Cls
+Color T%(0), T%(1)
+Print A$
+Color 14, 0
 Print "PLAYER          CONTRIBUTION"
 Print "                PERCENT"
 Color 15, 0
 T3 = 0
 For I = 0 To 13
-    Print Using "## "; I + 1;: Print A$(I);
-    Locate , 17: Print A(I, 3): Locate , 1
+    Print Using "## "; I + 1;
+	Print A$(I);
+    Locate , 17
+	Print A(I, 3)
+	Locate , 1
     T3 = T3 + A(I, 3)
 Next I
 Print
-Color 14: Print "TOTAL CP ";: Locate , 17: Color 15, 0: Print T3
+Color 14
+Print "TOTAL CP ";
+Locate , 17
+Color 15, 0
+Print T3
 
-805 Locate 21: Print "SELECT PLAYER TO CHANGE 1-14 (0-NO MORE CHANGE) ";
+Locate 21
+Print "SELECT PLAYER TO CHANGE 1-14 (0-NO MORE CHANGE) ";
 Input X9
 If X9 < 1 Or X9 > 14 Then 825
 X9 = X9 - 1
-Locate 22, 18: Print A$(X9): Locate , 1
+Locate 22, 18
+Print A$(X9)
+Locate , 1
 Locate 23, 1
 Input "ENTER CP: "; A(X9, 3)
 GoTo 800
 
-825 If T3 > 98 And T3 < 102 Then 840
-Cls
-GoSub 4500
-U$ = "TOTAL CONTRIBUTION MUST BE 100 %"
-Locate , (80 - Len(U$)) / 2
-Print U$
-U$ = "HIT ANY KEY TO CONTINUE"
-Locate , (80 - Len(U$)) / 2
-Print U$
-Color 15, 0
-830 I$ = GetKeyPress$
-GoTo 800
 
-840 Cls
+825 Cls
+If T3 > 98 And T3 < 102 Then 
+	GoSub 9800: Goto 100
+Else
+	GoSub 4500
+	U$ = "TOTAL CONTRIBUTION MUST BE 100 %"
+	Locate , (80 - Len(U$)) / 2
+	Print U$
+	U$ = "HIT ANY KEY TO CONTINUE"
+	Locate , (80 - Len(U$)) / 2
+	Print U$
+	Color 15, 0
+	830 I$ = GetKeyPress$
+	GoTo 800
+End If
 
-860 GoSub 9800
-
-870 GoTo 100
-
-880 Cls
-GoSub 4500
-
-881 Run "HELLO.EXE 2"
-End
+'880 Cls
+'GoSub 4500
+'881 Run "HELLO.EXE 2"
+'End
     
 1100 Open D$(0) + "BASK." + YN$ For Random As #1 Len = 655
 Y = LOF(1)
@@ -541,6 +570,7 @@ T1 = Y + 1
 Return
 
 9800 If NID% = 1 Then GoSub 9200: YN$ = NY$
+
 Open D$(0) + "BASK." + YN$ For Random As #1 Len = 655
 FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
 AS Q$(19), 602 AS X$
@@ -557,8 +587,10 @@ For I = 0 To 13
     For I1 = 0 To 6
         LSet Q$(I * 15 + I1 + 21) = MKI$(A(I, I1))
         LSet Q$(I * 15 + I1 + 28) = MKI$(X(I, I1))
-Next: Next
-Put #1, T1: Close 1
+	Next
+Next
+Put #1, T1
+Close 1
 
 Open D$(0) + "COLBBTMS." + YN$ For Random As #1 Len = 566
 Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
@@ -577,12 +609,14 @@ For I = 0 To 13
     LSet Q$(I * 16 + 5) = P$(I)
     For I1 = 0 To 13
         LSet Q$(I * 16 + I1 + 6) = MKI$(RS(I, I1))
-Next: Next
+	Next
+Next
 For I = 0 To 20
     LSet Q$(228 + I) = MKI$(T1%(I))
 Next
 LSet Q$(249) = MKI$(999)
-Put #1, T1: Close 1
+Put #1, T1
+Close 1
 
 10010 Return
 

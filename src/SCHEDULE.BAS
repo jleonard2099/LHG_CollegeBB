@@ -38,7 +38,8 @@ For X = 0 To 3
     Read MO$(X)
 Next
 
-10 Color 7, 0: Cls
+10 Color 7, 0
+Cls
 NG%(0, 8) = 3
 NG%(0, 3) = 1
 NG%(0, 7) = 1

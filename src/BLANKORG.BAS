@@ -52,6 +52,7 @@ Columns% = 4
 Spacing% = 6
 Row% = 4
 Column% = 1
+
 Locate 25, 1
 Color 14
 Print "ENTER";: Color 15

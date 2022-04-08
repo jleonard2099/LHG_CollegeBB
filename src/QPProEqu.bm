@@ -21,9 +21,9 @@ Function FCount% (fileSpec$)
         osSpec$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
 
         Select Case osSpec$
-            Case "[WINDOWS]": Shell _Hide "dir /on /b" + fileSpec$ + " > " + TmpFile$
-            Case "[MAC]": Shell _Hide "find . -iname fileSpec$ -type f -print0 | sort -z | tee TmpFile"
-            Case "[LINUX]": Shell _Hide "find . -iname fileSpec$ -type f -print0 | sort -z | tee TmpFile$'"
+            Case "[WINDOWS]": Shell _Hide "dir /on /b " + fileSpec$ + " > " + TmpFile$
+            Case "[MAC]": Shell _Hide "find . -iname " + fileSpec$ + " -type f -print0 | sort -z | tee " + TmpFile$
+            Case "[LINUX]": Shell _Hide "find . -iname " + fileSpec$ + " -type f -print0 | sort -z | tee " + TmpFile$
         End Select
 
         Index% = 0: DirList$(Index%) = "": ff% = FreeFile
@@ -209,7 +209,8 @@ End Sub
 Sub box0 (ULRow%, ULCol%, LRRow%, LRCol%, Char%, Colr%)
 
     ' TO DO:
-    ' Replace print characters with Char%
+    ' Convert Colr% to FG/ BG
+
     '1 = single line all around
     '2 = double line all around
     '3 = double line horizontally, single line vertically
@@ -697,11 +698,8 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
 
     'Right now the only issue with the code is
     'that it's very trusting of the user to get
-    'the parameters right, between column sizes
+    'the parameters right, like column sizes
     '(so it's not told to print off screen)
-    'and array lengths (if an array is longer
-    'than the # of menu items, it will try
-    'to print the blank items and throw an error!
 
     'Selected%
     ' which element was selected from the menu
@@ -739,11 +737,14 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
 
     itemLength% = Len(menuItems$(1))
     maxItemsPerScreen% = NumRows% * NumCols%
+    If maxItemsPerScreen% > Count% Then maxItemsPerScreen% = Count%
     ColWidth% = itemLength% + Spacing%
     TotalColsData% = Fix((Count% + (NumRows% - 1)) / NumRows%)
 
     'Determine how many items in the array are actually
     'needed for a menu (find the first empty element)
+    'This is basically a check against the Count% parameter
+    'It really shouldn't be used or needed
     numberItems% = UBound(menuItems$)
     For x = Start% To UBound(menuItems$)
         If menuItems$(x) = "" Then
@@ -819,7 +820,6 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
     Return
 
 
-
     '*** Get and process the user input ***
     UserInput:
 
@@ -888,8 +888,6 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
     Return
 
 End Sub
-
-
 
 
 '-----------------------------------
@@ -1125,20 +1123,20 @@ Sub ReadFile (fileList$())
     osSpec$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
 
     Select Case osSpec$
-        Case "[WINDOWS]": Shell _Hide "dir /on /b" + fileSpec$ + " > " + TmpFile$
-        Case "[MAC]": Shell _Hide "find . -iname fileSpec$ -type f -print0 | sort -z | tee TmpFile"
-        Case "[LINUX]": Shell _Hide "find . -iname fileSpec$ -type f -print0 | sort -z | tee TmpFile$'"
+        Case "[WINDOWS]": Shell _Hide "dir /on /b " + fileSpec$ + " > " + TmpFile$
+        Case "[MAC]": Shell _Hide "find . -iname " + fileSpec$ + " -type f -print0 | sort -z | tee " + TmpFile$
+        Case "[LINUX]": Shell _Hide "find . -iname " + fileSpec$ + " -type f -print0 | sort -z | tee " + TmpFile$
     End Select
 
     dirEntry = 0
-    Open tem$ For Input As #5
+    Open TmpFile$ For Input As #5
     While Not EOF(5)
         Line Input #5, x$
         dirEntry = dirEntry + 1
         fileList$(dirEntry) = x$
     Wend
     Close 5
-    Kill tem$
+    Kill TmpFile$
 End Sub
 
 
@@ -1188,7 +1186,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor%, BGColor%)
 
 
     TGetKey:
-    Call CapNum 'display Cap/Num if active
+    'Call CapNum 'display Cap/Num if active
 
     'Prevent INSERT if cursor is past the end
     If CursorPos > Length And Insrt <> 0 Then GoSub TInsertOff
@@ -1450,7 +1448,7 @@ Sub YesNoB (YN$, ExitCode, FGColor%, BGColor%)
 
 
     YGetKey:
-    Call CapNum 'print Cap/Num if active
+    'Call CapNum 'print Cap/Num if active
     X$ = InKey$
     If X$ = "" GoTo YGetKey
 

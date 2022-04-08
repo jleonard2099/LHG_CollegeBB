@@ -49,7 +49,7 @@ Print "SELECT LEAGUE TO ERASE"
 Color 15
 SELECTION% = 1
 Start% = 1
-FileFGColr% = 0: FileBGColr% = 7
+FileFGColr% = 15: FileBGColr% = 1
 HiLiteFGColr% = 0: HiLiteBGColr% = 7
 Rows% = 20
 Columns% = 4
