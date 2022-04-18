@@ -32,7 +32,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 12, 56, 2, 31)
+CALL box0(7, 24, 12, 56, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -56,10 +56,20 @@ End If
 56 Color 15, 0: Cls
 JJ = 6
 SN = 1: Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 Locate , 12: Print "ENTER DISK ID: ": Print
 Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -213,10 +223,20 @@ On B9 GOTO 210, 224, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222,
 300 Color 15, 0: Cls
 JJ = 6
 SN = 1: Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 Locate , 12: Print "ENTER NEW DISK ID: ": Print
 Locate 7, 31: Input NY$
 Locate , 12: Print "IS THIS CORRECT (YN)"
@@ -500,7 +520,8 @@ GoTo 250
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
 Return

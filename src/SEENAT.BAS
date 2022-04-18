@@ -21,13 +21,13 @@ Open "DEV.BAS" For Input As #1: For I = 0 To 1: Input #1, D$(I): Next: Close 1
 4000 Spec$ = D$(1) + "*.NLD"
 COUNT% = FCount%(Spec$)
 If COUNT% = 0 Then 4500
-ReDim F$(0 To COUNT%)
+ReDim nationalLeaderFiles$(0 To COUNT%)
 For X = 1 To COUNT%
-    F$(X) = Space$(12)
+    nationalLeaderFiles$(X) = Space$(12)
 Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), COUNT%, 0)
+nationalLeaderFiles$(0) = Spec$
+Call ReadFile(nationalLeaderFiles$())
+'CALL SortStr(VARPTR(nationalLeaderFiles$(1)), COUNT%, 0)
 
 1310 Cls
 Color , 1
@@ -50,7 +50,7 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE  ESC - EXIT PROGRAM";
 
 _MouseShow "DEFAULT"
-20 MAMenu F$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu nationalLeaderFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then 2900
@@ -59,14 +59,14 @@ If EXITCODE% = -79 Then START% = COUNT%: EXITCODE% = 3: SELECTION% = COUNT%: GoT
 If EXITCODE% = -73 Then START% = START% - 80: If START% < 1 Then START% = 1
 If EXITCODE% = -81 Then START% = START% + 80: If START% > COUNT% Then START% = COUNT%
 If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = START%: GoTo 20
-F$ = F$(SELECTION%)
-Locate 2, 33: Print F$
+targetFile$ = nationalLeaderFiles$(SELECTION%)
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 3910 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 1310
-F$ = RTrim$(F$)
-WE$ = Left$(F$, Len(F$) - 4)
+targetFile$ = RTrim$(targetFile$)
+WE$ = Left$(targetFile$, Len(targetFile$) - 4)
 GoTo 7
 
 4500 GoSub 4600
@@ -348,10 +348,10 @@ Return
 3100 Color 15, 0: Cls
 JJ = 7
 Locate 6, 8: Color 15, 1
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
 Locate , 12: Print "ENTER NAME FOR FILE: ": Print
 Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
 Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
@@ -640,15 +640,16 @@ Return
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
 Return
 
 2075 '
-Locate 8, 8: Color 15, 1: Print " Ö"; String$(61, 196); "· ";
-For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
-Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";: Locate 10, 15: Return
+Locate 8, 8: Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+For II = 1 To J: Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 10, 15: Return
 
 
 '------------------------------

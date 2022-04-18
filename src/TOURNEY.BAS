@@ -30,15 +30,15 @@ null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 
 If Count% > 0 Then
-	ReDim F$(0 To Count%)
+	ReDim tournamentFiles$0 To Count%)
 
 	For X = 1 To Count%
-		F$(X) = Space$(12)
+		tournamentFiles$X) = Space$(12)
 	Next
 
-	F$(0) = Spec$
-	Call ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+	tournamentFiles$0) = Spec$
+	Call ReadFile(tournamentFiles$))
+	'CALL SortStr(VARPTR(tournamentFiles$1)), Count%, 0)
 	nf% = Count%
 Else
 	'This was added to handle if no TOU files are available
@@ -223,10 +223,10 @@ GoTo 158
 Color , 0: Cls
 JJ = 7
 Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
 Locate , 12: Print "TOTAL GAMES ="; AP%(0)
 Locate , 12: Print "SELECT GAME # TO START AND END WITH": Print
 Locate , 12: Input "ENTER START GAME #: "; SG%: Print
@@ -312,7 +312,7 @@ Print "ENTER";: Color 15
 Print "-SELECTS TOURNEY";
 
 _MouseShow "DEFAULT"
-320 MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+320 MAMenu tournamentFiles$), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then Run "ADDTOURN.EXE"
@@ -321,17 +321,17 @@ If EXITCODE% = -79 Then Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GoT
 If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
 If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > Count% Then Start% = Count%
 If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 320
-F$ = F$(SELECTION%)
+targetFile$ = tournamentFiles$SELECTION%)
 T1 = SELECTION%
-Locate 2, 33: Print F$
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 3910 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 2100
-F$ = RTrim$(F$)
-WE$ = Left$(F$, Len(F$) - 4)
+targetFile$ = RTrim$(targetFile$)
+WE$ = Left$(targetFile$, Len(targetFile$) - 4)
 Color 15, 0
-F$ = WE$
+targetFile$ = WE$
 GoTo 605
     
 '$INCLUDE: 'KeyInput.BM'

@@ -53,7 +53,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 10, 57, 2, 31)
+CALL box0(7, 24, 10, 57, 2,  15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -65,8 +65,8 @@ If SCANCODE% = 27 Or SELECTION% = 2 Then Run "HELLO.EXE 3"
     Z1$(X) = "XXX"
 Next
 Spec$ = D$(1) + "*.TMS": GoSub 1440
-LG$ = F$
-Open D$(1) + F$ + ".TMS" For Input As #2
+LG$ = targetFile$
+Open D$(1) + targetFile$ + ".TMS" For Input As #2
 Input #2, LG$
 Input #2, D1$: Input #2, D2$
 For X = 1 To 30
@@ -91,7 +91,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 11, 57, 2, 31)
+CALL box0(7, 24, 11, 57, 2,  15, 1)
 
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -104,9 +104,11 @@ If SELECTION% = 2 Then 2880
 
 80 Color , 0: Cls: Print: Print: Print: Print: J = 20: ZZ = 1
 '
-Locate 2, 4: Color 15, 4: Print " Ö"; String$(66, 196); "· ";
-For II = 1 To J: Locate 2 + II, 4: Print " º"; String$(66, 32); "º ";: Next
-Locate 3 + J, 4: Print " Ó"; String$(66, 196); "½ ";: Locate 10, 15
+Locate 2, 4: Color 15, 4
+Print " " + Chr$(214); String$(66, 196); "· ";
+For II = 1 To J: Locate 2 + II, 4: Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";: Next
+Locate 3 + J, 4: Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";
+Locate 10, 15
 
 200 For I = 0 To 15: Color 14: Locate I + 3, 8: Print Using "##"; I;: Print " ";: Color 0: Print TP$(I);: Color 14: Print Tab(40); Using "##"; I + 16;: Print " ";: Color 0: Print TP$(I + 16): Next
 Print: Locate , 23: Input "SELECT NUMBER TO VIEW"; B9
@@ -395,9 +397,9 @@ If PV = 2 Then 850
 
 2880 Color , 0: Cls: Print: Print: Print: Print: J = 21: ZZ = 3
 '
-Locate 1, 4: Color 15, 6: Print " Ö"; String$(66, 196); "· ";
-For II = 1 To J: Locate 1 + II, 4: Print " º"; String$(66, 32); "º ";: Next
-Locate 2 + J, 4: Print " Ó"; String$(66, 196); "½ ";: Locate 10, 15
+Locate 1, 4: Color 15, 6: Print " " + Chr$(214); String$(66, 196); "· ";
+For II = 1 To J: Locate 1 + II, 4: Print " " + Chr$(186); String$(66, 32); Chr$(186) + " ";: Next
+Locate 2 + J, 4: Print " " + Chr$(211); String$(66, 196); Chr$(189) + " ";: Locate 10, 15
 For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
 For I = 20 To 38: Locate I - 18, 38: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
 
@@ -643,9 +645,9 @@ If I$ = "R" Then GoTo 5017
 If I$ <> "H" And I$ <> "L" And I$ <> "R" Then 5002
 
 5007 '
-Locate 8, 8: Color 15, 1: Print " Ö"; String$(57, 196); "· ";
-For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(57, 32); "º ";: Next
-Locate 9 + J, 8: Print " Ó"; String$(57, 196); "½ ";: Locate 10, 15: Return
+Locate 8, 8: Color 15, 1: Print " " + Chr$(214); String$(57, 196); "· ";
+For II = 1 To J: Locate 8 + II, 8: Print " " + Chr$(186); String$(57, 32); Chr$(186) + " ";: Next
+Locate 9 + J, 8: Print " " + Chr$(211); String$(57, 196); Chr$(189) + " ";: Locate 10, 15: Return
 
 5015 JX = 1: GoTo 5030
 
@@ -722,9 +724,9 @@ If I$ = "R" Then GoTo 5017
 If I$ <> "P" And I$ <> "V" And I$ <> "R" Then 7002
 
 7007 '
-Locate 9, 15: Color 15, 0: Print " Ö"; String$(40, 196); "· ";
-For II = 1 To J: Locate 9 + II, 15: Print " º"; String$(40, 32); "º ";: Next
-Locate 10 + J, 15: Print " Ó"; String$(40, 196); "½ ": Locate 10, 10
+Locate 9, 15: Color 15, 0: Print " " + Chr$(214); String$(40, 196); "· ";
+For II = 1 To J: Locate 9 + II, 15: Print " " + Chr$(186); String$(40, 32); Chr$(186) + " ";: Next
+Locate 10 + J, 15: Print " " + Chr$(211); String$(40, 196); "½ ": Locate 10, 10
 
 7015 Return
 
@@ -736,22 +738,22 @@ If LG > QW Then 8000
 GoTo 8015
 
 8007 '
-Locate 10, 20: Color 4, 15: Print " Ö"; String$(30, 196); "· ";
-For II = 1 To J: Locate 10 + II, 20: Print " º"; String$(30, 32); "º ";: Next
-Locate 11 + J, 20: Print " Ó"; String$(30, 196); "½ ": Locate 11
+Locate 10, 20: Color 4, 15: Print " " + Chr$(214); String$(30, 196); "· ";
+For II = 1 To J: Locate 10 + II, 20: Print " " + Chr$(186); String$(30, 32); Chr$(186) + " ";: Next
+Locate 11 + J, 20: Print " " + Chr$(211); String$(30, 196); "½ ": Locate 11
 
 8015 Return
 
 1440 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4600
-ReDim F$(0 To Count%)
+ReDim leagueFiles$(0 To Count%)
 For X = 1 To Count%
-    F$(X) = Space$(12)
+    leagueFiles$(X) = Space$(12)
 Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+leagueFiles$(0) = Spec$
+Call ReadFile(leagueFiles$())
+'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
 1445 Cls
 Color , 1
@@ -774,20 +776,20 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
-MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then 5
-F$ = F$(SELECTION%)
-Locate 2, 33: Print F$
+targetFile$ = leagueFiles$(SELECTION%)
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 3912 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 1445
 
-3913 F$ = RTrim$(F$)
-F$ = Left$(F$, Len(F$) - 4)
-LG$ = F$
+3913 targetFile$ = RTrim$(targetFile$)
+targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+LG$ = targetFile$
 Return
 
 4600 Locate 10, 8
@@ -832,7 +834,7 @@ Sub BUILDSTATS ()
 
     60 Next KK
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
-    Open D$(1) + F$ + ".LDS" For Output As #1
+    Open D$(1) + targetFile$ + ".LDS" For Output As #1
     Write #1, JB, TS, TTS
     For I = 1 To 600: Write #1, AL$(I), TMA$(I), GMA(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR
     For I1 = 1 To 14: Write #1, AL(I, I1): Next I1: Write #1, W0L(I): Write #1, W1L(I): Color 14: Locate 18, 45: TMR = TMR - 1: Print Using "#####"; TMR: Next I

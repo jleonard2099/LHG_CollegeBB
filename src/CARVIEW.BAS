@@ -21,13 +21,13 @@ Close #1
 30 Spec$ = D$(1) + "*.CAR"
 COUNT% = FCount%(Spec$)
 If COUNT% = 0 Then 4500
-ReDim F$(0 To COUNT%)
+ReDim careerFiles$(0 To COUNT%)
 For X = 1 To COUNT%
-    F$(X) = Space$(12)
+    careerFiles$(X) = Space$(12)
 Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), COUNT%, 0)
+careerFiles$(0) = Spec$
+Call ReadFile(careerFiles$())
+'CALL SortStr(VARPTR(careerFiles$(1)), COUNT%, 0)
 
 1310 Cls
 Color , 1
@@ -50,7 +50,7 @@ Print "ENTER";: Color 15
 Print "-SELECTS FILE";
 
 _MouseShow "DEFAULT"
-20 MAMenu F$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu careerFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then Run "CAREER.EXE"
@@ -59,16 +59,15 @@ If EXITCODE% = -79 Then START% = COUNT%: EXITCODE% = 3: SELECTION% = COUNT%: GoT
 If EXITCODE% = -73 Then START% = START% - 80: If START% < 1 Then START% = 1
 If EXITCODE% = -81 Then START% = START% + 80: If START% > COUNT% Then START% = COUNT%
 If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = START%: GoTo 20
-F$ = F$(SELECTION%)
-Locate 2, 33: Print F$
+targetFile$ = careerFiles$(SELECTION%)
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 3910 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 1310
-F$ = RTrim$(F$)
-Z$ = Left$(F$, Len(F$) - 4)
+targetFile$ = RTrim$(targetFile$)
+Z$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-Color 15: Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 Color 15: Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 Open D$(1) + Z$ + ".CAR" For Input As #2
 Input #2, NB, B$

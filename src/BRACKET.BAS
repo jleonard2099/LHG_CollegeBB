@@ -23,7 +23,9 @@ Dim C%(1): ' 0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
 'Dim U6 As Single
 'Dim teamItems$(500), V%(500), L%(4)
 'Dim CM$(1), TE$(1), HC$(2), TS$(1), SC$(2), TF$(1), T%(9)
-Dim menuItems$(4)
+
+'This needs to be large enough for 16 brackets + championship + exit menu
+Dim menuItems$(18)
 
 Open "DEV.BAS" For Input As #1
 Input #1, D$(0)
@@ -43,7 +45,7 @@ Spacing% = 1
 Row% = 10
 Column% = 25
 
-Call box0(9, 24, 13, 50, 2, 31)
+CALL box0(9, 24, 13, 50, 2,  15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -58,13 +60,13 @@ Spec$ = D$(0) + "*.TOU"
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4050
-ReDim F$(0 To Count%)
+ReDim tournamentFiles$(0 To Count%)
 For X = 1 To Count%
-    F$(X) = Space$(12)
+    tournamentFiles$(X) = Space$(12)
 Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), Count, 0)
+tournamentFiles$(0) = Spec$
+Call ReadFile(tournamentFiles$())
+'CALL SortStr(VARPTR(tournamentFiles$(1)), Count, 0)
 Cls
 Color , 1: Cls: Locate , 28: Color 14
 Print "SELECT TOURNAMENT FIELD TO VIEW": Color 15
@@ -83,19 +85,19 @@ Print "ENTER";: Color 15
 Print "-SELECTS TOURNAMENT FIELD";
 
 _MouseShow "DEFAULT"
-MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu tournamentFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then 10
-F$ = F$(SELECTION%)
-Locate 2, 33: Print F$
+targetFile$ = tournamentFiles$(SELECTION%)
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 604 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 610
-F$ = _Trim$(F$)
-F$ = Left$(F$, Len(F$) - 4)
-Open D$(0) + F$ + ".INF" For Input As #2
+targetFile$ = _Trim$(targetFile$)
+targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+Open D$(0) + targetFile$ + ".INF" For Input As #2
 Input #2, FF$
 Input #2, R: ' NUMBER OF REGIONS
 For I = 1 To 16
@@ -110,20 +112,20 @@ For I = 1 To 16
 Next: Next: Next
 Input #2, C%(0): Input #2, C%(1): ' CONSOLATION GAME
 Close 2
-Open D$(0) + F$ + ".TNY" For Input As #1
+Open D$(0) + targetFile$ + ".TNY" For Input As #1
 For I = 0 To 14
     Input #1, OP%(I)
 Next
 Close 1
 If C%(0) = 1 Then C$ = "Y" Else C$ = "N"
 NR$ = Str$(R)
-Open D$(0) + F$ + ".TOU" For Random As #1 Len = 90
+Open D$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
 Y = LOF(1)
 Close 1
 AP%(0) = Y / 90
 BS% = Int((AP%(0) - 1) / 20)
 For I = 1 To AP%(0)
-    Open D$(0) + F$ + ".TOU" For Random As #1 Len = 90
+    Open D$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
     Next
@@ -147,10 +149,12 @@ Color , 0: Cls
 Color , 6: Locate 1, 1: Print Tab(80);: Locate , 23: Color 15
 Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
+ERASE menuItems$
 For I = 1 To R
     If R$(I) = "" Then R$(I) = "TO BE NAMED"
     menuItems$(I) = R$(I)
 Next
+
 SELECTION% = 1
 Count% = R + 2
 Start% = 1

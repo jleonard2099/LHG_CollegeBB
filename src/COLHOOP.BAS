@@ -150,47 +150,59 @@ Close 2
 TMT = 1
 
 
-5 If Not _FileExists("GAME82") Then 6
-Open "GAME82" For Input As #2
-Input #2, FF$
-For I = 0 To 2: Input #2, AP%(I): Next
-Close 2
-Open p$(0) + FF$ For Random As #1 Len = 48
-For X = 0 To 18
-    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-Next
-Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-Get #1, AP%(0) + AP%(2)
-For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
-For X = 0 To 1: YN$(X) = Q$(20 + X): Next
-VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
-Close 1
-AP1 = 1
+5 If _FileExists("GAME82") Then
 
-6 If Not _FileExists("TOURNEY") Then 10
-Open "TOURNEY" For Input As #2
-Input #2, FF$
-For I = 0 To 2: Input #2, AP%(I): Next
-Close 2
-If AP%(2) = AP%(1) Then Kill "TOURNEY": End
-Open p$(0) + FF$ + ".TOU" As #1 Len = 90
-For X = 0 To 14
-    Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-Next
-Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-Get #1, AP%(0) + AP%(2)
-VS% = CVI(Q$(16)): HS% = CVI(Q$(17))
-VT$ = Q$(18): W$ = Q$(19)
-For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
-For X = 0 To 3: YN$(X) = Q$(20 + X): Next
-For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
-Close 1
+    Open "GAME82" For Input As #2
+    Input #2, FF$
+    For I = 0 To 2: Input #2, AP%(I): Next
+    Close 2
 
-AP1 = 1: TOU = 1
+    Open p$(0) + FF$ For Random As #1 Len = 48
+    For X = 0 To 18
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+    Next
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    Get #1, AP%(0) + AP%(2)
+    For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
+    For X = 0 To 1: YN$(X) = Q$(20 + X): Next
+    VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
+    Close 1
 
-10 T = 1200
+    AP = 1
+End If
+
+6 If _FileExists("TOURNEY") Then
+    Open "TOURNEY" For Input As #2
+    Input #2, FF$
+    For I = 0 To 2: Input #2, AP%(I): Next
+    Close 2
+
+    If AP%(2) = AP%(1) Then Kill "TOURNEY": End
+
+    Open p$(0) + FF$ + ".TOU" As #1 Len = 90
+    For X = 0 To 14
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+    Next
+
+    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+    Get #1, AP%(0) + AP%(2)
+
+    VS% = CVI(Q$(16)): HS% = CVI(Q$(17))
+    VT$ = Q$(18): W$ = Q$(19)
+
+    For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
+    For X = 0 To 3: YN$(X) = Q$(20 + X): Next
+    For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
+    Close 1
+
+    AP = 1
+    TOU = 1
+End If
+
+T = 1200
 H = 1
 T1(1) = 5
 T1(0) = 5
@@ -209,8 +221,8 @@ For I = 0 To 1
     Next I1
 Next I
 
-If AP1 = 1 Then Call AUTOSETUP
-If AP1 = 1 And TOU = 0 Then 51
+If AP = 1 Then Call AUTOSETUP
+If AP = 1 And TOU = 0 Then 51
 
 'Initialize variables
 '--------------------
@@ -322,9 +334,10 @@ PB$(0) = "VERBOSE        "
 PB$(1) = "HAFFNER CLASSIC"
 
 
-
-
-24 Cls: Color 2: Print ; Tab(29); "SELECT OPENING OPTIONS": Print
+24 Cls
+Color 2
+Print ; Tab(29); "SELECT OPENING OPTIONS"
+Print
 
 25 Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print U5$(U5)
 Locate 3, 2: Color 14: Print "(2) ";: Color 15: Print "VISITING TEAM: ";: Color TR%(0, 0), TR%(0, 1): Print B$(0): Color , 0
@@ -528,7 +541,7 @@ If S(0, 0) = S(1, 0) Then
 End If
 
 'Call HITKEY: GoTo 8400
-If AP1 = 1 Xor U5 = 2 Then
+If Not AP = 1 And Not U5 = 2 Then
     I$ = GetKeyPress
 End If
 GoTo 8400
@@ -1600,7 +1613,7 @@ For I = 0 To 13
 
 871 Locate 8, 41: Print "            ": Return
 
-900 If AP1 = 1 Then N = NG%(2)
+900 If AP = 1 Then N = NG%(2)
 If C7 = 1 Then X8 = 45
 If C7 = 2 Then X8 = 35
 'If C7 = 3 Then X8 = 30
@@ -1763,7 +1776,7 @@ U$ = "DISPLAY STATS AGAIN (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
 Color 15, 0
-If AP1 = 1 And U5 = 2 Then 8535
+If AP = 1 And U5 = 2 Then 8535
 
 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 8500
@@ -1776,7 +1789,7 @@ U$ = "SAVE STATS (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
 Color 15, 0
-If AP1 = 1 Then 9506
+If AP = 1 Then 9506
 I$ = GetKeyPress$
 If UCase$(I$) <> "Y" Then 9507
 
@@ -1789,9 +1802,12 @@ Call DRAWBOX
 U$ = "PLAY ANOTHER GAME (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
-If AP1 = 1 Then 8637
-I$ = GetKeyPress$
-If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
+
+If AP1 <> 1 Then
+    I$ = GetKeyPress$
+    If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
+    Color 15, 0
+End If
 
 8637 Color 15, 0
 Cls
@@ -1801,7 +1817,7 @@ Run "COLHOOP.EXE"
 Color 14: Print "(0) ";: Color 15: Print "STATS TO SCREEN": Print
 Color 14: Print "(1) ";: Color 15: Print "STATS TO PRINTER": Print
 Color 14: Print "(2) ";: Color 15: Print "STATS TO TEXT FILE"
-If AP1 = 1 And U5 = 2 Then X = 2: Call BOX2FILE: Return
+If AP = 1 And U5 = 2 Then X = 2: Call BOX2FILE: Return
 
 I$ = GetKeyPress$
 X = Val(I$)
@@ -1815,7 +1831,7 @@ Return
 Return
 
 8670 If X = 0 Then
-    If AP1 = 1 Xor U5 = 2 Then
+    If Not AP = 1 And Not U5 = 2 Then
         I$ = GetKeyPress
     End If
 End If
@@ -2124,8 +2140,8 @@ Sub MAKEPBP ()
     If RN = 26 Then U$ = AA$(p, B1(p, B)) + "...DOUBLE PUMP SLAM!!!"
     If RN = 27 Then U$ = AA$(p, B1(p, B)) + "...IN YOUR FACE SLAM!!!"
     If RN = 28 Then U$ = AA$(p, B1(p, B)) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
-                             
-                                            
+
+
     If RN = 29 Then U$ = "HE SLAMS IT HOME!!"
     If RN = 30 Then U$ = "HE LAYS IT UP AND IN!!"
     If RN = 31 Then U$ = "HE BANGS IT IN!!"
@@ -2136,7 +2152,7 @@ Sub MAKEPBP ()
     If RN = 36 Then U$ = AA$(p, B1(p, B)) + " WITH THE 2-HANDED SLAM!!!"
     If RN = 37 Then U$ = AA$(p, B1(p, B)) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
 
-                                            
+
     If RN = 38 Then U$ = "HE JAMS IT HOME!!!"
     If RN = 39 Then U$ = "HE HAMMERS IT HOME!"
     GoTo 1495
@@ -2148,10 +2164,10 @@ Sub MAKEPBP ()
     If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
     Return
 
-    1430 Rem:SHOOTS...PZ%567 SML
+    1430 'SHOOTS...PZ%567 SML
     U$ = AA$(p, B1(p, B))
     On PZ% GOTO 1431, 1432, 1433, 1434, 1435, 1436, 1437, 1438, 1439, 1446
-    1431 Rem:BAD
+    1431 'BAD
     If RN <= 40 Then U$ = U$ + " TAKES A TOUGH SHOT"
     If RN > 40 And RN <= 45 Then U$ = U$ + " SHOOTS OFF BALANCE"
     If RN > 45 And RN <= 50 Then U$ = U$ + " FORCES ONE UP"
@@ -2163,7 +2179,7 @@ Sub MAKEPBP ()
     If RN > 80 And RN <= 85 Then U$ = U$ + " FORCES THE INSIDE SHOT"
     If RN > 85 Then U$ = U$ + " TURNS AND SHOOTS"
     GoTo 1495
-    1432 Rem:INSIDE W/ASSIST
+    1432 'INSIDE W/ASSIST
 
     If RN <= 10 Then U$ = "HE CUTS TO THE BASKET": Call PBP: U$ = "TAKES IT UP": GoSub 1428: GoTo 1495
     If RN <= 20 Then U$ = "HE TAKES IT TO THE HOLE": GoSub 1428: GoTo 1495
@@ -2177,7 +2193,7 @@ Sub MAKEPBP ()
     If RN <= 90 Then U$ = "HE TAKES IT UP STRONG": GoSub 1428: GoTo 1495
     If RN <= 95 Then U$ = "HE POWERS IT UP": GoSub 1428: GoTo 1495
     U$ = "HE LAYS IT UP": GoTo 1495
-    1433 Rem:PENETRATE
+    1433 'PENETRATE
     If B = 4 And RN <= 15 Then U$ = "HE PUTS IT OFF THE GLASS": GoTo 1495
     If B = 4 And RN <= 25 Then U$ = "HE PIVOTS TO THE BASKET": GoTo 1495
     If B = 4 And RN <= 40 Then U$ = "HE POWERS IT UP": GoTo 1495
@@ -2234,7 +2250,7 @@ Sub MAKEPBP ()
     Return
     1426 If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
     Return
-    1434 Rem:THREE!
+    1434 'THREE!
     If FT% = 1 And RN <= 50 Then U$ = U$ + " THROWS UP A PRAYER"
     If FT% = 1 And RN > 50 Then U$ = U$ + " LAUNCHES A THREE"
     If FT% = 1 Then FT% = 0: GoTo 1495
@@ -2683,7 +2699,7 @@ Sub MAKEPBP ()
     If RN = 56 Then U$ = U$ + "DRIBBLES WITH THE RIGHT HAND"
     GoTo 1495
 
-    1490 Rem:PASS PB$=PREV HANDLER
+    1490 'PASS PB$=PREV HANDLER
     V$ = AA$(p, B1(p, B))
     RN = Int(Rnd(1) * 60) + 1
     If RN = 1 Then U$ = PB$ + " TO " + V$
@@ -2861,8 +2877,10 @@ End Sub
 ' ...explanation...
 Sub TICKER ()
     2850 '*** TICKER ***
-    If AP1 = 1 And U5 = 2 Then 2884
-    Color 14, 0: Cls
+    If AP = 1 And U5 = 2 Then 2884
+    Color 14, 0
+    Cls
+
     RN = Int(Rnd(1) * 100) + 1
     If RN <= 50 And HT% = 1 And G9 = 0 Then Locate , 23: Print "PRUDENTIAL AT THE HALF SCOREBOARD": GoTo 2851
     If RN > 50 And HT% = 1 And G9 = 0 Then Locate , 28: Print "RED MAN HALF TIME REPORT": GoTo 2851
@@ -2873,6 +2891,7 @@ Sub TICKER ()
     If EG% = 1 And RN > 33 And RN <= 67 Then Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD": GoTo 2851
     If EG% = 1 And RN > 67 Then Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD": GoTo 2851
     If HT% = 0 Then Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD": GoTo 2851
+
     2851 Color 15: If TMT = 0 Then Locate 10, 28: Print "NO OTHER GAMES SCHEDULED": GoTo 2883
     If H = 1 And T < 1200 And T >= 960 Then TE = 1
     If H = 1 And T < 960 And T >= 720 Then TE = 2
@@ -3004,14 +3023,12 @@ Sub TICKER ()
 '------------------------------
 ' Prints BoxScore to file
 Sub BOX2FILE
-    If AP1 = 1 Then
-        NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
-        GoTo 8951
-    End If
-
     Cls
-
-    Input "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
+    If AP = 1 Then
+        NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
+    Else
+        Input "ENTER FILENAME TO SAVE GAME SUMMARY UNDER "; NM$: NM$ = NM$ + ".SPC"
+    End If
 
     8951 Open p$(1) + NM$ For Output As #2
 
@@ -3740,7 +3757,7 @@ Sub DEFREBOUND ()
 ' ...explanation...
 Sub EDITCX ()
 
-    9300 If AP1 = 1 And U5 = 2 Then 9499
+    9300 If AP = 1 And U5 = 2 Then 9499
     Color 15, 0: Cls
     Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
     Print
@@ -4347,20 +4364,23 @@ Sub BOXSCREEN ()
 
         Print ; Tab(35);
         If V9(3) <> 0 Then Print Int(((V9(2) / V9(3)) * 100) + .5); "%"
-        
+
         Print
         Color 14: Print "TOTAL TURNOVERS -";: Color 15: Print T0(I)
         Color 14: Print "TOTAL REBOUNDS  -";: Color 15: Print R3(I)
 
         For I2 = 0 To 14: V9(I2) = 0: Next I2
 
-        If AP1 = 1 Xor U5 = 2 Then
+        If AP = 1 And U5 = 2 Then
+            '
+        Else
             I$ = GetKeyPress
         End If
+
         Cls
 
     Next I
-    
+
 End Sub
 
 
@@ -4641,9 +4661,9 @@ Sub BALLDISTRIBUTE ()
     If S9 > 150 And R0 <= 67 Then 424
     423 B = Int(Rnd(1) * 5): GoTo 427
     424 If displayPause <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call PBP
-    If displayPause <> 0 And PB% = 1 Then
+
+    If displayPause > 0 And PB% = 1 Then
         'IF AP=1 AND U5=2 OR displayPause=0 THEN 425
-        If displayPause = 0 Then 425
         For I = 8 To 15
             Locate I, 1
             Call BLANKLINE
@@ -4652,6 +4672,7 @@ Sub BALLDISTRIBUTE ()
         Print "PASS TO CHOICE (0-4)"
         Call DELAY
     End If
+
     425 I$ = GetKeyPress$
     If UCase$(I$) = "T" Then Call TICKER: Call SCOREBOARD: GoTo 425
 
@@ -4665,7 +4686,7 @@ Sub BALLDISTRIBUTE ()
 '------------------------------
 ' ...explanation...
 Sub PLAYINGTIME ()
-    Rem:*** INCREMENT MINUTES ***
+    '*** INCREMENT MINUTES ***
     For I3 = 0 To 1
         For I4 = 0 To 4
             ZZ(I3, B1(I3, I4)) = ZZ(I3, B1(I3, I4)) + TE
@@ -4697,7 +4718,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub CLEARPBPBOX ()
-    Rem:IF AP=1 AND U5=2 OR displayPause=0 THEN 4096
+    'IF AP=1 AND U5=2 OR displayPause=0 THEN 4096
     If displayPause = 0 Then 4096
     For I = 8 To 15: Locate I, 1: Call BLANKLINE: Next I
 
@@ -4748,7 +4769,7 @@ Sub DEADBALLOPTIONS ()
     C1 = 1: P9 = S2: Call LINEUPS: Call FOULSAFE: P9 = p: LC% = 1: GoTo 220
     227 If LC% = 1 Then LC% = 0: Call CLOCKOVER: Call SCOREBOARD
 
-    Rem:IF AP=1 AND U5=2 OR displayPause=0 THEN 222
+    'IF AP=1 AND U5=2 OR displayPause=0 THEN 222
     If displayPause = 0 Then 222
     For I = 8 To 15: Locate I, 1: Call BLANKLINE: Next I
 
@@ -4764,7 +4785,7 @@ Sub LASTFIVEMENU ()
     Color TR%(p, 0), TR%(p, 1)
 
     'Print box top
-    Print " " + Chr$(201); String$(61, 196); Chr$(187) + " ";
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
     'Print box sides
     JJ = 12
@@ -4775,7 +4796,7 @@ Sub LASTFIVEMENU ()
 
     'Print box bottom
     Locate 9 + JJ, 8
-    Print " " + Chr$(200); String$(61, 196); Chr$(188) + " ";
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
     Locate 10, 15
     Print B$(p); " LAST 5 SEC STRATEGY:"
@@ -4969,84 +4990,102 @@ Sub PRESSGUARD ()
 '------------------------------
 ' ...explanation...
 Sub SAVESTATS
-    6000 If Not _FileExists("GAME82") Then 6035
-    Open "GAME82" For Input As #2
-    Input #2, FF$
-    For I = 0 To 2: Input #2, AP%(I): Next: Close 2
+    6000 If _FileExists("GAME82") Then
+        Open "GAME82" For Input As #2
+        Input #2, FF$
+        For I = 0 To 2: Input #2, AP%(I): Next: Close 2
+        'AP(0) = Start Game
+        'AP(1) = End Game
+        'AP(2) = games played???
 
-    If AP%(2) > 31 Then 6011
-    For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X): Next
-    Open "TICKER" For Output As #2
-    For I = 1 To 32
-        For I1 = 0 To 1
-            For I2 = 1 To 14
-                Print #2, SX%(I, I1, I2):
+        If AP%(2) > 31 Then 6011
+        For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X): Next
+
+        Open "TICKER" For Output As #2
+        For I = 1 To 32
+            For I1 = 0 To 1
+                For I2 = 1 To 14
+                    Print #2, SX%(I, I1, I2):
+                Next
             Next
         Next
-    Next
-    For I = 1 To 32
-        For I1 = 0 To 1
-            Print #2, SX$(I, I1)
+        For I = 1 To 32
+            For I1 = 0 To 1
+                Print #2, SX$(I, I1)
+            Next
         Next
-    Next
-    For I = 1 To 32: Print #2, ST%(I): Next
-    Close 2
+        For I = 1 To 32: Print #2, ST%(I): Next
+        Close 2
 
-    6011 Open p$(0) + FF$ For Random As #1 Len = 48
-    For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-    Next
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-    NG%(13) = 1
-    For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(X)): Next
-    For X = 0 To 1: LSet Q$(20 + X) = YN$(X): Next
-    LSet Q$(22) = MKI$(S(0, 0)): LSet Q$(23) = MKI$(S(1, 0))
-    Put #1, AP%(0) + AP%(2)
-    Close 1
-    AP%(2) = AP%(2) + 1
-    AP1 = 1
-    If AP%(1) < AP%(0) + AP%(2) Then Kill "GAME82": AD = 1: GoTo 6065
-    Open "GAME82" For Output As #2
-    Print #2, FF$
-    For I = 0 To 2
-        Print #2, AP%(I)
-    Next
-    Close 2
-    GoTo 6065
+        6011 Open p$(0) + FF$ For Random As #1 Len = 48
+        For X = 0 To 18
+            Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+        Next
+        Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+        NG%(13) = 1
+        For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(X)): Next
+        For X = 0 To 1: LSet Q$(20 + X) = YN$(X): Next
+        LSet Q$(22) = MKI$(S(0, 0)): LSet Q$(23) = MKI$(S(1, 0))
+        Put #1, AP%(0) + AP%(2)
+        Close 1
+        AP%(2) = AP%(2) + 1
+        AP = 1
 
-    6035 If Not _FileExists("TOURNEY") Then 6065
-    Open "TOURNEY" For Input As #2
-    Input #2, FF$
-    For I = 0 To 2
-        Input #2, AP%(I)
-    Next
-    Close 2
-    Open p$(0) + FF$ + ".TOU" As #1 Len = 90
-    For X = 0 To 14
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-    Next
-    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-    NG%(13) = 1
-    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(X)): Next
-    For X = 0 To 3: LSet Q$(20 + X) = YN$(X): Next
-    For X = 1 To 3: LSet Q$(X + 23) = MKI$(NG%(X + 14)): Next
-    LSet Q$(16) = MKI$(S(0, 0)): LSet Q$(17) = MKI$(S(1, 0))
-    LSet Q$(18) = VT$: LSet Q$(19) = W$
-    Put #1, AP%(0) + AP%(2)
-    Close 1
-    AP%(2) = AP%(2) + 1
-    AP1 = 1
-    Open "TOURNEY" For Output As #2
-    Print #2, FF$
-    For I = 0 To 2
-        Print #2, AP%(I)
-    Next
-    Close 2
-    Call TOURNEY
-    If AP%(1) < AP%(0) + AP%(2) Then Kill "TOURNEY": AD = 1: GoTo 6065
-    If AP%(1) < AP%(0) + AP%(2) Then End
+        'AD = AllDone?
+        If AP%(1) < AP%(0) + AP%(2) Then Kill "GAME82": AD = 1: GoTo 6065
+
+        Open "GAME82" For Output As #2
+        Print #2, FF$
+        For I = 0 To 2
+            Print #2, AP%(I)
+        Next
+        Close 2
+        GoTo 6065
+    End If
+    
+    6035 If _FileExists("TOURNEY") Then
+        Open "TOURNEY" For Input As #2
+        Input #2, FF$
+        For I = 0 To 2
+            'AP(0) = Start Game
+            'AP(1) = End Game
+            'AP(2) = games played???
+            Input #2, AP%(I)
+        Next
+        Close 2
+
+        Open p$(0) + FF$ + ".TOU" As #1 Len = 90
+        For X = 0 To 14
+            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+        Next
+        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+        NG%(13) = 1
+        For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(X)): Next
+        For X = 0 To 3: LSet Q$(20 + X) = YN$(X): Next
+        For X = 1 To 3: LSet Q$(X + 23) = MKI$(NG%(X + 14)): Next
+        LSet Q$(16) = MKI$(S(0, 0)): LSet Q$(17) = MKI$(S(1, 0))
+        LSet Q$(18) = VT$: LSet Q$(19) = W$
+        Put #1, AP%(0) + AP%(2)
+        Close 1
+
+        AP%(2) = AP%(2) + 1
+        AP = 1
+
+        Open "TOURNEY" For Output As #2
+        Print #2, FF$
+        For I = 0 To 2
+            Print #2, AP%(I)
+        Next
+        Close 2
+
+        Call TOURNEY
+        'AD = AllDone?
+        If AP%(1) < AP%(0) + AP%(2) Then Kill "TOURNEY": AD = 1: GoTo 6065
+        If AP%(1) < AP%(0) + AP%(2) Then End
+    End If
+    
     6065 Cls
     H% = N
     For PX = 0 To 1
@@ -5056,6 +5095,7 @@ Sub SAVESTATS
             A(PX, J, 18) = A(PX, J, 24)
         Next
     Next
+
     For PX = 0 To 1
         For I = 0 To 13
             For J = 1 To 12
@@ -5065,17 +5105,20 @@ Sub SAVESTATS
         Next
         Y$(PX) = B$(PX)
     Next
+
     Q = 0
     6115 C% = 0
     Cls
     Color 15, 0
-    Cls: I = Q
+    Cls
+    I = Q
+
     Call DRAWBOX
     U$ = "COMPILE STATS FOR " + B$(Q) + " (YN)"
     Locate , (80 - Len(U$)) / 2
     Print U$
     Color 15, 0
-    If AP1 = 1 Then 6355
+    If AP = 1 Then 6355
 
     6325 I$ = GetKeyPress$
     If UCase$(I$) = "N" Then C% = 1: GoTo 6355
@@ -5083,6 +5126,7 @@ Sub SAVESTATS
     6355 If C% = 1 Then 6290
     Y$(Q) = B$(Q)
     Call STATCONVERT(Q, QQ): FG$ = Mid$(B$(Q), 4, QQ): R$ = FG$ + "." + Left$(B$(Q), 2)
+
     If Not _FileExists(p$(1) + R$) Then 6185
     Open p$(1) + R$ For Input As #2
     Input #2, B$(Q)
@@ -5092,6 +5136,7 @@ Sub SAVESTATS
     For L = 0 To 15: Input #2, Z(L): Next L
     For L = 0 To 15: Input #2, Z1(L): Next L
     Close #2
+
     6185 TG = 0
     For I = 0 To 13
         If A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I) > Z2(I, 13) Then Z2(I, 13) = A(Q, I, 2) * 2 + A(Q, I, 4) + W0(Q, I)
@@ -5122,6 +5167,7 @@ Sub SAVESTATS
     Locate , (80 - Len(U$)) / 2
     Print U$
     Color 15, 0
+
     Open p$(1) + R$ For Output As #1
     Print #1, Y$(Q)
     For I = 0 To 13: Print #1, AA$(Q, I)
@@ -5130,8 +5176,10 @@ Sub SAVESTATS
     For L = 0 To 15: Print #1, Z(L): Next L
     For L = 0 To 15: Print #1, Z1(L): Next L
     Close #1
+
     Print
     YY% = 0: R$ = R$ + "S"
+
     If Not _FileExists(p$(1) + R$) Then 6405
     Open p$(1) + R$ For Input As #1
     Input #1, YY%
@@ -5147,6 +5195,7 @@ Sub SAVESTATS
     For I = 1 To 100: Input #1, CRD(I): Next I
     For I = 1 To 100: Input #1, SITE$(I): Next I
     Close #1
+    
     6405 If YY% < 100 Then YY% = YY% + 1
     If H% = 2 And TG < 12100 Then H$(YY%) = "N": GoTo 6540
     If H% <> Q And TG < 12100 Then H$(YY%) = "V": GoTo 6540
@@ -5211,8 +5260,10 @@ Sub SAVESTATS
 
     6290 Q = Q + 1: Z(12) = 0
     If Q < 2 Then 6115
-    If AP1 = 1 And AD <> 1 Then 6292
-    If AD = 1 Then End
+    If AP = 1 And AD <> 1 Then 6292
+    'If AD = 1 Then End
+    'If we've played our last scheduled game
+    If AD = 1 Then Run "HELLO.EXE"
 
 6292 End Sub
 
@@ -5801,7 +5852,7 @@ Sub RECORDSCHECK ()
                 RC$(22, 3) = B$(1 - I) ' OPPONENT
                 RC$(22, 4) = Date$ ' DATE
             End If
-            Rem: FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
+            ' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
             If A(I, I1, 9) = A(I, I1, 10) And A(I, I1, 10) > REC(23, 0) Then
                 REC(23, 0) = A(I, I1, 10) ' MOST FTM
                 RC$(23, 0) = AA$(I, I1) ' NAME

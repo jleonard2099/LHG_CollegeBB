@@ -33,7 +33,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 10, 48, 2, 31)
+CALL box0(7, 24, 10, 48, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -60,7 +60,7 @@ For J = 1 To 100: Input #4, TR%(J): Next
 For J = 1 To 100: Input #4, H$(J): Next
 Close #4
 GoSub 1440
-LG$ = F$
+LG$ = targetFile$
 
 49 Cls: J = 5: GoSub 2075: Color 7
 Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
@@ -458,10 +458,10 @@ GoTo 600
 3056 Color 15, 0: Cls
 JJ = 6
 SN = 1: Locate 6, 8: Color 15, 4
-Print " Ö"; String$(61, 196); "· ";: For II = 1 To JJ: Locate 6 + II, 8
-Print " º"; String$(61, 32); "º ";: Next
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
 Locate 7 + JJ, 8
-Print " Ó"; String$(61, 196); "½ ";: Locate 7, 32
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
 Locate , 12: Print "ENTER DISK ID: ": Print
 Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -564,21 +564,21 @@ Color , 0
 GoTo 600
 
 2075 '
-Locate 8, 8: Color 15, 1: Print " Ö"; String$(61, 196); "· ";
-For II = 1 To J: Locate 8 + II, 8: Print " º"; String$(61, 32); "º ";: Next
-Locate 9 + J, 8: Print " Ó"; String$(61, 196); "½ ";: Locate 10, 15: Return
+Locate 8, 8: Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+For II = 1 To J: Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 10, 15: Return
 
 1440 Spec$ = D$(1) + "*.LIB"
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4600
-ReDim F$(0 To Count%)
+ReDim leagueFiles$(0 To Count%)
 For X = 1 To Count%
-    F$(X) = Space$(12)
+    leagueFiles$(X) = Space$(12)
 Next
-F$(0) = Spec$
-Call ReadFile(F$())
-'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+leagueFiles$(0) = Spec$
+Call ReadFile(leagueFiles$())
+'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 
 1445 Cls
 Color , 1
@@ -601,19 +601,19 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
-MAMenu F$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then 600
-F$ = F$(SELECTION%)
-Locate 2, 33: Print F$
+targetFile$ = leagueFiles$(SELECTION%)
+Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
 3912 I$ = GetKeyPress$
 If UCase$(I$) = "Y" Then 1445
 
-3913 F$ = RTrim$(F$)
-F$ = Left$(F$, Len(F$) - 4)
+3913 targetFile$ = RTrim$(targetFile$)
+targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 Return
 
 4600 Locate 10, 8

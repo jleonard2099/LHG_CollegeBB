@@ -88,7 +88,7 @@ SUB DRAWBOX ()
 	LOCATE 6, 8: COLOR TR%(I, 0), TR%(I, 1)
 	PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
 	FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " "; : NEXT
 	LOCATE 7 + JJ, 8
 	PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
 END SUB

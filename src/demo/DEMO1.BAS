@@ -128,10 +128,10 @@ CLOSE 1: GOTO 32
 50 IF B$(0) = "" OR B$(1) = "" THEN 24
 	CLS : COLOR 3: JJ = 6
 	SN = 1: LOCATE 6, 8: COLOR TR%(1, 0), TR%(1, 1)
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	Print " " + Chr$(214); String$(61, 196); Chr$(183) + " "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " "; : NEXT
 	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 11
+	Print " " + Chr$(211); String$(61, 196); Chr$(189) + " "; : LOCATE 7, 11
 	PRINT "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
 	LOCATE , 11: PRINT "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
 	LOCATE , 11: PRINT "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER": PRINT
@@ -281,10 +281,10 @@ TAKE3:
 HALFCT:
 	JJ = 8
 	LOCATE 8, 8: COLOR TR%(P, 0), TR%(P, 1)
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 8 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	Print " " + Chr$(214); String$(61, 196); Chr$(183) + " "; : FOR II = 1 TO JJ: LOCATE 8 + II, 8
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " "; : NEXT
 	LOCATE 9 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 10, 15
+	Print " " + Chr$(211); String$(61, 196); Chr$(189) + " "; : LOCATE 10, 15
 	PRINT B$(P); " HALF COURT OPTION"
 	LOCATE 12, 14
 	LOCATE , 14: PRINT USING "TIME REMAINING #.#"; T

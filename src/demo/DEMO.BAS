@@ -46,7 +46,7 @@ CALL Comline(N, A$(), 10)     ' Get what was typed on the command line
 	Row% = 8
 	Column% = 25
 
-CALL box0(7, 24, 17, 57, 2, 31)	
+CALL box0(7, 24, 17, 57, 2,  15, 1)	
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -136,7 +136,7 @@ Done:
 	Spacing% = 1
 	Row% = 8
 	Column% = 27
-CALL box0(7, 26, 14, 57, 2, 31)
+CALL box0(7, 26, 14, 57, 2,  15, 1)
 	
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -168,7 +168,7 @@ _MouseHide
 	Row% = 8
 	Column% = 25
 
-CALL box0(7, 24, 13, 58, 2, 31)	
+CALL box0(7, 24, 13, 58, 2,  15, 1)	
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -206,8 +206,8 @@ _MouseHide
 	Row% = 9
 	Column% = 12
 
-CALL box0(7, 11, 15, 37, 2, 31)
-CALL box0(7, 40, 15, 66, 2, 31)
+CALL box0(7, 11, 15, 37, 2,  15, 1)
+CALL box0(7, 40, 15, 66, 2,  15, 1)
 
 	COLOR 15, 0
 	LOCATE 8, 14: PRINT "COLLEGE CONFERENCE"

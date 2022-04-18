@@ -47,7 +47,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-Call box0(7, 24, 15, 50, 2, 31)
+CALL box0(7, 24, 15, 50, 2,  15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -322,30 +322,30 @@ Return
 
 5000 Color 0, 0: Cls: J = 20
 
-5001 Locate 1, 1: Color 15, 4: Print " Ö"; String$(73, 196); "· ";
-For II = 1 To J: Color 15, 4: Locate 1 + II, 1: Print " º"; String$(73, 32); "º ";: Color 7, 4: Print String$(2, 177): Next
+5001 Locate 1, 1: Color 15, 4: Print " " + Chr$(214); String$(73, 196); "· ";
+For II = 1 To J: Color 15, 4: Locate 1 + II, 1: Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 4: Print String$(2, 177): Next
 
-5002 Color 15, 4: Locate 2 + J, 1: Print " Ó"; String$(73, 196); "½ ";: Color 7, 4: Print String$(2, 177)
+5002 Color 15, 4: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 4: Print String$(2, 177)
 Locate , 3: Print String$(77, 177)
 
 5003 Return
 
 5100 Color 0, 0: Cls: J = 20
 
-5101 Locate 1, 1: Color 15, 1: Print " Ö"; String$(73, 196); "· ";
-For II = 1 To J: Color 15, 1: Locate 1 + II, 1: Print " º"; String$(73, 32); "º ";: Color 7, 1: Print String$(2, 177): Next
+5101 Locate 1, 1: Color 15, 1: Print " " + Chr$(214); String$(73, 196); "· ";
+For II = 1 To J: Color 15, 1: Locate 1 + II, 1: Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 1: Print String$(2, 177): Next
 
-5102 Color 15, 1: Locate 2 + J, 1: Print " Ó"; String$(73, 196); "½ ";: Color 7, 1: Print String$(2, 177)
+5102 Color 15, 1: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 1: Print String$(2, 177)
 Locate , 3: Print String$(77, 177)
 
 5103 Return
 
 5200 Color 0, 0: Cls: J = 20
 
-5201 Locate 1, 1: Color 15, 3: Print " Ö"; String$(73, 196); "· ";
-For II = 1 To J: Color 15, 3: Locate 1 + II, 1: Print " º"; String$(73, 32); "º ";: Color 7, 3: Print String$(2, 177): Next
+5201 Locate 1, 1: Color 15, 3: Print " " + Chr$(214); String$(73, 196); "· ";
+For II = 1 To J: Color 15, 3: Locate 1 + II, 1: Print " " + Chr$(186); String$(73, 32); Chr$(186) + " ";: Color 7, 3: Print String$(2, 177): Next
 
-5202 Color 15, 3: Locate 2 + J, 1: Print " Ó"; String$(73, 196); "½ ";: Color 7, 3: Print String$(2, 177)
+5202 Color 15, 3: Locate 2 + J, 1: Print " " + Chr$(211); String$(73, 196); Chr$(189) + " ";: Color 7, 3: Print String$(2, 177)
 Locate , 3: Print String$(77, 177)
 
 5203 Return

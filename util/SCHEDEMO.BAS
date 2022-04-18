@@ -76,7 +76,7 @@ OPEN "DEV.BAS" FOR INPUT AS #1: INPUT #1, P$(0): INPUT #1, P$(1): CLOSE 1
 	Row% = 6
 	Column% = 16
 
-CALL box0(5, 15, 15, 65, 2, 31)	
+CALL box0(5, 15, 15, 65, 2,  15, 1)	
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -97,17 +97,27 @@ _MouseHide
 21 COLOR 15, 0: CLS
 	JJ = 7
 	LOCATE 6, 8: COLOR 15, 1
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "ENTER NAME FOR SCHEDULE: ": PRINT
 	LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
 	LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
 	LOCATE , 12: PRINT "WILL AUTOMATICALLY ADD .SCD"
 	LOCATE , 12: PRINT "SAMPLE NAMES ARE ARKANSAS, LSU-68, IU76, ETC."
-	LOCATE 7, 37: INPUT F$
-	IF F$ = "" THEN 21
+	LOCATE 7, 37: INPUT scheduleFile$
+	IF scheduleFile$ = "" THEN 21
 	LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
 22 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 21
@@ -131,7 +141,7 @@ _MouseHide
 	COLOR 11: PRINT "X"; : COLOR 14: PRINT "-SAVE AND EXIT  ";
 	COLOR 11: PRINT "Q"; : COLOR 14: PRINT "-QUIT  ";
 	COLOR 11: PRINT "R"; : COLOR 14: PRINT "-RESET SCORES";
-	LOCATE 1, 1: PRINT TAB(80); : LOCATE 1, 1: PRINT F$
+	LOCATE 1, 1: PRINT TAB(80); : LOCATE 1, 1: PRINT scheduleFile$
 LOCATE 1, 33: COLOR 14: PRINT "AUTO SCHEDULER"
 	COLOR , 0
 
@@ -302,10 +312,20 @@ LOCATE 1, 33: COLOR 14: PRINT "AUTO SCHEDULER"
 181 COLOR 15, 0: CLS
 	JJ = 7
 	LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
 	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -368,10 +388,20 @@ LOCATE 1, 33: COLOR 14: PRINT "AUTO SCHEDULER"
 	COLOR , 0: CLS
 	JJ = 8
 	LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "TOTAL GAMES ="; AP%(0)
 	LOCATE , 12: PRINT "SELECT GAME # TO START AND END WITH": PRINT
 	LOCATE , 12: INPUT "ENTER START GAME #: "; SG%: PRINT
@@ -382,7 +412,7 @@ LOCATE 1, 33: COLOR 14: PRINT "AUTO SCHEDULER"
 	IF SG% <= 0 THEN SG% = 1
 	IF EG% > AP%(0) THEN EG% = AP%(0)
 OPEN "GAME82" FOR OUTPUT AS #2
-	PRINT #2, F$ + ".SCD"
+	PRINT #2, scheduleFile$ + ".SCD"
 	PRINT #2, SG%
 	PRINT #2, EG%
 	PRINT #2, 0
@@ -402,8 +432,8 @@ CLOSE 2
 
 350 ' *** SAVE SCHEDULE FILE ***
 
-351 IF _FILEEXISTS(P$(0) + F$ + ".SCD") THEN KILL P$(0) + F$ + ".SCD"
-	 OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+351 IF _FILEEXISTS(P$(0) + scheduleFile$ + ".SCD") THEN KILL P$(0) + scheduleFile$ + ".SCD"
+	 OPEN P$(0) + scheduleFile$ + ".SCD" FOR RANDOM AS #1 LEN = 48
 	FOR X = 0 TO 18
 	FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
 	NEXT
@@ -427,7 +457,7 @@ CLOSE 1
 	Spec$ = P$(0) + "*.SCD"
 	GOSUB 2100
 
-601 OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+601 OPEN P$(0) + scheduleFile$ + ".SCD" FOR RANDOM AS #1 LEN = 48
 	Y = LOF(1)
 CLOSE 1
 	AP%(0) = Y / 48
@@ -457,10 +487,20 @@ CLOSE 1: NS% = 0: TS% = 0
 	COLOR 15, 0: CLS
 	JJ = 7
 	LOCATE 6, 8: COLOR 15, 1
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "ENTER NAME FOR SUB-SCHEDULE: ": PRINT
 	LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
 	LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
@@ -478,10 +518,20 @@ CLOSE 1: NS% = 0: TS% = 0
 	COLOR 15, 0: CLS
 	JJ = 7
 	LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
 	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -555,15 +605,15 @@ CLOSE 1
 	null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 	Count% = DirCount%
 	IF Count% = 0 THEN 4700
-REDIM F$(0 TO Count%)
+REDIM leagueFiles$(0 TO Count%)
 	FOR X = 1 TO Count%
-	F$(X) = SPACE$(12)
+	leagueFiles$(X) = SPACE$(12)
 	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+	leagueFiles$(0) = Spec$
+	CALL ReadFile(leagueFiles$())
+	'CALL SortStr(VARPTR(leagueFiles$(1)), Count%, 0)
 	GOSUB 1310
-OPEN P$(1) + F$ + ".LIB" FOR INPUT AS #1
+OPEN P$(1) + targetFile$ + ".LIB" FOR INPUT AS #1
 	INPUT #1, X%
 	INPUT #1, LG$
 	INPUT #1, X$:INPUT #1, X$
@@ -718,13 +768,13 @@ _MouseHide
 2100 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 	Count% = DirCount%
 	IF Count% = 0 THEN 4400
-REDIM F$(0 TO Count%)
+REDIM scheduleFiles$(0 TO Count%)
 	FOR X = 1 TO Count%
-	F$(X) = SPACE$(12)
+	scheduleFiles$(X) = SPACE$(12)
 	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count%, 0)
+	scheduleFiles$(0) = Spec$
+	CALL ReadFile(scheduleFiles$())
+	'CALL SortStr(VARPTR(scheduleFiles$(1)), Count%, 0)
 
 1310 CLS
 	COLOR , 1
@@ -747,7 +797,7 @@ REDIM F$(0 TO Count%)
 	PRINT "-SELECTS SCHEDULE";
 
 _MouseShow "DEFAULT"
-320 MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+320 MAMenu scheduleFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF EXITCODE% = 27 THEN 2900
@@ -756,14 +806,14 @@ _MouseHide
 	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
 	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > Count% THEN Start% = Count%
 	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 320
-	F$ = F$(SELECTION%)
-	LOCATE 2, 33: PRINT F$
+	targetFile$ = scheduleFiles$(SELECTION%)
+	LOCATE 2, 33: PRINT targetFile$
 LOCATE , 33: PRINT "ANY CHANGE (YN)";
 	COLOR 15, 0
 3910 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 1310
-	F$ = RTrim$(F$)
-	WE$ = LEFT$(F$, LEN(F$) - 4)
+	targetFile$ = RTrim$(targetFile$)
+	WE$ = LEFT$(targetFile$, LEN(targetFile$) - 4)
 	COLOR 15, 0
 	F$ = WE$
 	RETURN
@@ -911,7 +961,7 @@ CLOSE 1
 	Spacing% = 1
 	Row% = 6
 	Column% = 16
-CALL box0(5, 15, 12, 65, 2, 31)
+CALL box0(5, 15, 12, 65, 2,  15, 1)
 	
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -944,15 +994,15 @@ _MouseHide
 	IF Count% = 0 AND SELECTION% = 3 THEN 4020
 	IF Count% = 0 AND SELECTION% = 5 THEN RETURN
 
-	REDIM F$(0 TO Count%)
+	REDIM boxFiles$(0 TO Count%)
 	FOR X = 1 TO Count%
-	F$(X) = SPACE$(12)
+	boxFiles$(X) = SPACE$(12)
 	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
+	boxFiles$(0) = Spec$
+	CALL ReadFile(boxFiles$())
 	  FOR X = 1 TO Count%
-	KILL (P$(1) + F$(X))
-	LOCATE 12, 34: PRINT "DELETING "; F$(X)
+	KILL (P$(1) + boxFiles$(X))
+	LOCATE 12, 34: PRINT "DELETING "; boxFiles$(X)
 	NEXT
 	RETURN
 
@@ -960,13 +1010,13 @@ _MouseHide
 	null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 	Count% = DirCount%
 	IF Count% = 0 THEN 4010
-REDIM F$(0 TO Count%)
+REDIM boxFiles$(0 TO Count%)
 	FOR X = 1 TO Count%
-	  F$(X) = SPACE$(12)
+	  boxFiles$(X) = SPACE$(12)
 	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count, 0)
+	boxFiles$(0) = Spec$
+	CALL ReadFile(boxFiles$())
+	'CALL SortStr(VARPTR(boxFiles$(1)), Count, 0)
 
 5065 CLS
 	COLOR , 1
@@ -989,17 +1039,17 @@ REDIM F$(0 TO Count%)
 	PRINT "-SELECTS BOXSCORE";
 
 _MouseShow "DEFAULT"
-MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu boxFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF EXITCODE% = 27 THEN 4500
-	F$ = F$(SELECTION%)
-	LOCATE 2, 33: PRINT F$
+	targetFile$ = boxFiles$(SELECTION%)
+	LOCATE 2, 33: PRINT targetFile$
 LOCATE , 33: PRINT "ANY CHANGE (YN)";
 	COLOR 15, 0
 3912 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 5065
-	BN$ = P$(1) + F$
+	BN$ = P$(1) + targetFile$
 REDIM array$(500)               'holds the main editor string array
 	'GOSUB 5050
 	GOTO 5060
@@ -1083,7 +1133,7 @@ RETURN
 	LOCATE 6, 8: COLOR 15, 1
 	PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
 	FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " "; : NEXT
 	LOCATE 7 + JJ, 8
 	PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
 	RETURN
@@ -1120,13 +1170,13 @@ END SUB
 	null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 	Count% = DirCount%
 	IF Count% = 0 THEN 4011
-	REDIM F$(0 TO Count%)
+	REDIM leagueFiles$(0 TO Count%)
 	FOR X = 1 TO Count%
-	  F$(X) = SPACE$(12)
+	  leagueFiles$(X) = SPACE$(12)
 	NEXT
-	F$(0) = Spec$
-	CALL ReadFile(F$())
-	'CALL SortStr(VARPTR(F$(1)), Count, 0)
+	leagueFiles$(0) = Spec$
+	CALL ReadFile(leagueFiles$())
+	'CALL SortStr(VARPTR(leagueFiles$(1)), Count, 0)
 
 1311 CLS
 	COLOR , 1
@@ -1149,7 +1199,7 @@ END SUB
 	PRINT "-SELECTS CONFERENCE";
 
 _MouseShow "DEFAULT"
-1320 MAMenu F$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+1320 MAMenu leagueFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF EXITCODE% = 27 THEN 1300
@@ -1158,13 +1208,13 @@ _MouseHide
 	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
 	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > Count% THEN Start% = Count%
 	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 1320
-	F$ = F$(SELECTION%)
-	LOCATE 2, 33: PRINT F$
+	targetFile$ = leagueFiles$(SELECTION%)
+	LOCATE 2, 33: PRINT targetFile$
 LOCATE , 33: PRINT "ANY CHANGE (YN)";
 	COLOR 15, 0
 3911 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 1311
-OPEN P$(1) + F$ FOR INPUT AS #2
+OPEN P$(1) + targetFile$ FOR INPUT AS #2
 	X1 = 0
 	INPUT #2, LG%
 	INPUT #2, LG$
@@ -1218,7 +1268,7 @@ CLOSE 1
 	PRINT NG%(I, 0), YN$(I, 0)
 	PRINT NG%(I, 1), YN$(I, 1)
 	NEXT
-	 OPEN P$(0) + F$ + ".SCD" FOR RANDOM AS #1 LEN = 48
+	 OPEN P$(0) + targetFile$ + ".SCD" FOR RANDOM AS #1 LEN = 48
 	Y = LOF(1) / 48
 	FOR X = 0 TO 18
 	FIELD #1, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
@@ -1236,17 +1286,27 @@ CLOSE 1
 4100 COLOR 15, 0: CLS
 	JJ = 7
 	LOCATE 6, 8: COLOR 15, 1
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "ENTER NAME FOR SCHEDULE: ": PRINT
 	LOCATE , 12: PRINT "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
 	LOCATE , 12: PRINT "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
 	LOCATE , 12: PRINT "WILL AUTOMATICALLY ADD .SCD"
 	LOCATE , 12: PRINT "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
-	LOCATE 7, 37: INPUT F$
-	IF F$ = "" THEN 21
+	LOCATE 7, 37: INPUT scheduleFile$
+	IF scheduleFile$ = "" THEN 21
 	LOCATE 13, 12: PRINT "ANY CHANGE (YN) "
 23 I$ = GetKeyPress$
 	IF UCASE$(I$) = "Y" THEN 4100

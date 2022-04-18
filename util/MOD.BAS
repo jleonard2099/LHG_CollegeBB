@@ -26,7 +26,7 @@ DECLARE SUB TITLE ()
 	Row% = 8
 	Column% = 25
 
-CALL box0(7, 24, 12, 56, 2, 31)	
+CALL box0(7, 24, 12, 56, 2,  15, 1)	
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -43,10 +43,20 @@ _MouseHide
 56 COLOR 15, 0: CLS
 	JJ = 6
 	SN = 1: LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
-	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+'Print box top
+Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+'Print box sides
+For II = 1 To JJ
+Locate 6 + II, 8
+Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+
+'Print box bottom
+Locate 7 + JJ, 8
+Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+Locate 7, 32
 	LOCATE , 12: PRINT "ENTER DISK ID: ": PRINT
 	LOCATE , 12: PRINT "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
 	LOCATE , 12: PRINT "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -200,10 +210,10 @@ _MouseHide
 300 COLOR 15, 0: CLS
 	JJ = 6
 	SN = 1: LOCATE 6, 8: COLOR 15, 4
-	PRINT " Ö"; STRING$(61, 196); "· "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	Print " " + Chr$(214); String$(61, 196); Chr$(183) + " "; : FOR II = 1 TO JJ: LOCATE 6 + II, 8
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " "; : NEXT
 	LOCATE 7 + JJ, 8
-	PRINT " Ó"; STRING$(61, 196); "½ "; : LOCATE 7, 32
+	Print " " + Chr$(211); String$(61, 196); Chr$(189) + " "; : LOCATE 7, 32
 	LOCATE , 12: PRINT "ENTER NEW DISK ID: ": PRINT
 	LOCATE 7, 31: INPUT NY$
 	LOCATE , 12: PRINT "IS THIS CORRECT (YN)"
@@ -470,7 +480,7 @@ TS% = INT((NT - 1) / 80)
 	LOCATE 6, 8: COLOR 15, 1
 	PRINT " "; CHR$(201); STRING$(61, 205); CHR$(187); " ";
 	FOR II = 1 TO JJ: LOCATE 6 + II, 8
-	PRINT " º"; STRING$(61, 32); "º "; : NEXT
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " "; : NEXT
 	LOCATE 7 + JJ, 8
 	PRINT " "; CHR$(200); STRING$(61, 205); CHR$(188); " "; : LOCATE 7
 	RETURN
