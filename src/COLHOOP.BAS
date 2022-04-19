@@ -541,7 +541,7 @@ If S(0, 0) = S(1, 0) Then
 End If
 
 'Call HITKEY: GoTo 8400
-If Not AP = 1 And Not U5 = 2 Then
+If Not (AP = 1 And U5 = 2) Then
     I$ = GetKeyPress
 End If
 GoTo 8400
@@ -1803,15 +1803,19 @@ U$ = "PLAY ANOTHER GAME (YN)"
 Locate , (80 - Len(U$)) / 2
 Print U$
 
-If AP1 <> 1 Then
-    I$ = GetKeyPress$
-    If UCase$(I$) <> "Y" Then Run "HELLO.EXE"
+If AP <> 1 Then
     Color 15, 0
+    I$ = GetKeyPress$
+    If UCase$(I$) <> "Y" Then
+        Run "HELLO.EXE"
+    Else
+        Cls
+        Run "COLHOOP.EXE"
+    End If
+Else
+    Cls
+    Run "COLHOOP.EXE"
 End If
-
-8637 Color 15, 0
-Cls
-Run "COLHOOP.EXE"
 
 8650 Cls
 Color 14: Print "(0) ";: Color 15: Print "STATS TO SCREEN": Print
@@ -1831,7 +1835,7 @@ Return
 Return
 
 8670 If X = 0 Then
-    If Not AP = 1 And Not U5 = 2 Then
+    If Not (AP = 1 And U5 = 2) Then
         I$ = GetKeyPress
     End If
 End If
