@@ -69,7 +69,7 @@ _MouseHide
 	 FOR I = 0 TO 1
 	 D$(I) = LEFT$(D$(I), LEN(D$(I)) - 1)
 	 NEXT
-	Colr = OneColor%(FG, BG)             'pack FG and BG into a single byte
+	'Colr = OneColor%(FG, BG)             'pack FG and BG into a single byte
 	CLS : LOCATE , 16: PRINT "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS": PRINT
 
 510 LOCATE , 31: PRINT "PATHNAME EXAMPLES:": PRINT

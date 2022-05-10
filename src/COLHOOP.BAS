@@ -553,9 +553,10 @@ Return
 178 If H = 2 Then
     U$ = "HALFTIME!"
     Select Case PB%
-        Case 0: Color 7, 0: Call WINDEX: Print U$: GoSub 8515
-        Case 1: Call WINDEX: Print U$: Call DELAY: GoSub 8515
+        Case 0: Color 7, 0: Call WINDEX: Print U$
+        Case 1: Call WINDEX: Print U$: Call DELAY
     End Select
+	GoSub 8515
 End If
 Return
 
@@ -4840,7 +4841,6 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub WINDEX ()
-    'IF AP=1 AND U5=2 OR displayPause=0 THEN 4090
     '    If displayPause > 0 Then
     For I = 8 To 15
         Locate I, 1
@@ -7254,6 +7254,6 @@ Sub RECORDSCHECK ()
     Next
     Close 1
 End Sub
+
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
-

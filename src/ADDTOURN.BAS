@@ -143,7 +143,7 @@ If I = 7 Then OP%(14) = 1 - OP%(14): GoTo 154
 Color 15, 1
 FG = 0
 BG = 7
-Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
+'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
 Cls
 Color , 6
 Locate 1, 1: Print Tab(80);
@@ -233,7 +233,7 @@ For NR = 1 To R
     Color 15, 1
     FG = 0
     BG = 7
-    Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
+    'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
     Cls
     Color , 6: Locate 1, 1: Print Tab(80);: Locate , 26: Color 15
     Print "REGIONAL/BRACKET INFORMATION"

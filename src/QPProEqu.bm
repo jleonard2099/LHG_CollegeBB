@@ -211,11 +211,16 @@ Function READDIR$ (spec$)
 
     If spec$ > "" Then 'get file names when a spec is given
         Shell _Hide "DIR " + spec$ + " /b /on > " + TmpFile$
-        Index% = 0: DirList$(Index%) = "": ff% = FreeFile
+        Index% = 0
+        'DirList$(Index%) = ""
+        ff% = FreeFile
+
         Open TmpFile$ For Append As #ff%
         size& = LOF(ff%)
         Close #ff%
+
         If size& = 0 Then Kill TmpFile$: Exit Function
+
         Open TmpFile$ For Input As #ff%
         Do While Not EOF(ff%) And Index% < ListMAX%
             Index% = Index% + 1
@@ -223,13 +228,13 @@ Function READDIR$ (spec$)
         Loop
         DirCount% = Index% 'SHARED variable can return the file count
         Close #ff%
+
         Kill TmpFile$
     Else
         If Index% > 0 Then Index% = Index% - 1 'if there's no spec, we get the next file name
     End If
     READDIR$ = DirList$(Index%)
 End Function
-
 
 
 '-----------------------------------
@@ -610,23 +615,25 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
 
     Dim numberItems%, maxItemsPerScreen%, itemLength%, ColWidth%, TotalColsData%
 
-    itemLength% = Len(menuItems$(1))
     maxItemsPerScreen% = NumRows% * NumCols%
     If maxItemsPerScreen% > Count% Then maxItemsPerScreen% = Count%
-    ColWidth% = itemLength% + Spacing%
     TotalColsData% = Fix((Count% + (NumRows% - 1)) / NumRows%)
 
     'Determine how many items in the array are actually
     'needed for a menu (find the first empty element)
-    'This is basically a check against the Count% parameter
-    'It really shouldn't be used or needed
+    'We can also take the time to figure out what item
+    'has the longest length, for column spacing
+
+    itemLength% = 0
     numberItems% = UBound(menuItems$)
     For x = Start% To UBound(menuItems$)
+        If Len(menuItems$(x)) > itemLength% Then itemLength% = Len(menuItems$(x))
         If menuItems$(x) = "" Then
             numberItems% = x - 1
             Exit For
         End If
     Next x
+    ColWidth% = itemLength% + Spacing%
 
     Do
         GoSub DrawMenu '*** Draw the menu ***
@@ -675,13 +682,16 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
     XItemPosn = Column%
     Locate Row%, XItemPosn
     For currentItem = Start% To Start% + maxItemsPerScreen% - 1
-        Color ItemFGColor%, ItemBGColor%
-        Print menuItems$(currentItem);
-        Locate CsrLin + 1, XItemPosn
-        If currentItem Mod NumRows% = 0 Then
-            XItemPosn = XItemPosn + ColWidth%
-            If XItemPosn > 80 Then XItemPosn = Column%
-            Locate Row%, XItemPosn
+        If (currentItem <= numberItems%) Then
+            Color ItemFGColor%, ItemBGColor%
+            Print menuItems$(currentItem);
+            Locate CsrLin + 1, XItemPosn
+            If currentItem Mod NumRows% = 0 Then
+                'Move to a new column
+                XItemPosn = XItemPosn + ColWidth%
+                If XItemPosn > 80 Then XItemPosn = Column%
+                Locate Row%, XItemPosn
+            End If
         End If
     Next currentItem
 

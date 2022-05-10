@@ -8,7 +8,7 @@ _AllowFullScreen
 
 DECLARE SUB TITLE ()
 
-Dim Q$(500), A$(1, 13), A(1, 13, 6), X(1, 13, 6), V$(500)
+Dim Q$(500), A$(1, 13), A(1, 13, 6), X(1, 13, 6), teamItems$(500)
 Dim S$(1), A1$(1), ATT(1), DF(1, 13), P$(1, 13), RS(1, 13, 13)
 Dim T1%(1, 20), CK(1), C$(1), V%(500), YN$(1), T1N(1), menuItems$(4)
 Dim T%(1, 9), L%(1, 4), T$(1), SP(1), DA(1), V1%(1), V2%(1)
@@ -129,7 +129,7 @@ Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 182
 YN$(1) = NY$
-For I = 1 To 500: V$(I) = "": Next
+ERASE teamItems$
 GoSub 1100
 
 182 If BO% = 1 Then BO% = 0: GoTo 1440
@@ -230,7 +230,7 @@ Y = LOF(1)
 Field #1, 15 As Q$(0), 640 As X$
 For I1 = 1 To Y / 655
     Get #1, I1
-    V$(I1) = Q$(0): V%(I1) = I1
+    teamItems$(I1) = Q$(0): V%(I1) = I1
 Next
 Close 1
 NT = Y / 655
@@ -252,7 +252,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-20 MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -270,7 +270,7 @@ Y = LOF(1)
 Field #1, 15 As Q$(0), 640 As X$
 For I1 = 1 To Y / 655
     Get #1, I1
-    V$(I1) = Q$(0): V%(I1) = I1
+    teamItems$(I1) = Q$(0): V%(I1) = I1
 Next
 Close 1
 NT = Y / 655
@@ -292,7 +292,7 @@ Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
 Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     
 _MouseShow "DEFAULT"
-21 MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+21 MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then BO% = 1: Return
@@ -327,7 +327,7 @@ Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 2001
 YN$(0) = NY$
-For I = 1 To 500: V$(I) = "": Next
+Erase teamItems$
 GoSub 1200
 
 2001 If BO% = 1 Then BO% = 0: GoTo 2000
@@ -339,29 +339,9 @@ If UCase$(I$) = "Y" Then 2000
 GoTo 450
 
 3000 Cls
-If UCase$(Left$(D$(0), 1)) <> "A" And UCase$(Left$(D$(0), 1)) <> "B" Then 3006
-GoSub 4500
 
 3006 Return
-4000 I$ = GetKeyPress$
 
-4001 If UCase$(I$) = "Y" Then I = 1: GoTo 4005
-
-4002 If UCase$(I$) = "N" Then I = 0: GoTo 4005
-
-4003 GoTo 4000
-
-4005 Return
-
-4500 JJ = 4
-Locate 6, 8: Color 15, 1
-Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-Next
-Locate 7 + JJ, 8
-Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
-Return
 
 9000 Open D$(0) + "BASK." + YN$(1) For Random As #1 Len = 655
 FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _
