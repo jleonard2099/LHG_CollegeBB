@@ -46,7 +46,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 11, 57, 2,  15, 1)
+Call box0(7, 24, 11, 57, 2, 15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -65,8 +65,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -190,13 +190,13 @@ Return
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4500
-ReDim conferenceFiles$0 To Count%)
+ReDim conferenceFiles$(0 To Count%)
 For X = 1 To Count%
-    conferenceFiles$X) = Space$(12)
+    conferenceFiles$(X) = Space$(12)
 Next
-conferenceFiles$0) = Spec$
-Call ReadFile(conferenceFiles$))
-'CALL SortStr(VARPTR(conferenceFiles$1)), Count, 0)
+conferenceFiles$(0) = Spec$
+Call ReadFile(conferenceFiles$())
+'CALL SortStr(VARPTR(conferenceFiles$(1)), Count, 0)
 
 1310 Cls
 Color , 1
@@ -219,11 +219,11 @@ Print "ENTER";: Color 15
 Print "-SELECTS TEAM";
 
 _MouseShow "DEFAULT"
-MAMenu conferenceFiles$), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+MAMenu conferenceFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If ExitCode% = 27 Then 60
-targetFile$ = conferenceFiles$SELECTION%)
+targetFile$ = conferenceFiles$(SELECTION%)
 Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0

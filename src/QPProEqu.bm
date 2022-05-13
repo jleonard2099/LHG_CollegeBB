@@ -607,8 +607,6 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
     ' Row% / Column%
     ' row / column from which to start printing
 
-    Option Base 1
-
     'Examples of using MAMenu I've seen usually assign
     'this variable before calling
     'Selected% = 1
@@ -676,7 +674,6 @@ Sub MAMenu (menuItems$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, It
             Start% = Start% - NumRows%
         Loop Until Selected% >= Start%
     End If
-
 
     'Print menu items
     XItemPosn = Column%
@@ -925,7 +922,7 @@ Sub MQPrint (X$, FGColor%, BGColor%)
     '--If using OneColor:
     '--Color (Colr% And 15), ((Colr% And 240) / 16)
     Color FGColor%, BGColor%
-    Print X$
+    Print X$;
     Locate V, H
     _MouseShow "DEFAULT"
 End Sub
@@ -1154,7 +1151,7 @@ Sub QPrint (X$, FGColor%, BGColor%, Page%)
     '--If using OneColor:
     '--Color (Colr% And 15), ((Colr% And 240) / 16)
     Color FGColor%, BGColor%
-    Print X$
+    Print X$;
 
     'Restore cursor position
     Locate V, H
@@ -1442,6 +1439,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor%, BGColor%)
 
     TTabKey: 'reserved for your Tab routine if you
     '  want to handle it differently
+	
     TEnter:
     GoSub TInsertOff 'clear insert, restore cursor size
     X$ = Left$(X$, Length) 'retain only the current length

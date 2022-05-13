@@ -43,7 +43,7 @@ Spacing% = 1
 Row% = 8
 Column% = 25
 
-CALL box0(7, 24, 11, 50, 2,  15, 1)
+Call box0(7, 24, 11, 50, 2, 15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -91,10 +91,10 @@ Next
 
 454 Locate 21, 1
 Color 14: Print "(1) ";: Color 15: Print "DRAFT PLAYER"
-Color 14: Print "(Z) ";: Color 15: Print "SAVE TEAM"
+Color 14: Print "(2) ";: Color 15: Print "SAVE TEAM"
 455 I$ = GetKeyPress$
 
-456 If UCase$(I$) = "Z" Then 800
+456 If UCase$(I$) = "2" Then 800
 
 457 If I$ = "1" Then 470
 
@@ -114,8 +114,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -129,7 +129,7 @@ Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
 Locate 7, 27: Input NY$
 If NY$ = "" Then GoSub 1102: GoTo 182
 YN$(1) = NY$
-ERASE teamItems$
+Erase teamItems$
 GoSub 1100
 
 182 If BO% = 1 Then BO% = 0: GoTo 1440
@@ -312,8 +312,8 @@ Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
 'Print box sides
 For II = 1 To JJ
-Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 
 'Print box bottom
@@ -342,6 +342,15 @@ GoTo 450
 
 3006 Return
 
+4500 JJ = 4
+Locate 6, 8: Color 15, 1
+Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+For II = 1 To JJ: Locate 6 + II, 8
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+Next
+Locate 7 + JJ, 8
+Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
+Return
 
 9000 Open D$(0) + "BASK." + YN$(1) For Random As #1 Len = 655
 FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 _

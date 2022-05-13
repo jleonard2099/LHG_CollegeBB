@@ -30,24 +30,24 @@ null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 
 If Count% > 0 Then
-	ReDim tournamentFiles$0 To Count%)
+    ReDim tournamentFiles$(0 To Count%)
 
-	For X = 1 To Count%
-		tournamentFiles$X) = Space$(12)
-	Next
+    For X = 1 To Count%
+        tournamentFiles$(X) = Space$(12)
+    Next
 
-	tournamentFiles$0) = Spec$
-	Call ReadFile(tournamentFiles$))
-	'CALL SortStr(VARPTR(tournamentFiles$1)), Count%, 0)
-	nf% = Count%
+    tournamentFiles$(0) = Spec$
+    Call ReadFile(tournamentFiles$())
+    'CALL SortStr(VARPTR(tournamentFiles$(1)), Count%, 0)
+    nf% = Count%
 Else
-	'This was added to handle if no TOU files are available
-	'Original game would just try to push ahead anyway
-	Locate 10
+    'This was added to handle if no TOU files are available
+    'Original game would just try to push ahead anyway
+    Locate 10
     Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, Pass)
     I$ = GetKeyPress$
     Call CSMsgBox("", 0, Pass)
-	RUN "ADDTOURN.EXE"
+    Run "ADDTOURN.EXE"
 End If
 
 Color 7, 0
@@ -312,7 +312,7 @@ Print "ENTER";: Color 15
 Print "-SELECTS TOURNEY";
 
 _MouseShow "DEFAULT"
-320 MAMenu tournamentFiles$), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+320 MAMenu tournamentFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then Run "ADDTOURN.EXE"
@@ -321,7 +321,7 @@ If EXITCODE% = -79 Then Start% = Count%: EXITCODE% = 3: SELECTION% = Count%: GoT
 If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
 If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > Count% Then Start% = Count%
 If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 320
-targetFile$ = tournamentFiles$SELECTION%)
+targetFile$ = tournamentFiles$(SELECTION%)
 T1 = SELECTION%
 Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";

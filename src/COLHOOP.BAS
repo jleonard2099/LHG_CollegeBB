@@ -1,4 +1,3 @@
-$Debug
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 
@@ -556,7 +555,7 @@ Return
         Case 0: Color 7, 0: Call WINDEX: Print U$
         Case 1: Call WINDEX: Print U$: Call DELAY
     End Select
-	GoSub 8515
+    GoSub 8515
 End If
 Return
 

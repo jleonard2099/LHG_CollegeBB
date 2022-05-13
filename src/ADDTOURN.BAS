@@ -81,7 +81,7 @@ Spacing% = 1
 Row% = 10
 Column% = 25
 
-CALL box0(9, 24, 16, 54, 2,  15, 1)
+Call box0(9, 24, 16, 54, 2, 15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -283,7 +283,7 @@ For NR = 1 To R
     Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
     Color 12
     MAXSEED = NN%(NR) + 1 + 4
-    Call box0(3, 24, MAXSEED, 54, 2, 15)
+    Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
     Locate 4, 25: Print "SEED  TEAM"
     For I1 = 1 To NN%(NR)
         Color 2
@@ -426,7 +426,7 @@ Spacing% = 1
 Row% = 4
 Column% = 32
 menuItems$(R + 1) = "SAVE AND EXIT"
-Call box0(3, 31, 3 + R + 2, 48, 2, 15)
+Call box0(3, 31, 3 + R + 2, 48, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -445,7 +445,7 @@ End
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
@@ -2744,13 +2744,13 @@ Spec$ = D$(0) + "*.TOU"
 null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
 Count% = DirCount%
 If Count% = 0 Then 4050
-ReDim tournamentFiles$0 To Count%)
+ReDim tournamentFiles$(0 To Count%)
 For X = 1 To Count%
-    tournamentFiles$X) = Space$(12)
+    tournamentFiles$(X) = Space$(12)
 Next
-tournamentFiles$0) = Spec$
-Call ReadFile(tournamentFiles$))
-'CALL SortStr(VARPTR(tournamentFiles$1)), Count, 0)
+tournamentFiles$(0) = Spec$
+Call ReadFile(tournamentFiles$())
+'CALL SortStr(VARPTR(tournamentFiles$(1)), Count, 0)
 Cls
 Color , 1: Cls: Locate , 28: Color 14
 Print "SELECT TOURNAMENT FIELD TO EDIT": Color 15
@@ -2769,7 +2769,7 @@ Print "ENTER";: Color 15
 Print "-SELECTS TOURNAMENT FIELD";
     
 _MouseShow "DEFAULT"
-206 MAMenu tournamentFiles$), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+206 MAMenu tournamentFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then 10
@@ -2778,7 +2778,7 @@ If EXITCODE% = -79 Then Start% = Count: EXITCODE% = 3: SELECTION% = Count: GoTo 
 If EXITCODE% = -73 Then Start% = Start% - 80: If Start% < 1 Then Start% = 1
 If EXITCODE% = -81 Then Start% = Start% + 80: If Start% > Count Then Start% = Count
 If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = Start%: GoTo 206
-F$ = tournamentFiles$SELECTION%)
+F$ = tournamentFiles$(SELECTION%)
 Locate 2, 33: Print F$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0

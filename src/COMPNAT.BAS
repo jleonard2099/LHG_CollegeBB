@@ -53,12 +53,12 @@ Close 1
 4003 Spec$ = D$(1) + "*.CON"
 COUNT% = FCount%(Spec$)
 If COUNT% = 0 Then 4500
-ReDim conferenceFiles$0 To COUNT%)
+ReDim conferenceFiles$(0 To COUNT%)
 For X = 1 To COUNT%
-    conferenceFiles$X) = Space$(12)
+    conferenceFiles$(X) = Space$(12)
 Next
-conferenceFiles$0) = Spec$
-Call ReadFile(conferenceFiles$))
+conferenceFiles$(0) = Spec$
+Call ReadFile(conferenceFiles$())
 'CALL SortStr(VARPTR(conferenceFiles$1)), COUNT%, 0)
 
 1310 Cls
@@ -82,7 +82,7 @@ Print "ENTER";: Color 15
 Print "-SELECTS LEAGUE";
 
 _MouseShow "DEFAULT"
-20 MAMenu conferenceFiles$), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20 MAMenu conferenceFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 If EXITCODE% = 27 Then 2905
@@ -91,7 +91,7 @@ If EXITCODE% = -79 Then START% = COUNT%: EXITCODE% = 3: SELECTION% = COUNT%: GoT
 If EXITCODE% = -73 Then START% = START% - 80: If START% < 1 Then START% = 1
 If EXITCODE% = -81 Then START% = START% + 80: If START% > COUNT% Then START% = COUNT%
 If EXITCODE% = -81 Or EXITCODE% = -73 Then EXITCODE% = 3: SELECTION% = START%: GoTo 20
-targetFile$ = conferenceFiles$SELECTION%)
+targetFile$ = conferenceFiles$(SELECTION%)
 Locate 2, 33: Print targetFile$
 Locate , 33: Print "ANY CHANGE (YN)";
 Color 15, 0
@@ -701,7 +701,7 @@ PT(NRT, 4) = SS
 Locate 6, 8: Color 15, 1
 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 For II = 1 To JJ: Locate 6 + II, 8
-Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
 Next
 Locate 7 + JJ, 8
 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7

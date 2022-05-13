@@ -45,7 +45,7 @@ Spacing% = 1
 Row% = 10
 Column% = 25
 
-CALL box0(9, 24, 13, 50, 2,  15, 1)
+Call box0(9, 24, 13, 50, 2, 15, 1)
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 _MouseHide
@@ -149,7 +149,7 @@ Color , 0: Cls
 Color , 6: Locate 1, 1: Print Tab(80);: Locate , 23: Color 15
 Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
-ERASE menuItems$
+Erase menuItems$
 For I = 1 To R
     If R$(I) = "" Then R$(I) = "TO BE NAMED"
     menuItems$(I) = R$(I)
@@ -166,7 +166,7 @@ Row% = 4
 Column% = 32
 menuItems$(R + 1) = "CHAMPIONSHIP BRACKET"
 menuItems$(R + 2) = "EXIT                "
-Call box0(3, 31, 3 + R + 3, 52, 2, 15)
+Call box0(3, 31, 3 + R + 3, 52, 2, 15, 1)
     
 _MouseShow "DEFAULT"
 MMenuVert menuItems$(), SELECTION%, Start%, SCANCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -260,7 +260,7 @@ Color , 6: Locate 1, 1: Print Tab(80);: Locate , 23: Color 15
 Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 MAXSEED = NN%(NR) + 1 + 4
-Call box0(3, 24, MAXSEED, 54, 2, 15)
+Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
 Locate 4, 25: Print "SEED  TEAM"
 For I1 = 1 To NN%(NR)
     Color 2
