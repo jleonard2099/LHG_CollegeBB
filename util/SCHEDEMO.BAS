@@ -7,7 +7,7 @@ DEFINT A-Z
 DECLARE SUB TITLE ()
 'DECLARE SUB QEdit (array$(), Ky$, Action, Ed AS EditInfo)
 
-DIM teamItems$(500), V%(500), TE$(1), TF$(1)
+DIM teamNames$(500), teamIndex%(500), TE$(1), TF$(1)
 DIM Q$(375), AP%(1), T%(9)
 DIM Z1$(30), Z1%(30), Z2$(30)
 DIM H$(20), V$(20), MO$(3), menuItems$(10)
@@ -333,7 +333,7 @@ Locate 7, 32
 	LOCATE 7, 27: INPUT NY$
 	IF NY$ = "" THEN GOSUB 1102: GOTO 182
 	YN$ = NY$
-	FOR II = 1 TO 500: teamItems$(II) = "": NEXT
+	FOR II = 1 TO 500: teamNames$(II) = "": NEXT
 	GOSUB 1100
 
 182 IF BO% = 1 THEN BO% = 0: GOTO 181
@@ -540,7 +540,7 @@ Locate 7, 32
 	LOCATE 7, 27: INPUT NY$
 	IF NY$ = "" THEN GOSUB 1102: GOTO 730
 	YN$ = NY$
-	ERASE teamItems$
+	ERASE teamNames$
 	GOSUB 1100
 
 730 IF BO% = 1 THEN BO% = 0: GOTO 725
@@ -639,7 +639,7 @@ CLOSE 1
 	GOTO 10
 
 850 PRINT "FOUND A MATCH"
-'    IF NOT _FILEEXISTS(DRI$(0) + SF$ + ".SCD") THEN 852
+'    IF NOT _FILEEXISTS(diskPaths$(0) + SF$ + ".SCD") THEN 852
 OPEN P$(0) + SF$ + ".SCD" FOR RANDOM AS #1 LEN = 48
 	Y = LOF(1): GOTO 853
 
@@ -722,7 +722,7 @@ OPEN P$(0) + "BASK." + YN$ FOR RANDOM AS #1 LEN = 655
 	FOR I1 = 1 TO Y / 655
 	GET #1, I1
 	NT = NT + 1
-	teamItems$(I1) = Q$(0): V%(I1) = I1
+	teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
 	NEXT
 CLOSE 1
 	NT = Y / 655
@@ -745,7 +745,7 @@ CLOSE 1
 	PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
 	
 _MouseShow "DEFAULT"
-206  MAMenu teamItems$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+206  MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 _MouseHide
 
 	IF EXITCODE% = 27 THEN BO% = 1: RETURN
@@ -754,7 +754,7 @@ _MouseHide
 	IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
 	IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
 	IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 206
-	T1 = V%(SELECTION%)
+	T1 = teamIndex%(SELECTION%)
 	GOTO 9000
 
 1200 FOR I = 1 TO AP%(0)

@@ -20,4 +20,6 @@
 
 - Added title text / icons for main EXEs
 
+- Removed almost all spaghetti code for easy flow and readability
 
+- Created several subroutines for menus and utilities to better modularize source

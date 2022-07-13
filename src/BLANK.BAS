@@ -1,125 +1,122 @@
-'$INCLUDE: 'Config.BI'
-'$INCLUDE: 'KeyInput.BI'
-'$INCLUDE: 'QPProEqu.BI'
+Sub BLANK ()
 
-_Title "Courtside College Basketball - Delete Conference Stats"
-''$ExeIcon:'./lhg_ccb.ico'
-'_Icon
-_AllowFullScreen
+    _Title "Courtside College Basketball - Delete Conference Stats"
 
-DefInt A-Z
+    DefInt A-Z
 
-'Dim O1(40), TM$(40), JS(46, 42) As Single, ZM%(46), NM$(46)
-Dim H1$(40), D$(2)
-'Dim PS$(40),BA$(40)
-'Dim DFT(40, 20) As Single, ER$(40), OFT(40, 20) As Single
-'Dim O2(40), Z2$(255), Z3$(255), Z1(255, 2) As Single, BAT(24), PIT(23)
-'Dim J As Single
+    Dim H1$(MAX_CONFERENCES)
 
-Open "DEV.BAS" For Input As #2
-For I = 0 To 1
-    Input #2, D$(I)
-Next
-Close #2
+    Do
+        'Display list of files...
 
-Cls
+        Cls
 
-'CheckFiles:
+        Spec$ = diskPaths$(1) + "*.LIB"
+        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+        Count% = DirCount%
 
-50 Spec$ = D$(1) + "*.LIB"
-null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-Count% = DirCount%
-If Count% = 0 Then GoTo 100
-ReDim leagueFiles$(0 To Count%)
-For X = 1 To Count%
-    leagueFiles$(X) = Space$(12)
-Next
-leagueFiles$(0) = Spec$
-Call ReadFile(leagueFiles$())
+        If Count% = 0 Then
+            Locate 10, 8
+            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
 
-'LeagueSelect:
+        Else
 
-75 Cls
-Color , 1
-Cls
-Locate , 28
-Color 14
-Print "SELECT LEAGUE TO ERASE"
+            ReDim leagueFiles$(0 To Count%)
+            For X = 1 To Count%
+                leagueFiles$(X) = Space$(12)
+            Next
+            leagueFiles$(0) = Spec$
+            Call ReadFile(leagueFiles$())
 
-Color 15
-SELECTION% = 1
-Start% = 1
-FileFGColr% = 15: FileBGColr% = 1
-HiLiteFGColr% = 0: HiLiteBGColr% = 7
-Rows% = 20
-Columns% = 4
-Spacing% = 6
-Row% = 4
-Column% = 1
+            'Select League
 
-Locate 25, 1
-Color 14
-Print "ENTER";
-Color 15
-Print "-SELECTS LEAGUE   ";
-Color 14
-Print "HIT ESCAPE KEY TO EXIT";
-Color 15
+            Cls
+            Color , 1
+            Cls
+            Locate , 28
+            Color 14
+            Print "SELECT LEAGUE TO ERASE"
+            Color 15
+            SELECTION% = 1
+            Start% = 1
+            FileFGColr% = 15: FileBGColr% = 1
+            HiLiteFGColr% = 0: HiLiteBGColr% = 7
+            Rows% = 20
+            Columns% = 4
+            Spacing% = 6
+            Row% = 4
+            Column% = 1
 
-_MouseShow "DEFAULT"
-MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-_MouseHide
+            Locate 25, 1
+            Color 14
+            Print "ENTER";
+            Color 15
+            Print "-SELECTS LEAGUE   ";
+            Color 14
+            Print "HIT ESCAPE KEY TO EXIT";
+            Color 15
 
-If ExitCode% = 27 Then Run "HELLO.EXE"
+            _MouseShow "DEFAULT"
+            MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            _MouseHide
 
-targetFile$ = leagueFiles$(SELECTION%)
-Locate 2, 33: Print targetFile$
-Locate , 33: Print "ANY CHANGE (YN)";
-Color 15, 0
-I$ = GetKeyPress$
-If UCase$(I$) = "Y" Then GoTo 75
-    
-targetFile$ = RTrim$(targetFile$)
-WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-LH$ = Left$(WE$, 8)
+            If Not (ExitCode% = 27) Then
 
-Cls
+                targetFile$ = leagueFiles$(SELECTION%)
+                Locate 2, 33: Print targetFile$
+                Locate , 33: Print "ANY CHANGE (YN)";
+                Color 15, 0
+                I$ = GetKeyPress$
 
-Locate 10, 8
-Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
-I$ = GetKeyPress$
-Call CSMsgBox("", 0, Pass)
-If I$ <> "Y" Then GoTo 75
+                If UCase$(I$) <> "Y" Then
 
-Open D$(1) + LH$ + ".TMS" For Input As #2
-Input #2, LG$, D1$, D2$, D3$, D4$
-For XW = 1 To 40
-    Input #2, H1$(XW)
-Next
-Close 2
+                    targetFile$ = RTrim$(targetFile$)
+                    WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+                    LH$ = Left$(WE$, 8)
 
-For XW = 1 To 40
-    If H1$(XW) = Chr$(42) Then _Continue
-    Print "DELETING "; H1$(XW); " STATS"
-    Kill D$(1) + H1$(XW)
-    Kill D$(1) + H1$(XW) + "R"
-    Kill D$(1) + H1$(XW) + "S"
-    Kill D$(1) + H1$(XW) + "D"
-Next
-    
-Cls
-    
-GoTo 50
+					Color 7,0
+                    Cls
 
-'MsgBox:
+                    Locate 10, 8
+                    Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+                    G$ = GetKeyPress$
+                    Call CSMsgBox("", 0, Pass)
 
-100 Locate 10, 8
-Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-I$ = GetKeyPress$
-Call CSMsgBox("", 0, Pass)
+                    If UCase$(G$) = "Y" Then
 
-Run "HELLO.EXE"
+                        Open diskPaths$(1) + LH$ + ".TMS" For Input As #2
+                        Input #2, LG$, D1$, D2$ ', D3$, D4$
+                        For XW = 1 To TEAMS_PER_CONFERENCE
+                            'Need a check if we're at the end of the file
+                            'This would be easiest if we just count the # of teams?
+                            'But if the file is created with 40 names regardless...
+                            'This should still work!!!
+                            Input #2, H1$(XW)
+                        Next
+                        Close 2
 
+                        For XW = 1 To TEAMS_PER_CONFERENCE
+                            If H1$(XW) <> Chr$(42) Then
+                                Print "DELETING "; H1$(XW); " STATS"
+                                statFileName$ = diskPaths$(1) + H1$(XW)
+                                If _FileExists(statFileName$) Then Kill statFileName$
+                                If _FileExists(statFileName$ + "D") Then Kill statFileName$ + "D"
+                                If _FileExists(statFileName$ + "R") Then Kill statFileName$ + "R"
+                                If _FileExists(statFileName$ + "S") Then Kill statFileName$ + "S"
+                            End If
+                        Next
 
-'$INCLUDE: 'KeyInput.BM'
-'$INCLUDE: 'QPProEqu.BM'
+                    End If 'Done confirming to delete stats
+
+                End If 'Done confirming file selection
+
+            End If 'Done checking for ESC
+
+        End If 'Done checking for file count
+
+        '...Until we press ESC
+    Loop Until ExitCode% = 27 Or Count% = 0
+
+End Sub

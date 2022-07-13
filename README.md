@@ -71,6 +71,6 @@ Contact me directly if interested in contributing. Only considering people who s
 Affero GNU GPL v3
 
 # Project Status
-Preliminary work has completed so that code can compile in a modern environment. Next stages will be cleaning up code and commenting it so we can later consolidate for purporses of going cross-platform.
+Code has been updated so that it will compile in a modern environment, and a significant portion of code cleanup has occurred. Code has also been mostly consolidated. Next will be finishing this by merging game and menu source.
 
 Things are moving along as fast as personal time allows for now, which is reasonable given the scope of the project.

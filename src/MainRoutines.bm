@@ -1,0 +1,2869 @@
+
+'------------------------------
+'   CHAMPIONSHIP Subroutine
+'------------------------------
+Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
+
+	Shared TC
+
+    Shared NG%()
+    'Shared homeScore%(), visitingScore%()
+    Shared homeTeam$(), visitingTeam$(), yearNumber$()
+
+    'TC = 0
+    Locate 2,1: Color 0,15
+    Print "Regions - "; Using "#"; numberRegions
+
+    Select Case numberRegions
+    
+        Case 1: Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 2:
+            5100 '2 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 3:
+            5200 '3 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 4:
+            5300 '4 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 902
+            NG%(TC, 1) = 903
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 3
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1001
+                NG%(TC, 1) = 1002
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 1 LOSER"
+                homeTeam$(TC) = "GAME 2 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 4
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1101
+                NG%(TC, 1) = 1102
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 1 WINNER"
+                homeTeam$(TC) = "GAME 2 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+            
+            5305 TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 1102
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 5:
+            5400 '5 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 905
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 5 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 902
+            NG%(TC, 1) = 903
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 4
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1003
+                NG%(TC, 1) = 1002
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 LOSER"
+                homeTeam$(TC) = "GAME 2 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 5
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1103
+                NG%(TC, 1) = 1102
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 WINNER"
+                homeTeam$(TC) = "GAME 2 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+            
+            5405 TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1102
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 6:
+            5500 '6 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 905
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 5 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 5
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1003
+                NG%(TC, 1) = 1004
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 LOSER"
+                homeTeam$(TC) = "GAME 4 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 6
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1103
+                NG%(TC, 1) = 1104
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 WINNER"
+                homeTeam$(TC) = "GAME 4 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+            
+            5505 TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1104
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 7:
+            5600 '7 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 902
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 904
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 1101
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 6
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1005
+                NG%(TC, 1) = 1004
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 LOSER"
+                homeTeam$(TC) = "GAME 4 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 7
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1105
+                NG%(TC, 1) = 1104
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 WINNER"
+                homeTeam$(TC) = "GAME 4 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            5605 TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1105
+            NG%(TC, 1) = 1104
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 5 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 8:
+            5700 '8 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 902
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 904
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 1102
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1104
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 7
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1005
+                NG%(TC, 1) = 1006
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 LOSER"
+                homeTeam$(TC) = "GAME 6 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 8
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1105
+                NG%(TC, 1) = 1106
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 WINNER"
+                homeTeam$(TC) = "GAME 6 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            5705 TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1105
+            NG%(TC, 1) = 1106
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 5 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+
+        Case 9:
+            5800 '9 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 902
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 904
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 1101
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 1103
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1104
+            NG%(TC, 1) = 1105
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 8
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1007
+                NG%(TC, 1) = 1006
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 LOSER"
+                homeTeam$(TC) = "GAME 6 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 9
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1107
+                NG%(TC, 1) = 1106
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 6 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            5805 TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1107
+            NG%(TC, 1) = 1106
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+
+        Case 10:
+            5900 '10 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 908
+            NG%(TC, 1) = 909
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 8 WINNER"
+            homeTeam$(TC) = "REGION 9 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 904
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 1102
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1104
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1105
+            NG%(TC, 1) = 1106
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 5 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 9
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1007
+                NG%(TC, 1) = 1008
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 LOSER"
+                homeTeam$(TC) = "GAME 8 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 10
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1107
+                NG%(TC, 1) = 1108
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 8 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+            
+            5905 TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1107
+            NG%(TC, 1) = 1108
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+            
+        Case 11:
+            6000 '11 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 911
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 1102
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 904
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 1103
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1104
+            NG%(TC, 1) = 1105
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1106
+            NG%(TC, 1) = 1107
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 6 WINNER"
+            homeTeam$(TC) = "GAME 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 10
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1009
+                NG%(TC, 1) = 1008
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 LOSER"
+                homeTeam$(TC) = "GAME 8 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 11
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1109
+                NG%(TC, 1) = 1108
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 WINNER"
+                homeTeam$(TC) = "GAME 8 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            6005 TC = TC + 1
+            REGION = 17
+            GAME = 10
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1109
+            NG%(TC, 1) = 1108
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+
+        Case 12:
+            6100 '12 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 911
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 912
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 902
+            NG%(TC, 1) = 1101
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 903
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 904
+            NG%(TC, 1) = 1103
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1104
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1106
+            NG%(TC, 1) = 1105
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 6 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 10
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1107
+            NG%(TC, 1) = 1108
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 11
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1009
+                NG%(TC, 1) = 1010
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 LOSER"
+                homeTeam$(TC) = "GAME 10 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 12
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1109
+                NG%(TC, 1) = 1110
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 WINNER"
+                homeTeam$(TC) = "GAME 10 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            6105 TC = TC + 1
+            REGION = 17
+            GAME = 11
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1109
+            NG%(TC, 1) = 1110
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 10 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 13:
+            6200 '13 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 913
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 912
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 906
+            NG%(TC, 1) = 911
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 6 WINNER"
+            homeTeam$(TC) = "REGION 11 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 1102
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 901
+            NG%(TC, 1) = 1103
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1104
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 903
+            NG%(TC, 1) = 1105
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 10
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1107
+            NG%(TC, 1) = 1106
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 11
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1109
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 9 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 12
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1011
+                NG%(TC, 1) = 1010
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 11 LOSER"
+                homeTeam$(TC) = "GAME 10 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 13
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1111
+                NG%(TC, 1) = 1110
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 11 WINNER"
+                homeTeam$(TC) = "GAME 10 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+            
+            6205 TC = TC + 1
+            REGION = 17
+            GAME = 12
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1111
+            NG%(TC, 1) = 1110
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 11 WINNER"
+            homeTeam$(TC) = "GAME 10 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+
+        Case 14:
+
+            6300 '14 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 914
+            NG%(TC, 1) = 903
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 14 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 913
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 912
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 911
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 909
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1104
+            NG%(TC, 1) = 1101
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1105
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 5 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 1103
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 10
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1106
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 6 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 11
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1107
+            NG%(TC, 1) = 1108
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 12
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1109
+            NG%(TC, 1) = 1110
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 10 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 13
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1012
+                NG%(TC, 1) = 1011
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 LOSER"
+                homeTeam$(TC) = "GAME 11 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 14
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1112
+                NG%(TC, 1) = 1111
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 WINNER"
+                homeTeam$(TC) = "GAME 11 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+            
+            6305 TC = TC + 1
+            REGION = 17
+            GAME = 13
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1111
+            NG%(TC, 1) = 1112
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 11 WINNER"
+            homeTeam$(TC) = "GAME 12 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 15:
+
+            6400 '15 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 915
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 15 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 914
+            NG%(TC, 1) = 903
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 14 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 913
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 912
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 911
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 1106
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 1105
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 10
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1104
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 11
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1107
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 12
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1109
+            NG%(TC, 1) = 1108
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 13
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1110
+            NG%(TC, 1) = 1111
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 10 WINNER"
+            homeTeam$(TC) = "GAME 11 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 14
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1012
+                NG%(TC, 1) = 1013
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 LOSER"
+                homeTeam$(TC) = "GAME 13 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 15
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1112
+                NG%(TC, 1) = 1113
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 WINNER"
+                homeTeam$(TC) = "GAME 13 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            6405 TC = TC + 1
+            REGION = 17
+            GAME = 14
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1112
+            NG%(TC, 1) = 1113
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 12 WINNER"
+            homeTeam$(TC) = "GAME 13 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            Call SaveTourney (saveFile$, numberRegions, tournName$)
+        Case 16:
+            6500 '16 REGIONS
+            TC = TC + 1
+            REGION = 17
+            GAME = 1
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 916
+            NG%(TC, 1) = 901
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 16 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 2
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 915
+            NG%(TC, 1) = 902
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 15 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 3
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 914
+            NG%(TC, 1) = 903
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 14 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 4
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 913
+            NG%(TC, 1) = 904
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 5
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 912
+            NG%(TC, 1) = 905
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 6
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 911
+            NG%(TC, 1) = 906
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 7
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 910
+            NG%(TC, 1) = 907
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 8
+            ROUND = 1
+            Call Settings
+
+            NG%(TC, 0) = 909
+            NG%(TC, 1) = 908
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 9
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1101
+            NG%(TC, 1) = 1108
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 10
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1104
+            NG%(TC, 1) = 1105
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 11
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1103
+            NG%(TC, 1) = 1106
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 12
+            ROUND = 2
+            Call Settings
+
+            NG%(TC, 0) = 1102
+            NG%(TC, 1) = 1107
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 7 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 13
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1109
+            NG%(TC, 1) = 1110
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 10 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            TC = TC + 1
+            REGION = 17
+            GAME = 14
+            ROUND = 3
+            Call Settings
+
+            NG%(TC, 0) = 1111
+            NG%(TC, 1) = 1112
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 11 WINNER"
+            homeTeam$(TC) = "GAME 12 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+            If C%(1) <> 0 Then
+                TC = TC + 1
+                REGION = 17
+                GAME = 15
+                ROUND = 98
+                Call Settings
+
+                NG%(TC, 0) = 1014
+                NG%(TC, 1) = 1013
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 14 LOSER"
+                homeTeam$(TC) = "GAME 13 LOSER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                TC = TC + 1
+                REGION = 17
+                GAME = 16
+                ROUND = 99
+                Call Settings
+
+                NG%(TC, 0) = 1114
+                NG%(TC, 1) = 1113
+                NG%(TC, 15) = REGION
+                NG%(TC, 16) = ROUND
+                NG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 14 WINNER"
+                homeTeam$(TC) = "GAME 13 WINNER"
+                yearNumber$(TC, 0) = "XXX"
+                yearNumber$(TC, 1) = "XXX"
+                Call WRITEGAME (saveFile$)
+
+                Call SaveTourney (saveFile$, numberRegions, tournName$)
+            End If
+
+            6505 TC = TC + 1
+            REGION = 17
+            GAME = 15
+            ROUND = 99
+            Call Settings
+
+            NG%(TC, 0) = 1114
+            NG%(TC, 1) = 1113
+            NG%(TC, 15) = REGION
+            NG%(TC, 16) = ROUND
+            NG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 14 WINNER"
+            homeTeam$(TC) = "GAME 13 WINNER"
+            yearNumber$(TC, 0) = "XXX"
+            yearNumber$(TC, 1) = "XXX"
+            Call WRITEGAME (saveFile$)
+
+    End Select
+    
+End Sub
+
+
+'------------------------------
+'    SETTINGS Subroutine
+'------------------------------
+Sub SETTINGS ()
+
+	Shared TC
+    Shared NG%(), tourneyDefaults%()
+
+    For I = 0 To 14
+        NG%(TC, I) = tourneyDefaults%(I)
+    Next
+
+    NG%(TC, 8) = 3
+    NG%(TC, 2) = 2
+
+End Sub
+
+
+'------------------------------
+'    WRITEGAME Subroutine
+'------------------------------
+' Creates both TMP and TCX files,
+' which serve as "schedule" files
+' of sorts that are used only with
+' the tournament play menu.
+
+Sub WRITEGAME (outputFile$)
+
+	Shared TC
+
+    Shared homeScore%(), NG%(), visitingScore%()
+    Shared homeTeam$(), visitingTeam$(), yearNumber$()
+
+    'WRITE OUT A GAME
+    'TMP file
+    Open diskPaths$(0) + outputFile$ + ".TMP" For Random As #1 Len = 90
+    For X = 0 To 14
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+    Next
+
+    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(TC, X)): Next
+    For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC, X): Next
+
+    LSet Q$(16) = MKI$(visitingScore%(TC))
+    LSet Q$(17) = MKI$(homeScore%(TC))
+    LSet Q$(18) = visitingTeam$(TC)
+    LSet Q$(19) = homeTeam$(TC)
+
+    For X = 24 To 26
+        LSet Q$(X) = MKI$(NG%(TC, X - 9))
+    Next
+    Put #1
+    Close 1
+
+    'TCX file
+    Open diskPaths$(0) + outputFile$ + ".TCX" For Random As #1 Len = 90
+    For X = 0 To 14
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+    Next
+
+    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(TC, X)): Next
+    For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC, X): Next
+    LSet Q$(16) = MKI$(visitingScore%(TC))
+    LSet Q$(17) = MKI$(homeScore%(TC))
+    LSet Q$(18) = visitingTeam$(TC)
+    LSet Q$(19) = homeTeam$(TC)
+
+    For X = 24 To 26
+        LSet Q$(X) = MKI$(NG%(TC, X - 9))
+    Next
+    Put #1
+    Close 1
+
+End Sub
+
+
+'------------------------------
+'    SaveTourney Subroutine
+'------------------------------
+'...explanation...
+Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
+
+	Shared TC
+
+    Shared consolationSetting%(), N%(), NN%()
+    Shared slotName$(), regionNames$()
+
+    'SAVE TOURNAMENT INFO AND QUIT
+    Open diskPaths$(0) + saveFile$ + ".INF" For Output As #2
+    Print #2, tourneyName$
+    Print #2, numberRegions ' NUMBER OF REGIONS
+    For I = 1 To 16
+        Print #2, NN%(I) ' NUMBER OF TEAMS IN REGION
+        Print #2, regionNames$(I) ' NAME OF REGION
+    Next
+    For I = 1 To 16
+        For I1 = 1 To 16
+            For I2 = 0 To 3
+                Print #2, slotName$(I, I1, I2) ' SEED SLOT NAME
+                Print #2, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+            Next
+        Next
+    Next
+
+    Print #2, consolationSetting%(0)
+    Print #2, consolationSetting%(1): ' CONSOLATION GAME
+    Close 2
+
+
+    Locate 2, 1: Color 0, 15
+    Print "Regions - "; Using "#"; numberRegions
+
+
+    Call SORTGAMES(saveFile$, numberRegions)
+    'Sort games actually saves the file
+    '-- should update this so file saving is in this routine
+
+    Locate 22, 25: Print Space$(34)
+
+    Locate 10
+
+    Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, Pass)
+    I$ = GetKeyPress$
+    Call CSMsgBox("", 0, Pass)
+
+    'Return to previous menu
+    'GoTo 10
+
+End Sub
+
+
+'------------------------------
+'    SORTGAMES Subroutine
+'------------------------------
+Sub SORTGAMES (tourneyFile$, numberRegions)
+
+    Shared NG%()
+    Shared homeTeam$(), visitingTeam$(), yearNumber$()
+    Shared homeScore%(), visitingScore%()
+
+    Locate 2, 1: Color 0, 15
+    Print "Regions - "; Using "#"; numberRegions
+
+    For RD = 1 To 89
+        If Not (RD > 5 And RD < 88 Or RD > 89) Then
+            Locate 22, 25: Print "SCHEDULING GAMES FOR BRACKET"; NR
+            For NR = 1 To 16
+
+                'currently numberRegions is coming through as 0???
+                If NR <= numberRegions Then
+
+                    For AP% = 1 To TC
+
+                        Open diskPaths$(0) + tourneyFile$ + ".TMP" For Random As #1 Len = 90
+                        For X = 0 To 14
+                            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                        Next
+                        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                        Get #1, AP%
+
+                        For X = 0 To 14: NG%(0, X) = CVI(Q$(X + 1)): Next
+                        For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
+                        visitingScore%(0) = CVI(Q$(16))
+                        homeScore%(0) = CVI(Q$(17))
+                        visitingTeam$(0) = Q$(18)
+                        homeTeam$(0) = Q$(19)
+
+                        For X = 1 To 3: NG%(0, X + 14) = CVI(Q$(X + 23)): Next
+                        Close 1
+
+                        If NG%(0, 16) = RD And NG%(0, 15) = NR Then
+                            MATCH = MATCH + 1
+                            Open diskPaths$(0) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                            For X = 0 To 14
+                                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                            Next
+                            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(0, X)): Next
+                            For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
+                            LSet Q$(16) = MKI$(visitingScore%(0)): LSet Q$(17) = MKI$(homeScore%(0))
+                            LSet Q$(18) = visitingTeam$(0): LSet Q$(19) = homeTeam$(0)
+                            For X = 24 To 26: LSet Q$(X) = MKI$(NG%(0, X - 9)): Next
+                            Put #1, MATCH
+                            Close 1
+                        End If
+
+                    Next AP% 'Done looping through all games
+
+                End If 'Done checking if we're still within a valid region
+
+            Next NR 'Done processing all regions
+
+        End If
+    Next RD
+
+    NR = 17
+
+    tempFile$ = diskPaths$(0) + tourneyFile$ + ".TMP"
+
+    For RD = 1 To 99
+        If Not (RD > 5 And RD < 88 Or RD > 89 And RD < 98) Then
+            For AP% = 1 To TC
+                Open tempFile$ For Random As #1 Len = 90
+                For X = 0 To 14
+                    Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                Next
+                Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                Get #1, AP%
+
+                For X = 0 To 14: NG%(0, X) = CVI(Q$(X + 1)): Next
+                For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
+                visitingScore%(0) = CVI(Q$(16))
+                homeScore%(0) = CVI(Q$(17))
+                visitingTeam$(0) = Q$(18)
+                homeTeam$(0) = Q$(19)
+                For X = 1 To 3: NG%(0, X + 14) = CVI(Q$(X + 23)): Next
+                Close 1
+
+                If NG%(0, 16) = RD And NG%(0, 15) = NR Then
+                    MATCH = MATCH + 1
+                    Open diskPaths$(0) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                    For X = 0 To 14
+                        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                    Next
+                    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(0, X)): Next
+                    For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
+                    LSet Q$(16) = MKI$(visitingScore%(0)): LSet Q$(17) = MKI$(homeScore%(0))
+                    LSet Q$(18) = visitingTeam$(0): LSet Q$(19) = homeTeam$(0)
+                    For X = 24 To 26: LSet Q$(X) = MKI$(NG%(0, X - 9)): Next
+                    Put #1, MATCH
+                    Close 1
+                End If
+
+            Next AP%
+        End If
+    Next RD
+
+    If _FileExists(tempFile$) Then Kill tempFile$
+
+    Call FCopy(diskPaths$(0) + tourneyFile$ + ".TCX", diskPaths$(0) + tourneyFile$ + ".TOU", BUFFER$, ERRCODE%)
+    'SHELL "COPY "+diskPaths$(0)+tourneyFile$+".TCX "+diskPaths$(0)+tourneyFile$+".TOU >NUL:"
+
+End Sub
