@@ -101,17 +101,20 @@ Sub SCHEDULE ()
                     'Have the user pick a schedule
                     Call LoadSchedule(scheduleFile$)
 
-                    Cls
+					If scheduleFile$ <> "" Then
+						Cls
+						
+						'Extract / Change / Global
+						If action% >= 2 And action% <= 5 Then
+							Call ExtractSchedule(action%, scheduleFile$)
+							Call SaveScheduleFile(scheduleFile$)
+						Else
+							'Retrieve / Edit / Play Schedule
+							Call NewSchedule(scheduleFile$)
+						End If
 
-                    'Extract / Change / Global
-                    If action% >= 2 And action% <= 5 Then
-                        Call ExtractSchedule(action%, scheduleFile$)
-                        Call SaveScheduleFile(scheduleFile$)
-                    Else
-                        'Retrieve / Edit / Play Schedule
-                        Call NewSchedule(scheduleFile$)
-                    End If
-
+					End If 'Done checking for valid file
+					
                 Case 7: Call CreateConferenceSchedule 'GoTo 1300
                 Case 8: Call BoxscoreMaintenance 'GoTo 4500
                 Case 9: Cls
@@ -612,6 +615,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
     If scheduleAction% = 2 Or scheduleAction% = 3 Then
         Do
+			Cls
             Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
             Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
             Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
@@ -1234,7 +1238,6 @@ Sub LoadSchedule (targetFile$)
             Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
-            'GoTo 2900
         Else
             ReDim scheduleFiles$(0 To Count%)
             For X = 1 To Count%
@@ -1243,9 +1246,6 @@ Sub LoadSchedule (targetFile$)
 
             scheduleFiles$(0) = Spec$
             Call ReadFile(scheduleFiles$())
-            'CALL SortStr(VARPTR(scheduleFiles$(1)), Count%, 0)
-
-            'Call SelectScheduleFile(targetFile$, scheduleFiles$())
 
             Do
                 Cls
@@ -1289,36 +1289,36 @@ Sub LoadSchedule (targetFile$)
 
         End If
 
-    Loop Until Count% = 0 Or EXITCODE% = 27 Or EXITCODE% = 13 'Or targetFile$ <> ""
+		Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+		Y = LOF(1)
+		Close 1
 
-    Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
-    Y = LOF(1)
-    Close 1
+		scheduleAP%(0) = Y / 48
 
-    scheduleAP%(0) = Y / 48
+		BS% = Int((scheduleAP%(0) - 1) / 20)
 
-    BS% = Int((scheduleAP%(0) - 1) / 20)
+		Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
 
-    Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+		For X = 0 To 18
+			Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+		Next
 
-    For X = 0 To 18
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-    Next
+		Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+		For I = 1 To scheduleAP%(0)
+			Get #1, I
+			For X = 0 To 18: NG%(I, X) = CVI(Q$(X + 1)): Next
+			For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
+			visitingScore%(I) = CVI(Q$(22))
+			homeScore%(I) = CVI(Q$(23))
+		Next
 
-    For I = 1 To scheduleAP%(0)
-        Get #1, I
-        For X = 0 To 18: NG%(I, X) = CVI(Q$(X + 1)): Next
-        For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
-        visitingScore%(I) = CVI(Q$(22))
-        homeScore%(I) = CVI(Q$(23))
-    Next
+		Close 1
 
-    Close 1
+		NS% = 0
+		TS% = 0
 
-    NS% = 0
-    TS% = 0
+    Loop Until Count% = 0 Or EXITCODE% = 27 'Or targetFile$ <> ""
 
 End Sub
 

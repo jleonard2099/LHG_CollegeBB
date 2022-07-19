@@ -24,7 +24,7 @@ Sub TITLE_HEADER ()
 	Locate , 23
 	Color 12
 
-    Print "COURTSIDE COLLEGE BASKETBALL V4.0"
+    Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
     Locate 3, 1
 	Color 2, 0
 End Sub
@@ -141,7 +141,7 @@ Sub TITLE ()
 	Locate , 23
 	Color 12
 
-    Print "COURTSIDE COLLEGE BASKETBALL V4.0"
+    Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
     Locate 24, 1
 	Print Tab(80);
 	Locate , 1

@@ -2,13 +2,13 @@ Sub BLANKORG ()
 
     _Title "Courtside College Basketball - Delete Org Stats"
 
+	'This should be redundant
     DefInt A-Z
 
     Dim H1$(40), Z4$(40)
 
     Do
         'Display list of files...
-
         Cls
 
         Spec$ = diskPaths$(1) + "*.CON"
@@ -63,7 +63,7 @@ Sub BLANKORG ()
 
             If Not (ExitCode% = 27) Then
 
-                targetFile$ = conferenceFiles$(SELECTION%))
+                targetFile$ = conferenceFiles$(SELECTION%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0

@@ -1,4 +1,4 @@
-$Debug
+Const GAME_VERSION$ = "4.25"
 Const MAX_CONFERENCES = 40
 Const TEAMS_PER_CONFERENCE = 30
 Const TEAMS_PER_DIV = 15
@@ -21,7 +21,7 @@ DefInt A-Z
 ' Used across more than one source file
 '----------------------------------------
 Dim A1$, C$, S$
-Dim ATT, CK, DA, LS, SP, TC, WN
+Dim ATT, CK, DA, JX, LS, SP, TC, WN
 Dim BO%, V1%, V2%
 
 '---> 500 is too high; I rarely find it higher than 230ish
@@ -37,7 +37,8 @@ Dim Shared Y As Long
 Dim A$(0 To 15)
 Dim L%(0 To 4), T1%(20)
 Dim A(0 To 14, 0 To 13), DF(13), RS(13, 13), X(13, 13)
-Dim W0(15), W1(15), Z(15), Z1(15)
+Dim W0(15), W1(15)
+Dim Z!(15), Z1!(15)
 Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
 Dim homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 Dim T%(0 To 9)
@@ -65,6 +66,7 @@ Dim consolationSetting%(1) '0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONS
 Dim AR$(62)
 Dim ARS(15, 62, 15)
 Dim W0S(15, 62), W1S(15, 62)
+Dim careerT%(0 To 34)
 
 '----------------------------------------
 'Shared across CNGRAT.BAS routines
@@ -84,9 +86,12 @@ Dim B$(14), HP$(100), OP$(100)
 'Shared across COMPNAT.BAS routines
 '----------------------------------------
 Dim compnatH$(100), compnatN$(0 To 14)
-Dim DT(21), LD(1 To 250, 0 To 2), OT(21)
-Dim NDL(1 To 40, 1 To 20), NLD(1 To 250, 1 To 2), NOL(1 To 40, 1 To 20)
+Dim LD(1 To 250, 0 To 2)
+Dim NDL!(1 To 40, 1 To 20), NLD(1 To 250, 1 To 2), NOL!(1 To 40, 1 To 20)
 Dim S(0 To 14, 0 To 26)
+
+Dim DT!(21), OT!(21)
+
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim Z0$(1 To 250), Z3$(1 To 250)
 
@@ -114,11 +119,12 @@ Dim expanTT$(40, 15), TT1$(40, 15)
 Dim TMA$(600)
 
 Dim TMM$(600), TPP$(600)
-'i think this should just be A1 and that maybe a typo was made by me
-Dim statsAL(1 To 600, 0 To 14), GM1(1 To 40), GMA(600)
-Dim TT(40, 15), TT1(40, 15)
-ReDim TYP(600)
-Dim W0L(600), W1L(600)
+
+'These should all be single
+Dim statsAL!(1 To 600, 0 To 14), GM1!(1 To 40), GMA!(600)
+Dim TT!(40, 15), TT1!(40, 15)
+ReDim TYP!(600)
+Dim W0L!(600), W1L!(600)
 
 
 Data GAMES,MINUTES,FIELD GOALS MADE,FIELD GOAL ATTEMPS,F.G. PCT. (3.65 FGM/GAME),THREE POINTS MADE,THREE POINT ATTEMPTS,3FG (.30 3FGM/GAME),FREE THROWS MADE,FREE THROWS ATTEMPTED,F.T. PCT. (1.52 FTM/GAME)
@@ -150,7 +156,7 @@ Dim mergeT%(100)
 Dim O%(100), P%(100)
 Dim CP$(25), O$(100)
 
-Dim lookyA(14, 24)
+Dim lookyA(0 To 14, 24)
 
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
@@ -165,7 +171,7 @@ Dim recordsA$(5), RC$(50, 4), TRC$(125, 3)
 '----------------------------------------
 'Shared across RECCON.BAS routines
 '----------------------------------------
-Dim BRC(32), TRC(21), TRC1(21)
+Dim BRC(32), TRC!(21), TRC1!(21)
 Dim BRC$(32, 1), recconTRC$(21), recconTRC1$(21)
 
 Dim TT$(20), TB$(25)
@@ -199,9 +205,9 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 'Shared across SEECON/SEENAT.BAS routines
 '----------------------------------------
 Dim DL$(60), OL$(60), PR$(1200)
-Dim DL(60, 20), OL(60, 20) ', seeconP(60)
+Dim DL!(60, 20), OL!(60, 20) ', seeconP(60)
 Dim O1(30), O2(30), O3(30), O4(30), O5(30), O6(30)
-Dim seenatZ(260), seenatZ1(260)
+Dim seenatZ!(260), seenatZ1!(260)
 Dim seenatZ1$(260), seenatZ2$(260), seenatZ3$(260)
 Dim PT#(1200, 5)
 Dim T$(30)
@@ -410,7 +416,7 @@ Sub Replay_Menu
     Do
         Cls
 
-        750 Call TITLE
+        Call TITLE
         ReDim menuChoices$(1 To 5)
         'Erase menuChoices$
         menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
@@ -444,7 +450,7 @@ Sub Replay_Menu
                 Case 5: Cls
             End Select
         End If
-        
+
     Loop Until SELECTION% = 5 Or EXITCODE% = 27
 
 End Sub
@@ -455,10 +461,10 @@ End Sub
 '----------------------------------------
 '...explanation...
 Sub Leaders_Menu
-    
+
     Do
         Cls
-        
+
         800 Call TITLE
         ReDim menuChoices$(1 To 14)
         'Erase menuChoices$

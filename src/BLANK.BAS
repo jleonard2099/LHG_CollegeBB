@@ -2,6 +2,7 @@ Sub BLANK ()
 
     _Title "Courtside College Basketball - Delete Conference Stats"
 
+	'This should be redundant
     DefInt A-Z
 
     Dim H1$(MAX_CONFERENCES)

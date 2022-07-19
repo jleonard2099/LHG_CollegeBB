@@ -2,7 +2,8 @@ SUB RECCON ()
 
 	_Title "Courtside College Basketball - Manage Records"
 
-	Shared BRC(), TRC(), TRC1()
+	Shared BRC(), TRC!(), TRC1!()
+
 	Shared BRC$(), recconTRC$(), recconTRC1$()
 
 	'-----
@@ -63,7 +64,7 @@ End Sub
 '...explanation...
 Sub ViewSeasonRecords ()
 
-	Shared BRC(), TRC(), TRC1()
+	Shared BRC(), TRC!(), TRC1!()
 	Shared TB$(), TT$(), BRC$()
 	Shared recconTRC$(), recconTRC1$()
 
@@ -79,14 +80,14 @@ Sub ViewSeasonRecords ()
 			Input #1, BRC$(I, 1)
 		Next
 		For I = 1 To 21
-			Input #1, TRC(I)
+			Input #1, TRC!(I)
 			Input #1, recconTRC$(I)
-			If TRC(I) = 19999 Then TRC(I) = 0: recconTRC$(I) = ""
+			If TRC!(I) = 19999 Then TRC!(I) = 0: recconTRC$(I) = ""
 		Next
 		For I = 1 To 21
-			Input #1, TRC1(I)
+			Input #1, TRC1!(I)
 			Input #1, recconTRC1$(I)
-			If TRC1(I) = 19999 Then TRC1(I) = 0: recconTRC1$(I) = ""
+			If TRC1!(I) = 19999 Then TRC1!(I) = 0: recconTRC1$(I) = ""
 		Next
 		Close 1
 
@@ -188,21 +189,21 @@ Sub ViewSeasonRecords ()
 		Print
 		Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 		Color 14
-		Locate , 4: Print TT$(1); Tab(33); recconTRC$(1); Tab(53); Using "####"; TRC(1)
-		Locate , 4: Print TT$(2); Tab(33); recconTRC$(2); Tab(53); Using "####"; TRC(2)
-		Locate , 4: Print TT$(3); Tab(33); recconTRC$(3); Tab(53); Using "##.#"; TRC(3) * 100
-		Locate , 4: Print TT$(4); Tab(33); recconTRC$(4); Tab(53); Using "####"; TRC(4)
-		Locate , 4: Print TT$(5); Tab(33); recconTRC$(5); Tab(53); Using "####"; TRC(5)
-		Locate , 4: Print TT$(6); Tab(33); recconTRC$(6); Tab(53); Using "##.#"; TRC(6) * 100
-		Locate , 4: Print TT$(7); Tab(33); recconTRC$(7); Tab(53); Using "####"; TRC(7)
-		Locate , 4: Print TT$(8); Tab(33); recconTRC$(8); Tab(53); Using "####"; TRC(8)
-		Locate , 4: Print TT$(9); Tab(33); recconTRC$(9); Tab(53); Using "##.#"; TRC(9) * 100
-		Locate , 4: Print TT$(10); Tab(33); recconTRC$(10); Tab(53); Using "####"; TRC(10)
-		Locate , 4: Print TT$(11); Tab(33); recconTRC$(11); Tab(53); Using "####"; TRC(11)
-		Locate , 4: Print TT$(12); Tab(33); recconTRC$(12); Tab(53); Using "####"; TRC(12)
-		Locate , 4: Print TT$(13); Tab(33); recconTRC$(13); Tab(53); Using "##.#"; TRC(13)
-		Locate , 4: Print TT$(14); Tab(33); recconTRC$(14); Tab(53); Using "####"; TRC(14)
-		Locate , 4: Print TT$(15); Tab(33); recconTRC$(15); Tab(53); Using "####"; TRC(15)
+		Locate , 4: Print TT$(1); Tab(33); recconTRC$(1); Tab(53); Using "####"; TRC!(1)
+		Locate , 4: Print TT$(2); Tab(33); recconTRC$(2); Tab(53); Using "####"; TRC!(2)
+		Locate , 4: Print TT$(3); Tab(33); recconTRC$(3); Tab(53); Using "##.#"; TRC!(3) * 100
+		Locate , 4: Print TT$(4); Tab(33); recconTRC$(4); Tab(53); Using "####"; TRC!(4)
+		Locate , 4: Print TT$(5); Tab(33); recconTRC$(5); Tab(53); Using "####"; TRC!(5)
+		Locate , 4: Print TT$(6); Tab(33); recconTRC$(6); Tab(53); Using "##.#"; TRC!(6) * 100
+		Locate , 4: Print TT$(7); Tab(33); recconTRC$(7); Tab(53); Using "####"; TRC!(7)
+		Locate , 4: Print TT$(8); Tab(33); recconTRC$(8); Tab(53); Using "####"; TRC!(8)
+		Locate , 4: Print TT$(9); Tab(33); recconTRC$(9); Tab(53); Using "##.#"; TRC!(9) * 100
+		Locate , 4: Print TT$(10); Tab(33); recconTRC$(10); Tab(53); Using "####"; TRC!(10)
+		Locate , 4: Print TT$(11); Tab(33); recconTRC$(11); Tab(53); Using "####"; TRC!(11)
+		Locate , 4: Print TT$(12); Tab(33); recconTRC$(12); Tab(53); Using "####"; TRC!(12)
+		Locate , 4: Print TT$(13); Tab(33); recconTRC$(13); Tab(53); Using "##.#"; TRC!(13)
+		Locate , 4: Print TT$(14); Tab(33); recconTRC$(14); Tab(53); Using "####"; TRC!(14)
+		Locate , 4: Print TT$(15); Tab(33); recconTRC$(15); Tab(53); Using "####"; TRC!(15)
 		Color 7
 		I$ = GetKeyPress$
 
@@ -228,12 +229,12 @@ Sub ViewSeasonRecords ()
 		Print
 		Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 		Color 14
-		Locate , 4: Print TT$(16); Tab(33); recconTRC$(16); Tab(53); Using "####"; TRC(16)
-		Locate , 4: Print TT$(17); Tab(33); recconTRC$(17); Tab(53); Using "####"; TRC(17)
-		Locate , 4: Print TT$(18); Tab(33); recconTRC$(18); Tab(53); Using "####"; TRC(18)
-		Locate , 4: Print TT$(19); Tab(33); recconTRC$(19); Tab(52); Using "#####"; TRC(19)
-		Locate , 4: Print TT$(20); Tab(33); recconTRC$(20); Tab(52); Using "###.#"; TRC(20)
-		Locate , 4: Print "WINS"; Tab(33); recconTRC$(21); Tab(53); Using "####"; TRC(21)
+		Locate , 4: Print TT$(16); Tab(33); recconTRC$(16); Tab(53); Using "####"; TRC!(16)
+		Locate , 4: Print TT$(17); Tab(33); recconTRC$(17); Tab(53); Using "####"; TRC!(17)
+		Locate , 4: Print TT$(18); Tab(33); recconTRC$(18); Tab(53); Using "####"; TRC!(18)
+		Locate , 4: Print TT$(19); Tab(33); recconTRC$(19); Tab(52); Using "#####"; TRC!(19)
+		Locate , 4: Print TT$(20); Tab(33); recconTRC$(20); Tab(52); Using "###.#"; TRC!(20)
+		Locate , 4: Print "WINS"; Tab(33); recconTRC$(21); Tab(53); Using "####"; TRC!(21)
 		Color 7
 		I$ = GetKeyPress$
 
@@ -259,21 +260,21 @@ Sub ViewSeasonRecords ()
 		Print
 		Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 		Color 15
-		Locate , 4: Print TT$(1); Tab(33); recconTRC1$(1); Tab(53); Using "####"; TRC1(1)
-		Locate , 4: Print TT$(2); Tab(33); recconTRC1$(2); Tab(53); Using "####"; TRC1(2)
-		Locate , 4: Print TT$(3); Tab(33); recconTRC1$(3); Tab(53); Using "##.#"; TRC1(3) * 100
-		Locate , 4: Print TT$(4); Tab(33); recconTRC1$(4); Tab(53); Using "####"; TRC1(4)
-		Locate , 4: Print TT$(5); Tab(33); recconTRC1$(5); Tab(53); Using "####"; TRC1(5)
-		Locate , 4: Print TT$(6); Tab(33); recconTRC1$(6); Tab(53); Using "##.#"; TRC1(6) * 100
-		Locate , 4: Print TT$(7); Tab(33); recconTRC1$(7); Tab(53); Using "####"; TRC1(7)
-		Locate , 4: Print TT$(8); Tab(33); recconTRC1$(8); Tab(53); Using "####"; TRC1(8)
-		Locate , 4: Print TT$(9); Tab(33); recconTRC1$(9); Tab(53); Using "##.#"; TRC1(9) * 100
-		Locate , 4: Print TT$(10); Tab(33); recconTRC1$(10); Tab(53); Using "####"; TRC1(10)
-		Locate , 4: Print TT$(11); Tab(33); recconTRC1$(11); Tab(53); Using "####"; TRC1(11)
-		Locate , 4: Print TT$(12); Tab(33); recconTRC1$(12); Tab(53); Using "####"; TRC1(12)
-		Locate , 4: Print TT$(13); Tab(33); recconTRC1$(13); Tab(53); Using "##.#"; TRC1(13)
-		Locate , 4: Print TT$(14); Tab(33); recconTRC1$(14); Tab(53); Using "####"; TRC1(14)
-		Locate , 4: Print TT$(15); Tab(33); recconTRC1$(15); Tab(53); Using "####"; TRC1(15)
+		Locate , 4: Print TT$(1); Tab(33); recconTRC1$(1); Tab(53); Using "####"; TRC1!(1)
+		Locate , 4: Print TT$(2); Tab(33); recconTRC1$(2); Tab(53); Using "####"; TRC1!(2)
+		Locate , 4: Print TT$(3); Tab(33); recconTRC1$(3); Tab(53); Using "##.#"; TRC1!(3) * 100
+		Locate , 4: Print TT$(4); Tab(33); recconTRC1$(4); Tab(53); Using "####"; TRC1!(4)
+		Locate , 4: Print TT$(5); Tab(33); recconTRC1$(5); Tab(53); Using "####"; TRC1!(5)
+		Locate , 4: Print TT$(6); Tab(33); recconTRC1$(6); Tab(53); Using "##.#"; TRC1!(6) * 100
+		Locate , 4: Print TT$(7); Tab(33); recconTRC1$(7); Tab(53); Using "####"; TRC1!(7)
+		Locate , 4: Print TT$(8); Tab(33); recconTRC1$(8); Tab(53); Using "####"; TRC1!(8)
+		Locate , 4: Print TT$(9); Tab(33); recconTRC1$(9); Tab(53); Using "##.#"; TRC1!(9) * 100
+		Locate , 4: Print TT$(10); Tab(33); recconTRC1$(10); Tab(53); Using "####"; TRC1!(10)
+		Locate , 4: Print TT$(11); Tab(33); recconTRC1$(11); Tab(53); Using "####"; TRC1!(11)
+		Locate , 4: Print TT$(12); Tab(33); recconTRC1$(12); Tab(53); Using "####"; TRC1!(12)
+		Locate , 4: Print TT$(13); Tab(33); recconTRC1$(13); Tab(53); Using "##.#"; TRC1!(13)
+		Locate , 4: Print TT$(14); Tab(33); recconTRC1$(14); Tab(53); Using "####"; TRC1!(14)
+		Locate , 4: Print TT$(15); Tab(33); recconTRC1$(15); Tab(53); Using "####"; TRC1!(15)
 		Color 7
 		I$ = GetKeyPress$
 
@@ -299,12 +300,12 @@ Sub ViewSeasonRecords ()
 		Print
 		Locate , 4: Print "CATEGORY                        TEAM             RECORD            "
 		Color 15
-		Locate , 4: Print TT$(16); Tab(33); recconTRC1$(16); Tab(53); Using "####"; TRC1(16)
-		Locate , 4: Print TT$(17); Tab(33); recconTRC1$(17); Tab(53); Using "####"; TRC1(17)
-		Locate , 4: Print TT$(18); Tab(33); recconTRC1$(18); Tab(53); Using "####"; TRC1(18)
-		Locate , 4: Print TT$(19); Tab(33); recconTRC1$(19); Tab(52); Using "#####"; TRC1(19)
-		Locate , 4: Print TT$(20); Tab(33); recconTRC1$(20); Tab(52); Using "###.#"; TRC1(20)
-		Locate , 4: Print "LOSSES"; Tab(33); recconTRC1$(21); Tab(53); Using "####"; TRC1(21)
+		Locate , 4: Print TT$(16); Tab(33); recconTRC1$(16); Tab(53); Using "####"; TRC1!(16)
+		Locate , 4: Print TT$(17); Tab(33); recconTRC1$(17); Tab(53); Using "####"; TRC1!(17)
+		Locate , 4: Print TT$(18); Tab(33); recconTRC1$(18); Tab(53); Using "####"; TRC1!(18)
+		Locate , 4: Print TT$(19); Tab(33); recconTRC1$(19); Tab(52); Using "#####"; TRC1!(19)
+		Locate , 4: Print TT$(20); Tab(33); recconTRC1$(20); Tab(52); Using "###.#"; TRC1!(20)
+		Locate , 4: Print "LOSSES"; Tab(33); recconTRC1$(21); Tab(53); Using "####"; TRC1!(21)
 		Color 7
 		I$ = GetKeyPress$
 
@@ -323,7 +324,7 @@ End Sub
 '...explanation...
 Sub PrintSeasonRecords ()
 
-	Shared BRC(), TRC(), TRC1()
+	Shared BRC(), TRC!(), TRC1!()
 	Shared TB$(), TT$(), BRC$()
 	Shared recconTRC$(), recconTRC1$()
 
@@ -342,14 +343,14 @@ Sub PrintSeasonRecords ()
 			Input #1, BRC$(I, 1)
 		Next
 		For I = 1 To 21
-			Input #1, TRC(I)
+			Input #1, TRC!(I)
 			Input #1, recconTRC$(I)
-			If TRC(I) = 19999 Then TRC(I) = 0: recconTRC$(I) = ""
+			If TRC!(I) = 19999 Then TRC!(I) = 0: recconTRC$(I) = ""
 		Next
 		For I = 1 To 21
-			Input #1, TRC1(I)
+			Input #1, TRC1!(I)
 			Input #1, recconTRC1$(I)
-			If TRC1(I) = 19999 Then TRC1(I) = 0: recconTRC1$(I) = ""
+			If TRC1!(I) = 19999 Then TRC1!(I) = 0: recconTRC1$(I) = ""
 		Next
 		Close 1
 
@@ -386,52 +387,52 @@ Sub PrintSeasonRecords ()
 		LPrint Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
 		LPrint
 		LPrint "CATEGORY                        TEAM             RECORD            "
-		LPrint TT$(1); Tab(33); recconTRC$(1); Tab(53); Using "####"; TRC(1)
-		LPrint TT$(2); Tab(33); recconTRC$(2); Tab(53); Using "####"; TRC(2)
-		LPrint TT$(3); Tab(33); recconTRC$(3); Tab(53); Using "##.#"; TRC(3) * 100
-		LPrint TT$(4); Tab(33); recconTRC$(4); Tab(53); Using "####"; TRC(4)
-		LPrint TT$(5); Tab(33); recconTRC$(5); Tab(53); Using "####"; TRC(5)
-		LPrint TT$(6); Tab(33); recconTRC$(6); Tab(53); Using "##.#"; TRC(6) * 100
-		LPrint TT$(7); Tab(33); recconTRC$(7); Tab(53); Using "####"; TRC(7)
-		LPrint TT$(8); Tab(33); recconTRC$(8); Tab(53); Using "####"; TRC(8)
-		LPrint TT$(9); Tab(33); recconTRC$(9); Tab(53); Using "##.#"; TRC(9) * 100
-		LPrint TT$(10); Tab(33); recconTRC$(10); Tab(53); Using "####"; TRC(10)
-		LPrint TT$(11); Tab(33); recconTRC$(11); Tab(53); Using "####"; TRC(11)
-		LPrint TT$(12); Tab(33); recconTRC$(12); Tab(53); Using "####"; TRC(12)
-		LPrint TT$(13); Tab(33); recconTRC$(13); Tab(53); Using "##.#"; TRC(13)
-		LPrint TT$(14); Tab(33); recconTRC$(14); Tab(53); Using "####"; TRC(14)
-		LPrint TT$(15); Tab(33); recconTRC$(15); Tab(53); Using "####"; TRC(15)
-		LPrint TT$(16); Tab(33); recconTRC$(16); Tab(53); Using "####"; TRC(16)
-		LPrint TT$(17); Tab(33); recconTRC$(17); Tab(53); Using "####"; TRC(17)
-		LPrint TT$(18); Tab(33); recconTRC$(18); Tab(53); Using "####"; TRC(18)
-		LPrint TT$(19); Tab(33); recconTRC$(19); Tab(52); Using "#####"; TRC(19)
-		LPrint TT$(20); Tab(33); recconTRC$(20); Tab(52); Using "###.#"; TRC(20)
-		LPrint "WINS"; Tab(33); recconTRC$(21); Tab(53); Using "####"; TRC(21)
+		LPrint TT$(1); Tab(33); recconTRC$(1); Tab(53); Using "####"; TRC!(1)
+		LPrint TT$(2); Tab(33); recconTRC$(2); Tab(53); Using "####"; TRC!(2)
+		LPrint TT$(3); Tab(33); recconTRC$(3); Tab(53); Using "##.#"; TRC!(3) * 100
+		LPrint TT$(4); Tab(33); recconTRC$(4); Tab(53); Using "####"; TRC!(4)
+		LPrint TT$(5); Tab(33); recconTRC$(5); Tab(53); Using "####"; TRC!(5)
+		LPrint TT$(6); Tab(33); recconTRC$(6); Tab(53); Using "##.#"; TRC!(6) * 100
+		LPrint TT$(7); Tab(33); recconTRC$(7); Tab(53); Using "####"; TRC!(7)
+		LPrint TT$(8); Tab(33); recconTRC$(8); Tab(53); Using "####"; TRC!(8)
+		LPrint TT$(9); Tab(33); recconTRC$(9); Tab(53); Using "##.#"; TRC!(9) * 100
+		LPrint TT$(10); Tab(33); recconTRC$(10); Tab(53); Using "####"; TRC!(10)
+		LPrint TT$(11); Tab(33); recconTRC$(11); Tab(53); Using "####"; TRC!(11)
+		LPrint TT$(12); Tab(33); recconTRC$(12); Tab(53); Using "####"; TRC!(12)
+		LPrint TT$(13); Tab(33); recconTRC$(13); Tab(53); Using "##.#"; TRC!(13)
+		LPrint TT$(14); Tab(33); recconTRC$(14); Tab(53); Using "####"; TRC!(14)
+		LPrint TT$(15); Tab(33); recconTRC$(15); Tab(53); Using "####"; TRC!(15)
+		LPrint TT$(16); Tab(33); recconTRC$(16); Tab(53); Using "####"; TRC!(16)
+		LPrint TT$(17); Tab(33); recconTRC$(17); Tab(53); Using "####"; TRC!(17)
+		LPrint TT$(18); Tab(33); recconTRC$(18); Tab(53); Using "####"; TRC!(18)
+		LPrint TT$(19); Tab(33); recconTRC$(19); Tab(52); Using "#####"; TRC!(19)
+		LPrint TT$(20); Tab(33); recconTRC$(20); Tab(52); Using "###.#"; TRC!(20)
+		LPrint "WINS"; Tab(33); recconTRC$(21); Tab(53); Using "####"; TRC!(21)
 		LPrint
 		LPrint Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
 		LPrint
 		LPrint "CATEGORY                        TEAM             RECORD            "
-		LPrint TT$(1); Tab(33); recconTRC1$(1); Tab(53); Using "####"; TRC1(1)
-		LPrint TT$(2); Tab(33); recconTRC1$(2); Tab(53); Using "####"; TRC1(2)
-		LPrint TT$(3); Tab(33); recconTRC1$(3); Tab(53); Using "##.#"; TRC1(3) * 100
-		LPrint TT$(4); Tab(33); recconTRC1$(4); Tab(53); Using "####"; TRC1(4)
-		LPrint TT$(5); Tab(33); recconTRC1$(5); Tab(53); Using "####"; TRC1(5)
-		LPrint TT$(6); Tab(33); recconTRC1$(6); Tab(53); Using "##.#"; TRC1(6) * 100
-		LPrint TT$(7); Tab(33); recconTRC1$(7); Tab(53); Using "####"; TRC1(7)
-		LPrint TT$(8); Tab(33); recconTRC1$(8); Tab(53); Using "####"; TRC1(8)
-		LPrint TT$(9); Tab(33); recconTRC1$(9); Tab(53); Using "##.#"; TRC1(9) * 100
-		LPrint TT$(10); Tab(33); recconTRC1$(10); Tab(53); Using "####"; TRC1(10)
-		LPrint TT$(11); Tab(33); recconTRC1$(11); Tab(53); Using "####"; TRC1(11)
-		LPrint TT$(12); Tab(33); recconTRC1$(12); Tab(53); Using "####"; TRC1(12)
-		LPrint TT$(13); Tab(33); recconTRC1$(13); Tab(53); Using "##.#"; TRC1(13)
-		LPrint TT$(14); Tab(33); recconTRC1$(14); Tab(53); Using "####"; TRC1(14)
-		LPrint TT$(15); Tab(33); recconTRC1$(15); Tab(53); Using "####"; TRC1(15)
-		LPrint TT$(16); Tab(33); recconTRC1$(16); Tab(53); Using "####"; TRC1(16)
-		LPrint TT$(17); Tab(33); recconTRC1$(17); Tab(53); Using "####"; TRC1(17)
-		LPrint TT$(18); Tab(33); recconTRC1$(18); Tab(53); Using "####"; TRC1(18)
-		LPrint TT$(19); Tab(33); recconTRC1$(19); Tab(52); Using "#####"; TRC1(19)
-		LPrint TT$(20); Tab(33); recconTRC1$(20); Tab(52); Using "###.#"; TRC1(20)
-		LPrint "LOSSES"; Tab(33); recconTRC1$(21); Tab(53); Using "####"; TRC1(21)
+		LPrint TT$(1); Tab(33); recconTRC1$(1); Tab(53); Using "####"; TRC1!(1)
+		LPrint TT$(2); Tab(33); recconTRC1$(2); Tab(53); Using "####"; TRC1!(2)
+		LPrint TT$(3); Tab(33); recconTRC1$(3); Tab(53); Using "##.#"; TRC1!(3) * 100
+		LPrint TT$(4); Tab(33); recconTRC1$(4); Tab(53); Using "####"; TRC1!(4)
+		LPrint TT$(5); Tab(33); recconTRC1$(5); Tab(53); Using "####"; TRC1!(5)
+		LPrint TT$(6); Tab(33); recconTRC1$(6); Tab(53); Using "##.#"; TRC1!(6) * 100
+		LPrint TT$(7); Tab(33); recconTRC1$(7); Tab(53); Using "####"; TRC1!(7)
+		LPrint TT$(8); Tab(33); recconTRC1$(8); Tab(53); Using "####"; TRC1!(8)
+		LPrint TT$(9); Tab(33); recconTRC1$(9); Tab(53); Using "##.#"; TRC1!(9) * 100
+		LPrint TT$(10); Tab(33); recconTRC1$(10); Tab(53); Using "####"; TRC1!(10)
+		LPrint TT$(11); Tab(33); recconTRC1$(11); Tab(53); Using "####"; TRC1!(11)
+		LPrint TT$(12); Tab(33); recconTRC1$(12); Tab(53); Using "####"; TRC1!(12)
+		LPrint TT$(13); Tab(33); recconTRC1$(13); Tab(53); Using "##.#"; TRC1!(13)
+		LPrint TT$(14); Tab(33); recconTRC1$(14); Tab(53); Using "####"; TRC1!(14)
+		LPrint TT$(15); Tab(33); recconTRC1$(15); Tab(53); Using "####"; TRC1!(15)
+		LPrint TT$(16); Tab(33); recconTRC1$(16); Tab(53); Using "####"; TRC1!(16)
+		LPrint TT$(17); Tab(33); recconTRC1$(17); Tab(53); Using "####"; TRC1!(17)
+		LPrint TT$(18); Tab(33); recconTRC1$(18); Tab(53); Using "####"; TRC1!(18)
+		LPrint TT$(19); Tab(33); recconTRC1$(19); Tab(52); Using "#####"; TRC1!(19)
+		LPrint TT$(20); Tab(33); recconTRC1$(20); Tab(52); Using "###.#"; TRC1!(20)
+		LPrint "LOSSES"; Tab(33); recconTRC1$(21); Tab(53); Using "####"; TRC1!(21)
 		LPrint Chr$(12)
 
 	End If

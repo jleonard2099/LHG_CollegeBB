@@ -6,6 +6,7 @@ Sub COMPNAT ()
 
     Dim CRD(100)
     Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
+
     Dim CN$(40), H1$(40)
     Dim NOL$(40)
     Dim SITE$(100)
@@ -13,11 +14,12 @@ Sub COMPNAT ()
     ReDim PT(1200, 4)
     ReDim PT$(1200)
 
-    Shared BRC(), DT(), DL()
-    Shared LD(), NDL(), NLD(), NOL()
-	Shared OT(), OL()
+    Shared BRC(), DL!()
+    Shared LD(), NDL!(), NLD(), NOL!(), OL!()
     Shared O1(), O2(), O3(), O4(), O5(), O6()
-    Shared TRC(), TRC1()
+    Shared TRC!(), TRC1!()
+
+	Shared DT!(), OT!()
 
     Shared BRC$(), compnatH$(), DL$(), O$(), OL$()
     Shared NDL$(), NZ0$(), NZ1$(), NZ3$()
@@ -34,10 +36,10 @@ Sub COMPNAT ()
         Next Y
     Next X
 
-    TRC(14) = 19999: TRC(18) = 19999
-    For I = 1 To 13: TRC1(I) = 19999: Next
-    For I = 15 To 17: TRC1(I) = 19999: Next
-    For I = 19 To 20: TRC1(I) = 19999: Next
+    TRC!(14) = 19999: TRC!(18) = 19999
+    For I = 1 To 13: TRC1!(I) = 19999: Next
+    For I = 15 To 17: TRC1!(I) = 19999: Next
+    For I = 19 To 20: TRC1!(I) = 19999: Next
 
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
@@ -49,12 +51,12 @@ Sub COMPNAT ()
         Next
 
         For I = 1 To 21
-            Input #1, TRC(I)
+            Input #1, TRC!(I)
             Input #1, recconTRC$(I)
         Next
 
         For I = 1 To 21
-            Input #1, TRC1(I)
+            Input #1, TRC1!(I)
             Input #1, recconTRC1$(I)
         Next
         Close 1
@@ -65,20 +67,20 @@ Sub COMPNAT ()
         'Display list of files...
 
         4003 Spec$ = diskPaths$(1) + "*.CON"
-        COUNT% = FCount%(Spec$)
-        If COUNT% = 0 Then
+        Count% = FCount%(Spec$)
+        If Count% = 0 Then
             Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
         Else
 
-            ReDim conferenceFiles$(0 To COUNT%)
-            For X = 1 To COUNT%
+            ReDim conferenceFiles$(0 To Count%)
+            For X = 1 To Count%
                 conferenceFiles$(X) = Space$(12)
             Next
             conferenceFiles$(0) = Spec$
             Call ReadFile(conferenceFiles$())
-            'CALL SortStr(VARPTR(conferenceFiles$1)), COUNT%, 0)
+            'CALL SortStr(VARPTR(conferenceFiles$1)), Count%, 0)
 
             Do
 
@@ -103,7 +105,7 @@ Sub COMPNAT ()
                 Print "-SELECTS LEAGUE";
 
                 _MouseShow "DEFAULT"
-                MAMenu conferenceFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu conferenceFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
                 If EXITCODE% = 27 Then Exit Sub
@@ -132,7 +134,7 @@ Sub COMPNAT ()
             Close 2
 
             For X = 1 To 40
-                NDL(X, 19) = 9999
+                NDL!(X, 19) = 9999
             Next
 
             For NC = 1 To 40
@@ -143,13 +145,13 @@ Sub COMPNAT ()
                     OL$(X) = ""
                     DL$(X) = ""
                     For X1 = 0 To 20
-                        DL(X, X1) = 0
-                        OL(X, X1) = 0
+                        DL!(X, X1) = 0
+                        OL!(X, X1) = 0
                     Next
                 Next
 
                 For X = 1 To 40
-                    DL(X, 19) = 9999
+                    DL!(X, 19) = 9999
                 Next
 
                 For X = 1 To 250
@@ -199,7 +201,7 @@ Sub COMPNAT ()
 
                         Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
 
-                        801 Input #2, Y%
+                        801 Input #2, numGames%
                         For I = 1 To 100: Input #2, O%(I): Next I
                         For I = 1 To 100: Input #2, O$(I): Next I
 
@@ -216,7 +218,7 @@ Sub COMPNAT ()
                         803 WN = 0: LS = 0: CW = 0: CL = 0
 
                         '804 GoSub 5500
-                        5500 For I = 1 To Y%
+                        5500 For I = 1 To numGames%
 
                             5501 'GoSub 5600
                             5600 For P = 4 To 11
@@ -256,26 +258,26 @@ Sub COMPNAT ()
                         'STRENGTH OF SCHEDULE
                         PW = 0: SS = 0
 
-                        For I = 1 To Y%
+                        For I = 1 To numGames%
                             SS = AP%(I, 1) + SS
                         Next
 
-                        SS = SS / Y%
+                        SS = SS / numGames%
                         'INDIVIDUAL GAME POWER RATINGS
                         GL = 0: PW = 0
 
-                        For I = 1 To Y%
+                        For I = 1 To numGames%
                             RAT = O%(I) - compnatT%(I) + AP%(I, 1)
                             If Left$(compnatH$(I), 1) = "H" Then RAT = RAT - 4.5
                             If Left$(compnatH$(I), 1) = "A" Then RAT = RAT + 4.5
                             PW = PW + RAT
                         Next
 
-                        If Y% > 4 Then 9805
-                        GL = 5 - Y%
+                        If numGames% > 4 Then 9805
+                        GL = 5 - numGames%
                         PW = PW + GL * AP%(1, 0)
 
-                        9805 PW = PW / (Y% + GL)
+                        9805 PW = PW / (numGames% + GL)
                         NRT = NRT + 1
                         PT$(NRT) = H1$(XW)
                         PT(NRT, 1) = PW
@@ -376,8 +378,8 @@ Sub COMPNAT ()
                 For X = 1 To 30: Write #2, Z1$(X), O1(X), O2(X), O3(X), O4(X), O5(X), O6(X): Next
                 For X = 1 To 250
                 Write #2, Z0$(X), Z3$(X), LD(X, 1), LD(X, 2): Next X
-                For X = 1 To 40: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL(X, Y): Next: Next
-                For X = 1 To 40: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL(X, Y): Next: Next
+                For X = 1 To 40: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL!(X, Y): Next: Next
+                For X = 1 To 40: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL!(X, Y): Next: Next
                 Close 2
 
             90 Next NC
@@ -399,14 +401,14 @@ Sub COMPNAT ()
             For X = 1 To 40
                 Write #2, NOL$(X)
                 For Y = 1 To 20
-                    Write #2, NOL(X, Y)
+                    Write #2, NOL!(X, Y)
                 Next
             Next
 
             For X = 1 To 40
                 Write #2, NDL$(X)
                 For Y = 1 To 20
-                    Write #2, NDL(X, Y)
+                    Write #2, NDL!(X, Y)
                 Next
             Next
 
@@ -437,11 +439,11 @@ Sub COMPNAT ()
                 Print #1, BRC$(I, 1)
             Next
             For I = 1 To 21
-                Print #1, TRC(I)
+                Print #1, TRC!(I)
                 Print #1, recconTRC$(I)
             Next
             For I = 1 To 21
-                Print #1, TRC1(I)
+                Print #1, TRC1!(I)
                 Print #1, recconTRC1$(I)
             Next
             Close 1
@@ -449,7 +451,7 @@ Sub COMPNAT ()
         End If
 
         '...Until we press ESC
-    Loop Until EXITCODE% = 27 Or COUNT% = 0 Or I$ = "N"
+    Loop Until EXITCODE% = 27 Or Count% = 0 Or I$ = "N"
 
     99 '
 
@@ -464,10 +466,11 @@ End Sub
 Sub LoadStats (statFile$)
 
     Dim BRC$(32, 1)
-    Dim TRC(21), TRC1(21)
+    Dim TRC!(21), TRC1!(21)
 
-    Shared BRC(), DT(), OT()
-    Shared S(), W0(), W1()
+    Shared BRC()
+	Shared S(), W0(), W1()
+    Shared DT!(), OT!()
     Shared compnatN$(), recconTRC$(), recconTRC1$()
 
     811 For I = 0 To 13
@@ -489,7 +492,7 @@ Sub LoadStats (statFile$)
             Input #2, W0(I)
             Input #2, W1(I)
         Next
-        For L = 1 To 16: Input #2, OT(L): Next: For L = 1 To 16: Input #2, DT(L): Next
+        For L = 1 To 16: Input #2, OT!(L): Next: For L = 1 To 16: Input #2, DT!(L): Next
         Close 2
 
         For I = 0 To 13
@@ -504,26 +507,26 @@ Sub LoadStats (statFile$)
             S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
             S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
             S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
-            If S(I, 1) = 0 Or (S(I, 2) / Y% < 5) Then 826
+            If S(I, 1) = 0 Or (S(I, 2) / numGames% < 5) Then 826
             S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
 
-            826 If S(I, 3) = 0 Or (S(I, 4) / Y%) < 2.5 Then 828
+            826 If S(I, 3) = 0 Or (S(I, 4) / numGames%) < 2.5 Then 828
             S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
 
-            828 If W1(I) = 0 Or W0(I) / Y% < 1.5 Then 831
+            828 If W1(I) = 0 Or W0(I) / numGames% < 1.5 Then 831
             S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
 
             831 S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
             If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = compnatN$(I): BRC$(1, 1) = TN$
             If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = compnatN$(I): BRC$(2, 1) = TN$
             If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = compnatN$(I): BRC$(3, 1) = TN$
-            If S(I, 19) > BRC(4) And UCase$(UP$) = "Y" And S(I, 2) / Y% >= 5 Then BRC(4) = S(I, 19): BRC$(4, 0) = compnatN$(I): BRC$(4, 1) = TN$
+            If S(I, 19) > BRC(4) And UCase$(UP$) = "Y" And S(I, 2) / numGames% >= 5 Then BRC(4) = S(I, 19): BRC$(4, 0) = compnatN$(I): BRC$(4, 1) = TN$
             If W1(I) > BRC(5) Then BRC(5) = W1(I): BRC$(5, 0) = compnatN$(I): BRC$(5, 1) = TN$
             If W0(I) > BRC(6) Then BRC(6) = W0(I): BRC$(6, 0) = compnatN$(I): BRC$(6, 1) = TN$
-            If S(I, 21) > BRC(7) And UCase$(UP$) = "Y" And W0(I) / Y% >= 1.5 Then BRC(7) = S(I, 21): BRC$(7, 0) = compnatN$(I): BRC$(7, 1) = TN$
+            If S(I, 21) > BRC(7) And UCase$(UP$) = "Y" And W0(I) / numGames% >= 1.5 Then BRC(7) = S(I, 21): BRC$(7, 0) = compnatN$(I): BRC$(7, 1) = TN$
             If S(I, 3) > BRC(8) Then BRC(8) = S(I, 3): BRC$(8, 0) = compnatN$(I): BRC$(8, 1) = TN$
             If S(I, 4) > BRC(9) Then BRC(9) = S(I, 4): BRC$(9, 0) = compnatN$(I): BRC$(9, 1) = TN$
-            If S(I, 20) > BRC(10) And UCase$(UP$) = "Y" And S(I, 4) / Y% >= 2.5 Then BRC(10) = S(I, 20): BRC$(10, 0) = compnatN$(I): BRC$(10, 1) = TN$
+            If S(I, 20) > BRC(10) And UCase$(UP$) = "Y" And S(I, 4) / numGames% >= 2.5 Then BRC(10) = S(I, 20): BRC$(10, 0) = compnatN$(I): BRC$(10, 1) = TN$
             If S(I, 10) / 60 > BRC(11) Then BRC(11) = S(I, 10) / 60: BRC$(11, 0) = compnatN$(I): BRC$(11, 1) = TN$
             If S(I, 12) > BRC(12) Then BRC(12) = S(I, 12): BRC$(12, 0) = compnatN$(I): BRC$(12, 1) = TN$
             If S(I, 22) > BRC(13) And UCase$(UP$) = "Y" Then BRC(13) = S(I, 22): BRC$(13, 0) = compnatN$(I): BRC$(13, 1) = TN$
@@ -542,54 +545,54 @@ Sub LoadStats (statFile$)
 
         835 Next
 
-        OT(16) = Y%: DT(16) = Y%: OT(17) = OT(3) / OT(2): DT(17) = DT(3) / DT(2)
-        OT(18) = OT(5) / OT(4): DT(18) = DT(5) / DT(4)
-        OT(20) = OT(11): DT(20) = DT(11)
-        If OT(15) <> 0 Then OT(21) = OT(14) / OT(15) Else OT(21) = 0
-        If DT(15) <> 0 Then DT(21) = DT(14) / DT(15) Else DT(21) = 999
-        OT(19) = OT(20) / Y%: DT(19) = DT(20) / Y%
-        If OT(2) > TRC(1) Then TRC(1) = OT(2): recconTRC$(1) = TN$
-        If OT(3) > TRC(2) Then TRC(2) = OT(3): recconTRC$(2) = TN$
-        If OT(17) > TRC(3) And UCase$(UP$) = "Y" Then TRC(3) = OT(17): recconTRC$(3) = TN$
-        If OT(15) > TRC(4) Then TRC(4) = OT(15): recconTRC$(4) = TN$
-        If OT(14) > TRC(5) Then TRC(5) = OT(14): recconTRC$(5) = TN$
-        If OT(21) > TRC(6) And UCase$(UP$) = "Y" Then TRC(6) = OT(21): recconTRC$(6) = TN$
-        If OT(4) > TRC(7) Then TRC(7) = OT(4): recconTRC$(7) = TN$
-        If OT(5) > TRC(8) Then TRC(8) = OT(5): recconTRC$(8) = TN$
-        If OT(18) > TRC(9) And UCase$(UP$) = "Y" Then TRC(9) = OT(18): recconTRC$(9) = TN$
-        If OT(13) > TRC(10) Then TRC(10) = OT(13): recconTRC$(10) = TN$
-        If OT(6) - OT(13) > TRC(11) Then TRC(11) = OT(6) - OT(13): recconTRC$(11) = TN$
-        If OT(6) > TRC(12) Then TRC(12) = OT(6): recconTRC$(12) = TN$
-        If OT(6) / Y% > TRC(13) And UCase$(UP$) = "Y" Then TRC(13) = OT(6) / Y%: recconTRC$(13) = TN$
-        If OT(7) < TRC(14) And UCase$(UP$) = "Y" Then TRC(14) = OT(7): recconTRC$(14) = TN$
-        If OT(8) > TRC(15) Then TRC(15) = OT(8): recconTRC$(15) = TN$
-        If OT(9) > TRC(16) Then TRC(16) = OT(9): recconTRC$(16) = TN$
-        If OT(10) > TRC(17) Then TRC(17) = OT(10): recconTRC$(17) = TN$
-        If OT(12) < TRC(18) And UCase$(UP$) = "Y" Then TRC(18) = OT(12): recconTRC$(18) = TN$
-        If OT(11) > TRC(19) Then TRC(19) = OT(11): recconTRC$(19) = TN$
-        If OT(11) / Y% > TRC(20) And UCase$(UP$) = "Y" Then TRC(20) = OT(11) / Y%: recconTRC$(20) = TN$
-        If WN > TRC(21) Then TRC(21) = WN: recconTRC$(21) = TN$
-        If DT(2) < TRC1(1) Then TRC1(1) = DT(2): recconTRC1$(1) = TN$
-        If DT(3) < TRC1(2) Then TRC1(2) = DT(3): recconTRC1$(2) = TN$
-        If DT(17) < TRC1(3) And UCase$(UP$) = "Y" Then TRC1(3) = DT(17): recconTRC1$(3) = TN$
-        If DT(15) < TRC1(4) Then TRC1(4) = DT(15): recconTRC1$(4) = TN$
-        If DT(14) < TRC1(5) Then TRC1(5) = DT(14): recconTRC1$(5) = TN$
-        If DT(21) < TRC1(6) And DT(15) <> 0 And UCase$(UP$) = "Y" Then TRC1(6) = DT(21): recconTRC1$(6) = TN$
-        If DT(4) < TRC1(7) Then TRC1(7) = DT(4): recconTRC1$(7) = TN$
-        If DT(5) < TRC1(8) Then TRC1(8) = DT(5): recconTRC1$(8) = TN$
-        If DT(18) < TRC1(9) And UCase$(UP$) = "Y" Then TRC1(9) = DT(18): recconTRC1$(9) = TN$
-        If DT(13) < TRC1(10) Then TRC1(10) = DT(13): recconTRC1$(10) = TN$
-        If DT(6) - DT(13) < TRC1(11) Then TRC1(11) = DT(6) - DT(13): recconTRC1$(11) = TN$
-        If DT(6) < TRC1(12) Then TRC1(12) = DT(6): recconTRC1$(12) = TN$
-        If DT(6) / Y% < TRC1(13) And UCase$(UP$) = "Y" Then TRC1(13) = DT(6) / Y%: recconTRC1$(13) = TN$
-        If DT(7) > TRC1(14) And UCase$(UP$) = "Y" Then TRC1(14) = DT(7): recconTRC1$(14) = TN$
-        If DT(8) < TRC1(15) Then TRC1(15) = DT(8): recconTRC1$(15) = TN$
-        If DT(9) < TRC1(16) Then TRC1(16) = DT(9): recconTRC1$(16) = TN$
-        If DT(10) < TRC1(17) Then TRC1(17) = DT(10): recconTRC1$(17) = TN$
-        If DT(12) > TRC1(18) And UCase$(UP$) = "Y" Then TRC1(18) = DT(12): recconTRC1$(18) = TN$
-        If DT(11) < TRC1(19) Then TRC1(19) = DT(11): recconTRC1$(19) = TN$
-        If DT(11) / Y% < TRC1(20) And UCase$(UP$) = "Y" Then TRC1(20) = DT(11) / Y%: recconTRC1$(20) = TN$
-        If LS > TRC1(21) Then TRC1(21) = LS: recconTRC1$(21) = TN$
+        OT!(16) = numGames%: DT!(16) = numGames%: OT!(17) = OT!(3) / OT!(2): DT!(17) = DT!(3) / DT!(2)
+        OT!(18) = OT!(5) / OT!(4): DT!(18) = DT!(5) / DT!(4)
+        OT!(20) = OT!(11): DT!(20) = DT!(11)
+        If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
+        If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
+        OT!(19) = OT!(20) / numGames%: DT!(19) = DT!(20) / numGames%
+        If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): recconTRC$(1) = TN$
+        If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): recconTRC$(2) = TN$
+        If OT!(17) > TRC!(3) And UCase$(UP$) = "Y" Then TRC!(3) = OT!(17): recconTRC$(3) = TN$
+        If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): recconTRC$(4) = TN$
+        If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): recconTRC$(5) = TN$
+        If OT!(21) > TRC!(6) And UCase$(UP$) = "Y" Then TRC!(6) = OT!(21): recconTRC$(6) = TN$
+        If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): recconTRC$(7) = TN$
+        If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): recconTRC$(8) = TN$
+        If OT!(18) > TRC!(9) And UCase$(UP$) = "Y" Then TRC!(9) = OT!(18): recconTRC$(9) = TN$
+        If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): recconTRC$(10) = TN$
+        If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): recconTRC$(11) = TN$
+        If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): recconTRC$(12) = TN$
+        If OT!(6) / numGames% > TRC!(13) And UCase$(UP$) = "Y" Then TRC!(13) = OT!(6) / numGames%: recconTRC$(13) = TN$
+        If OT!(7) < TRC!(14) And UCase$(UP$) = "Y" Then TRC!(14) = OT!(7): recconTRC$(14) = TN$
+        If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): recconTRC$(15) = TN$
+        If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): recconTRC$(16) = TN$
+        If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): recconTRC$(17) = TN$
+        If OT!(12) < TRC!(18) And UCase$(UP$) = "Y" Then TRC!(18) = OT!(12): recconTRC$(18) = TN$
+        If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): recconTRC$(19) = TN$
+        If OT!(11) / numGames% > TRC!(20) And UCase$(UP$) = "Y" Then TRC!(20) = OT!(11) / numGames%: recconTRC$(20) = TN$
+        If WN > TRC!(21) Then TRC!(21) = WN: recconTRC$(21) = TN$
+        If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): recconTRC1$(1) = TN$
+        If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): recconTRC1$(2) = TN$
+        If DT!(17) < TRC1!(3) And UCase$(UP$) = "Y" Then TRC1!(3) = DT!(17): recconTRC1$(3) = TN$
+        If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): recconTRC1$(4) = TN$
+        If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): recconTRC1$(5) = TN$
+        If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(UP$) = "Y" Then TRC1!(6) = DT!(21): recconTRC1$(6) = TN$
+        If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): recconTRC1$(7) = TN$
+        If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): recconTRC1$(8) = TN$
+        If DT!(18) < TRC1!(9) And UCase$(UP$) = "Y" Then TRC1!(9) = DT!(18): recconTRC1$(9) = TN$
+        If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): recconTRC1$(10) = TN$
+        If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): recconTRC1$(11) = TN$
+        If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): recconTRC1$(12) = TN$
+        If DT!(6) / numGames% < TRC1!(13) And UCase$(UP$) = "Y" Then TRC1!(13) = DT!(6) / numGames%: recconTRC1$(13) = TN$
+        If DT!(7) > TRC1!(14) And UCase$(UP$) = "Y" Then TRC1!(14) = DT!(7): recconTRC1$(14) = TN$
+        If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): recconTRC1$(15) = TN$
+        If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): recconTRC1$(16) = TN$
+        If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): recconTRC1$(17) = TN$
+        If DT!(12) > TRC1!(18) And UCase$(UP$) = "Y" Then TRC1!(18) = DT!(12): recconTRC1$(18) = TN$
+        If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): recconTRC1$(19) = TN$
+        If DT!(11) / numGames% < TRC1!(20) And UCase$(UP$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: recconTRC1$(20) = TN$
+        If LS > TRC1!(21) Then TRC1!(21) = LS: recconTRC1$(21) = TN$
 
     End If
     '1030 Return
@@ -603,10 +606,11 @@ End Sub
 '----------------------------------------
 Sub CheckTeam ()
 
-    Shared DL(), DT(), LD()
-    Shared NDL(), NOL(), NLD()
-    Shared OL(), OT(), W0(), W1()
-    Shared S()
+    Shared DL!(), LD()
+    Shared NDL!(), NOL!(), NLD()
+    Shared OL!(), S(), W0(), W1()
+
+	Shared DT!(), OT!()
 
     Shared compnatN$(), DL$()
     Shared NDL$(), NZ0$(), NZ3$()
@@ -831,23 +835,23 @@ Sub CheckTeam ()
     3700 Next X
 
     'FOR X=1 TO 40
-    If OT(19) <= OL(40, 19) Then 3820
-    For M = 1 To 20: OL(40, M) = OT(M): Next: OL$(40) = TN$
-    For X = 1 To 39: For X1 = 1 + X To 40: If OL(X, 19) >= OL(X1, 19) Then 3817
+    If OT!(19) <= OL!(40, 19) Then 3820
+    For M = 1 To 20: OL!(40, M) = OT!(M): Next: OL$(40) = TN$
+    For X = 1 To 39: For X1 = 1 + X To 40: If OL!(X, 19) >= OL!(X1, 19) Then 3817
         Swap OL$(X1), OL$(X)
-        For M = 1 To 20: J = OL(X1, M): OL(X1, M) = OL(X, M): OL(X, M) = J: Next
+        For M = 1 To 20: J = OL!(X1, M): OL!(X1, M) = OL!(X, M): OL!(X, M) = J: Next
 
     3817 Next X1: Next X
 
     3820 'FOR X=1 TO 15
-    If DT(19) < DL(40, 19) Then
-        For M = 1 To 20: DL(40, M) = DT(M): Next:
+    If DT!(19) < DL!(40, 19) Then
+        For M = 1 To 20: DL!(40, M) = DT!(M): Next:
         DL$(40) = TN$
         For X = 1 To 39
             For X1 = 1 + X To 40:
-                If DL(X, 19) > DL(X1, 19) Then
+                If DL!(X, 19) > DL!(X1, 19) Then
                     Swap DL$(X1), DL$(X)
-                    For M = 1 To 20: J = DL(X1, M): DL(X1, M) = DL(X, M): DL(X, M) = J: Next
+                    For M = 1 To 20: J! = DL!(X1, M): DL!(X1, M) = DL!(X, M): DL!(X, M) = J!: Next
                 End If
             Next X1
         Next X
@@ -862,8 +866,10 @@ End Sub
 '...explanation...
 Sub CheckStatsLeaders (statFile$)
 
-    Shared DT(), NDL(), NOL(), NLD()
-    Shared OT(), S(), W0(), W1()
+    Shared NDL!(), NOL!(), NLD()
+    Shared S(), W0(), W1()
+
+	Shared DT!(), OT!()
 
     Shared compnatN$()
     Shared NDL$(), NZ0$(), NZ3$()
@@ -1090,23 +1096,23 @@ Sub CheckStatsLeaders (statFile$)
 
     4700 Next X
     'FOR X=1 TO 40
-    If OT(19) <= NOL(40, 19) Then 4820
-    For M = 1 To 20: NOL(40, M) = OT(M): Next: NOL$(40) = TN$
-    For X = 1 To 39: For X1 = 1 + X To 40: If NOL(X, 19) >= NOL(X1, 19) Then 4817
+    If OT!(19) <= NOL!(40, 19) Then 4820
+    For M = 1 To 20: NOL!(40, M) = OT!(M): Next: NOL$(40) = TN$
+    For X = 1 To 39: For X1 = 1 + X To 40: If NOL!(X, 19) >= NOL!(X1, 19) Then 4817
         Swap NOL$(X1), NOL$(X)
-        For M = 1 To 20: J = NOL(X1, M): NOL(X1, M) = NOL(X, M): NOL(X, M) = J: Next
+        For M = 1 To 20: J = NOL!(X1, M): NOL!(X1, M) = NOL!(X, M): NOL!(X, M) = J: Next
 
     4817 Next X1: Next X
 
     4820 'FOR X=1 TO 15
-    If DT(19) < NDL(40, 19) Then
-        For M = 1 To 20: NDL(40, M) = DT(M): Next
+    If DT!(19) < NDL!(40, 19) Then
+        For M = 1 To 20: NDL!(40, M) = DT!(M): Next
         NDL$(40) = TN$
         For X = 1 To 39
             For X1 = 1 + X To 40:
-                If NDL(X, 19) > NDL(X1, 19) Then
+                If NDL!(X, 19) > NDL!(X1, 19) Then
                     Swap NDL$(X1), NDL$(X)
-                    For M = 1 To 20: J = NDL(X1, M): NDL(X1, M) = NDL(X, M): NDL(X, M) = J: Next
+                    For M = 1 To 20: J! = NDL!(X1, M): NDL!(X1, M) = NDL!(X, M): NDL!(X, M) = J!: Next
                 End If
             Next X1
         Next X

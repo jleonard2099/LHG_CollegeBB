@@ -6,7 +6,7 @@ Sub LOOKY ()
 
     CP% = 1
 
-    45 Color 15, 0: Cls
+    Color 15, 0: Cls
 
     Do
 
@@ -60,37 +60,41 @@ Sub LOOKY ()
             Else
                 A$ = Q$(0)
 
-                Do
-                    Locate 2, 33
-                    Color mergeT%(0), mergeT%(1): Print A$
-                    Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
+                While Right$(A$, 1) = " "
+                    A$ = Left$(A$, Len(A$) - 1)
+                Wend
 
-                    If UCase$(I$) = "N" Then
-                        B$ = A$
-                        Color 15, 0
-                        '6585
-                        For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                        Next XX
+                B$ = A$
 
-                        For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                        Next XX
+                'Do
+                Locate 2, 33
+                Color mergeT%(0), mergeT%(1): Print A$
+                Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
 
-                        QQ = 8
-                        For XX = 11 To 4 Step -1
-                            If Mid$(B$, XX, 1) = "_" Then
-                                QQ = XX - 4
-                                GoTo 6615
-                            Else
-                                Exit For
-                            End If
-                        6615 Next XX
+                If UCase$(I$) = "N" Then
+                    Color 15, 0
 
-                        Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+                    For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+                    Next XX
 
-                    End If 'Done checking if "N"
+                    For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+                    Next XX
 
-                Loop Until UCase$(I$) = "N"
+                    QQ = 8
+                    For XX = 11 To 4 Step -1
+                        If Mid$(B$, XX, 1) = "_" Then
+                            QQ = XX - 4
+                        Else
+                            Exit For
+                        End If
+                    Next XX
+
+                    Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+
+                End If 'Done checking if "N"
+
+                'Loop Until UCase$(I$) = "N"
 
                 If UCase$(Z$) <> "END" Then
                     Call ReadStats(Z$)
@@ -115,13 +119,19 @@ Sub ReadStats (statFile$)
     Dim AP%(100, 1)
     Dim SITE$(100)
 
+    'Do these need shared based on the below???
+    'All are assigned 0s and read in from file
+    Shared HL%, HW%, NL%, NW%, VL%, VW%
+    Shared L%, W%
+
     Shared lookyA()
-    Shared W0(), W1(), Z(), Z1()
+    Shared W0(), W1()
+	Shared Z!(), Z1!()
+
     Shared mergeT%(), O%(), P%()
+
     Shared A$(), homeTeam$(), O$()
 
-
-    '-- how do we get here???
     ' *** READ IN TEAM STATS ***
     If Not _FileExists(diskPaths$(1) + statFile$) Then
         Cls
@@ -133,7 +143,9 @@ Sub ReadStats (statFile$)
         HW% = 0: VW% = 0: NW% = 0: HL% = 0: VL% = 0: NL% = 0
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #2
-        Input #2, Y%
+		'# of games?
+        Input #2, lookyY%
+
         For I = 1 To 100: Input #2, O%(I): Next I
         For I = 1 To 100: Input #2, O$(I): Next I
         For I = 1 To 100: Input #2, mergeT%(I): Next I
@@ -144,15 +156,17 @@ Sub ReadStats (statFile$)
         For I = 1 To 100: Input #2, SITE$(I): Next I
         Close #2
 
-        For I = 1 To Y%
+        For I = 1 To lookyY%
             If O%(I) > mergeT%(I) Then W% = W% + 1
             If O%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "H" Then HW% = HW% + 1
             If O%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "V" Then VW% = VW% + 1
             If O%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "N" Then NW% = NW% + 1
+
             If O%(I) < mergeT%(I) Then L% = L% + 1
             If O%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "H" Then HL% = HL% + 1
             If O%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "V" Then VL% = VL% + 1
             If O%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "N" Then NL% = NL% + 1
+
             If O%(I) = mergeT%(I) Then X% = X% + 1
             P%(0) = P%(0) + O%(I): P%(1) = P%(1) + mergeT%(I)
         Next
@@ -161,8 +175,8 @@ Sub ReadStats (statFile$)
         Input #1, B$
         For I = 0 To 13: Input #1, A$(I)
         For J = 0 To 13: Input #1, lookyA(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
-        For L = 0 To 15: Input #1, Z(L): Next
-        For L = 0 To 15: Input #1, Z1(L): Next
+        For K = 0 To 15: Input #1, Z!(K): Next
+        For M = 0 To 15: Input #1, Z1!(M): Next
         Close #1
 
         For I = 0 To 13
@@ -178,12 +192,14 @@ Sub ReadStats (statFile$)
         815 Call TITLE_HEADER
         Color , 1: Locate 1, 1: Print Tab(80);
         Locate , 31: Color 14
-        Y = Len(B$): Y = Int((80 - Y) / 2): Locate , Y: Print B$
+        Y = Len(B$)
+        Y = Int((80 - Y) / 2)
+        Locate , Y: Print B$
         Locate 25, 1: Print Tab(80);: Locate , 1
         Locate 2, 1
         Color , 0
 
-        For I = 1 To Y%
+        For I = 1 To lookyY%
             Color 7
 
             If I / 2 = Int(I / 2) Then Color 15
@@ -209,11 +225,11 @@ Sub ReadStats (statFile$)
             Print Tab(20); Using "###"; mergeT%(I);
             Print Tab(24); homeTeam$(I)
 
-        830 Next I
+        Next I
 
         Print
 
-        860 Locate 21, 27
+        Locate 21, 27
         Color 14: Print "OVERALL RECORD ";: Color 15: Print "("; W%; "-"; L%; ")"
         Locate , 27: Color 14: Print "HOME RECORD    ";: Color 15: Print "("; HW%; "-"; HL%; ")"
         Locate , 27: Color 14: Print "ROAD RECORD    ";: Color 15: Print "("; VW%; "-"; VL%; ")"
@@ -230,18 +246,21 @@ Sub ReadStats (statFile$)
 
         Do
             I$ = GetKeyPress$
-            If I$ = Chr$(0) + "Q" Then
-                Color , 0
-                Cls
-                Call ViewStatSummary(statFile$)
-            End If
-            If UCase$(I$) = "D" Then
-                Kill diskPaths$(1) + statFile$
-                Kill diskPaths$(1) + statFile$ + "S"
-            End If
-            If UCase$(I$) = "P" Then Call PrintTeamStatSummary(B$)
+            Select Case I$
+                'Page Down
+                Case Chr$(0) + "Q":
+                    Color , 0
+                    Cls
+                    Call ViewStatSummary(statFile$)
+                Case "d", "D":
+                    Kill diskPaths$(1) + statFile$
+                    Kill diskPaths$(1) + statFile$ + "S"
+                Case "p", "P": Call PrintTeamStatSummary(B$, lookyY%)
+            End Select
 
-        Loop Until I$ = Chr$(27)
+        Loop Until I$ = Chr$(0) + "Q" Or I$ = Chr$(27)
+
+        'If I$ = Chr$(27) Then Exit Sub
 
     End If 'Done checking for presence of file
 
@@ -255,152 +274,148 @@ End Sub
 '       PlayerStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub PlayerStats (statFile$)
+Sub PlayerStats (statFile$, B$)
 
     Shared lookyA()
-    Shared W0(), W1(), Z(), Z1()
+    Shared W0(), W1()
+	Shared Z!(), Z1!()
 
     Shared A$(), CP$()
 
+    '    Do
+    Call TITLE_HEADER
+    Color , 1
+    Locate 24, 1: Print Tab(80);: Locate , 1
+    Color 15, 1: Print "SCHEDULE ";
+    Color 14: Print "[Pg UP]  ";
+    Color 15: Print "MORE STATS ";
+    Color 14: Print "[Pg DN]  ";
+    Color 15: Print "NEW TEAM ";
+    Color 14: Print "[ESC]  ";
+    Color 15: Print "SORT ";
+    Color 14: Print "<-,-> and [ENTER] ";
+    Locate 25, 1
+    Color 15: Print "PRINT ";: Color 14: Print "[P]  ";
+    Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                    ";
+    Color 12, 0: Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+    Locate 3, 1: Color 2, 0
+
+    Color 14: Print B$
+    Print "NAME"; Tab(15);
+    Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
+    For I = 0 To 13
+        If A$(I) <> "XXX" Then
+            Color 7
+            If I / 2 = Int(I / 2) Then Color 15
+            Print Left$(A$(I), 13); Tab(15);
+            Print Using "## "; lookyA(I, 0);
+            If lookyA(I, 10) > 0 Then Locate , 18: Print Using "####"; Int((lookyA(I, 10) + 30) / 60);: Locate , 24: Print Using "##"; Int(((lookyA(I, 10) / 60) / lookyA(I, 0)) + .5);
+            Locate , 28: Print Using "#### ####"; lookyA(I, 2); lookyA(I, 1);: Locate , 38
+
+            If lookyA(I, 1) = 0 Then Print ".---";: GoTo 160
+            If lookyA(I, 2) = lookyA(I, 1) Then Print "1.00";: GoTo 160
+            If lookyA(I, 2) = 0 Then Print ".000";: GoTo 160
+
+            statPCT! = lookyA(I, 2) / lookyA(I, 1)
+            Print Using ".###"; statPCT!;
+
+            160 Locate , 44: Print Using "#### ####"; W0(I); W1(I);: Locate , 54
+            If W1(I) = 0 Then Print ".---";: GoTo 161
+            If W1(I) = W0(I) Then Print "1.00";: GoTo 161
+            If W0(I) = 0 Then Print ".000";: GoTo 161
+
+            statPCT! = W0(I) / W1(I)
+            Print Using ".###"; statPCT!;
+
+            161 Locate , 60: Print Using "#### ####"; lookyA(I, 4); lookyA(I, 3);: Locate , 70
+            If lookyA(I, 3) = 0 Then Print ".---": GoTo 165
+            If lookyA(I, 3) = lookyA(I, 4) Then Print "1.00": GoTo 165
+            If lookyA(I, 4) = 0 Then Print ".000": GoTo 165
+            statPCT! = lookyA(I, 4) / lookyA(I, 3)
+            Print Using ".###"; statPCT!
+        End If
+    165 Next
+
+    Color 12: Print: Print "TOTALS";: Locate , 15
+    Print Using "##"; lookyY%;
+    Locate , 28: Print Using "#### ####"; Z!(2); Z!(1);
+    If Z!(1) <> 0 Then statPCT! = Z!(2) / Z!(1): Locate , 38: Print Using ".###"; statPCT!;
+    Locate , 44: Print Using "#### ####"; Z!(13); Z!(14);
+    If Z!(14) <> 0 Then statPCT! = Z!(13) / Z!(14): Locate , 54: Print Using ".###"; statPCT!;
+    Locate , 60: Print Using "#### ####"; Z!(4); Z!(3);
+    If Z!(3) <> 0 Then statPCT! = Z!(4) / Z!(3): Locate , 70: Print Using ".###"; statPCT!
+    Color 12: Locate , 15: Print Using "##"; lookyY%;
+    Locate , 28: Print Using "#### ####"; Z1!(2); Z1!(1);
+    If Z1!(1) <> 0 Then statPCT! = Z1!(2) / Z1!(1): Locate , 38: Print Using ".###"; statPCT!;
+    Locate , 44: Print Using "#### ####"; Z1!(13); Z1!(14);
+    If Z1!(14) <> 0 Then statPCT! = Z1!(13) / Z1!(14): Locate , 54: Print Using ".###"; statPCT!;
+    Locate , 60: Print Using "#### ####"; Z1!(4); Z1!(3);
+    If Z1!(3) <> 0 Then statPCT! = Z1!(4) / Z1!(3): Locate , 70: Print Using ".###"; statPCT!
+
     Do
-        142 Call TITLE_HEADER
-        Color , 1
-        Locate 24, 1: Print Tab(80);: Locate , 1
-        Color 15, 1: Print "SCHEDULE ";
-        Color 14: Print "[Pg UP]  ";
-        Color 15: Print "MORE STATS ";
-        Color 14: Print "[Pg DN]  ";
-        Color 15: Print "NEW TEAM ";
-        Color 14: Print "[ESC]  ";
-        Color 15: Print "SORT ";
-        Color 14: Print "<-,-> and [ENTER] ";
-        Locate 25, 1
-        Color 15: Print "PRINT ";: Color 14: Print "[P]  ";
-        Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                    ";
-        Color 12, 0: Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-        Locate 3, 1: Color 2, 0
+        I$ = GetKeyPress$
 
-        '--- where does it get B$ from ??? ---
-        Color 14: Print B$
-        Print "NAME"; Tab(15);
-        Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
-        For I = 0 To 13
-            If A$(I) <> "XXX" Then
-                Color 7
-                If I / 2 = Int(I / 2) Then Color 15
-                Print Left$(A$(I), 13); Tab(15);
-                Print Using "## "; lookyA(I, 0);
-                If lookyA(I, 10) > 0 Then Locate , 18: Print Using "####"; Int((lookyA(I, 10) + 30) / 60);: Locate , 24: Print Using "##"; Int(((lookyA(I, 10) / 60) / lookyA(I, 0)) + .5);
-                Locate , 28: Print Using "#### ####"; lookyA(I, 2); lookyA(I, 1);: Locate , 38
+        Select Case I$
+            Case Chr$(0) + "Q"
+                CP% = 14
+                Call TeamStats(statFile$, CP%, lookyY%, B$)
+            Case Chr$(0) + "I"
+                Cls
+                Call ViewStatSummary(statFile$)
+                'Exit the sub altogether?
+            Case "d", "D"
+                Kill diskPaths$(1) + statFile$
+                Kill diskPaths$(1) + statFile$ + "S"
+            Case Chr$(0) + "M"
+                CP% = CP% + 1: If CP% > 12 Then CP% = 1
+                Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+            Case Chr$(0) + "K"
+                CP% = CP% - 1: If CP% < 1 Then CP% = 12
+                Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+            Case "p", "P"
+                Call PrintTeamStatSummary(B$, lookyY%)
+            Case Chr$(13)
+                'SORT BASED ON CATEGORY
+                If CP% = 1 Then SG% = 0
+                If CP% = 2 Then SG% = 10
+                If CP% = 3 Then SG% = 14
+                If CP% = 4 Then SG% = 2
+                If CP% = 5 Then SG% = 1
+                If CP% = 6 Then SG% = 15
+                If CP% = 7 Then SG% = 18
+                If CP% = 8 Then SG% = 19
+                If CP% = 9 Then SG% = 16
+                If CP% = 10 Then SG% = 4
+                If CP% = 11 Then SG% = 3
+                If CP% = 12 Then SG% = 17
+                If CP% = 14 Then SG% = 22
+                If CP% = 15 Then SG% = 20
+                If CP% = 17 Then SG% = 12
+                If CP% = 16 Then SG% = 13
+                If CP% = 18 Then SG% = 23
+                If CP% = 19 Then SG% = 5
+                If CP% = 20 Then SG% = 21
+                If CP% = 21 Then SG% = 6
+                If CP% = 22 Then SG% = 8
+                If CP% = 23 Then SG% = 9
+                If CP% = 24 Then SG% = 7
+                If CP% = 25 Then SG% = 11
+                For Z = 0 To 12
+                    For Z1 = Z + 1 To 13
+                        If lookyA(Z, SG%) < lookyA(Z1, SG%) Then
+                            For I = 0 To 24: Swap lookyA(Z, I), lookyA(Z1, I): Next
+                            Swap W0(Z), W0(Z1)
+                            Swap W1(Z), W1(Z1)
+                            Swap A$(Z), A$(Z1)
+                        End If
+                    Next Z1
+                Next Z
 
-                If lookyA(I, 1) = 0 Then Print ".---";: GoTo 160
-                If lookyA(I, 2) = lookyA(I, 1) Then Print "1.00";: GoTo 160
-                If lookyA(I, 2) = 0 Then Print ".000";: GoTo 160
+        End Select
 
-                statPCT! = lookyA(I, 2) / lookyA(I, 1)
-                Print Using ".###"; statPCT!;
+    Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q"
 
-                160 Locate , 44: Print Using "#### ####"; W0(I); W1(I);: Locate , 54
-                If W1(I) = 0 Then Print ".---";: GoTo 161
-                If W1(I) = W0(I) Then Print "1.00";: GoTo 161
-                If W0(I) = 0 Then Print ".000";: GoTo 161
-
-                statPCT! = W0(I) / W1(I)
-                Print Using ".###"; statPCT!;
-
-                161 Locate , 60: Print Using "#### ####"; lookyA(I, 4); lookyA(I, 3);: Locate , 70
-                If lookyA(I, 3) = 0 Then Print ".---": GoTo 165
-                If lookyA(I, 3) = lookyA(I, 4) Then Print "1.00": GoTo 165
-                If lookyA(I, 4) = 0 Then Print ".000": GoTo 165
-                statPCT! = lookyA(I, 4) / lookyA(I, 3)
-                Print Using ".###"; statPCT!
-            End If
-        165 Next
-
-        Color 12: Print: Print "TOTALS";: Locate , 15
-        Print Using "##"; Y%;
-        Locate , 28: Print Using "#### ####"; Z(2); Z(1);
-        If Z(1) <> 0 Then statPCT! = Z(2) / Z(1): Locate , 38: Print Using ".###"; statPCT!;
-        Locate , 44: Print Using "#### ####"; Z(13); Z(14);
-        If Z(14) <> 0 Then statPCT! = Z(13) / Z(14): Locate , 54: Print Using ".###"; statPCT!;
-        Locate , 60: Print Using "#### ####"; Z(4); Z(3);
-        If Z(3) <> 0 Then statPCT! = Z(4) / Z(3): Locate , 70: Print Using ".###"; statPCT!
-        Color 12: Locate , 15: Print Using "##"; Y%;
-        Locate , 28: Print Using "#### ####"; Z1(2); Z1(1);
-        If Z1(1) <> 0 Then statPCT! = Z1(2) / Z1(1): Locate , 38: Print Using ".###"; statPCT!;
-        Locate , 44: Print Using "#### ####"; Z1(13); Z1(14);
-        If Z1(14) <> 0 Then statPCT! = Z1(13) / Z1(14): Locate , 54: Print Using ".###"; statPCT!;
-        Locate , 60: Print Using "#### ####"; Z1(4); Z1(3);
-        If Z1(3) <> 0 Then statPCT! = Z1(4) / Z1(3): Locate , 70: Print Using ".###"; statPCT!
-
-        Do
-            I$ = GetKeyPress$
-
-            Select Case I$
-                Case Chr$(0) + "Q"
-                    CP% = 14
-                    Call TeamStats(statFile$)
-                    'Exit the sub altogether?
-                Case Chr$(0) + "I"
-                    Cls
-                    Call ViewStatSummary(statFile$)
-                    'Exit the sub altogether?
-                Case "D"
-                    Kill diskPaths$(1) + statFile$
-                    Kill diskPaths$(1) + statFile$ + "S"
-                Case Chr$(0) + "M"
-                    CP% = CP% + 1: If CP% > 12 Then CP% = 1
-                    Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-                Case Chr$(0) + "K"
-                    CP% = CP% - 1: If CP% < 1 Then CP% = 12
-                    Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-                Case "P"
-                    Call PrintTeamStatSummary(B$)
-                    'GoTo 230
-                Case Chr$(13)
-                    600 'SORT BASED ON CATEGORY
-                    If CP% = 1 Then SG% = 0
-                    If CP% = 2 Then SG% = 10
-                    If CP% = 3 Then SG% = 14
-                    If CP% = 4 Then SG% = 2
-                    If CP% = 5 Then SG% = 1
-                    If CP% = 6 Then SG% = 15
-                    If CP% = 7 Then SG% = 18
-                    If CP% = 8 Then SG% = 19
-                    If CP% = 9 Then SG% = 16
-                    If CP% = 10 Then SG% = 4
-                    If CP% = 11 Then SG% = 3
-                    If CP% = 12 Then SG% = 17
-                    If CP% = 14 Then SG% = 22
-                    If CP% = 15 Then SG% = 20
-                    If CP% = 17 Then SG% = 12
-                    If CP% = 16 Then SG% = 13
-                    If CP% = 18 Then SG% = 23
-                    If CP% = 19 Then SG% = 5
-                    If CP% = 20 Then SG% = 21
-                    If CP% = 21 Then SG% = 6
-                    If CP% = 22 Then SG% = 8
-                    If CP% = 23 Then SG% = 9
-                    If CP% = 24 Then SG% = 7
-                    If CP% = 25 Then SG% = 11
-                    For Z = 0 To 12
-                        For Z1 = Z + 1 To 13
-                            If lookyA(Z, SG%) < lookyA(Z1, SG%) Then
-                                For I = 0 To 24: Swap lookyA(Z, I), lookyA(Z1, I): Next
-                                Swap W0(Z), W0(Z1)
-                                Swap W1(Z), W1(Z1)
-                                Swap A$(Z), A$(Z1)
-                            End If
-                    Next Z1: Next Z
-
-
-            End Select
-
-            'GoTo 230
-
-        Loop Until I$ = Chr$(27)
-
-    Loop Until I$ = Chr$(13)
+    'Loop Until I$ = Chr$(13)
 
     'GoTo 45
 End Sub
@@ -412,124 +427,131 @@ End Sub
 '       TeamStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub TeamStats (statFile$)
+Sub TeamStats (statFile$, CP%, lookyY%, teamName$)
 
     Shared lookyA()
 
-    Shared W0(), Z(), Z1()
+    Shared W0()
+	Shared Z!(), Z1!()
 
-    Shared CP$()
+    Shared A$(), CP$()
+
+    'Do
+    Cls
+
+    Call TITLE_HEADER
+
+    Color , 1
+    Locate 24, 1: Print Tab(80);
+    Locate , 1
+    Locate 24, 1: Color 14, 1
+    Color 15: Print "MORE STATS ";
+    Color 14: Print "[Pg UP]  ";
+    Color 15: Print "SELECT NEW TEAM ";
+    Color 14: Print "[ESC]  ";
+    Color 15: Print "SORT ";
+    Color 14: Print "<-,-> and [ENTER]  ";
+    Color 15: Print "PRINT ";
+    Color 14: Print "[P]";
+    Locate 25, 1
+    Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                     ";
+    Color 12, 0: Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+    Locate 3, 1: Color 2, 0
+
+    Color 14: Print teamName$;: Locate , 15
+    Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
+    Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+
+    For I = 0 To 13
+        If A$(I) <> "XXX" Then
+            Color 7
+            If I / 2 = Int(I / 2) Then Color 15
+            Print Left$(A$(I), 13);: Locate , 15
+            Print Using "####"; lookyA(I, 2) * 2 + lookyA(I, 4) + W0(I);
+            If lookyA(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (lookyA(I, 2) * 2 + lookyA(I, 4) + W0(I)) / lookyA(I, 0);
+            Locate , 26: Print Using "## #### #### ####"; lookyA(I, 13); lookyA(I, 12); lookyA(I, 5) - lookyA(I, 12); lookyA(I, 5);
+            If lookyA(I, 0) > 0 Then Locate , 45: Print Using "##.#"; lookyA(I, 5) / lookyA(I, 0);
+            Locate , 51: Print Using "### ####  ###  ###  ###"; lookyA(I, 6); lookyA(I, 8); lookyA(I, 9); lookyA(I, 7); lookyA(I, 11)
+        End If
+    Next I
+
+    Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
+    Color 12: Print "TOTALS";
+    statVal! = Z!(10) / lookyY%
+    Locate , 14: Print Using "##### ###.#"; Z!(10); statVal!;
+    statVal! = Z!(5) / lookyY%
+    Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); statVal!;
+    Print Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
+    statVal = Z!(10) / lookyY%
+    Locate , 14: Print Using "##### ###.#"; Z1!(10); statVal;
+    statVal! = Z1!(5) / lookyY%
+    Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); statVal!;
+    Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11): Color 3
+
 
     Do
-        Cls
-        Call TITLE_HEADER
-        Color , 1
-        Locate 24, 1: Print Tab(80);: Locate , 1600
-        Locate 24, 1: Color 14, 1
-        Color 15: Print "MORE STATS ";
-        Color 14: Print "[Pg UP]  ";
-        Color 15: Print "SELECT NEW TEAM ";
-        Color 14: Print "[ESC]  ";
-        Color 15: Print "SORT ";
-        Color 14: Print "<-,-> and [ENTER]  ";
-        Color 15: Print "PRINT ";
-        Color 14: Print "[P]";
-        Locate 25, 1
-        Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                     ";
-        Color 12, 0: Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-        Locate 3, 1: Color 2, 0
+        I$ = GetKeyPress$
 
-        '--- where does it get B$ from ??? ---
-        Color 14: Print B$;: Locate , 15
-        Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
-        Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+        Select Case UCase$(I$)
+            Case Chr$(0) + "I"
+                Cls
+                CP% = 1
+                Call PlayerStats(statFile$, teamName$)
+            Case Chr$(0) + "M"
+                CP% = CP% + 1: If CP% > 25 Then CP% = 14
+                Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+            Case "d", "D"
+                Kill diskPaths$(1) + statFile$
+                Kill diskPaths$(1) + statFile$ + "S"
+            Case Chr$(0) + "K"
+                CP% = CP% - 1: If CP% < 14 Then CP% = 25
+                Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+            Case Chr$(13)
+                'SORT BASED ON CATEGORY
+                If CP% = 1 Then SG% = 0
+                If CP% = 2 Then SG% = 10
+                If CP% = 3 Then SG% = 14
+                If CP% = 4 Then SG% = 2
+                If CP% = 5 Then SG% = 1
+                If CP% = 6 Then SG% = 15
+                If CP% = 7 Then SG% = 18
+                If CP% = 8 Then SG% = 19
+                If CP% = 9 Then SG% = 16
+                If CP% = 10 Then SG% = 4
+                If CP% = 11 Then SG% = 3
+                If CP% = 12 Then SG% = 17
+                If CP% = 14 Then SG% = 22
+                If CP% = 15 Then SG% = 20
+                If CP% = 17 Then SG% = 12
+                If CP% = 16 Then SG% = 13
+                If CP% = 18 Then SG% = 23
+                If CP% = 19 Then SG% = 5
+                If CP% = 20 Then SG% = 21
+                If CP% = 21 Then SG% = 6
+                If CP% = 22 Then SG% = 8
+                If CP% = 23 Then SG% = 9
+                If CP% = 24 Then SG% = 7
+                If CP% = 25 Then SG% = 11
+                For Z = 0 To 12
+                    For Z1 = Z + 1 To 13
+                        If lookyA(Z, SG%) < lookyA(Z1, SG%) Then
+                            For I = 0 To 24: Swap lookyA(Z, I), lookyA(Z1, I): Next
+                            Swap W0(Z), W0(Z1)
+                            Swap W1(Z), W1(Z1)
+                            Swap A$(Z), A$(Z1)
+                        End If
+                    Next Z1
+                Next Z
 
-        For I = 0 To 13
-            If A$(I) <> "XXX" Then
-                Color 7
-                If I / 2 = Int(I / 2) Then Color 15
-                Print Left$(A$(I), 13);: Locate , 15
-                Print Using "####"; lookyA(I, 2) * 2 + lookyA(I, 4) + W0(I);
-                If lookyA(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (lookyA(I, 2) * 2 + lookyA(I, 4) + W0(I)) / lookyA(I, 0);
-                Locate , 26: Print Using "## #### #### ####"; lookyA(I, 13); lookyA(I, 12); lookyA(I, 5) - lookyA(I, 12); lookyA(I, 5);
-                If lookyA(I, 0) > 0 Then Locate , 45: Print Using "##.#"; lookyA(I, 5) / lookyA(I, 0);
-                Locate , 51: Print Using "### ####  ###  ###  ###"; lookyA(I, 6); lookyA(I, 8); lookyA(I, 9); lookyA(I, 7); lookyA(I, 11)
-            End If
-        Next I
+                'GoTo 235
+                'Loop back to the beginning
+            Case "p", "P"
+                Call PrintTeamStatSummary(B$, lookyY%)
+        End Select
 
-        Print "TEAM";: Locate , 39: Print Using "####"; Z(15)
-        Color 12: Print "TOTALS";
-        Locate , 14: Print Using "##### ###.#"; Z(10); Z(10) / Y%;
-        Locate , 29: Print Using "#### #### ####  ##.#"; Z(12); Z(5) - Z(12) - Z(15); Z(5); Z(5) / Y%;
-        Print Using " #### #### #### #### ####"; Z(6); Z(8); Z(9); Z(7); Z(11)
-        Locate , 14: Print Using "##### ###.#"; Z1(10); Z1(10) / Y%;
-        Locate , 29: Print Using "#### #### ####  ##.#"; Z1(12); Z1(5) - Z1(12) - Z1(15); Z1(5); Z1(5) / Y%;
-        Print Using " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11): Color 3
+    Loop Until I$ = Chr$(27)
 
-
-        Do
-            I$ = GetKeyPress$
-
-            Select Case UCase$(I$)
-                Case Chr$(0) + "I"
-                    Cls
-                    CP% = 1
-                    Call PlayerStats(statFile$)
-                Case Chr$(0) + "M"
-                    CP% = CP% + 1: If CP% > 25 Then CP% = 14
-                    Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-                Case "D"
-                    Kill diskPaths$(1) + statFile$
-                    Kill diskPaths$(1) + statFile$ + "S"
-                Case Chr$(0) + "K"
-                    CP% = CP% - 1: If CP% < 14 Then CP% = 25
-                    Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-                Case Chr$(13)
-                    'SORT BASED ON CATEGORY
-                    If CP% = 1 Then SG% = 0
-                    If CP% = 2 Then SG% = 10
-                    If CP% = 3 Then SG% = 14
-                    If CP% = 4 Then SG% = 2
-                    If CP% = 5 Then SG% = 1
-                    If CP% = 6 Then SG% = 15
-                    If CP% = 7 Then SG% = 18
-                    If CP% = 8 Then SG% = 19
-                    If CP% = 9 Then SG% = 16
-                    If CP% = 10 Then SG% = 4
-                    If CP% = 11 Then SG% = 3
-                    If CP% = 12 Then SG% = 17
-                    If CP% = 14 Then SG% = 22
-                    If CP% = 15 Then SG% = 20
-                    If CP% = 17 Then SG% = 12
-                    If CP% = 16 Then SG% = 13
-                    If CP% = 18 Then SG% = 23
-                    If CP% = 19 Then SG% = 5
-                    If CP% = 20 Then SG% = 21
-                    If CP% = 21 Then SG% = 6
-                    If CP% = 22 Then SG% = 8
-                    If CP% = 23 Then SG% = 9
-                    If CP% = 24 Then SG% = 7
-                    If CP% = 25 Then SG% = 11
-                    For Z = 0 To 12
-                        For Z1 = Z + 1 To 13
-                            If lookyA(Z, SG%) < lookyA(Z1, SG%) Then
-                                For I = 0 To 24: Swap lookyA(Z, I), lookyA(Z1, I): Next
-                                Swap W0(Z), W0(Z1)
-                                Swap W1(Z), W1(Z1)
-                                Swap A$(Z), A$(Z1)
-                            End If
-                        Next Z1
-                    Next Z
-
-                    'GoTo 235
-                    'Loop back to the beginning
-                Case "P"
-                    Call PrintTeamStatSummary(B$)
-            End Select
-
-        Loop Until I$ = Chr$(27)
-
-    Loop Until I$ = Chr$(13)
+    'Loop Until I$ = Chr$(13)
 
     'Cls
     'Call TITLE_HEADER
@@ -557,17 +579,28 @@ Sub ViewStatSummary (statFile$)
     Shared O$()
     Shared O%()
 
-    Shared W0(), W1(), Z(), Z1()
+    Shared W0(), W1()
+	Shared Z!(), Z1!()
     Shared mergeT%()
     Shared homeTeam$()
 
-    '--- where does it get B$ from??? ---
-    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 31: Color 14
-    Y = Len(B$): Y = Int((80 - Y) / 2): Locate , Y: Print B$
+    Color , 1
+    Locate 1, 1: Print Tab(80);
+    Locate , 31: Color 14
+
+    'what is the deal here???
+    Y = Len(B$)
+    Y = Int((80 - Y) / 2)
+    Locate , Y: Print B$
+
     Locate 25, 1: Print Tab(80);: Locate , 1
     Locate 2, 1
     Color , 0
-    For I = 1 To Y%
+
+    'Logic here must be wrong or else Y is wrong
+    'Currently prints a full page of games
+    'mostly with 0's
+    For I = 1 To Y
         Color 7
         If I / 2 = Int(I / 2) Then Color 15
         If I >= 55 Then
@@ -604,28 +637,24 @@ Sub ViewStatSummary (statFile$)
     Do
         I$ = GetKeyPress$
         Select Case I$
+            'Page Down
             Case Chr$(0) + "Q"
                 Color , 0
                 Cls
-                Call PlayerStats(statFile$)
-                'GoTo 970
+                Call PlayerStats(statFile$, teamName$)
+                'Page Up
             Case Chr$(0) + "I"
                 Color , 0
                 Cls
                 Call ReadStats(statFile$)
-                '-- does ReadStats need separated into
-                'a menu routine and another?
-                'GoTo 815
-                'GoTo 970
-            Case "D":
+            Case "d", "D":
                 Kill diskPaths$(1) + statFile$
                 Kill diskPaths$(1) + statFile$ + "S"
-            Case "P":
-                Call PrintTeamStatSummary(B$)
+            Case "p", "P":
+                Call PrintTeamStatSummary(B$, lookyY%)
         End Select
 
-    Loop Until I$ = Chr$(27)
-    'Goto 45
+    Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q"
 
 End Sub
 
@@ -634,7 +663,7 @@ End Sub
 '     PrintTeamStatSummary Subroutine
 '----------------------------------------
 '...explanation...
-Sub PrintTeamStatSummary (B$)
+Sub PrintTeamStatSummary (B$, lookyY%)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
     Shared L%, W%
@@ -653,12 +682,12 @@ Sub PrintTeamStatSummary (B$)
         LPrint Tab(5); Left$(O$(I), 14);
         LPrint Tab(20); Using "###"; mergeT%(I);
         LPrint Tab(24); homeTeam$(I); Tab(27);
-        If I + 28 <= Y% Then
+        If I + 28 <= lookyY% Then
             LPrint Using "###"; O%(I + 28);
             LPrint Tab(31); Left$(O$(I + 28), 14);
             LPrint Tab(46); Using "###"; mergeT%(I + 28);
             LPrint Tab(50); homeTeam$(I + 28); Tab(53);
-            If I + 56 <= Y% Then
+            If I + 56 <= lookyY% Then
                 LPrint Using "###"; O%(I + 56);
                 LPrint Tab(57); Left$(O$(I + 56), 14);
                 LPrint Tab(72); Using "###"; mergeT%(I + 56);
@@ -709,20 +738,20 @@ Sub PrintTeamStatSummary (B$)
     533 Next
 
     LPrint: LPrint "TOTALS"; Tab(15);
-    LPrint Using "##"; Y%;
-    LPrint Tab(28); Using "#### ####"; Z(2); Z(1);
-    If Z(1) <> 0 Then statPCT! = Z(2) / Z(1): LPrint Tab(38); Using ".###"; statPCT!;
-    LPrint Tab(44); Using "#### ####"; Z(13); Z(14);
-    If Z(14) <> 0 Then statPCT! = Z(13) / Z(14): LPrint Tab(54); Using ".###"; statPCT!;
-    LPrint Tab(60); Using "#### ####"; Z(4); Z(3);
-    If Z(3) <> 0 Then statPCT! = Z(4) / Z(3): LPrint Tab(70); Using ".###"; statPCT!
-    LPrint Tab(15); Using "##"; Y%;
-    LPrint Tab(28); Using "#### ####"; Z1(2); Z1(1);
-    If Z1(1) <> 0 Then statPCT! = Z1(2) / Z1(1): LPrint Tab(38); Using ".###"; statPCT!;
-    LPrint Tab(44); Using "#### ####"; Z1(13); Z1(14);
-    If Z1(14) <> 0 Then statPCT! = Z1(13) / Z1(14): LPrint Tab(54); Using ".###"; statPCT!;
-    LPrint Tab(60); Using "#### ####"; Z1(4); Z1(3);
-    If Z1(3) <> 0 Then statPCT! = Z1(4) / Z1(3): LPrint Tab(70); Using ".###"; statPCT!
+    LPrint Using "##"; lookyY%;
+    LPrint Tab(28); Using "#### ####"; Z!(2); Z!(1);
+    If Z!(1) <> 0 Then statPCT! = Z!(2) / Z!(1): LPrint Tab(38); Using ".###"; statPCT!;
+    LPrint Tab(44); Using "#### ####"; Z!(13); Z!(14);
+    If Z!(14) <> 0 Then statPCT! = Z!(13) / Z!(14): LPrint Tab(54); Using ".###"; statPCT!;
+    LPrint Tab(60); Using "#### ####"; Z!(4); Z!(3);
+    If Z!(3) <> 0 Then statPCT! = Z!(4) / Z!(3): LPrint Tab(70); Using ".###"; statPCT!
+    LPrint Tab(15); Using "##"; lookyY%;
+    LPrint Tab(28); Using "#### ####"; Z1!(2); Z1!(1);
+    If Z1!(1) <> 0 Then statPCT! = Z1!(2) / Z1!(1): LPrint Tab(38); Using ".###"; statPCT!;
+    LPrint Tab(44); Using "#### ####"; Z1!(13); Z1!(14);
+    If Z1!(14) <> 0 Then statPCT! = Z1!(13) / Z1!(14): LPrint Tab(54); Using ".###"; statPCT!;
+    LPrint Tab(60); Using "#### ####"; Z1!(4); Z1!(3);
+    If Z1!(3) <> 0 Then statPCT! = Z1!(4) / Z1!(3): LPrint Tab(70); Using ".###"; statPCT!
     LPrint
     LPrint Tab(15);
     LPrint "               OFF  DEF  TOT": LPrint Tab(15);
@@ -737,14 +766,14 @@ Sub PrintTeamStatSummary (B$)
         LPrint Tab(51); Using "### ####  ###  ###  ###"; lookyA(I, 6); lookyA(I, 8); lookyA(I, 9); lookyA(I, 7); lookyA(I, 11)
     Next I
 
-    LPrint "TEAM";: LPrint Tab(39); Using "####"; Z(15)
+    LPrint "TEAM";: LPrint Tab(39); Using "####"; Z!(15)
     LPrint: LPrint "TOTALS";
-    LPrint Tab(14); Using "##### ###.#"; Z(10); Z(10) / Y%;
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z(12); Z(5) - Z(12) - Z(15); Z(5); Z(5) / Y%;
-    LPrint Using " #### #### #### #### ####"; Z(6); Z(8); Z(9); Z(7); Z(11)
-    LPrint Tab(14); Using "##### ###.#"; Z1(10); Z1(10) / Y%;
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1(12); Z1(5) - Z1(12) - Z1(15); Z1(5); Z1(5) / Y%;
-    LPrint Using " #### #### #### #### ####"; Z1(6); Z1(8); Z1(9); Z1(7); Z1(11)
+    LPrint Tab(14); Using "##### ###.#"; Z!(10); Z!(10) / lookyY%;
+    LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / lookyY%;
+    LPrint Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
+    LPrint Tab(14); Using "##### ###.#"; Z1!(10); Z1!(10) / lookyY%;
+    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / lookyY%;
+    LPrint Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
     LPrint Chr$(12)
 
 End Sub
@@ -758,7 +787,7 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
 
     Shared L%(), mergeT%()
 
-    1102 SELECTION% = 1
+    SELECTION% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -782,23 +811,16 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
 
     T1 = teamIndex%(SELECTION%)
 
-    9000 Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
     For I = 0 To 13
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
     Get #1, T1
-    A$ = Q$(0)
 
-    While Right$(A$, 1) = " "
-        A$ = Left$(A$, Len(A$) - 1)
-    Wend
-
-    B$ = A$
     SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
     For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
     For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
     Close 1
-    'B$ = A$
 
 End Sub

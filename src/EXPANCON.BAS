@@ -188,8 +188,10 @@ Sub PlayerLeaders (printTarget)
 
     Shared AL$()
     Shared TMA$(), TMM$(), TP$(), TPP$()
-    Shared statsAL(), GMA(), TYP()
-    Shared W0L(), W1L()
+
+    'Single not INT
+    Shared statsAL!(), GMA!(), TYP!()
+    Shared W0L!(), W1L!()
 
     Do
 
@@ -261,9 +263,9 @@ Sub PlayerLeaders (printTarget)
                 Cls
                 PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) <> 0 Then
+                    If statsAL!(I, X) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = statsAL(I, X)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = statsAL!(I, X)
                     End If
                 Next I
                 Call SortPlayer
@@ -274,9 +276,9 @@ Sub PlayerLeaders (printTarget)
                 Cls
                 PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) <> 0 Then
+                    If statsAL!(I, X) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (statsAL(I, X) + 30) / 60
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = (statsAL!(I, X) + 30) / 60
                     End If
                 Next I
                 Call SortPlayer
@@ -286,9 +288,9 @@ Sub PlayerLeaders (printTarget)
             Case 4:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) >= GMA(I) * 3.65 Then
+                    If statsAL!(I, X) >= GMA!(I) * 3.65 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = statsAL(I, X) / statsAL(I, X1)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = statsAL!(I, X) / statsAL!(I, X1)
                     End If
                 Next I
                 Call SortPlayer
@@ -298,9 +300,9 @@ Sub PlayerLeaders (printTarget)
             Case 5:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If W0L(I) <> 0 Then
+                    If W0L!(I) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = W0L!(I)
                     End If
                 Next I
                 Call SortPlayer
@@ -311,9 +313,9 @@ Sub PlayerLeaders (printTarget)
                 Cls
                 PPP = 0
                 For I = 1 To JB
-                    If W1L(I) <> 0 Then
+                    If W1L!(I) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W1L(I)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = W1L!(I)
                     End If
                 Next I
                 Call SortPlayer
@@ -323,9 +325,9 @@ Sub PlayerLeaders (printTarget)
             Case 7:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If W0L(I) >= GMA(I) * .3 Then
+                    If W0L!(I) >= GMA!(I) * .3 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = W0L(I) / W1L(I)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = W0L!(I) / W1L!(I)
                     End If
                 Next I
                 Call SortPlayer
@@ -336,9 +338,9 @@ Sub PlayerLeaders (printTarget)
                 Cls
                 PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) >= GMA(I) * 1.52 Then
+                    If statsAL!(I, X) >= GMA!(I) * 1.52 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = statsAL(I, X) / statsAL(I, X1)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = statsAL!(I, X) / statsAL!(I, X1)
                     End If
                 Next I
                 Call SortPlayer
@@ -349,10 +351,10 @@ Sub PlayerLeaders (printTarget)
                 Cls
                 PPP = 0
                 For I = 1 To JB
-                    If (statsAL(I, X) * 2) + statsAL(I, X1) + W0L(I) <> 0 Then
+                    If (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (statsAL(I, X) * 2) + statsAL(I, X1) + W0L(I)
-                        'TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = 0
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I)
+                        'TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = 0
                     End If
                 Next I
                 Call SortPlayer
@@ -362,9 +364,9 @@ Sub PlayerLeaders (printTarget)
             Case 12:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If (statsAL(I, X) * 2) + statsAL(I, X1) + W0L(I) <> 0 And statsAL(I, X2) <> 0 Then
+                    If (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I) <> 0 And statsAL!(I, X2) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((statsAL(I, X) * 2) + statsAL(I, X1) + W0L(I)) / statsAL(I, X2)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = ((statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I)) / statsAL!(I, X2)
                     End If
                 Next I
                 Call SortPlayer
@@ -374,9 +376,9 @@ Sub PlayerLeaders (printTarget)
             Case 15:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) - statsAL(I, X1) <> 0 Then
+                    If statsAL!(I, X) - statsAL!(I, X1) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = statsAL(I, X) - statsAL(I, X1)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = statsAL!(I, X) - statsAL!(I, X1)
                     End If
                 Next I
                 Call SortPlayer
@@ -387,9 +389,9 @@ Sub PlayerLeaders (printTarget)
                 Cls
                 PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) <> 0 Then
+                    If statsAL!(I, X) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = statsAL(I, X) / statsAL(I, X1)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = statsAL!(I, X) / statsAL!(I, X1)
                     End If
                 Next I
                 Call SortPlayer
@@ -398,9 +400,9 @@ Sub PlayerLeaders (printTarget)
             Case 23:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If (statsAL(I, X) * 2) + statsAL(I, X1) + W0L(I) <> 0 And statsAL(I, X2) <> 0 Then
+                    If (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I) <> 0 And statsAL!(I, X2) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (((statsAL(I, X) * 2) + statsAL(I, X1) + W0L(I))) * 48 / ((statsAL(I, X2) + 30) / 60)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = (((statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I))) * 48 / ((statsAL!(I, X2) + 30) / 60)
                     End If
                 Next I
                 Call SortPlayer
@@ -409,9 +411,9 @@ Sub PlayerLeaders (printTarget)
             Case 24 TO 29:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) <> 0 And statsAL(I, X1) <> 0 Then
+                    If statsAL!(I, X) <> 0 And statsAL!(I, X1) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = (statsAL(I, X)) * 48 / ((statsAL(I, X1) + 30) / 60)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = (statsAL!(I, X)) * 48 / ((statsAL!(I, X1) + 30) / 60)
                     End If
                 Next I
                 Call SortPlayer
@@ -420,9 +422,9 @@ Sub PlayerLeaders (printTarget)
             Case 30:
                 Cls: PPP = 0
                 For I = 1 To JB
-                    If statsAL(I, X) <> 0 And statsAL(I, X1) <> 0 Then
+                    If statsAL!(I, X) <> 0 And statsAL!(I, X1) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP(PPP) = ((statsAL(I, X) + 30) / 60) / statsAL(I, X1)
+                        TPP$(PPP) = AL$(I): TMM$(PPP) = TMA$(I): TYP!(PPP) = ((statsAL!(I, X) + 30) / 60) / statsAL!(I, X1)
                     End If
                 Next I
                 Call SortPlayer
@@ -474,12 +476,15 @@ End Sub
 '...explanation...
 Sub TeamTotals (printTarget)
 
-    Dim GM(1 To 40)
+    Dim GM!(1 To 40)
 
-    Shared TS, TTS
+    Shared JX, TS, TTS
 
     Shared expanTT$(), TMM$(), TP1$(), TT1$()
-    Shared GM1(), TT(), TYP(), TT1()
+    Shared GM1!(), TT!(), TYP!(), TT1!()
+
+    'JX = 1: Sort HIGH to LOW
+    'JX = 2: Sort LOW to HIGH
 
     Do
 
@@ -549,142 +554,89 @@ Sub TeamTotals (printTarget)
 
         Select Case B9
             Case 0 TO 1, 3 TO 4, 6 TO 7, 9, 11, 13 TO 17:
-                For I = 1 To TS: TMM$(I) = expanTT$(I, X): TYP(I) = TT(I, X): Next
-                For I = 2 To TS:
-                    stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-                    For J = TS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
-
+                For I = 1 To TS
+					TMM$(I) = expanTT$(I, X)
+					TYP!(I) = TT!(I, X)
+				Next
+				Call SortTeam (TS)
                 TVN = 1
 
             Case 2, 5, 8:
                 For I = 1 To TS
-                    If TT(I, X1) = 0 Then
-                        TMM$(I) = expanTT$(I, X): TYP(I) = 0
+                    If TT!(I, X1) = 0 Then
+                        TMM$(I) = expanTT$(I, X): TYP!(I) = 0
                     Else
-                        TMM$(I) = expanTT$(I, X): TYP(I) = TT(I, X) / TT(I, X1)
+                        TMM$(I) = expanTT$(I, X): TYP!(I) = TT!(I, X) / TT!(I, X1)
                     End If
                 Next
-
-                For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-                    For J = TS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
-
+				Call SortTeam (TS)
                 TVN = 2
 
             Case 10:
-                For I = 1 To TS: TMM$(I) = expanTT$(I, X): TYP(I) = TT(I, X) - TT(I, X1): Next
-                For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-                    For J = TS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+                For I = 1 To TS
+					TMM$(I) = expanTT$(I, X)
+					TYP!(I) = TT!(I, X) - TT!(I, X1)
+				Next
+				Call SortTeam (TS)
                 TVN = 1
 
             Case 12:
-                For I = 1 To TS: TMM$(I) = expanTT$(I, X): TYP(I) = TT(I, X) / GM(I): Next
-                For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-                    For J = TS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+                For I = 1 To TS
+					TMM$(I) = expanTT$(I, X)
+					TYP!(I) = TT!(I, X) / GM!(I)
+				Next
+				Call SortTeam (TS)
                 TVN = 3
 
             Case 18:
-                For I = 1 To TS: TMM$(I) = expanTT$(I, X): TYP(I) = ((TT(I, X) * 2) + TT(I, X1) + TT(I, X2)) / GM(I): Next
-                For I = 2 To TS: stpl = stpl + 1: Locate 5, 5: Print "sorting team "; stpl
-                    For J = TS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+                For I = 1 To TS
+					TMM$(I) = expanTT$(I, X)
+					TYP!(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM!(I)
+				Next
+				Call SortTeam (TS)
                 TVN = 3
 
             Case 19 TO 20, 22 TO 23, 25 TO 26, 28, 30:
-                For I = 1 To TTS: TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X): Next
-                For I = 2 To TTS
-                    stpl = stpl + 1
-                    Locate 5, 5: Print "sorting team "; stpl
-
-                    For J = TTS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+                For I = 1 To TTS
+					TMM$(I) = TT1$(I, X)
+					TYP!(I) = TT1!(I, X)
+				Next
+				Call SortTeam (TTS)
                 TVN = 1
 
             Case 21, 24, 27:
                 For I = 1 To TTS
-                    If TT1(I, X1) = 0 Then
-                        TMM$(I) = TT1$(I, X): TYP(I) = 0
+                    If TT1!(I, X1) = 0 Then
+                        TMM$(I) = TT1$(I, X): TYP!(I) = 0
                     Else
-                        TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) / TT1(I, X1)
+                        TMM$(I) = TT1$(I, X): TYP!(I) = TT1!(I, X) / TT1!(I, X1)
                     End If
                 Next
-
-                For I = 2 To TTS
-                    stpl = stpl + 1
-                    Locate 5, 5: Print "sorting team "; stpl
-
-                    For J = TTS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+				Call SortTeam (TTS)
                 TVN = 2
 
             Case 29:
-                For I = 1 To TTS: TMM$(I) = TT1$(I, X): TYP(I) = TT1(I, X) - TT1(I, X1): Next
-                For I = 2 To TTS
-                    stpl = stpl + 1
-                    Locate 5, 5: Print "sorting team "; stpl
-
-                    For J = TTS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+                For I = 1 To TTS
+					TMM$(I) = TT1$(I, X)
+					TYP!(I) = TT1!(I, X) - TT1!(I, X1)
+				Next
+				Call SortTeam (TTS)
                 TVN = 1
 
             Case 31 TO 36:
                 For I = 1 To TTS
                     TMM$(I) = TT1$(I, X)
-                    TYP(I) = TT1(I, X) / GM1(I)
+                    TYP!(I) = TT1!(I, X) / GM1!(I)
                 Next
-
-                For I = 2 To TTS
-                    stpl = stpl + 1
-                    Locate 5, 5: Print "sorting team "; stpl
-
-                    For J = TTS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+				Call SortTeam (TTS)
                 TVN = 3
 
             Case 37:
                 For I = 1 To TTS
                     TMM$(I) = TT1$(I, X)
-                    TYP(I) = ((TT1(I, X) * 2) + TT1(I, X1) + TT1(I, X2)) / GM1(I)
+                    TYP!(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1!(I)
                 Next
-                For I = 2 To TTS
-                    stpl = stpl + 1
-                    Locate 5, 5: Print "sorting team "; stpl
-
-                    For J = TTS To I Step -1
-                        If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                        If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-                    Next J
-                Next I
+				Call SortTeam (TTS)
                 TVN = 3
 
         End Select
@@ -707,7 +659,7 @@ End Sub
 Sub PrintPlayer (printTarget, maxRecords, TVN, categoryID)
 
     Shared TP$(), TMM$(), TPP$()
-    Shared TYP()
+    Shared TYP!()
 
     Select Case printTarget
         Case 1:
@@ -756,10 +708,9 @@ Sub PrintPlayer (printTarget, maxRecords, TVN, categoryID)
 
                     '--** we can replace this really easy by checking W against a 0 remainder when we do mod 20
 
-
-                    If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using "#####"; TYP(W)
-                    If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using ".###"; TYP(W)
-                    If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using "###.#"; TYP(W)
+                    If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using "#####"; TYP!(W)
+                    If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using ".###"; TYP!(W)
+                    If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TPP$(W);: Color 15: Print Tab(25); TMM$(W);: Color 15: Print Tab(58); Using "###.#"; TYP!(W)
 
                 Next W
 
@@ -773,7 +724,7 @@ Sub PrintPlayer (printTarget, maxRecords, TVN, categoryID)
                     I$ = GetKeyPress$
                 End If
 
-            Loop Until UCase$(I$) = "N"
+            Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
 
         Case 2:
 
@@ -810,9 +761,9 @@ Sub PrintPlayer (printTarget, maxRecords, TVN, categoryID)
                     LPrint "     PLAYER                  TEAM                     "; TP$(categoryID)
                 End If
 
-                If TVN = 1 Then LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using "#####"; TYP(W)
-                If TVN = 2 Then LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using ".###"; TYP(W)
-                If TVN = 3 Then LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using "###.#"; TYP(W)
+                If TVN = 1 Then LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using "#####"; TYP!(W)
+                If TVN = 2 Then LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using ".###"; TYP!(W)
+                If TVN = 3 Then LPrint Using "###"; W;: LPrint " ";: LPrint TPP$(W);: LPrint Tab(25); TMM$(W);: LPrint Tab(58); Using "###.#"; TYP!(W)
 
             Next W
 
@@ -832,7 +783,7 @@ End Sub
 Sub PrintIt (printTarget, maxRecords, TVN, categoryID)
 
     Shared TMM$(), TP1$()
-    Shared TYP()
+    Shared TYP!()
 
     Select Case printTarget
 
@@ -850,9 +801,9 @@ Sub PrintIt (printTarget, maxRecords, TVN, categoryID)
                         Cls
                         Color 14: Print "     TEAM                     "; TP1$(categoryID)
                     End If
-                    If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP(W)
-                    If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP(W)
-                    If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP(W)
+                    If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP!(W)
+                    If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP!(W)
+                    If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP!(W)
                 Next W
 
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
@@ -874,9 +825,9 @@ Sub PrintIt (printTarget, maxRecords, TVN, categoryID)
             LPrint "     TEAM                     "; TP1$(categoryID)
             '-- Should these be LPRINT ???
             For W = 1 To maxRecords
-                If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP(W)
-                If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP(W)
-                If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP(W)
+                If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP!(W)
+                If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP!(W)
+                If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP!(W)
             Next W
             LPrint Chr$(12)
             LPrint Chr$(18)
@@ -894,18 +845,18 @@ End Sub
 '       SortPlayer Subroutine
 '----------------------------------------
 '...explanation...
-Sub SortPlayer ()
+Sub SortPlayer
 
-    Shared PPP
+    Shared JX, PPP
     Shared TMM$(), TPP$()
-    Shared TYP()
+    Shared TYP!()
 
     For I = 2 To PPP
         stpl = stpl + 1
         Locate 5, 5: Print "sorting player "; stpl
         For J = PPP To I Step -1
-            If JX = 1 Then If TYP(J - 1) < TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
-            If JX = 2 Then If TYP(J - 1) > TYP(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP(J - 1), TYP(J)
+            If JX = 1 Then If TYP!(J - 1) < TYP!(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP!(J - 1), TYP!(J)
+            If JX = 2 Then If TYP!(J - 1) > TYP!(J) Then Swap TPP$(J - 1), TPP$(J): Swap TMM$(J - 1), TMM$(J): Swap TYP!(J - 1), TYP!(J)
         Next J
     Next I
 
@@ -917,6 +868,8 @@ End Sub
 '----------------------------------------
 '...explanation...
 Sub SortOptions (printTarget, ZZ)
+
+    Shared JX
 
     Do
 
@@ -1008,15 +961,17 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub BUILDSTATS (statFile$, Z1$())
-    Dim GM(1 To 40)
+
+    Dim GM!(1 To 40)
+
     Shared A$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
-    Shared A(), statsAL()
-    Shared GMA(), GM1()
-    Shared TT(), TT1()
-    Shared W0(), W1(), W0L(), W1L()
-    Shared Z(), Z1()
+    Shared A(), statsAL!()
+    Shared GMA!(), GM1!()
+    Shared TT!(), TT1!()
+    Shared W0(), W1(), W0L!(), W1L!()
+    Shared Z!(), Z1!()
 
     Shared JB, TS, TMR, TTS
 
@@ -1038,16 +993,16 @@ Sub BUILDSTATS (statFile$, Z1$())
                     Input #1, W0(I)
                     Input #1, W1(I)
                 Next
-                For L = 0 To 15: Input #1, Z(L): Next
-                For L = 0 To 15: Input #1, Z1(L): Next
+                For L = 0 To 15: Input #1, Z!(L): Next
+                For L = 0 To 15: Input #1, Z1!(L): Next
                 Close #1
 
                 Open diskPaths$(1) + Z1$(KK) + "S" For Input As #1
-                Input #1, Y
+                Input #1, year
                 Close #1
 
-                TS = TS + 1: For I = 0 To 14: TT(TS, I) = Z(I): expanTT$(TS, I) = B$: GM(TS) = Y: Next
-                TTS = TTS + 1: For I = 0 To 14: TT1(TTS, I) = Z1(I): TT1$(TTS, I) = B$: GM1(TTS) = Y: Next
+                TS = TS + 1: For I = 0 To 14: TT!(TS, I) = Z!(I): expanTT$(TS, I) = B$: GM!(TS) = year: Next
+                TTS = TTS + 1: For I = 0 To 14: TT1!(TTS, I) = Z1!(I): TT1$(TTS, I) = B$: GM1!(TTS) = year: Next
 
                 For I = 0 To 14
                     If A$(I) <> "XXX" Then
@@ -1055,15 +1010,15 @@ Sub BUILDSTATS (statFile$, Z1$())
                         AL$(JB) = A$(I)
                         TBN = TBN + 1
                         TMA$(TBN) = B$
-                        GMA(JB) = Y
+                        GMA!(JB) = year
                         K1 = 0
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            statsAL(JB, K1) = A(I, I1)
+                            statsAL!(JB, K1) = A(I, I1)
                         Next I1
                     End If
-                    W0L(JB) = W0(I)
-                    W1L(JB) = W1(I)
+                    W0L!(JB) = W0(I)
+                    W1L!(JB) = W1(I)
                 Next I
 
             End If
@@ -1075,15 +1030,15 @@ Sub BUILDSTATS (statFile$, Z1$())
     Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
     Write #1, JB, TS, TTS
     For I = 1 To 600:
-        Write #1, AL$(I), TMA$(I), GMA(I)
+        Write #1, AL$(I), TMA$(I), GMA!(I)
         Color 14: TMR = TMR - 1
         Locate 18, 45: Print Using "#####"; TMR
         For I1 = 1 To 14:
-            Write #1, statsAL(I, I1)
+            Write #1, statsAL!(I, I1)
         Next I1
 
-        Write #1, W0L(I)
-        Write #1, W1L(I)
+        Write #1, W0L!(I)
+        Write #1, W1L!(I)
         Color 14
         TMR = TMR - 1
         Locate 18, 45: Print Using "#####"; TMR
@@ -1091,23 +1046,45 @@ Sub BUILDSTATS (statFile$, Z1$())
 
     For I = 1 To 40
         For I1 = 0 To 14
-            Write #1, TT(I, I1), expanTT$(I, I1)
+            Write #1, TT!(I, I1), expanTT$(I, I1)
         Next
         Color 14
         TMR = TMR - 1
         Locate 18, 45: Print Using "#####"; TMR
-        Write #1, GM(I)
+        Write #1, GM!(I)
     Next
     For I = 1 To 40
         For I1 = 0 To 14
-            Write #1, TT1(I, I1), TT1$(I, I1)
+            Write #1, TT1!(I, I1), TT1$(I, I1)
         Next
         Color 14
         TMR = TMR - 1
         Locate 18, 45
         Print Using "#####"; TMR
-        Write #1, GM1(I)
+        Write #1, GM1!(I)
     Next
 
     Close #1
+End Sub
+
+
+'----------------------------------------
+'       SortTeam Subroutine
+'----------------------------------------
+'...explanation...
+Sub SortTeam (sortMax)
+
+    Shared JX
+    Shared TMM$()
+    Shared TYP!()
+
+	For I = 2 To sortMax
+		stpl = stpl + 1
+		Locate 5, 5: Print "sorting team "; stpl
+		For J = sortMax To I Step -1
+			If JX = 1 Then If TYP!(J - 1) < TYP!(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP!(J - 1), TYP!(J)
+			If JX = 2 Then If TYP!(J - 1) > TYP!(J) Then Swap TMM$(J - 1), TMM$(J): Swap TYP!(J - 1), TYP!(J)
+		Next J
+	Next I
+
 End Sub

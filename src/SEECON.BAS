@@ -3,9 +3,9 @@ Sub SEECON ()
     _Title "Courtside College Basketball - Conference Stats"
 
     'Dim seeconP(60), BA$(120), ER$(20), P$(260), S$(60), TT(120, 4)
-    Shared DL(), OL()
+    Shared DL!(), OL!()
     Shared O1(), O2(), O3(), O4(), O5(), O6()
-    Shared seenatZ(), seenatZ1()
+    Shared seenatZ!(), seenatZ1!()
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
     Shared T$()
@@ -13,21 +13,21 @@ Sub SEECON ()
     H$ = " 1/2"
 
     4000 Spec$ = diskPaths$(1) + "*.LDR"
-    COUNT% = FCount%(Spec$)
+    Count% = FCount%(Spec$)
 
-    If COUNT% = 0 Then
+    If Count% = 0 Then
         Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
     Else
 
-        ReDim leagueLeaderFiles$(0 To COUNT%)
-        For X = 1 To COUNT%
+        ReDim leagueLeaderFiles$(0 To Count%)
+        For X = 1 To Count%
             leagueLeaderFiles$(X) = Space$(12)
         Next
         leagueLeaderFiles$(0) = Spec$
         Call ReadFile(leagueLeaderFiles$())
-        'CALL SortStr(VARPTR(leagueLeaderFiles$(1)), COUNT%, 0)
+        'CALL SortStr(VARPTR(leagueLeaderFiles$(1)), Count%, 0)
 
         Do
 
@@ -52,7 +52,7 @@ Sub SEECON ()
             Print "-SELECTS LEAGUE  ESC - EXIT PROGRAM";
 
             _MouseShow "DEFAULT"
-            MAMenu leagueLeaderFiles$(), SELECTION%, START%, COUNT%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu leagueLeaderFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
             If EXITCODE% = 27 Then Exit Sub
@@ -75,9 +75,9 @@ Sub SEECON ()
 
         Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
         For X = 1 To 30: Input #2, T$(X), O1(X), O2(X), O3(X), O4(X), O5(X), O6(X): Next
-        For X = 1 To 250: Input #2, seenatZ2$(X), seenatZ3$(X), seenatZ(X), seenatZ1(X): Next
-        For X = 1 To 40: Input #2, OL$(X): For M = 1 To 20: Input #2, OL(X, M): Next: Next
-        For X = 1 To 40: Input #2, DL$(X): For M = 1 To 20: Input #2, DL(X, M): Next: Next
+        For X = 1 To 250: Input #2, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1!(X): Next
+        For X = 1 To 40: Input #2, OL$(X): For M = 1 To 20: Input #2, OL!(X, M): Next: Next
+        For X = 1 To 40: Input #2, DL$(X): For M = 1 To 20: Input #2, DL!(X, M): Next: Next
         Close #2
 
         Do
@@ -147,9 +147,9 @@ End Sub
 '...explanation...
 Sub DisplayConToScreen (confFile$)
 
-    Shared DL(), OL()
+    Shared DL!(), OL!()
     Shared O1(), O2(), O3(), O4(), O5(), O6()
-    Shared seenatZ(), seenatZ1()
+    Shared seenatZ!(), seenatZ1!()
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
     Shared T$()
@@ -246,8 +246,8 @@ Sub DisplayConToScreen (confFile$)
     For P = 41 To 60
         If seenatZ2$(P) <> "" Then
             Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);: Locate , 28
-            'Print Using "##.#  ####"; seenatZ(P) * 100; seenatZ1(P)
-            Print Using "###.#  ####"; seenatZ(P) * 100; seenatZ1(P)
+            'Print Using "##.#  ####"; seenatZ!(P) * 100; seenatZ1!(P)
+            Print Using "###.#  ####"; seenatZ!(P) * 100; seenatZ1!(P)
         End If
     Next
 
@@ -255,7 +255,7 @@ Sub DisplayConToScreen (confFile$)
     For P = 61 To 80
         If seenatZ2$(P) <> "" Then
             Locate , 41: Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);: Locate , 67
-            Print Using "###.#  ####"; seenatZ(P) * 100; seenatZ1(P)
+            Print Using "###.#  ####"; seenatZ!(P) * 100; seenatZ1!(P)
         End If
     Next
 
@@ -269,7 +269,7 @@ Sub DisplayConToScreen (confFile$)
     For P = 1 To 20
         If seenatZ2$(P) = "" Then 1330
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1330 Next
     Locate 1, 41: Color 14: Print "TOTAL POINTS"
@@ -277,7 +277,7 @@ Sub DisplayConToScreen (confFile$)
     For P = 21 To 40
         If seenatZ2$(P) = "" Then 1333
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1333 Next
     HZ = 1: VT = 24
@@ -289,28 +289,28 @@ Sub DisplayConToScreen (confFile$)
     For P = 81 To 90
         If seenatZ2$(P) = "" Then 1420
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1420 Next
     Locate 1, 41: Color 14: Print "STEALS": Color 15
     For P = 91 To 100
         If seenatZ2$(P) = "" Then 1426
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1426 Next
     Locate 13: Color 14: Print "ASSISTS PER GAME": Color 15
     For P = 101 To 110
         If seenatZ2$(P) = "" Then 1432
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1432 Next
     Locate 13, 41: Color 14: Print "ASSISTS": Color 15
     For P = 111 To 120
         If seenatZ2$(P) = "" Then 1433
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1433 Next
     HZ = 1: VT = 24
@@ -324,8 +324,8 @@ Sub DisplayConToScreen (confFile$)
     For P = 121 To 130
         If seenatZ2$(P) <> "" Then
             Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-            Print Using "###.#"; seenatZ(P) * 100
-            'Print Using "##.#"; seenatZ(P) * 100
+            Print Using "###.#"; seenatZ!(P) * 100
+            'Print Using "##.#"; seenatZ!(P) * 100
         End If
     Next P
 
@@ -334,7 +334,7 @@ Sub DisplayConToScreen (confFile$)
     For P = 141 To 150
         If seenatZ2$(P) = "" Then 1449
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1449 Next P
     Locate 13
@@ -342,14 +342,14 @@ Sub DisplayConToScreen (confFile$)
     For P = 131 To 140
         If seenatZ2$(P) = "" Then 1450
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1450 Next
     Locate 13, 41: Color 14: Print "TOTAL MINUTES": Color 15
     For P = 151 To 160
         If seenatZ2$(P) = "" Then 1451
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1451 Next
     HZ = 1: VT = 24
@@ -361,28 +361,28 @@ Sub DisplayConToScreen (confFile$)
     For P = 161 To 170
         If seenatZ2$(P) = "" Then 1452
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1452 Next
     Locate 1, 41: Color 14: Print "REBOUNDS": Color 15
     For P = 171 To 180
         If seenatZ2$(P) = "" Then 1453
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1453 Next
     Locate 13: Color 14: Print "BLOCKS PER GAME": Color 15
     For P = 181 To 190
         If seenatZ2$(P) = "" Then 1454
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1454 Next
     Locate 13, 41: Color 14: Print "BLOCKS": Color 15
     For P = 191 To 200
         If seenatZ2$(P) = "" Then 1455
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1455 Next
     HZ = 1: VT = 24
@@ -394,28 +394,28 @@ Sub DisplayConToScreen (confFile$)
     For P = 201 To 210
         If seenatZ2$(P) = "" Then 1456
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1456 Next
     Locate 1, 41: Color 14: Print "FREE THROWS MADE": Color 15
     For P = 211 To 220
         If seenatZ2$(P) = "" Then 1457
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1457 Next
     Locate 13: Color 14: Print "FOULS PER GAME": Color 15
     For P = 221 To 230
         If seenatZ2$(P) = "" Then 1458
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "##.#"; seenatZ(P)
+        Print Using "##.#"; seenatZ!(P)
 
     1458 Next
     Locate 13, 41: Color 14: Print "FOULS": Color 15
     For P = 231 To 240
         If seenatZ2$(P) = "" Then 1459
         Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1459 Next
     HZ = 1: VT = 24
@@ -427,7 +427,7 @@ Sub DisplayConToScreen (confFile$)
     For P = 241 To 250
         If seenatZ2$(P) = "" Then 1460
         Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 34
-        Print Using "####"; seenatZ(P)
+        Print Using "####"; seenatZ!(P)
 
     1460 Next
     HZ = 1: VT = 24
@@ -443,15 +443,15 @@ Sub DisplayConToScreen (confFile$)
 
         1910 If OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " " Then 1980
 
-        1915 Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; OL(X, 16);: Print Tab(16);: Print Using "####"; OL(X, 2);: Print Tab(21);: Print Using "####"; OL(X, 3);: Print Tab(26);
+        1915 Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; OL!(X, 16);: Print Tab(16);: Print Using "####"; OL!(X, 2);: Print Tab(21);: Print Using "####"; OL!(X, 3);: Print Tab(26);
 
-        1920 Print Using ".###"; OL(X, 17);: Print Tab(31);: Print Using "#### #### .###"; OL(X, 4); OL(X, 5); OL(X, 18);
+        1920 Print Using ".###"; OL!(X, 17);: Print Tab(31);: Print Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
 
-        1930 Print Tab(46);: Print Using "####"; OL(X, 6);: Print Tab(51);: Print Using "####"; OL(X, 9);: Print Tab(56);: Print Using "####"; OL(X, 7);: Print Tab(61);
+        1930 Print Tab(46);: Print Using "####"; OL!(X, 6);: Print Tab(51);: Print Using "####"; OL!(X, 9);: Print Tab(56);: Print Using "####"; OL!(X, 7);: Print Tab(61);
 
-        1935 Print Using "###"; OL(X, 8);: Print Tab(65);: Print Using "###"; OL(X, 10);: Print Tab(69);: Print Using "#####"; OL(X, 20);
+        1935 Print Using "###"; OL!(X, 8);: Print Tab(65);: Print Using "###"; OL!(X, 10);: Print Tab(69);: Print Using "#####"; OL!(X, 20);
 
-        1940 Print Tab(75);: Print Using "###.#"; OL(X, 19)
+        1940 Print Tab(75);: Print Using "###.#"; OL!(X, 19)
 
     1980 Next
     HZ = 1: VT = 24
@@ -469,37 +469,37 @@ Sub DisplayConToScreen (confFile$)
         2910 If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
             Print Left$(DL$(X), 11); Tab(13);
             'G
-            Print Using "##"; DL(X, 16);
+            Print Using "##"; DL!(X, 16);
             Print Tab(16);
             'FGA
-            Print Using "####"; DL(X, 2);
+            Print Using "####"; DL!(X, 2);
             Print Tab(21);
             'FGM
-            Print Using "####"; DL(X, 3);
+            Print Using "####"; DL!(X, 3);
             Print Tab(26);
             'FG PCT
-            Print Using ".###"; DL(X, 17);
+            Print Using ".###"; DL!(X, 17);
             Print Tab(31);
             'FTA / FTM / FT PCT
-            Print Using "#### #### .###"; DL(X, 4); DL(X, 5); DL(X, 18);
+            Print Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
             Print Tab(46);
             'REB / AST
-            Print Using "#### ####"; DL(X, 6); DL(X, 9);
+            Print Using "#### ####"; DL!(X, 6); DL!(X, 9);
             Print Tab(56);
             'PF
-            Print Using "####"; DL(X, 7);
+            Print Using "####"; DL!(X, 7);
             Print Tab(61);
             'STL
-            Print Using "###"; DL(X, 8);
+            Print Using "###"; DL!(X, 8);
             Print Tab(65);
             'BLK
-            Print Using "###"; DL(X, 10);
+            Print Using "###"; DL!(X, 10);
             Print Tab(69);
             'PTS
-            Print Using "#####"; DL(X, 20);
+            Print Using "#####"; DL!(X, 20);
             Print Tab(75);
             'AVG
-            Print Using "###.#"; DL(X, 19)
+            Print Using "###.#"; DL!(X, 19)
         End If
 
     2980 Next
@@ -560,9 +560,9 @@ End Sub
 
 Sub PrintReport_SEECON (confFile$, reportFile$, X1)
 
-    Shared DL(), OL()
+    Shared DL!(), OL!()
     Shared O1(), O2(), O3(), O4(), O5(), O6()
-    Shared seenatZ(), seenatZ1()
+    Shared seenatZ!(), seenatZ1!()
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
     Shared T$()
@@ -638,7 +638,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
             Print #2, Tab(28);
-            Print #2, Using "##.#  ####"; seenatZ(P) * 100; seenatZ1(P);
+            Print #2, Using "##.#  ####"; seenatZ!(P) * 100; seenatZ1!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 20) = "" Then
@@ -646,7 +646,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, Left$(seenatZ2$(P + 20), 10) + ", " + seenatZ3$(P + 20);
             Print #2, Tab(67);
-            Print #2, Using "###.#  ####"; seenatZ(P + 20) * 100; seenatZ1(P)
+            Print #2, Using "###.#  ####"; seenatZ!(P + 20) * 100; seenatZ1!(P)
         End If
 
     3320 Next
@@ -660,7 +660,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P);
+            Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 20) = "" Then
@@ -669,7 +669,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 20)
+            Print #2, Using "####"; seenatZ!(P + 20)
         End If
 
     3340 Next
@@ -683,7 +683,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P);
+            Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
@@ -691,7 +691,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 10)
+            Print #2, Using "####"; seenatZ!(P + 10)
         End If
 
     3360 Next
@@ -705,7 +705,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P);
+            Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
@@ -713,7 +713,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 10)
+            Print #2, Using "####"; seenatZ!(P + 10)
         End If
 
     3370 Next
@@ -727,7 +727,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P) * 100;
+            Print #2, Using "##.#"; seenatZ!(P) * 100;
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 20) = "" Then
@@ -735,7 +735,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "##.#"; seenatZ(P + 20)
+            Print #2, Using "##.#"; seenatZ!(P + 20)
         End If
 
     3361 Next
@@ -749,7 +749,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; seenatZ(P);
+            Print #2, Using "####"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 20) = "" Then
@@ -757,7 +757,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 20)
+            Print #2, Using "####"; seenatZ!(P + 20)
         End If
 
     3371 Next
@@ -772,7 +772,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P);
+            Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
@@ -780,7 +780,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 10)
+            Print #2, Using "####"; seenatZ!(P + 10)
         End If
 
     3362 Next
@@ -794,7 +794,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P);
+            Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
@@ -802,7 +802,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 20)
+            Print #2, Using "####"; seenatZ!(P + 20)
         End If
 
     3372 Next
@@ -816,7 +816,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; seenatZ(P);
+            Print #2, Using "####"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
@@ -824,7 +824,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 10)
+            Print #2, Using "####"; seenatZ!(P + 10)
         End If
 
     3363 Next
@@ -837,7 +837,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ(P);
+            Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
@@ -845,7 +845,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         Else
             Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
             Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ(P + 10)
+            Print #2, Using "####"; seenatZ!(P + 10)
         End If
 
     3373 Next
@@ -857,7 +857,7 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         If seenatZ2$(P) <> "" Then
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
-            Print #2, Using "####"; seenatZ(P)
+            Print #2, Using "####"; seenatZ!(P)
         End If
     3364 Next
 
@@ -867,11 +867,11 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
     Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     For X = 1 To 20
         If OL$(X) = "" Or OL$(X) = "*" Or OL$(X) = " " Then 1981
-        Print #2, Left$(OL$(X), 11); Tab(13);: Print #2, Using "##"; OL(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; OL(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; OL(X, 3);: Print #2, Tab(26);
-        Print #2, Using ".###"; OL(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; OL(X, 4); OL(X, 5); OL(X, 18);
-        Print #2, Tab(46);: Print #2, Using "####"; OL(X, 6);: Print #2, Tab(51);: Print #2, Using "####"; OL(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; OL(X, 7);: Print #2, Tab(61);
-        Print #2, Using "###"; OL(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; OL(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; OL(X, 20);
-        Print #2, Tab(75);: Print #2, Using "###.#"; OL(X, 19)
+        Print #2, Left$(OL$(X), 11); Tab(13);: Print #2, Using "##"; OL!(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; OL!(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; OL!(X, 3);: Print #2, Tab(26);
+        Print #2, Using ".###"; OL!(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
+        Print #2, Tab(46);: Print #2, Using "####"; OL!(X, 6);: Print #2, Tab(51);: Print #2, Using "####"; OL!(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; OL!(X, 7);: Print #2, Tab(61);
+        Print #2, Using "###"; OL!(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; OL!(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; OL!(X, 20);
+        Print #2, Tab(75);: Print #2, Using "###.#"; OL!(X, 19)
 
     1981 Next
 
@@ -881,11 +881,11 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
 
     For X = 1 To 20
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print #2, Left$(DL$(X), 11); Tab(13);: Print #2, Using "##"; DL(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; DL(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; DL(X, 3);: Print #2, Tab(26);
-            Print #2, Using ".###"; DL(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; DL(X, 4); DL(X, 5); DL(X, 18);
-            Print #2, Tab(46);: Print #2, Using "#### ####"; DL(X, 6); DL(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; DL(X, 7);: Print #2, Tab(61);
-            Print #2, Using "###"; DL(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; DL(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; DL(X, 20);
-            Print #2, Tab(75);: Print #2, Using "###.#"; DL(X, 19)
+            Print #2, Left$(DL$(X), 11); Tab(13);: Print #2, Using "##"; DL!(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; DL!(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; DL!(X, 3);: Print #2, Tab(26);
+            Print #2, Using ".###"; DL!(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
+            Print #2, Tab(46);: Print #2, Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; DL!(X, 7);: Print #2, Tab(61);
+            Print #2, Using "###"; DL!(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; DL!(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; DL!(X, 20);
+            Print #2, Tab(75);: Print #2, Using "###.#"; DL!(X, 19)
         End If
     2981 Next
 

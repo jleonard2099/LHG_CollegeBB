@@ -6,7 +6,8 @@ Sub SINPUT ()
 
     'Dim A(14, 14)
     Shared A$()
-    Shared W0(), W1(), Z(), Z1()
+    Shared W0(), W1()
+	Shared Z!(), Z1!()
 
     Dim Z2(14, 14)
 
@@ -50,9 +51,9 @@ Sub SINPUT ()
 
             2065 For J = 0 To 13: Input #1, Z2(I, J): Next J: Input #1, W0(I): Input #1, W1(I): Next I
 
-            2075 For L = 0 To 15: Input #1, Z(L): Next L
+            2075 For L = 0 To 15: Input #1, Z!(L): Next L
 
-            2085 For L = 0 To 15: Input #1, Z1(L): Next L
+            2085 For L = 0 To 15: Input #1, Z1!(L): Next L
 
             2095 Close 1
 
@@ -70,35 +71,35 @@ Sub SINPUT ()
 
             175 Locate 3, 1: Input "1. STAT FILE NAME "; Z$: If C1 = 1 Then 210
 
-            177 Locate 4, 1: Input "2. TM MINUTES "; Z(0): Z(0) = Z(0) * 60: If C1 = 1 Then 210
+            177 Locate 4, 1: Input "2. TM MINUTES "; Z!(0): Z!(0) = Z!(0) * 60: If C1 = 1 Then 210
 
-            179 Locate 5, 1: Input "3. TM FGA "; Z(1): If C1 = 1 Then 210
+            179 Locate 5, 1: Input "3. TM FGA "; Z!(1): If C1 = 1 Then 210
 
-            181 Locate 6, 1: Input "4. TM FGM "; Z(2): If C1 = 1 Then 210
+            181 Locate 6, 1: Input "4. TM FGM "; Z!(2): If C1 = 1 Then 210
 
-            183 Locate 7, 1: Input "5. TM 3FGA "; Z(14): If C1 = 1 Then 210
+            183 Locate 7, 1: Input "5. TM 3FGA "; Z!(14): If C1 = 1 Then 210
 
-            185 Locate 8, 1: Input "6. TM 3FGM "; Z(13): If C1 = 1 Then 210
+            185 Locate 8, 1: Input "6. TM 3FGM "; Z!(13): If C1 = 1 Then 210
 
-            187 Locate 9, 1: Input "7. TM FTA "; Z(3): If C1 = 1 Then 210
+            187 Locate 9, 1: Input "7. TM FTA "; Z!(3): If C1 = 1 Then 210
 
-            189 Locate 10, 1: Input "8. TM FTM "; Z(4): If C1 = 1 Then 210
+            189 Locate 10, 1: Input "8. TM FTM "; Z!(4): If C1 = 1 Then 210
 
-            191 Locate 11, 1: Input "9. TM OFF RB  "; Z(12): If C1 = 1 Then 210
+            191 Locate 11, 1: Input "9. TM OFF RB  "; Z!(12): If C1 = 1 Then 210
 
-            193 Locate 12, 1: Input "10. TM TOT RB "; Z(5): If C1 = 1 Then 210
+            193 Locate 12, 1: Input "10. TM TOT RB "; Z!(5): If C1 = 1 Then 210
 
-            195 Locate 13, 1: Input "11. TM FOULS "; Z(6): If C1 = 1 Then 210
+            195 Locate 13, 1: Input "11. TM FOULS "; Z!(6): If C1 = 1 Then 210
 
-            197 Locate 14, 1: Input "12. TM STEALS "; Z(7): If C1 = 1 Then 210
+            197 Locate 14, 1: Input "12. TM STEALS "; Z!(7): If C1 = 1 Then 210
 
-            199 Locate 15, 1: Input "13. TM ASSISTS "; Z(8): If C1 = 1 Then 210
+            199 Locate 15, 1: Input "13. TM ASSISTS "; Z!(8): If C1 = 1 Then 210
 
-            201 Locate 16, 1: Input "14. TM BLOCKS "; Z(9): If C1 = 1 Then 210
+            201 Locate 16, 1: Input "14. TM BLOCKS "; Z!(9): If C1 = 1 Then 210
 
-            203 Locate 17, 1: Input "15. TM TURNOVERS "; Z(11): If C1 = 1 Then 210
+            203 Locate 17, 1: Input "15. TM TURNOVERS "; Z!(11): If C1 = 1 Then 210
 
-            205 Locate 18, 1: Input "16. TM POINTS  "; Z(10): If C1 = 1 Then 210
+            205 Locate 18, 1: Input "16. TM POINTS  "; Z!(10): If C1 = 1 Then 210
 
             210 C1 = 1
 
@@ -118,33 +119,33 @@ Sub SINPUT ()
             X$ = "DEFENSIVE TEAM STATS"
             Call Title_SINPUT (2, X$)
 
-            379 Locate 3, 1: Input "1. OPP FGA "; Z1(1): If C1 = 1 Then 410
+            379 Locate 3, 1: Input "1. OPP FGA "; Z1!(1): If C1 = 1 Then 410
 
-            381 Locate 4, 1: Input "2. OPP FGM "; Z1(2): If C1 = 1 Then 410
+            381 Locate 4, 1: Input "2. OPP FGM "; Z1!(2): If C1 = 1 Then 410
 
-            383 Locate 5, 1: Input "3. OPP 3FGA "; Z1(14): If C1 = 1 Then 410
+            383 Locate 5, 1: Input "3. OPP 3FGA "; Z1!(14): If C1 = 1 Then 410
 
-            385 Locate 6, 1: Input "4. OPP 3FGM "; Z1(13): If C1 = 1 Then 410
+            385 Locate 6, 1: Input "4. OPP 3FGM "; Z1!(13): If C1 = 1 Then 410
 
-            387 Locate 7, 1: Input "5. OPP FTA "; Z1(3): If C1 = 1 Then 410
+            387 Locate 7, 1: Input "5. OPP FTA "; Z1!(3): If C1 = 1 Then 410
 
-            389 Locate 8, 1: Input "6. OPP FTM "; Z1(4): If C1 = 1 Then 410
+            389 Locate 8, 1: Input "6. OPP FTM "; Z1!(4): If C1 = 1 Then 410
 
-            391 Locate 9, 1: Input "7. OPP OFF RB  "; Z1(12): If C1 = 1 Then 410
+            391 Locate 9, 1: Input "7. OPP OFF RB  "; Z1!(12): If C1 = 1 Then 410
 
-            393 Locate 10, 1: Input "8. OPP TOT RB "; Z1(5): If C1 = 1 Then 410
+            393 Locate 10, 1: Input "8. OPP TOT RB "; Z1!(5): If C1 = 1 Then 410
 
-            395 Locate 11, 1: Input "9. OPP FOULS "; Z1(6): If C1 = 1 Then 410
+            395 Locate 11, 1: Input "9. OPP FOULS "; Z1!(6): If C1 = 1 Then 410
 
-            397 Locate 12, 1: Input "10. OPP STEALS "; Z1(7): If C1 = 1 Then 410
+            397 Locate 12, 1: Input "10. OPP STEALS "; Z1!(7): If C1 = 1 Then 410
 
-            399 Locate 13, 1: Input "11. OPP ASSISTS "; Z1(8): If C1 = 1 Then 410
+            399 Locate 13, 1: Input "11. OPP ASSISTS "; Z1!(8): If C1 = 1 Then 410
 
-            401 Locate 14, 1: Input "12. OPP BLOCKS "; Z1(9): If C1 = 1 Then 410
+            401 Locate 14, 1: Input "12. OPP BLOCKS "; Z1!(9): If C1 = 1 Then 410
 
-            403 Locate 15, 1: Input "13. OPP TURNOVERS "; Z1(11): If C1 = 1 Then 410
+            403 Locate 15, 1: Input "13. OPP TURNOVERS "; Z1!(11): If C1 = 1 Then 410
 
-            405 Locate 16, 1: Input "14. OPP POINTS  "; Z1(10): If C1 = 1 Then 410
+            405 Locate 16, 1: Input "14. OPP POINTS  "; Z1!(10): If C1 = 1 Then 410
 
             410 C1 = 1
 
@@ -221,20 +222,20 @@ Sub SINPUT ()
 
             X% = 2
             Locate 3, 1
-            Print "1. OPP FGA "; Z1(1)
-            Print "2. OPP FGM "; Z1(2)
-            Print "3. OPP 3FGA "; Z1(14)
-            Print "4. OPP 3FGM "; Z1(13)
-            Print "5. OPP FTA "; Z1(3)
-            Print "6. OPP FTM "; Z1(4)
-            Print "7. OPP OFF RB  "; Z1(12)
-            Print "8. OPP TOT RB "; Z1(5)
-            Print "9. OPP FOULS "; Z1(6)
-            Print "10. OPP STEALS "; Z1(7)
-            Print "11. OPP ASSISTS "; Z1(8)
-            Print "12. OPP BLOCKS "; Z1(9)
-            Print "13. OPP TURNOVERS "; Z1(11)
-            Print "14. OPP POINTS  "; Z1(10)
+            Print "1. OPP FGA "; Z1!(1)
+            Print "2. OPP FGM "; Z1!(2)
+            Print "3. OPP 3FGA "; Z1!(14)
+            Print "4. OPP 3FGM "; Z1!(13)
+            Print "5. OPP FTA "; Z1!(3)
+            Print "6. OPP FTM "; Z1!(4)
+            Print "7. OPP OFF RB  "; Z1!(12)
+            Print "8. OPP TOT RB "; Z1!(5)
+            Print "9. OPP FOULS "; Z1!(6)
+            Print "10. OPP STEALS "; Z1!(7)
+            Print "11. OPP ASSISTS "; Z1!(8)
+            Print "12. OPP BLOCKS "; Z1!(9)
+            Print "13. OPP TURNOVERS "; Z1!(11)
+            Print "14. OPP POINTS  "; Z1!(10)
             GoTo 410
 
             1605 Cls
@@ -310,9 +311,9 @@ Sub SINPUT ()
 
             1965 For J = 0 To 13: Print #1, Z2(I, J): Next J: Print #1, W0(I): Print #1, W1(I): Next I
 
-            1975 For L = 0 To 15: Print #1, Z(L): Next L
+            1975 For L = 0 To 15: Print #1, Z!(L): Next L
 
-            1985 For L = 0 To 15: Print #1, Z1(L): Next L
+            1985 For L = 0 To 15: Print #1, Z1!(L): Next L
 
             1995 Close 1
 

@@ -4,9 +4,13 @@ Sub ALIGN ()
 
     Dim A$(15), AN$(15), AR$(15)
 
+	'Should any of these be SINGLE?
+	'In the original code they were!!
     Dim A(15, 14), AN(15, 14), R(15, 14)
     Dim W0(15), W1(15), W0R(15), WR1(15), W0N(15), WN1(15)
-    Dim Z(15), Z1(15), ZR(15), ZR1(15)
+    Dim ZR(15), ZR1(15)
+
+	Dim Z!(15), Z1!(15)
 
     '-----
     1 Cls
@@ -90,11 +94,14 @@ Sub ALIGN ()
 
     222 For I = 0 To 13: Input #1, A$(I)
 
-    223 For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
+		223 For J = 0 To 13: Input #1, A(I, J): Next
+		Input #1, W0(I)
+		Input #1, W1(I)
+	Next
 
-    224 For L = 0 To 15: Input #1, Z(L): Next
+    224 For L = 0 To 15: Input #1, Z!(L): Next
 
-    225 For L = 0 To 15: Input #1, Z1(L): Next
+    225 For L = 0 To 15: Input #1, Z1!(L): Next
 
     260 Close #1
 

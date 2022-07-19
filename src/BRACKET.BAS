@@ -7,6 +7,10 @@ Sub BRACKET ()
 
     _Title "Courtside College Basketball - View Brackets/Seeding"
 
+	'I believe this is redundant / unecessary
+	'However it does give insight into where
+	'the original coded intended to use INT
+	'over SINGLE in each module
     DefInt A-Z
 
 
