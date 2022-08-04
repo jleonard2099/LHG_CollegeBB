@@ -27,7 +27,7 @@ Teams files will not be included at this time. However, if you're nice enough, t
 
 ## Support
 Contact me at my [profile page](https://github.com/jleonard2099/jleonard2099/tree/main) for now.
-See future revisions to this for possible links to bug trackers / etc. as they are considered.
+Bugs and/or feature requests can be submitted using GitHub (see the "Issues" tab at the top of page). This will be the easiest way for me to implement ideas.
 
 ## Project Status
 Code has been re-worked to compile in a modern environment. Code for menu navigation is completely re-factored, and has been consolidated so it can be supported for Linux / Mac compile in QB64.
