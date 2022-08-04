@@ -1,7 +1,7 @@
 # LH Games Courtside College Basketball
 
 ## Game Description
-**Each player contributes as they did in real life! * Stats Compiler * You determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more!**
+***Each player contributes as they did in real life! * Stats Compiler * You determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more!**
 
 ## About Project
 With permission from Lance Haffner himself, this effort is being made to bring his original source code from the DOS world into the modern world. This is due in part to cross-platform compilers for BASIC. But this effort restores his original vision for a cross-platform sports sim empire, also opening the door for any manner of improvements to accuracy and portability.
@@ -29,6 +29,11 @@ Teams files will not be included at this time. However, if you're nice enough, t
 Contact me at my [profile page](https://github.com/jleonard2099/jleonard2099/tree/main) for now.
 See future revisions to this for possible links to bug trackers / etc. as they are considered.
 
+## Project Status
+Code has been re-worked to compile in a modern environment. Code for menu navigation is completely re-factored, and has been consolidated so it can be supported for Linux / Mac compile in QB64.
+
+Things are moving along as fast as personal time allows for now, which is pretty well now. Anticipate finished product by September 2022. This only involves re-factoring game play code.
+
 # Roadmap
 ## Phase 1
 
@@ -38,7 +43,7 @@ First work from this point will focus on further code efficiency and cleanup suc
 - Make wording of menus and options consistent for all products
 
 The following improvements to functionality are also planned:
-- Improve handling of required defeault files
+- Improve handling of required default files
 - Improve error handling to catch / provide helpful messages
 - Update key input handling / routines (handling Esc vs. Ctrl+C, etc.)
 
@@ -69,8 +74,3 @@ Contact me directly if interested in contributing. Only considering people who s
 
 # License
 Affero GNU GPL v3
-
-# Project Status
-Code has been updated so that it will compile in a modern environment, and a significant portion of code cleanup has occurred. Code has also been mostly consolidated. Next will be finishing this by merging game and menu source.
-
-Things are moving along as fast as personal time allows for now, which is reasonable given the scope of the project.
