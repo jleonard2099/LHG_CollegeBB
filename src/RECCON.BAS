@@ -6,7 +6,6 @@ SUB RECCON ()
 
 	Shared BRC$(), recconTRC$(), recconTRC1$()
 
-	'-----
 	ReDim menuChoices$(1 to 7)
 	Shared TB$(), TT$()
 
@@ -21,10 +20,10 @@ SUB RECCON ()
 		menuChoices$(5) = "PRINT SINGLE GAME RECORDS"
 		menuChoices$(6) = "DELETE GAME RECORDS      "
 		menuChoices$(7) = "RETURN TO GAME MENU      "
-		SELECTION% = 1
+		Selection% = 1
 		Count% = 7
 		Start% = 1
-		EXITCODE% = 7
+		ExitCode% = 7
 		FileFGColr% = 15: FileBGColr% = 1
 		HiLiteFGColr% = 0: HiLiteBGColr% = 7
 		Spacing% = 1
@@ -34,12 +33,12 @@ SUB RECCON ()
 		CALL box0(7, 24, 15, 50, 2,  15, 1)
 			
 		_MouseShow "DEFAULT"
-		MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+		MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
 		_MouseHide
 
 		Color , 0
-		If Not (EXITCODE% = 27) Then	
-			Select Case SELECTION%
+		If ExitCode% <> 27 Then	
+			Select Case Selection%
 				Case 1: Call ViewSeasonRecords
 				Case 2: Call PrintSeasonRecords
 				Case 3: If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then Kill diskPaths$(1) + "RECORDS.CBB"
@@ -50,7 +49,7 @@ SUB RECCON ()
 			End Select
 		End If
 		
-	Loop Until SELECTION% = 7 OR EXITCODE% = 27
+	Loop Until Selection% = 7 OR ExitCode% = 27
 
 Cls
     

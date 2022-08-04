@@ -42,7 +42,7 @@ Sub CARVIEW ()
                 Locate , 28
                 Color 14
                 Print "SELECT CAREER FILE TO VIEW": Color 15
-                SELECTION% = 1
+                Selection% = 1
                 START% = 1
                 FileFGColr% = 15: FileBGColr% = 1
                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -57,19 +57,19 @@ Sub CARVIEW ()
                 Print "-SELECTS FILE";
 
                 _MouseShow "DEFAULT"
-                MAMenu careerFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu careerFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
                 'Wouldn't it be better here to just
                 'exit the loop, not the sub?
-                If EXITCODE% = 27 Then Exit Sub
+                If ExitCode% = 27 Then Exit Sub
 
-                targetFile$ = careerFiles$(SELECTION%)
+                targetFile$ = careerFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 I$ = GetKeyPress$
 
-            Loop Until UCase$(I$) = "N" Or EXITCODE% = 27
+            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
             Color 15, 0
             targetFile$ = RTrim$(targetFile$)
@@ -113,7 +113,7 @@ Sub CARVIEW ()
         End If
 
         '...Until we press ESC
-    Loop Until EXITCODE% = 27 Or Count% = 0
+    Loop Until ExitCode% = 27 Or Count% = 0
 
 End Sub
 

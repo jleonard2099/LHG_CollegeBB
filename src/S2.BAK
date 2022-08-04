@@ -2,7 +2,7 @@ DEFINT A-Z
 DECLARE FUNCTION EXIST% (FILENAME$)
 DECLARE SUB DRAWBOX ()
 DECLARE SUB SHOTSTRING ()
-DECLARE SUB MAMenu (BYVAL Address%, SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
+DECLARE SUB MAMenu (BYVAL Address%, Selection%, Start%, Count%, ExitCode%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
   DIM NG%(18), NG1%(18), AP%(2), HF%(1, 6), DP(2, 4), FA%(1, 13), FY%(2), OF%(1), DT%(1), TM%(1, 13)
   DIM D8(4, 3), PR%(1, 1), PC%(1), CZ%(1), OB$(9), DB$(14)
   DIM R$(14), p$(1), X$(3), C7$(2), TS$(1), CM$(1), U5$(3), LC$(2), TB$(1)
@@ -96,15 +96,13 @@ FIELD #1, 53 + I * 43 AS X$, 15 AS Q$(I * 15 + 20), 2 AS Q$(I * 15 + 21), 2 AS Q
 , 2 AS Q$(I * 15 + 30), 2 AS Q$(I * 15 + 31), 2 AS Q$(I * 15 + 32), 2 AS Q$(I * 15 + 33), 2 AS Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 AS X$
 NEXT
 GET #1, I1
-   B$(P9) = Q$(0)
-9010 IF RIGHT$(B$(P9), 1) = " " THEN B$(P9) = LEFT$(B$(P9), LEN(B$(P9)) - 1): GOTO 9010
+   B$(P9) = RTRim$(Q$(0))
      S1(P9) = CVI(Q$(1)): D1(P9) = CVI(Q$(2))
      V1%(P9) = CVI(Q$(3)): V2%(P9) = CVI(Q$(4))
      FOR I3 = 0 TO 4: L%(P9, I3) = CVI(Q$(I3 + 5)): NEXT
      FOR I3 = 0 TO 9: TR%(P9, I3) = CVI(Q$(I3 + 10)): NEXT
      FOR I3 = 0 TO 13
-     AA$(P9, I3) = Q$(I3 * 15 + 20)
-9015 IF RIGHT$(AA$(P9, I3), 1) = " " THEN AA$(P9, I3) = LEFT$(AA$(P9, I3), LEN(AA$(P9, I3)) - 1): GOTO 9015
+     AA$(P9, I3) = RTRim$(Q$(I3 * 15 + 20))
      FOR I4 = 0 TO 6
      A(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
      C(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))

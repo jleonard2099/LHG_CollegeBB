@@ -20,10 +20,10 @@ Sub CNGRAT (userChoice)
         menuChoices$(2) = "PRINT A TEAM ROSTER            "
         menuChoices$(3) = "VIEW A TEAM ROSTER             "
         menuChoices$(4) = "EXIT TO MAIN MENU              "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 4
         Start% = 1
-        EXITCODE% = 4
+        ExitCode% = 4
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -31,20 +31,20 @@ Sub CNGRAT (userChoice)
         Column% = 25
 
         If (userChoice <> 0) Then
-            SELECTION% = userChoice
+            Selection% = userChoice
         Else
             Call box0(7, 24, 12, 56, 2, 15, 1)
 
             _MouseShow "DEFAULT"
-            MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
             _MouseHide
 
             Color , 0
         End If
 
-        If Not (EXITCODE% = 27) Then
+        If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case Selection%
                 Case 1:
                     Call GetTeam_CNGRAT(YN$, TI, A$)
                     Call EditTeam(YN$, TI, A$)
@@ -135,7 +135,7 @@ Sub CNGRAT (userChoice)
         'If RN = 4 And D% >= 67 Then Exit Sub
         'On D1 GOTO 56, 56, 56, 880
 
-    Loop Until SELECTION% = 4 Or EXITCODE% = 27
+    Loop Until Selection% = 4 Or ExitCode% = 27
 
 End Sub
 
@@ -144,7 +144,7 @@ End Sub
 '     GetTeam_CNGRAT Subroutine
 '----------------------------------------
 '... explain here ...
-Sub GetTeam_CNGRAT (yearNumber$, teamIndex%, teamName$)
+Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
 
     Shared T%()
 
@@ -153,7 +153,7 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIndex%, teamName$)
         Call GetDiskID_CNGRAT(yearNumber$)
 
         If yearNumber$ = "" Then
-            Call SelectTeam_CNGRAT(teamIndex%, NT, yearNumber$, teamName$)
+            Call SelectTeam_CNGRAT(teamIdx%, NTMS, yearNumber$, teamName$)
         Else
             Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
             Y = LOF(1)
@@ -165,10 +165,10 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIndex%, teamName$)
             Next
             Close 1
 
-            NT = Y / 655
-            TS% = Int((NT - 1) / 80)
+            NTMS = Y / 655
+            TS% = Int((NTMS - 1) / 80)
 
-            Call SelectTeam_CNGRAT(teamIndex%, NT, yearNumber$, teamName$)
+            Call SelectTeam_CNGRAT(teamIdx%, NTMS, yearNumber$, teamName$)
             'We have at least 1 condition where we have to rewind to 1100
         End If
 
@@ -197,7 +197,7 @@ End Sub
 '     EditTeam Subroutine
 '----------------------------------------
 '... explain here ...
-Sub EditTeam (yearNumber$, teamIndex%, teamName$)
+Sub EditTeam (yearNumber$, teamIdx%, teamName$)
 
     Shared V1%, V2%
     Shared DA, SP
@@ -211,7 +211,7 @@ Sub EditTeam (yearNumber$, teamIndex%, teamName$)
     Cls
     Color 14
     Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
-    Print " 1. TEAM NUMBER "; teamIndex%
+    Print " 1. TEAM NUMBER "; teamIdx%
     Print " 2. DISK ID "; yearNumber$
     Print " 3. TEAM NAME "; teamName$; Tab(40); "20. NICKNAME "; A1$
     Print " 4. TEAM STAMINA RATING "; SP; Tab(40); "21. COACH "; C$
@@ -241,7 +241,7 @@ Sub EditTeam (yearNumber$, teamIndex%, teamName$)
 
     145 Cls: Color 14: Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
 
-    147 Locate 2: Input " 1. TEAM NUMBER "; teamIndex%: If C1 = 1 Then 190
+    147 Locate 2: Input " 1. TEAM NUMBER "; teamIdx%: If C1 = 1 Then 190
 
     162 Locate 3: Input " 2. DISK ID "; yearNumber$: If C1 = 1 Then 190
 
@@ -430,7 +430,7 @@ Sub EditTeam (yearNumber$, teamIndex%, teamName$)
 
             If UCase$(I$) = "Y" Then
                 newID% = 1
-                Call SaveTeam_CNGRAT(NY$, newID%, teamIndex%)
+                Call SaveTeam_CNGRAT(NY$, newID%, teamIdx%)
                 Exit Sub
             End If
 
@@ -474,7 +474,7 @@ Sub EditTeam (yearNumber$, teamIndex%, teamName$)
             Cls
             If T3 > 98 And T3 < 102 Then
                 'This is where we actually leave
-                Call SaveTeam_CNGRAT(yearNumber$, newID%, teamIndex%)
+                Call SaveTeam_CNGRAT(yearNumber$, newID%, teamIdx%)
             Else
                 'We need to warn the user that
                 'our total doesn't add up!!
@@ -558,7 +558,7 @@ End Sub
 '     SelectTeam_CNGRAT Subroutine
 '----------------------------------------
 '...explanation...
-Sub SelectTeam_CNGRAT (teamIndex%, numberTeams%, yearNumber$, selectedTeamName$)
+Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
 
     Shared V1%, V2%
     Shared DA, SP
@@ -570,7 +570,7 @@ Sub SelectTeam_CNGRAT (teamIndex%, numberTeams%, yearNumber$, selectedTeamName$)
 
     NS% = 0
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams%
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -587,11 +587,11 @@ Sub SelectTeam_CNGRAT (teamIndex%, numberTeams%, yearNumber$, selectedTeamName$)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If Not (EXITCODE% = 27) Then
-        teamIndex% = SELECTION%
+    If ExitCode% <> 27 Then
+        teamIdx% = Selection%
 
         '-- This could be it's own subroutine
         Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
@@ -600,26 +600,20 @@ Sub SelectTeam_CNGRAT (teamIndex%, numberTeams%, yearNumber$, selectedTeamName$)
         For I = 0 To 13
             Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
         Next
-        Get #1, teamIndex%
+        Get #1, teamIdx%
 
-        selectedTeamName$ = Q$(0)
-
-        While Right$(selectedTeamName$, 1) = " "
-            selectedTeamName$ = Left$(selectedTeamName$, Len(selectedTeamName$) - 1)
-        Wend
+        selectedTeamName$ = RTrim$(Q$(0))
 
         SP = CVI(Q$(1))
         DA = CVI(Q$(2))
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
+
         For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
         For I = 0 To 13
-            cngratA$(I) = Q$(I * 15 + 20)
 
-            While Right$(selectedTeamName$, 1) = " "
-                selectedTeamName$ = Left$(selectedTeamName$, Len(selectedTeamName$) - 1)
-            Wend
+            cngratA$(I) = RTrim$(Q$(I * 15 + 20))
 
             For I1 = 0 To 6
                 A(I, I1) = CVI(Q$(I * 15 + I1 + 21))
@@ -634,7 +628,7 @@ Sub SelectTeam_CNGRAT (teamIndex%, numberTeams%, yearNumber$, selectedTeamName$)
             Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
             Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
-        Get #1, teamIndex%
+        Get #1, teamIdx%
 
         C$ = Q$(0)
         S$ = Q$(1)
@@ -675,7 +669,7 @@ Sub SelectTeam_CNGRAT (teamIndex%, numberTeams%, yearNumber$, selectedTeamName$)
         End If 'done checking for '999
     Else
         BO% = 1
-    End If 'Done checking EXITCODE
+    End If 'Done checking ExitCode
 
 End Sub
 
@@ -685,7 +679,7 @@ End Sub
 '     SaveTeam_CNGRAT Subroutine
 '----------------------------------------
 '... explain here ...
-Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIndex%)
+Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%)
 
     Shared V1%, V2%
     Shared DA, SP
@@ -699,7 +693,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIndex%)
         Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
         Y = LOF(1) / 655
         Close 1
-        teamIndex% = Y + 1
+        teamIdx% = Y + 1
     End If
 
     Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
@@ -724,9 +718,8 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIndex%)
         Next
     Next
 
-    Put #1, teamIndex%
+    Put #1, teamIdx%
     Close 1
-
 
     Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
     Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
@@ -755,7 +748,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIndex%)
 
     LSet Q$(249) = MKI$(999)
     'issue here
-    Put #1, teamIndex%
+    Put #1, teamIdx%
     Close 1
 
 End Sub

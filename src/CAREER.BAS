@@ -19,10 +19,10 @@ SUB CAREER ()
         menuChoices$(4) = "PRINT CAREER FILE                 "
         menuChoices$(5) = "VIEW / PRINT CAREER RECORDS       "
         menuChoices$(6) = "EXIT TO MAIN MENU                 "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 6
         Start% = 1
-        EXITCODE% = 6
+        ExitCode% = 6
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -31,14 +31,14 @@ SUB CAREER ()
 
         Call box0(7, 24, 14, 59, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        'I = SELECTION%
+        'I = Selection%
 
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call CreateCareerFile
                 Case 2:
                     Color 14, 0: Cls: Locate 5, 27: Print "- - - C A U T I O N - - -"
@@ -63,7 +63,7 @@ SUB CAREER ()
             End Select
         End If
 
-    Loop Until SELECTION% = 6 Or EXITCODE% = 27
+    Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -107,12 +107,7 @@ Sub CreateCareerFile ()
         Color 11: Locate 15, 5: Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; Z$
         Call DiskSelection_CAREER
 
-        A$ = Q$(0)
-
-        While Right$(A$, 1) = " "
-            A$ = Left$(A$, Len(A$) - 1)
-        Wend
-
+        A$ = RTrim$(Q$(0))
         B$ = A$
 
         For XX = 4 To 11
@@ -145,8 +140,7 @@ Sub CreateCareerFile ()
                 Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
                 J$ = GetKeyPress$
 
-                If UCase$(J$) = "Y" Then JX = 1
-                If UCase$(J$) = "N" Then JX = 0
+				If UCase$(I$) = "Y" Then JX = 1 Else JX = 0
 
                 If Not _FileExists(diskPaths$(1) + Z1$) Then
                     Cls
@@ -372,7 +366,7 @@ Sub ViewCareerRecords ()
                 Locate , 28
                 Color 14
                 Print "SELECT FILE TO VIEW": Color 15
-                SELECTION% = 1
+                Selection% = 1
                 Start% = 1
                 FileFGColr% = 15: FileBGColr% = 1
                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -387,12 +381,12 @@ Sub ViewCareerRecords ()
                 Print "-SELECTS FILE";
 
                 _MouseShow "DEFAULT"
-                MAMenu confLeaderFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu confLeaderFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                If EXITCODE% = 27 Then Exit Sub
+                If ExitCode% = 27 Then Exit Sub
 
-                targetFile$ = confLeaderFiles$(SELECTION%)
+                targetFile$ = confLeaderFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 I$ = GetKeyPress
@@ -485,7 +479,7 @@ Sub ViewCareerRecords ()
         End If 'End checking for files
 
         '...Until we press ESC
-    Loop Until EXITCODE% = 27 Or Count% = 0
+    Loop Until ExitCode% = 27 Or Count% = 0
 
 End Sub
 
@@ -620,7 +614,7 @@ Sub DoTheMerge ()
             Locate , 28
             Color 14
             Print "SELECT FILE TO UPDATE": Color 15
-            SELECTION% = 1
+            Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -635,12 +629,12 @@ Sub DoTheMerge ()
             Print "-SELECTS TEAM LIBRARY";
 
             _MouseShow "DEFAULT"
-            MAMenu careerFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu careerFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If EXITCODE% = 27 Then Exit Sub
+            If ExitCode% = 27 Then Exit Sub
 
-            targetFile$ = careerFiles$(SELECTION%)
+            targetFile$ = careerFiles$(Selection%)
             Locate 2, 33: Print targetFile$
             Locate , 33: Print "ANY CHANGE (YN)";
             Color 15, 0
@@ -652,12 +646,7 @@ Sub DoTheMerge ()
         Z$ = Left$(targetFile$, Len(targetFile$) - 4)
         Call DiskSelection_CAREER
 
-        A$ = Q$(0)
-
-        While Right$(A$, 1) = " "
-            A$ = Left$(A$, Len(A$) - 1)
-        Wend
-
+        A$ = RTrim$(Q$(0))
         B$ = A$
 
         For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
@@ -685,8 +674,7 @@ Sub DoTheMerge ()
             VV = 0
             Locate , 5: Print "IS THIS THE FINAL UPDATE FOR THE CURRENT SEASON? (Y/N)"
             I$ = GetKeyPress$
-            If UCase$(I$) = "Y" Then JX = 1
-            If UCase$(I$) = "N" Then JX = 0
+			If UCase$(I$) = "Y" Then JX = 1 Else JX = 0
 
             Locate 20, 5: Color 15: Print "MERGING CAREER STATS AND UPDATING CAREER LEADER FILE . . . . PLEASE WAIT"
             Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
@@ -818,7 +806,7 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams)
 
     Shared L%(), careerT%()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -835,30 +823,34 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If not (ExitCode% = 27) Then
 
-    T1 = teamIndex%(SELECTION%)
+		T1 = teamIndex%(Selection%)
 
-    'This part of the routine would be a ReadTeam
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		'This part of the routine would be a ReadTeam
+		Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
 
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
+		For I = 0 To 13
+			Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+		Next
 
-    Get #1, T1
+		Get #1, T1
 
-    SP = CVI(Q$(1))
-    DA = CVI(Q$(2))
-    V1% = CVI(Q$(3))
-    V2% = CVI(Q$(4))
-    For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
-    For I = 0 To 9: careerT%(I) = CVI(Q$(I + 10)): Next
-    Close 1
+		SP = CVI(Q$(1))
+		DA = CVI(Q$(2))
+		V1% = CVI(Q$(3))
+		V2% = CVI(Q$(4))
+		For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+		For I = 0 To 9: careerT%(I) = CVI(Q$(I + 10)): Next
+		Close 1
+
+	Else
+		BO% = 1
+	End If
 
 End Sub

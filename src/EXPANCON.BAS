@@ -27,10 +27,10 @@ Sub EXPANCON ()
         ReDim menuChoices$(1 To 2)
         menuChoices$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
         menuChoices$(2) = "RETURN TO LEAGUE LEADER MENU    "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -39,19 +39,19 @@ Sub EXPANCON ()
 
         Call box0(7, 24, 10, 57, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call ViewExpanded
                 Case 2: Cls
             End Select
         End If
 
-    Loop Until SELECTION% = 2 Or EXITCODE% = 27
+    Loop Until Selection% = 2 Or ExitCode% = 27
 
 End Sub
 
@@ -93,7 +93,7 @@ Sub ViewExpanded ()
             Locate , 28
             Color 14
             Print "SELECT LEAGUE": Color 15
-            SELECTION% = 1
+            Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -108,12 +108,12 @@ Sub ViewExpanded ()
             Print "-SELECTS LEAGUE";
 
             _MouseShow "DEFAULT"
-            MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
             If ExitCode% = 27 Then Exit Sub
 
-            targetFile$ = leagueFiles$(SELECTION%)
+            targetFile$ = leagueFiles$(Selection%)
             Locate 2, 33: Print targetFile$
             Locate , 33: Print "ANY CHANGE (YN)";
             Color 15, 0
@@ -144,7 +144,7 @@ Sub ViewExpanded ()
             menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
             menuChoices$(2) = "VIEW TEAM TOTALS                "
             menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
-            SELECTION% = 1
+            Selection% = 1
             Count% = 3
             Start% = 1
             ExitCode% = 3
@@ -157,21 +157,21 @@ Sub ViewExpanded ()
             Call box0(7, 24, 11, 57, 2, 15, 1)
 
             _MouseShow "DEFAULT"
-            MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
             _MouseHide
 
             Color , 0
             If Not (ExitCode% = 27) Then
-                Select Case SELECTION%
+                Select Case Selection%
                     Case 1: Call PlayerLeaders(printTarget)
                     Case 2: Call TeamTotals(printTarget)
                     Case 3: Cls
                 End Select
             Else
-                SELECTION% = 3
+                Selection% = 3
             End If
 
-        Loop Until SELECTION% = 3
+        Loop Until Selection% = 3
 
     End If
 
@@ -809,7 +809,7 @@ Sub PrintIt (printTarget, maxRecords, TVN, categoryID)
                 Locate 22: Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 
                 I$ = GetKeyPress$
-                If Not (I$ = Chr$(27)) Then
+                If I$ <> Chr$(27) Then
                     Locate 22: Print "                                                                "
                     Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
                     I$ = GetKeyPress$

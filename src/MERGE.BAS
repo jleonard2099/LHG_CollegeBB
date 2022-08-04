@@ -9,7 +9,6 @@ Sub MERGE ()
     'Dim A%(17), APR%(1, 120), CRDR(120), SITER$(120)
     'Dim P%(100), Z2(14, 14), PRD%(100), ZRD2(14, 14)
 
-    '-----
     ReDim menuChoices$(1 To 3)
 
     Do
@@ -22,10 +21,10 @@ Sub MERGE ()
         menuChoices$(1) = "MERGE STATISTICAL FILES           "
         menuChoices$(2) = "ALIGN STATISTICAL FILES           "
         menuChoices$(3) = "EXIT TO MAIN MENU                 "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -34,20 +33,20 @@ Sub MERGE ()
 
         Call box0(7, 24, 11, 59, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call MergeIt
                 Case 2: Call ALIGN
                 Case 3: Cls
             End Select
         End If
 
-    Loop Until SELECTION% = 3 Or EXITCODE% = 27
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -55,6 +54,7 @@ End Sub
 '----------------------------------------
 '       MergeIt Subroutine
 '----------------------------------------
+'...explanation...
 Sub MergeIt ()
 
     'Dim A$(14)
@@ -134,7 +134,6 @@ Sub MergeIt ()
 
             If NY$ = "" Then
                 Call GetTeamFile_MERGE(NY$, NTMS)
-                'GoTo 3060
             Else
                 YN$ = NY$
                 Erase teamNames$
@@ -154,11 +153,7 @@ Sub MergeIt ()
 
         End If
 
-        A$ = Q$(0)
-
-        While Right$(A$, 1) = " "
-            A$ = Left$(A$, Len(A$) - 1)
-        Wend
+        A$ = RTrim$(Q$(0))
 
         If BO% = 1 Then
             BO% = 0
@@ -381,8 +376,7 @@ Sub GetTeamFile_MERGE (yearNumber$, numberTeams)
 
     Shared mergeT%(), L%()
 
-
-    1102 SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -400,12 +394,12 @@ Sub GetTeamFile_MERGE (yearNumber$, numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 	
 	_MouseShow "DEFAULT"
-	MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+	MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 	_MouseHide
 	
-	If EXITCODE% = 27 Then BO% = 1: Exit Sub
+	If ExitCode% = 27 Then BO% = 1: Exit Sub
 
-    T1 = teamIndex%(SELECTION%)
+    T1 = teamIndex%(Selection%)
 
     Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$

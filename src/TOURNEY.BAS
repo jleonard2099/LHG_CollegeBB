@@ -83,7 +83,7 @@ Sub TOURNEY ()
             Locate , 28
             Color 14
             Print "SELECT FIELD TO PLAY": Color 15
-            SELECTION% = 1
+            Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -99,13 +99,13 @@ Sub TOURNEY ()
 
             '-- This would be a short loop / structure
             _MouseShow "DEFAULT"
-            MAMenu tournamentFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If EXITCODE% = 27 Then Exit Sub
+            If ExitCode% = 27 Then Exit Sub
 
-            targetFile$ = tournamentFiles$(SELECTION%)
-            T1 = SELECTION%
+            targetFile$ = tournamentFiles$(Selection%)
+            T1 = Selection%
             'That loop would end here
 
             Locate 2, 33: Print targetFile$
@@ -148,7 +148,7 @@ Sub TOURNEY ()
 
             For X = 1 To 3: NG%(I, X + 14) = CVI(Q$(X + 23)): Next
             For X = 2 To 3
-                610 If Right$(yearNumber$(I, X), 1) = " " Then yearNumber$(I, X) = Left$(yearNumber$(I, X), Len(yearNumber$(I, X)) - 1): GoTo 610
+                yearNumber$(I, X) = RTrim$(yearNumber$(I, X))
             Next
 
             Close 1

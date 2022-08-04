@@ -22,10 +22,10 @@ Sub CREATNAT ()
         menuChoices$(1) = "CREATE / DEFINE LEAGUE & MEMBERS"
         menuChoices$(2) = "ADD / DELETE /REVIEW CONFERENCES"
         menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU"
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -34,14 +34,14 @@ Sub CREATNAT ()
 
         Call box0(7, 24, 11, 57, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
+        If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case Selection%
                 Case 1:
                     Do
                         130 Color 15, 0: Cls
@@ -113,7 +113,7 @@ Sub CREATNAT ()
                                 Locate , 28
                                 Color 14
                                 Print "SELECT LEAGUE TO SCHEDULE": Color 15
-                                SELECTION% = 1
+                                Selection% = 1
                                 Start% = 1
                                 FileFGColr% = 15: FileBGColr% = 1
                                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -128,11 +128,11 @@ Sub CREATNAT ()
                                 Print "-SELECTS TEAM";
 
                                 _MouseShow "DEFAULT"
-                                MAMenu conferenceFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                                MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                                 _MouseHide
 
-                                If Not (EXITCODE% = 27) Then
-                                    targetFile$ = conferenceFiles$(SELECTION%)
+                                If ExitCode% <> 27 Then
+                                    targetFile$ = conferenceFiles$(Selection%)
                                     Locate 2, 33: Print targetFile$
                                     Locate , 33: Print "ANY CHANGE (YN)";
                                     Color 15, 0
@@ -141,7 +141,7 @@ Sub CREATNAT ()
                                 End If
                             Loop Until UCase$(I$) = "N"
 
-                            If Not (EXITCODE% = 27) Then
+                            If ExitCode% <> 27 Then
                                 targetFile$ = RTrim$(targetFile$)
                                 LG$ = Left$(targetFile$, Len(targetFile$) - 4)
                                 Open diskPaths$(1) + LG$ + ".CON" For Input As #2
@@ -156,7 +156,7 @@ Sub CREATNAT ()
                         End If
 
                         '...Until we press ESC
-                    Loop Until EXITCODE% = 27 Or Count% = 0 Or UCase$(I$) = "N"
+                    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
                     Call Conference_Menu(LG$, Z1$())
 
@@ -165,13 +165,9 @@ Sub CREATNAT ()
 
         End If
 
-    Loop Until SELECTION% = 3 Or EXITCODE% = 27
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
-
-
-'2060 Cls: Print "ERROR:: UNABLE TO READ TEAM FILE": Print
-'2720 BO% = 1: Return
 
 
 '----------------------------------------
@@ -205,7 +201,7 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
             Locate , 28
             Color 14
             Print "SELECT CONFERENCE": Color 15
-            SELECTION% = 1
+            Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -220,11 +216,11 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
             Print "-SELECTS CONFERENCE";
 
             _MouseShow "DEFAULT"
-            MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
             If Not (ExitCode% = 27) Then
-                targetFile$ = leagueFiles$(SELECTION%)
+                targetFile$ = leagueFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0

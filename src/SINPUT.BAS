@@ -16,56 +16,54 @@ Sub SINPUT ()
     'On Error GoTo 0
 
     Do
-        55 Cls
+        Cls
         Call Title_SINPUT (1, "")
 
-        65 Color 15: Print "C";
+        Color 15: Print "C";
         Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
         Print
         Color 15: Print "R";
         Color 3: Print "ETURN TO MAIN MENU"
 
         Do
-            75 I$ = GetKeyPress$
-            85 If UCase$(I$) <> "R" Then Q = 1
-            If UCase$(I$) = "R" Then Q = 2
+            I$ = GetKeyPress$
+            If UCase$(I$) <> "R" Then 
+				Q = 1
+            Else 
+				Q = 2
+			End If
+
         Loop Until Q >= 1 And Q <= 2
 
-        105 If Q = 1 Then 
+		If Q = 1 Then 
             
-            2015 Call SelectTeam_SINPUT (B$)
+            Call SelectTeam_SINPUT (B$)
 
             Z$ = Right$(B$, Len(B$) - 3) + "." + Left$(B$, 2)
 
-            2025 Cls
+            Cls
             X$ = "OFFENSIVE TEAM STATS"
             Call Title_SINPUT (2, X$)
             Locate 3, 1
             Print "1. STAT FILE NAME "; Z$
 
-            2035 Open diskPaths$(1) + Z$ For Input As #1
+            Open diskPaths$(1) + Z$ For Input As #1
+            Input #1, A$
+            For I = 0 To 13: Input #1, A$(I)
+            For J = 0 To 13: Input #1, Z2(I, J): Next J: Input #1, W0(I): Input #1, W1(I): Next I
+            For L = 0 To 15: Input #1, Z!(L): Next L
+            For L = 0 To 15: Input #1, Z1!(L): Next L
+            Close 1
 
-            2045 Input #1, A$
-
-            2055 For I = 0 To 13: Input #1, A$(I)
-
-            2065 For J = 0 To 13: Input #1, Z2(I, J): Next J: Input #1, W0(I): Input #1, W1(I): Next I
-
-            2075 For L = 0 To 15: Input #1, Z!(L): Next L
-
-            2085 For L = 0 To 15: Input #1, Z1!(L): Next L
-
-            2095 Close 1
-
-            2105 X% = 2
+            X% = 2
             
-            1305 Cls
+            Cls
             X$ = "OFFENSIVE TEAM STATS"
             Call Title_SINPUT (2, X$)
 
-            1335 X% = 2
+            X% = 2
 
-            165 Cls
+            Cls
             X$ = "OFFENSIVE TEAM STATS"
             Call Title_SINPUT (2, X$)
 
@@ -103,17 +101,18 @@ Sub SINPUT ()
 
             210 C1 = 1
 
-            211 Locate 20, 1: Input "# TO CHANGE (0 TO CONTINUE) "; B9
+			Do
+				Locate 20, 1
+				Input "# TO CHANGE (0 TO CONTINUE) "; B9
 
-            212 If B9 < 0 Or B9 > 16 Then 211
+            Loop Until B9 >= 0 And B9 <= 16
 
-            213 On B9 GOTO 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205
-
+            On B9 GOTO 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205
 
             '0 = Continue
-            215 C1 = 0
+            C1 = 0
 
-            217 If X% > 0 Then 1580
+            If X% > 0 Then 1580
 
             365 Cls
             X$ = "DEFENSIVE TEAM STATS"
@@ -149,19 +148,18 @@ Sub SINPUT ()
 
             410 C1 = 1
 
-            411 Locate 20, 1: Input "# TO CHANGE (0 TO CONTINUE) "; B9
-
-            412 If B9 < 0 Or B9 > 14 Then 411
+			Do
+				Locate 20, 1: Input "# TO CHANGE (0 TO CONTINUE) "; B9
+            Loop Until B9 >= 0 And B9 <= 14
 
             413 On B9 GOTO 379, 381, 383, 385, 387, 389, 391, 393, 395, 397, 399, 401, 403, 405
 
-
             '0 = Continue
-            645 C1 = 0
+            C1 = 0
 
-            655 If X% > 0 Then 1605
+            If X% > 0 Then 1605
 
-            665 For I = 0 To 13
+            For I = 0 To 13
                 Cls
                 X$ = "PLAYER -" + Str$(I + 1)
                 Call Title_SINPUT (2, X$)
@@ -202,21 +200,21 @@ Sub SINPUT ()
 
                 1225 C1 = 1
 
-                1235 Locate 21, 1
+				Do
+					Locate 21, 1
 
-                1245 Input "# TO CHANGE (0 TO CONTINUE) "; B9
+					Input "# TO CHANGE (0 TO CONTINUE) "; B9
 
-                1255 If B9 < 0 Or B9 > 17 Then 1235
+                Loop Until B9 >= 0 And B9 <= 17
 
                 1265 On B9 GOTO 675, 705, 745, 785, 825, 865, 905, 906, 945, 985, 1025, 1065, 1105, 1106, 1184, 1185, 1186
 
-                1275 C1 = 0
+                C1 = 0
+                If X% > 0 Then 1605
 
-                1285 If X% > 0 Then 1605
+            Next I
 
-            1295 Next I
-
-            1580 Cls
+            Cls
             X$ = "DEFENSIVE TEAM STATS"
             Call Title_SINPUT (2, X$)
 
@@ -261,33 +259,36 @@ Sub SINPUT ()
 
             1685 Input I: I = I - 1
 
-            1695 If I > 13 Or I < 0 Then X% = 0: GoTo 1865
+            1695 If I <= 13 And I >= 0 Then
 
-            1705 Cls
-            X$ = "PLAYER -" + Str$(I + 1)
-            Call Title_SINPUT (2, X$)
+				1705 Cls
+				X$ = "PLAYER -" + Str$(I + 1)
+				Call Title_SINPUT (2, X$)
 
-            Locate 3, 1
-            Print "1. NAME "; A$(I)
-            Print "2. GAMES "; Z2(I, 0)
-            Print "3. MINUTES "; Int(Z2(I, 10) / 60 + .5)
-            Print "4. FGA "; Z2(I, 1)
-            Print "5. FGM "; Z2(I, 2); ""
-            Print "6. FTA "; Z2(I, 3)
-            Print "7. FTM "; Z2(I, 4)
-            Print "8. OFF REB "; Z2(I, 12)
-            Print "9. TOT REB  "; Z2(I, 5)
-            Print "10. FOULS "; Z2(I, 6)
-            Print "11. STEALS "; Z2(I, 7)
-            Print "12. ASSISTS "; Z2(I, 8)
-            Print "13. BLOCKS "; Z2(I, 9)
-            Print "14. TURNOVERS "; Z2(I, 11)
-            Print "15. 3FGA "; W1(I)
-            Print "16. 3FGM "; W0(I)
-            Print "17. HI-GAME (PTS) "; Z2(I, 13)
-            GoTo 1225
+				Locate 3, 1
+				Print "1. NAME "; A$(I)
+				Print "2. GAMES "; Z2(I, 0)
+				Print "3. MINUTES "; Int(Z2(I, 10) / 60 + .5)
+				Print "4. FGA "; Z2(I, 1)
+				Print "5. FGM "; Z2(I, 2); ""
+				Print "6. FTA "; Z2(I, 3)
+				Print "7. FTM "; Z2(I, 4)
+				Print "8. OFF REB "; Z2(I, 12)
+				Print "9. TOT REB  "; Z2(I, 5)
+				Print "10. FOULS "; Z2(I, 6)
+				Print "11. STEALS "; Z2(I, 7)
+				Print "12. ASSISTS "; Z2(I, 8)
+				Print "13. BLOCKS "; Z2(I, 9)
+				Print "14. TURNOVERS "; Z2(I, 11)
+				Print "15. 3FGA "; W1(I)
+				Print "16. 3FGM "; W0(I)
+				Print "17. HI-GAME (PTS) "; Z2(I, 13)
+				GoTo 1225
+			Else
+				X% = 0
+			End If
 
-            1865 GoTo 1935
+            GoTo 1935
 
             1875 Print
 
@@ -304,20 +305,12 @@ Sub SINPUT ()
             Call Title_SINPUT (1, "")
 
             1935 Open diskPaths$(1) + Z$ For Output As #1
-
-            1945 Print #1, A$
-
-            1955 For I = 0 To 13: Print #1, A$(I)
-
-            1965 For J = 0 To 13: Print #1, Z2(I, J): Next J: Print #1, W0(I): Print #1, W1(I): Next I
-
-            1975 For L = 0 To 15: Print #1, Z!(L): Next L
-
-            1985 For L = 0 To 15: Print #1, Z1!(L): Next L
-
-            1995 Close 1
-
-            '2005 GoTo 55
+            Print #1, A$
+            For I = 0 To 13: Print #1, A$(I)
+            For J = 0 To 13: Print #1, Z2(I, J): Next J: Print #1, W0(I): Print #1, W1(I): Next I
+            For L = 0 To 15: Print #1, Z!(L): Next L
+            For L = 0 To 15: Print #1, Z1!(L): Next L
+            Close 1
             
         End If
 
@@ -352,43 +345,47 @@ Sub SelectTeam_SINPUT (B$)
         Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
         Color 15, 0
 
-        3057 I$ = GetKeyPress$
+        I$ = GetKeyPress$
         
-        If I$ = Chr$(27) Then Exit Sub
-        If I$ = Chr$(13) Then 
-            GetTeam_SINPUT
-        Else
-            Locate 7, 27: Print I$
-            Locate 7, 28: Line Input NY$
-            NY$ = I$ + NY$
-            Color 15, 0
+        If I$ <> Chr$(27) Then
+		
+			If I$ = Chr$(13) Then 
+				GetTeam_SINPUT
+			Else
+				Locate 7, 27: Print I$
+				Locate 7, 28: Line Input NY$
+				NY$ = I$ + NY$
+				Color 15, 0
 
-            If NY$ = "" Then GetTeam_SINPUT: GoTo 3060
-            YN$ = NY$
-            Erase teamNames$
+				If NY$ = "" Then GetTeam_SINPUT: GoTo 3060
+				YN$ = NY$
+				Erase teamNames$
 
-            Open diskPaths$(0) + "BASK." + YN$ As #1 Len = 655
-            Y = LOF(1)
-            Field #1, 15 As Q$(0), 640 As X$
-            For I1 = 1 To Y / 655
-                Get #1, I1
-                teamNames$(I1) = Q$(0)
-            Next
-            Close 1
+				Open diskPaths$(0) + "BASK." + YN$ As #1 Len = 655
+				Y = LOF(1)
+				Field #1, 15 As Q$(0), 640 As X$
+				For I1 = 1 To Y / 655
+					Get #1, I1
+					teamNames$(I1) = Q$(0)
+				Next
+				Close 1
 
-            NT = Y / 655
-            TS% = Int((NT - 1) / 80)
-            GetTeam_SINPUT
-        End If
-        
-        3060 If BO% = 1 Then 
-            BO% = 0
-        Else
-            3058 Locate 2, 33: Color T%(0), T%(1): Print A$
-            Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
-        End If
-
+				NTMS = Y / 655
+				'TS% = Int((NTMS - 1) / 80)
+				GetTeam_SINPUT
+			End If
+			
+			If BO% = 1 Then 
+				BO% = 0
+			Else
+				Locate 2, 33: Color T%(0), T%(1): Print A$
+				Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			End If
+		Else
+			BO% = 1
+		End If
+			
     Loop Until UCase$(I$) = "N"
     
     Color 15, 0
@@ -404,9 +401,9 @@ Sub GetTeam_SINPUT ()
 
     Shared L%(), T%()
 
-    1102 NS% = 0
+    NS% = 0
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -423,36 +420,36 @@ Sub GetTeam_SINPUT ()
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    20 MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If I$ = Chr$(27) Then BO% = 1: Exit Sub
+    If I$ <> Chr$(27) Then
 
-    If Not (I$ = Chr$(27)) Then
+        T1 = NS% * 80 + Y - 3 + (X - 1) * 20
 
-        1190 T1 = NS% * 80 + Y - 3 + (X - 1) * 20
-
-        9000 Open diskPaths$(0) + "BASK." + YN$ As #1 Len = 655
-        FIELD #1,15 AS Q$(0),2 AS Q$(1),2 AS Q$(2),2 AS Q$(3),2 AS Q$(4),2 AS Q$(5),2 AS Q$(6),2 AS Q$(7),2 AS Q$(8),2 AS Q$(9),2 AS Q$(10),2 AS Q$(11),2 AS Q$(12),2 AS Q$(13),2 AS Q$(14),2 AS Q$(15),2 AS Q$(16),2 AS Q$(17),2 AS Q$(18),2 AS Q$(19),602 AS X$
-        For I = 0 To 13
-        FIELD #1,53+I*43 AS X$,15 AS Q$(I*15+20),2 AS Q$(I*15+21),2 AS Q$(I*15+22),2 AS Q$(I*15+23),2 AS Q$(I*15+24),2 AS Q$(I*15+25),2 AS Q$(I*15+26),2 AS Q$(I*15+27),2 AS Q$(I*15+28),2 AS Q$(I*15+29),2 AS Q$(I*15+30),2 AS Q$(I*15+31),2 AS Q$(I*15+32),2 AS Q$(I*15+33),2 AS Q$(I*15+34),655-53-43-I*43 AS X$
+        Open diskPaths$(0) + "BASK." + YN$ As #1 Len = 655
+        
+		FIELD #1,15 AS Q$(0),2 AS Q$(1),2 AS Q$(2),2 AS Q$(3),2 AS Q$(4),2 AS Q$(5),2 AS Q$(6),2 AS Q$(7),2 AS Q$(8),2 AS Q$(9),2 AS Q$(10),2 AS Q$(11),2 AS Q$(12),2 AS Q$(13),2 AS Q$(14),2 AS Q$(15),2 AS Q$(16),2 AS Q$(17),2 AS Q$(18),2 AS Q$(19),602 AS X$
+        
+		For I = 0 To 13
+			FIELD #1,53+I*43 AS X$,15 AS Q$(I*15+20),2 AS Q$(I*15+21),2 AS Q$(I*15+22),2 AS Q$(I*15+23),2 AS Q$(I*15+24),2 AS Q$(I*15+25),2 AS Q$(I*15+26),2 AS Q$(I*15+27),2 AS Q$(I*15+28),2 AS Q$(I*15+29),2 AS Q$(I*15+30),2 AS Q$(I*15+31),2 AS Q$(I*15+32),2 AS Q$(I*15+33),2 AS Q$(I*15+34),655-53-43-I*43 AS X$
         Next
-        Get #1, T1
-        A$ = Q$(0)
+        
+		Get #1, T1
 
-        While Right$(A$, 1) = " "
-            A$ = Left$(A$, Len(A$) - 1)
-        Wend
-
+        A$ = RTRim$(Q$(0))
         B$ = A$
+        SP = CVI(Q$(1))
+		DA = CVI(Q$(2))
+		V1% = CVI(Q$(3))
+		V2% = CVI(Q$(4))
 
-        SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
         For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
-        Close 1
-    End If 'Done checking EXITCODE code
 
-'4501 I$ = GetKeyPress$
-'Return
+        Close 1
+	Else
+		BO% = 1
+    End If 'Done checking ExitCode code
 
 END SUB

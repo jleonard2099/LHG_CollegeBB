@@ -24,7 +24,6 @@ Dim A1$, C$, S$
 Dim ATT, CK, DA, JX, LS, SP, TC, WN
 Dim BO%, V1%, V2%
 
-'---> 500 is too high; I rarely find it higher than 230ish
 Dim Shared diskPaths$(3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
@@ -39,6 +38,7 @@ Dim L%(0 To 4), T1%(20)
 Dim A(0 To 14, 0 To 13), DF(13), RS(13, 13), X(13, 13)
 Dim W0(15), W1(15)
 Dim Z!(15), Z1!(15)
+
 Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
 Dim homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 Dim T%(0 To 9)
@@ -194,11 +194,9 @@ Dim BS%, NS%
 Dim N$
 Dim NG%(MAX_GAMES, 18) 'number of Games
 
-'Dim scheduleOP%(14) ' TOURNAMENT DEFAULTS
-'Dim HS%(MAX_GAMES), VS%(MAX_GAMES)
-Dim scheduleYN$(MAX_GAMES, 1)
 Dim scheduleAP%(1), scheduleT%(9), scheduleZ1%(1 To 30)
 Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
+Dim scheduleYN$(MAX_GAMES, 1)
 Dim Z1$(1 To 30), Z2$(1 To 30)
 
 '----------------------------------------
@@ -227,11 +225,11 @@ For I = 0 To 1
 Next
 Close 1
 
-SELECTION% = 1
+Selection% = 1
 
 Do
-    Call Main_Menu(SELECTION%)
-Loop Until SELECTION% = 9
+    Call Main_Menu(Selection%)
+Loop Until Selection% = 9
 
 End
 
@@ -260,10 +258,10 @@ Sub Main_Menu (menuSelection%)
         menuChoices$(7) = "HARD DRIVE INSTALLATION         "
         menuChoices$(8) = "CONFIGURE DRIVES FOR TEAMS,STATS"
         menuChoices$(9) = "EXIT TO DOS                     "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 9
         Start% = 1
-        EXITCODE% = 9
+        ExitCode% = 9
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -272,11 +270,11 @@ Sub Main_Menu (menuSelection%)
 
         Call box0(7, 24, 17, 57, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), menuSelection%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
+        If ExitCode% <> 27 Then
             Select Case menuSelection%
                 Case 1: Run "COLHOOP.EXE"
                 Case 2: Call TeamMgt_Menu
@@ -290,9 +288,9 @@ Sub Main_Menu (menuSelection%)
             End Select
         End If
 
-    Loop Until menuSelection% = 9 Or EXITCODE% = 27
+    Loop Until menuSelection% = 9 Or ExitCode% = 27
 
-    If EXITCODE% = 27 Then menuSelection% = 9
+    If ExitCode% = 27 Then menuSelection% = 9
 
 End Sub
 
@@ -373,10 +371,10 @@ Sub TeamMgt_Menu ()
         menuChoices$(4) = "VIEW TEAM ROSTER / REPORT    "
         menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM "
         menuChoices$(6) = "RETURN TO MAIN MENU          "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 6
         Start% = 1
-        EXITCODE% = 6
+        ExitCode% = 6
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -385,12 +383,12 @@ Sub TeamMgt_Menu ()
         Call box0(7, 26, 14, 57, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call CBBINPUT
                 Case 2: Call CNGRAT(1)
                 Case 3: Call CNGRAT(2)
@@ -399,10 +397,10 @@ Sub TeamMgt_Menu ()
                 Case 6: Cls
             End Select
         Else
-            SELECTION% = 6
+            Selection% = 6
         End If
 
-    Loop Until SELECTION% = 6 Or EXITCODE% = 27
+    Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -424,10 +422,10 @@ Sub Replay_Menu
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
         menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES "
         menuChoices$(5) = "RETURN TO COURTSIDE MAIN MENU    "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 5
         Start% = 1
-        EXITCODE% = 5
+        ExitCode% = 5
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -437,12 +435,12 @@ Sub Replay_Menu
         Call box0(7, 24, 13, 58, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call LOOKY
                 Case 2: Call CAREER
                 Case 3: Call COMPARE
@@ -451,7 +449,7 @@ Sub Replay_Menu
             End Select
         End If
 
-    Loop Until SELECTION% = 5 Or EXITCODE% = 27
+    Loop Until Selection% = 5 Or ExitCode% = 27
 
 End Sub
 
@@ -482,7 +480,7 @@ Sub Leaders_Menu
         menuChoices$(12) = "DELETE ORGANIZATION STATS"
         menuChoices$(13) = "RETURN TO COURTSIDE MENU "
         menuChoices$(14) = "EXIT TO DOS              "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 14
         Start% = 1
         FileFGColr% = 15: FileBGColr% = 1
@@ -505,14 +503,14 @@ Sub Leaders_Menu
         Locate , 10: Print "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
 
         _MouseShow "DEFAULT"
-        MAMenu menuChoices$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu menuChoices$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% = 27 Then Exit Sub
 
         Color , 0
 
-        Select Case SELECTION%
+        Select Case Selection%
             Case 1: Call CREATCON
             Case 2: Call COMPCON
             Case 3: Call SEECON
@@ -528,9 +526,9 @@ Sub Leaders_Menu
             Case 13 Or 14: Cls
         End Select
 
-    Loop Until SELECTION% >= 13 Or ExitCode% = 27
+    Loop Until Selection% >= 13 Or ExitCode% = 27
 
-    If SELECTION% = 14 Then
+    If Selection% = 14 Then
         End
         System
     End If

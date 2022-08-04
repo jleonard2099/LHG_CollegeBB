@@ -29,10 +29,10 @@ Sub ADDTOURN ()
         menuChoices$(4) = "RESET A TOURNAMENT           "
         menuChoices$(5) = "PLAY TOURNAMENT GAMES        "
         menuChoices$(6) = "RETURN TO COURTSIDE MAIN MENU"
-        SELECTION% = 1
+        Selection% = 1
         Count% = 6
         Start% = 1
-        EXITCODE% = 6
+        ExitCode% = 6
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -41,16 +41,16 @@ Sub ADDTOURN ()
 
         Call box0(9, 24, 16, 54, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1:
                     newTourneyName$ = ""
-                    Call SetupTourney(NR$, SELECTION%, newTourneyName$, tourneyFile$)
+                    Call SetupTourney(NR$, Selection%, newTourneyName$, tourneyFile$)
 
                 Case 2, 4:
                     For I = 1 To 16
@@ -69,7 +69,7 @@ Sub ADDTOURN ()
                     consolationSetting%(0) = 0
                     consolationSetting%(1) = 0
 
-                    Call LoadTourney(NR%, SELECTION%, tn$)
+                    Call LoadTourney(NR%, Selection%, tn$)
 
                 Case 3: Call BRACKET
                 Case 5: Call TOURNEY
@@ -77,7 +77,7 @@ Sub ADDTOURN ()
             End Select
         End If
 
-    Loop Until SELECTION% = 6 Or EXITCODE% = 27
+    Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -395,7 +395,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
                                     Erase teamNames$
                                     Cls
 
-                                    NT = 0
+                                    NTMS = 0
 
                                     If Not _FileExists(diskPaths$(0) + "BASK." + YN$) Then
                                         Locate 10, 8
@@ -416,15 +416,15 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
                                                 If Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then 1103
                                             Next I2
                                             NT = NT + 1
-                                            teamNames$(NT) = Q$(0)
-                                            teamIndex%(NT) = I1
+                                            teamNames$(NTMS) = Q$(0)
+                                            teamIndex%(NTMS) = I1
                                         1103 Next I1
                                         Close 1
 
                                         If BO% = 1 Then
                                             BO% = 0
                                         Else
-                                            Call SelectTeam_TOURN(YN$, NT, A$, teamIdx)
+                                            Call SelectTeam_TOURN(YN$, NTMS, A$, teamIdx)
                                             Locate 2, 33: Color 15, 0
                                             Color T%(0), T%(1): Print A$
                                             Color 15, 4
@@ -502,10 +502,10 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         menuChoices$(I) = regionNames$(I)
     Next
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberRegions + 1
     Start% = 1
-    EXITCODE% = numberRegions + 1
+    ExitCode% = numberRegions + 1
     FileFGColr% = 15: FileBGColr% = 1
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
     Spacing% = 1
@@ -516,15 +516,15 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
     Call box0(3, 31, 3 + numberRegions + 2, 48, 2, 15, 1)
 
     _MouseShow "DEFAULT"
-    MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+    MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
     _MouseHide
 
     Color , 0
-    If EXITCODE% = 27 Then Exit Sub 'GoTo 10
+    If ExitCode% = 27 Then Exit Sub 'GoTo 10
 
 
     'Save and Exit
-    If SELECTION% = numberRegions + 1 Then
+    If Selection% = numberRegions + 1 Then
 
         If _FileExists(diskPaths$(0) + saveFile$ + ".TMP") Then Kill diskPaths$(0) + saveFile$ + ".TMP"
         If _FileExists(diskPaths$(0) + saveFile$ + ".TCX") Then Kill diskPaths$(0) + saveFile$ + ".TCX"
@@ -541,7 +541,7 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
     End If
 
-    numberTeams$ = Str$(NN%(SELECTION%))
+    numberTeams$ = Str$(NN%(Selection%))
     numberTeams$ = _Trim$(numberTeams$)
     'GoTo SEEDBRACKET
 
@@ -587,7 +587,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             Color , 1: Cls: Locate , 28: Color 14
 
             Print "SELECT TOURNAMENT FIELD TO EDIT": Color 15
-            SELECTION% = 1
+            Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -602,12 +602,12 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             Print "-SELECTS TOURNAMENT FIELD";
 
             _MouseShow "DEFAULT"
-            MAMenu tournamentFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If EXITCODE% = 27 Then Exit Sub
+            If ExitCode% = 27 Then Exit Sub
 
-            loadFile$ = tournamentFiles$(SELECTION%)
+            loadFile$ = tournamentFiles$(Selection%)
 
             Locate 2, 33: Print loadFile$
             Locate , 33: Print "ANY CHANGE (YN)";
@@ -690,7 +690,7 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
 
     Shared L%(), T%()
 
-    1102 SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -701,40 +701,41 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
     Row% = 4
     Column% = 1
 
-    1106 Color , 4: Cls: Locate , 33: Color 14: Print "TEAM SELECTION": Color 15
+    Color , 4: Cls: Locate , 33: Color 14: Print "TEAM SELECTION": Color 15
     Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then Exit Sub
+    If ExitCode% <> 27 Then
 
-    'Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  LEFT/RIGHT ARROW  UP/DOWN ARROW  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+		'Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  LEFT/RIGHT ARROW  UP/DOWN ARROW  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
-    selectedIndex = teamIndex%(SELECTION%)
+		selectedIndex = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-    Get #1, selectedIndex
+		Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+		Get #1, selectedIndex
 
-    teamName$ = Q$(0)
+		teamName$ = RTrim$(Q$(0))
 
-    While Right$(teamName$, 1) = " "
-        teamName$ = Left$(teamName$, Len(teamName$) - 1)
-    Wend
+		SP = CVI(Q$(1))
+		DA = CVI(Q$(2))
+		V1% = CVI(Q$(3))
+		V2% = CVI(Q$(4))
+		For I = 0 To 4
+			L%(I) = CVI(Q$(I + 5))
+		Next
+		For I = 0 To 9
+			T%(I) = CVI(Q$(I + 10))
+		Next
 
-    SP = CVI(Q$(1))
-    DA = CVI(Q$(2))
-    V1% = CVI(Q$(3))
-    V2% = CVI(Q$(4))
-    For I = 0 To 4
-        L%(I) = CVI(Q$(I + 5))
-    Next
-    For I = 0 To 9
-        T%(I) = CVI(Q$(I + 10))
-    Next
-    Close 1
+		Close 1
+	Else
+		BO% = 1
+	End If
+		
 
 End Sub
 

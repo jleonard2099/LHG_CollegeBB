@@ -83,15 +83,14 @@ FIELD #1, 53 + I * 43 AS X$, 15 AS Q$(I * 15 + 20), 2 AS Q$(I * 15 + 21), 2 AS Q
 , 2 AS Q$(I * 15 + 30), 2 AS Q$(I * 15 + 31), 2 AS Q$(I * 15 + 32), 2 AS Q$(I * 15 + 33), 2 AS Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 AS X$
     Next
     Get #1, I1
-    B$(P9) = Q$(0)
-    9010 If Right$(B$(P9), 1) = " " Then B$(P9) = Left$(B$(P9), Len(B$(P9)) - 1): GoTo 9010
+    B$(P9) = RTrim$(Q$(0))
+
     S1(P9) = CVI(Q$(1)): D1(P9) = CVI(Q$(2))
     V1%(P9) = CVI(Q$(3)): V2%(P9) = CVI(Q$(4))
     For I3 = 0 To 4: L%(P9, I3) = CVI(Q$(I3 + 5)): Next
     For I3 = 0 To 9: TR%(P9, I3) = CVI(Q$(I3 + 10)): Next
     For I3 = 0 To 13
-        AA$(P9, I3) = Q$(I3 * 15 + 20)
-        9015 If Right$(AA$(P9, I3), 1) = " " Then AA$(P9, I3) = Left$(AA$(P9, I3), Len(AA$(P9, I3)) - 1): GoTo 9015
+        AA$(P9, I3) = RTrim$(Q$(I3 * 15 + 20))
         For I4 = 0 To 6
             A(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
             C(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
@@ -1436,8 +1435,8 @@ Sub TOURNEY
     Y2 = LOF(1)
     Close 1
 
-    NT = Y2 / 90
-    For I = 1 To NT
+    NTMS = Y2 / 90
+    For I = 1 To NTMS
         Open p$(0) + FF$ + ".TOU" As #1 Len = 90
         For X = 0 To 14
             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -2104,9 +2103,9 @@ Sub AUTOSETUP ()
         Call GETATEAM(I1, YN$)
     Call TEAMSETUP: Next P9
     If TOU <> 1 Then 1305
-    1302 If Right$(FF$, 1) = " " Then FF$ = Left$(FF$, Len(FF$) - 1): GoTo 1302
-    1303 If Right$(YN$(0), 1) = " " Then YN$(0) = Left$(YN$(0), Len(YN$(0)) - 1): GoTo 1303
-    1304 If Right$(YN$(1), 1) = " " Then YN$(1) = Left$(YN$(1), Len(YN$(1)) - 1): GoTo 1304
+    FF$ = RTrim$(FF$)
+    YN$(0) = RTrim$(YN$(0))
+    YN$(1) = RTrim$(YN$(1))
 
     Open p$(0) + FF$ + ".INF" For Input As #2
     Input #2, X$
@@ -2560,7 +2559,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub PRELOAD ()
-    1100 NT = 0
+    1100 NTMS = 0
     Open p$(0) + "BASK." + YN$ For Random As #1 Len = 655
     Y2 = LOF(1)
     Field #1, 15 As Q$(0)
@@ -2569,8 +2568,8 @@ Sub PRELOAD ()
         For I2 = 1 To 15
             If Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then 1105
         Next I2
-        NT = NT + 1
-        V$(NT) = Q$(0): V%(NT) = I1
+        NTMS = NTMS + 1
+        V$(NTMS) = Q$(0): V%(NTMS) = I1
     1105 Next I1
     Close 1
 
@@ -2583,8 +2582,8 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub TEAMSELECT ()
-    1102 SELECTION% = 1
-    Count% = NT
+    1102 Selection% = 1
+    Count% = NTMS
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -2599,12 +2598,12 @@ Sub TEAMSELECT ()
     Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
     _MouseShow "Default"
-    MAMenu V$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu V$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
-    If EXITCODE% = 27 Then 
+    If ExitCode% = 27 Then 
 		BO% = 1
 	Else
-		I1 = teamIndex%(SELECTION%)
+		I1 = teamIndex%(Selection%)
 		Call GETATEAM(I1, YN$)
 	End If
 	

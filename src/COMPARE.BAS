@@ -16,13 +16,13 @@ Sub COMPARE ()
 
         Cls
 
-        10 Call TITLE
+        Call TITLE
         menuChoices$(1) = "VIEW/PRINT STATISTICAL COMPARISONS"
         menuChoices$(2) = "RETURN TO COURTSIDE MENU          "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -31,20 +31,20 @@ Sub COMPARE ()
         Call box0(8, 23, 11, 58, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        I1 = SELECTION%
+        I1 = Selection%
 
-        If Not (EXITCODE% = 27) Then
+        If ExitCode% <> 27 Then
 
             loopChoice = 0
 
             Do
 
-                Select Case SELECTION%
+                Select Case Selection%
 
                     Case 1:
                         Do
@@ -89,6 +89,9 @@ Sub COMPARE ()
                                 Call SelectTeam_COMPARE(NTMS, YN$, posn$())
                             End If
 
+
+							B$(0) = RTrim$(Q$(0))
+							
                             If BO% = 1 Then BO% = 0: Exit Sub 'GoTo 10  --> which is not so much Exit Sub as it is back to the menu
 
                             Locate 2, 33: Color 15, 0: Color compareT%(0), compareT%(1)
@@ -136,7 +139,7 @@ Sub COMPARE ()
 
         End If
 
-    Loop Until SELECTION% = 2 Or EXITCODE% = 27
+    Loop Until Selection% = 2 Or ExitCode% = 27
 
 
 End Sub
@@ -606,7 +609,6 @@ End Sub
 '...explanation...
 Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
 
-
     Shared A1$, C$, S$
     Shared ATT, CK, DA, LS, SP, WN
     Shared V1%, V2%
@@ -618,7 +620,7 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
 
     'Dim A$(), B$()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -635,12 +637,12 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% = 27 Then BO% = 1: Exit Sub
 
-    t1 = teamIndex%(SELECTION%)
+    t1 = teamIndex%(Selection%)
 
     Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
@@ -649,20 +651,14 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
     Next
     Get #1, t1
 
-    B$(0) = Q$(0)
-
-    While Right$(A$, 1) = " "
-        A$ = Left$(A$, Len(A$) - 1)
-    Wend
-
-    B$ = A$
-    SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
+    SP = CVI(Q$(1))
+	DA = CVI(Q$(2))
+	V1% = CVI(Q$(3))
+	V2% = CVI(Q$(4))
     For I = 0 To 4: compareL%(I) = CVI(Q$(I + 5)): Next
     For I = 0 To 9: compareT%(I) = CVI(Q$(I + 10)): Next
     For I = 0 To 13
-        A$(I) = Q$(I * 15 + 20)
-
-        9007 If Right$(A$(I), 1) = " " Then A$(I) = Left$(A$(I), Len(A$(I)) - 1): GoTo 9007
+        A$(I) = RTrim$(Q$(I * 15 + 20))
         For I1 = 0 To 6
             A1(I, I1) = CVI(Q$(I * 15 + I1 + 21))
             X1(I, I1) = CVI(Q$(I * 15 + I1 + 28))
@@ -670,6 +666,7 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
     Next
     Close 1
 
+	'-- this belongs in it's own routine
     Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
     Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
     For I = 0 To 13
@@ -708,21 +705,28 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
         Next
         For I = 0 To 20: T1%(I) = 0: Next
     End If
-    B$ = A$
 
-    1486 If Right$(B$(0), 1) = " " Then B$(0) = Left$(B$(0), Len(B$(0)) - 1): GoTo 1486
+	B$(0) = RTrim$(Q$(0))
     B$ = B$(0)
+	
     For XX = 4 To 11
         If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
     Next XX
-    For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+	
+    For XX = 12 To 14
+		If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
     Next XX
-    QQ = 8: For XX = 11 To 4 Step -1: If Mid$(B$, XX, 1) = "_" Then QQ = XX - 4: GoTo 6615
-        GoTo 6620
+    
+	QQ = 8
+	For XX = 11 To 4 Step -1
+		If Mid$(B$, XX, 1) = "_" Then 
+			QQ = XX - 4
+		Else
+			Exit For
+		End If
+    Next XX
 
-    6615 Next XX
-
-    6620 Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+    Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
     If Not _FileExists(diskPaths$(1) + Z$) Then
         Color 15, 0: Cls

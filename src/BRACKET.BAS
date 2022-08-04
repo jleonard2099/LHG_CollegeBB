@@ -35,10 +35,10 @@ Sub BRACKET ()
         menuChoices$(1) = "VIEW BRACKETS            "
         menuChoices$(2) = "VIEW SEEDINGS            "
         menuChoices$(3) = "RETURN TO TOURNAMENT MENU"
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -47,18 +47,18 @@ Sub BRACKET ()
 
         Call box0(9, 24, 13, 50, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
-                Case 1 TO 2: Call ViewTourneyInfo(SELECTION%)
+        If ExitCode% <> 27 Then
+            Select Case Selection%
+                Case 1 TO 2: Call ViewTourneyInfo(Selection%)
                 Case 3: Cls
             End Select
         End If
 
-    Loop Until SELECTION% = 3 Or EXITCODE% = 27
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -102,7 +102,7 @@ Sub ViewTourneyInfo (ACTION%)
 
         Color , 1: Cls: Locate , 28: Color 14
         Print "SELECT TOURNAMENT FIELD TO VIEW": Color 15
-        SELECTION% = 1
+        Selection% = 1
         Start% = 1
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -117,12 +117,12 @@ Sub ViewTourneyInfo (ACTION%)
         Print "-SELECTS TOURNAMENT FIELD";
 
         _MouseShow "DEFAULT"
-        MAMenu tournamentFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
-        If EXITCODE% = 27 Then Exit Sub 'Should go back to menu selection
+        If ExitCode% = 27 Then Exit Sub 'Should go back to menu selection
 
-        targetFile$ = tournamentFiles$(SELECTION%)
+        targetFile$ = tournamentFiles$(Selection%)
         Locate 2, 33: Print targetFile$
         Locate , 33: Print "ANY CHANGE (YN)";
         Color 15, 0
@@ -313,10 +313,10 @@ Sub EditBracket (numberRegions, ACTION%)
             menuChoices$(I) = regionNames$(I)
         Next
 
-        SELECTION% = 1
+        Selection% = 1
         Count% = numberRegions + 2
         Start% = 1
-        EXITCODE% = numberRegions + 2
+        ExitCode% = numberRegions + 2
         FileColr% = 15
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -328,12 +328,12 @@ Sub EditBracket (numberRegions, ACTION%)
 
         Call box0(3, 31, 3 + numberRegions + 3, 52, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If EXITCODE% = 27 Then Exit Sub
-        NR = SELECTION%
+        If ExitCode% = 27 Then Exit Sub
+        NR = Selection%
         If NR = numberRegions + 1 Then NR = 17
         If NR = numberRegions + 2 Then Exit Sub
 
@@ -1444,7 +1444,7 @@ Sub EditBracket (numberRegions, ACTION%)
         I$ = GetKeyPress$
 
         'menu until they choose exit
-    Loop Until SELECTION% = numberRegions + 2 'ACTION% = 2
+    Loop Until Selection% = numberRegions + 2 'ACTION% = 2
 
 End Sub
 

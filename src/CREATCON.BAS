@@ -42,10 +42,10 @@ Sub CREATCON ()
         menuChoices$(1) = "CREATE / DEFINE NEW CONFERENCES "
         menuChoices$(2) = "ADD / REVIEW CONFERENCE MEMBERS "
         menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU"
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -54,14 +54,14 @@ Sub CREATCON ()
 
         Call box0(7, 24, 11, 57, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
+        If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case Selection%
                 Case 1:
                     Do
                         Color 15, 0: Cls
@@ -291,9 +291,7 @@ Sub CREATCON ()
 
         End If 'Done checking for ESC
 
-    Loop Until SELECTION% = 3 Or EXITCODE% = 27
-
-    'GoTo 1195
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -324,7 +322,6 @@ Sub SelectFile_CREATCON (targetFile$)
             Next
             leagueFiles$(0) = Spec$
             Call ReadFile(leagueFiles$())
-            'CALL SortStr(VARPTR(leagueFiles$(1)), Count, 0)
 
             Do
                 Cls
@@ -333,7 +330,7 @@ Sub SelectFile_CREATCON (targetFile$)
                 Locate , 28
                 Color 14
                 Print "SELECT CONFERENCE TO SCHEDULE": Color 15
-                SELECTION% = 1
+                Selection% = 1
                 Start% = 1
                 FileFGColr% = 15: FileBGColr% = 1
                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -348,11 +345,11 @@ Sub SelectFile_CREATCON (targetFile$)
                 Print "-SELECTS TEAM";
 
                 _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                If Not (EXITCODE% = 27) Then
-                    targetFile$ = leagueFiles$(SELECTION%)
+                If ExitCode% <> 27 Then
+                    targetFile$ = leagueFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
                     Locate , 33: Print "ANY CHANGE (YN)";
                     Color 15, 0
@@ -366,10 +363,7 @@ Sub SelectFile_CREATCON (targetFile$)
         End If
 
         '...Until we press ESC
-    Loop Until EXITCODE% = 27 Or Count% = 0 Or UCase$(I$) = "N"
-
-    '1230 Locate 24, 1: Print "PRESS ANY KEY TO CONTINUE";
-    '1240 I$ = GetKeyPress$
+    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
 End Sub
 
@@ -381,7 +375,7 @@ Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamName$)
 
     Shared T%()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -398,29 +392,29 @@ Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamName$)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% <> 27 Then
 
-    T1 = teamIndex%(SELECTION%)
+		T1 = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
-    Get #1, T1
+		Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+		For I = 0 To 13
+			Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+		Next
+		Get #1, T1
 
-    teamName$ = Q$(0)
-    While Right$(teamName$, 1) = " "
-        teamName$ = Left$(teamName$, Len(teamName$) - 1)
-    Wend
+		teamName$ = RTrim$(Q$(0))
 
-    For I = 0 To 9
-        T%(I) = CVI(Q$(I + 10))
-    Next
+		For I = 0 To 9
+			T%(I) = CVI(Q$(I + 10))
+		Next
 
-    Close 1
+		Close 1
+	Else
+		BO% = 1
+	End If
 
 End Sub

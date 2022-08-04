@@ -33,7 +33,7 @@ Sub SEENAT ()
                 Locate , 28
                 Color 14
                 Print "SELECT LEAGUE TO VIEW": Color 15
-                SELECTION% = 1
+                Selection% = 1
                 START% = 1
                 FileFGColr% = 15: FileBGColr% = 1
                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -48,12 +48,12 @@ Sub SEENAT ()
                 Print "-SELECTS LEAGUE  ESC - EXIT PROGRAM";
 
                 _MouseShow "DEFAULT"
-                MAMenu natlLeaderFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu natlLeaderFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                If EXITCODE% = 27 Then Exit Sub
+                If ExitCode% = 27 Then Exit Sub
 
-                targetFile$ = natlLeaderFiles$(SELECTION%)
+                targetFile$ = natlLeaderFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
                     Locate , 33: Print "ANY CHANGE (YN)";
                     Color 15, 0

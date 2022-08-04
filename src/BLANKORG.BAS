@@ -38,7 +38,7 @@ Sub BLANKORG ()
             Color 14
             Print "SELECT ORGANIZATION TO ERASE"
             Color 15
-            SELECTION% = 1
+            Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
             HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -58,12 +58,12 @@ Sub BLANKORG ()
             Color 15
 
             _MouseShow "DEFAULT"
-            MAMenu conferenceFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
             If Not (ExitCode% = 27) Then
 
-                targetFile$ = conferenceFiles$(SELECTION%)
+                targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0

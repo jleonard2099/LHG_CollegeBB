@@ -42,6 +42,7 @@ Sub LOOKY ()
                 Else
                     YN$ = NY$
                     Erase teamNames$
+
                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
                     Y = LOF(1)
                     Field #1, 15 As Q$(0), 640 As X$
@@ -51,6 +52,7 @@ Sub LOOKY ()
                     Next
                     Close 1
                     NTMS = Y / 655
+
                     Call SelectTeam_LOOKY(NTMS, YN$)
                 End If
             End If
@@ -58,12 +60,8 @@ Sub LOOKY ()
             If BO% = 1 Then
                 BO% = 0
             Else
-                A$ = Q$(0)
 
-                While Right$(A$, 1) = " "
-                    A$ = Left$(A$, Len(A$) - 1)
-                Wend
-
+                A$ = RTRim$(Q$(0))
                 B$ = A$
 
                 'Do
@@ -134,8 +132,10 @@ Sub ReadStats (statFile$)
 
     ' *** READ IN TEAM STATS ***
     If Not _FileExists(diskPaths$(1) + statFile$) Then
-        Cls
-        Print "ERROR::: UNABLE TO LOCATE COMPILED STATS FILE"
+		Locate 10, 8
+		Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+		I$=GetKeyPress$
+		Call CSMsgBox("", 0, Pass)		
     Else
 
         PX = 0
@@ -144,7 +144,7 @@ Sub ReadStats (statFile$)
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #2
 		'# of games?
-        Input #2, lookyY%
+        Input #2, totalGames%
 
         For I = 1 To 100: Input #2, O%(I): Next I
         For I = 1 To 100: Input #2, O$(I): Next I
@@ -156,7 +156,7 @@ Sub ReadStats (statFile$)
         For I = 1 To 100: Input #2, SITE$(I): Next I
         Close #2
 
-        For I = 1 To lookyY%
+        For I = 1 To totalGames%
             If O%(I) > mergeT%(I) Then W% = W% + 1
             If O%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "H" Then HW% = HW% + 1
             If O%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "V" Then VW% = VW% + 1
@@ -199,7 +199,7 @@ Sub ReadStats (statFile$)
         Locate 2, 1
         Color , 0
 
-        For I = 1 To lookyY%
+        For I = 1 To totalGames%
             Color 7
 
             If I / 2 = Int(I / 2) Then Color 15
@@ -255,7 +255,7 @@ Sub ReadStats (statFile$)
                 Case "d", "D":
                     Kill diskPaths$(1) + statFile$
                     Kill diskPaths$(1) + statFile$ + "S"
-                Case "p", "P": Call PrintTeamStatSummary(B$, lookyY%)
+                Case "p", "P": Call PrintTeamStatSummary(B$, totalGames%)
             End Select
 
         Loop Until I$ = Chr$(0) + "Q" Or I$ = Chr$(27)
@@ -337,14 +337,14 @@ Sub PlayerStats (statFile$, B$)
     165 Next
 
     Color 12: Print: Print "TOTALS";: Locate , 15
-    Print Using "##"; lookyY%;
+    Print Using "##"; totalGames%;
     Locate , 28: Print Using "#### ####"; Z!(2); Z!(1);
     If Z!(1) <> 0 Then statPCT! = Z!(2) / Z!(1): Locate , 38: Print Using ".###"; statPCT!;
     Locate , 44: Print Using "#### ####"; Z!(13); Z!(14);
     If Z!(14) <> 0 Then statPCT! = Z!(13) / Z!(14): Locate , 54: Print Using ".###"; statPCT!;
     Locate , 60: Print Using "#### ####"; Z!(4); Z!(3);
     If Z!(3) <> 0 Then statPCT! = Z!(4) / Z!(3): Locate , 70: Print Using ".###"; statPCT!
-    Color 12: Locate , 15: Print Using "##"; lookyY%;
+    Color 12: Locate , 15: Print Using "##"; totalGames%;
     Locate , 28: Print Using "#### ####"; Z1!(2); Z1!(1);
     If Z1!(1) <> 0 Then statPCT! = Z1!(2) / Z1!(1): Locate , 38: Print Using ".###"; statPCT!;
     Locate , 44: Print Using "#### ####"; Z1!(13); Z1!(14);
@@ -358,7 +358,7 @@ Sub PlayerStats (statFile$, B$)
         Select Case I$
             Case Chr$(0) + "Q"
                 CP% = 14
-                Call TeamStats(statFile$, CP%, lookyY%, B$)
+                Call TeamStats(statFile$, CP%, totalGames%, B$)
             Case Chr$(0) + "I"
                 Cls
                 Call ViewStatSummary(statFile$)
@@ -373,7 +373,7 @@ Sub PlayerStats (statFile$, B$)
                 CP% = CP% - 1: If CP% < 1 Then CP% = 12
                 Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
             Case "p", "P"
-                Call PrintTeamStatSummary(B$, lookyY%)
+                Call PrintTeamStatSummary(B$, totalGames%)
             Case Chr$(13)
                 'SORT BASED ON CATEGORY
                 If CP% = 1 Then SG% = 0
@@ -421,13 +421,11 @@ Sub PlayerStats (statFile$, B$)
 End Sub
 
 
-
-
 '----------------------------------------
 '       TeamStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub TeamStats (statFile$, CP%, lookyY%, teamName$)
+Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
 
     Shared lookyA()
 
@@ -477,14 +475,14 @@ Sub TeamStats (statFile$, CP%, lookyY%, teamName$)
 
     Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
     Color 12: Print "TOTALS";
-    statVal! = Z!(10) / lookyY%
+    statVal! = Z!(10) / totalGames%
     Locate , 14: Print Using "##### ###.#"; Z!(10); statVal!;
-    statVal! = Z!(5) / lookyY%
+    statVal! = Z!(5) / totalGames%
     Locate , 29: Print Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); statVal!;
     Print Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
-    statVal = Z!(10) / lookyY%
+    statVal = Z!(10) / totalGames%
     Locate , 14: Print Using "##### ###.#"; Z1!(10); statVal;
-    statVal! = Z1!(5) / lookyY%
+    statVal! = Z1!(5) / totalGames%
     Locate , 29: Print Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); statVal!;
     Print Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11): Color 3
 
@@ -546,7 +544,7 @@ Sub TeamStats (statFile$, CP%, lookyY%, teamName$)
                 'GoTo 235
                 'Loop back to the beginning
             Case "p", "P"
-                Call PrintTeamStatSummary(B$, lookyY%)
+                Call PrintTeamStatSummary(B$, totalGames%)
         End Select
 
     Loop Until I$ = Chr$(27)
@@ -651,7 +649,7 @@ Sub ViewStatSummary (statFile$)
                 Kill diskPaths$(1) + statFile$
                 Kill diskPaths$(1) + statFile$ + "S"
             Case "p", "P":
-                Call PrintTeamStatSummary(B$, lookyY%)
+                Call PrintTeamStatSummary(B$, totalGames%)
         End Select
 
     Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q"
@@ -663,7 +661,7 @@ End Sub
 '     PrintTeamStatSummary Subroutine
 '----------------------------------------
 '...explanation...
-Sub PrintTeamStatSummary (B$, lookyY%)
+Sub PrintTeamStatSummary (B$, totalGames%)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
     Shared L%, W%
@@ -682,12 +680,12 @@ Sub PrintTeamStatSummary (B$, lookyY%)
         LPrint Tab(5); Left$(O$(I), 14);
         LPrint Tab(20); Using "###"; mergeT%(I);
         LPrint Tab(24); homeTeam$(I); Tab(27);
-        If I + 28 <= lookyY% Then
+        If I + 28 <= totalGames% Then
             LPrint Using "###"; O%(I + 28);
             LPrint Tab(31); Left$(O$(I + 28), 14);
             LPrint Tab(46); Using "###"; mergeT%(I + 28);
             LPrint Tab(50); homeTeam$(I + 28); Tab(53);
-            If I + 56 <= lookyY% Then
+            If I + 56 <= totalGames% Then
                 LPrint Using "###"; O%(I + 56);
                 LPrint Tab(57); Left$(O$(I + 56), 14);
                 LPrint Tab(72); Using "###"; mergeT%(I + 56);
@@ -738,14 +736,14 @@ Sub PrintTeamStatSummary (B$, lookyY%)
     533 Next
 
     LPrint: LPrint "TOTALS"; Tab(15);
-    LPrint Using "##"; lookyY%;
+    LPrint Using "##"; totalGames%;
     LPrint Tab(28); Using "#### ####"; Z!(2); Z!(1);
     If Z!(1) <> 0 Then statPCT! = Z!(2) / Z!(1): LPrint Tab(38); Using ".###"; statPCT!;
     LPrint Tab(44); Using "#### ####"; Z!(13); Z!(14);
     If Z!(14) <> 0 Then statPCT! = Z!(13) / Z!(14): LPrint Tab(54); Using ".###"; statPCT!;
     LPrint Tab(60); Using "#### ####"; Z!(4); Z!(3);
     If Z!(3) <> 0 Then statPCT! = Z!(4) / Z!(3): LPrint Tab(70); Using ".###"; statPCT!
-    LPrint Tab(15); Using "##"; lookyY%;
+    LPrint Tab(15); Using "##"; totalGames%;
     LPrint Tab(28); Using "#### ####"; Z1!(2); Z1!(1);
     If Z1!(1) <> 0 Then statPCT! = Z1!(2) / Z1!(1): LPrint Tab(38); Using ".###"; statPCT!;
     LPrint Tab(44); Using "#### ####"; Z1!(13); Z1!(14);
@@ -768,11 +766,11 @@ Sub PrintTeamStatSummary (B$, lookyY%)
 
     LPrint "TEAM";: LPrint Tab(39); Using "####"; Z!(15)
     LPrint: LPrint "TOTALS";
-    LPrint Tab(14); Using "##### ###.#"; Z!(10); Z!(10) / lookyY%;
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / lookyY%;
+    LPrint Tab(14); Using "##### ###.#"; Z!(10); Z!(10) / totalGames%;
+    LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / totalGames%;
     LPrint Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
-    LPrint Tab(14); Using "##### ###.#"; Z1!(10); Z1!(10) / lookyY%;
-    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / lookyY%;
+    LPrint Tab(14); Using "##### ###.#"; Z1!(10); Z1!(10) / totalGames%;
+    LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / totalGames%;
     LPrint Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
     LPrint Chr$(12)
 
@@ -787,7 +785,7 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
 
     Shared L%(), mergeT%()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -804,23 +802,27 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% <> 27 Then
 
-    T1 = teamIndex%(SELECTION%)
+		T1 = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
-    Get #1, T1
+		Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+		For I = 0 To 13
+			Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+		Next
+		Get #1, T1
 
-    SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
-    For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
-    For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
-    Close 1
+		SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
+		For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+		For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
+		Close 1
+
+	Else
+		BO% = 1
+	End If
 
 End Sub

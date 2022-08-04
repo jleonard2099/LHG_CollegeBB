@@ -2,7 +2,7 @@ DEFINT A-Z
 DECLARE FUNCTION EXIST% (FILENAME$)
 DECLARE SUB DRAWBOX ()
 DECLARE SUB SHOTSTRING ()
-DECLARE SUB MAMenu (BYVAL Address%, SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
+DECLARE SUB MAMenu (BYVAL Address%, Selection%, Start%, Count%, ExitCode%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%)
   DIM NG%(18), NG1%(18), AP%(2), HF%(1, 6), DP(2, 4), FA%(1, 13), FY%(2), OF%(1), DT%(1), TM%(1, 13)
   DIM D8(4, 3), PR%(1, 1), PC%(1), CZ%(1), OB$(9), DB$(14)
   DIM R$(14), p$(1), X$(3), C7$(2), TS$(1), CM$(1), U5$(3), LC$(2), TB$(1)
@@ -985,7 +985,7 @@ SUB PRELOAD ()
 END SUB
 
 SUB TEAMSELECT ()
-1102 SELECTION% = 1
+1102 Selection% = 1
      Count% = NT
      Start% = 1
      FileColr% = 79
@@ -1001,15 +1001,15 @@ SUB TEAMSELECT ()
      PRINT "-SELECT NEW ID  PGDN  PGUP  "; : COLOR 14
      PRINT "ENTER"; : COLOR 15: PRINT "-SELECTS TEAM";
      CALL ShowCursor
-20   MAMenu VARPTR(V$(1)), SELECTION%, Start%, Count%, EXITCODE%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
+20   MAMenu VARPTR(V$(1)), Selection%, Start%, Count%, ExitCode%, FileColr%, HiLiteColr%, Rows%, Columns%, Spacing%, Row%, Column%
      CALL HideCursor
-     IF EXITCODE% = 27 THEN BO% = 1: GOTO 21
-     IF EXITCODE% = -71 THEN Start% = 1: EXITCODE% = 3: SELECTION% = 1: GOTO 20
-     IF EXITCODE% = -79 THEN Start% = NT: EXITCODE% = 3: SELECTION% = NT: GOTO 20
-     IF EXITCODE% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
-     IF EXITCODE% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
-     IF EXITCODE% = -81 OR EXITCODE% = -73 THEN EXITCODE% = 3: SELECTION% = Start%: GOTO 20
-     I1 = V%(SELECTION%)
+     IF ExitCode% = 27 THEN BO% = 1: GOTO 21
+     IF ExitCode% = -71 THEN Start% = 1: ExitCode% = 3: Selection% = 1: GOTO 20
+     IF ExitCode% = -79 THEN Start% = NT: ExitCode% = 3: Selection% = NT: GOTO 20
+     IF ExitCode% = -73 THEN Start% = Start% - 80: IF Start% < 1 THEN Start% = 1
+     IF ExitCode% = -81 THEN Start% = Start% + 80: IF Start% > NT THEN Start% = NT
+     IF ExitCode% = -81 OR ExitCode% = -73 THEN ExitCode% = 3: Selection% = Start%: GOTO 20
+     I1 = V%(Selection%)
      CALL GETATEAM (I1,YN$)
 21   END SUB
 

@@ -13,10 +13,10 @@ Sub HD2HDCON ()
         600 Call TITLE
         menuChoices$(1) = "VIEW TEAM VS CONFERENCE"
         menuChoices$(2) = "RETURN TO MAIN  MENU   "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 2
         Start% = 1
-        EXITCODE% = 2
+        ExitCode% = 2
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -26,18 +26,18 @@ Sub HD2HDCON ()
         Call box0(7, 24, 10, 48, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1: Call TeamVsConf
                 Case 2: Cls
             End Select
         End If
 
-    Loop Until SELECTION% = 2 Or EXITCODE% = 27
+    Loop Until Selection% = 2 Or ExitCode% = 27
 
 End Sub
 
@@ -66,7 +66,6 @@ Sub TeamVsConf ()
     Shared R1(), R2(), R3(), R4()
     Shared TAL(), TAW(), THL(), THW()
     Shared TR1(), TR2(), TR3(), TR4()
-
 
     RDD = 0
     ER = 0
@@ -187,7 +186,7 @@ Sub TeamVsConf ()
         Locate , 28
         Color 14
         Print "SELECT LEAGUE": Color 15
-        SELECTION% = 1
+        Selection% = 1
         Start% = 1
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -202,13 +201,13 @@ Sub TeamVsConf ()
         Print "-SELECTS LEAGUE";
 
         _MouseShow "DEFAULT"
-        MAMenu leagueFiles$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% = 27 Then Exit Sub
         '-- what is this???
 
-        targetFile$ = leagueFiles$(SELECTION%)
+        targetFile$ = leagueFiles$(Selection%)
         Locate 2, 33: Print targetFile$
         Locate , 33: Print "ANY CHANGE (YN)";
         Color 15, 0
@@ -254,7 +253,7 @@ Sub TeamVsConf ()
         Input #1, hd2hdZ2$(X)
     Next
 
-    NT = 30
+    NTMS = 30
     Close 1
 
     Cls
@@ -552,7 +551,7 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
 
     Shared L%(), T%()
 
-    SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -569,34 +568,34 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If ExitCode% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% <> 27 Then
 
-    T1 = teamIndex%(SELECTION%)
+		T1 = teamIndex%(Selection%)
 
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
 
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
+		For I = 0 To 13
+			Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+		Next
 
-    Get #1, T1
-    teamName$ = Q$(0)
+		Get #1, T1
+		teamName$ = RTrim$(Q$(0))
 
-    'This is an easy Do / Until loop
-    9005 If Right$(teamName$, 1) = " " Then teamName$ = Left$(teamName$, Len(teamName$) - 1): GoTo 9005
-
-    SP = CVI(Q$(1))
-    DA = CVI(Q$(2))
-    V1% = CVI(Q$(3))
-    V2% = CVI(Q$(4))
-    For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
-    For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
-    Close 1
+		SP = CVI(Q$(1))
+		DA = CVI(Q$(2))
+		V1% = CVI(Q$(3))
+		V2% = CVI(Q$(4))
+		For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+		For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+		Close 1
+	Else
+		BO% = 1
+	End If
 
 End Sub
 

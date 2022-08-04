@@ -90,7 +90,7 @@ Sub COMPNAT ()
                 Locate , 28
                 Color 14
                 Print "SELECT LEAGUE TO UPDATE": Color 15
-                SELECTION% = 1
+                Selection% = 1
                 START% = 1
                 FileFGColr% = 15: FileBGColr% = 1
                 HiLiteFGColr% = 0: HiLiteBGColr% = 7
@@ -105,12 +105,12 @@ Sub COMPNAT ()
                 Print "-SELECTS LEAGUE";
 
                 _MouseShow "DEFAULT"
-                MAMenu conferenceFiles$(), SELECTION%, START%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu conferenceFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                If EXITCODE% = 27 Then Exit Sub
+                If ExitCode% = 27 Then Exit Sub
 
-                targetFile$ = conferenceFiles$(SELECTION%)
+                targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0
@@ -451,7 +451,7 @@ Sub COMPNAT ()
         End If
 
         '...Until we press ESC
-    Loop Until EXITCODE% = 27 Or Count% = 0 Or I$ = "N"
+    Loop Until ExitCode% = 27 Or Count% = 0 Or I$ = "N"
 
     99 '
 

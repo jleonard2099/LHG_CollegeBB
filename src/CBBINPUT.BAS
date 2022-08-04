@@ -21,14 +21,14 @@ Sub CBBINPUT ()
         Color 14: Print "(1) ";: Color 15: Print "HIGH SCHOOL BASKETBALL"
 
         I$ = GetKeyPress$
-        If Not (I$ = Chr$(27)) Then
+        If I$ <> Chr$(27) Then
             H = Val(I$)
         End If
     
 	Loop Until I$ = Chr$(27) Or I$ = "0" Or I$ = "1"
 
 
-    If Not (I$ = Chr$(27)) Then
+    If I$ <> Chr$(27) Then
         'Show league data
         'H = 0, College BB
         'H = 1, High School BB

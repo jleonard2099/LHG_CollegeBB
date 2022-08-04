@@ -36,10 +36,10 @@ Sub DRAFT ()
         menuChoices$(1) = "DRAFT A NEW TEAM         "
         menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
         menuChoices$(3) = "EXIT TO MAIN MENU        "
-        SELECTION% = 1
+        Selection% = 1
         Count% = 3
         Start% = 1
-        EXITCODE% = 3
+        ExitCode% = 3
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
@@ -48,13 +48,13 @@ Sub DRAFT ()
 
         Call box0(7, 24, 11, 50, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
-        If Not (EXITCODE% = 27) Then
-            Select Case SELECTION%
+        If ExitCode% <> 27 Then
+            Select Case Selection%
                 Case 1:
                     DNT% = 0
                     Call DraftNewTeam(DNT%)
@@ -70,7 +70,7 @@ Sub DRAFT ()
             End Select
         End If
 
-    Loop Until SELECTION% = 3 Or EXITCODE% = 27
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
     '1 Exit Sub
 End Sub
@@ -134,7 +134,7 @@ Sub DraftNewTeam (draftNew%)
     If draftT%(0, 6) > 6 Then draftT%(0, 6) = 6
     C1 = 0
 
-    Call DoTheDraft(draftNew%, teamIndex%)
+    Call DoTheDraft(draftNew%, teamIdx%)
 
 End Sub
 
@@ -508,7 +508,7 @@ Sub SelectTeam_DRAFT (numberTeams)
     Shared draftL%(), draftT%(), draftT1%()
     Shared TR%(), V1%(), V2%()
 
-    1102 SELECTION% = 1
+    Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -525,97 +525,105 @@ Sub SelectTeam_DRAFT (numberTeams)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% <> 27 Then
 
-    D = teamIndex%(SELECTION%)
-    9000 Open diskPaths$(0) + "BASK." + draftYN$(1) For Random As #1 Len = 655
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
-    Get #1, D
-    draftT$(1) = Q$(0)
+		D = teamIndex%(Selection%)
+		Open diskPaths$(0) + "BASK." + draftYN$(1) For Random As #1 Len = 655
+		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+		For I = 0 To 13
+			Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+		Next
+		Get #1, D
+		draftT$(1) = RTrim$(Q$(0))
 
-    9005 If Right$(draftT$(1), 1) = " " Then draftT$(1) = Left$(draftT$(1), Len(draftT$(1)) - 1): GoTo 9005
+		SP(1) = CVI(Q$(1)): DA(1) = CVI(Q$(2))
+		V1%(1) = CVI(Q$(3)): V2%(1) = CVI(Q$(4))
+		For I = 0 To 4: draftL%(1, I) = CVI(Q$(I + 5)): Next
+		For I = 0 To 9: draftT%(1, I) = CVI(Q$(I + 10)): Next
+		For I = 0 To 13
+			draftA$(1, I) = RTrim$(Q$(I * 15 + 20))
 
-    SP(1) = CVI(Q$(1)): DA(1) = CVI(Q$(2))
-    V1%(1) = CVI(Q$(3)): V2%(1) = CVI(Q$(4))
-    For I = 0 To 4: draftL%(1, I) = CVI(Q$(I + 5)): Next
-    For I = 0 To 9: draftT%(1, I) = CVI(Q$(I + 10)): Next
-    For I = 0 To 13
-        draftA$(1, I) = Q$(I * 15 + 20)
+			For I1 = 0 To 6
+				draftA(1, I, I1) = CVI(Q$(I * 15 + I1 + 21))
+				draftX(1, I, I1) = CVI(Q$(I * 15 + I1 + 28))
+			Next
+		Next
+		Close 1
 
-        9007 If Right$(draftA$(1, I), 1) = " " Then draftA$(1, I) = Left$(draftA$(1, I), Len(draftA$(1, I)) - 1): GoTo 9007
-        For I1 = 0 To 6
-            draftA(1, I, I1) = CVI(Q$(I * 15 + I1 + 21))
-            draftX(1, I, I1) = CVI(Q$(I * 15 + I1 + 28))
-    Next: Next
-    Close 1
+		If V2%(1) > 20 Then V2%(1) = 100 - V2%(1)
+		If V1%(1) > 20 Then V1%(1) = 100 - V1%(1)
+		If draftL%(1, 0) > 20 Then draftL%(1, 0) = 100 - draftL%(1, 0)
+		If draftL%(1, 2) > 20 Then draftL%(1, 2) = 100 - draftL%(1, 2)
+		If draftL%(1, 3) > 20 Then draftL%(1, 3) = 100 - draftL%(1, 3)
 
-    If V2%(1) > 20 Then V2%(1) = 100 - V2%(1)
-    If V1%(1) > 20 Then V1%(1) = 100 - V1%(1)
-    If draftL%(1, 0) > 20 Then draftL%(1, 0) = 100 - draftL%(1, 0)
-    If draftL%(1, 2) > 20 Then draftL%(1, 2) = 100 - draftL%(1, 2)
-    If draftL%(1, 3) > 20 Then draftL%(1, 3) = 100 - draftL%(1, 3)
+		Open diskPaths$(0) + "COLBBTMS." + draftYN$(1) For Random As #1 Len = 566
+		Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+		For I = 0 To 13
+			Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+			Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+		Next
+		Get #1, D
 
-    Open diskPaths$(0) + "COLBBTMS." + draftYN$(1) For Random As #1 Len = 566
-    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-    For I = 0 To 13
-        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
-    Next
-    Get #1, D
+		C$(1) = Q$(0)
+		S$(1) = Q$(1)
+		A1$(1) = Q$(2)
+		ATT(1) = CVL(Q$(3))
 
-    C$(1) = Q$(0)
-    S$(1) = Q$(1)
-    A1$(1) = Q$(2)
-    ATT(1) = CVL(Q$(3))
+		For I = 0 To 13
+			draftDF(1, I) = CVI(Q$(I * 16 + 4))
+			draftP$(1, I) = Q$(I * 16 + 5)
+			For I1 = 0 To 13
+				draftRS(1, I, I1) = CVI(Q$(I * 16 + I1 + 6))
+			Next
+		Next
 
-    For I = 0 To 13
-        draftDF(1, I) = CVI(Q$(I * 16 + 4))
-        draftP$(1, I) = Q$(I * 16 + 5)
-        For I1 = 0 To 13
-            draftRS(1, I, I1) = CVI(Q$(I * 16 + I1 + 6))
-        Next
-    Next
+		For I = 0 To 20
+			draftT1%(1, I) = CVI(Q$(228 + I))
+		Next
+		
+		CK(1) = CVI(Q$(249))
 
-    For I = 0 To 20
-        draftT1%(1, I) = CVI(Q$(228 + I))
-    Next
-    CK(1) = CVI(Q$(249))
-    Close 1
+		Close 1
 
-    For I = 0 To 13
-        TR%(1, I, 1) = SP(1)
-        TR%(1, I, 2) = DA(1)
-        TR%(1, I, 3) = V2%(1)
-        TR%(1, I, 4) = V1%(1)
-        TR%(1, I, 5) = draftL%(1, 0)
-        TR%(1, I, 6) = draftL%(1, 2)
-        TR%(1, I, 7) = draftL%(1, 3)
-        TR%(1, I, 8) = 99
-        TR%(1, I, 9) = draftT%(1, 3)
-        TR%(1, I, 10) = draftT%(1, 4)
-        TR%(1, I, 11) = draftT%(1, 5)
-        TR%(1, I, 12) = draftT%(1, 6)
-    Next
-    If CK(1) <> 999 Then
-        C$(1) = "": S$(1) = "": A1$(1) = "": ATT(1) = 0
-        For I = 0 To 13: draftDF(1, I) = 5: draftP$(1, I) = ""
-            For I1 = 0 To 13
-                draftRS(1, I, I1) = 0
-            Next
-        Next
-        For I = 0 To 20: draftT1%(1, I) = 0: Next
-    End If
+		For I = 0 To 13
+			TR%(1, I, 1) = SP(1)
+			TR%(1, I, 2) = DA(1)
+			TR%(1, I, 3) = V2%(1)
+			TR%(1, I, 4) = V1%(1)
+			TR%(1, I, 5) = draftL%(1, 0)
+			TR%(1, I, 6) = draftL%(1, 2)
+			TR%(1, I, 7) = draftL%(1, 3)
+			TR%(1, I, 8) = 99
+			TR%(1, I, 9) = draftT%(1, 3)
+			TR%(1, I, 10) = draftT%(1, 4)
+			TR%(1, I, 11) = draftT%(1, 5)
+			TR%(1, I, 12) = draftT%(1, 6)
+		Next
 
-    '9010 Return
+		If CK(1) <> 999 Then
+
+			C$(1) = ""
+			S$(1) = ""
+			A1$(1) = ""
+			ATT(1) = 0
+
+			For I = 0 To 13: draftDF(1, I) = 5: draftP$(1, I) = ""
+				For I1 = 0 To 13
+					draftRS(1, I, I1) = 0
+				Next
+			Next
+
+			For I = 0 To 20: draftT1%(1, I) = 0: Next
+
+		End If 'Done comparing to 999
+	Else
+		BO% = 1
+	End If
 
 End Sub
-
 
 
 '----------------------------------------
@@ -644,7 +652,7 @@ Sub MoreTeam (teamPosition%)
     Close 1
     numberTeams = Y / 655
 
-    1202 SELECTION% = 1
+    1202 Selection% = 1
     Count% = numberTeams
     Start% = 1
     FileFGColr% = 15: FileBGColr% = 4
@@ -661,12 +669,12 @@ Sub MoreTeam (teamPosition%)
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
-    MAMenu teamNames$(), SELECTION%, Start%, Count%, EXITCODE%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If EXITCODE% = 27 Then BO% = 1: Exit Sub
+    If ExitCode% = 27 Then BO% = 1: Exit Sub
 
-    teamPosition% = teamIndex%(SELECTION%)
+    teamPosition% = teamIndex%(Selection%)
 
     9100 Open diskPaths$(0) + "BASK." + draftYN$(0) For Random As #1 Len = 655
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
@@ -674,21 +682,20 @@ Sub MoreTeam (teamPosition%)
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
     Get #1, teamPosition%
-    draftT$(0) = Q$(0)
+    draftT$(0) = RTrim$(Q$(0))
 
-    9105 If Right$(draftT$(0), 1) = " " Then draftT$(0) = Left$(draftT$(0), Len(draftT$(0)) - 1): GoTo 9105
     SP(0) = CVI(Q$(1)): DA(0) = CVI(Q$(2))
     V1%(0) = CVI(Q$(3)): V2%(0) = CVI(Q$(4))
     For I = 0 To 4: draftL%(0, I) = CVI(Q$(I + 5)): Next
     For I = 0 To 9: draftT%(0, I) = CVI(Q$(I + 10)): Next
     For I = 0 To 13
-        draftA$(0, I) = Q$(I * 15 + 20)
+        draftA$(0, I) = RTrim$(Q$(I * 15 + 20))
 
-        9107 If Right$(draftA$(0, I), 1) = " " Then draftA$(0, I) = Left$(draftA$(0, I), Len(draftA$(0, I)) - 1): GoTo 9107
         For I1 = 0 To 6
             draftA(0, I, I1) = CVI(Q$(I * 15 + I1 + 21))
             draftX(0, I, I1) = CVI(Q$(I * 15 + I1 + 28))
-    Next: Next
+		Next
+	Next
     Close 1
 
     If V1%(0) > 20 Then V1%(0) = 100 - V1%(0)
