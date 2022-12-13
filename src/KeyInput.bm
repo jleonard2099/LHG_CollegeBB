@@ -13,3 +13,4 @@ Function GetKeyCode% Static
     Loop Until k$ <> ""
     GetKeyCode% = CVI(k$ + Chr$(0))
 End Function
+

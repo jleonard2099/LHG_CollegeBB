@@ -13,12 +13,12 @@ Sub CREATCON ()
 
     Shared T%()
 
-    'Dim A(1, 6), A1(1, 6), A2(1, 6), A3(1, 6), A4(1, 5), A5(1, 5), A6(1, 2), A7(1, 2), A8(1, 2), A9(1, 2)
+    'Dim A(1, 6), A1!(1, 6), A2(1, 6), A3(1, 6), A4(1, 5), A5(1, 5), A6(1, 2), A7(1, 2), A8(1, 2), A9(1, 2)
     'Dim B1(1, 2), B3(1, 2), B6(11, 7), Q6%(1)
-    'Dim O1(30), N$(25, 2), NM$(10, 6, 3), O2(30), O3(30), O4(30)
+    'Dim O1!(30), N$(25, 2), NM$(10, 6, 3), O2!(30), O3!(30), O4!(30)
     'Dim B2(1, 2), K3(1, 6), R9%(1)
     'Dim J6(1)
-    'Dim S(1, 10), O$(16), D3%(5, 6), P$(2), P(2), F(4), F1(4)
+    'Dim S!(1, 10), O$(16), D3%(5, 6), P$(2), P(2), F(4), F1(4)
     'Dim S1%(7, 6, 4)
     'Dim W6(1, 1)
     'Dim A$(1), A1$(1, 6), A2$(1, 5), A3$(1, 2), A4$(1, 2), A5$(1, 2), A6$(1, 2)
@@ -243,7 +243,9 @@ Sub CREATCON ()
                                 Locate , 12: Print
                                 Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
                                 Locate 7, 27: Input NY$
-                                If NY$ <> "" Then
+								If NY$ = "" And YN$ <> "" Then 
+									Call SelectTeam_CREATCON(YN$, NTMS, A$)
+                                Else
                                     YN$ = NY$
                                     Erase teamNames$
                                     NTMS = 0
@@ -295,7 +297,6 @@ Sub CREATCON ()
 
 End Sub
 
-
 '----------------------------------------
 '       SelectFile_CREATCON Routine
 '----------------------------------------
@@ -305,23 +306,26 @@ Sub SelectFile_CREATCON (targetFile$)
     Do
         'Display list of files...
 
-        4000 Spec$ = diskPaths$(1) + "*.LIB"
+        Spec$ = diskPaths$(1) + "*.LIB"
         null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
         Count% = DirCount%
 
         If Count% = 0 Then
-            4500 Locate 10, 8
-            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Locate 10, 8
+            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
         Else
 
-            ReDim leagueFiles$(0 To Count%)
+            ReDim conferenceFiles$(0 To Count%)
+
             For X = 1 To Count%
-                leagueFiles$(X) = Space$(12)
+                conferenceFiles$(X) = Space$(12)
             Next
-            leagueFiles$(0) = Spec$
-            Call ReadFile(leagueFiles$())
+
+            conferenceFiles$(0) = Spec$
+
+            Call ReadFile(conferenceFiles$())
 
             Do
                 Cls
@@ -342,23 +346,25 @@ Sub SelectFile_CREATCON (targetFile$)
                 Locate 25, 1
                 Color 14
                 Print "ENTER";: Color 15
-                Print "-SELECTS TEAM";
+                Print "-SELECTS CONFERENCE ";
 
                 _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
                 If ExitCode% <> 27 Then
-                    targetFile$ = leagueFiles$(Selection%)
+                    targetFile$ = conferenceFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
                     Locate , 33: Print "ANY CHANGE (YN)";
                     Color 15, 0
                     I$ = GetKeyPress$
                 End If
 
-            Loop Until UCase$(I$) = "N"
+            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-            targetFile$ = RTrim$(targetFile$)
+			If ExitCode% <> 27 Then
+				targetFile$ = RTrim$(targetFile$)
+			End If
 
         End If
 
@@ -366,7 +372,6 @@ Sub SelectFile_CREATCON (targetFile$)
     Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
 End Sub
-
 
 '----------------------------------------
 '       SelectTeam_CREATCON Routine

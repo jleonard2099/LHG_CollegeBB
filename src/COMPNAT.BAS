@@ -14,16 +14,16 @@ Sub COMPNAT ()
     ReDim PT(1200, 4)
     ReDim PT$(1200)
 
-    Shared BRC(), DL!()
-    Shared LD(), NDL!(), NLD(), NOL!(), OL!()
-    Shared O1(), O2(), O3(), O4(), O5(), O6()
+    Shared BRC!(), DL!()
+    Shared LD!(), NDL!(), NLD!(), NOL!(), OL!()
+    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared TRC!(), TRC1!()
 
-	Shared DT!(), OT!()
+    Shared DT!(), OT!()
 
     Shared BRC$(), compnatH$(), DL$(), O$(), OL$()
     Shared NDL$(), NZ0$(), NZ1$(), NZ3$()
-	Shared recconTRC$(), recconTRC1$()
+    Shared recconTRC$(), recconTRC1$()
     Shared Z0$(), Z1$(), Z3$()
 
     Shared O%()
@@ -32,7 +32,7 @@ Sub COMPNAT ()
 
     For X = 1 To 250
         For Y = 1 To 2
-            NLD(X, Y) = 0
+            NLD!(X, Y) = 0
         Next Y
     Next X
 
@@ -45,7 +45,7 @@ Sub COMPNAT ()
 
         Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
         For I = 1 To 25
-            Input #1, BRC(I)
+            Input #1, BRC!(I)
             Input #1, BRC$(I, 0)
             Input #1, BRC$(I, 1)
         Next
@@ -62,34 +62,32 @@ Sub COMPNAT ()
         Close 1
     End If
 
-
     Do
         'Display list of files...
 
-        4003 Spec$ = diskPaths$(1) + "*.CON"
+        Spec$ = diskPaths$(1) + "*.CON"
         Count% = FCount%(Spec$)
         If Count% = 0 Then
-            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
         Else
 
-            ReDim conferenceFiles$(0 To Count%)
+            ReDim organizationFiles$(0 To Count%)
             For X = 1 To Count%
-                conferenceFiles$(X) = Space$(12)
+                organizationFiles$(X) = Space$(12)
             Next
-            conferenceFiles$(0) = Spec$
-            Call ReadFile(conferenceFiles$())
-            'CALL SortStr(VARPTR(conferenceFiles$1)), Count%, 0)
+            organizationFiles$(0) = Spec$
+            Call ReadFile(organizationFiles$())
 
             Do
 
-                1310 Cls
+                Cls
                 Color , 1
                 Cls
                 Locate , 28
                 Color 14
-                Print "SELECT LEAGUE TO UPDATE": Color 15
+                Print "SELECT ORGANIZATION TO UPDATE": Color 15
                 Selection% = 1
                 START% = 1
                 FileFGColr% = 15: FileBGColr% = 1
@@ -102,362 +100,386 @@ Sub COMPNAT ()
                 Locate 25, 1
                 Color 14
                 Print "ENTER";: Color 15
-                Print "-SELECTS LEAGUE";
+                Print "-SELECTS ORGANIZATION";
 
                 _MouseShow "DEFAULT"
-                MAMenu conferenceFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                MAMenu organizationFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                 _MouseHide
 
-                If ExitCode% = 27 Then Exit Sub
-
-                targetFile$ = conferenceFiles$(Selection%)
-                Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                3910 I$ = GetKeyPress$
-                'If UCase$(I$) = "Y" Then 1310
+                If ExitCode% <> 27 Then
+                    targetFile$ = organizationFiles$(Selection%)
+                    Locate 2, 33: Print targetFile$
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Color 15, 0
+                    3910 I$ = GetKeyPress$
+                End If
             Loop Until UCase$(I$) = "N"
 
-            3911 targetFile$ = RTrim$(targetFile$)
-            WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-            LH$ = WE$
-            Cls: Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-            Color 15, 0
-            3912 I$ = GetKeyPress$
-            If UCase$(I$) = "Y" Then UP$ = "Y"
+            If ExitCode% <> 27 Then
 
-            Open diskPaths$(1) + WE$ + ".CON" For Input As #2
-            Input #2, X$
-            For I = 1 To 40
-                Input #2, CN$(I)
-            Next
-            Close 2
+                3911 targetFile$ = RTrim$(targetFile$)
+                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+                LH$ = WE$
+                Cls: Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+                Color 15, 0
+                3912 I$ = GetKeyPress$
+                If UCase$(I$) = "Y" Then UP$ = "Y"
 
-            For X = 1 To 40
-                NDL!(X, 19) = 9999
-            Next
+                Open diskPaths$(1) + WE$ + ".CON" For Input As #2
+                Input #2, X$
+                For I = 1 To 40
+                    Input #2, CN$(I)
+                Next
+                Close 2
 
-            For NC = 1 To 40
-                If CN$(NC) = "XXX" Then 90
+                For X = 1 To 40
+                    NDL!(X, 19) = 9999
+                Next
+
+                For NC = 1 To 40
+                    If CN$(NC) <> "XXX" Then
+                        Cls
+
+                        For X = 0 To 40
+                            OL$(X) = ""
+                            DL$(X) = ""
+                            For X1 = 0 To 20
+                                DL!(X, X1) = 0
+                                OL!(X, X1) = 0
+                            Next
+                        Next
+
+                        For X = 1 To 40
+                            DL!(X, 19) = 9999
+                        Next
+
+                        For X = 1 To 250
+                            Z0$(X) = "": Z3$(X) = ""
+                            For X1 = 0 To 2
+                                LD!(X, X1) = 0
+                            Next
+                        Next
+
+                        For X = 1 To 30
+                            Z1$(X) = "": O1!(X) = 0: O2!(X) = 0: O3!(X) = 0: O4!(X) = 0: O5!(X) = 0: O6!(X) = 0
+                        Next
+
+                        Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
+                        Input #2, LG$
+                        Input #2, D1$: Input #2, D2$
+                        For XW = 1 To 30
+                            Input #2, H1$(XW)
+                            Z1$(XW) = H1$(XW)
+                        Next
+                        Close 2
+
+                        For XW = 1 To 30
+                            replayWins% = 0
+                            replayLosses% = 0
+                            CW = 0
+                            CL = 0
+
+                            If H1$(XW) = Chr$(42) Then Exit For 'was Return; but where from?
+
+                            H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
+
+                            For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
+                            Next XX
+
+                            For XX = 12 To 14: If Mid$(H1$(XW), XX, 2) = "ST" Then Mid$(H1$(XW), 9, 1) = "_": Mid$(H1$(XW), 10, 2) = "ST"
+                            Next XX
+
+                            QQ = 8
+
+                            For XX = 11 To 4 Step -1
+                                If Mid$(H1$(XW), XX, 1) = "_" Then
+                                    QQ = XX - 4
+                                Else
+                                    Exit For
+                                End If
+                            Next XX
+
+                            G$ = H1$(XW): H1$(XW) = Right$(H1$(XW), Len(H1$(XW)) - 3): YR$ = Left$(G$, 2)
+                            If Len(H1$(XW)) > 8 Then H1$(XW) = Left$(H1$(XW), 8)
+                            H1$(XW) = H1$(XW) + "." + YR$
+
+                            If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
+
+                                Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
+
+                                Input #2, numGames%
+                                For I = 1 To 100: Input #2, O%(I): Next I
+                                For I = 1 To 100: Input #2, O$(I): Next I
+
+                                For I = 1 To 100: Input #2, compnatT%(I): Next I
+                                For I = 1 To 100: Input #2, compnatH$(I): Next I
+                                For I = 1 To 100
+                                    For I1 = 0 To 1
+                                        Input #2, AP%(I, I1)
+                                Next: Next
+                                For I = 1 To 100: Input #2, CRD(I): Next I
+                                For I = 1 To 100: Input #2, SITE$(I): Next I
+                                Close 2
+
+                                replayWins% = 0: replayLosses% = 0: CW = 0: CL = 0
+
+                                '804 GoSub 5500
+                                For I = 1 To numGames%
+
+                                    'GoSub 5600
+                                    For P = 4 To 11
+                                        If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
+                                    Next P
+
+                                    For P = 12 To 14
+                                        If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
+                                    Next P
+
+                                    QQ = 8
+                                    For P = 11 To 4 Step -1:
+                                        If Mid$(O$(I), P, 1) = "_" Then
+                                            QQ = P - 4
+                                        Else
+                                            Exit For
+                                        End If
+                                    Next P
+
+                                    f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
+                                    O$(I) = R$
+
+                                    For EC = 1 To 30
+                                        If O$(I) = H1$(EC) Then
+                                            skipper=1: Exit For
+                                        End If
+                                    Next EC
+
+                                    If skipper <> 1 Then
+                                        If O%(I) > compnatT%(I) Then replayWins% = replayWins% + 1
+                                        If O%(I) < compnatT%(I) Then replayLosses% = replayLosses% + 1
+                                    Else
+                                        If O%(I) > compnatT%(I) Then CW = CW + 1: replayWins% = replayWins% + 1
+
+                                        If O%(I) < compnatT%(I) Then CL = CL + 1: replayLosses% = replayLosses% + 1
+                                    End If
+
+                                    EC = 0
+                                Next I
+
+                                'STRENGTH OF SCHEDULE
+                                PW = 0: SS = 0
+
+                                For I = 1 To numGames%
+                                    SS = AP%(I, 1) + SS
+                                Next
+
+                                SS = SS / numGames%
+                                'INDIVIDUAL GAME POWER RATINGS
+                                GL = 0: PW = 0
+
+                                For I = 1 To numGames%
+                                    RAT = O%(I) - compnatT%(I) + AP%(I, 1)
+                                    If Left$(compnatH$(I), 1) = "H" Then RAT = RAT - 4.5
+                                    If Left$(compnatH$(I), 1) = "A" Then RAT = RAT + 4.5
+                                    PW = PW + RAT
+                                Next
+
+                                If numGames% <= 4 Then
+                                    GL = 5 - numGames%
+                                    PW = PW + GL * AP%(1, 0)
+                                End If
+
+                                PW = PW / (numGames% + GL)
+                                NRT = NRT + 1
+                                PT$(NRT) = H1$(XW)
+                                PT(NRT, 1) = PW
+                                PT(NRT, 2) = replayWins%
+                                PT(NRT, 3) = replayLosses%
+                                PT(NRT, 4) = SS
+
+                                Cls
+                                Locate 4, 5
+                                Color 14: Print "FINDING ";
+                                Color 15: Print H1$(XW);: Color 14
+                                Print " STATS            "
+
+                                L = Len(H1$(XW)): WT$ = ""
+                                For X = 1 To L
+                                    A = Asc(Mid$(H1$(XW), X, 1))
+                                WT$ = WT$ + Chr$(A): Next X
+                                For X = 1 To 30
+                                    If Z1$(X) = WT$ Then
+                                        If O1!(X) = replayWins% And O2!(X) = replayLosses% Then GoTo 948
+                                        O1!(X) = replayWins%
+                                        O2!(X) = replayLosses%
+                                        O4!(X) = CW
+                                        O5!(X) = CL
+                                        If O1!(X) + O2!(X) = 0 Then
+                                            O3!(X) = 0
+                                        Else
+                                            O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                        End If
+                                        If O4!(X) + O5!(X) = 0 Then
+                                            O6!(X) = 0
+                                        Else
+                                            O6!(X) = O4!(X) / (O4!(X) + O5!(X))
+                                        End If
+                                    End If
+                                Next X
+
+                                Call LoadStats(H1$(XW))
+
+                            End If 'Done checkin for stat file
+
+                            Call CheckTeam
+
+                            948 '
+                            If H1$(XW) <> "*" And _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
+                                Call CheckStatsLeaders(H1$(XW))
+                            End If
+
+                            Close 3
+                        Next
+
+                        AA = 1: ZZ = 15
+                        For X = AA To ZZ - 1
+                            For Y = X + 1 To ZZ
+                                DiffX = O1!(X) - O2!(X)
+                                DiffY = O1!(Y) - O2!(Y)
+                                If DiffX <= DiffY Then
+                                    If DiffX = DiffY Then
+                                        If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
+                                            Swap Z1$(X), Z1$(Y)
+                                            Swap O1!(X), O1!(Y)
+                                            Swap O2!(X), O2!(Y)
+                                            Swap O3!(X), O3!(Y)
+                                            Swap O4!(X), O4!(Y)
+                                            Swap O5!(X), O5!(Y)
+                                            Swap O6!(X), O6!(Y)
+                                        End If
+                                    End If
+                                End If
+                            Next Y
+                        Next X
+
+                        AA = 16: ZZ = 30
+
+                        For X = AA To ZZ - 1
+                            For Y = X + 1 To ZZ
+                                DiffX = O1!(X) - O2!(X)
+                                DiffY = O1!(Y) - O2!(Y)
+                                If DiffX <= DiffY Then
+                                    If DiffX = DiffY Then
+                                        If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
+                                            Swap Z1$(X), Z1$(Y)
+                                            Swap O1!(X), O1!(Y)
+                                            Swap O2!(X), O2!(Y)
+                                            Swap O3!(X), O3!(Y)
+                                            Swap O4!(X), O4!(Y)
+                                            Swap O5!(X), O5!(Y)
+                                            Swap O6!(X), O6!(Y)
+                                        End If
+                                    End If
+                                End If
+                            Next Y
+                        Next X
+
+                        Cls
+                        Print
+
+                        Open diskPaths$(1) + CN$(NC) + ".LDR" For Output As #2
+                        Print "    POSTING NEW "; CN$(NC); " CONFERENCE LEADERS"
+                        For X = 1 To 30:
+                            Write #2, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+                        Next
+
+                        For X = 1 To 250
+                            Write #2, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
+                        Next X
+
+                        For X = 1 To 40: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL!(X, Y): Next: Next
+                        For X = 1 To 40: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL!(X, Y): Next: Next
+                        Close 2
+
+                    End If
+
+                Next NC
+
                 Cls
+                Print
 
-                For X = 0 To 40
-                    OL$(X) = ""
-                    DL$(X) = ""
-                    For X1 = 0 To 20
-                        DL!(X, X1) = 0
-                        OL!(X, X1) = 0
+                Open diskPaths$(1) + WE$ + ".NLD" For Output As #2
+                Print "    POSTING NEW "; WE$; " LEADERS"
+
+                For X = 1 To 30
+                    Write #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
+                Next
+
+                For X = 1 To 250
+                    Write #2, NZ0$(X), NZ3$(X), NLD!(X, 1), NLD!(X, 2)
+                Next X
+
+                For X = 1 To 40
+                    Write #2, NOL$(X)
+                    For Y = 1 To 20
+                        Write #2, NOL!(X, Y)
                     Next
                 Next
 
                 For X = 1 To 40
-                    DL!(X, 19) = 9999
-                Next
-
-                For X = 1 To 250
-                    Z0$(X) = "": Z3$(X) = ""
-                    For X1 = 0 To 2
-                        LD(X, X1) = 0
+                    Write #2, NDL$(X)
+                    For Y = 1 To 20
+                        Write #2, NDL!(X, Y)
                     Next
                 Next
 
-                For X = 1 To 30
-                    Z1$(X) = "": O1(X) = 0: O2(X) = 0: O3(X) = 0: O4(X) = 0: O5(X) = 0: O6(X) = 0
-                Next
+                Close 2
 
-                Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
-                Input #2, LG$
-                Input #2, D1$: Input #2, D2$
-                For XW = 1 To 30
-                    Input #2, H1$(XW)
-                    Z1$(XW) = H1$(XW)
+                For Z = 1 To NRT - 1
+                    For Z1 = Z + 1 To NRT
+                        If PT(Z, 1) < PT(Z1, 1) Then
+                            Swap PT$(Z1), PT$(Z)
+                            For MN = 1 To 4
+                                Swap PT(Z1, MN), PT(Z, MN)
+                            Next MN
+                        End If
+                    Next Z1
+                Next Z
+
+                Open diskPaths$(1) + WE$ + ".POL" For Output As #2
+                Print "POSTING "; WE$; " POLL"
+                Write #2, NRT
+                For X = 1 To 1200
+                    Write #2, PT$(X), PT(X, 1), PT(X, 2), PT(X, 3), PT(X, 4)
                 Next
                 Close 2
 
-                For XW = 1 To 30
-                    700 WN = 0: LS = 0: CW = 0: CL = 0
-                    If H1$(XW) = Chr$(42) Then Exit For 'was Return; but where from?
-
-                    9131 H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
-                    9900 For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
-                    Next XX
-
-                    For XX = 12 To 14: If Mid$(H1$(XW), XX, 2) = "ST" Then Mid$(H1$(XW), 9, 1) = "_": Mid$(H1$(XW), 10, 2) = "ST"
-                    Next XX
-                    QQ = 8
-                    For XX = 11 To 4 Step -1
-                        If Mid$(H1$(XW), XX, 1) = "_" Then
-                            QQ = XX - 4
-                        Else
-                            GoTo 9907
-                        End If
-                    9906 Next XX
-
-                    9907 G$ = H1$(XW): H1$(XW) = Right$(H1$(XW), Len(H1$(XW)) - 3): YR$ = Left$(G$, 2)
-                    If Len(H1$(XW)) > 8 Then H1$(XW) = Left$(H1$(XW), 8)
-                    H1$(XW) = H1$(XW) + "." + YR$
-
-                    If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-
-                        Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
-
-                        801 Input #2, numGames%
-                        For I = 1 To 100: Input #2, O%(I): Next I
-                        For I = 1 To 100: Input #2, O$(I): Next I
-
-                        802 For I = 1 To 100: Input #2, compnatT%(I): Next I
-                        For I = 1 To 100: Input #2, compnatH$(I): Next I
-                        For I = 1 To 100
-                            For I1 = 0 To 1
-                                Input #2, AP%(I, I1)
-                        Next: Next
-                        For I = 1 To 100: Input #2, CRD(I): Next I
-                        For I = 1 To 100: Input #2, SITE$(I): Next I
-                        Close 2
-
-                        803 WN = 0: LS = 0: CW = 0: CL = 0
-
-                        '804 GoSub 5500
-                        5500 For I = 1 To numGames%
-
-                            5501 'GoSub 5600
-                            5600 For P = 4 To 11
-                                If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
-                            5601 Next P
-
-                            5602 For P = 12 To 14
-                                If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
-                            5603 Next P
-
-                            5604 QQ = 8: For P = 11 To 4 Step -1: If Mid$(O$(I), P, 1) = "_" Then QQ = P - 4: GoTo 5606
-                                5605 GoTo 5608
-                            5606 Next P
-
-                            5608 f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
-
-                            5609 O$(I) = R$
-
-
-                            5505 For EC = 1 To 30
-                                If O$(I) = H1$(EC) Then 5510
-                            5506 Next EC
-
-                            5507 If O%(I) > compnatT%(I) Then WN = WN + 1
-
-                            5508 If O%(I) < compnatT%(I) Then LS = LS + 1
-
-                            5509 GoTo 5520
-
-                            5510 If O%(I) > compnatT%(I) Then CW = CW + 1: WN = WN + 1
-
-                            5511 If O%(I) < compnatT%(I) Then CL = CL + 1: LS = LS + 1
-
-                            5520 EC = 0
-                        Next I
-
-                        'STRENGTH OF SCHEDULE
-                        PW = 0: SS = 0
-
-                        For I = 1 To numGames%
-                            SS = AP%(I, 1) + SS
-                        Next
-
-                        SS = SS / numGames%
-                        'INDIVIDUAL GAME POWER RATINGS
-                        GL = 0: PW = 0
-
-                        For I = 1 To numGames%
-                            RAT = O%(I) - compnatT%(I) + AP%(I, 1)
-                            If Left$(compnatH$(I), 1) = "H" Then RAT = RAT - 4.5
-                            If Left$(compnatH$(I), 1) = "A" Then RAT = RAT + 4.5
-                            PW = PW + RAT
-                        Next
-
-                        If numGames% > 4 Then 9805
-                        GL = 5 - numGames%
-                        PW = PW + GL * AP%(1, 0)
-
-                        9805 PW = PW / (numGames% + GL)
-                        NRT = NRT + 1
-                        PT$(NRT) = H1$(XW)
-                        PT(NRT, 1) = PW
-                        PT(NRT, 2) = WN
-                        PT(NRT, 3) = LS
-                        PT(NRT, 4) = SS
-
-                        Cls
-                        Locate 4, 5
-                        Color 14: Print "FINDING ";
-                        Color 15: Print H1$(XW);: Color 14
-                        Print " STATS            "
-
-                        900 L = Len(H1$(XW)): WT$ = ""
-                        For X = 1 To L
-                            A = Asc(Mid$(H1$(XW), X, 1))
-                        WT$ = WT$ + Chr$(A): Next X
-                        For X = 1 To 30
-                            If Z1$(X) = WT$ Then
-                                If O1(X) = WN And O2(X) = LS Then 948
-                                O1(X) = WN
-                                O2(X) = LS
-                                O4(X) = CW
-                                O5(X) = CL
-                                If O1(X) + O2(X) = 0 Then
-                                    O3(X) = 0
-                                Else
-                                    O3(X) = O1(X) / (O1(X) + O2(X))
-                                End If
-                                If O4(X) + O5(X) = 0 Then
-                                    O6(X) = 0
-                                Else
-                                    O6(X) = O4(X) / (O4(X) + O5(X))
-                                End If
-                            End If
-                        Next X
-
-                        Call LoadStats(H1$(XW))
-
-                    End If 'Done checkin for stat file
-
-                    Call CheckTeam
-
-                    948 '
-                    If H1$(XW) <> "*" And _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-                        Call CheckStatsLeaders(H1$(XW))
-                    End If
-
-                    Close 3
+                Open diskPaths$(1) + "RECORDS.CBB" For Output As #1
+                For I = 1 To 25
+                    Print #1, BRC!(I)
+                    Print #1, BRC$(I, 0)
+                    Print #1, BRC$(I, 1)
                 Next
-
-                AA = 1: ZZ = 15
-                For X = AA To ZZ - 1
-                    For Y = X + 1 To ZZ
-                        DiffX = O1(X) - O2(X)
-                        DiffY = O1(Y) - O2(Y)
-                        If DiffX <= DiffY Then
-                            If DiffX = DiffY Then
-                                If Not (O1(X) <= O1(Y) And O1(X) > O2(X)) Or Not (O1(X) >= O1(Y) And O1(X) < O2(X)) Then
-                                    Swap Z1$(X), Z1$(Y)
-                                    Swap O1(X), O1(Y)
-                                    Swap O2(X), O2(Y)
-                                    Swap O3(X), O3(Y)
-                                    Swap O4(X), O4(Y)
-                                    Swap O5(X), O5(Y)
-                                    Swap O6(X), O6(Y)
-                                End If
-                            End If
-                        End If
-                    Next Y
-                Next X
-
-                AA = 16: ZZ = 30
-
-                For X = AA To ZZ - 1
-                    For Y = X + 1 To ZZ
-                        DiffX = O1(X) - O2(X)
-                        DiffY = O1(Y) - O2(Y)
-                        If DiffX <= DiffY Then
-                            If DiffX = DiffY Then
-                                If Not (O1(X) <= O1(Y) And O1(X) > O2(X)) Or Not (O1(X) >= O1(Y) And O1(X) < O2(X)) Then
-                                    Swap Z1$(X), Z1$(Y)
-                                    Swap O1(X), O1(Y)
-                                    Swap O2(X), O2(Y)
-                                    Swap O3(X), O3(Y)
-                                    Swap O4(X), O4(Y)
-                                    Swap O5(X), O5(Y)
-                                    Swap O6(X), O6(Y)
-                                End If
-                            End If
-                        End If
-                    Next Y
-                Next X
-
-                4000 Cls
-                Print: Open diskPaths$(1) + CN$(NC) + ".LDR" For Output As #2
-                Print "    POSTING NEW "; CN$(NC); " CONFERENCE LEADERS"
-                For X = 1 To 30: Write #2, Z1$(X), O1(X), O2(X), O3(X), O4(X), O5(X), O6(X): Next
-                For X = 1 To 250
-                Write #2, Z0$(X), Z3$(X), LD(X, 1), LD(X, 2): Next X
-                For X = 1 To 40: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL!(X, Y): Next: Next
-                For X = 1 To 40: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL!(X, Y): Next: Next
-                Close 2
-
-            90 Next NC
-
-            4010 Cls
-            Print
-
-            Open diskPaths$(1) + WE$ + ".NLD" For Output As #2
-            Print "    POSTING NEW "; WE$; " LEADERS"
-
-            For X = 1 To 30
-                Write #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
-            Next
-
-            For X = 1 To 250
-                Write #2, NZ0$(X), NZ3$(X), NLD(X, 1), NLD(X, 2)
-            Next X
-
-            For X = 1 To 40
-                Write #2, NOL$(X)
-                For Y = 1 To 20
-                    Write #2, NOL!(X, Y)
+                For I = 1 To 21
+                    Print #1, TRC!(I)
+                    Print #1, recconTRC$(I)
                 Next
-            Next
-
-            For X = 1 To 40
-                Write #2, NDL$(X)
-                For Y = 1 To 20
-                    Write #2, NDL!(X, Y)
+                For I = 1 To 21
+                    Print #1, TRC1!(I)
+                    Print #1, recconTRC1$(I)
                 Next
-            Next
+                Close 1
 
-            Close 2
+            End If 'Done checking for ESC
 
-            For Z = 1 To NRT - 1
-                For Z1 = Z + 1 To NRT
-                    If PT(Z, 1) >= PT(Z1, 1) Then 4022
-                    Swap PT$(Z1), PT$(Z)
-                    For MN = 1 To 4
-                        Swap PT(Z1, MN), PT(Z, MN)
-                    Next MN
+        End If 'Done checking for file count
 
-            4022 Next Z1: Next Z
-
-            Open diskPaths$(1) + WE$ + ".POL" For Output As #2
-            Print "POSTING "; WE$; " POLL"
-            Write #2, NRT
-            For X = 1 To 1200
-                Write #2, PT$(X), PT(X, 1), PT(X, 2), PT(X, 3), PT(X, 4)
-            Next
-            Close 2
-
-            Open diskPaths$(1) + "RECORDS.CBB" For Output As #1
-            For I = 1 To 25
-                Print #1, BRC(I)
-                Print #1, BRC$(I, 0)
-                Print #1, BRC$(I, 1)
-            Next
-            For I = 1 To 21
-                Print #1, TRC!(I)
-                Print #1, recconTRC$(I)
-            Next
-            For I = 1 To 21
-                Print #1, TRC1!(I)
-                Print #1, recconTRC1$(I)
-            Next
-            Close 1
-
-        End If
-
-        '...Until we press ESC
+    '...Until we press ESC
     Loop Until ExitCode% = 27 Or Count% = 0 Or I$ = "N"
 
     99 '
 
     '2905 Exit Sub
 End Sub
-
 
 '----------------------------------------
 '       LoadStats Subroutine
@@ -468,14 +490,14 @@ Sub LoadStats (statFile$)
     Dim BRC$(32, 1)
     Dim TRC!(21), TRC1!(21)
 
-    Shared BRC()
-	Shared S(), W0(), W1()
+    Shared BRC!()
+    Shared S!(), W0!(), W1!()
     Shared DT!(), OT!()
     Shared compnatN$(), recconTRC$(), recconTRC1$()
 
     811 For I = 0 To 13
         For J = 0 To 26
-            S(I, J) = 0
+            S!(I, J) = 0
         Next
     Next
 
@@ -487,63 +509,69 @@ Sub LoadStats (statFile$)
         812 For I = 0 To 13
             Input #2, compnatN$(I)
             For J = 0 To 13
-                Input #2, S(I, J)
+                Input #2, S!(I, J)
             Next
-            Input #2, W0(I)
-            Input #2, W1(I)
+            Input #2, W0!(I)
+            Input #2, W1!(I)
         Next
         For L = 1 To 16: Input #2, OT!(L): Next: For L = 1 To 16: Input #2, DT!(L): Next
         Close 2
 
         For I = 0 To 13
-            S(I, 25) = S(I, 13)
-            S(I, 26) = S(I, 12)
-            S(I, 12) = S(I, 2) * 2 + W0(I) + S(I, 4): ' *** PTS ***
-            If S(I, 0) = 0 Then 835
-            S(I, 13) = S(I, 5) / S(I, 0): ' *** RB/G ***
-            S(I, 14) = S(I, 6) / S(I, 0): ' *** FOULS/G ***
-            S(I, 15) = S(I, 7) / S(I, 0): ' *** STEALS/G ***
-            S(I, 16) = S(I, 8) / S(I, 0): ' *** ASSISTS/G ***
-            S(I, 17) = S(I, 9) / S(I, 0): ' *** BLOCKS/G ***
-            S(I, 24) = S(I, 5) + S(I, 12) - S(I, 6) + S(I, 8) + S(I, 9) + S(I, 7) - 2 * S(I, 11)
-            S(I, 18) = S(I, 10) / 60 / S(I, 0): ' *** MIN/G ***
-            If S(I, 1) = 0 Or (S(I, 2) / numGames% < 5) Then 826
-            S(I, 19) = S(I, 2) / S(I, 1): ' *** FG% ***
+            S!(I, 25) = S!(I, 13)
+            S!(I, 26) = S!(I, 12)
+            S!(I, 12) = S!(I, 2) * 2 + W0!(I) + S!(I, 4): ' *** PTS ***
+            If S!(I, 0) <> 0 Then
+                S!(I, 13) = S!(I, 5) / S!(I, 0): ' *** RB/G ***
+                S!(I, 14) = S!(I, 6) / S!(I, 0): ' *** FOULS/G ***
+                S!(I, 15) = S!(I, 7) / S!(I, 0): ' *** STEALS/G ***
+                S!(I, 16) = S!(I, 8) / S!(I, 0): ' *** ASSISTS/G ***
+                S!(I, 17) = S!(I, 9) / S!(I, 0): ' *** BLOCKS/G ***
+                S!(I, 24) = S!(I, 5) + S!(I, 12) - S!(I, 6) + S!(I, 8) + S!(I, 9) + S!(I, 7) - 2 * S!(I, 11)
+                S!(I, 18) = S!(I, 10) / 60 / S!(I, 0): ' *** MIN/G ***
 
-            826 If S(I, 3) = 0 Or (S(I, 4) / numGames%) < 2.5 Then 828
-            S(I, 20) = S(I, 4) / S(I, 3): ' *** FT% ***
+                If S!(I, 1) <> 0 And (S!(I, 2) / numGames% >= 5) Then
+                    S!(I, 19) = S!(I, 2) / S!(I, 1): ' *** FG% ***
+                End If
 
-            828 If W1(I) = 0 Or W0(I) / numGames% < 1.5 Then 831
-            S(I, 21) = W0(I) / W1(I): ' *** 3FG% ***
+                If S!(I, 3) <> 0 And (S!(I, 4) / numGames%) >= 2.5 Then
+                    S!(I, 20) = S!(I, 4) / S!(I, 3): ' *** FT% ***
+                End If
 
-            831 S(I, 22) = S(I, 12) / S(I, 0): ' *** PTS/G ***
-            If S(I, 0) > BRC(1) Then BRC(1) = S(I, 0): BRC$(1, 0) = compnatN$(I): BRC$(1, 1) = TN$
-            If S(I, 1) > BRC(2) Then BRC(2) = S(I, 1): BRC$(2, 0) = compnatN$(I): BRC$(2, 1) = TN$
-            If S(I, 2) > BRC(3) Then BRC(3) = S(I, 2): BRC$(3, 0) = compnatN$(I): BRC$(3, 1) = TN$
-            If S(I, 19) > BRC(4) And UCase$(UP$) = "Y" And S(I, 2) / numGames% >= 5 Then BRC(4) = S(I, 19): BRC$(4, 0) = compnatN$(I): BRC$(4, 1) = TN$
-            If W1(I) > BRC(5) Then BRC(5) = W1(I): BRC$(5, 0) = compnatN$(I): BRC$(5, 1) = TN$
-            If W0(I) > BRC(6) Then BRC(6) = W0(I): BRC$(6, 0) = compnatN$(I): BRC$(6, 1) = TN$
-            If S(I, 21) > BRC(7) And UCase$(UP$) = "Y" And W0(I) / numGames% >= 1.5 Then BRC(7) = S(I, 21): BRC$(7, 0) = compnatN$(I): BRC$(7, 1) = TN$
-            If S(I, 3) > BRC(8) Then BRC(8) = S(I, 3): BRC$(8, 0) = compnatN$(I): BRC$(8, 1) = TN$
-            If S(I, 4) > BRC(9) Then BRC(9) = S(I, 4): BRC$(9, 0) = compnatN$(I): BRC$(9, 1) = TN$
-            If S(I, 20) > BRC(10) And UCase$(UP$) = "Y" And S(I, 4) / numGames% >= 2.5 Then BRC(10) = S(I, 20): BRC$(10, 0) = compnatN$(I): BRC$(10, 1) = TN$
-            If S(I, 10) / 60 > BRC(11) Then BRC(11) = S(I, 10) / 60: BRC$(11, 0) = compnatN$(I): BRC$(11, 1) = TN$
-            If S(I, 12) > BRC(12) Then BRC(12) = S(I, 12): BRC$(12, 0) = compnatN$(I): BRC$(12, 1) = TN$
-            If S(I, 22) > BRC(13) And UCase$(UP$) = "Y" Then BRC(13) = S(I, 22): BRC$(13, 0) = compnatN$(I): BRC$(13, 1) = TN$
-            If S(I, 25) > BRC(14) Then BRC(14) = S(I, 25): BRC$(14, 0) = compnatN$(I): BRC$(14, 1) = TN$
-            If S(I, 26) > BRC(15) Then BRC(15) = S(I, 26): BRC$(15, 0) = compnatN$(I): BRC$(15, 1) = TN$
-            If S(I, 5) - S(I, 26) > BRC(16) Then BRC(16) = S(I, 5) - S(I, 26): BRC$(16, 0) = compnatN$(I): BRC$(16, 1) = TN$
-            If S(I, 5) > BRC(17) Then BRC(17) = S(I, 5): BRC$(17, 0) = compnatN$(I): BRC$(17, 1) = TN$
-            If S(I, 13) > BRC(18) And UCase$(UP$) = "Y" Then BRC(18) = S(I, 13): BRC$(18, 0) = compnatN$(I): BRC$(18, 1) = TN$
-            If S(I, 6) > BRC(19) Then BRC(19) = S(I, 6): BRC$(19, 0) = compnatN$(I): BRC$(19, 1) = TN$
-            If S(I, 7) > BRC(20) Then BRC(20) = S(I, 7): BRC$(20, 0) = compnatN$(I): BRC$(20, 1) = TN$
-            If S(I, 8) > BRC(21) Then BRC(21) = S(I, 8): BRC$(21, 0) = compnatN$(I): BRC$(21, 1) = TN$
-            If S(I, 9) > BRC(22) Then BRC(22) = S(I, 9): BRC$(22, 0) = compnatN$(I): BRC$(22, 1) = TN$
-            If S(I, 11) > BRC(23) Then BRC(23) = S(I, 11): BRC$(23, 0) = compnatN$(I): BRC$(23, 1) = TN$
-            If S(I, 18) > BRC(24) And UCase$(UP$) = "Y" Then BRC(24) = S(I, 18): BRC$(24, 0) = compnatN$(I): BRC$(24, 1) = TN$
-            If S(I, 24) > BRC(25) Then BRC(25) = S(I, 24): BRC$(25, 0) = compnatN$(I): BRC$(25, 1) = TN$
+                If W1!(I) <> 0 And W0!(I) / numGames% >= 1.5 Then
+                    S!(I, 21) = W0!(I) / W1!(I): ' *** 3FG% ***
+                End If
 
-        835 Next
+                S!(I, 22) = S!(I, 12) / S!(I, 0): ' *** PTS/G ***
+                If S!(I, 0) > BRC!(1) Then BRC!(1) = S!(I, 0): BRC$(1, 0) = compnatN$(I): BRC$(1, 1) = TN$
+                If S!(I, 1) > BRC!(2) Then BRC!(2) = S!(I, 1): BRC$(2, 0) = compnatN$(I): BRC$(2, 1) = TN$
+                If S!(I, 2) > BRC!(3) Then BRC!(3) = S!(I, 2): BRC$(3, 0) = compnatN$(I): BRC$(3, 1) = TN$
+                If S!(I, 19) > BRC!(4) And UCase$(UP$) = "Y" And S!(I, 2) / numGames% >= 5 Then BRC!(4) = S!(I, 19): BRC$(4, 0) = compnatN$(I): BRC$(4, 1) = TN$
+                If W1!(I) > BRC!(5) Then BRC!(5) = W1!(I): BRC$(5, 0) = compnatN$(I): BRC$(5, 1) = TN$
+                If W0!(I) > BRC!(6) Then BRC!(6) = W0!(I): BRC$(6, 0) = compnatN$(I): BRC$(6, 1) = TN$
+                If S!(I, 21) > BRC!(7) And UCase$(UP$) = "Y" And W0!(I) / numGames% >= 1.5 Then BRC!(7) = S!(I, 21): BRC$(7, 0) = compnatN$(I): BRC$(7, 1) = TN$
+                If S!(I, 3) > BRC!(8) Then BRC!(8) = S!(I, 3): BRC$(8, 0) = compnatN$(I): BRC$(8, 1) = TN$
+                If S!(I, 4) > BRC!(9) Then BRC!(9) = S!(I, 4): BRC$(9, 0) = compnatN$(I): BRC$(9, 1) = TN$
+                If S!(I, 20) > BRC!(10) And UCase$(UP$) = "Y" And S!(I, 4) / numGames% >= 2.5 Then BRC!(10) = S!(I, 20): BRC$(10, 0) = compnatN$(I): BRC$(10, 1) = TN$
+                If S!(I, 10) / 60 > BRC!(11) Then BRC!(11) = S!(I, 10) / 60: BRC$(11, 0) = compnatN$(I): BRC$(11, 1) = TN$
+                If S!(I, 12) > BRC!(12) Then BRC!(12) = S!(I, 12): BRC$(12, 0) = compnatN$(I): BRC$(12, 1) = TN$
+                If S!(I, 22) > BRC!(13) And UCase$(UP$) = "Y" Then BRC!(13) = S!(I, 22): BRC$(13, 0) = compnatN$(I): BRC$(13, 1) = TN$
+                If S!(I, 25) > BRC!(14) Then BRC!(14) = S!(I, 25): BRC$(14, 0) = compnatN$(I): BRC$(14, 1) = TN$
+                If S!(I, 26) > BRC!(15) Then BRC!(15) = S!(I, 26): BRC$(15, 0) = compnatN$(I): BRC$(15, 1) = TN$
+                If S!(I, 5) - S!(I, 26) > BRC!(16) Then BRC!(16) = S!(I, 5) - S!(I, 26): BRC$(16, 0) = compnatN$(I): BRC$(16, 1) = TN$
+                If S!(I, 5) > BRC!(17) Then BRC!(17) = S!(I, 5): BRC$(17, 0) = compnatN$(I): BRC$(17, 1) = TN$
+                If S!(I, 13) > BRC!(18) And UCase$(UP$) = "Y" Then BRC!(18) = S!(I, 13): BRC$(18, 0) = compnatN$(I): BRC$(18, 1) = TN$
+                If S!(I, 6) > BRC!(19) Then BRC!(19) = S!(I, 6): BRC$(19, 0) = compnatN$(I): BRC$(19, 1) = TN$
+                If S!(I, 7) > BRC!(20) Then BRC!(20) = S!(I, 7): BRC$(20, 0) = compnatN$(I): BRC$(20, 1) = TN$
+                If S!(I, 8) > BRC!(21) Then BRC!(21) = S!(I, 8): BRC$(21, 0) = compnatN$(I): BRC$(21, 1) = TN$
+                If S!(I, 9) > BRC!(22) Then BRC!(22) = S!(I, 9): BRC$(22, 0) = compnatN$(I): BRC$(22, 1) = TN$
+                If S!(I, 11) > BRC!(23) Then BRC!(23) = S!(I, 11): BRC$(23, 0) = compnatN$(I): BRC$(23, 1) = TN$
+                If S!(I, 18) > BRC!(24) And UCase$(UP$) = "Y" Then BRC!(24) = S!(I, 18): BRC$(24, 0) = compnatN$(I): BRC$(24, 1) = TN$
+                If S!(I, 24) > BRC!(25) Then BRC!(25) = S!(I, 24): BRC$(25, 0) = compnatN$(I): BRC$(25, 1) = TN$
+
+            End If
+
+        Next
 
         OT!(16) = numGames%: DT!(16) = numGames%: OT!(17) = OT!(3) / OT!(2): DT!(17) = DT!(3) / DT!(2)
         OT!(18) = OT!(5) / OT!(4): DT!(18) = DT!(5) / DT!(4)
@@ -571,7 +599,7 @@ Sub LoadStats (statFile$)
         If OT!(12) < TRC!(18) And UCase$(UP$) = "Y" Then TRC!(18) = OT!(12): recconTRC$(18) = TN$
         If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): recconTRC$(19) = TN$
         If OT!(11) / numGames% > TRC!(20) And UCase$(UP$) = "Y" Then TRC!(20) = OT!(11) / numGames%: recconTRC$(20) = TN$
-        If WN > TRC!(21) Then TRC!(21) = WN: recconTRC$(21) = TN$
+        If replayWins% > TRC!(21) Then TRC!(21) = replayWins%: recconTRC$(21) = TN$
         If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): recconTRC1$(1) = TN$
         If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): recconTRC1$(2) = TN$
         If DT!(17) < TRC1!(3) And UCase$(UP$) = "Y" Then TRC1!(3) = DT!(17): recconTRC1$(3) = TN$
@@ -592,25 +620,23 @@ Sub LoadStats (statFile$)
         If DT!(12) > TRC1!(18) And UCase$(UP$) = "Y" Then TRC1!(18) = DT!(12): recconTRC1$(18) = TN$
         If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): recconTRC1$(19) = TN$
         If DT!(11) / numGames% < TRC1!(20) And UCase$(UP$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: recconTRC1$(20) = TN$
-        If LS > TRC1!(21) Then TRC1!(21) = LS: recconTRC1$(21) = TN$
+        If replayLosses% > TRC1!(21) Then TRC1!(21) = LS: recconTRC1$(21) = TN$
 
     End If
     '1030 Return
 
 End Sub
 
-
-
 '----------------------------------------
 '       CheckStatsLeaders Subroutine
 '----------------------------------------
 Sub CheckTeam ()
 
-    Shared DL!(), LD()
-    Shared NDL!(), NOL!(), NLD()
-    Shared OL!(), S(), W0(), W1()
+    Shared DL!(), LD!()
+    Shared NDL!(), NOL!(), NLD!()
+    Shared OL!(), S!(), W0!(), W1!()
 
-	Shared DT!(), OT!()
+    Shared DT!(), OT!()
 
     Shared compnatN$(), DL$()
     Shared NDL$(), NZ0$(), NZ3$()
@@ -618,232 +644,372 @@ Sub CheckTeam ()
 
     For X = 0 To 14:
         Color 14: Print "CHECKING STATS OF ";: Color 15: Print compnatN$(X)
-        If S(X, 22) <= LD(20, 1) Then 3320
-        LD(20, 1) = S(X, 22): LD(20, 2) = 0: Z0$(20) = compnatN$(X): Z3$(20) = TN$
-        For Z = 1 To 19:
-            For Z1 = Z + 1 To 20
-                If LD(Z, 1) < LD(Z1, 1) Then
-                    Swap Z0$(Z1), Z0$(Z)
-                    Swap Z3$(Z1), Z3$(Z)
-                    For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-                End If
-            Next Z1
-        Next Z
 
-        3320 If S(X, 12) <= LD(40, 1) Then 3340
-        LD(40, 1) = S(X, 12): LD(40, 2) = 0: Z0$(40) = compnatN$(X): Z3$(40) = TN$
-        For Z = 21 To 39: For Z1 = Z + 1 To 40: If LD(Z, 1) >= LD(Z1, 1) Then 3337
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        If S!(X, 22) > LD!(20, 1) Then
+            LD!(20, 1) = S!(X, 22)
+            LD!(20, 2) = 0
+            Z0$(20) = compnatN$(X)
+            Z3$(20) = TN$
+            For Z = 1 To 19:
+                For Z1 = Z + 1 To 20
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3337 Next Z1: Next Z
+        If S!(X, 12) > LD!(40, 1) Then
+            LD!(40, 1) = S!(X, 12)
+            LD!(40, 2) = 0
+            Z0$(40) = compnatN$(X)
+            Z3$(40) = TN$
+            For Z = 21 To 39
+                For Z1 = Z + 1 To 40
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3340 If S(X, 19) <= LD(60, 1) Then 3360
-        LD(60, 1) = S(X, 19): LD(60, 2) = S(X, 1): Z0$(60) = compnatN$(X): Z3$(60) = TN$
-        For Z = 41 To 59: For Z1 = Z + 1 To 60: If LD(Z, 1) >= LD(Z1, 1) Then 3357
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        If S!(X, 19) > LD!(60, 1) Then
+            LD!(60, 1) = S!(X, 19)
+            LD!(60, 2) = S!(X, 1)
+            Z0$(60) = compnatN$(X)
+            Z3$(60) = TN$
+            For Z = 41 To 59
+                For Z1 = Z + 1 To 60
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3357 Next Z1: Next Z
+        If S!(X, 20) > LD!(80, 1) Then
+            LD!(80, 1) = S!(X, 20)
+            LD!(80, 2) = S!(X, 3)
+            Z0$(80) = compnatN$(X)
+            Z3$(80) = TN$
+            For Z = 61 To 79
+                For Z1 = Z + 1 To 80
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3360 If S(X, 20) <= LD(80, 1) Then 3380
-        LD(80, 1) = S(X, 20): LD(80, 2) = S(X, 3): Z0$(80) = compnatN$(X): Z3$(80) = TN$
-        For Z = 61 To 79: For Z1 = Z + 1 To 80: If LD(Z, 1) >= LD(Z1, 1) Then 3377
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        If S!(X, 15) > LD!(90, 1) Then
+            LD!(90, 1) = S!(X, 15)
+            LD!(90, 2) = S!(X, 7)
+            Z0$(90) = compnatN$(X)
+            Z3$(90) = TN$
+            For Z = 81 To 89
+                For Z1 = Z + 1 To 90
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3377 Next Z1: Next Z
+        If S!(X, 7) > LD!(100, 1) Then
+            LD!(100, 1) = S!(X, 7)
+            LD!(100, 2) = 0
+            Z0$(100) = compnatN$(X)
+            Z3$(100) = TN$
+            For Z = 91 To 99
+                For Z1 = Z + 1 To 100
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3380 If S(X, 15) <= LD(90, 1) Then 3400
-        LD(90, 1) = S(X, 15): LD(90, 2) = S(X, 7): Z0$(90) = compnatN$(X): Z3$(90) = TN$
-        For Z = 81 To 89: For Z1 = Z + 1 To 90: If LD(Z, 1) >= LD(Z1, 1) Then 3397
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        If S!(X, 16) > LD!(110, 1) Then
+            LD!(110, 1) = S!(X, 16)
+            LD!(110, 2) = S!(X, 8)
+            Z0$(110) = compnatN$(X)
+            Z3$(110) = TN$
+            For Z = 101 To 109
+                For Z1 = Z + 1 To 110
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3397 Next Z1: Next Z
+        'FOR Z=111 TO 120
+        If S!(X, 8) > LD!(120, 1) Then
+            LD!(120, 1) = S!(X, 8)
+            LD!(120, 2) = S!(X, 8)
+            Z0$(120) = compnatN$(X)
+            Z3$(120) = TN$
+            For Z = 111 To 119
+                For Z1 = Z + 1 To 120
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3400 If S(X, 7) <= LD(100, 1) Then 3420
-        LD(100, 1) = S(X, 7): LD(100, 2) = 0: Z0$(100) = compnatN$(X): Z3$(100) = TN$
-        For Z = 91 To 99
-            For Z1 = Z + 1 To 100
-                If LD(Z, 1) >= LD(Z1, 1) Then 3417
-                Swap Z0$(Z1), Z0$(Z)
-                Swap Z3$(Z1), Z3$(Z)
-                For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-            3417 Next Z1
-        Next Z
+        'FOR Z=121 TO 130
+        If S!(X, 21) > LD!(130, 1) Then
+            LD!(130, 1) = S!(X, 21)
+            LD!(130, 2) = W1!(X)
+            Z0$(130) = compnatN$(X)
+            Z3$(130) = TN$
+            For Z = 121 To 129
+                For Z1 = Z + 1 To 130
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3420 If S(X, 16) <= LD(110, 1) Then 3440
-        LD(110, 1) = S(X, 16): LD(110, 2) = S(X, 8): Z0$(110) = compnatN$(X): Z3$(110) = TN$
-        For Z = 101 To 109
-            For Z1 = Z + 1 To 110
-                If LD(Z, 1) >= LD(Z1, 1) Then 3437
-                Swap Z0$(Z1), Z0$(Z)
-                Swap Z3$(Z1), Z3$(Z)
-                For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-            3437 Next Z1
-        Next Z
+        'FOR Z=131 TO 140
+        If W0!(X) > LD!(140, 1) Then
+            LD!(140, 1) = W0!(X)
+            LD!(140, 2) = 0
+            Z0$(140) = compnatN$(X)
+            Z3$(140) = TN$
+            For Z = 131 To 139
+                For Z1 = Z + 1 To 140
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3440 'FOR Z=111 TO 120
-        If S(X, 8) <= LD(120, 1) Then 3460
-        LD(120, 1) = S(X, 8): LD(120, 2) = S(X, 8): Z0$(120) = compnatN$(X): Z3$(120) = TN$
-        For Z = 111 To 119
-            For Z1 = Z + 1 To 120
-                If LD(Z, 1) >= LD(Z1, 1) Then 3457
-                Swap Z0$(Z1), Z0$(Z)
-                Swap Z3$(Z1), Z3$(Z)
-                For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-            3457 Next Z1
-        Next Z
+        'FOR Z=141 TO 150
+        If S!(X, 18) > LD!(150, 1) Then
+            LD!(150, 1) = S!(X, 18)
+            LD!(150, 2) = 0
+            Z0$(150) = compnatN$(X)
+            Z3$(150) = TN$
+            For Z = 141 To 149
+                For Z1 = Z + 1 To 150
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3460 'FOR Z=121 TO 130
-        If S(X, 21) <= LD(130, 1) Then 3480
-        LD(130, 1) = S(X, 21): LD(130, 2) = W1(X): Z0$(130) = compnatN$(X): Z3$(130) = TN$
-        For Z = 121 To 129
-            For Z1 = Z + 1 To 130
-                If LD(Z, 1) >= LD(Z1, 1) Then 3477
-                Swap Z0$(Z1), Z0$(Z)
-                Swap Z3$(Z1), Z3$(Z)
-                For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-            3477 Next Z1
-        Next Z
+        'FOR Z=151 TO 160
+        If S!(X, 10) / 60 > LD!(160, 1) Then
+            LD!(160, 1) = S!(X, 10) / 60
+            LD!(160, 2) = 0
+            Z0$(160) = compnatN$(X)
+            Z3$(160) = TN$
+            For Z = 151 To 159
+            For Z1 = Z + 1 To 160
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+            3537 Next Z1: Next Z
+        End If
 
-        3480 'FOR Z=131 TO 140
-        If W0(X) <= LD(140, 1) Then 3500
-        LD(140, 1) = W0(X): LD(140, 2) = 0: Z0$(140) = compnatN$(X): Z3$(140) = TN$
-        For Z = 131 To 139: For Z1 = Z + 1 To 140: If LD(Z, 1) >= LD(Z1, 1) Then 3497
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        'FOR Z=161 TO 170
+        If S!(X, 13) > LD!(170, 1) Then
+            LD!(170, 1) = S!(X, 13)
+            LD!(170, 2) = S!(X, 5)
+            Z0$(170) = compnatN$(X)
+            Z3$(170) = TN$
+            For Z = 161 To 169
+            For Z1 = Z + 1 To 170
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3497 Next Z1: Next Z
+        'FOR Z=171 TO 180
+        If S!(X, 5) > LD!(180, 1) Then
+            LD!(180, 1) = S!(X, 5)
+            LD!(18, 2) = 0
+            Z0$(180) = compnatN$(X)
+            Z3$(180) = TN$
+            For Z = 171 To 179
+                For Z1 = Z + 1 To 180
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3500 'FOR Z=141 TO 150
-        If S(X, 18) <= LD(150, 1) Then 3520
-        LD(150, 1) = S(X, 18): LD(150, 2) = 0: Z0$(150) = compnatN$(X): Z3$(150) = TN$
-        For Z = 141 To 149: For Z1 = Z + 1 To 150: If LD(Z, 1) >= LD(Z1, 1) Then 3517
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        'FOR Z=181 TO 190
+        If S!(X, 17) > LD!(190, 1) Then
+            LD!(190, 1) = S!(X, 17)
+            LD!(190, 2) = 0
+            Z0$(190) = compnatN$(X)
+            Z3$(190) = TN$
+            For Z = 181 To 189
+                For Z1 = Z + 1 To 190
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3517 Next Z1: Next Z
+        'FOR Z=191 TO 200
+        If S!(X, 9) > LD!(200, 1) Then
+            LD!(200, 1) = S!(X, 9)
+            LD!(200, 2) = 0
+            Z0$(200) = compnatN$(X)
+            Z3$(200) = TN$
+            For Z = 191 To 199
+                For Z1 = Z + 1 To 200
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3520 'FOR Z=151 TO 160
-        If S(X, 10) / 60 <= LD(160, 1) Then 3540
-        LD(160, 1) = S(X, 10) / 60: LD(160, 2) = 0: Z0$(160) = compnatN$(X): Z3$(160) = TN$
-        For Z = 151 To 159: For Z1 = Z + 1 To 160: If LD(Z, 1) >= LD(Z1, 1) Then 3537
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        'FOR Z=201 TO 210
+        If S!(X, 2) > LD!(210, 1) Then
+            LD!(210, 1) = S!(X, 2)
+            LD!(210, 2) = 0
+            Z0$(210) = compnatN$(X)
+            Z3$(210) = TN$
+            For Z = 201 To 209
+                For Z1 = Z + 1 To 210
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3537 Next Z1: Next Z
+        'FOR Z=211 TO 220
+        If S!(X, 4) > LD!(220, 1) Then
+            LD!(220, 1) = S!(X, 4)
+            LD!(220, 2) = 0
+            Z0$(220) = compnatN$(X)
+            Z3$(220) = TN$
+            For Z = 211 To 219
+                For Z1 = Z + 1 To 220
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3540 'FOR Z=161 TO 170
-        If S(X, 13) <= LD(170, 1) Then 3560
-        LD(170, 1) = S(X, 13): LD(170, 2) = S(X, 5): Z0$(170) = compnatN$(X): Z3$(170) = TN$
-        For Z = 161 To 169: For Z1 = Z + 1 To 170: If LD(Z, 1) >= LD(Z1, 1) Then 3557
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        'FOR Z=221 TO 230
+        If S!(X, 14) > LD!(230, 1) Then
+            LD!(230, 1) = S!(X, 14)
+            LD!(230, 2) = 0
+            Z0$(230) = compnatN$(X)
+            Z3$(230) = TN$
+            For Z = 221 To 229
+                For Z1 = Z + 1 To 230
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3557 Next Z1: Next Z
+        'FOR Z=231 TO 240
+        If S!(X, 6) > LD!(240, 1) Then
+            LD!(240, 1) = S!(X, 6)
+            LD!(240, 2) = 0
+            Z0$(240) = compnatN$(X)
+            Z3$(240) = TN$
+            For Z = 231 To 239
+                For Z1 = Z + 1 To 240
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3560 'FOR Z=171 TO 180
-        If S(X, 5) <= LD(180, 1) Then 3580
-        LD(180, 1) = S(X, 5): LD(18, 2) = 0: Z0$(180) = compnatN$(X): Z3$(180) = TN$
-        For Z = 171 To 179: For Z1 = Z + 1 To 180: If LD(Z, 1) >= LD(Z1, 1) Then 3577
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
+        'FOR Z=241 TO 250
+        If S!(X, 24) > LD!(250, 1) Then
+            LD!(250, 1) = S!(X, 24)
+            LD!(250, 2) = 0
+            Z0$(250) = compnatN$(X)
+            Z3$(250) = TN$
+            For Z = 241 To 249
+                For Z1 = Z + 1 To 250
+                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z3$(Z1), Z3$(Z)
+                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        3577 Next Z1: Next Z
-
-        3580 'FOR Z=181 TO 190
-        If S(X, 17) <= LD(190, 1) Then 3600
-        LD(190, 1) = S(X, 17): LD(190, 2) = 0: Z0$(190) = compnatN$(X): Z3$(190) = TN$
-        For Z = 181 To 189: For Z1 = Z + 1 To 190: If LD(Z, 1) >= LD(Z1, 1) Then 3597
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3597 Next Z1: Next Z
-
-        3600 'FOR Z=191 TO 200
-        If S(X, 9) <= LD(200, 1) Then 3620
-        LD(200, 1) = S(X, 9): LD(200, 2) = 0: Z0$(200) = compnatN$(X): Z3$(200) = TN$
-        For Z = 191 To 199: For Z1 = Z + 1 To 200: If LD(Z, 1) >= LD(Z1, 1) Then 3617
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3617 Next Z1: Next Z
-
-        3620 'FOR Z=201 TO 210
-        If S(X, 2) <= LD(210, 1) Then 3640
-        LD(210, 1) = S(X, 2): LD(210, 2) = 0: Z0$(210) = compnatN$(X): Z3$(210) = TN$
-        For Z = 201 To 209: For Z1 = Z + 1 To 210: If LD(Z, 1) >= LD(Z1, 1) Then 3637
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3637 Next Z1: Next Z
-
-        3640 'FOR Z=211 TO 220
-        If S(X, 4) <= LD(220, 1) Then 3660
-        LD(220, 1) = S(X, 4): LD(220, 2) = 0: Z0$(220) = compnatN$(X): Z3$(220) = TN$
-        For Z = 211 To 219: For Z1 = Z + 1 To 220: If LD(Z, 1) >= LD(Z1, 1) Then 3657
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3657 Next Z1: Next Z
-
-        3660 'FOR Z=221 TO 230
-        If S(X, 14) <= LD(230, 1) Then 3680
-        LD(230, 1) = S(X, 14): LD(230, 2) = 0: Z0$(230) = compnatN$(X): Z3$(230) = TN$
-        For Z = 221 To 229: For Z1 = Z + 1 To 230: If LD(Z, 1) >= LD(Z1, 1) Then 3677
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3677 Next Z1: Next Z
-
-        3680 'FOR Z=231 TO 240
-        If S(X, 6) <= LD(240, 1) Then 3690
-        LD(240, 1) = S(X, 6): LD(240, 2) = 0: Z0$(240) = compnatN$(X): Z3$(240) = TN$
-        For Z = 231 To 239: For Z1 = Z + 1 To 240: If LD(Z, 1) >= LD(Z1, 1) Then 3697
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3697 Next Z1: Next Z
-
-        3690 'FOR Z=241 TO 250
-        If S(X, 24) <= LD(250, 1) Then 3700
-        LD(250, 1) = S(X, 24): LD(250, 2) = 0: Z0$(250) = compnatN$(X): Z3$(250) = TN$
-        For Z = 241 To 249: For Z1 = Z + 1 To 250: If LD(Z, 1) >= LD(Z1, 1) Then 3698
-            Swap Z0$(Z1), Z0$(Z)
-            Swap Z3$(Z1), Z3$(Z)
-            For M = 1 To 2: Swap LD(Z1, M), LD(Z, M): Next
-
-        3698 Next Z1: Next Z
-
-    3700 Next X
+    Next X
 
     'FOR X=1 TO 40
-    If OT!(19) <= OL!(40, 19) Then 3820
-    For M = 1 To 20: OL!(40, M) = OT!(M): Next: OL$(40) = TN$
-    For X = 1 To 39: For X1 = 1 + X To 40: If OL!(X, 19) >= OL!(X1, 19) Then 3817
-        Swap OL$(X1), OL$(X)
-        For M = 1 To 20: J = OL!(X1, M): OL!(X1, M) = OL!(X, M): OL!(X, M) = J: Next
+    If OT!(19) > OL!(40, 19) Then
+        For M = 1 To 20: OL!(40, M) = OT!(M): Next: OL$(40) = TN$
+        For X = 1 To 39: 
+            For X1 = 1 + X To 40: 
+                If OL!(X, 19) < OL!(X1, 19) Then
+                    Swap OL$(X1), OL$(X)
+                    For M = 1 To 20: J = OL!(X1, M): OL!(X1, M) = OL!(X, M): OL!(X, M) = J: Next
+                End If
+            Next X1
+        Next X
+    End If
 
-    3817 Next X1: Next X
-
-    3820 'FOR X=1 TO 15
+    'FOR X=1 TO 15
     If DT!(19) < DL!(40, 19) Then
         For M = 1 To 20: DL!(40, M) = DT!(M): Next:
         DL$(40) = TN$
@@ -859,17 +1025,16 @@ Sub CheckTeam ()
 
 End Sub
 
-
 '----------------------------------------
 '       CheckStatsLeaders Subroutine
 '----------------------------------------
 '...explanation...
 Sub CheckStatsLeaders (statFile$)
 
-    Shared NDL!(), NOL!(), NLD()
-    Shared S(), W0(), W1()
+    Shared NDL!(), NOL!(), NLD!()
+    Shared S!(), W0!(), W1!()
 
-	Shared DT!(), OT!()
+    Shared DT!(), OT!()
 
     Shared compnatN$()
     Shared NDL$(), NZ0$(), NZ3$()
@@ -877,9 +1042,9 @@ Sub CheckStatsLeaders (statFile$)
     Cls: Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
     For X = 0 To 14
         Color 14: Print "CHECKING STATS OF ";: Color 15: Print compnatN$(X)
-        If S(X, 22) > NLD(20, 1) Then
-            NLD(20, 1) = S(X, 22)
-            NLD(20, 2) = 0
+        If S!(X, 22) > NLD!(20, 1) Then
+            NLD!(20, 1) = S!(X, 22)
+            NLD!(20, 2) = 0
             NZ0$(20) = compnatN$(X)
             NZ3$(20) = TN$
             'Is this logic accurate?
@@ -888,231 +1053,390 @@ Sub CheckStatsLeaders (statFile$)
             'Manually assigning values to the arrays
             For Z = 1 To 19
                 For Z1 = Z + 1 To 20
-                    If NLD(Z, 1) < NLD(Z1, 1) Then
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
                     End If
                 Next Z1
             Next Z
         End If
 
-        If S(X, 12) <= NLD(40, 1) Then 4340
-        NLD(40, 1) = S(X, 12)
-        NLD(40, 2) = 0
-        NZ0$(40) = compnatN$(X)
-        NZ3$(40) = TN$
-        For Z = 21 To 39: For Z1 = Z + 1 To 40: If NLD(Z, 1) >= NLD(Z1, 1) Then 4337
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        If S!(X, 12) > NLD!(40, 1) Then
+            NLD!(40, 1) = S!(X, 12)
+            NLD!(40, 2) = 0
+            NZ0$(40) = compnatN$(X)
+            NZ3$(40) = TN$
+            For Z = 21 To 39
+                For Z1 = Z + 1 To 40
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4337 Next Z1: Next Z
+        If S!(X, 19) > NLD!(60, 1) Then
+            NLD!(60, 1) = S!(X, 19)
+            NLD!(60, 2) = S!(X, 1)
+            NZ0$(60) = compnatN$(X)
+            NZ3$(60) = TN$
+            For Z = 41 To 59
+                For Z1 = Z + 1 To 60
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4340 If S(X, 19) <= NLD(60, 1) Then 4360
-        NLD(60, 1) = S(X, 19): NLD(60, 2) = S(X, 1): NZ0$(60) = compnatN$(X): NZ3$(60) = TN$
-        For Z = 41 To 59: For Z1 = Z + 1 To 60: If NLD(Z, 1) >= NLD(Z1, 1) Then 4357
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        If S!(X, 20) > NLD!(80, 1) Then
+            NLD!(80, 1) = S!(X, 20)
+            NLD!(80, 2) = S!(X, 3)
+            NZ0$(80) = compnatN$(X)
+            NZ3$(80) = TN$
+            For Z = 61 To 79
+                For Z1 = Z + 1 To 80
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4357 Next Z1: Next Z
+        If S!(X, 15) > NLD!(90, 1) Then
+            NLD!(90, 1) = S!(X, 15)
+            NLD!(90, 2) = S!(X, 7)
+            NZ0$(90) = compnatN$(X)
+            NZ3$(90) = TN$
+            For Z = 81 To 89
+                For Z1 = Z + 1 To 90
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4360 If S(X, 20) <= NLD(80, 1) Then 4380
-        NLD(80, 1) = S(X, 20): NLD(80, 2) = S(X, 3): NZ0$(80) = compnatN$(X): NZ3$(80) = TN$
-        For Z = 61 To 79: For Z1 = Z + 1 To 80: If NLD(Z, 1) >= NLD(Z1, 1) Then 4377
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        If S!(X, 7) > NLD!(100, 1) Then
+            NLD!(100, 1) = S!(X, 7)
+            NLD!(100, 2) = 0
+            NZ0$(100) = compnatN$(X)
+            NZ3$(100) = TN$
+            For Z = 91 To 99
+                For Z1 = Z + 1 To 100
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4377 Next Z1: Next Z
+        If S!(X, 16) > NLD!(110, 1) Then
+            NLD!(110, 1) = S!(X, 16)
+            NLD!(110, 2) = S!(X, 8)
+            NZ0$(110) = compnatN$(X)
+            NZ3$(110) = TN$
+            For Z = 101 To 109
+                For Z1 = Z + 1 To 110
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4380 If S(X, 15) <= NLD(90, 1) Then 4400
-        NLD(90, 1) = S(X, 15): NLD(90, 2) = S(X, 7): NZ0$(90) = compnatN$(X): NZ3$(90) = TN$
-        For Z = 81 To 89: For Z1 = Z + 1 To 90: If NLD(Z, 1) >= NLD(Z1, 1) Then 4397
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=111 TO 120
+        If S!(X, 8) > NLD!(120, 1) Then
+            NLD!(120, 1) = S!(X, 8)
+            NLD!(120, 2) = S!(X, 8)
+            NZ0$(120) = compnatN$(X)
+            NZ3$(120) = TN$
+            For Z = 111 To 119
+                For Z1 = Z + 1 To 120
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4397 Next Z1: Next Z
+        'FOR Z=121 TO 130
+        If S!(X, 21) > NLD!(130, 1) Then
+            NLD!(130, 1) = S!(X, 21)
+            NLD!(130, 2) = W1!(X)
+            NZ0$(130) = compnatN$(X)
+            NZ3$(130) = TN$
+            For Z = 121 To 129
+                For Z1 = Z + 1 To 130
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4400 If S(X, 7) <= NLD(100, 1) Then 4420
-        NLD(100, 1) = S(X, 7): NLD(100, 2) = 0: NZ0$(100) = compnatN$(X): NZ3$(100) = TN$
-        For Z = 91 To 99: For Z1 = Z + 1 To 100: If NLD(Z, 1) >= NLD(Z1, 1) Then 4417
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=131 TO 140
+        If W0!(X) > NLD!(140, 1) Then
+            NLD!(140, 1) = W0!(X)
+            NLD!(140, 2) = 0
+            NZ0$(140) = compnatN$(X)
+            NZ3$(140) = TN$
+            For Z = 131 To 139
+                For Z1 = Z + 1 To 140
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4417 Next Z1: Next Z
+        'FOR Z=141 TO 150
+        If S!(X, 18) > NLD!(150, 1) Then
+            NLD!(150, 1) = S!(X, 18)
+            NLD!(150, 2) = 0
+            NZ0$(150) = compnatN$(X)
+            NZ3$(150) = TN$
+            For Z = 141 To 149
+                For Z1 = Z + 1 To 150
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4420 If S(X, 16) <= NLD(110, 1) Then 4440
-        NLD(110, 1) = S(X, 16): NLD(110, 2) = S(X, 8): NZ0$(110) = compnatN$(X): NZ3$(110) = TN$
-        For Z = 101 To 109: For Z1 = Z + 1 To 110: If NLD(Z, 1) >= NLD(Z1, 1) Then 4437
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=151 TO 160
+            If S!(X, 10) / 60 <= NLD!(160, 1) Then
+            NLD!(160, 1) = S!(X, 10) / 60
+            NLD!(160, 2) = 0
+            NZ0$(160) = compnatN$(X)
+            NZ3$(160) = TN$
+            For Z = 151 To 159
+                For Z1 = Z + 1 To 160
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4437 Next Z1: Next Z
+        'FOR Z=161 TO 170
+        If S!(X, 13) > NLD!(170, 1) Then
+            NLD!(170, 1) = S!(X, 13)
+            NLD!(170, 2) = S!(X, 5)
+            NZ0$(170) = compnatN$(X)
+            NZ3$(170) = TN$
+            For Z = 161 To 169
+                For Z1 = Z + 1 To 170
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4440 'FOR Z=111 TO 120
-        If S(X, 8) <= NLD(120, 1) Then 4460
-        NLD(120, 1) = S(X, 8): NLD(120, 2) = S(X, 8): NZ0$(120) = compnatN$(X): NZ3$(120) = TN$
-        For Z = 111 To 119: For Z1 = Z + 1 To 120: If NLD(Z, 1) >= NLD(Z1, 1) Then 4457
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=171 TO 180
+        If S!(X, 5) > NLD!(180, 1) Then
+            NLD!(180, 1) = S!(X, 5)
+            NLD!(18, 2) = 0
+            NZ0$(180) = compnatN$(X)
+            NZ3$(180) = TN$
+            For Z = 171 To 179
+                For Z1 = Z + 1 To 180
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4457 Next Z1: Next Z
+        'FOR Z=181 TO 190
+        If S!(X, 17) > NLD!(190, 1) Then
+            NLD!(190, 1) = S!(X, 17)
+            NLD!(190, 2) = 0
+            NZ0$(190) = compnatN$(X)
+            NZ3$(190) = TN$
+            For Z = 181 To 189
+                For Z1 = Z + 1 To 190
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4460 'FOR Z=121 TO 130
-        If S(X, 21) <= NLD(130, 1) Then 4480
-        NLD(130, 1) = S(X, 21): NLD(130, 2) = W1(X): NZ0$(130) = compnatN$(X): NZ3$(130) = TN$
-        For Z = 121 To 129: For Z1 = Z + 1 To 130: If NLD(Z, 1) >= NLD(Z1, 1) Then 4477
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=191 TO 200
+        If S!(X, 9) > NLD!(200, 1) Then
+            NLD!(200, 1) = S!(X, 9)
+            NLD!(200, 2) = 0
+            NZ0$(200) = compnatN$(X)
+            NZ3$(200) = TN$
+            For Z = 191 To 199
+                For Z1 = Z + 1 To 200
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4477 Next Z1: Next Z
+        'FOR Z=201 TO 210
+        If S!(X, 2) > NLD!(210, 1) Then
+            NLD!(210, 1) = S!(X, 2)
+            NLD!(210, 2) = 0
+            NZ0$(210) = compnatN$(X)
+            NZ3$(210) = TN$
+            For Z = 201 To 209
+                For Z1 = Z + 1 To 210
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4480 'FOR Z=131 TO 140
-        If W0(X) <= NLD(140, 1) Then 4502
-        NLD(140, 1) = W0(X): NLD(140, 2) = 0: NZ0$(140) = compnatN$(X): NZ3$(140) = TN$
-        For Z = 131 To 139: For Z1 = Z + 1 To 140: If NLD(Z, 1) >= NLD(Z1, 1) Then 4497
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=211 TO 220
+        If S!(X, 4) > NLD!(220, 1) Then
+            NLD!(220, 1) = S!(X, 4)
+            NLD!(220, 2) = 0
+            NZ0$(220) = compnatN$(X)
+            NZ3$(220) = TN$
+            For Z = 211 To 219
+                For Z1 = Z + 1 To 220
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4497 Next Z1: Next Z
+        'FOR Z=221 TO 230
+        If S!(X, 14) > NLD!(230, 1) Then
+            NLD!(230, 1) = S!(X, 14)
+            NLD!(230, 2) = 0
+            NZ0$(230) = compnatN$(X)
+            NZ3$(230) = TN$
+            For Z = 221 To 229
+                For Z1 = Z + 1 To 230
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4502 'FOR Z=141 TO 150
-        If S(X, 18) <= NLD(150, 1) Then 4520
-        NLD(150, 1) = S(X, 18): NLD(150, 2) = 0: NZ0$(150) = compnatN$(X): NZ3$(150) = TN$
-        For Z = 141 To 149: For Z1 = Z + 1 To 150: If NLD(Z, 1) >= NLD(Z1, 1) Then 4517
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+        'FOR Z=231 TO 240
+        If S!(X, 6) > NLD!(240, 1) Then
+            NLD!(240, 1) = S!(X, 6)
+            NLD!(240, 2) = 0
+            NZ0$(240) = compnatN$(X)
+            NZ3$(240) = TN$
+            For Z = 231 To 239
+                For Z1 = Z + 1 To 240
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4517 Next Z1: Next Z
+        'FOR Z=241 TO 250
+        If S!(X, 24) > NLD!(250, 1) Then
+            NLD!(250, 1) = S!(X, 24)
+            NLD!(250, 2) = 0
+            NZ0$(250) = compnatN$(X)
+            NZ3$(250) = TN$
+            For Z = 241 To 249
+                For Z1 = Z + 1 To 250
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+        End If
 
-        4520 'FOR Z=151 TO 160
-        If S(X, 10) / 60 <= NLD(160, 1) Then 4540
-        NLD(160, 1) = S(X, 10) / 60: NLD(160, 2) = 0: NZ0$(160) = compnatN$(X): NZ3$(160) = TN$
-        For Z = 151 To 159: For Z1 = Z + 1 To 160: If NLD(Z, 1) >= NLD(Z1, 1) Then 4537
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
+    Next X
 
-        4537 Next Z1: Next Z
-
-        4540 'FOR Z=161 TO 170
-        If S(X, 13) <= NLD(170, 1) Then 4560
-        NLD(170, 1) = S(X, 13): NLD(170, 2) = S(X, 5): NZ0$(170) = compnatN$(X): NZ3$(170) = TN$
-        For Z = 161 To 169: For Z1 = Z + 1 To 170: If NLD(Z, 1) >= NLD(Z1, 1) Then 4557
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4557 Next Z1: Next Z
-
-        4560 'FOR Z=171 TO 180
-        If S(X, 5) <= NLD(180, 1) Then 4580
-        NLD(180, 1) = S(X, 5): NLD(18, 2) = 0: NZ0$(180) = compnatN$(X): NZ3$(180) = TN$
-        For Z = 171 To 179: For Z1 = Z + 1 To 180: If NLD(Z, 1) >= NLD(Z1, 1) Then 4577
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4577 Next Z1: Next Z
-
-        4580 'FOR Z=181 TO 190
-        If S(X, 17) <= NLD(190, 1) Then 4600
-        NLD(190, 1) = S(X, 17): NLD(190, 2) = 0: NZ0$(190) = compnatN$(X): NZ3$(190) = TN$
-        For Z = 181 To 189: For Z1 = Z + 1 To 190: If NLD(Z, 1) >= NLD(Z1, 1) Then 4597
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4597 Next Z1: Next Z
-
-        4600 'FOR Z=191 TO 200
-        If S(X, 9) <= NLD(200, 1) Then 4620
-        NLD(200, 1) = S(X, 9): NLD(200, 2) = 0: NZ0$(200) = compnatN$(X): NZ3$(200) = TN$
-        For Z = 191 To 199: For Z1 = Z + 1 To 200: If NLD(Z, 1) >= NLD(Z1, 1) Then 4617
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4617 Next Z1: Next Z
-
-        4620 'FOR Z=201 TO 210
-        If S(X, 2) <= NLD(210, 1) Then 4640
-        NLD(210, 1) = S(X, 2): NLD(210, 2) = 0: NZ0$(210) = compnatN$(X): NZ3$(210) = TN$
-        For Z = 201 To 209: For Z1 = Z + 1 To 210: If NLD(Z, 1) >= NLD(Z1, 1) Then 4637
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4637 Next Z1: Next Z
-
-        4640 'FOR Z=211 TO 220
-        If S(X, 4) <= NLD(220, 1) Then 4660
-        NLD(220, 1) = S(X, 4): NLD(220, 2) = 0: NZ0$(220) = compnatN$(X): NZ3$(220) = TN$
-        For Z = 211 To 219: For Z1 = Z + 1 To 220: If NLD(Z, 1) >= NLD(Z1, 1) Then 4657
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4657 Next Z1: Next Z
-
-        4660 'FOR Z=221 TO 230
-        If S(X, 14) <= NLD(230, 1) Then 4680
-        NLD(230, 1) = S(X, 14): NLD(230, 2) = 0: NZ0$(230) = compnatN$(X): NZ3$(230) = TN$
-        For Z = 221 To 229: For Z1 = Z + 1 To 230: If NLD(Z, 1) >= NLD(Z1, 1) Then 4677
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4677 Next Z1: Next Z
-
-        4680 'FOR Z=231 TO 240
-        If S(X, 6) <= NLD(240, 1) Then 4690
-        NLD(240, 1) = S(X, 6): NLD(240, 2) = 0: NZ0$(240) = compnatN$(X): NZ3$(240) = TN$
-        For Z = 231 To 239: For Z1 = Z + 1 To 240: If NLD(Z, 1) >= NLD(Z1, 1) Then 4697
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4697 Next Z1: Next Z
-
-        4690 'FOR Z=241 TO 250
-        If S(X, 24) <= NLD(250, 1) Then 4700
-        NLD(250, 1) = S(X, 24): NLD(250, 2) = 0: NZ0$(250) = compnatN$(X): NZ3$(250) = TN$
-        For Z = 241 To 249: For Z1 = Z + 1 To 250: If NLD(Z, 1) >= NLD(Z1, 1) Then 4698
-            Swap NZ0$(Z1), NZ0$(Z)
-            Swap NZ3$(Z1), NZ3$(Z)
-            For M = 1 To 2: Swap NLD(Z1, M), NLD(Z, M): Next
-
-        4698 Next Z1: Next Z
-
-    4700 Next X
     'FOR X=1 TO 40
-    If OT!(19) <= NOL!(40, 19) Then 4820
-    For M = 1 To 20: NOL!(40, M) = OT!(M): Next: NOL$(40) = TN$
-    For X = 1 To 39: For X1 = 1 + X To 40: If NOL!(X, 19) >= NOL!(X1, 19) Then 4817
-        Swap NOL$(X1), NOL$(X)
-        For M = 1 To 20: J = NOL!(X1, M): NOL!(X1, M) = NOL!(X, M): NOL!(X, M) = J: Next
+    If OT!(19) > NOL!(40, 19) Then  
+        For M = 1 To 20
+            NOL!(40, M) = OT!(M)
+        Next
 
-    4817 Next X1: Next X
+        NOL$(40) = TN$
 
-    4820 'FOR X=1 TO 15
+        For X = 1 To 39
+            For X1 = 1 + X To 40
+                If NOL!(X, 19) < NOL!(X1, 19) Then
+                    Swap NOL$(X1), NOL$(X)
+                    For M = 1 To 20
+                        J! = NOL!(X1, M)
+                        NOL!(X1, M) = NOL!(X, M)
+                        NOL!(X, M) = J!
+                    Next
+                End If
+            Next X1
+        Next X
+    End If
+
+    'FOR X=1 TO 15
     If DT!(19) < NDL!(40, 19) Then
-        For M = 1 To 20: NDL!(40, M) = DT!(M): Next
+        For M = 1 To 20
+            NDL!(40, M) = DT!(M)
+        Next
+
         NDL$(40) = TN$
+
         For X = 1 To 39
             For X1 = 1 + X To 40:
                 If NDL!(X, 19) > NDL!(X1, 19) Then
                     Swap NDL$(X1), NDL$(X)
-                    For M = 1 To 20: J! = NDL!(X1, M): NDL!(X1, M) = NDL!(X, M): NDL!(X, M) = J!: Next
+                    For M = 1 To 20
+                        J! = NDL!(X1, M)
+                        NDL!(X1, M) = NDL!(X, M)
+                        NDL!(X, M) = J!
+                    Next
                 End If
             Next X1
         Next X

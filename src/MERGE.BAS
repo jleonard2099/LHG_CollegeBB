@@ -50,7 +50,6 @@ Sub MERGE ()
 
 End Sub
 
-
 '----------------------------------------
 '       MergeIt Subroutine
 '----------------------------------------
@@ -71,9 +70,8 @@ Sub MergeIt ()
 
     Shared A$()
     Shared L%(), mergeT%()
-    Shared W0(), W1()
+    Shared W0!(), W1!()
 	Shared Z!(), Z1!()
-
 
     Do
         Color 12, 0
@@ -105,10 +103,7 @@ Sub MergeIt ()
     Do
         Color 15, 0
         Cls
-
         JJ = 6
-        SN = 1
-
         Locate 6, 8: Color 15, 4
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
@@ -132,8 +127,8 @@ Sub MergeIt ()
             NY$ = I$ + NY$
             Color 15, 0
 
-            If NY$ = "" Then
-                Call GetTeamFile_MERGE(NY$, NTMS)
+			If NY$ = "" And YN$ <> "" Then 
+                Call GetTeamFile_MERGE(YN$, NTMS)
             Else
                 YN$ = NY$
                 Erase teamNames$
@@ -220,8 +215,6 @@ Sub MergeIt ()
 
             130 Close #1
 
-            180 'GoTo 500
-
             500 Open PR$ + "\" + Z$ + "S" For Input As #1
 
             501 Input #1, YR%
@@ -240,14 +233,12 @@ Sub MergeIt ()
 
             506 Close #1
 
-            595 'GoTo 200
-            200 'GoSub 1100
-            1100 Locate 21, 5: Color 3
+            Locate 21, 5: Color 3
+
             For J = 21 To 23
                 Locate J
-                1104 Print "                                                                "
-            1105 Next
-
+                Print Space$(64)
+            Next
 
             If Not _FileExists(PC$ + "\" + Z$) Then
                 Cls
@@ -258,11 +249,10 @@ Sub MergeIt ()
                 Open PC$ + "\" + Z$ For Input As #1
                 Input #1, B$
                 For I = 0 To 13: Input #1, A$(I)
-                For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, W0(I): Input #1, W1(I): Next
+                For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, W0!(I): Input #1, W1!(I): Next
                 For L = 0 To 15: Input #1, Z!(L): Next
                 For L = 0 To 15: Input #1, Z1!(L): Next
                 Close #1
-
 
                 Open PR$ + "\" + Z$ + "S" For Input As #1
                 Input #1, Y%
@@ -303,8 +293,8 @@ Sub MergeIt ()
 
                     For I = 0 To 13
                         For J = 0 To 12: mergeA(I, J) = mergeA(I, J) + ARD(I, J): Next J
-                        W0(I) = W0(I) + W0RD(I)
-                        W1(I) = W1(I) + W1RD(I)
+                        W0!(I) = W0!(I) + W0RD(I)
+                        W1!(I) = W1!(I) + W1RD(I)
                         If mergeA(I, 13) < ARD(I, 13) Then mergeA(I, 13) = ARD(I, 13) Else mergeA(I, 13) = mergeA(I, 13)
                     Next I
 
@@ -313,7 +303,7 @@ Sub MergeIt ()
                     Open PC$ + "\" + Z$ For Output As #1
                     Write #1, B$
                     For I = 0 To 13: Write #1, A$(I)
-                    For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, W0(I): Write #1, W1(I): Next
+                    For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, W0!(I): Write #1, W1!(I): Next
                     For L = 0 To 15: Write #1, Z!(L): Next
                     For L = 0 To 15: Write #1, Z1!(L): Next
                     Close #1
@@ -367,7 +357,6 @@ Sub MergeIt ()
 
 End Sub
 
-
 '----------------------------------------
 '       GetTeamFile_MERGE Subroutine
 '----------------------------------------
@@ -392,11 +381,11 @@ Sub GetTeamFile_MERGE (yearNumber$, numberTeams)
     Locate 25, 1: Color 14: Print "ESC";: Color 15
     Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
     Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-	
+
 	_MouseShow "DEFAULT"
 	MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
 	_MouseHide
-	
+
 	If ExitCode% = 27 Then BO% = 1: Exit Sub
 
     T1 = teamIndex%(Selection%)
@@ -408,7 +397,7 @@ Sub GetTeamFile_MERGE (yearNumber$, numberTeams)
     Next
     Get #1, T1
 
-    SP = CVI(Q$(1)): DA = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
+    staminaRating% = CVI(Q$(1)): defFGPctAdj% = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
     For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
     For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
     Close 1

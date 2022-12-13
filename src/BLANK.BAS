@@ -18,18 +18,18 @@ Sub BLANK ()
 
         If Count% = 0 Then
             Locate 10, 8
-            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
 
         Else
 
-            ReDim leagueFiles$(0 To Count%)
+            ReDim conferenceFiles$(0 To Count%)
             For X = 1 To Count%
-                leagueFiles$(X) = Space$(12)
+                conferenceFiles$(X) = Space$(12)
             Next
-            leagueFiles$(0) = Spec$
-            Call ReadFile(leagueFiles$())
+            conferenceFiles$(0) = Spec$
+            Call ReadFile(conferenceFiles$())
 
             'Select League
 
@@ -38,7 +38,7 @@ Sub BLANK ()
             Cls
             Locate , 28
             Color 14
-            Print "SELECT LEAGUE TO ERASE"
+            Print "SELECT CONFERENCE TO ERASE"
             Color 15
             Selection% = 1
             Start% = 1
@@ -54,18 +54,18 @@ Sub BLANK ()
             Color 14
             Print "ENTER";
             Color 15
-            Print "-SELECTS LEAGUE   ";
+            Print "-SELECTS CONFERENCE";
             Color 14
             Print "HIT ESCAPE KEY TO EXIT";
             Color 15
 
             _MouseShow "DEFAULT"
-            MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If Not (ExitCode% = 27) Then
+            If ExitCode% <> 27 Then
 
-                targetFile$ = leagueFiles$(Selection%)
+                targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0
@@ -81,7 +81,7 @@ Sub BLANK ()
                     Cls
 
                     Locate 10, 8
-                    Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+                    Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS FOR THIS CONFERENCE. IF YOU STILL WISH TO ERASE ALL STATS, HIT 'Y' FOR YES", 26, Pass)
                     G$ = GetKeyPress$
                     Call CSMsgBox("", 0, Pass)
 

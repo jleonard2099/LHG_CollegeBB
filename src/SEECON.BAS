@@ -4,7 +4,7 @@ Sub SEECON ()
 
     'Dim seeconP(60), BA$(120), ER$(20), P$(260), S$(60), TT(120, 4)
     Shared DL!(), OL!()
-    Shared O1(), O2(), O3(), O4(), O5(), O6()
+    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seenatZ!(), seenatZ1!()
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
@@ -16,18 +16,17 @@ Sub SEECON ()
     Count% = FCount%(Spec$)
 
     If Count% = 0 Then
-        Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
     Else
 
-        ReDim leagueLeaderFiles$(0 To Count%)
+        ReDim conferenceLeaderFiles$(0 To Count%)
         For X = 1 To Count%
-            leagueLeaderFiles$(X) = Space$(12)
+            conferenceLeaderFiles$(X) = Space$(12)
         Next
-        leagueLeaderFiles$(0) = Spec$
-        Call ReadFile(leagueLeaderFiles$())
-        'CALL SortStr(VARPTR(leagueLeaderFiles$(1)), Count%, 0)
+        conferenceLeaderFiles$(0) = Spec$
+        Call ReadFile(conferenceLeaderFiles$())
 
         Do
 
@@ -36,7 +35,7 @@ Sub SEECON ()
             Cls
             Locate , 28
             Color 14
-            Print "SELECT LEAGUE TO VIEW": Color 15
+            Print "SELECT CONFERENCE TO VIEW": Color 15
             Selection% = 1
             START% = 1
             FileFGColr% = 15: FileBGColr% = 1
@@ -49,97 +48,97 @@ Sub SEECON ()
             Locate 25, 1
             Color 14
             Print "ENTER";: Color 15
-            Print "-SELECTS LEAGUE  ESC - EXIT PROGRAM";
+            Print "-SELECTS CONFERENCE";
 
             _MouseShow "DEFAULT"
-            MAMenu leagueLeaderFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu conferenceLeaderFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If ExitCode% = 27 Then Exit Sub
-
-            targetFile$ = leagueLeaderFiles$(Selection%)
-            Locate 2, 33: Print targetFile$
-            Locate , 33: Print "ANY CHANGE (YN)";
-            Color 15, 0
-            I$ = GetKeyPress$
+            If ExitCode% <> 27 Then
+                targetFile$ = conferenceLeaderFiles$(Selection%)
+                Locate 2, 33: Print targetFile$
+                Locate , 33: Print "ANY CHANGE (YN)";
+                Color 15, 0
+                I$ = GetKeyPress$
+            End If
 
         Loop Until UCase$(I$) = "N"
 
-        targetFile$ = RTrim$(targetFile$)
-        WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-        targetFile$ = Left$(WE$, 8)
-
-
-        Cls
-        Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
-
-        Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
-        For X = 1 To 30: Input #2, T$(X), O1(X), O2(X), O3(X), O4(X), O5(X), O6(X): Next
-        For X = 1 To 250: Input #2, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1!(X): Next
-        For X = 1 To 40: Input #2, OL$(X): For M = 1 To 20: Input #2, OL!(X, M): Next: Next
-        For X = 1 To 40: Input #2, DL$(X): For M = 1 To 20: Input #2, DL!(X, M): Next: Next
-        Close #2
-
-        Do
+        If ExitCode% <> 27 Then
+            targetFile$ = RTrim$(targetFile$)
+            WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+            targetFile$ = Left$(WE$, 8)
 
             Cls
-            Call TITLE_STATS
-            J = 5
-            Locate 8, 8
-            Color 15, 1
-            Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-            For II = 1 To J
-                Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-            Locate 9 + J, 8
-            Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-            Locate 10, 15
+            Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-            Color 7
-            Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-            Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
-            Locate , 30: Print "STATS TO ";: Color 15: Print "F";: Color 7: Print "ILE"
-            I$ = GetKeyPress$
-            Color 14, 0
-            Select Case UCase$(I$)
-                Case "P"
-                    Call PrintReport_SEECON(targetFile$, SF$, 0)
-                Case "F"
-                    Call GetReportFileName(SF$)
-                    Call PrintReport_SEECON(targetFile$, SF$, 1)
-                Case "S"
-                    Call DisplayConToScreen(targetFile$)
-            End Select
+            Open diskPaths$(1) + WE$ + ".LDR" For Input As #2
+            For X = 1 To 30: Input #2, T$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X): Next
+            For X = 1 To 250: Input #2, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1!(X): Next
+            For X = 1 To 40: Input #2, OL$(X): For M = 1 To 20: Input #2, OL!(X, M): Next: Next
+            For X = 1 To 40: Input #2, DL$(X): For M = 1 To 20: Input #2, DL!(X, M): Next: Next
+            Close #2
 
-            Cls
-            JJ = 4
-            Locate 6, 8: Color 15, 1
-            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-            For II = 1 To JJ: Locate 6 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-            Locate 7 + JJ, 8
-            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 7
+            Do
 
-            U$ = "VIEW LEAGUE STATS AGAIN (YN)"
-            Locate , (80 - Len(U$)) / 2
-            Print U$
-            Color 15, 0
+                Cls
+                Call TITLE_STATS
+                J = 5
+                Locate 8, 8
+                Color 15, 1
+                Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+                For II = 1 To J
+                    Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+                Next
+                Locate 9 + J, 8
+                Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+                Locate 10, 15
 
+                Color 7
+                Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
+                Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+                Locate , 30: Print "STATS TO ";: Color 15: Print "F";: Color 7: Print "ILE"
+                I$ = GetKeyPress$
+                Color 14, 0
+                Select Case UCase$(I$)
+                    Case "P"
+                        Call PrintReport_SEECON(targetFile$, SF$, 0)
+                    Case "F"
+                        Call GetReportFileName(SF$)
+                        Call PrintReport_SEECON(targetFile$, SF$, 1)
+                    Case "S"
+                        Call DisplayConToScreen(targetFile$)
+                End Select
 
-            A$ = GetKeyPress$
+                Cls
+                JJ = 4
+                Locate 6, 8: Color 15, 1
+                Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+                For II = 1 To JJ: 
+                    Locate 6 + II, 8
+                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+                Next
+                Locate 7 + JJ, 8
+                Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+                Locate 7
 
-            'pressing ANY key at this point goes to the first menu
-            'need to break this up so that only Y/N is possible???
+                U$ = "VIEW LEAGUE STATS AGAIN (YN)"
+                Locate , (80 - Len(U$)) / 2
+                Print U$
+                Color 15, 0
 
-        Loop Until UCase$(A$) = "N"
+                A$ = GetKeyPress$
 
-    End If
+                'pressing ANY key at this point goes to the first menu
+                'need to break this up so that only Y/N is possible???
 
-    'GoTo 1200
+            Loop Until UCase$(A$) = "N"
+
+        End If 'Done checking for ESC
+
+    End If 'Done checking file count
 
 End Sub
-
 
 '----------------------------------------
 '       DisplayConToScreen Subroutine
@@ -148,7 +147,7 @@ End Sub
 Sub DisplayConToScreen (confFile$)
 
     Shared DL!(), OL!()
-    Shared O1(), O2(), O3(), O4(), O5(), O6()
+    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seenatZ!(), seenatZ1!()
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
@@ -183,21 +182,21 @@ Sub DisplayConToScreen (confFile$)
         If T$(P) = "" Or T$(P) = "*" Then 1256
 
         1255 Print T$(P); Tab(16);
-        Print Using "##   ##   "; O4(P); O5(P);
+        Print Using "##   ##   "; O4!(P); O5!(P);
 
-        If O6(P) = 0 And O4(P) = 0 And O5(P) = 0 Then Print " .---";
-        If O6(P) = 0 And (O4(P) <> 0 Or O5(P) <> 0) Then Print " .000";
-        If O6(P) = 1 Then Print "1.000";
-        If O6(P) <> 0 And O6(P) <> 1 Then Print Using " .###"; O6(P);
+        If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
+        If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print " .000";
+        If O6!(P) = 1 Then Print "1.000";
+        If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
 
         Locate , 41
         Print T$(P); Tab(56);
-        Print Using "##   ##   "; O1(P); O2(P);
+        Print Using "##   ##   "; O1!(P); O2!(P);
 
-        If O3(P) = 0 And O1(P) = 0 And O2(P) = 0 Then Print " .---"
-        If O3(P) = 0 And (O1(P) <> 0 Or O2(P) <> 0) Then Print " .000"
-        If O3(P) = 1 Then Print "1.000"
-        If O3(P) <> 0 And O3(P) <> 1 Then Print Using " .###"; O3(P)
+        If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print " .---"
+        If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print " .000"
+        If O3!(P) = 1 Then Print "1.000"
+        If O3!(P) <> 0 And O3!(P) <> 1 Then Print Using " .###"; O3!(P)
 
     1256 Next P
 
@@ -217,21 +216,21 @@ Sub DisplayConToScreen (confFile$)
     For P = 16 To 30
         If T$(P) = "" Or T$(P) = "*" Then 1258
         Print T$(P); Tab(16);
-        Print Using "##   ##   "; O4(P); O5(P);
+        Print Using "##   ##   "; O4!(P); O5!(P);
 
-        If O6(P) = 0 And O4(P) = 0 And O5(P) = 0 Then Print " .---";
-        If O6(P) = 0 And (O4(P) <> 0 Or O5(P) <> 0) Then Print " .000";
-        If O6(P) = 1 Then Print "1.000";
-        If O6(P) <> 0 And O6(P) <> 1 Then Print Using " .###"; O6(P);
+        If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
+        If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print " .000";
+        If O6!(P) = 1 Then Print "1.000";
+        If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
 
         Locate , 41
         Print T$(P); Tab(56);
-        Print Using "##   ##   "; O1(P); O2(P);
+        Print Using "##   ##   "; O1!(P); O2!(P);
 
-        If O3(P) = 0 And O1(P) = 0 And O2(P) = 0 Then Print " .---"
-        If O3(P) = 0 And (O1(P) <> 0 Or O2(P) <> 0) Then Print " .000"
-        If O3(P) = 1 Then Print "1.000"
-        If O3(P) <> 0 And O3(P) <> 1 Then Print Using " .###"; O3(P)
+        If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print " .---"
+        If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print " .000"
+        If O3!(P) = 1 Then Print "1.000"
+        If O3!(P) <> 0 And O3!(P) <> 1 Then Print Using " .###"; O3!(P)
 
     1258 Next P
     HZ = 1: VT = 24
@@ -510,9 +509,7 @@ Sub DisplayConToScreen (confFile$)
 
     'Loop Until UCase$(A$) = "N"
 
-    'GoTo 1310
 End Sub
-
 
 '----------------------------------------
 '      GetReportFileName Subroutine
@@ -542,7 +539,6 @@ Sub GetReportFileName (reportFile$)
 
 End Sub
 
-
 '----------------------------------------
 '     PrintReport_SEECON Subroutine
 '----------------------------------------
@@ -561,12 +557,11 @@ End Sub
 Sub PrintReport_SEECON (confFile$, reportFile$, X1)
 
     Shared DL!(), OL!()
-    Shared O1(), O2(), O3(), O4(), O5(), O6()
+    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seenatZ!(), seenatZ1!()
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
     Shared T$()
-
 
     Open diskPaths$(1) + confFile$ + ".TMS" For Input As #2
     Input #2, FF$, D1$, D2$
@@ -588,18 +583,18 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
     For P = 1 To 15
         If T$(P) = "" Or T$(P) = "*" Then 3256
         Print #2, T$(P); Tab(16);
-        Print #2, Using "##   ##   "; O4(P); O5(P);
-        If O6(P) = 0 And O4(P) = 0 And O5(P) = 0 Then Print #2, " .---";
-        If O6(P) = 0 And (O4(P) <> 0 Or O5(P) <> 0) Then Print #2, " .000";
-        If O6(P) = 1 Then Print #2, "1.000";
-        If O6(P) <> 0 And O6(P) <> 1 Then Print #2, Using " .###"; O6(P);
+        Print #2, Using "##   ##   "; O4!(P); O5!(P);
+        If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #2, " .---";
+        If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #2, " .000";
+        If O6!(P) = 1 Then Print #2, "1.000";
+        If O6!(P) <> 0 And O6!(P) <> 1 Then Print #2, Using " .###"; O6!(P);
         Print #2, Tab(41);
         Print #2, T$(P); Tab(56);
-        Print #2, Using "##   ##   "; O1(P); O2(P);
-        If O3(P) = 0 And O1(P) = 0 And O2(P) = 0 Then Print #2, " .---"
-        If O3(P) = 0 And (O1(P) <> 0 Or O2(P) <> 0) Then Print #2, " .000"
-        If O3(P) = 1 Then Print #2, "1.000"
-        If O3(P) <> 0 And O3(P) <> 1 Then Print #2, Using " .###"; O3(P)
+        Print #2, Using "##   ##   "; O1!(P); O2!(P);
+        If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #2, " .---"
+        If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #2, " .000"
+        If O3!(P) = 1 Then Print #2, "1.000"
+        If O3!(P) <> 0 And O3!(P) <> 1 Then Print #2, Using " .###"; O3!(P)
 
     3256 Next P
 
@@ -612,18 +607,18 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
     For P = 16 To 30
         If T$(P) = "" Or T$(P) = "*" Then 3258
         Print #2, T$(P); Tab(16);
-        Print #2, Using "##   ##   "; O4(P); O5(P);
-        If O6(P) = 0 And O4(P) = 0 And O5(P) = 0 Then Print #2, " .---";
-        If O6(P) = 0 And (O4(P) <> 0 Or O5(P) <> 0) Then Print #2, " .000";
-        If O6(P) = 1 Then Print #2, "1.000";
-        If O6(P) <> 0 And O6(P) <> 1 Then Print #2, Using " .###"; O6(P);
+        Print #2, Using "##   ##   "; O4!(P); O5!(P);
+        If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #2, " .---";
+        If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #2, " .000";
+        If O6!(P) = 1 Then Print #2, "1.000";
+        If O6!(P) <> 0 And O6!(P) <> 1 Then Print #2, Using " .###"; O6!(P);
         Print #2, Tab(41);
         Print #2, T$(P); Tab(56);
-        Print #2, Using "##   ##   "; O1(P); O2(P);
-        If O3(P) = 0 And O1(P) = 0 And O2(P) = 0 Then Print #2, " .---"
-        If O3(P) = 0 And (O1(P) <> 0 Or O2(P) <> 0) Then Print #2, " .000"
-        If O3(P) = 1 Then Print #2, "1.000"
-        If O3(P) <> 0 And O3(P) <> 1 Then Print #2, Using " .###"; O3(P)
+        Print #2, Using "##   ##   "; O1!(P); O2!(P);
+        If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #2, " .---"
+        If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #2, " .000"
+        If O3!(P) = 1 Then Print #2, "1.000"
+        If O3!(P) <> 0 And O3!(P) <> 1 Then Print #2, Using " .###"; O3!(P)
 
     3258 Next P
 
@@ -665,14 +660,13 @@ Sub PrintReport_SEECON (confFile$, reportFile$, X1)
         End If
         If seenatZ2$(P + 20) = "" Then
             Print #2,
-            GoTo 3340
         Else
             Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
             Print #2, Tab(74);
             Print #2, Using "####"; seenatZ!(P + 20)
         End If
 
-    3340 Next
+    Next
 
     Print #2, Chr$(12)
     Print #2, "STEALS PER GAME"; Tab(41); "STEALS"

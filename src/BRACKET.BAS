@@ -7,15 +7,14 @@ Sub BRACKET ()
 
     _Title "Courtside College Basketball - View Brackets/Seeding"
 
-	'I believe this is redundant / unecessary
-	'However it does give insight into where
-	'the original coded intended to use INT
-	'over SINGLE in each module
+    'I believe this is redundant / unecessary
+    'However it does give insight into where
+    'the original coded intended to use INT
+    'over SINGLE in each module
     DefInt A-Z
 
-
     ' 0 - CONSOLATION IN REGIONS
-	' 1 - CONSOLATION IN CHAMPIONSHIP
+    ' 1 - CONSOLATION IN CHAMPIONSHIP
 
     ' TOURNAMENT DEFAULTS
 
@@ -29,7 +28,7 @@ Sub BRACKET ()
 
     Do
 
-        10 Call TITLE_TOURN
+        Call TITLE_TOURN
 
         ReDim menuChoices$(1 To 3)
         menuChoices$(1) = "VIEW BRACKETS            "
@@ -51,6 +50,7 @@ Sub BRACKET ()
         _MouseHide
 
         Color , 0
+
         If ExitCode% <> 27 Then
             Select Case Selection%
                 Case 1 TO 2: Call ViewTourneyInfo(Selection%)
@@ -61,7 +61,6 @@ Sub BRACKET ()
     Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
-
 
 '------------------------------
 '  ViewTourneyInfo Subroutine
@@ -78,133 +77,141 @@ Sub ViewTourneyInfo (ACTION%)
     Shared regionNames$(), slotName$()
     Shared yearNumber$()
 
-    610 ' *** LOAD IN A SAVED TOURNAMENT ***
-    Spec$ = diskPaths$(0) + "*.TOU"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+    Do
+        ' *** LOAD IN A SAVED TOURNAMENT ***
+        Spec$ = diskPaths$(0) + "*.TOU"
+        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+        Count% = DirCount%
 
-    If Count% = 0 Then
-        4050 Locate 10, 8
-        Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-        'Should go back to selection instead
-    Else
+        If Count% = 0 Then
+            Locate 10, 8
+            Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
+            'Should go back to selection instead
+        Else
 
-        ReDim tournamentFiles$(0 To Count%)
-        For X = 1 To Count%
-            tournamentFiles$(X) = Space$(12)
-        Next
-        tournamentFiles$(0) = Spec$
-        Call ReadFile(tournamentFiles$())
-        'CALL SortStr(VARPTR(tournamentFiles$(1)), Count, 0)
-        Cls
-
-        Color , 1: Cls: Locate , 28: Color 14
-        Print "SELECT TOURNAMENT FIELD TO VIEW": Color 15
-        Selection% = 1
-        Start% = 1
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Rows% = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-        Locate 25, 1: Color 14: Print "ESC";: Color 15
-        Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-        Print "ENTER";: Color 15
-        Print "-SELECTS TOURNAMENT FIELD";
-
-        _MouseShow "DEFAULT"
-        MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% = 27 Then Exit Sub 'Should go back to menu selection
-
-        targetFile$ = tournamentFiles$(Selection%)
-        Locate 2, 33: Print targetFile$
-        Locate , 33: Print "ANY CHANGE (YN)";
-        Color 15, 0
-        604 I$ = GetKeyPress$
-        If UCase$(I$) = "Y" Then 610
-
-        targetFile$ = _Trim$(targetFile$)
-        targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-
-        Open diskPaths$(0) + targetFile$ + ".INF" For Input As #2
-        Input #2, FF$
-        Input #2, R: ' NUMBER OF REGIONS
-        For I = 1 To 16
-            Input #2, NN%(I): ' NUMBER OF TEAMS IN REGION
-            Input #2, regionNames$(I): ' NAME OF REGION
-        Next
-        For I = 1 To 16
-            For I1 = 1 To 16
-                For I2 = 0 To 3
-                    Input #2, slotName$(I, I1, I2): ' SEED SLOT NAME
-                    Input #2, N%(I, I1, I2): ' REGION, SEED NUMBER, MODE PLAY/TM#
-                Next
+            ReDim tournamentFiles$(0 To Count%)
+            For X = 1 To Count%
+                tournamentFiles$(X) = Space$(12)
             Next
-        Next
+            tournamentFiles$(0) = Spec$
+            Call ReadFile(tournamentFiles$())
 
-        Input #2, consolationSetting%(0): Input #2, consolationSetting%(1): ' CONSOLATION GAME
-        Close 2
+            Cls
 
-        Open diskPaths$(0) + targetFile$ + ".TNY" For Input As #1
-        For I = 0 To 14
-            Input #1, tourneyDefaults%(I)
-        Next
-        Close 1
+            Color , 1
+            Cls
+            Locate , 28: Color 14
+            Print "SELECT TOURNAMENT TO VIEW": Color 15
+            Selection% = 1
+            Start% = 1
+            FileFGColr% = 15: FileBGColr% = 1
+            HiLiteFGColr% = 0: HiLiteBGColr% = 7
+            Rows% = 20
+            Columns% = 4
+            Spacing% = 6
+            Row% = 4
+            Column% = 1
+            Locate 25, 1: Color 14: Print "ESC";: Color 15
+            Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+            Print "ENTER";: Color 15
+            Print "-SELECTS TOURNAMENT";
 
-        If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
-        NR$ = Str$(R)
+            _MouseShow "DEFAULT"
+            MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            _MouseHide
 
-        Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
-        Y = LOF(1)
-        Close 1
+            If ExitCode% <> 27 Then
 
-        scheduleAP%(0) = Y / 90
-        BS% = Int((scheduleAP%(0) - 1) / 20)
+                targetFile$ = tournamentFiles$(Selection%)
+                Locate 2, 33: Print targetFile$
+                Locate , 33: Print "ANY CHANGE (YN)";
+                Color 15, 0
+                Do
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or Ucase$(I$) = "N"
 
-        For I = 1 To scheduleAP%(0)
-            Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                If UCase$(I$) <> "Y" Then
 
-            For X = 0 To 14
-                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-            Next
-
-            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-            Get #1, I
-
-            For X = 0 To 14: NG%(I, X) = CVI(Q$(X + 1)): Next
-            For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
-
-            visitingScore%(I) = CVI(Q$(16))
-            homeScore%(I) = CVI(Q$(17))
-            visitingTeam$(I) = Q$(18)
-            homeTeam$(I) = Q$(19)
-
-            For X = 1 To 3: NG%(I, X + 14) = CVI(Q$(X + 23)): Next
-            For X = 2 To 3
-                'This needs to be a loop instead
-                611 If Right$(yearNumber$(I, X), 1) = " " Then
-                    yearNumber$(I, X) = Left$(yearNumber$(I, X), Len(yearNumber$(I, X)) - 1)
-                    GoTo 611
+                    targetFile$ = _Trim$(targetFile$)
+                    targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
                 End If
-            Next
 
-            Close 1
-        Next
+                Open diskPaths$(0) + targetFile$ + ".INF" For Input As #2
+                Input #2, FF$
+                Input #2, R%: ' NUMBER OF REGIONS
+                For I = 1 To 16
+                    Input #2, NN%(I): ' NUMBER OF TEAMS IN REGION
+                    Input #2, regionNames$(I): ' NAME OF REGION
+                Next
+                For I = 1 To 16
+                    For I1 = 1 To 16
+                        For I2 = 0 To 3
+                            Input #2, slotName$(I, I1, I2): ' SEED SLOT NAME
+                            Input #2, N%(I, I1, I2): ' REGION, SEED NUMBER, MODE PLAY/TM#
+                        Next
+                    Next
+                Next
 
-        Call EditBracket(R, ACTION%)
+                Input #2, consolationSetting%(0): Input #2, consolationSetting%(1): ' CONSOLATION GAME
+                Close 2
 
-    End If 'Done checking file count
+                Open diskPaths$(0) + targetFile$ + ".TNY" For Input As #1
+                For I = 0 To 14
+                    Input #1, tourneyDefaults%(I)
+                Next
+                Close 1
+
+                If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
+                NR$ = Str$(R%)
+
+                Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                Y = LOF(1)
+                Close 1
+
+                scheduleAP%(0) = Y / 90
+                BS% = Int((scheduleAP%(0) - 1) / 20)
+
+                For I = 1 To scheduleAP%(0)
+                    Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+
+                    For X = 0 To 14
+                        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                    Next
+
+                    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                    Get #1, I
+
+                    For X = 0 To 14: NG%(I, X) = CVI(Q$(X + 1)): Next
+                    For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
+
+                    visitingScore%(I) = CVI(Q$(16))
+                    homeScore%(I) = CVI(Q$(17))
+                    visitingTeam$(I) = Q$(18)
+                    homeTeam$(I) = Q$(19)
+
+                    For X = 1 To 3: NG%(I, X + 14) = CVI(Q$(X + 23)): Next
+                    For X = 2 To 3
+                        While Right$(yearNumber$(I, X), 1) = " "
+                            yearNumber$(I, X) = Left$(yearNumber$(I, X), Len(yearNumber$(I, X)) - 1)
+                        Wend
+                    Next
+
+                    Close 1
+                Next
+
+                Call EditBracket(R%, ACTION%)
+
+            End If 'Done checking for ESC
+
+        End If 'Done checking for no files
+
+    Loop Until UCase$(I$) = "N" Or Count% = 0
 
 End Sub
-
 
 '------------------------------
 '  PrintFourTeamBracket Subroutine
@@ -233,7 +240,6 @@ Sub PrintFourTeamBracket ()
 
 End Sub
 
-
 '------------------------------
 '      TeamColors Subroutine
 '------------------------------
@@ -243,6 +249,7 @@ Sub TeamColors (currentTeam$, currentScore%)
     'teamName$(teamIndex), teamScore%(teamIndex)
     'need to Dim these in Hello.BAS
     Shared slotName$(), N%(), NG%()
+
     Dim found
 
     found = 0
@@ -279,8 +286,6 @@ Sub TeamColors (currentTeam$, currentScore%)
 
 End Sub
 
-
-
 '------------------------------
 '    EditBracket Subroutine
 '------------------------------
@@ -303,8 +308,6 @@ Sub EditBracket (numberRegions, ACTION%)
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
         Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
 
-        'Where does value of "R" come from?
-        '(obviously it has to do with "regions"
         ReDim menuChoices$(1 To numberRegions + 2)
 
         'Erase menuChoices$
@@ -332,1122 +335,1123 @@ Sub EditBracket (numberRegions, ACTION%)
         _MouseHide
 
         Color , 0
-        If ExitCode% = 27 Then Exit Sub
-        NR = Selection%
-        If NR = numberRegions + 1 Then NR = 17
-        If NR = numberRegions + 2 Then Exit Sub
+        If ExitCode% <> 27 Then
+            NR = Selection%
+            If NR = numberRegions + 1 Then NR = 17
+            If NR = numberRegions + 2 Then Exit Sub
 
-        If ACTION% = 2 Then
-            21 Cls
-            Color , 0: Cls
-            Color , 6: Locate 1, 1: Print Tab(80);: Locate , 23: Color 15
-            Print "TOURNAMENT  - REGION/BRACKET EDITOR"
-            Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
-            MAXSEED = NN%(NR) + 1 + 4
-            Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
-            Locate 4, 25: Print "SEED  TEAM"
-            For I1 = 1 To NN%(NR)
-                Color 2
-                Locate , 25
-                Print Using "##    "; I1;: Color 15: Print slotName$(NR, I1, 0)
-            Next I1
-            I$ = GetKeyPress$
-            'Call EditBracket 'GoTo 35
-        Else
-            'ACTION% = 1
-            N = NR
-
-            Color , 0
-
-            Cls
-
-            R$ = regionNames$(N)
-            Y = Int((80 - Len(R$)) / 2): Locate 1, Y: Print R$
-            Locate 2
-            If N = 17 Then
-                caseNN = 1
+            If ACTION% = 2 Then
+                21 Cls
+                Color , 0: Cls
+                Color , 6: Locate 1, 1: Print Tab(80);: Locate , 23: Color 15
+                Print "TOURNAMENT  - REGION/BRACKET EDITOR"
+                Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
+                MAXSEED = NN%(NR) + 1 + 4
+                Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
+                Locate 4, 25: Print "SEED  TEAM"
+                For I1 = 1 To NN%(NR)
+                    Color 2
+                    Locate , 25
+                    Print Using "##    "; I1;: Color 15: Print slotName$(NR, I1, 0)
+                Next I1
+                I$ = GetKeyPress$
             Else
-                caseNN = NN%(N) - 3
-            End If
-
-            Select Case caseNN
-                Case 1: '2 Teams
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 3 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 2: '3 Teams
-                    47 ' 5 TEAM BRACKET
-                    For I = 0 To 1
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 4 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 3: '5 Teams
-                    46 ' 6 TEAM BRACKET
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) And (I <> 4 And I <> 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) And (I <> 4 And I <> 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) And (I <> 5 And I <> 3) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 5 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 4: '6 Teams
-                    45 ' 7 TEAM BRACKET
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) And I <> 4 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) And I <> 4 Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) And I <> 5 Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 6 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 5: '7 Teams
-                    40 ' 8 TEAM BRACKET
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 7 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 6: '8 Teams
-                    36 '9 TEAM BRACKET
-                    Locate 22, 1
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 8 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 7: '10 Teams
-                    '--------------------
-                    34 '10 TEAM BRACKET
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 9 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 8: '11 Teams
-                    32 '11 TEAM BRACKET
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 9
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 10 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 9: '12 Teams
-                    30 '12 TEAM BRACKET
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Color 15
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Color 7
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 9
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 10
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 11 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Locate 12, 64
-
-                Case 10: '13 Teams
-                    27 '13 TEAM BRACKET
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 9
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 10
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 11
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 12 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 11: '14 Teams
-                    25 '14 TEAM BRACKET
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-                    Print
-                    Print
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 9
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 10
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 11
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 12
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 13 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                Case 12: '15 Teams
-                    22 '15 TEAM BRACKET
-
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 9
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 10
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 11
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 12
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 13
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 14 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-                Case 13: '16 Teams
-                    20 '16 TEAM BRACKET
-                    REG = N: GAME = 1
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 8
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 4
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 5
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 3
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 6
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 2
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Print
-
-                    REG = N: GAME = 7
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Call TeamColors(homeTeam$(I), homeScore%(I))
-                    Color 15
-                    For I = 0 To 7
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                        If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
-                        If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
-                    Next
-                    Color 7
-                    Call PrintFourTeamBracket
-
-                    REG = N: GAME = 9
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 10
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 11
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 12
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 13
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 14
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-                    REG = N: GAME = 15 + consolationSetting%(0)
-                    For I = 1 To scheduleAP%(0)
-                        If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
-                    Next
-                    Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
-                    Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
-
-            End Select
-
-        End If 'Done determining our ACTION%
-
-        'Print team and wait for keypress
-        Locate 12, 64
-
-        If NG%(I, 13) > 0 Then
-            'Determine winner
-            If homeScore%(I) > visitingScore%(I) Then
-                X$ = _Trim$(homeTeam$(I))
-            Else
-                X$ = _Trim$(visitingTeam$(I))
-            End If
-
-            found = 0
-            'Determine team color
-            For X = 1 To 16
-                For X1 = 1 To 16
-                    If X$ = slotName$(X, X1, 0) Then
-                        Color N%(X, X1, 2), N%(X, X1, 3)
-                        found = 1
-                        Exit For
-                    End If
+                'ACTION% = 1
+                N = NR
+
+                Color , 0
+
+                Cls
+
+                R$ = regionNames$(N)
+                Y = Int((80 - Len(R$)) / 2): Locate 1, Y: Print R$
+                Locate 2
+                If N = 17 Then
+                    caseNN = 1
+                Else
+                    caseNN = NN%(N) - 3
+                End If
+
+                Select Case caseNN
+                    Case 1: '2 Teams
+                        REG = N
+                        GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 3 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 2: '3 Teams
+                        ' 5 TEAM BRACKET
+                        For I = 0 To 1
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 4 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 3: '5 Teams
+                        46 ' 6 TEAM BRACKET
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) And (I <> 4 And I <> 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) And (I <> 4 And I <> 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) And (I <> 5 And I <> 3) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 5 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 4: '6 Teams
+                        45 ' 7 TEAM BRACKET
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) And I <> 4 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) And I <> 4 Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) And I <> 5 Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 6 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 5: '7 Teams
+                        40 ' 8 TEAM BRACKET
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 7 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 6: '8 Teams
+                        36 '9 TEAM BRACKET
+                        Locate 22, 1
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 8 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 7: '10 Teams
+                        '--------------------
+                        34 '10 TEAM BRACKET
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 9 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 8: '11 Teams
+                        32 '11 TEAM BRACKET
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 9
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 10 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 9: '12 Teams
+                        30 '12 TEAM BRACKET
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Color 15
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Color 7
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 9
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 10
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 11 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Locate 12, 64
+
+                    Case 10: '13 Teams
+                        27 '13 TEAM BRACKET
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 9
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 10
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 11
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 12 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 11: '14 Teams
+                        25 '14 TEAM BRACKET
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+                        Print
+                        Print
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 9
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 10
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 11
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 12
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 13 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                    Case 12: '15 Teams
+                        22 '15 TEAM BRACKET
+
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 9
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 10
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 11
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 12
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 13
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 14 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+                    Case 13: '16 Teams
+                        20 '16 TEAM BRACKET
+                        REG = N: GAME = 1
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 8
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 4
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 5
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 3
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 6
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 2
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Print
+
+                        REG = N: GAME = 7
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Call TeamColors(homeTeam$(I), homeScore%(I))
+                        Color 15
+                        For I = 0 To 7
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print A$(I + 1)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print A$(I + 1)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
+                        Next
+                        Color 7
+                        Call PrintFourTeamBracket
+
+                        REG = N: GAME = 9
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 10
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 11
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 12
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 13
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 14
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                        REG = N: GAME = 15 + consolationSetting%(0)
+                        For I = 1 To scheduleAP%(0)
+                            If NG%(I, 15) = N And NG%(I, 17) = GAME Then Exit For
+                        Next
+                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitingScore%(I))
+                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScore%(I))
+
+                End Select
+
+            End If 'Done determining our ACTION%
+
+            'Print team and wait for keypress
+            Locate 12, 64
+
+            If NG%(I, 13) > 0 Then
+                'Determine winner
+                If homeScore%(I) > visitingScore%(I) Then
+                    X$ = _Trim$(homeTeam$(I))
+                Else
+                    X$ = _Trim$(visitingTeam$(I))
+                End If
+
+                found = 0
+                'Determine team color
+                For X = 1 To 16
+                    For X1 = 1 To 16
+                        If X$ = slotName$(X, X1, 0) Then
+                            Color N%(X, X1, 2), N%(X, X1, 3)
+                            found = 1
+                            Exit For
+                        End If
+                    Next
+                    If found = 1 Then Exit For
                 Next
-                If found = 1 Then Exit For
-            Next
 
-            'Print winner
-            Color 7, 0
-            Print X$
+                'Print winner
+                Color 7, 0
+                Print X$
 
-        End If
+            End If
 
-        I$ = GetKeyPress$
+            I$ = GetKeyPress$
 
-        'menu until they choose exit
+        End If 'Done checking for ESC
+
+    'menu until they choose exit
     Loop Until Selection% = numberRegions + 2 'ACTION% = 2
 
 End Sub
-
 
 '------------------------------
 '    EditBracket Subroutine
@@ -1478,7 +1482,6 @@ Sub BracketsNotUsed ()
     Locate 9, 32: Print homeTeam$(1); Str$(homeScore%(1))
     Locate 6, 48: Print Left$(visitingTeam$(2), 13); Str$(visitingScore%(2))
     Locate 18, 48: Print Left$(homeTeam$(2), 13); Str$(homeScore%(2))
-
 
     '--------------------
     60 'TWO TEAM BRACKET

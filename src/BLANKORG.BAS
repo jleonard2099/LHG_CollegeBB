@@ -17,18 +17,18 @@ Sub BLANKORG ()
 
         If Count% = 0 Then
             Locate 10, 8
-            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
 
         Else
 
-            ReDim conferenceFiles$(0 To Count%)
+            ReDim organizationFiles$(0 To Count%)
             For X = 1 To Count%
-                conferenceFiles$(X) = Space$(12)
+                organizationFiles$(X) = Space$(12)
             Next
-            conferenceFiles$(0) = Spec$
-            Call ReadFile(conferenceFiles$())
+            organizationFiles$(0) = Spec$
+            Call ReadFile(organizationFiles$())
 
             'Select Org
             Cls
@@ -52,18 +52,18 @@ Sub BLANKORG ()
             Color 14
             Print "ENTER";
             Color 15
-            Print "-SELECTS ORGANIZATION   ";
+            Print "-SELECTS ORGANIZATION";
             Color 14
             Print "HIT ESCAPE KEY TO EXIT";
             Color 15
 
             _MouseShow "DEFAULT"
-            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu organizationFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If Not (ExitCode% = 27) Then
+            If ExitCode% <> 27 Then
 
-                targetFile$ = conferenceFiles$(Selection%)
+                targetFile$ = organizationFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0
@@ -77,7 +77,7 @@ Sub BLANKORG ()
                     Cls
 
                     Locate 10, 8
-                    Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS AND LEAGUE FILES FOR THIS LEAGUE. IF YOU STILL WISH TO ERASE ALL LEAGUE FILES AND STATS, HIT 'Y' FOR YES", 26, Pass)
+                    Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS FOR THIS ORGANIZATION. IF YOU STILL WISH TO ERASE ALL STATS, HIT 'Y' FOR YES", 26, Pass)
                     I$ = GetKeyPress$
                     Call CSMsgBox("", 0, Pass)
 

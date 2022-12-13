@@ -93,18 +93,17 @@ Sub CREATNAT ()
                         Count% = DirCount%
                         If Count% = 0 Then
                             Locate 10, 8
-                            Call CSMsgBox("NO LEAGUE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+                            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
                             I$ = GetKeyPress$
                             Call CSMsgBox("", 0, Pass)
                         Else
 
-                            ReDim conferenceFiles$(0 To Count%)
+                            ReDim organizationFiles$(0 To Count%)
                             For X = 1 To Count%
-                                conferenceFiles$(X) = Space$(12)
+                                organizationFiles$(X) = Space$(12)
                             Next
-                            conferenceFiles$(0) = Spec$
-                            Call ReadFile(conferenceFiles$())
-                            'CALL SortStr(VARPTR(conferenceFiles$(1)), Count, 0)
+                            organizationFiles$(0) = Spec$
+                            Call ReadFile(organizationFiles$())
 
                             Do
                                 Cls
@@ -112,7 +111,7 @@ Sub CREATNAT ()
                                 Cls
                                 Locate , 28
                                 Color 14
-                                Print "SELECT LEAGUE TO SCHEDULE": Color 15
+                                Print "SELECT ORGANIZATION TO SCHEDULE": Color 15
                                 Selection% = 1
                                 Start% = 1
                                 FileFGColr% = 15: FileBGColr% = 1
@@ -125,14 +124,14 @@ Sub CREATNAT ()
                                 Locate 25, 1
                                 Color 14
                                 Print "ENTER";: Color 15
-                                Print "-SELECTS TEAM";
+                                Print "-SELECTS ORGANIZATION";
 
                                 _MouseShow "DEFAULT"
-                                MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+                                MAMenu organizationFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
                                 _MouseHide
 
                                 If ExitCode% <> 27 Then
-                                    targetFile$ = conferenceFiles$(Selection%)
+                                    targetFile$ = organizationFiles$(Selection%)
                                     Locate 2, 33: Print targetFile$
                                     Locate , 33: Print "ANY CHANGE (YN)";
                                     Color 15, 0
@@ -169,7 +168,6 @@ Sub CREATNAT ()
 
 End Sub
 
-
 '----------------------------------------
 '   SelectFile_CREATNAT Subroutine
 '----------------------------------------
@@ -186,13 +184,15 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
     Else
-        ReDim leagueFiles$(0 To Count%)
+        ReDim conferenceFiles$(0 To Count%)
+
         For X = 1 To Count%
-            leagueFiles$(X) = Space$(12)
+            conferenceFiles$(X) = Space$(12)
         Next
-        leagueFiles$(0) = Spec$
-        Call ReadFile(leagueFiles$())
-        'CALL SortStr(VARPTR(leagueFiles$(1)), Count, 0)
+
+        conferenceFiles$(0) = Spec$
+
+        Call ReadFile(conferenceFiles$())
 
         Do
             Cls
@@ -216,11 +216,11 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
             Print "-SELECTS CONFERENCE";
 
             _MouseShow "DEFAULT"
-            MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
-            If Not (ExitCode% = 27) Then
-                targetFile$ = leagueFiles$(Selection%)
+            If ExitCode% <> 27 Then
+                targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
                 Locate , 33: Print "ANY CHANGE (YN)";
                 Color 15, 0
@@ -229,25 +229,26 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
 
         Loop Until UCase$(I$) = "N"
 
-        targetFile$ = RTrim$(targetFile$)
-        targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+        If ExitCode% <> 27 Then
+			targetFile$ = RTrim$(targetFile$)
+			targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+		End If 'Done checking for ESC
 
     End If 'Done checking file count
 
 End Sub
 
-
 '----------------------------------------
 '       Conference_Menu Subroutine
 '----------------------------------------
 '...explanation...
-Sub Conference_Menu (leagueFile$, leagueData$())
+Sub Conference_Menu (conferenceFile$, leagueData$())
 
     Do
         Color 14, 0
         Cls
         Print
-        Print "  "; leagueFile$: Print: Color 12
+        Print "  "; conferenceFile$: Print: Color 12
 
         For I = 1 To 10
             Color 2: Print Using "## "; I;
@@ -274,6 +275,7 @@ Sub Conference_Menu (leagueFile$, leagueData$())
                 Do
                     Locate 20, 30
                     Print "SLOT # (1-40) ";
+					'What does N do?
                     N = 1
                     Input conferenceIndex
                 Loop Until conferenceIndex >= 1 And conferenceIndex <= MAX_CONFERENCES
@@ -284,6 +286,7 @@ Sub Conference_Menu (leagueFile$, leagueData$())
             Case "2":
                 Do
                     Locate 20, 30: Print "SLOT # (1-40) ";
+					'What does N do?
                     N = 1
                     Input B
                 Loop Until conferenceIndex >= 1 And conferenceIndex <= MAX_CONFERENCES
@@ -291,8 +294,8 @@ Sub Conference_Menu (leagueFile$, leagueData$())
 
             Case "3":
                 Cls
-                Open diskPaths$(1) + leagueFile$ + ".CON" For Output As #2
-                Print #2, leagueFile$
+                Open diskPaths$(1) + conferenceFile$ + ".CON" For Output As #2
+                Print #2, conferenceFile$
                 For idx = 1 To MAX_CONFERENCES
                     Print #2, leagueData$(idx)
                 Next

@@ -3,13 +3,19 @@
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_CAREER ()
-	Color , 1: Locate 1, 1: Print Tab(80);: Locate , 22: Color 14
-	Print "COURTSIDE COLLEGE BASKETBALL: CAREER STATS"
-	Locate 24, 1: Print Tab(80);: Locate , 1
-	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
-	Locate 4, 1: Color 1, 0
-End Sub
 
+	Color , 1
+	Locate 1, 1: Print Tab(80);
+	Locate , 22
+	Color 14
+	Print "COURTSIDE COLLEGE BASKETBALL: CAREER STATS"
+	Locate 24, 1: Print Tab(80);
+	Locate , 1
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+	Locate 4, 1
+	Color 1, 0
+
+End Sub
 
 '------------------------------
 '   TITLE_HEADER Subroutine
@@ -29,35 +35,44 @@ Sub TITLE_HEADER ()
 	Color 2, 0
 End Sub
 
-
 '------------------------------
 '   TITLE_MERGE Subroutine
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_MERGE ()
+
 	Color , 1
 	Locate 1, 1: Print Tab(80);
-	Locate , 26: Color 0
+	Locate , 26
+	Color 0
 	Print "COURTSIDE COLLEGE BASKETBALL: MERGE"
-	Locate 24, 1: Print Tab(80);: Locate , 1
+	Locate 24, 1: Print Tab(80);
+	Locate , 1
 	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
-	Locate 4, 1: Color 1, 0
-End Sub
+	Locate 4, 1
+	Color 1, 0
 
+End Sub
 
 '------------------------------
 '  TITLE_SCHEDULER Subroutine
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_SCHEDULER ()
-    Color , 0: KEY Off: Cls
-    Color , 1: Locate 1, 1: Print Tab(80);: Locate , 33: Color 14
+    Color , 0
+	KEY Off
+	Cls
+    Color , 1
+	Locate 1, 1: Print Tab(80);
+	Locate , 33
+	Color 14
     Print "AUTO SCHEDULER"
-    Locate 24, 1: Print Tab(80);: Locate , 1
+    Locate 24, 1: Print Tab(80);
+	Locate , 1
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997";
-    Locate 5, 1: Color , 0
+    Locate 5, 1
+	Color , 0
 End Sub
-
 
 '------------------------------
 '    TITLE_STATS Subroutine
@@ -96,12 +111,13 @@ Sub Title_SINPUT (titleType, subtitle$)
         Print subtitle$
     End If
 
-    Locate 24, 1: Print Tab(80);: Locate , 1
+    Locate 24, 1: Print Tab(80);
+	Locate , 1
     Print "(C) SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
-    Locate 4, 1: Color 15, 0
+    Locate 4, 1
+	Color 15, 0
 
 End Sub
-
 
 '------------------------------
 '    TITLE_TOURN Subroutine
@@ -126,7 +142,6 @@ Sub TITLE_TOURN ()
     Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
     Color 10
 End Sub
-
 
 '------------------------------
 '      TITLE Subroutine
