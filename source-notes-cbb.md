@@ -1,5 +1,11 @@
 ## Variables ##
 
+#### Naming ####
+
+???
+
+#### Useage ####
+
 |Variable	|Description			|
 |---------------|-------------------------------|
 |FG		|2-point % made			|
