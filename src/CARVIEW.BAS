@@ -62,21 +62,29 @@ Sub CARVIEW ()
                 'Wouldn't it be better here to just
                 'exit the loop, not the sub?
                 If ExitCode% <> 27 Then
-                    targetFile$ = careerFiles$(Selection%)
+
+                    Color 15, 1
+					targetFile$ = careerFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
-                    Locate , 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
+                    
+					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+					
+					Color 15, 0
+
                 End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
             If ExitCode% <> 27 Then
 
-                Color 15, 0
                 targetFile$ = RTrim$(targetFile$)
                 Z$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-                Color 15: Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
+				Cls                
+				Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
                 'The variables below here clearly need Shared for each sub
                 Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
@@ -89,15 +97,16 @@ Sub CARVIEW ()
                         Next J
                         Input #2, W0S!(N, I)
                         Input #2, W1S!(N, I)
-                        Locate 12, 52
-                        Color 5: TMR% = TMR% - 1: Print Using "####"; TMR%
+                        Color 5: Locate 12, 52
+						TMR% = TMR% - 1
+						Print Using "####"; TMR%
                     Next I
                 Next N
                 Close #2
 
                 Locate 18, 10
-                Color 12: Print "P";: Color 7: Print "RINT OR ";
-                Color 12: Print "V";: Color 7: Print "IEW"
+				Color 12: Print "V";: Color 7: Print "iew or ";
+				Color 12: Print "P";: Color 7: Print "rint"
 
                 Do
                     A$ = GetKeyPress$
@@ -403,8 +412,14 @@ Sub CareerViewOptions (A$())
                     Next I
 
                     Cls
-                    Locate 5, 20: Color 14: Print "VIEW AGAIN (Y/N)"
-                    I$ = GetKeyPress$
+                    
+					Color 14
+					
+					Do
+						Locate 5, 20
+						Print "VIEW AGAIN (Y/N)"
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
                 Loop Until UCase$(I$) = "N"
 

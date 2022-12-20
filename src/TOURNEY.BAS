@@ -96,31 +96,36 @@ Sub TOURNEY ()
             Print "ENTER";: Color 15
             Print "-SELECTS TOURNAMENT";
 
-            '-- This would be a short loop / structure
             _MouseShow "DEFAULT"
             MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
             _MouseHide
 
             If ExitCode% <> 27 Then
+
+                Color 15, 1
                 targetFile$ = tournamentFiles$(Selection%)
                 T1 = Selection%
-                'That loop would end here
 
                 Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                3910 I$ = GetKeyPress$
+				
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
             End If
+			
+			Color 15, 0
 
         Loop Until UCase$(I$) = "N"
 
         If ExitCode% <> 27 Then
+
             targetFile$ = RTrim$(targetFile$)
             WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-            Color 15, 0
             targetFile$ = WE$
 
-            605 Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+            Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
             Y = LOF(1)
             Close 1
 
@@ -238,15 +243,17 @@ Sub TOURNEY ()
 
                         Close 1
 
-                        Do
-                            300 ' *** PLAY GAMES ***
-                            Color , 0: Cls
-                            JJ = 7
-                            Locate 6, 8: Color 15, 4
-                            Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-                            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-                            Locate 7 + JJ, 8
-                            Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+						' *** PLAY GAMES ***
+						Color , 0: Cls
+						JJ = 7
+						Locate 6, 8: Color 15, 4
+						Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+						Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+						Locate 7 + JJ, 8
+						Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+                        Do						
+							Locate 7, 32
                             Locate , 12: Print "TOTAL GAMES ="; scheduleAP%(0)
                             Locate , 12: Print "SELECT GAME # TO START AND END WITH": Print
                             Locate , 12: Input "ENTER START GAME #: "; SG%: Print

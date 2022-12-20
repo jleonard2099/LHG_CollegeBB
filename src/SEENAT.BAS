@@ -51,16 +51,24 @@ Sub SEENAT ()
                 _MouseHide
 
                 If ExitCode% <> 27 Then
+
+                    Color 15, 1
                     targetFile$ = organizationLeaderFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
-                    Locate , 33: Print "ANY CHANGE (YN)";
-                    Color 15, 0
-                    3910 I$ = GetKeyPress$
+
+					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+					Color 15, 0
+
                 End If
 
             Loop Until UCase$(I$) = "N"
 
             If ExitCode% <> 27 Then
+
                 targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
                 targetFile$ = Left$(WE$, 8)
@@ -132,25 +140,37 @@ Sub LoadLeague_SEENAT (leagueFile$)
             Case "S": Call PrintScreen_SEENAT
             Case "F":
                 X1 = 1
+				Color 15, 0
+				Cls
+				JJ = 7
+				Locate 6, 8: Color 15, 1
+				Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+				Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+				Locate 7 + JJ, 8
+				Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+					
                 Do
-                    3100 Color 15, 0: Cls
-                    JJ = 7
-                    Locate 6, 8: Color 15, 1
-                    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-                    Locate 7 + JJ, 8
-                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-                    Locate , 12: Print "ENTER NAME FOR FILE: ": Print
+					Locate 7, 32
+                    
+					Locate , 12: Print "ENTER NAME FOR FILE: ": Print
                     Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
                     Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
                     Locate 7, 37: Input SF$
-                    If SF$ = "" Then 3100
-                    Locate 13, 12: Print "ANY CHANGE (YN) "
-                    F$ = GetKeyPress$
-                Loop Until UCase$(F$) = "N" 'Then
+
+                    If SF$ <> "" Then
+						Do
+							Locate 13, 12: Print "ANY CHANGE (YN) "
+							F$ = GetKeyPress$
+						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+					End If
+
+                Loop Until UCase$(F$) = "N" Or SF$ <> ""
+
                 Color 15, 0
+
                 Call PrintReport_SEENAT(SF$)
+
         End Select
 
         Cls
@@ -162,14 +182,19 @@ Sub LoadLeague_SEENAT (leagueFile$)
         Next
         Locate 7 + JJ, 8
         Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-        Locate 7
 
-        U$ = "VIEW LEAGUE STATS AGAIN (YN)"
-        Locate , (80 - Len(U$)) / 2
-        Print U$
-        Color 15, 0
 
-        A$ = GetKeyPress$
+        Do
+			Locate 7
+
+			U$ = "VIEW LEAGUE STATS AGAIN (YN)"
+			Locate , (80 - Len(U$)) / 2
+			Print U$
+			Color 15, 0
+
+			A$ = GetKeyPress$
+		
+		Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
     Loop Until UCase$(A$) = "N"
 

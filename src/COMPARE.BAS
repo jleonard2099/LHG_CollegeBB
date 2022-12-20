@@ -91,16 +91,27 @@ Sub COMPARE ()
 
                             B$(0) = RTrim$(Q$(0))
 
-                            If BO% = 1 Then BO% = 0: Exit Sub
+                            If BO% = 1 Then 
+								BO% = 0
+								Exit Sub
+							Else
+								Locate 2, 33
+								Color compareT%(0), compareT%(1): Print B$(0)
+								
+								Color 15, 4
+								
+								Do
+									Locate , 33: Print "ANY CHANGE (YN)";
+									I$ = GetKeyPress$
+								Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-                            Locate 2, 33: Color 15, 0: Color compareT%(0), compareT%(1)
-                            Print B$(0): Color 15, 4
-                            Locate , 33: Print "ANY CHANGE (YN)";
-                            I$ = GetKeyPress$
+							End If
 
                         Loop Until UCase$(I$) = "N"
 
-                        Color 15, 0: Cls
+                        Color 15, 0
+						Cls
+
                         JJ = 4
                         Locate 8, 8: Color 14, 1
                         Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
@@ -115,7 +126,7 @@ Sub COMPARE ()
                         Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
 
                         Do
-                            8651 I$ = GetKeyPress$
+                            I$ = GetKeyPress$
                             If I$ = Chr$(27) Then Exit Sub
                         Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S"
 

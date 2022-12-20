@@ -235,7 +235,8 @@ If _FileExists("GAME82") Then
     For X = 0 To 18: NG%(X) = CVI(Q$(X + 1)): Next
     For X = 0 To 1: YN$(X) = Q$(20 + X): Next
 
-    VS% = CVI(Q$(22)): HS% = CVI(Q$(23))
+    VS% = CVI(Q$(22))
+    HS% = CVI(Q$(23))
 
     Close 1
 
@@ -813,14 +814,16 @@ Do
     Color 15, 0
     Cls
     I = 1
-    Call DRAWBOX
-    U$ = "DISPLAY STATS AGAIN (YN)"
-    Locate , (80 - Len(U$)) / 2
-    Print U$
-    Color 15, 0
 
     If AP <> 1 Or U5 <> 2 Then
-        I$ = GetKeyPress$
+        Call DRAWBOX
+        Do
+            U$ = "DISPLAY STATS AGAIN (YN)"
+            Locate , (80 - Len(U$)) / 2
+            Print U$
+            Color 15, 0
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
     End If
 
 Loop Until UCase$(I$) = "N" Or AP = 1 And U5 = 2
@@ -829,14 +832,14 @@ Loop Until UCase$(I$) = "N" Or AP = 1 And U5 = 2
 Color 15, 0
 Cls
 I = 1
-Call DRAWBOX
-U$ = "SAVE STATS (YN)"
-Locate , (80 - Len(U$)) / 2
-Print U$
-Color 15, 0
 
 If AP <> 1 Then
+    Call DRAWBOX
     Do
+        U$ = "SAVE STATS (YN)"
+        Locate , (80 - Len(U$)) / 2
+        Print U$
+        Color 15, 0
         I$ = GetKeyPress$
     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 End If
@@ -855,15 +858,15 @@ I = 1
 Call DRAWBOX
 
 ' Prompt to play another game
-U$ = "PLAY ANOTHER GAME (YN)"
-Locate , (80 - Len(U$)) / 2
-Print U$
-
-Color 15, 0
 
 If AP <> 1 Then
 
     Do
+        U$ = "PLAY ANOTHER GAME (YN)"
+        Locate , (80 - Len(U$)) / 2
+        Print U$
+
+        Color 15, 0
         I$ = GetKeyPress$
     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -2731,6 +2734,7 @@ Call PRESSGUARD
 GoTo 300
 
 '----- NOODLE -----
+
 580 Call LASTSHOT
 Call ResetShotClock
 

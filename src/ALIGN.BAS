@@ -13,46 +13,58 @@ Sub ALIGN ()
 	Dim Z!(15), Z1!(15)
 
 	Do
-		Cls
 
-		Color 12, 0: Cls: Locate 2, 5: Print "ENTER COMPLETE PATH FOR TEAM STATS TO ALIGN"
-		Color 15: Locate 4, 5: Print "EXAMPLE - A:"
+		Color 12, 0		
+		Cls
+		
+		Locate 2, 5: Print "ENTER COMPLETE PATH FOR TEAM STATS TO ALIGN"
+		Color 15
+		Locate 4, 5: Print "EXAMPLE - A:"
 		Locate , 5: Print "          C:\HAFFNER"
 		Locate , 5: Print "          C:\HAFFNER\1960"
 		Locate , 5: Print "          D:\BASKET"
 
+		For J = 10 To 13: 
+			Locate J
+			Print Space$(62)
+		Next
+
+		Color 10
+		
 		Do
-			For J = 10 To 13: 
-				Locate J
-				Print Space$(62)
-			Next
-
-			Color 10: Locate 10, 5: Line Input "ROAD STATS:     "; PR$
-
+			Locate 10, 5: Line Input "ROAD STATS:     "; PR$
 			Locate , 5: Line Input "CURRENT STATS:  "; PC$
 
-			Color 14: Locate 13, 5: Print "ANY CHANGE (Y/N)"
+			Color 14
+
+			Locate 13, 5: Print "ANY CHANGE (Y/N)"
 			I$ = GetKeyPress$
 
 		Loop Until UCase$(I$) = "N"
 
+		Locate 15, 5: Print Space$(55)
+		Locate 16, 5: Print Space$(55)
+
+		Color 11
+				
 		Do
-			Locate 15, 5: Print Space$(55)
-
-			Locate 16, 5: Print Space$(55)
-
-			Color 11: Locate 15, 5: Input "ENTER NAME OF STAT FILE (EX.- MINNESOT.90)"; Z$
+			Locate 15, 5
+			Input "ENTER NAME OF STAT FILE (EX.- MINNESOT.90)"; Z$
 
 			Locate , 5: Print "ANY CHANGE (YN)"
-
 			I$ = GetKeyPress$
+		
 		Loop Until UCase$(I$) = "N"
 
 		If Not _FileExists(PR$ + "\" + Z$) Then
+
 			Cls
-			Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+			Locate 2, 10: Color 7
+			Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
 			Print
-			Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+			Locate , 10
+			Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+
 		Else
 
 			Open PR$ + "\" + Z$ For Input As #1
@@ -68,6 +80,7 @@ Sub ALIGN ()
 			Close #1
 
 			If Not _FileExists(PC$ + "\" + Z$) Then
+
 				Cls
 				Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
 				Print
@@ -132,7 +145,10 @@ Sub ALIGN ()
 				If SEQ = 0 Then
 					Cls: Locate 1, 32: Color 12: Print "STAT ROSTERS"
 					Locate , 26: Color 15: Print "CURRENT  ";: Color 7: Print "             ROAD"
-					For I = 0 To 13: Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";: Color 15: Print A$(I);: Color 12: Print Tab(44); Using "##"; I;: Print " ";: Color 7: Print AN$(I): Next
+					For I = 0 To 13: 
+						Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";: Color 15: Print A$(I);: Color 12: Print Tab(44); Using "##"; I;: Print " ";: Color 7: Print AN$(I)
+					Next
+
 					Color 11: Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
 
 					Open PR$ + "\" + Z$ For Output As #1
@@ -143,10 +159,16 @@ Sub ALIGN ()
 					For L = 0 To 15: Write #1, ZR1(L): Next
 					Close #1
 
-					Locate 19, 20: Print Space$(50)
-					Color 15: Cls: Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
+					Locate 19, 20
+					Print Space$(50)
+
+					Color 15
+					Cls
+					
+					Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
 					Print
-					Locate 12, 20: Color 12: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+					Locate 12, 20
+					Color 12: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
 				Else
 
@@ -160,6 +182,6 @@ Sub ALIGN ()
 
 		End If 'Done checking for road file
 
-	Loop Until DUMMY$ <> ""
+    Loop Until DUMMY$ <> "" Or UCase$(I$) = "N"
 
 End Sub

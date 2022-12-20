@@ -291,7 +291,9 @@ Sub SelectTeam_SINPUT (B$)
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -335,9 +337,15 @@ Sub SelectTeam_SINPUT (B$)
             If BO% = 1 Then 
                 BO% = 0
             Else
-                Locate 2, 33: Color T%(0), T%(1): Print A$
-                Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
+                Locate 2, 33
+				Color T%(0), T%(1): Print A$
+                
+				Color 15, 4
+				
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
             End If
         Else
             BO% = 1

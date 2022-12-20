@@ -85,22 +85,22 @@ Declare Sub RECORDSCHECK ()
 Dim Shared AP, B, C1, C7, DY, CT, D, FO, F3, G9, H, I, IN, J, JJ
 Dim Shared M5, MJ, N, NTMS, P, P9, Q, S2, S9, TMT, TOU, U5, XM, XS
 
+Dim Shared BO%, BU%, CM%, DK%, EG%, F3S%, FB%, FT%, HT%, J8%, LC%, N7%, NF%, NL%
+Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, TS%, X3%, X0%, X1%, XX%
+
+Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, FF$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
+
 Dim Shared B1(1, 4), C(1, 13, 6), D1(1), D2(1), D8(4, 3), DF(1, 13), DP(2, 4)
 Dim Shared F1(13), G4(13), G5(13), P2(1), P4(14), P5(14), P7(1)
 Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), R3!(1), RB(9), RS(1, 13, 13)
 Dim Shared S!(1, 9), S1(1), S3(13), T0(1), T1(1), V9(14)
 Dim Shared W0!(1, 13), W1!(1, 13), W2(1, 13), W3(1, 13), Z5(1), Z6(1), ZZ(1, 13)
 
-Dim Shared BO%, BU%, CM%, DK%, EG%, F3S%, FB%, FT%, HT%, J8%, LC%, N7%, NF%, NL%
-Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, TS%, X3%, X0%, X1%, XX%
-
 Dim Shared AP%(2), APT%(100, 1), B%(1, 13, 18), CZ%(1), DT%(1), E%(13), F5%(1, 8), FA%(1, 13), FY%(2)
 Dim Shared G9%(1), HF%(1, 6), HT%(100), L%(1, 4), N%(16, 16, 3), NG%(18), NG1%(18)
 Dim Shared O%(100), OF%(1), PR%(1, 1), ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TF%(1), TM%(1, 13), TP%(1), TR%(1, 9), teamIndex%(500), V1%(1), V2%(1)
-Dim Shared vg%(8), vh%(8), W%(1, 13, 1)
-
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, FF$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
+Dim Shared VG%(8), VH%(8), W%(1, 13, 1)
 
 Dim Shared C7$(2) 'C7$(3) would allow for the 30-second shot clock option
 Dim Shared A1$(1), AA$(1, 13), B$(1), C$(1), CM$(1), D$(15), DB$(14)
@@ -110,6 +110,7 @@ Dim Shared TB$(1), TS$(1), U5$(3), teamNames$(500), X$(3), Y$(1), YN$(5), YN1$(3
 
 Dim Shared A!(1, 13, 24)
 Dim Shared Z!(15), Z1!(15), Z2!(13, 13)
+
 Dim Shared F!, pbpDelay!, R0!, T!, TE!
 
 'CRD stores attendance for stat files
@@ -118,5 +119,4 @@ Dim Shared F!, pbpDelay!, R0!, T!, TE!
 'is the most supported?
 Dim Shared avgAttendance&(1), CRD&(100)
 
-'Y3 = Actual Attendance
 Dim Shared fileLength&, actualAttendance&

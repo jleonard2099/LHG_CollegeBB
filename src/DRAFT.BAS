@@ -172,9 +172,17 @@ Sub DraftExistingTeam (draftNew%)
         If BO% = 1 Then
             BO% = 0
         Else
-            Locate 2, 33: Color draftT%(0, 0), draftT%(0, 1): Print draftT$(0): Color 15, 4
-            Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
+
+            Locate 2, 33
+			Color draftT%(0, 0), draftT%(0, 1): Print draftT$(0)
+			
+			Color 15, 4
+			
+			Do
+				Locate , 33: Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
         End If
 
     Loop Until UCase$(I$) = "N"
@@ -271,13 +279,20 @@ Sub DoTheDraft (draftNew%, teamPosition%)
                         Call SelectTeam_DRAFT(NTMS)
                     End If
 
-                    182 If BO% = 1 Then
+                    If BO% = 1 Then
                         BO% = 0
                     Else
-                        Locate 2, 33: Color draftT%(1, 0), draftT%(1, 1): Print draftT$(1): Color 15, 4
-                        Locate , 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
+                        Locate 2, 33
+						Color draftT%(1, 0), draftT%(1, 1): Print draftT$(1)
+						
+						Color 15, 4
+
+						Do
+							Locate , 33: Print "ANY CHANGE (YN)";
+							I$ = GetKeyPress$
+						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
                     End If
+
 
                 Loop Until UCase$(I$) = "N"
 
@@ -467,22 +482,29 @@ Sub DoTheDraft (draftNew%, teamPosition%)
 
     Cls
     JJ = 4
+
     Locate 6, 8: Color 15, 1
+
     Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
     For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
     Next
+
     Locate 7 + JJ, 8
     Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-    Locate 7
 
-    U$ = "DRAFT ANOTHER TEAM (YN)"
-    Locate , (80 - Len(U$)) / 2
-    Print U$
+	Do
+		Locate 7
+		U$ = "DRAFT ANOTHER TEAM (YN)"
+		Locate , (80 - Len(U$)) / 2
+		Print U$
 
-    Color 15, 0
+		Color 15, 0
 
-    I$ = GetKeyPress$
+		I$ = GetKeyPress$
+	
+	Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
     If UCase$(I$) = "N" Then Cls
 

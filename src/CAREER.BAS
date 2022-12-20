@@ -133,8 +133,11 @@ Sub CreateCareerFile ()
         Do
             Cls
             Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-            Locate 9, 25: Print "ANY CHANGE (YN)"
-            I$ = GetKeyPress$
+
+			Do
+				Locate 9, 25: Print "ANY CHANGE (YN)"
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             If UCase$(I$) = "N" Then
 
@@ -386,17 +389,25 @@ Sub ViewCareerRecords ()
                 _MouseHide
 
                 If ExitCode% <> 27 Then
+
+					Color 15, 1
                     targetFile$ = careerLeaderFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
-                    Locate , 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress
+
+                    Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+					Color 15, 0
+
                 End If
 
             Loop Until UCase$(I$) = "N"
 
             If ExitCode% <> 27 Then
-                Color 15, 0
 
+                Color 15, 0
                 targetFile$ = RTrim$(targetFile$)
                 ZZ$ = Left$(targetFile$, Len(targetFile$) - 4)
 
@@ -404,11 +415,10 @@ Sub ViewCareerRecords ()
                 For I = 0 To 20: Input #1, BLYR(I), BL$(I), BL(I): Next
                 Close #1
 
-                Locate 15, 10
-                Color 12: Print "V";: Color 7: Print "iew or ";
-                Color 12: Print "P";: Color 7: Print "rint"
-
                 Do
+					Locate 15, 10
+					Color 12: Print "V";: Color 7: Print "iew or ";
+					Color 12: Print "P";: Color 7: Print "rint"
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "V" Or UCase$(I$) = "P"
 
@@ -445,8 +455,14 @@ Sub ViewCareerRecords ()
                             Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR(18)
                             Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR(19)
                             Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR(20)
-                            Color 15: Locate 22: Print "VIEW AGAIN (Y/N)"
-                            I$ = GetKeyPress$
+                            
+							Color 15
+
+							Do
+								Locate 22: Print "VIEW AGAIN (Y/N)"
+								I$ = GetKeyPress$
+							Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
                         Loop Until UCase$(I$) = "N"
 
                     Case "P":
@@ -557,9 +573,16 @@ Sub DiskSelection_CAREER ()
             If BO% = 1 Then
                 BO% = 0
             Else
-                Locate 2, 33: Color careerT%(0), careerT%(1): Print A$
-                Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
+                Locate 2, 33
+				Color careerT%(0), careerT%(1): Print A$
+
+                Color 15, 4
+				
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
             End If
 
         End If 'Done checking if ESC was pressed
@@ -611,8 +634,6 @@ Sub DoTheMerge ()
         Call ReadFile(careerFiles$())
 
         Do
-
-            Cls
             Color , 1
             Cls
             Locate , 28
@@ -629,7 +650,8 @@ Sub DoTheMerge ()
             Column% = 1
             Locate 25, 1
             Color 14
-            Print "ENTER";: Color 15
+            Print "ENTER";
+			Color 15
             Print "-SELECTS FILE";
 
             _MouseShow "DEFAULT"
@@ -637,11 +659,18 @@ Sub DoTheMerge ()
             _MouseHide
 
             If ExitCode% <> 27 Then
+
+                Color 15, 1
                 targetFile$ = careerFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                I$ = GetKeyPress$
+
+                Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+				Color 15, 0
+
             End If
 
         Loop Until UCase$(I$) = "N"
@@ -675,11 +704,15 @@ Sub DoTheMerge ()
 
             Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-            Cls
+            Color 15, 0
+			Cls
 
             Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-            Locate 9, 25: Print "ANY CHANGE (YN)"
-            I$ = GetKeyPress$
+     
+			Do
+				Locate 9, 25: Print "ANY CHANGE (YN)"
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             If UCase$(I$) = "N" Then
 
@@ -706,11 +739,13 @@ Sub DoTheMerge ()
 
                 If Not _FileExists(diskPaths$(1) + Z1$) Then
                     Cls
-                    Color 7: Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
+                    Color 7
+					Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
                     Print
                     Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
                 Else
+
                     Open diskPaths$(1) + Z1$ For Input As #1
                     Input #1, B$
                     For I = 0 To 13: Input #1, A$(I)

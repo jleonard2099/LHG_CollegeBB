@@ -81,18 +81,36 @@ Sub CBBINPUT ()
 
         'If 0 was pressed, we continue
 
-        250 C1 = 0
+        C1 = 0
 
         Do
-            1600 Cls: Print "YOU MUST HAVE THE FOLLOWING TEAM &": Print "INDIVIDUAL STATS: FGA,FG %,": Print "FTA,FT %,REBOUNDS": Print
-            1601 Print "IF YOU ARE INPUTTING A TEAM WITH ANY ": Print "OF THE FOLLOWING STATS MISSING,": Print "SIMPLY CHECK 'N' AND THE PROGRAM WILL"
-            1602 Print "ALLOW YOU TO INPUT RATINGS DIRECTLY"
-            1603 Print: Print "DO YOU HAVE THE FOLLOWING:"
-            1604 Print: Input "ASSISTS (YN) "; I$: QQ(0) = 0: If I$ = "N" Then QQ(0) = 1
-            1605 Input "PERSONAL FOULS (YN) "; I$: QQ(1) = 0: If I$ = "N" Then QQ(1) = 1
-            1606 Input "STEALS & TURNOVERS (YN) "; I$: QQ(2) = 0: If I$ = "N" Then QQ(2) = 1
-            1607 Input "BLOCKS (YN) "; I$: QQ(3) = 0: If I$ = "N" Then QQ(3) = 1
-            1608 Print: Input "ANY CHANGE (YN) "; I$
+            Cls
+			
+			Print "YOU MUST HAVE THE FOLLOWING TEAM &"
+			Print "INDIVIDUAL STATS: FGA,FG %,"
+			Print "FTA,FT %,REBOUNDS"
+			Print
+            Print "IF YOU ARE INPUTTING A TEAM WITH ANY "
+			Print "OF THE FOLLOWING STATS MISSING,"
+			Print "SIMPLY CHECK 'N' AND THE PROGRAM WILL"
+            Print "ALLOW YOU TO INPUT RATINGS DIRECTLY"
+            Print
+			Print "DO YOU HAVE THE FOLLOWING:"
+            Print
+			
+			Input "ASSISTS (YN) "; I$: QQ(0) = 0
+			If I$ = "N" Then QQ(0) = 1
+
+            Input "PERSONAL FOULS (YN) "; I$: QQ(1) = 0
+			If I$ = "N" Then QQ(1) = 1
+
+            Input "STEALS & TURNOVERS (YN) "; I$: QQ(2) = 0
+			If I$ = "N" Then QQ(2) = 1
+
+            Input "BLOCKS (YN) "; I$: QQ(3) = 0
+			If I$ = "N" Then QQ(3) = 1
+            Print
+			Input "ANY CHANGE (YN) "; I$
 
         Loop Until UCase$(I$) = "N"
 
@@ -102,7 +120,8 @@ Sub CBBINPUT ()
         Do
 
             'C1 should be 0 our first time through
-            308 Locate 1: Print X$(H)
+            308 
+			Locate 1: Print X$(H)
             Locate 2: Input " 0. TEAM # (0-EXIT)"; T
 
             If T > 0 And T < 999 Then
@@ -430,14 +449,16 @@ Sub CBBINPUT ()
 
                 Input I$
 
-                1707 If UCase$(I$) = "Y" Then
+                If UCase$(I$) = "Y" Then
                     I = Val(I$)
                     GoTo 1702
                 End If
-                1709 For I = 0 To 13
+                
+				For I = 0 To 13
                     A(I, 4) = A(I, 4) + E0(I)
                 Next I
                 C1 = 0
+
             End If
 
             If QQ(1) = 1 Then
@@ -457,7 +478,9 @@ Sub CBBINPUT ()
                 Next I
 
                 C1 = 1
-                PF = 0: TP = 0
+                PF = 0
+				TP = 0
+
                 For I1 = 0 To 13
                     If N$(I1) <> "XXX" Then
                         TP = TP + 1
@@ -467,7 +490,8 @@ Sub CBBINPUT ()
 
                 Locate 20, 1
                 Print "PF = "; PF / TP
-                Locate 21, 1: Print "ANY CHANGE (0-13) (N=NO CHANGE) "
+                Locate 21, 1
+				Print "ANY CHANGE (0-13) (N=NO CHANGE) "
                 Input I$
 
                 If UCase$(I$) <> "N" Then
@@ -516,10 +540,12 @@ Sub CBBINPUT ()
                 SV = (R * E0(15)) / 100: SW = ((4 + E0(16)) * R) / 100
                 ST = ST - SY - SV + SW: Locate 10, 26: Print "ST = "; ST;
 
-                Locate 23, 1: Print "ANY CHANGE (0-Z) (N = NO CHANGE) ";
+                Locate 23, 1
+				Print "ANY CHANGE (0-Z) (N = NO CHANGE) ";
 
                 Input I$
-                If UCase$(I$) = "N" Then
+                
+				If UCase$(I$) = "N" Then
                     For I = 0 To 13
                         A(I, 5) = A(I, 5) + E0(I)
                     Next I
@@ -550,38 +576,42 @@ Sub CBBINPUT ()
 
             End If
 
-            1654 If QQ(3) = 1 Then
-                2100 Cls
+            If QQ(3) = 1 Then
+            
+			Cls
                 Print "INPUT BLOCK RATINGS"
                 Print "GUARDS ARE USUALLY 0,1 ; FORWARDS,CENTERS ARE USUALLY 0,1,2,3"
                 Print "THE GREAT SHOT BLOCKERS ARE USUALLY 5,6,7"
                 Print
 
-                2101 C1 = 0
+                C1 = 0
                 For I = 0 To 13
 
-                    2102 Locate I + 6, 1: Print I; " "; N$(I);: Locate I + 6, 20: Input E0(I)
+                    2102 '
+					Locate I + 6, 1: Print I; " "; N$(I);
+					Locate I + 6, 20: Input E0(I)
 
-                    2103 If C1 = 1 Then Exit For '2105
+                    If C1 = 1 Then Exit For '2105
 
-                2104 Next I
+                Next I
 
                 'The "RETURN" should take us out the If Statement, and then run the Locate/Print ??
-                2105 C1 = 1
+                C1 = 1
                 Locate 20, 1: Print "ANY CHANGE (0-13) (N=NO CHANGE) ";
 
-                2106 Input I$
+                Input I$
 
-                2107 If UCase$(I$) = "N" Then 2109
-
-                2108 I = Val(I$): GoTo 2102
-
-                2109 For I = 0 To 13: A(I, 6) = A(I, 6) + E0(I): Next I
-                C1 = 0
+                If UCase$(I$) <> "N" Then
+					I = Val(I$)
+					GoTo 2102
+				Else
+					For I = 0 To 13: A(I, 6) = A(I, 6) + E0(I): Next I
+					C1 = 0
+				End If
 
             End If
 
-            375 'Call SaveTeam (YN$)
+            'Call SaveTeam (YN$)
             Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
             Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 

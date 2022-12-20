@@ -66,10 +66,16 @@ Sub CREATNAT ()
                         Locate , 12: Print "SPACES. TO EXIT, JUST HIT 'ENTER'"
                         Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
                         Locate 7, 37: Input LG$
+
                         If LG$ <> "" Then
+
                             LG$ = Left$(LG$, 8)
-                            Locate 13, 12: Print "ANY CHANGE (YN) "
-                            I$ = GetKeyPress$
+
+							Do
+								Locate 13, 12: Print "ANY CHANGE (YN) "
+								I$ = GetKeyPress$
+							Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
                         End If
 
                     Loop Until UCase$(I$) = "N"
@@ -131,25 +137,36 @@ Sub CREATNAT ()
                                 _MouseHide
 
                                 If ExitCode% <> 27 Then
+
+                                    Color 15, 1
                                     targetFile$ = organizationFiles$(Selection%)
                                     Locate 2, 33: Print targetFile$
-                                    Locate , 33: Print "ANY CHANGE (YN)";
-                                    Color 15, 0
-                                    I$ = GetKeyPress$
-                                    'If UCase$(I$) = "Y" Then 1310
+
+									Do
+										Locate , 33: Print "ANY CHANGE (YN)";
+										I$ = GetKeyPress$
+									Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+									Color 15, 0
+
                                 End If
+
                             Loop Until UCase$(I$) = "N"
 
                             If ExitCode% <> 27 Then
+
                                 targetFile$ = RTrim$(targetFile$)
                                 LG$ = Left$(targetFile$, Len(targetFile$) - 4)
+
                                 Open diskPaths$(1) + LG$ + ".CON" For Input As #2
                                 Input #2, LG$
                                 For X = 1 To MAX_CONFERENCES
                                     Input #2, Z1$(X)
                                 Next
                                 Close 2
+
                                 Color 15, 1
+
                             End If
 
                         End If
@@ -220,11 +237,18 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
             _MouseHide
 
             If ExitCode% <> 27 Then
+
+                Color 15, 1
                 targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                I$ = GetKeyPress$
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+				Color 15, 0
+
             End If
 
         Loop Until UCase$(I$) = "N"

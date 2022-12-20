@@ -115,11 +115,11 @@ Sub WHOLAY ()
     RN = Int(Rnd(1) * 100) + 1
 
     Select Case RN
-        Case 1 TO 38: B = 0
-        Case 39 TO 75: B = 1
-        Case 76 TO 83: B = 2
-        Case 84 TO 91: B = 3
-        Case 92 TO 100: B = 4
+        Case 1 To 38: B = 0
+        Case 39 To 75: B = 1
+        Case 76 To 83: B = 2
+        Case 84 To 91: B = 3
+        Case 92 To 100: B = 4
     End Select
 
 End Sub
@@ -265,17 +265,19 @@ Sub DISABLEPLAYER ()
     Cls
     I = P9
     Call DRAWBOX
-    U$ = "DISABLE PLAYERS FOR " + B$(P9) + " (YN)"
-    Locate , (80 - Len(U$)) / 2
-    Print U$
-    Color 15, 0
-    Print: Print
-    Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
-    Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
-    Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
-    Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
 
     Do
+        U$ = "DISABLE PLAYERS FOR " + B$(P9) + " (YN)"
+        Locate , (80 - Len(U$)) / 2
+        Print U$
+        Color 15, 0
+        
+        Print
+        Print
+        Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
+        Print "       THE RATIO OF GAMES PLAYED FOR EACH PLAYER TO THE TOTAL"
+        Print "       NUMBER OF GAMES PLAYED BY THE TEAM. YOU MAY WANT TO CHECK"
+        Print "       TO ACTIVATE ANY COMPUTER DEACTIVATED PLAYERS"
         I$ = GetKeyPress$
     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -352,71 +354,71 @@ End Sub
 Sub GETATEAM (I1, YN$)
 
     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-
+    FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 AS Q$(19), 602 AS X$
     For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+    FIELD #1, 53 + I * 43 AS X$, 15 AS Q$(I * 15 + 20), 2 AS Q$(I * 15 + 21), 2 AS Q$(I * 15 + 22), 2 AS Q$(I * 15 + 23), 2 AS Q$(I * 15 + 24), 2 AS Q$(I * 15 + 25), 2 AS Q$(I * 15 + 26), 2 AS Q$(I * 15 + 27), 2 AS Q$(I * 15 + 28), 2 AS Q$(I * 15 + 29) , 2 AS Q$(I * 15 + 30), 2 AS Q$(I * 15 + 31), 2 AS Q$(I * 15 + 32), 2 AS Q$(I * 15 + 33), 2 AS Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 AS X$
     Next
-
     Get #1, I1
 
     B$(P9) = RTrim$(Q$(0))
-
-    S1(P9) = CVI(Q$(1))
-    D1(P9) = CVI(Q$(2))
+    
+	S1(P9) = CVI(Q$(1))
+	D1(P9) = CVI(Q$(2))
     V1%(P9) = CVI(Q$(3))
-    V2%(P9) = CVI(Q$(4))
+	V2%(P9) = CVI(Q$(4))
 
-    For I3 = 0 To 4: L%(P9, I3) = CVI(Q$(I3 + 5)): Next
-    For I3 = 0 To 9: TR%(P9, I3) = CVI(Q$(I3 + 10)): Next
+    For I3 = 0 To 4: 
+		L%(P9, I3) = CVI(Q$(I3 + 5))
+	Next
+
+    For I3 = 0 To 9: 
+		TR%(P9, I3) = CVI(Q$(I3 + 10))
+	Next
+
     For I3 = 0 To 13
-        AA$(P9, I3) = RTrim$(Q$(I3 * 15 + 20))
+        AA$(P9, I3) = RTRim$(Q$(I3 * 15 + 20))
+
         For I4 = 0 To 6
             A!(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
             C(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
         Next
     Next
+
     Close 1
 
     FY%(P9) = 2 * TR%(P9, 3) - TR%(P9, 4)
 
-    doLoop% = 0
+    9016 '
+	CNT% = 0
+	CNTX% = 0
+    
+	If TR%(P9, 5) <> 0 Then
 
-    Do
-        9016 '
-        CNT% = 0
-        CNTX% = 0
+		For I = 0 To 13
+			If B%(P9, I, 18) = -1 Then B%(P9, I, 18) = 0
+			RN = Int(Rnd(1) * 100) + 1
+			If UCase$(AA$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
+			If UCase$(AA$(P9, I)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(C(P9, I, 0) / TR%(P9, 5) * 100 + .5)) Then B%(P9, I, 18) = -1
+		Next
 
-        If TR%(P9, 5) <> 0 Then
+		For I = 0 To 13:
+			If B%(P9, I, 18) = 0 Then CNT% = CNT% + 1
+		Next
 
-            For I = 0 To 13
-                If B%(P9, I, 18) = -1 Then B%(P9, I, 18) = 0
-                RN = Int(Rnd(1) * 100) + 1
-                If UCase$(AA$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
-                If UCase$(AA$(P9, I)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(C(P9, I, 0) / TR%(P9, 5) * 100 + .5)) Then B%(P9, I, 18) = -1
-            Next
+		If CNT% < 10 And CNTX% < 4 Then 9016
+		If CNTX% >= 5 And CNT% < 8 Then 9016
 
-            For I = 0 To 13:
-                If B%(P9, I, 18) = 0 Then CNT% = CNT% + 1
-            Next
-
-            If CNT% < 10 And CNTX% < 4 Then doLoop% = 1
-            If CNTX% >= 5 And CNT% < 8 Then doLoop% = 1
-
-        End If
-
-    Loop Until doLoop% = 0
+	End If
 
     9018 '
 
     Open diskPaths$(0) + "COLBBTMS." + YN$ As #1 Len = 566
-
-    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-    For I = 0 To 13
-        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+    
+	Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+    
+	For I = 0 To 13
+		FIELD #1,74+I*32 AS X$,2 AS Q$(I*16+4),2 AS Q$(I*16+5),2 AS Q$(I*16+6),2 AS Q$(I*16+7),2 AS Q$(I*16+8),2 AS Q$(I*16+9),2 AS Q$(I*16+10),2 AS Q$(I*16+11),2 AS Q$(I*16+12),2 AS Q$(I*16+13),2 AS Q$(I*16+14),2 AS Q$(I*16+15),2 AS Q$(I*16+16),2 AS Q$(I*16+17),2 AS Q$(I*16+18),2 AS Q$(I*16+19)
+		FIELD #1, 522 AS X$,2 AS Q$(228),2 AS Q$(229),2 AS Q$(230),2 AS Q$(231),2 AS Q$(232),2 AS Q$(233),2 AS Q$(234),2 AS Q$(235),2 AS Q$(236),2 AS Q$(237),2 AS Q$(238),2 AS Q$(239),2 AS Q$(240),2 AS Q$(241),2 AS Q$(242),2 AS Q$(243),2 AS Q$(244),2 AS Q$(245),2 AS Q$(246),2 AS Q$(247),2 AS Q$(248),2 AS Q$(249)
     Next
 
     Get #1, I1
@@ -429,9 +431,11 @@ Sub GETATEAM (I1, YN$)
     For I = 0 To 13
         DF(P9, I) = CVI(Q$(I * 16 + 4))
         PO$(P9, I) = Q$(I * 16 + 5)
+
         For I1 = 0 To 13
             RS(P9, I, I1) = CVI(Q$(I * 16 + I1 + 6))
         Next
+
     Next
 
     For I = 0 To 20
@@ -449,12 +453,16 @@ Sub GETATEAM (I1, YN$)
         avgAttendance&(P9) = 0
 
         For I = 0 To 13:
-            DF(P9, I) = 5: PO$(P9, I) = ""
-            For I1 = 0 To 13:
+            DF(P9, I) = 5
+            PO$(P9, I) = ""
+
+            For I1 = 0 To 13
                 RS(P9, I, I1) = 0
             Next
         Next
+
         For I = 0 To 20: T2%(P9, I) = 0: Next
+
     End If
 
 End Sub
@@ -491,7 +499,7 @@ Sub MAKEPBP ()
                 1410 'TURNOVER
                 U$ = AA$(P, B1(P, B))
 
-                If RN > 35 And RN <= 68 And P7(D) > 1 And PASS% = 1 Then 
+                If RN > 35 And RN <= 68 And P7(D) > 1 And PASS% = 1 Then
                     U$ = B$(P) + " CALLED FOR 10 SEC VIOLATION"
                 Else
 
@@ -621,86 +629,86 @@ Sub MAKEPBP ()
                     Case 1
                         1431 'BAD
                         Select Case RN
-                            Case 1 to 40
+                            Case 1 To 40
                                 U$ = U$ + " TAKES A TOUGH SHOT"
-                            Case 40 to 45
+                            Case 40 To 45
                                 U$ = U$ + " SHOOTS OFF BALANCE"
-                            Case 46 to 50 
+                            Case 46 To 50
                                 U$ = U$ + " FORCES ONE UP"
-                            Case 51 to 60
+                            Case 51 To 60
                                 U$ = U$ + " SHOOTS UNDER PRESSURE"
-                            Case 61 to 65
+                            Case 61 To 65
                                 U$ = U$ + " WITH A BAD SHOT"
-                            Case 66 to 70
+                            Case 66 To 70
                                 U$ = U$ + " SHOOTS IN HEAVY TRAFFIC"
-                            Case 71 to 75
+                            Case 71 To 75
                                 U$ = U$ + " THROWS UP A PRAYER"
-                            Case 76 to 80
+                            Case 76 To 80
                                 U$ = U$ + " TAKES A BAD SHOT"
-                            Case 81 to 85
+                            Case 81 To 85
                                 U$ = U$ + " FORCES THE INSIDE SHOT"
-                            Case 86 to 100
+                            Case 86 To 100
                                 U$ = U$ + " TURNS AND SHOOTS"
                         End Select
 
                     Case 2
                         1432 'INSIDE W/ASSIST
                         Select Case RN
-                            Case 1 to 10
+                            Case 1 To 10
                                 U$ = "HE CUTS TO THE BASKET": Call PBP: U$ = "TAKES IT UP"
 
                                 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
                                 If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                            Case 11 to 20
+                            Case 11 To 20
                                 U$ = "HE TAKES IT TO THE HOLE"
                                 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
                                 If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                            Case 21 to 30
+                            Case 21 To 30
                                 U$ = "HE TAKES IT TO THE HOOP"
                                 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
                                 If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                            Case 31 to 40 
+                            Case 31 To 40
                                 U$ = "HE LEANS IN AND SHOOTS"
 
-                            Case 41 to 50 
+                            Case 41 To 50
                                 U$ = "HE PUTS IT UP"
 
-                            Case 51 to 60
+                            Case 51 To 60
                                 U$ = "HE TAKES IT TO THE BOARD"
                                 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
                                 If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                            Case 61 to 70
+                            Case 61 To 70
                                 U$ = "HE PUTS IT OFF THE GLASS"
 
-                            Case 71 to 80
-                                If B = 4 Then 
+                            Case 71 To 80
+                                If B = 4 Then
                                     U$ = "HE SHOOTS THE HOOK"
                                 Else
-                                    'B <> 4 
+                                    'B <> 4
                                     U$ = "HE GOES IN FOR THE LAYUP"
                                 End If
 
-                            Case 81 to 90
+                            Case 81 To 90
                                 U$ = "HE TAKES IT UP STRONG"
                                 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
                                 If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                            Case 91 to 95
+                            Case 91 To 95
                                 U$ = "HE POWERS IT UP"
                                 If (B = 0 Or B = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (B = 2 Or B = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
                                 If B = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
 
-                            Case 96 to 100
+                            Case 96 To 100
                                 U$ = "HE LAYS IT UP"
 
                         End Select
@@ -708,23 +716,23 @@ Sub MAKEPBP ()
                     Case 3
                         1433 'PENETRATE
                         Select Case B
-                            Case 0,1
+                            Case 0, 1
                                 Select Case RN
-                                    Case 1 to 25
+                                    Case 1 To 25
                                         U$ = "HE SPINS FREE"
                                         Call PBP
                                         U$ = "SHOOTS"
-                                    Case 26 to 50
+                                    Case 26 To 50
                                         U$ = "HE TAKES IT UP UNDER THE BASKET"
                                         If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
-                                    Case 51 to 52
+                                    Case 51 To 52
                                         U$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         U$ = "AND SOARS TO THE HOOP"
                                         If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
-                                    Case 53 to 54
+                                    Case 53 To 54
                                         U$ = "HE BLOWS PAST TWO DEFENDERS"
-                                    Case 55 to 56
+                                    Case 55 To 56
                                         U$ = "HE DRIVES THE BASELINE"
                                         Call PBP
                                         U$ = "SPINS RIGHT AND GOES UP"
@@ -741,9 +749,9 @@ Sub MAKEPBP ()
                                         U$ = "HE PENETRATES"
                                         Call PBP
                                         U$ = "GORGEOUS FINGER ROLL!"
-                                    Case 60 to 75
+                                    Case 60 To 75
                                         U$ = "HE TAKES THE JUMPER"
-                                    Case 76 to 90
+                                    Case 76 To 90
                                         U$ = "HE STOPS"
                                         Call PBP
                                         U$ = "SHOOTS"
@@ -753,28 +761,28 @@ Sub MAKEPBP ()
                                         U$ = "NO ONE IS OPEN"
                                         Call PBP
                                         U$ = "HE PUTS IT UP"
-                                    Case 92 to 100
+                                    Case 92 To 100
                                         U$ = "HE TAKES THE SHOT"
                                 End Select
 
                             Case 2, 3
                                 Select Case RN
-                                    Case 1 to 16
+                                    Case 1 To 16
                                         U$ = "HE TAKES IT UP"
                                         If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                    Case 17 to 32
+                                    Case 17 To 32
                                         U$ = "HE SPINS FREE"
                                         Call PBP
                                         U$ = "SHOOTS"
                                         If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                    Case 33 to 48
+                                    Case 33 To 48
                                         U$ = "HE GETS LOOSE IN THE PAINT"
                                         Call PBP
                                         U$ = "TAKES IT UP"
                                         If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                                    Case 49 to 64
+                                    Case 49 To 64
                                         U$ = "HE PUTS IT UP"
-                                    Case 65 to 67
+                                    Case 65 To 67
                                         U$ = "HE CURLS OFF A PICK IN THE PAINT"
                                         Call PBP
                                         U$ = "TAKES IT UP"
@@ -801,25 +809,25 @@ Sub MAKEPBP ()
                                         U$ = "HE PENETRATES"
                                         Call PBP
                                         U$ = "GORGEOUS FINGER ROLL!"
-                                    Case 75 to 80
+                                    Case 75 To 80
                                         U$ = "HE SHOOTS"
-                                    Case 81 to 100
+                                    Case 81 To 100
                                         U$ = "HE TAKES THE SHOT"
                                 End Select
 
                             Case 4
 
                                 Select Case RN
-                                    Case 1 to 15
+                                    Case 1 To 15
                                         U$ = "HE PUTS IT OFF THE GLASS"
-                                    Case 16 to 25
+                                    Case 16 To 25
                                         U$ = "HE PIVOTS TO THE BASKET"
-                                    Case 26 to 40
+                                    Case 26 To 40
                                         U$ = "HE POWERS IT UP"
-                                    Case 41 to 58
+                                    Case 41 To 58
                                         U$ = "HE TAKES IT TO THE HOOP"
                                         If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
-                                    Case 59 to 70
+                                    Case 59 To 70
                                         U$ = "HE TAKES THE SHOT"
                                     Case 71, 72
                                         U$ = "HE CURLS OFF A PICK IN THE PAINT"
@@ -831,7 +839,7 @@ Sub MAKEPBP ()
                                         Call PBP
                                         U$ = "AND SOARS TO THE HOOP"
                                         If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
-                                    Case 75 to 100 
+                                    Case 75 To 100
                                         U$ = "HE TAKES IT UP STRONG"
                                         If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
                                 End Select
@@ -847,25 +855,25 @@ Sub MAKEPBP ()
                             FT% = 0
                         Else
                             Select Case RN
-                                Case 1 to 10
+                                Case 1 To 10
                                     U$ = U$ + " TRIES FOR THREE!"
-                                Case 11 to 20
+                                Case 11 To 20
                                     U$ = U$ + " SHOOTS FROM 3-POINT RANGE!"
-                                Case 21 to 30
+                                Case 21 To 30
                                     U$ = U$ + " HOISTS A THREE!"
-                                Case 31 to 40
+                                Case 31 To 40
                                     U$ = U$ + " BOMBS A THREE FROM THE CORNER!"
-                                Case 41 to 50
+                                Case 41 To 50
                                     U$ = U$ + " FIRES FROM THE 3-POINT LINE!"
-                                Case 51 to 60
+                                Case 51 To 60
                                     U$ = U$ + " SHOOTS FOR THREE!"
-                                Case 61 to 70
+                                Case 61 To 70
                                     U$ = U$ + " SHOOTS THE 3-POINTER!"
-                                Case 71 to 80
+                                Case 71 To 80
                                     U$ = U$ + " FOR 3...!"
-                                Case 81 to 90
+                                Case 81 To 90
                                     U$ = U$ + " PUTS UP THE TREY!"
-                                Case 91 to 100
+                                Case 91 To 100
                                     U$ = U$ + " TAKES THE 3-POINTER!"
                             End Select
 
@@ -882,10 +890,10 @@ Sub MAKEPBP ()
                             Case 2
                                 U$ = U$ + " SHOOTS THE J"
                             Case 3
-                                If B = 4 Then 
+                                If B = 4 Then
                                     U$ = U$ + " RELEASES THE HOOK"
                                 Else
-                                    'B <> 4 
+                                    'B <> 4
                                     U$ = U$ + " TAKES THE SHOT"
                                 End If
                             Case 4
@@ -893,26 +901,26 @@ Sub MAKEPBP ()
                             Case 5
                                 U$ = U$ + " WITH THE 10 FOOTER"
                             Case 6
-                                If B = 4 Then 
+                                If B = 4 Then
                                     U$ = U$ + " WITH THE RUNNING HOOK"
                                 Else
-                                    'B <> 4 
+                                    'B <> 4
                                     U$ = U$ + " WITH THE RUNNER"
                                 End If
 
                             Case 7
-                                If B = 4 Then 
+                                If B = 4 Then
                                     U$ = U$ + " WITH A SWEEPING HOOK"
                                 Else
-                                    'B <> 4 
+                                    'B <> 4
                                     U$ = U$ + " WORKS FREE AND SHOOTS"
                                 End If
 
                             Case 8
-                                If B = 4 Then 
+                                If B = 4 Then
                                     U$ = U$ + " WITH A BABY HOOK SHOT"
                                 Else
-                                    'B <> 4 
+                                    'B <> 4
                                     U$ = U$ + " TAKES THE SHOT"
                                 End If
 
@@ -1148,57 +1156,57 @@ Sub MAKEPBP ()
                     Case 7
                         DK% = 0
                         Select Case RN
-                            Case 1 to 10
+                            Case 1 To 10
                                 U$ = U$ + " FIRES FROM THE PERIMETER"
-                            Case 11 to 20 
+                            Case 11 To 20
                                 U$ = U$ + " SHOOTS FROM 17"
-                            Case 21 to 30 
+                            Case 21 To 30
                                 U$ = U$ + " PUTS IT UP FROM 17"
-                            Case 31 to 40 
+                            Case 31 To 40
                                 U$ = U$ + " PUTS IT UP"
-                            Case 41 to 45 
+                            Case 41 To 45
                                 U$ = U$ + " FROM INSIDE THE THE KEY"
-                            Case 46 to 50 
+                            Case 46 To 50
                                 U$ = U$ + " FIRES FROM THE CORNER"
-                            Case 51 to 60 
+                            Case 51 To 60
                                 U$ = U$ + " SHOOTS FROM OUTSIDE"
-                            Case 61 to 70 
+                            Case 61 To 70
                                 U$ = U$ + " PUMPS AND SHOOTS"
-                            Case 71 to 80
+                            Case 71 To 80
                                 U$ = U$ + " FIRES THE FADE-AWAY"
-                            Case 81 to 90
+                            Case 81 To 90
                                 If X3% = 1 Then U$ = U$ + " FROM INSIDE THE 3-POINT LINE"
                             Case 91
                                 If X3% = 1 Then U$ = U$ + " FOR THREE!": Call PBP: U$ = "NO!": Call PBP: U$ = "HIS FOOT IS ON THE 3-POINT LINE"
-                            Case 92 to 100
+                            Case 92 To 100
                                 U$ = U$ + " SHOOTS FROM THE WING"
                         End Select
 
                     Case 8
                         Select Case RN
-                            Case 1 to 20 
+                            Case 1 To 20
                                 U$ = "HE SAILS TO THE HOOP"
-                            Case 21 to 23 
+                            Case 21 To 23
                                 U$ = "HE TAKES IT TO THE BUCKET"
-                            Case 24 to 26 
+                            Case 24 To 26
                                 U$ = "HE TAKES IT TO THE HOLE"
-                            Case 27 to 29 
+                            Case 27 To 29
                                 U$ = "HE SLASHES TO THE HOLE"
-                            Case 30 to 32 
+                            Case 30 To 32
                                 U$ = "HE SLASHES TO THE BUCKET"
-                            Case 33 to 35 
+                            Case 33 To 35
                                 U$ = "HE SOARS TO THE BUCKET"
-                            Case 36 to 38 
+                            Case 36 To 38
                                 U$ = "HE SOARS TO THE HOLE"
-                            Case 39 to 40 
+                            Case 39 To 40
                                 U$ = "HE GLIDES TO THE HOLE"
-                            Case 41 to 60 
+                            Case 41 To 60
                                 U$ = "HE GOES IN STRONG"
-                            Case 61 to 80 
+                            Case 61 To 80
                                 U$ = "HE TAKES IT IN"
-                            Case 81 to 90 
+                            Case 81 To 90
                                 U$ = "HE TAKES A DEFENDER WITH HIM"
-                            Case 91 to 100
+                            Case 91 To 100
                                 U$ = "HE GOES UP WITH IT"
                         End Select
 
@@ -1240,15 +1248,15 @@ Sub MAKEPBP ()
 
                         RN = Int(Rnd(1) * 100) + 1
                         Select Case RN
-                            Case 1 to 20 
+                            Case 1 To 20
                                 U$ = U$ + " SHOOTS FROM 15"
-                            Case 21 to 40 
+                            Case 21 To 40
                                 U$ = U$ + " SHOOTS"
-                            Case 41 to 60
+                            Case 41 To 60
                                 U$ = U$ + " TAKES THE JUMPER"
-                            Case 61 to 80
+                            Case 61 To 80
                                 U$ = U$ + " PUTS IT UP FROM 16"
-                            Case 81 to 100
+                            Case 81 To 100
                                 U$ = U$ + " FAKES AND SHOOTS"
                         End Select
 
@@ -1259,34 +1267,34 @@ Sub MAKEPBP ()
                 U$ = "HE "
 
                 Select Case RN
-                    Case 1 to 6
+                    Case 1 To 6
                         U$ = U$ + " DRAINS THE THREE!"
                         Call PBP
                         U$ = "NO!"
                         Call PBP
                         U$ = "HIS FOOT IS ON THE 3-POINT LINE"
                         XX% = 1
-                    Case 7 to 10
+                    Case 7 To 10
                         U$ = U$ + "FILLS UP THE BASKET!!!"
-                    Case 11 to 20
+                    Case 11 To 20
                         U$ = U$ + "HITS THE TREY!!!"
-                    Case 21 to 30
+                    Case 21 To 30
                         U$ = "IT'S GOOOODD!!"
-                    Case 31 to 40
+                    Case 31 To 40
                         U$ = U$ + "GETS IT!!!"
-                    Case 41 to 45
+                    Case 41 To 45
                         U$ = "NOTHING BUT THE BOTTOM OF THE NET"
-                    Case 46 to 50
+                    Case 46 To 50
                         U$ = "COUNT IT!!"
-                    Case 51 to 55
+                    Case 51 To 55
                         U$ = "WAY DOWNTOWN BANG!!!"
-                    Case 56 to 60
+                    Case 56 To 60
                         U$ = U$ + "RINGS IT UP!!!"
-                    Case 61 to 80
+                    Case 61 To 80
                         U$ = U$ + "DRAINS IT!!!"
-                    Case 81 to 90
+                    Case 81 To 90
                         U$ = "HE BURIES IT!!!"
-                    Case 91 to 100
+                    Case 91 To 100
                         U$ = "IT'S ALL NET!!!"
                 End Select
 
@@ -1295,19 +1303,19 @@ Sub MAKEPBP ()
                 U$ = "HE "
 
                 Select Case RN
-                    Case 1 to 20
+                    Case 1 To 20
                         U$ = U$ + "GETS NONE"
-                    Case 21 to 25
+                    Case 21 To 25
                         U$ = "IT NEVER HAD A CHANCE"
-                    Case 26 to 35
+                    Case 26 To 35
                         U$ = "AIRRRR BALLLL!!"
-                    Case 36 to 40
+                    Case 36 To 40
                         U$ = U$ + "MISFIRES"
-                    Case 41 to 60
+                    Case 41 To 60
                         U$ = "IT'S OFF THE RIM...NO GOOD!"
-                    Case 61 to 80
+                    Case 61 To 80
                         U$ = "IT'S SHORT"
-                    Case 81 to 100
+                    Case 81 To 100
                         U$ = U$ + "MISSES"
                 End Select
 
@@ -1493,15 +1501,15 @@ Sub MAKEPBP ()
 
                     Select Case RN
 
-                        Case 1 to 20
+                        Case 1 To 20
                             U$ = U$ + "MISSES THE EASY BASKET!"
-                        Case 21 to 40
+                        Case 21 To 40
                             U$ = U$ + "JAMS IT TOO HARD!!"
-                        Case 41 to 60
+                        Case 41 To 60
                             U$ = U$ + "SLAMS IT OFF THE IRON...NO GOOD!"
-                        Case 61 to 80
+                        Case 61 To 80
                             U$ = U$ + "CAN'T GET IT DOWN!"
-                        Case 81 to 100
+                        Case 81 To 100
                             U$ = U$ + "BLOWS THE EASY BASKET!!"
                     End Select
 
@@ -1901,14 +1909,14 @@ Sub PBP ()
         U$ = PadRight$(U, 38)
 
         Locate 8, 1
-        If NL% = 1 Then A1$ = U$: vg%(1) = TR%(P, 0): vh%(1) = TR%(P, 1)
-        If NL% = 2 Then B1$ = U$: vg%(2) = TR%(P, 0): vh%(2) = TR%(P, 1)
-        If NL% = 3 Then C1$ = U$: vg%(3) = TR%(P, 0): vh%(3) = TR%(P, 1)
-        If NL% = 4 Then D1$ = U$: vg%(4) = TR%(P, 0): vh%(4) = TR%(P, 1)
-        If NL% = 5 Then E1$ = U$: vg%(5) = TR%(P, 0): vh%(5) = TR%(P, 1)
-        If NL% = 6 Then F1$ = U$: vg%(6) = TR%(P, 0): vh%(6) = TR%(P, 1)
-        If NL% = 7 Then G1$ = U$: vg%(7) = TR%(P, 0): vh%(7) = TR%(P, 1)
-        If NL% = 8 Then H1$ = U$: vg%(8) = TR%(P, 0): vh%(8) = TR%(P, 1)
+        If NL% = 1 Then A1$ = U$: VG%(1) = TR%(P, 0): VH%(1) = TR%(P, 1)
+        If NL% = 2 Then B1$ = U$: VG%(2) = TR%(P, 0): VH%(2) = TR%(P, 1)
+        If NL% = 3 Then C1$ = U$: VG%(3) = TR%(P, 0): VH%(3) = TR%(P, 1)
+        If NL% = 4 Then D1$ = U$: VG%(4) = TR%(P, 0): VH%(4) = TR%(P, 1)
+        If NL% = 5 Then E1$ = U$: VG%(5) = TR%(P, 0): VH%(5) = TR%(P, 1)
+        If NL% = 6 Then F1$ = U$: VG%(6) = TR%(P, 0): VH%(6) = TR%(P, 1)
+        If NL% = 7 Then G1$ = U$: VG%(7) = TR%(P, 0): VH%(7) = TR%(P, 1)
+        If NL% = 8 Then H1$ = U$: VG%(8) = TR%(P, 0): VH%(8) = TR%(P, 1)
         If NL% > 8 Then
             A1$ = B1$
             B1$ = C1$
@@ -1919,23 +1927,23 @@ Sub PBP ()
             G1$ = H1$
             H1$ = U$
             For I = 1 To 7
-                vg%(I) = vg%(I + 1)
-                vh%(I) = vh%(I + 1)
+                VG%(I) = VG%(I + 1)
+                VH%(I) = VH%(I + 1)
             Next
-            vg%(8) = TR%(P, 0)
-            vh%(8) = TR%(P, 1)
+            VG%(8) = TR%(P, 0)
+            VH%(8) = TR%(P, 1)
         End If
 
         NL% = NL% + 1
 
-        Color vg%(1), vh%(1): Print A1$
-        Color vg%(2), vh%(2): Print B1$
-        Color vg%(3), vh%(3): Print C1$
-        Color vg%(4), vh%(4): Print D1$
-        Color vg%(5), vh%(5): Print E1$
-        Color vg%(6), vh%(6): Print F1$
-        Color vg%(7), vh%(7): Print G1$
-        Color vg%(8), vh%(8): Print H1$
+        Color VG%(1), VH%(1): Print A1$
+        Color VG%(2), VH%(2): Print B1$
+        Color VG%(3), VH%(3): Print C1$
+        Color VG%(4), VH%(4): Print D1$
+        Color VG%(5), VH%(5): Print E1$
+        Color VG%(6), VH%(6): Print F1$
+        Color VG%(7), VH%(7): Print G1$
+        Color VG%(8), VH%(8): Print H1$
 
         Color 15, 0
         Call DELAY
@@ -2961,15 +2969,15 @@ Sub TICKERCHECK ()
 
         If H = 1 Then
             Select Case T!
-                Case 721 TO 960
+                Case 721 To 960
                     If SX%(AP%(2) + 1, 0, 1) = -1 Then SX%(AP%(2) + 1, 0, 1) = S!(0, 0): SX%(AP%(2) + 1, 1, 1) = S!(1, 0)
-                Case 481 TO 720
+                Case 481 To 720
                     If SX%(AP%(2) + 1, 0, 2) = -1 Then SX%(AP%(2) + 1, 0, 2) = S!(0, 0): SX%(AP%(2) + 1, 1, 2) = S!(1, 0)
-                Case 241 TO 480
+                Case 241 To 480
                     If SX%(AP%(2) + 1, 0, 3) = -1 Then SX%(AP%(2) + 1, 0, 3) = S!(0, 1): SX%(AP%(2) + 1, 1, 3) = S!(1, 1)
-                Case 121 TO 240
+                Case 121 To 240
                     If SX%(AP%(2) + 1, 0, 4) = -1 Then SX%(AP%(2) + 1, 0, 4) = S!(0, 0): SX%(AP%(2) + 1, 1, 4) = S!(1, 0)
-                Case 0 TO 120
+                Case 0 To 120
                     If SX%(AP%(2) + 1, 0, 5) = -1 Then SX%(AP%(2) + 1, 0, 5) = S!(0, 0): SX%(AP%(2) + 1, 1, 5) = S!(1, 0)
             End Select
         Else
@@ -2979,15 +2987,15 @@ Sub TICKERCHECK ()
             Else
                 If H = 2 Then
                     Select Case T!
-                        Case 721 TO 960
+                        Case 721 To 960
                             If SX%(AP%(2) + 1, 0, 9) = -1 Then SX%(AP%(2) + 1, 0, 9) = S!(0, 0): SX%(AP%(2) + 1, 1, 9) = S!(1, 0)
-                        Case 481 TO 720
+                        Case 481 To 720
                             If SX%(AP%(2) + 1, 0, 10) = -1 Then SX%(AP%(2) + 1, 0, 10) = S!(0, 0): SX%(AP%(2) + 1, 1, 10) = S!(1, 0)
-                        Case 241 TO 480
+                        Case 241 To 480
                             If SX%(AP%(2) + 1, 0, 11) = -1 Then SX%(AP%(2) + 1, 0, 11) = S!(0, 3) + S!(0, 2) + S!(0, 1): SX%(AP%(2) + 1, 1, 11) = S!(1, 3) + S!(1, 2) + S!(1, 1)
-                        Case 121 TO 240
+                        Case 121 To 240
                             If SX%(AP%(2) + 1, 0, 12) = -1 Then SX%(AP%(2) + 1, 0, 12) = S!(0, 0): SX%(AP%(2) + 1, 1, 12) = S!(1, 0)
-                        Case 0 TO 120
+                        Case 0 To 120
                             If SX%(AP%(2) + 1, 0, 13) = -1 Then SX%(AP%(2) + 1, 0, 13) = S!(0, 0): SX%(AP%(2) + 1, 1, 13) = S!(1, 0)
                     End Select
                 Else
@@ -3588,7 +3596,7 @@ Sub DEFENSEMENU ()
 
         Select Case DT%(P9)
 
-            Case 0 TO 3
+            Case 0 To 3
                 P7(P9) = 0
 
             Case 4
@@ -3599,10 +3607,10 @@ Sub DEFENSEMENU ()
 
                 'original if statement had this ranging to <= 10
                 'however the next statement was > 9
-            Case 7 TO 9
+            Case 7 To 9
                 P7(P9) = 3
 
-            Case 10 TO 13
+            Case 10 To 13
                 P7(P9) = 4
 
             Case 14
@@ -4519,10 +4527,13 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub SELECTID ()
+
     Color 15, 0
     Cls
+
     SN = 1
     Locate 6, 8
+
     Color 15, 4
 
     'Print box top
@@ -4561,9 +4572,15 @@ Sub SELECTID ()
     If BO% = 1 Then
         BO% = 0
     Else
-        Locate 2, 33: Color TR%(P9, 0), TR%(P9, 1): Print B$(P9)
-        Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-        I$ = GetKeyPress$
+        Locate 2, 33
+        Color TR%(P9, 0), TR%(P9, 1): Print B$(P9)
+
+        Color 15, 4
+
+        Do
+            Locate , 33: Print "ANY CHANGE (YN)";
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
         If UCase$(I$) <> "Y" Then
             Color 15, 0
@@ -4585,7 +4602,7 @@ Sub PRDFAT ()
 
         R0! = Int(Rnd(1) * 100) + 1
 
-        If R0! <= X0% Then 
+        If R0! <= X0% Then
             FA%(D, B1(D, I)) = FA%(D, B1(D, I)) + X1%
         Else
             FA%(D, B1(D, I)) = FA%(D, B1(D, I)) + X1% + 1
@@ -4608,7 +4625,7 @@ Sub PRPFAT ()
 
         R0! = Int(Rnd(1) * 100) + 1
 
-        If R0! <= X0% Then 
+        If R0! <= X0% Then
             FA%(P, B1(P, I)) = FA%(P, B1(P, I)) + X1%
         Else
             FA%(P, B1(P, I)) = FA%(P, B1(P, I)) + X1% + 1
@@ -5691,7 +5708,7 @@ Sub AICOMCOACH ()
     If P9 = 0 Then I6 = 1
     If P9 = 1 Then I6 = 0
 
-    If S!(P9, 0) - S!(I6, 0) < 0 Then 
+    If S!(P9, 0) - S!(I6, 0) < 0 Then
         I5 = S!(I6, 0) - S!(P9, 0)
 
         8867 R0! = Int(Rnd(1) * 100) + 1
@@ -5750,23 +5767,23 @@ Sub AICOMCOACH ()
 
         R0! = Int(Rnd(1) * 100) + 1: DT%(P9) = 0: D2(P9) = 0: P7(P9) = 0
         Select Case R0!
-            Case 1 to 10
+            Case 1 To 10
                 D2(P9) = 1: DT%(P9) = 1: P7(P9) = 0
-            Case 11 to 36
+            Case 11 To 36
                 D2(P9) = 2: DT%(P9) = 2: P7(P9) = 0
-            Case 37 to 100
+            Case 37 To 100
                 DT%(P9) = 0: D2(P9) = 0: P7(P9) = 0
         End Select
 
         R0! = Int(Rnd(1) * 100) + 1
         Select Case R0!
-            Case 1 to 5 
+            Case 1 To 5
                 P7(P9) = 1: DT%(P9) = 4: D2(P9) = 0
-            Case 6 to 9
+            Case 6 To 9
                 P7(P9) = 3: DT%(P9) = 8: D2(P9) = 0
             Case 10
                 P7(P9) = 3: DT%(P9) = 7: D2(P9) = 2
-            'Nothing for 11 to 100
+                'Nothing for 11 to 100
         End Select
 
     End If
@@ -5774,17 +5791,17 @@ Sub AICOMCOACH ()
     R0! = Int(Rnd(1) * 100) + 1
     If H = 1 Then
         Select Case R0!
-            Case 1 to 80 
+            Case 1 To 80
                 OF%(P9) = 0
-            Case 81 to 90
+            Case 81 To 90
                 OF%(P9) = 1
-            Case 91 to 100
+            Case 91 To 100
                 OF%(P9) = 2
         End Select
     End If
 
     If H >= 2 And S!(P9, 0) - S!(I6, 0) < 0 Then
-        If R0! <= 80 Then 
+        If R0! <= 80 Then
             OF%(P9) = 0
         Else
             'R0 > 80
@@ -5793,19 +5810,19 @@ Sub AICOMCOACH ()
     End If
 
     If H >= 2 And S!(P9, 0) - S!(I6, 0) >= 0 Then
-        If R0! <= 80 Then 
+        If R0! <= 80 Then
             OF%(P9) = 0
         Else
-            'R0! > 80 
+            'R0! > 80
             OF%(P9) = 2
         End If
     End If
 
     If H >= 2 And T! <= 180 And S!(P9, 0) - S!(I6, 0) < 0 Then
-        If R0! <= 30 Then 
+        If R0! <= 30 Then
             OF%(P9) = 3
         Else
-            'R0! <= 30 
+            'R0! <= 30
             OF%(P9) = 4
         End If
     End If

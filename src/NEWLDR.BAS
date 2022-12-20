@@ -101,12 +101,20 @@ Sub ViewExpanded ()
             _MouseHide
 
             If ExitCode% <> 27 Then
+            
+				Color 15, 1
                 targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                I$ = GetKeyPress$
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+				Color 15, 0
+
             End If
+			
         Loop Until UCase$(I$) = "N"
 
         If ExitCode% <> 27 Then
@@ -129,7 +137,7 @@ Sub ViewExpanded ()
             Do
                 Cls
 
-                70 Call TITLE
+                Call TITLE
                 'Erase menuChoices$
                 ReDim menuChoices$(1 To 3)
                 menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
@@ -152,7 +160,8 @@ Sub ViewExpanded ()
                 _MouseHide
 
                 Color , 0
-                If ExitCode% <> 27 Then
+                
+				If ExitCode% <> 27 Then
                     Select Case Selection%
                         Case 1: Call PlayerLeaders(printOrView%, sortType%)
                         Case 2: Call TeamTotals(printOrView%, sortType%)
@@ -682,10 +691,19 @@ Sub PrintPlayer (printOrView%, maxRecords, TVN, categoryID)
                 Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
 
                 I$ = GetKeyPress$
+
                 If I$ <> Chr$(27) Then
-                    Locate 22: Print Space$(64)
-                    Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
-                    I$ = GetKeyPress$
+                    Locate 22
+					Print Space$(64)
+
+					Color 14
+
+					Do
+						Locate 22
+						Print "VIEW AGAIN (Y/N)"
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
                 End If
 
             Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
@@ -754,8 +772,15 @@ Sub PrintIt (printOrView%, maxRecords, TVN, categoryID)
                 I$ = GetKeyPress$
                 If I$ <> Chr$(27) Then
                     Locate 22: Print Space$(64)
-                    Locate 22: Color 14: Print "VIEW AGAIN (Y/N)"
-                    I$ = GetKeyPress$
+					
+					Color 14
+					
+					Do
+						Locate 22
+						Print "VIEW AGAIN (Y/N)"
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
                 Else
                     I$ = "N"
                 End If

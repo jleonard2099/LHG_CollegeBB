@@ -13,12 +13,15 @@ Sub LOOKY ()
         Call TITLE_HEADER
 
         Color 15, 0
-        JJ = 6
+        
+		JJ = 6
         Locate 6, 8: Color 15, 4
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+		
+		Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -64,13 +67,18 @@ Sub LOOKY ()
                 A$ = RTRim$(Q$(0))
                 B$ = A$
 
-                'Do
                 Locate 2, 33
                 Color mergeT%(0), mergeT%(1): Print A$
-                Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
+				
+				Color 15, 4
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                 If UCase$(I$) = "N" Then
+
                     Color 15, 0
 
                     For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
@@ -582,16 +590,23 @@ Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
 
     Loop Until I$ = Chr$(27)
 
-    'Loop Until I$ = Chr$(13)
+	'-- Football / Baseball still perform the below
+	'-- (prompting for a reset of stats
+	'-- We should get rid of it altogether as
+	'-- it makes it too easy to wipe your hard-earned
+	'-- work and time. This code was in the
+	'-- original but no logic branches reached it
 
-    'Cls
-    'Call TITLE_HEADER
-    'Print "RESET STATS TO 0 ? (YN)";:
-    '455 I$ = GetKeyPress$
-    'If UCase$(I$) <> "Y" Then 45
-    'Print: Print "ARE YOU SURE ? (YN) ";
-    '470 I$ = GetKeyPress$
-    'If UCase$(I$) = "N" Then Run 'X = FRE(0)
+    '    Cls
+    '    Call TITLE_HEADER
+    '    Print "RESET STATS TO 0 ? (YN)";:
+    '    I$ = GetKeyPress$
+    '    If UCase$(I$) <> "Y" Then ...
+
+    '    Print
+    '    Print "ARE YOU SURE ? (YN) ";
+    '    I$ = GetKeyPress$
+    '    If UCase$(I$) = "N" Then Exit Sub
 
     Cls
 

@@ -18,6 +18,7 @@ Sub MERGE ()
         Cls
 
         Call TITLE_MERGE
+
         menuChoices$(1) = "MERGE STATISTICAL FILES           "
         menuChoices$(2) = "ALIGN STATISTICAL FILES           "
         menuChoices$(3) = "EXIT TO MAIN MENU                 "
@@ -73,287 +74,294 @@ Sub MergeIt ()
     Shared W0!(), W1!()
 	Shared Z!(), Z1!()
 
-    Do
-        Color 12, 0
-        Cls
+	Do
 
-        Locate 2, 5: Print "ENTER COMPLETE PATH FOR TEAM STATS TO MERGE"
+		Color 12, 0
+		Cls
 
-        Color 15
+		Locate 2, 5: Print "ENTER COMPLETE PATH FOR TEAM STATS TO MERGE"
+		Color 15
+		Locate 4, 5: Print "EXAMPLE - A:"
+		Locate , 5: Print "          C:\HAFFNER"
+		Locate , 5: Print "          C:\HAFFNER\1980"
+		Locate , 5: Print "          D:\BASKET"
 
-        Locate 4, 5: Print "EXAMPLE - A:"
-        Locate , 5: Print "          C:\HAFFNER"
-        Locate , 5: Print "          C:\HAFFNER\1980"
-        Locate , 5: Print "          D:\BASKET"
+		For J = 10 To 13
+			Locate J
+			Print Space$(60)
+		Next
 
-        For J = 10 To 13
-            Locate J
-            Print Space$(60)
-        Next
+		Do
 
-        Color 10: Locate 10, 5: Line Input "ROAD STATS:     "; PR$
-        Locate , 5: Locate , 5: Line Input "CURRENT STATS:  "; PC$
-        Color 14: Locate 13, 5: Print "ANY CHANGE (Y/N)"
+			Color 10
+			Locate 10, 5: Line Input "ROAD STATS:     "; PR$
+			Locate , 5
+			Locate , 5: Line Input "CURRENT STATS:  "; PC$
 
-        I$ = GetKeyPress$
-        If I$ = Chr$(27) Then Cls: Exit Sub
+			Color 14
+			
+			Locate 13, 5: Print "ANY CHANGE (Y/N)"
+			I$ = GetKeyPress$
+			
+        Loop Until UCase$(I$) = "N"
 
-    Loop Until UCase$(I$) = "N"
+		'beginning of GetDiskID sub
+		Do
+			Color 15, 0
+			Cls
+			JJ = 6
+			Locate 6, 8: Color 15, 4
+			Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+			Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+			Locate 7 + JJ, 8
+			Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+			
+			Locate 7, 32
+			Locate , 12: Print "ENTER DISK ID: ": Print
+			Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+			Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+			Print
+			Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
 
-    Do
-        Color 15, 0
-        Cls
-        JJ = 6
-        Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
-        Locate , 12: Print "ENTER DISK ID: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
+			I$ = GetKeyPress$
 
-        I$ = GetKeyPress$
+			If I$ = Chr$(27) Then Z$ = "END": Cls: Exit Sub
 
-        If I$ = Chr$(27) Then Z$ = "END": Cls: Exit Sub
+			If I$ = Chr$(13) Then
+				Call GetTeamFile_MERGE(YN$, NTMS)
+			Else
+				Locate 7, 27: Print I$
+				Locate 7, 28: Line Input NY$
+				NY$ = I$ + NY$
+				Color 15, 0
 
-        If I$ = Chr$(13) Then
-            Call GetTeamFile_MERGE(YN$, NTMS)
-        Else
-            Locate 7, 27: Print I$
-            Locate 7, 28: Line Input NY$
-            NY$ = I$ + NY$
-            Color 15, 0
+				If NY$ = "" And YN$ <> "" Then 
+					Call GetTeamFile_MERGE(YN$, NTMS)
+				Else
+					YN$ = NY$
+					Erase teamNames$
+					Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+					Y = LOF(1)
+					Field #1, 15 As Q$(0), 640 As X$
+					For I1 = 1 To Y / 655
+						Get #1, I1
+						teamNames$(I1) = Q$(0)
+						teamIndex%(I1) = I1
+					Next
+					Close 1
+					NTMS = Y / 655
 
-			If NY$ = "" And YN$ <> "" Then 
-                Call GetTeamFile_MERGE(YN$, NTMS)
-            Else
-                YN$ = NY$
-                Erase teamNames$
-                Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-                Y = LOF(1)
-                Field #1, 15 As Q$(0), 640 As X$
-                For I1 = 1 To Y / 655
-                    Get #1, I1
-                    teamNames$(I1) = Q$(0)
-                    teamIndex%(I1) = I1
-                Next
-                Close 1
-                NTMS = Y / 655
+					Call GetTeamFile_MERGE(YN$, NTMS)
+				End If
 
-                Call GetTeamFile_MERGE(YN$, NTMS)
-            End If
+			End If
 
-        End If
+			A$ = RTrim$(Q$(0))
 
-        A$ = RTrim$(Q$(0))
+			If BO% = 1 Then
+				BO% = 0
+			Else
+				Locate 2, 33
+				Color mergeT%(0), mergeT%(1): Print A$
 
-        If BO% = 1 Then
-            BO% = 0
-        Else
-            3058 Locate 2, 33: Color mergeT%(0), mergeT%(1): Print A$
-            Color 15, 4: Locate , 33: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
-        End If
-        'If UCase$(I$) = "Y" Then 3056
+				Color 15, 4
+				
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-    Loop Until UCase$(I$) = "N"
+			End If
+	
+		Loop Until UCase$(I$) = "N"
 
-    Color 15, 0
+		Color 15, 0
 
-    B$ = A$
+		'end of GetDiskID sub
 
-    For XX = 4 To 11
-        If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-    Next XX
-    For XX = 12 To 14
-        If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-    Next XX
-    QQ = 8
-    For XX = 11 To 4 Step -1
-        If Mid$(B$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
+		B$ = A$
 
-    Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
-    Cls
-    Locate 10, 15: Print "ROAD STATS ARE ON DRIVE "; PR$
-    Locate , 15: Print "MASTER STATS ARE ON DRIVE "; PC$
-    Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; A$
-    Locate 14, 15: Print "ANY CHANGE (YN)"
-    I$ = GetKeyPress$
+		For XX = 4 To 11
+			If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+		Next XX
 
-    If UCase$(I$) = "N" Then
+		For XX = 12 To 14
+			If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+		Next XX
 
-        For J = 21 To 23
-            Locate J
-            Print Space$(64)
-        Next
+		QQ = 8
 
-        If Not _FileExists(PR$ + "\" + Z$) Then
-            Cls
-            Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
-            Print
-            Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
-        Else
-            120 Open PR$ + "\" + Z$ For Input As #1
+		For XX = 11 To 4 Step -1
+			If Mid$(B$, XX, 1) = "_" Then
+				QQ = XX - 4
+			Else
+				Exit For
+			End If
+		Next XX
 
-            121 Input #1, B$
+		Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-            122 For I = 0 To 13: Input #1, ARP$(I)
+		Cls
+		
+		Locate 10, 15: Print "ROAD STATS ARE ON DRIVE "; PR$
+		Locate , 15: Print "MASTER STATS ARE ON DRIVE "; PC$
+		Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; A$
 
-            123 For J = 0 To 13: Input #1, ARD(I, J): Next: Input #1, W0RD(I): Input #1, W1RD(I): Next
+		Do
+			Locate 14, 15: Print "ANY CHANGE (YN)"
+			I$ = GetKeyPress$
+		Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-            124 For L = 0 To 15: Input #1, ZRD!(L): Next
+		If UCase$(I$) = "N" Then
 
-            125 For L = 0 To 15: Input #1, ZRD1!(L): Next
+			If Not _FileExists(PR$ + "\" + Z$) Then
+				Cls
+				Color 7
+				Locate 2, 10: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+				Print
+				Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+			Else
+			
+				Open PR$ + "\" + Z$ For Input As #1
+				Input #1, B$
+				For I = 0 To 13: Input #1, ARP$(I)
+				For J = 0 To 13: Input #1, ARD(I, J): Next: Input #1, W0RD(I): Input #1, W1RD(I): Next
+				For L = 0 To 15: Input #1, ZRD!(L): Next
+				For L = 0 To 15: Input #1, ZRD1!(L): Next
+				Close #1
 
-            130 Close #1
 
-            500 Open PR$ + "\" + Z$ + "S" For Input As #1
+				Open PR$ + "\" + Z$ + "S" For Input As #1
+				Input #1, YR%
+				For I = 1 To 100: Input #1, ORD%(I): Next I
+				For I = 1 To 100: Input #1, ORP$(I): Next I
+				For I = 1 To 100: Input #1, TRD%(I): Next I
+				For I = 1 To 100: Input #1, HRP$(I): Next I
+				For I = 1 To 100
+				For I1 = 0 To 1: Input #1, APRD%(I, I1): Next: Next
+				For I = 1 To 100: Input #1, CRDRD(I): Next I
+				For I = 1 To 100: Input #1, SITERP$(I): Next I
+				Close #1
 
-            501 Input #1, YR%
+				Locate 21, 5: Color 3
 
-            502 For I = 1 To 100: Input #1, ORD%(I): Next I
+				For J = 21 To 23
+					Locate J
+					Print Space$(64)
+				Next
 
-            503 For I = 1 To 100: Input #1, ORP$(I): Next I
+				If Not _FileExists(PC$ + "\" + Z$) Then
+					Cls
+					Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
+					Print
+					Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+				Else
+					Open PC$ + "\" + Z$ For Input As #1
+					Input #1, B$
+					For I = 0 To 13: Input #1, A$(I)
+					For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, W0!(I): Input #1, W1!(I): Next
+					For L = 0 To 15: Input #1, Z!(L): Next
+					For L = 0 To 15: Input #1, Z1!(L): Next
+					Close #1
 
-            504 For I = 1 To 100: Input #1, TRD%(I): Next I
+					Open PR$ + "\" + Z$ + "S" For Input As #1
+					Input #1, Y%
+					For I = 1 To 100: Input #1, O%(I): Next I
+					For I = 1 To 100: Input #1, O$(I): Next I
+					For I = 1 To 100: Input #1, mergeT%(I): Next I
+					For I = 1 To 100: Input #1, mergeH$(I): Next I
+					For I = 1 To 100
+					For I1 = 0 To 1: Input #1, AP%(I, I1): Next: Next
+					For I = 1 To 100: Input #1, CRD(I): Next I
+					For I = 1 To 100: Input #1, SITE$(I): Next I
+					Close #1
 
-            505 For I = 1 To 100: Input #1, HRP$(I): Next I
-            For I = 1 To 100
-            For I1 = 0 To 1: Input #1, APRD%(I, I1): Next: Next
-            For I = 1 To 100: Input #1, CRDRD(I): Next I
-            For I = 1 To 100: Input #1, SITERP$(I): Next I
+					SEQ = 0
 
-            506 Close #1
+					For K = 0 To 13
 
-            Locate 21, 5: Color 3
+						If ARP$(K) <> A$(K) Then
+							SEQ = SEQ + 1
+						End If
 
-            For J = 21 To 23
-                Locate J
-                Print Space$(64)
-            Next
+					Next
 
-            If Not _FileExists(PC$ + "\" + Z$) Then
-                Cls
-                Locate 2, 10: Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
-                Print
-                Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
-            Else
-                Open PC$ + "\" + Z$ For Input As #1
-                Input #1, B$
-                For I = 0 To 13: Input #1, A$(I)
-                For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, W0!(I): Input #1, W1!(I): Next
-                For L = 0 To 15: Input #1, Z!(L): Next
-                For L = 0 To 15: Input #1, Z1!(L): Next
-                Close #1
+					If SEQ = 0 Then
+						For K = 1 To YR%
+							Y% = Y% + 1
+							O%(Y%) = ORD%(K)
+							O$(Y%) = ORP$(K)
+							mergeT%(Y%) = TRD%(K)
+							mergeH$(Y%) = HRP$(K)
+							AP%(Y%, 0) = APRD%(Y%, 0)
+							AP%(Y%, 1) = APRD%(Y%, 1)
+							CRD(Y%) = CRDRD(Y%)
+							SITE$(Y%) = SITERP$(Y%)
+						Next
 
-                Open PR$ + "\" + Z$ + "S" For Input As #1
-                Input #1, Y%
-                For I = 1 To 100: Input #1, O%(I): Next I
-                For I = 1 To 100: Input #1, O$(I): Next I
-                For I = 1 To 100: Input #1, mergeT%(I): Next I
-                For I = 1 To 100: Input #1, mergeH$(I): Next I
-                For I = 1 To 100
-                For I1 = 0 To 1: Input #1, AP%(I, I1): Next: Next
-                For I = 1 To 100: Input #1, CRD(I): Next I
-                For I = 1 To 100: Input #1, SITE$(I): Next I
-                Close #1
+						Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
-                SEQ = 0
+						For I = 0 To 13
+							For J = 0 To 12: mergeA(I, J) = mergeA(I, J) + ARD(I, J): Next J
+							W0!(I) = W0!(I) + W0RD(I)
+							W1!(I) = W1!(I) + W1RD(I)
+							If mergeA(I, 13) < ARD(I, 13) Then mergeA(I, 13) = ARD(I, 13) Else mergeA(I, 13) = mergeA(I, 13)
+						Next I
 
-                For K = 0 To 13
+						For L = 0 To 15: Z!(L) = Z!(L) + ZRD!(L): Z1!(L) = Z1!(L) + ZRD1!(L): Next
 
-                    If ARP$(K) <> A$(K) Then
-                        SEQ = SEQ + 1
-                    End If
+						Open PC$ + "\" + Z$ For Output As #1
+						Write #1, B$
+						For I = 0 To 13: Write #1, A$(I)
+						For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, W0!(I): Write #1, W1!(I): Next
+						For L = 0 To 15: Write #1, Z!(L): Next
+						For L = 0 To 15: Write #1, Z1!(L): Next
+						Close #1
 
-                Next
+						Open PC$ + "\" + Z$ + "S" For Output As #1
+						Write #1, Y%
+						For I = 1 To 100: Write #1, O%(I): Next I
+						For I = 1 To 100: Write #1, O$(I): Next I
+						For I = 1 To 100: Write #1, mergeT%(I): Next I
+						For I = 1 To 100: Write #1, mergeH$(I): Next I
+						For I = 1 To 100
+							For I1 = 0 To 1: Write #1, AP%(I, I1): Next
+						Next
+						For I = 1 To 100: Write #1, CRD(I): Next I
+						For I = 1 To 100: Write #1, SITE$(I): Next I
 
-                If SEQ = 0 Then
-                    For K = 1 To YR%
-                        Y% = Y% + 1
-                        O%(Y%) = ORD%(K)
-                        O$(Y%) = ORP$(K)
-                        mergeT%(Y%) = TRD%(K)
-                        mergeH$(Y%) = HRP$(K)
-                        AP%(Y%, 0) = APRD%(Y%, 0)
-                        AP%(Y%, 1) = APRD%(Y%, 1)
-                        CRD(Y%) = CRDRD(Y%)
-                        SITE$(Y%) = SITERP$(Y%)
-                    Next
+						Close #1
 
-                    Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
+						Y = 0
 
-                    For I = 0 To 13
-                        For J = 0 To 12: mergeA(I, J) = mergeA(I, J) + ARD(I, J): Next J
-                        W0!(I) = W0!(I) + W0RD(I)
-                        W1!(I) = W1!(I) + W1RD(I)
-                        If mergeA(I, 13) < ARD(I, 13) Then mergeA(I, 13) = ARD(I, 13) Else mergeA(I, 13) = mergeA(I, 13)
-                    Next I
+						Locate 20, 20: Color 12: Print "RESULTS SUCCESSFULLY MERGED!!"
 
-                    For L = 0 To 15: Z!(L) = Z!(L) + ZRD!(L): Z1!(L) = Z1!(L) + ZRD1!(L): Next
+						For J = 13 To 23
+							Locate J
+							Print Space$(65)
+						Next
 
-                    Open PC$ + "\" + Z$ For Output As #1
-                    Write #1, B$
-                    For I = 0 To 13: Write #1, A$(I)
-                    For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, W0!(I): Write #1, W1!(I): Next
-                    For L = 0 To 15: Write #1, Z!(L): Next
-                    For L = 0 To 15: Write #1, Z1!(L): Next
-                    Close #1
+					Else
+						Cls
+						Color 14
+						Locate 5, 27: Print "PLAYERS NOT IN SEQUENCE !!" '; DUMMY$
+						Color 15
+						Locate 7, 20: Print "STATS WILL BE DISTORTED UNLESS THE ROAD"
+						Locate , 19: Print "FILE LISTS THE PLAYERS IN THE SAME SEQUENCE"
+						Locate , 24: Print "AS YOUR CURRENT PLAYER STAT FILE."
+						Locate 11, 24: Color 12: Print "YOU MUST REALIGN ROAD STAT FILE OR"
+						Locate , 31: Print "ENTER STATS MANUALLY."
+						Locate 15, 29: Color 13: Line Input "HIT ENTER TO GO TO MENU"; DUMMY$
 
-                    Open PC$ + "\" + Z$ + "S" For Output As #1
-                    Write #1, Y%
-                    For I = 1 To 100: Write #1, O%(I): Next I
-                    For I = 1 To 100: Write #1, O$(I): Next I
-                    For I = 1 To 100: Write #1, mergeT%(I): Next I
-                    For I = 1 To 100: Write #1, mergeH$(I): Next I
-                    For I = 1 To 100
-                        For I1 = 0 To 1: Write #1, AP%(I, I1): Next
-                    Next
-                    For I = 1 To 100: Write #1, CRD(I): Next I
-                    For I = 1 To 100: Write #1, SITE$(I): Next I
+					End If 'Done checking SEQ value
 
-                    Close #1
+				End If 'Done checking if home file exists
 
-                    Y = 0
+			End If 'Done checking if road file exists
 
-                    Locate 20, 20: Color 12: Print "RESULTS SUCCESSFULLY MERGED!!"
+		End If 'Done checking if ready to proceed
 
-                    For J = 13 To 23
-                        Locate J
-                        Print Space$(65)
-                    Next
-
-                Else
-                    Cls
-                    Color 14
-                    Locate 5, 27: Print "PLAYERS NOT IN SEQUENCE !!" '; DUMMY$
-                    Color 15
-                    Locate 7, 20: Print "STATS WILL BE DISTORTED UNLESS THE ROAD"
-                    Locate , 19: Print "FILE LISTS THE PLAYERS IN THE SAME SEQUENCE"
-                    Locate , 24: Print "AS YOUR CURRENT PLAYER STAT FILE."
-                    Locate 11, 24: Color 12: Print "YOU MUST REALIGN ROAD STAT FILE OR"
-                    Locate , 31: Print "ENTER STATS MANUALLY."
-                    Locate 15, 29: Color 13: Line Input "HIT ENTER TO GO TO MENU"; DUMMY$
-
-                End If 'Done checking SEQ value
-
-            End If 'Done checking if home file exists
-
-        End If 'Done checking if road file exists
-
-    End If 'Done checking if ready to proceed
-
-    '1290 GoTo 5
-
-    '993 Exit Sub
+	Loop Until DUMMY$ <> "" Or UCase$(I$) = "N"
 
 End Sub
 

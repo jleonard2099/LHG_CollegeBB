@@ -47,7 +47,8 @@ Sub SEECON ()
             Column% = 1
             Locate 25, 1
             Color 14
-            Print "ENTER";: Color 15
+            Print "ENTER";
+			Color 15
             Print "-SELECTS CONFERENCE";
 
             _MouseShow "DEFAULT"
@@ -55,11 +56,18 @@ Sub SEECON ()
             _MouseHide
 
             If ExitCode% <> 27 Then
+
+                Color 15, 1
                 targetFile$ = conferenceLeaderFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
-                Locate , 33: Print "ANY CHANGE (YN)";
-                Color 15, 0
-                I$ = GetKeyPress$
+
+				Do
+					Locate , 33: Print "ANY CHANGE (YN)";
+					I$ = GetKeyPress$
+				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+				Color 15, 0
+
             End If
 
         Loop Until UCase$(I$) = "N"
@@ -120,14 +128,15 @@ Sub SEECON ()
                 Next
                 Locate 7 + JJ, 8
                 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-                Locate 7
 
-                U$ = "VIEW LEAGUE STATS AGAIN (YN)"
-                Locate , (80 - Len(U$)) / 2
-                Print U$
-                Color 15, 0
-
-                A$ = GetKeyPress$
+				Do
+					Locate 7
+					U$ = "VIEW LEAGUE STATS AGAIN (YN)"
+					Locate , (80 - Len(U$)) / 2
+					Print U$
+					Color 15, 0
+					A$ = GetKeyPress$
+				Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
                 'pressing ANY key at this point goes to the first menu
                 'need to break this up so that only Y/N is possible???
@@ -516,24 +525,35 @@ End Sub
 '----------------------------------------
 '...explanation...
 Sub GetReportFileName (reportFile$)
+
+	Color 15, 0
+	Cls
+	JJ = 7
+	Locate 6, 8: Color 15, 1
+	Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+	Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+	Locate 7 + JJ, 8
+	Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+	Locate 7, 32
+
     Do
-        3100 Color 15, 0: Cls
-        JJ = 7
-        Locate 6, 8: Color 15, 1
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";: Locate 7, 32
         Locate , 12: Print "ENTER NAME FOR FILE: ": Print
         Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
         Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
         Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
         Locate 7, 37: Input reportFile$
-        If SF$ = "" Then 3100
-        Locate 13, 12: Print "ANY CHANGE (YN) "
-        705 I$ = GetKeyPress$
-        'If UCase$(I$) = "Y" Then 3100
-    Loop Until UCase$(I$) = "N"
+        
+		If SF$ <> "" Then
+
+			Do
+				Locate 13, 12: Print "ANY CHANGE (YN) "
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+		End If
+
+    Loop Until UCase$(I$) = "N" Or SF$ <> ""
 
     Color 15, 0
 

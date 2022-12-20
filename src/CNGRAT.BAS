@@ -176,14 +176,20 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
             '   it's starting from that point in the code!!!
             Locate 2, 33
             Color T%(0), T%(1): Print teamName$
-            Locate , 33
-            Color 15, 4: Print "ANY CHANGE (YN)";
-            I$ = GetKeyPress$
-        Else
-            BO% = 0
-        End If
 
-        '59 If UCase$(I$) = "Y" Then 56
+			Color 15, 4
+
+			Do
+				Locate , 33
+				Print "ANY CHANGE (YN)";
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+        Else
+
+            BO% = 0
+
+        End If
 
     Loop Until UCase$(I$) = "N"
 
@@ -382,10 +388,14 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
             Locate 7, 32
-            Locate , 12: Print "ENTER NEW DISK ID: ": Print
-            Locate 7, 31: Input NY$
-            Locate , 12: Print "IS THIS CORRECT (YN)"
-            I$ = GetKeyPress$
+            Locate , 12: Print "ENTER NEW DISK ID: "
+			Print
+			
+			Do
+				Locate 7, 31: Input NY$
+				Locate , 12: Print "IS THIS CORRECT (YN)"
+				I$ = GetKeyPress$
+			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             If UCase$(I$) = "Y" Then
                 newID% = 1

@@ -96,25 +96,38 @@ Sub COMPCON ()
                 _MouseHide
 
                 If ExitCode% <> 27 Then
+
+                    Color 15, 1
                     targetFile$ = conferenceFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
-                    Locate , 33: Print "ANY CHANGE (YN)";
-                    Color 15, 0
-                    3910 I$ = GetKeyPress$
+
+					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+					Color 15, 0
+						
                 End If
 
             Loop Until UCase$(I$) = "N"
 
             If ExitCode% <> 27 Then
 
-                3911 targetFile$ = RTrim$(targetFile$)
+                targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
                 LH$ = WE$
-                Cls: Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-                Color 15, 0
-                3912 I$ = GetKeyPress$
 
-                If UCase$(I$) = "Y" Then UP$ = "Y"
+                Cls
+				Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+                Color 15, 0
+
+				Do
+					I$ = GetKeyPress$
+					finalUpdate$ = UCase$(I$)
+				Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
+
+                If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
                 Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
                 Input #2, LG$
@@ -130,10 +143,14 @@ Sub COMPCON ()
                 Next
 
                 For XW = 1 To 30
-                    'GoSub 700
 
-                    replayWins% = 0: replayLosses% = 0: CW = 0: CL = 0
+                    replayWins% = 0
+					replayLosses% = 0
+					CW = 0
+					CL = 0
+
                     If Not (H1$(XW) = Chr$(42)) Then 
+
                         H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
 
                         For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
@@ -158,12 +175,11 @@ Sub COMPCON ()
                         H1$(XW) = H1$(XW) + "." + YR$
 
                         If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-                            Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
 
+                            Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
                             Input #2, numGames%
                             For I = 1 To 100: Input #2, O%(I): Next I
                             For I = 1 To 100: Input #2, O$(I): Next I
-
                             For I = 1 To 100: Input #2, compconT%(I): Next I
                             Close 2
 
@@ -172,10 +188,8 @@ Sub COMPCON ()
                             CW = 0
                             CL = 0
 
-                            '804 'GoSub 5500
                             For I = 1 To numGames%
 
-                                '5501 'GoSub 5600
                                 For P = 4 To 11
                                     If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
                                 Next P
@@ -229,8 +243,7 @@ Sub COMPCON ()
 
                     End If 'Done checking for Chr$(42)
 
-                    'GoSub 900
-                    900 L = Len(H1$(XW)): WT$ = ""
+                    L = Len(H1$(XW)): WT$ = ""
                     For X = 1 To L
                         A = Asc(Mid$(H1$(XW), X, 1))
                         WT$ = WT$ + Chr$(A)
@@ -255,9 +268,9 @@ Sub COMPCON ()
                             End If
                         End If
 
-                    945 Next X
+                    Next X
 
-                    811 For I = 0 To 13: For J = 0 To 22: S!(I, J) = 0: Next: Next
+                    For I = 0 To 13: For J = 0 To 22: S!(I, J) = 0: Next: Next
 
                     If _FileExists(diskPaths$(1) + H1$(XW)) Then
 
@@ -304,27 +317,27 @@ Sub COMPCON ()
                                 If S!(I, 0) > BRC!(1) Then BRC!(1) = S!(I, 0): BRC$(1, 0) = compconN$(I): BRC$(1, 1) = TN$
                                 If S!(I, 1) > BRC!(2) Then BRC!(2) = S!(I, 1): BRC$(2, 0) = compconN$(I): BRC$(2, 1) = TN$
                                 If S!(I, 2) > BRC!(3) Then BRC!(3) = S!(I, 2): BRC$(3, 0) = compconN$(I): BRC$(3, 1) = TN$
-                                If S!(I, 19) > BRC!(4) And UCase$(UP$) = "Y" And S!(I, 2) / numGames% >= 5 Then BRC!(4) = S!(I, 19): BRC$(4, 0) = compconN$(I): BRC$(4, 1) = TN$
+                                If S!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And S!(I, 2) / numGames% >= 5 Then BRC!(4) = S!(I, 19): BRC$(4, 0) = compconN$(I): BRC$(4, 1) = TN$
                                 If W1!(I) > BRC!(5) Then BRC!(5) = W1!(I): BRC$(5, 0) = compconN$(I): BRC$(5, 1) = TN$
                                 If W0!(I) > BRC!(6) Then BRC!(6) = W0!(I): BRC$(6, 0) = compconN$(I): BRC$(6, 1) = TN$
-                                If S!(I, 21) > BRC!(7) And UCase$(UP$) = "Y" And W0!(I) / numGames% >= 1.5 Then BRC!(7) = S!(I, 21): BRC$(7, 0) = compconN$(I): BRC$(7, 1) = TN$
+                                If S!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And W0!(I) / numGames% >= 1.5 Then BRC!(7) = S!(I, 21): BRC$(7, 0) = compconN$(I): BRC$(7, 1) = TN$
                                 If S!(I, 3) > BRC!(8) Then BRC!(8) = S!(I, 3): BRC$(8, 0) = compconN$(I): BRC$(8, 1) = TN$
                                 If S!(I, 4) > BRC!(9) Then BRC!(9) = S!(I, 4): BRC$(9, 0) = compconN$(I): BRC$(9, 1) = TN$
-                                If S!(I, 20) > BRC!(10) And UCase$(UP$) = "Y" And S!(I, 4) / numGames% >= 2.5 Then BRC!(10) = S!(I, 20): BRC$(10, 0) = compconN$(I): BRC$(10, 1) = TN$
+                                If S!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And S!(I, 4) / numGames% >= 2.5 Then BRC!(10) = S!(I, 20): BRC$(10, 0) = compconN$(I): BRC$(10, 1) = TN$
                                 If S!(I, 10) / 60 > BRC!(11) Then BRC!(11) = S!(I, 10) / 60: BRC$(11, 0) = compconN$(I): BRC$(11, 1) = TN$
                                 If S!(I, 12) > BRC!(12) Then BRC!(12) = S!(I, 12): BRC$(12, 0) = compconN$(I): BRC$(12, 1) = TN$
-                                If S!(I, 22) > BRC!(13) And UCase$(UP$) = "Y" Then BRC!(13) = S!(I, 22): BRC$(13, 0) = compconN$(I): BRC$(13, 1) = TN$
+                                If S!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = S!(I, 22): BRC$(13, 0) = compconN$(I): BRC$(13, 1) = TN$
                                 If S!(I, 25) > BRC!(14) Then BRC!(14) = S!(I, 25): BRC$(14, 0) = compconN$(I): BRC$(14, 1) = TN$
                                 If S!(I, 26) > BRC!(15) Then BRC!(15) = S!(I, 26): BRC$(15, 0) = compconN$(I): BRC$(15, 1) = TN$
                                 If S!(I, 5) - S!(I, 26) > BRC!(16) Then BRC!(16) = S!(I, 5) - S!(I, 26): BRC$(16, 0) = compconN$(I): BRC$(16, 1) = TN$
                                 If S!(I, 5) > BRC!(17) Then BRC!(17) = S!(I, 5): BRC$(17, 0) = compconN$(I): BRC$(17, 1) = TN$
-                                If S!(I, 13) > BRC!(18) And UCase$(UP$) = "Y" Then BRC!(18) = S!(I, 13): BRC$(18, 0) = compconN$(I): BRC$(18, 1) = TN$
+                                If S!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = S!(I, 13): BRC$(18, 0) = compconN$(I): BRC$(18, 1) = TN$
                                 If S!(I, 6) > BRC!(19) Then BRC!(19) = S!(I, 6): BRC$(19, 0) = compconN$(I): BRC$(19, 1) = TN$
                                 If S!(I, 7) > BRC!(20) Then BRC!(20) = S!(I, 7): BRC$(20, 0) = compconN$(I): BRC$(20, 1) = TN$
                                 If S!(I, 8) > BRC!(21) Then BRC!(21) = S!(I, 8): BRC$(21, 0) = compconN$(I): BRC$(21, 1) = TN$
                                 If S!(I, 9) > BRC!(22) Then BRC!(22) = S!(I, 9): BRC$(22, 0) = compconN$(I): BRC$(22, 1) = TN$
                                 If S!(I, 11) > BRC!(23) Then BRC!(23) = S!(I, 11): BRC$(23, 0) = compconN$(I): BRC$(23, 1) = TN$
-                                If S!(I, 18) > BRC!(24) And UCase$(UP$) = "Y" Then BRC!(24) = S!(I, 18): BRC$(24, 0) = compconN$(I): BRC$(24, 1) = TN$
+                                If S!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = S!(I, 18): BRC$(24, 0) = compconN$(I): BRC$(24, 1) = TN$
                                 If S!(I, 24) > BRC!(25) Then BRC!(25) = S!(I, 24): BRC$(25, 0) = compconN$(I): BRC$(25, 1) = TN$
 
                             End If
@@ -339,49 +352,48 @@ Sub COMPCON ()
                         OT!(19) = OT!(20) / numGames%: DT!(19) = DT!(20) / numGames%
                         If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): TRC$(1) = TN$
                         If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): TRC$(2) = TN$
-                        If OT!(17) > TRC!(3) And UCase$(UP$) = "Y" Then TRC!(3) = OT!(17): TRC$(3) = TN$
+                        If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): TRC$(3) = TN$
                         If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): TRC$(4) = TN$
                         If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): TRC$(5) = TN$
-                        If OT!(21) > TRC!(6) And UCase$(UP$) = "Y" Then TRC!(6) = OT!(21): TRC$(6) = TN$
+                        If OT!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = OT!(21): TRC$(6) = TN$
                         If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): TRC$(7) = TN$
                         If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): TRC$(8) = TN$
-                        If OT!(18) > TRC!(9) And UCase$(UP$) = "Y" Then TRC!(9) = OT!(18): TRC$(9) = TN$
+                        If OT!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = OT!(18): TRC$(9) = TN$
                         If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): TRC$(10) = TN$
                         If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): TRC$(11) = TN$
                         If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): TRC$(12) = TN$
-                        If OT!(6) / numGames% > TRC!(13) And UCase$(UP$) = "Y" Then TRC!(13) = OT!(6) / numGames%: TRC$(13) = TN$
-                        If OT!(7) < TRC!(14) And UCase$(UP$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
+                        If OT!(6) / numGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numGames%: TRC$(13) = TN$
+                        If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): TRC$(14) = TN$
                         If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): TRC$(15) = TN$
                         If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): TRC$(16) = TN$
                         If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): TRC$(17) = TN$
-                        If OT!(12) < TRC!(18) And UCase$(UP$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
+                        If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): TRC$(18) = TN$
                         If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): TRC$(19) = TN$
-                        If OT!(11) / numGames% > TRC!(20) And UCase$(UP$) = "Y" Then TRC!(20) = OT!(11) / numGames%: TRC$(20) = TN$
+                        If OT!(11) / numGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numGames%: TRC$(20) = TN$
                         If replayWins% > TRC!(21) Then TRC!(21) = replayWins%: TRC$(21) = TN$
                         If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): TRC1$(1) = TN$
                         If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): TRC1$(2) = TN$
-                        If DT!(17) < TRC1!(3) And UCase$(UP$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
+                        If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): TRC1$(3) = TN$
                         If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): TRC1$(4) = TN$
                         If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): TRC1$(5) = TN$
-                        If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(UP$) = "Y" Then TRC1!(6) = DT!(21): TRC1$(6) = TN$
+                        If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = DT!(21): TRC1$(6) = TN$
                         If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): TRC1$(7) = TN$
                         If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): TRC1$(8) = TN$
-                        If DT!(18) < TRC1!(9) And UCase$(UP$) = "Y" Then TRC1!(9) = DT!(18): TRC1$(9) = TN$
+                        If DT!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = DT!(18): TRC1$(9) = TN$
                         If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): TRC1$(10) = TN$
                         If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): TRC1$(11) = TN$
                         If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): TRC1$(12) = TN$
-                        If DT!(6) / numGames% < TRC1!(13) And UCase$(UP$) = "Y" Then TRC1!(13) = DT!(6) / numGames%: TRC1$(13) = TN$
-                        If DT!(7) > TRC1!(14) And UCase$(UP$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
+                        If DT!(6) / numGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numGames%: TRC1$(13) = TN$
+                        If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): TRC1$(14) = TN$
                         If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): TRC1$(15) = TN$
                         If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): TRC1$(16) = TN$
                         If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): TRC1$(17) = TN$
-                        If DT!(12) > TRC1!(18) And UCase$(UP$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
+                        If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): TRC1$(18) = TN$
                         If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): TRC1$(19) = TN$
-                        If DT!(11) / numGames% < TRC1!(20) And UCase$(UP$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: TRC1$(20) = TN$
+                        If DT!(11) / numGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: TRC1$(20) = TN$
                         If replayLosses% > TRC1!(21) Then TRC1!(21) = replayLosses%: TRC1$(21) = TN$
                     End If
 
-                    3100 'CLS:PRINT "CHECKING ";H1$(XW);" STATS"
                     For X = 0 To 14: Color 14: Print "CHECKING STATS OF ";: Color 15: Print compconN$(X)
                         If S!(X, 22) > LD!(20, 1) Then
                             LD!(20, 1) = S!(X, 22): LD!(20, 2) = 0: Z0$(20) = compconN$(X): Z3$(20) = TN$
@@ -704,7 +716,7 @@ Sub COMPCON ()
                     948 '
                     Close 3
 
-                Next 'Done "checking stats" (3100)
+                Next 'Done "checking stats"
 
                 AA = 1
                 ZZ = 15

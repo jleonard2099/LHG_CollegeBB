@@ -86,16 +86,23 @@ Sub CREATCON ()
                         Locate , 12: Print "SPACES. TO EXIT, JUST HIT 'ENTER'"
                         Locate , 12: Print "SAMPLE NAMES ARE SEC, SWC, 94-ACC"
                         Locate 7, 37: Input LG$
+
                         If LG$ <> "" Then
                             LG$ = Left$(LG$, 8)
-                            Locate 13, 12: Print "ANY CHANGE (YN) "
-                            I$ = GetKeyPress$
+							
+							Do
+								Locate 13, 12: Print "ANY CHANGE (YN) "
+								I$ = GetKeyPress$
+							Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
                         End If
+						
                     Loop Until UCase$(I$) = "N"
 
                     If LG$ <> "" Then
                         Color 15, 0
-                        Print: Print
+                        Print
+						Print
                         Locate , 12: Input "ENTER NAME OF DIVISION 1 (ENTER FOR NONE) "; D1$
                         Locate , 12: Input "ENTER NAME OF DIVISION 2 (ENTER FOR NONE) "; D2$
                     End If
@@ -270,11 +277,15 @@ Sub CREATCON ()
                                 Else
                                     Locate 2, 33
                                     Color T%(0), T%(1): Print A$
+
                                     Color 15, 4
-                                    Locate , 33: Print "ANY CHANGE (YN)";
-                                    prompt$ = GetKeyPress$
+									
+									Do
+										Locate , 33: Print "ANY CHANGE (YN)";
+										prompt$ = GetKeyPress$
+									Loop Until UCase$(prompt$) = "Y" Or UCase$(prompt$) = "N"
+
                                     If UCase$(prompt$) = "N" Then
-                                        Color 15, 0
                                         Z1$(teamIndex) = A$
                                         Z2$(teamIndex) = YN$
                                         Z1%(teamIndex) = T1
@@ -294,6 +305,8 @@ Sub CREATCON ()
         End If 'Done checking for ESC
 
     Loop Until Selection% = 3 Or ExitCode% = 27
+
+	Color 15, 0
 
 End Sub
 
@@ -353,11 +366,18 @@ Sub SelectFile_CREATCON (targetFile$)
                 _MouseHide
 
                 If ExitCode% <> 27 Then
+
+                    Color 15, 1
                     targetFile$ = conferenceFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
-                    Locate , 33: Print "ANY CHANGE (YN)";
-                    Color 15, 0
-                    I$ = GetKeyPress$
+
+					Do
+						Locate , 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+					
+					Color 15, 0
+
                 End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
