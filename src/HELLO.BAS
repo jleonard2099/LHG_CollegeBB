@@ -1,3 +1,4 @@
+
 Const GAME_VERSION$ = "4.30"
 Const MAX_CONFERENCES = 40
 Const TEAMS_PER_CONFERENCE = 30
@@ -241,6 +242,7 @@ Sub Replay_Menu ()
         Cls
 
         Call TITLE
+
         ReDim menuChoices$(1 To 5)
         'Erase menuChoices$
         menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
@@ -265,6 +267,7 @@ Sub Replay_Menu ()
         _MouseHide
 
         Color , 0
+
         If ExitCode% <> 27 Then
             Select Case Selection%
                 Case 1: Call LOOKY

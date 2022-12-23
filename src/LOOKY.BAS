@@ -6,7 +6,8 @@ Sub LOOKY ()
 
     CP% = 1
 
-    Color 15, 0: Cls
+    Color 15, 0
+	Cls
 
     Do
 
@@ -29,9 +30,8 @@ Sub LOOKY ()
         Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
         I$ = GetKeyPress$
 
-        If I$ = Chr$(27) Then
-            Z$ = "END"
-        Else
+        If I$ <> Chr$(27) Then
+		
             If I$ = Chr$(13) Then
                 Call SelectTeam_LOOKY(NTMS, YN$)
             Else
@@ -110,7 +110,7 @@ Sub LOOKY ()
 
         End If 'Done checking for ESC
 
-    Loop Until UCase$(Z$) = "END"
+    Loop Until UCase$(Z$) = "END" Or I$ = Chr$(27)
 
 End Sub
 

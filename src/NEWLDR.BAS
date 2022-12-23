@@ -115,7 +115,7 @@ Sub ViewExpanded ()
 
             End If
 			
-        Loop Until UCase$(I$) = "N"
+        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
         If ExitCode% <> 27 Then
 

@@ -10,6 +10,8 @@ Sub CAREER ()
 
         Cls
 
+		Color 15, 0
+
         Call TITLE_CAREER
 
         menuChoices$(1) = "CREATE AND MERGE INITIAL STAT FILE"
@@ -403,7 +405,7 @@ Sub ViewCareerRecords ()
 
                 End If
 
-            Loop Until UCase$(I$) = "N"
+            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
             If ExitCode% <> 27 Then
 
@@ -673,7 +675,7 @@ Sub DoTheMerge ()
 
             End If
 
-        Loop Until UCase$(I$) = "N"
+        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
         If ExitCode% <> 27 Then
 

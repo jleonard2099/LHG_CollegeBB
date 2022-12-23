@@ -212,7 +212,7 @@ Sub ViewTourneyInfo (ACTION%)
 
         End If 'Done checking for no files
 
-    Loop Until UCase$(I$) = "N" Or Count% = 0
+    Loop Until Count% = 0 Or ExitCode% = 27 Or UCase$(I$) = "N"
 
 End Sub
 
@@ -338,7 +338,8 @@ Sub EditBracket (numberRegions, ACTION%)
         _MouseHide
 
         Color , 0
-        If ExitCode% <> 27 Then
+        
+		If ExitCode% <> 27 Then
             NR = Selection%
             If NR = numberRegions + 1 Then NR = 17
             If NR = numberRegions + 2 Then Exit Sub
@@ -1452,7 +1453,7 @@ Sub EditBracket (numberRegions, ACTION%)
         End If 'Done checking for ESC
 
     'menu until they choose exit
-    Loop Until Selection% = numberRegions + 2 'ACTION% = 2
+    Loop Until ExitCode% = 27 Or Selection% = numberRegions + 2 'ACTION% = 2
 
 End Sub
 

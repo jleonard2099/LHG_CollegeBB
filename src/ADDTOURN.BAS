@@ -682,7 +682,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
         End If
 
-    Loop Until Count% = 0 Or UCase$(I$) = "N"
+    Loop Until Count% = 0 Or ExitCode% = 27 Or UCase$(I$) = "N"
     'I don't think we ever get here
     'Print "THERE ARE "; R; " REGIONS"
     'For I = 1 To R

@@ -10,9 +10,9 @@ Sub CNGRAT (userChoice)
     Shared cngratA$(), P$()
     Shared L%(), T%(), T1%()
 
-    ReDim menuChoices$(1 To 4)
-
     Do
+        ReDim menuChoices$(1 To 4)
+
         Cls
 
         Call TITLE
@@ -177,13 +177,13 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
             Locate 2, 33
             Color T%(0), T%(1): Print teamName$
 
-			Color 15, 4
+            Color 15, 4
 
-			Do
-				Locate , 33
-				Print "ANY CHANGE (YN)";
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+            Do
+                Locate , 33
+                Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
         Else
 
@@ -212,80 +212,89 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
     Shared A!(), DF!(), RS!(), X!()
 
     '-- these singular variables all need values
-'   Do
-        Cls
-        Color 14
-        Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
-        Print " 1. TEAM NUMBER "; teamIdx%
-        Print " 2. DISK ID "; yearNumber$
-        Print " 3. TEAM NAME "; teamName$; Tab(40); "20. NICKNAME "; A1$
-        Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "21. COACH "; C$
-        Print " 5. DEF FG% ADJ "; defFGPctAdj%
-        Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(40); "22. AVG ATTENDANCE "; avgAttendance%
-        Print " 7. DEF 3FG% ADJ "; V1%; Tab(40); "23. WINS "; T%(7)
-        Print " 8. OFF STEAL RATING "; L%(0); Tab(40); "24. LOSSES "; T%(8)
-        Print " 9. OFF TURNOVER RATING "; L%(1); Tab(40); "25. POWER RATING "; T%(9)
-        Print "10. DEF TURNOVER ADJ "; L%(2)
-        Print "11. DEF FOUL ADJ "; L%(3)
-        Print "12. ENTER 99 IF USING 6-9 "; L%(4)
-        Print "13. TEXT COLOR (0-15) "; T%(0)
-        Print "14. BACKGROUND (0-7) "; T%(1)
-        Print "15. TEAM FGA/G "; T%(3)
-        Print "16. LEAGUE FGA/G "; T%(4)
-        Print "17. TEAM GAMES PLAYED "; T%(5)
-        Print "18. HOMECOURT FACTOR "; T%(6)
-        Print "19. ARENA NAME "; S$
+    '   Do
+    Cls
+    Color 14
+    Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
+    Print " 1. TEAM NUMBER "; teamIdx%
+    Print " 2. DISK ID "; yearNumber$
+    Print " 3. TEAM NAME "; teamName$; Tab(40); "20. NICKNAME "; A1$
+    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "21. COACH "; C$
+    Print " 5. DEF FG% ADJ "; defFGPctAdj%
+    Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(40); "22. AVG ATTENDANCE "; avgAttendance%
+    Print " 7. DEF 3FG% ADJ "; V1%; Tab(40); "23. WINS "; T%(7)
+    Print " 8. OFF STEAL RATING "; L%(0); Tab(40); "24. LOSSES "; T%(8)
+    Print " 9. OFF TURNOVER RATING "; L%(1); Tab(40); "25. POWER RATING "; T%(9)
+    Print "10. DEF TURNOVER ADJ "; L%(2)
+    Print "11. DEF FOUL ADJ "; L%(3)
+    Print "12. ENTER 99 IF USING 6-9 "; L%(4)
+    Print "13. TEXT COLOR (0-15) "; T%(0)
+    Print "14. BACKGROUND (0-7) "; T%(1)
+    Print "15. TEAM FGA/G "; T%(3)
+    Print "16. LEAGUE FGA/G "; T%(4)
+    Print "17. TEAM GAMES PLAYED "; T%(5)
+    Print "18. HOMECOURT FACTOR "; T%(6)
+    Print "19. ARENA NAME "; S$
 
-        190'
-        Locate 21, 1: Color T%(0), T%(1)
-        Print "TEAM APPEARANCE": Color 15, 0
-
+    Do
         C1 = 1
         Locate 23, 1: Print "SELECT # TO CHANGE 1-24 (0 TO CONTINUE) ";
-
         Input B9
-        On B9 GOTO 147, 162, 163, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 164, 165, 166, 167, 168, 169, 170
 
-'       Select Case B9
-'           On B9 GOTO 147, 162, 163, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 164, 165, 166, 167, 168, 169, 170
-'
+        If B9 <> 0 Then
 
-'       End Select
+            On B9 GOTO 147, 162, 163, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 164, 165, 166, 167, 168, 169, 170
 
-'   Loop Until C1 = 0
+            '       Select Case B9
+            '           On B9 GOTO 147, 162, 163, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 164, 165, 166, 167, 168, 169, 170
+            '
 
-    '-- is the 1600 part necessary?
-    '   isn't that all doing the same as below???
-    '   (but without the C1 tracking
-    ' IN FACT, it skips #'s 20+
-    ' is that part of the deal?
-    ' if you don't have the data?
-    145 Cls: Color 14: Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
-    147 Locate 2: Input " 1. TEAM NUMBER "; teamIdx%: If C1 = 1 Then 190
-    162 Locate 3: Input " 2. DISK ID "; yearNumber$: If C1 = 1 Then 190
-    163 Locate 4: Input " 3. TEAM NAME "; teamName$: If C1 = 1 Then 190
-    148 Locate 5: Input " 4. TEAM STAMINA RATING "; staminaRating%: If C1 = 1 Then 190
-    149 Locate 6: Input " 5. DEF FG% ADJ "; defFGPctAdj%: If C1 = 1 Then 190
-    150 Locate 7: Input " 6. DEF 3FGA/FGA ADJ "; V2%: If C1 = 1 Then 190
-    151 Locate 8: Input " 7. DEF 3FG% ADJ "; V1%: If C1 = 1 Then 190
-    152 Locate 9: Input " 8. OFF STEAL RATING "; L%(0): If C1 = 1 Then 190
-    153 Locate 10: Input " 9. OFF TURNOVER RATING "; L%(1): If C1 = 1 Then 190
-    154 Locate 11: Input "10. DEF TURNOVER ADJ "; L%(2): If C1 = 1 Then 190
-    155 Locate 12: Input "11. DEF FOUL ADJ "; L%(3): If C1 = 1 Then 190
-    156 Locate 13: Input "12. ENTER 99 IF USING 6-9 "; L%(4): If C1 = 1 Then 190
-    157 Locate 14: Input "13. TEXT COLOR (0-15) "; T%(0): If C1 = 1 Then 190
-    158 Locate 15: Input "14. BACKGROUND (0-7) "; T%(1): If C1 = 1 Then 190
-    159 Locate 16: Input "15. TEAM FGA/G "; T%(3): If C1 = 1 Then 190
-    160 Locate 17: Input "16. LEAGUE FGA/G "; T%(4): If C1 = 1 Then 190
-    161 Locate 18: Input "17. TEAM GAMES PLAYED "; T%(5): If C1 = 1 Then 190
-    164 Locate 19: Input "18. HOMECOURT FACTOR "; T%(6): If C1 = 1 Then 190
-    165 Locate 20: Input "19. ARENA NAME "; S$: If C1 = 1 Then 190
-    166 Locate 4, 40: Input "20. NICKNAME "; A1$: If C1 = 1 Then 190
-    167 Locate 5, 40: Input "21. COACH "; C$: If C1 = 1 Then 190
-    168 Locate 7, 40: Input "22. AVG ATTENDANCE "; avgAttendance%: If C1 = 1 Then 190
-    169 Locate 8, 40: Input "23. WINS "; T%(7): If C1 = 1 Then 190
-    170 Locate 9, 40: Input "24. LOSSES "; T%(8): If C1 = 1 Then 190
-    171 Locate 10, 40: Input "25. POWER RATING "; T%(9): If C1 = 1 Then 190
+            '       End Select
+
+            '   Loop Until C1 = 0
+
+            '-- is the 1600 part necessary?
+            '   isn't that all doing the same as below???
+            '   (but without the C1 tracking
+            ' IN FACT, it skips #'s 20+
+            ' is that part of the deal?
+            ' if you don't have the data?
+            '145 Cls: Color 14: Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
+
+            147 Locate 2: Input " 1. TEAM NUMBER "; teamIdx%: If C1 = 1 Then 190
+            162 Locate 3: Input " 2. DISK ID "; yearNumber$: If C1 = 1 Then 190
+            163 Locate 4: Input " 3. TEAM NAME "; teamName$: If C1 = 1 Then 190
+            148 Locate 5: Input " 4. TEAM STAMINA RATING "; staminaRating%: If C1 = 1 Then 190
+            149 Locate 6: Input " 5. DEF FG% ADJ "; defFGPctAdj%: If C1 = 1 Then 190
+            150 Locate 7: Input " 6. DEF 3FGA/FGA ADJ "; V2%: If C1 = 1 Then 190
+            151 Locate 8: Input " 7. DEF 3FG% ADJ "; V1%: If C1 = 1 Then 190
+            152 Locate 9: Input " 8. OFF STEAL RATING "; L%(0): If C1 = 1 Then 190
+            153 Locate 10: Input " 9. OFF TURNOVER RATING "; L%(1): If C1 = 1 Then 190
+            154 Locate 11: Input "10. DEF TURNOVER ADJ "; L%(2): If C1 = 1 Then 190
+            155 Locate 12: Input "11. DEF FOUL ADJ "; L%(3): If C1 = 1 Then 190
+            156 Locate 13: Input "12. ENTER 99 IF USING 6-9 "; L%(4): If C1 = 1 Then 190
+            157 Locate 14: Input "13. TEXT COLOR (0-15) "; T%(0): If C1 = 1 Then 190
+            158 Locate 15: Input "14. BACKGROUND (0-7) "; T%(1): If C1 = 1 Then 190
+            159 Locate 16: Input "15. TEAM FGA/G "; T%(3): If C1 = 1 Then 190
+            160 Locate 17: Input "16. LEAGUE FGA/G "; T%(4): If C1 = 1 Then 190
+            161 Locate 18: Input "17. TEAM GAMES PLAYED "; T%(5): If C1 = 1 Then 190
+            164 Locate 19: Input "18. HOMECOURT FACTOR "; T%(6): If C1 = 1 Then 190
+            165 Locate 20: Input "19. ARENA NAME "; S$: If C1 = 1 Then 190
+            166 Locate 4, 40: Input "20. NICKNAME "; A1$: If C1 = 1 Then 190
+            167 Locate 5, 40: Input "21. COACH "; C$: If C1 = 1 Then 190
+            168 Locate 7, 40: Input "22. AVG ATTENDANCE "; avgAttendance%: If C1 = 1 Then 190
+            169 Locate 8, 40: Input "23. WINS "; T%(7): If C1 = 1 Then 190
+            170 Locate 9, 40: Input "24. LOSSES "; T%(8): If C1 = 1 Then 190
+            171 Locate 10, 40: Input "25. POWER RATING "; T%(9): If C1 = 1 Then 190
+
+            190 '
+            Locate 21, 1: Color T%(0), T%(1)
+            Print "TEAM APPEARANCE": Color 15, 0
+
+        End If
+
+    Loop Until B9 = 0
+
 
     '---------------
     'Change Players
@@ -389,13 +398,13 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
 
             Locate 7, 32
             Locate , 12: Print "ENTER NEW DISK ID: "
-			Print
-			
-			Do
-				Locate 7, 31: Input NY$
-				Locate , 12: Print "IS THIS CORRECT (YN)"
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+            Print
+
+            Do
+                Locate 7, 31: Input NY$
+                Locate , 12: Print "IS THIS CORRECT (YN)"
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             If UCase$(I$) = "Y" Then
                 newID% = 1
@@ -452,24 +461,24 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
                 JJ = 4
                 Locate 6, 8: Color 15, 1
                 Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-                For II = 1 To JJ: 
+                For II = 1 To JJ:
                     Locate 6 + II, 8
                     Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
                 Next
                 Locate 7 + JJ, 8
                 Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
                 Locate 7
-                
+
                 U$ = "TOTAL CONTRIBUTION MUST BE 100 %"
                 Locate , (80 - Len(U$)) / 2
                 Print U$
-                
+
                 U$ = "HIT ANY KEY TO CONTINUE"
                 Locate , (80 - Len(U$)) / 2
                 Print U$
-                
+
                 Color 15, 0
-                
+
                 I$ = GetKeyPress$
             End If
         Else
@@ -565,6 +574,7 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
     _MouseHide
 
     If ExitCode% <> 27 Then
+
         teamIdx% = Selection%
 
         '-- This could be it's own subroutine

@@ -6,13 +6,14 @@ SUB RECCON ()
 
 	Shared BRC$(), recconTRC$(), recconTRC1$()
 
-	ReDim menuChoices$(1 to 7)
 	Shared TB$(), TT$()
 
 	Do
+		ReDim menuChoices$(1 to 7)
+		
 		Cls
 
-		2300 Call TITLE
+		Call TITLE
 		menuChoices$(1) = "VIEW SEASON RECORDS      "
 		menuChoices$(2) = "PRINT SEASON RECORDS     "
 		menuChoices$(3) = "DELETE SEASON RECORDS    "

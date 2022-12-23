@@ -5,14 +5,22 @@
 Sub TITLE_CAREER ()
 
 	Color , 1
-	Locate 1, 1: Print Tab(80);
+
+	Locate 1, 1
+	Print Tab(80);
 	Locate , 22
+
 	Color 14
 	Print "COURTSIDE COLLEGE BASKETBALL: CAREER STATS"
-	Locate 24, 1: Print Tab(80);
+
+	Locate 24, 1
+	Print Tab(80);
 	Locate , 1
+
 	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+
 	Locate 4, 1
+
 	Color 1, 0
 
 End Sub
@@ -22,17 +30,23 @@ End Sub
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_HEADER ()
+
     Color , 0
+
 	KEY Off
 	Cls
+
     Color , 1
 	Locate 1, 1: Print Tab(80);
 	Locate , 23
-	Color 12
 
+	Color 12
     Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
+
     Locate 3, 1
+
 	Color 2, 0
+
 End Sub
 
 '------------------------------
@@ -42,14 +56,22 @@ End Sub
 Sub TITLE_MERGE ()
 
 	Color , 1
-	Locate 1, 1: Print Tab(80);
+
+	Locate 1, 1
+	Print Tab(80);
 	Locate , 26
+
 	Color 0
 	Print "COURTSIDE COLLEGE BASKETBALL: MERGE"
-	Locate 24, 1: Print Tab(80);
+
+	Locate 24, 1
+	Print Tab(80);
 	Locate , 1
+
 	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+
 	Locate 4, 1
+
 	Color 1, 0
 
 End Sub
@@ -59,19 +81,30 @@ End Sub
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_SCHEDULER ()
+
     Color , 0
 	KEY Off
 	Cls
+
     Color , 1
-	Locate 1, 1: Print Tab(80);
+
+	Locate 1, 1
+	Print Tab(80);
 	Locate , 33
+
 	Color 14
     Print "AUTO SCHEDULER"
-    Locate 24, 1: Print Tab(80);
+
+    Locate 24, 1
+	Print Tab(80);
 	Locate , 1
+
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1997";
+
     Locate 5, 1
+
 	Color , 0
+
 End Sub
 
 '------------------------------
@@ -79,16 +112,26 @@ End Sub
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_STATS ()
+
     Color , 2
-    Locate 1, 1: Print Tab(80);
+    
+	Locate 1, 1
+	Print Tab(80);
 	Locate , 26
+
 	Color 0
     Print "COURTSIDE COLLEGE BASKETBALL STATISTICS"
-    Locate 24, 1: Print Tab(80);
+
+    Locate 24, 1
+	Print Tab(80);
 	Locate , 1
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
-    Locate 4, 1
+    
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    
+	Locate 4, 1
+
 	Color 2, 0
+
 End Sub
 
 '----------------------------------------
@@ -98,7 +141,8 @@ End Sub
 Sub Title_SINPUT (titleType, subtitle$)
 
     Color , 1
-    Locate 1, 1
+    
+	Locate 1, 1
     Print Tab(80);
 
     If (titleType = 1) Then
@@ -111,10 +155,14 @@ Sub Title_SINPUT (titleType, subtitle$)
         Print subtitle$
     End If
 
-    Locate 24, 1: Print Tab(80);
+    Locate 24, 1
+	Print Tab(80);
 	Locate , 1
-    Print "(C) SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
-    Locate 4, 1
+    
+	Print "(C) SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
+    
+	Locate 4, 1
+
 	Color 15, 0
 
 End Sub
@@ -124,23 +172,36 @@ End Sub
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE_TOURN ()
-    Color , 0
+    
+	Color , 0
+	
 	KEY Off
 	Cls
-    Color , 1
-	Locate 1, 1: Print Tab(80);
+    
+	Color , 1
+	
+	Locate 1, 1
+	Print Tab(80);
 	Locate , 16
+	
 	Color 12
     Print "COURTSIDE COLLEGE BASKETBALL TOURNAMENT SCHEDULER"
-    Locate 24, 1: Print Tab(80);
+    
+	Locate 24, 1
+	Print Tab(80);
 	Locate , 1
-    Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994";
-    Locate 3, 1
+    
+	Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994";
+    
+	Locate 3, 1
 	Color 2, 0
+
     Color 15
 	Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
     Print "              FOR TECHNICAL SUPPORT, CALL (615) 366-8088"
+
     Color 10
+
 End Sub
 
 '------------------------------
@@ -148,23 +209,36 @@ End Sub
 '------------------------------
 ' Displays window title / game copyright
 Sub TITLE ()
+
     Color , 0
+
 	KEY Off
 	Cls
-    Color , 1
-	Locate 1, 1: Print Tab(80);
-	Locate , 23
-	Color 12
 
+    Color , 1
+	
+    'Header
+	Locate 1, 1
+	Print Tab(80);
+	Locate , 23
+
+	Color 12
     Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
+
+    'Footer
     Locate 24, 1
 	Print Tab(80);
 	Locate , 1
+
     Print "(C) LANCE HAFFNER/SHANNON LYNN 1987-1994"; Tab(70); Left$(Time$, 5);
+
+    'Contact
     Locate 3, 1
-	Color 2, 0
-    Color 15
+
+	Color 15, 0
 	Print "        PROGRAMMED AND DEVELOPED BY LANCE HAFFNER AND SHANNON LYNN"
     Print "     FOR TECHNICAL SUPPORT, CALL (615) 366-8088 OR SportGames@AOL.COM"
+
     Color 10
+
 End Sub

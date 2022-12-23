@@ -70,9 +70,10 @@ Sub SEECON ()
 
             End If
 
-        Loop Until UCase$(I$) = "N"
+        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
         If ExitCode% <> 27 Then
+		
             targetFile$ = RTrim$(targetFile$)
             WE$ = Left$(targetFile$, Len(targetFile$) - 4)
             targetFile$ = Left$(WE$, 8)
