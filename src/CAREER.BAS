@@ -8,9 +8,9 @@ Sub CAREER ()
 
     Do
 
-        Cls
+        Color 15, 0
 
-		Color 15, 0
+        Cls
 
         Call TITLE_CAREER
 
@@ -136,10 +136,10 @@ Sub CreateCareerFile ()
             Cls
             Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
 
-			Do
-				Locate 9, 25: Print "ANY CHANGE (YN)"
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+            Do
+                Locate 9, 25: Print "ANY CHANGE (YN)"
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             If UCase$(I$) = "N" Then
 
@@ -392,16 +392,16 @@ Sub ViewCareerRecords ()
 
                 If ExitCode% <> 27 Then
 
-					Color 15, 1
+                    Color 15, 1
                     targetFile$ = careerLeaderFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
 
                     Do
-						Locate , 33: Print "ANY CHANGE (YN)";
-						I$ = GetKeyPress
-					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                        Locate , 33: Print "ANY CHANGE (YN)";
+                        I$ = GetKeyPress
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-					Color 15, 0
+                    Color 15, 0
 
                 End If
 
@@ -418,9 +418,9 @@ Sub ViewCareerRecords ()
                 Close #1
 
                 Do
-					Locate 15, 10
-					Color 12: Print "V";: Color 7: Print "iew or ";
-					Color 12: Print "P";: Color 7: Print "rint"
+                    Locate 15, 10
+                    Color 12: Print "V";: Color 7: Print "iew or ";
+                    Color 12: Print "P";: Color 7: Print "rint"
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "V" Or UCase$(I$) = "P"
 
@@ -457,13 +457,13 @@ Sub ViewCareerRecords ()
                             Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR(18)
                             Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR(19)
                             Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR(20)
-                            
-							Color 15
 
-							Do
-								Locate 22: Print "VIEW AGAIN (Y/N)"
-								I$ = GetKeyPress$
-							Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+                            Color 15
+
+                            Do
+                                Locate 22: Print "VIEW AGAIN (Y/N)"
+                                I$ = GetKeyPress$
+                            Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
                         Loop Until UCase$(I$) = "N"
 
@@ -547,7 +547,7 @@ Sub DiskSelection_CAREER ()
                 NY$ = I$ + NY$
                 Color 15, 0
 
-                If NY$ = "" And YN$ <> "" Then 
+                If NY$ = "" And YN$ <> "" Then
                     Call SelectTeam_CAREER(YN$, NTMS)
                 Else
                     YN$ = NY$
@@ -576,14 +576,14 @@ Sub DiskSelection_CAREER ()
                 BO% = 0
             Else
                 Locate 2, 33
-				Color careerT%(0), careerT%(1): Print A$
+                Color careerT%(0), careerT%(1): Print A$
 
                 Color 15, 4
-				
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                Do
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             End If
 
@@ -653,7 +653,7 @@ Sub DoTheMerge ()
             Locate 25, 1
             Color 14
             Print "ENTER";
-			Color 15
+            Color 15
             Print "-SELECTS FILE";
 
             _MouseShow "DEFAULT"
@@ -667,11 +667,11 @@ Sub DoTheMerge ()
                 Locate 2, 33: Print targetFile$
 
                 Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-				Color 15, 0
+                Color 15, 0
 
             End If
 
@@ -686,17 +686,17 @@ Sub DoTheMerge ()
             A$ = RTrim$(Q$(0))
             B$ = A$
 
-            For XX = 4 To 11: 
-				If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+            For XX = 4 To 11:
+                If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
             Next XX
 
-            For XX = 12 To 14: 
-				If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+            For XX = 12 To 14:
+                If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
             Next XX
-            
-			QQ = 8
-            
-			For XX = 11 To 4 Step -1
+
+            QQ = 8
+
+            For XX = 11 To 4 Step -1
                 If Not (Mid$(B$, XX, 1) = "_") Then
                     Exit For
                 Else
@@ -707,14 +707,14 @@ Sub DoTheMerge ()
             Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
             Color 15, 0
-			Cls
+            Cls
 
             Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-     
-			Do
-				Locate 9, 25: Print "ANY CHANGE (YN)"
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+            Do
+                Locate 9, 25: Print "ANY CHANGE (YN)"
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             If UCase$(I$) = "N" Then
 
@@ -742,7 +742,7 @@ Sub DoTheMerge ()
                 If Not _FileExists(diskPaths$(1) + Z1$) Then
                     Cls
                     Color 7
-					Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
+                    Print "UNABLE TO LOCATE STAT FILE . . . PLEASE RE-ENTER"
                     Print
                     Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
@@ -825,14 +825,14 @@ Sub DoTheMerge ()
                     For N = 1 To 15
                         For I = 0 To 61
                             Write #2, AR$(I)
-                            For J = 0 To 15: 
+                            For J = 0 To 15:
                                 Write #2, ARS!(N, I, J)
                             Next J
                             Write #2, W0S!(N, I)
                             Write #2, W1S!(N, I)
                             Locate 21, 38: Color 5
                             TMR1% = TMR1% - 1
-                            Print Using "####"; TMR1%: 
+                            Print Using "####"; TMR1%:
                         Next I
                     Next N
                     Close #2
@@ -875,7 +875,7 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams)
     MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
     _MouseHide
 
-    If not (ExitCode% = 27) Then
+    If Not (ExitCode% = 27) Then
 
         T1 = teamIndex%(Selection%)
 

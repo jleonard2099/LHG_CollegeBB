@@ -1167,6 +1167,7 @@ Sub BoxscoreMaintenance ()
                 Case 5:
                     Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteSchedules(Selection%, Spec$)
+
                     Spec$ = diskPaths$(1) + "BOX*.*"
                     Call DeleteSchedules(Selection%, Spec$)
 
@@ -1618,7 +1619,9 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
         Next
 
         boxFiles$(0) = fileSpec$
+
         Call ReadFile(boxFiles$())
+
         For X = 1 To Count%
             Kill (diskPaths$(1) + boxFiles$(X))
             Locate 12, 34: Print "DELETING "; boxFiles$(X)

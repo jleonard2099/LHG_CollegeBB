@@ -46,11 +46,11 @@ Sub CNGRAT (userChoice)
 
             Select Case Selection%
                 Case 1:
-                    Call GetTeam_CNGRAT(YN$, TI, A$)
-                    Call EditTeam(YN$, TI, A$)
+                    Call GetTeam_CNGRAT(YN$, T1, A$)
+                    Call EditTeam(YN$, T1, A$)
 
                 Case 2:
-                    Call GetTeam_CNGRAT(YN$, TI, A$)
+                    Call GetTeam_CNGRAT(YN$, T1, A$)
                     'Send team roster to default printer
                     Cls
                     LPrint "TEAM ROSTER FOR "; A$
@@ -81,8 +81,9 @@ Sub CNGRAT (userChoice)
                     LPrint "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"
                     LPrint "PS- PASSING RATING            3FG%- THREE POINT GOAL %"
                     LPrint " D- DEFENSIVE RATING"
+
                 Case 3:
-                    Call GetTeam_CNGRAT(YN$, TI, A$)
+                    Call GetTeam_CNGRAT(YN$, T1, A$)
 
                     'Send team roster to screen
                     Cls
@@ -122,6 +123,8 @@ Sub CNGRAT (userChoice)
                     Print "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"
                     Print "PS- PASSING RATING               D- DEFENSIVE RATING"
                     I$ = GetKeyPress$
+
+					'No need to implement a "View Again" here as it's just one page
 
                 Case 4: Cls
 
@@ -299,14 +302,24 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
     '---------------
     'Change Players
     '---------------
-    200 If T%(6) < 0 Then T%(6) = 0
+    200 '
+    If T%(6) < 0 Then T%(6) = 0
     If T%(6) > 6 Then T%(6) = 6
 
     C1 = 0
+
+
     Cls
-    Print "CHANGE PLAYERS": X% = 2
+
+    Print "CHANGE PLAYERS"
+
+    X% = 2
+
     For I = 0 To 6
-        Locate I + 5, 5: Print Using "##"; I + 1;: Print " "; cngratA$(I); Tab(40);: Print Using "##"; I + 8;: Print " "; cngratA$(I + 7)
+        Locate I + 5, 5
+        Print Using "##"; I + 1;
+        Print " "; cngratA$(I); Tab(40);: Print Using "##"; I + 8;
+        Print " "; cngratA$(I + 7)
     Next
 
     Print
@@ -408,7 +421,7 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
 
             If UCase$(I$) = "Y" Then
                 newID% = 1
-                Call SaveTeam_CNGRAT(NY$, newID%, teamIdx%)
+                Call SaveTeam_CNGRAT(NY$, newID%, teamIdx%, teamName$)
                 Exit Sub
             End If
 
@@ -423,13 +436,18 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
     '---------------
     Do
         Cls
+
         Color T%(0), T%(1)
-        Print A$
+        Print teamName$
+
         Color 14, 0
         Print "PLAYER          CONTRIBUTION"
         Print "                PERCENT"
+
         Color 15, 0
+
         T3 = 0
+
         For I = 0 To 13
             Print Using "## "; I + 1;
             Print cngratA$(I);
@@ -454,7 +472,7 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             Cls
             If T3 > 98 And T3 < 102 Then
                 'This is where we actually leave
-                Call SaveTeam_CNGRAT(yearNumber$, newID%, teamIdx%)
+                Call SaveTeam_CNGRAT(yearNumber$, newID%, teamIdx%, teamName$)
             Else
                 'We need to warn the user that
                 'our total doesn't add up!!
@@ -661,7 +679,7 @@ End Sub
 '     SaveTeam_CNGRAT Subroutine
 '----------------------------------------
 '... explain here ...
-Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%)
+Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
 
     Shared V1%, V2%
     Shared defFGPctAdj%, staminaRating%
@@ -685,7 +703,9 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%)
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
 
-    LSet Q$(0) = A$: LSet Q$(1) = MKI$(staminaRating%): LSet Q$(2) = MKI$(defFGPctAdj%)
+    LSet Q$(0) = teamName$
+    LSet Q$(1) = MKI$(staminaRating%)
+    LSet Q$(2) = MKI$(defFGPctAdj%)
     LSet Q$(3) = MKI$(V1%): LSet Q$(4) = MKI$(V2%)
     For I = 0 To 4: LSet Q$(I + 5) = MKI$(L%(I)): Next
     T%(2) = 999

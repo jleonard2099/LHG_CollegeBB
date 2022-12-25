@@ -85,32 +85,32 @@ Sub CBBINPUT ()
 
         Do
             Cls
-			
-			Print "YOU MUST HAVE THE FOLLOWING TEAM &"
-			Print "INDIVIDUAL STATS: FGA,FG %,"
-			Print "FTA,FT %,REBOUNDS"
-			Print
+
+            Print "YOU MUST HAVE THE FOLLOWING TEAM &"
+            Print "INDIVIDUAL STATS: FGA,FG %,"
+            Print "FTA,FT %,REBOUNDS"
+            Print
             Print "IF YOU ARE INPUTTING A TEAM WITH ANY "
-			Print "OF THE FOLLOWING STATS MISSING,"
-			Print "SIMPLY CHECK 'N' AND THE PROGRAM WILL"
+            Print "OF THE FOLLOWING STATS MISSING,"
+            Print "SIMPLY CHECK 'N' AND THE PROGRAM WILL"
             Print "ALLOW YOU TO INPUT RATINGS DIRECTLY"
             Print
-			Print "DO YOU HAVE THE FOLLOWING:"
+            Print "DO YOU HAVE THE FOLLOWING:"
             Print
-			
-			Input "ASSISTS (YN) "; I$: QQ(0) = 0
-			If I$ = "N" Then QQ(0) = 1
+
+            Input "ASSISTS (YN) "; I$: QQ(0) = 0
+            If I$ = "N" Then QQ(0) = 1
 
             Input "PERSONAL FOULS (YN) "; I$: QQ(1) = 0
-			If I$ = "N" Then QQ(1) = 1
+            If I$ = "N" Then QQ(1) = 1
 
             Input "STEALS & TURNOVERS (YN) "; I$: QQ(2) = 0
-			If I$ = "N" Then QQ(2) = 1
+            If I$ = "N" Then QQ(2) = 1
 
             Input "BLOCKS (YN) "; I$: QQ(3) = 0
-			If I$ = "N" Then QQ(3) = 1
+            If I$ = "N" Then QQ(3) = 1
             Print
-			Input "ANY CHANGE (YN) "; I$
+            Input "ANY CHANGE (YN) "; I$
 
         Loop Until UCase$(I$) = "N"
 
@@ -120,8 +120,8 @@ Sub CBBINPUT ()
         Do
 
             'C1 should be 0 our first time through
-            308 
-			Locate 1: Print X$(H)
+            308
+            Locate 1: Print X$(H)
             Locate 2: Input " 0. TEAM # (0-EXIT)"; T
 
             If T > 0 And T < 999 Then
@@ -339,8 +339,10 @@ Sub CBBINPUT ()
             BC = Int(X3 / 2)
             BY = Int(X3 / 2)
             X4 = Int(Rnd(1) * 2)
+
             If X3 - BC - BY > 0 And X4 = 0 Then BC = BC + 1
             If X3 - BC - BY > 0 And X4 = 1 Then BY = BY + 1
+
             U7 = Int((46 - L4) / 2)
             D = OE - L4 + BY - U7
 
@@ -353,8 +355,11 @@ Sub CBBINPUT ()
 
             V% = Int(((W0 / T2) + .005) * 100)
             V2% = V% - Q7
+
             If V2% < 0 Then V2% = 100 + V2%
+
             V1% = W1 - Q8
+
             If V1% < 0 Then V1% = 100 + V1%
 
             For I = 0 To 13
@@ -364,9 +369,11 @@ Sub CBBINPUT ()
                     If A(I, 8) <> 0 And H = 1 Then M = 32 / (A(I, 8) / A(I, 7))
                     If A(I, 8) = 0 Then M = (X9 / 5) / (A(I, 9) + A(I, 10))
                     If A(I, 8) = 0 And M < 1 Then M = 1
+
                     B3 = (A(I, 12) / A(I, 7)) * M: B3 = Int((B3 * 10) + .5)
                     X(I, 5) = B3
                     B3 = A(I, 9) * (A(I, 0) / 100): B4 = A(I, 17) * (A(I, 18) / 100)
+
                     If A(I, 9) - A(I, 17) <> 0 Then A(I, 0) = ((B3 - B4) / (A(I, 9) - A(I, 17))) + .005
                     A(I, 0) = Int((A(I, 0) * 100) + .5)
                 End If
@@ -453,8 +460,8 @@ Sub CBBINPUT ()
                     I = Val(I$)
                     GoTo 1702
                 End If
-                
-				For I = 0 To 13
+
+                For I = 0 To 13
                     A(I, 4) = A(I, 4) + E0(I)
                 Next I
                 C1 = 0
@@ -479,7 +486,7 @@ Sub CBBINPUT ()
 
                 C1 = 1
                 PF = 0
-				TP = 0
+                TP = 0
 
                 For I1 = 0 To 13
                     If N$(I1) <> "XXX" Then
@@ -491,7 +498,7 @@ Sub CBBINPUT ()
                 Locate 20, 1
                 Print "PF = "; PF / TP
                 Locate 21, 1
-				Print "ANY CHANGE (0-13) (N=NO CHANGE) "
+                Print "ANY CHANGE (0-13) (N=NO CHANGE) "
                 Input I$
 
                 If UCase$(I$) <> "N" Then
@@ -541,11 +548,11 @@ Sub CBBINPUT ()
                 ST = ST - SY - SV + SW: Locate 10, 26: Print "ST = "; ST;
 
                 Locate 23, 1
-				Print "ANY CHANGE (0-Z) (N = NO CHANGE) ";
+                Print "ANY CHANGE (0-Z) (N = NO CHANGE) ";
 
                 Input I$
-                
-				If UCase$(I$) = "N" Then
+
+                If UCase$(I$) = "N" Then
                     For I = 0 To 13
                         A(I, 5) = A(I, 5) + E0(I)
                     Next I
@@ -577,8 +584,8 @@ Sub CBBINPUT ()
             End If
 
             If QQ(3) = 1 Then
-            
-			Cls
+
+                Cls
                 Print "INPUT BLOCK RATINGS"
                 Print "GUARDS ARE USUALLY 0,1 ; FORWARDS,CENTERS ARE USUALLY 0,1,2,3"
                 Print "THE GREAT SHOT BLOCKERS ARE USUALLY 5,6,7"
@@ -588,8 +595,8 @@ Sub CBBINPUT ()
                 For I = 0 To 13
 
                     2102 '
-					Locate I + 6, 1: Print I; " "; N$(I);
-					Locate I + 6, 20: Input E0(I)
+                    Locate I + 6, 1: Print I; " "; N$(I);
+                    Locate I + 6, 20: Input E0(I)
 
                     If C1 = 1 Then Exit For '2105
 
@@ -602,17 +609,18 @@ Sub CBBINPUT ()
                 Input I$
 
                 If UCase$(I$) <> "N" Then
-					I = Val(I$)
-					GoTo 2102
-				Else
-					For I = 0 To 13: A(I, 6) = A(I, 6) + E0(I): Next I
-					C1 = 0
-				End If
+                    I = Val(I$)
+                    GoTo 2102
+                Else
+                    For I = 0 To 13: A(I, 6) = A(I, 6) + E0(I): Next I
+                    C1 = 0
+                End If
 
             End If
 
             'Call SaveTeam (YN$)
             Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+
             Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
             For I = 0 To 13
@@ -624,9 +632,13 @@ Sub CBBINPUT ()
             LSet Q$(2) = MKI$(D)
             LSet Q$(3) = MKI$(V1%)
             LSet Q$(4) = MKI$(V2%)
+
             For I = 0 To 4: LSet Q$(I + 5) = MKI$(L%(I)): Next
+
             T%(2) = 999
+
             For I = 0 To 9: LSet Q$(I + 10) = MKI$(T%(I)): Next
+
             For I = 0 To 13
                 LSet Q$(I * 15 + 20) = N$(I)
                 For I1 = 0 To 6
@@ -634,7 +646,9 @@ Sub CBBINPUT ()
                     LSet Q$(I * 15 + I1 + 28) = MKI$(X(I, I1))
                 Next
             Next
+
             Put #1, T
+
             Close 1
 
             Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566

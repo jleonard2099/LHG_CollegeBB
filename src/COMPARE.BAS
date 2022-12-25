@@ -48,10 +48,15 @@ Sub COMPARE ()
 
                     Case 1:
                         Do
-                            Color 15, 0: Cls
-                            JJ = 7
-                            Locate 6, 8: Color 15, 4
-                            'Print box top
+                            Color 15, 0
+
+							Cls
+                            
+							JJ = 7
+							Color 15, 4
+                            Locate 6, 8
+                            
+							'Print box top
                             Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
                             'Print box sides
@@ -131,15 +136,22 @@ Sub COMPARE ()
                         Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S"
 
                         Color 14, 0
+
                         If UCase$(I$) = "S" Then
                             Call TeamComparison
-                            Locate 23, 28: Color 15, 0: Print "HIT ANY KEY TO CONTINUE"
+                            Color 15, 0
+							Locate 23, 28: Print "HIT ANY KEY TO CONTINUE"
                             I$ = GetKeyPress$
 
                             Call PlayerComparison(loopChoice, posn$())
+						Else
+							'-- Where did this go to?
+							' Currently no code for a print routine
+							' Need to write a custom one based on other games
                         End If
 
                     Case 2: Cls
+
                 End Select
 
             Loop Until loopChoice = 0
@@ -166,20 +178,24 @@ Sub TeamComparison ()
 
     '2001 'GoSub 6000
     For dc = 1 To 22
-        Color 15, 0: Locate dc
+        Color 15, 0
+		Locate dc
         Print String$(79, 177)
     Next
 
     Locate 11, 31: Print Space$(18)
 
-    Color 11: Locate 11, 33: Print B$(0)
+    Color 11
+	Locate 11, 33: Print B$(0)
 
-    Color 15, 12
-
-    Color 15, 2: Locate 5, 30: Print "              W - L ";
+    'Color 15, 12
+    Color 15, 2
+	Locate 5, 30: Print "              W - L ";
     Locate 6, 30: Print "  ACTUAL   ";
     Locate 7, 30: Print "  REPLAY   ";
-    Color 15, 1: Locate 2, 3: Print "   OFFENSIVE STATS    "
+    
+	Color 15, 1
+	Locate 2, 3: Print "   OFFENSIVE STATS    "
     Locate 3, 3: Print "       ACTUAL   REPLAY"
     Locate 4, 3: Print " FGM   ";
     Locate 5, 3: Print " FGA   ";
@@ -198,7 +214,10 @@ Sub TeamComparison ()
     Locate 18, 3: Print " 3-FGM ";
     Locate 19, 3: Print " 3-FGA ";
     Locate 20, 3: Print " 3-PCT ";
-    Color 15, 12: Locate 2, 55: Print "   DEFENSIVE STATS   "
+    
+	
+	Color 15, 12
+	Locate 2, 55: Print "   DEFENSIVE STATS   "
     Locate 3, 55: Print "       ACTUAL  REPLAY"
     Locate 4, 55: Print " FGM   ";
     Locate 5, 55: Print " FGA   ";
@@ -220,16 +239,24 @@ Sub TeamComparison ()
 
     For I = 3 To 21: Locate I, 25: Color 7, 0: Print String$(2, 177): Next
     For I = 3 To 21: Locate I, 76: Print String$(2, 177): Next
-    Locate 21, 5: Print String$(20, 177)
+    
+	Locate 21, 5: Print String$(20, 177)
     Locate 21, 57: Print String$(20, 177)
-    For I = 6 To 8: Locate I, 50: Print String$(2, 177): Next
-    Locate 8, 32: Print String$(18, 177)
+    
+	For I = 6 To 8: Locate I, 50: Print String$(2, 177): Next
+    
+	Locate 8, 32: Print String$(18, 177)
 
-    Color 3, 0: Locate 6, 41: Print Using "####"; compareT%(7);
+    Color 3, 0
+	Locate 6, 41: Print Using "####"; compareT%(7);
     Locate 6, 45: Print Using "####"; compareT%(8);: Print " ";
-    Color 14, 0: Locate 7, 41: Print Using "####"; replayWins%;
+
+    Color 14, 0
+	Locate 7, 41: Print Using "####"; replayWins%;
     Locate 7, 45: Print Using "####"; replayLosses%;: Print " ";
-    Color 3, 0: Locate 4, 10: Print Using "######"; T1%(1) / 100 * T1%(3);
+    
+	Color 3, 0
+	Locate 4, 10: Print Using "######"; T1%(1) / 100 * T1%(3);
     Locate 5, 10: Print Using "######"; T1%(1);
 
     If T1%(1) = 0 Then Locate 6, 10: Print "  .000";
@@ -252,7 +279,9 @@ Sub TeamComparison ()
     Locate 18, 10: Print "   ---"
     Locate 19, 10: Print "   ---"
     Locate 20, 10: Print "   ---"
-    Color 3, 0: Locate 4, 62: Print Using "######"; T1%(2) / 100 * T1%(4);
+
+    Color 3, 0
+	Locate 4, 62: Print Using "######"; T1%(2) / 100 * T1%(4);
     Locate 5, 62: Print Using "######"; T1%(2);
 
     If compareT%(2) = 0 Then Locate 6, 62: Print "  .000";
@@ -287,9 +316,9 @@ Sub TeamComparison ()
     Locate 7, 16: Print Using "#########"; Z!(4);
     Locate 8, 16: Print Using "#########"; Z!(3);
 
-    2220 If Z!(3) = 0 Then Locate 9, 16: Print "     .000";
+    If Z!(3) = 0 Then Locate 9, 16: Print "     .000";
+    If Z!(3) > 0 Then statPCT! = (Z!(4) / Z!(3)): Locate 9, 16: Print "     ";: Print Using ".###"; statPCT!;
 
-    2221 If Z!(3) > 0 Then statPCT! = (Z!(4) / Z!(3)): Locate 9, 16: Print "     ";: Print Using ".###"; statPCT!;
     Locate 10, 16: Print Using "#########"; Z!(12);
     Locate 11, 16: Print Using "#########"; Z!(5) - Z!(12) - Z!(15);
     Locate 12, 16: Print Using "#########"; Z!(5) - Z!(15);
@@ -302,12 +331,16 @@ Sub TeamComparison ()
     Locate 19, 16: Print Using "#########"; Z!(14);
     Locate 4, 68: Print Using "########"; Z1!(2);
     Locate 5, 68: Print Using "########"; Z1!(1);
+
     If Z1!(1) = 0 Then Locate 6, 68: Print "    .000";
     If Z1!(1) > 0 Then statPCT! = (Z1!(2) / Z1!(1)): Locate 6, 68: Print "    ";: Print Using ".###"; statPCT!;
+
     Locate 7, 68: Print Using "########"; Z1!(4);
     Locate 8, 68: Print Using "########"; Z1!(3);
+
     If Z1!(3) = 0 Then Locate 9, 68: Print "    .000";
     If Z1!(3) > 0 Then statPCT! = (Z1!(4) / Z1!(3)): Locate 9, 68: Print "    ";: Print Using ".###"; statPCT!;
+
     Locate 10, 68: Print Using "########"; Z1!(12);
     Locate 11, 68: Print Using "########"; Z1!(5) - Z1!(12) - Z1!(15);
     Locate 12, 68: Print Using "########"; Z1!(5) - Z1!(15);
@@ -318,6 +351,7 @@ Sub TeamComparison ()
     Locate 17, 68: Print Using "########"; Z1!(9);
     Locate 18, 68: Print Using "########"; Z1!(13);
     Locate 19, 68: Print Using "########"; Z1!(14);
+
     If Z1!(13) = 0 Then Locate 20, 68: Print "    .000";
     If Z1!(13) > 0 Then statPCT! = (Z1!(13) / Z1!(14)): Locate 20, 68: Print "    ";: Print Using ".###"; statPCT!;
 
@@ -400,10 +434,14 @@ Sub PlayerComparison (loopChoice, PS$())
                 Locate 2, 14: Print A$(I);
                 'Player Position
                 Print " - ";: Color 11: Print PS$(I)
-                Color 12: Locate 5, 2: Print "ACTUAL  "
-                Locate 6, 2: Print "REPLAY  ";: Color 7, 0: Print String$(2, 177)
+                Color 12
+				Locate 5, 2: Print "ACTUAL  "
+                Locate 6, 2: Print "REPLAY  ";
+				Color 7, 0: Print String$(2, 177)
                 Locate 7, 4: Print String$(8, 177)
-                Color 0, 11: Locate 4, 14: Print "  G ";
+                
+				Color 0, 11
+				Locate 4, 14: Print "  G ";
                 Locate , 18: Print " MIN ";
                 Locate , 23: Print " FGM ";
                 Locate , 28: Print " FGA ";
@@ -413,10 +451,16 @@ Sub PlayerComparison (loopChoice, PS$())
                 Locate , 51: Print " FT-PCT ";
                 Locate , 59: Print " O.REB ";
                 Locate , 65: Print "  O.REB/G"
-                Color 12, 0: Locate 10, 2: Print "ACTUAL  "
-                Locate 11, 2: Print "REPLAY  ";: Color 7, 0: Print String$(2, 177)
+                
+				Color 12, 0
+				Locate 10, 2: Print "ACTUAL  "
+                Locate 11, 2: Print "REPLAY  ";
+				
+				Color 7, 0: Print String$(2, 177)
                 Locate 12, 4: Print String$(8, 177)
-                Color 0, 11: Locate 9, 14: Print " D.REB ";
+                
+				Color 0, 11
+				Locate 9, 14: Print " D.REB ";
                 Locate , 21: Print " D.REB/G ";
                 Locate , 30: Print " ASST ";
                 Locate , 36: Print " ASST/G ";
@@ -425,10 +469,18 @@ Sub PlayerComparison (loopChoice, PS$())
                 Locate , 56: Print " TREB ";
                 Locate , 62: Print " STL ";
                 Locate , 67: Print " STL/G"
-                Color 12, 0: Locate 15, 2: Print "ACTUAL  "
-                Locate 16, 2: Print "REPLAY  ";: Color 7, 0: Print String$(2, 177)
-                Locate 17, 4: Print String$(8, 177)
-                Color 0, 11: Locate 14, 14: Print " BLK ";
+
+                Color 12, 0
+				Locate 15, 2: Print "ACTUAL  "
+                Locate 16, 2: Print "REPLAY  ";
+				
+				Color 7, 0
+				Print String$(2, 177)
+                Locate 17, 4
+				Print String$(8, 177)
+
+                Color 0, 11
+				Locate 14, 14: Print " BLK ";
                 Locate , 19: Print " BLK/G ";
                 Locate , 26: Print " 3-FGM ";
                 Locate , 33: Print " 3-FGA ";
@@ -459,7 +511,8 @@ Sub PlayerComparison (loopChoice, PS$())
                 If RS!(I, 0) > 0 And RS!(I, 6) > 0 Then Locate , 65: Print Using "#######.#"; RS!(I, 6) / RS!(I, 0);
 
                 Color 7, 0: Print String$(2, 177)
-                Color 1, 11: Locate 10, 14: Print Using "######"; RS!(I, 7) - RS!(I, 6);
+                Color 1, 11
+				Locate 10, 14: Print Using "######"; RS!(I, 7) - RS!(I, 6);
 
                 If RS!(I, 0) = 0 Or RS!(I, 7) - RS!(I, 6) = 0 Then Locate , 20: Print "      0.0";
                 If RS!(I, 0) > 0 And RS!(I, 7) - RS!(I, 6) = 0 Then Locate , 20: Print "      0.0";
@@ -485,7 +538,8 @@ Sub PlayerComparison (loopChoice, PS$())
                 If RS!(I, 0) > 0 And RS!(I, 11) > 0 Then Locate , 66: Print Using "#####.#"; RS!(I, 11) / RS!(I, 0);
 
                 Color 7, 0: Print String$(2, 177)
-                Color 1, 11: Locate 15, 14: Print Using "####"; RS!(I, 10);
+                Color 1, 11
+				Locate 15, 14: Print Using "####"; RS!(I, 10);
 
                 If RS!(I, 0) = 0 Or RS!(I, 10) = 0 Then Locate , 18: Print "    0.0";
                 If RS!(I, 0) > 0 And RS!(I, 10) = 0 Then Locate , 18: Print "    0.0";
@@ -506,7 +560,8 @@ Sub PlayerComparison (loopChoice, PS$())
                 If RS!(I, 0) > 0 Then Locate , 68: Print Using "#####.#"; RS!(I, 1) / RS!(I, 0);
 
                 Color 7, 0: Print String$(2, 177)
-                Color 14, 11: Locate 6, 14: Print Using "###"; compareA!(I, 0);
+                Color 14, 11
+				Locate 6, 14: Print Using "###"; compareA!(I, 0);
 
                 If compareA!(I, 10) = 0 Then Locate , 17: Print "    0";
                 If compareA!(I, 10) > 0 Then Locate , 17: Print Using "#####"; (compareA!(I, 10) + 30) / 60;
@@ -531,7 +586,8 @@ Sub PlayerComparison (loopChoice, PS$())
 
                 Color 7, 0: Print String$(2, 177)
                 Locate , 16: Print String$(60, 177)
-                Color 14, 11: Locate 11, 14: Print Using "######"; compareA!(I, 5) - compareA!(I, 12);
+                Color 14, 11
+				Locate 11, 14: Print Using "######"; compareA!(I, 5) - compareA!(I, 12);
 
                 If compareA!(I, 0) = 0 Or (compareA!(I, 5) - compareA!(I, 12)) = 0 Then Locate , 20: Print "      0.0";
                 If compareA!(I, 0) > 0 And (compareA!(I, 5) - compareA!(I, 12)) = 0 Then Locate , 20: Print "      0.0";
@@ -558,7 +614,8 @@ Sub PlayerComparison (loopChoice, PS$())
 
                 Color 7, 0: Print String$(2, 177)
                 Locate , 16: Print String$(59, 177)
-                Color 14, 11: Locate 16, 14: Print Using "####"; compareA!(I, 9);
+                Color 14, 11
+				Locate 16, 14: Print Using "####"; compareA!(I, 9);
 
                 If compareA!(I, 0) = 0 Or compareA!(I, 9) = 0 Then Locate , 18: Print "    0.0";
                 If compareA!(I, 0) > 0 And compareA!(I, 9) = 0 Then Locate , 18: Print "    0.0";
@@ -580,8 +637,11 @@ Sub PlayerComparison (loopChoice, PS$())
                 If compareA!(I, 10) > 0 Then Locate , 68: Print Using "#####.#"; ((compareA!(I, 10) + 30) / 60) / compareA!(I, 0);
 
                 Color 7, 0: Print String$(2, 177)
-                Locate , 16: Print String$(61, 177)
-                Color 15, 0: Locate 22: Print "HIT ENTER TO CONTINUE"
+                
+				Locate , 16: Print String$(61, 177)
+                
+				Color 15, 0
+				Locate 22: Print "HIT ENTER TO CONTINUE"
 
                 'If viewing all players in sequence...
                 If inSequence = 1 Then
@@ -731,19 +791,10 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$())
         Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
         If Not _FileExists(diskPaths$(1) + Z$) Then
-            Color 15, 0: Cls
-            JJ = 4
-            Locate 8, 8: Color 14, 1
-            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-            For II = 1 To JJ: Locate 8 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-            Locate 9 + JJ, 8
-            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 10
-            Color 15
-            Locate , 30: Print "NO COMPILED STATS FOR TEAM": Color 7
+            Locate 10, 8
+            Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
-
+            Call CSMsgBox("", 0, Pass)
             BO% = 1
         Else
 

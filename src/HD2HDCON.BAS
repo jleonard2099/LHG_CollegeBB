@@ -381,10 +381,12 @@ Sub Hd2Hd_Screen (teamName$)
                 If Z1$(K) <> "XXX" And Z1$(K) <> teamName$ And Z1$(K) <> "*" Then
                     Color 15
                     Locate , 1: Print Left$(Z1$(K), 13);
-                    Color 7
+                    
+					Color 7
                     Locate , 15: Print Using "#"; HW!(K);
                     Locate , 17: Print Using "#"; HL!(K);
-                    If HW!(K) = HW!(K) + HL!(K) And HW!(K) <> 0 Then Locate , 19: Print "1.000";
+                    
+					If HW!(K) = HW!(K) + HL!(K) And HW!(K) <> 0 Then Locate , 19: Print "1.000";
                     If HW!(K) = 0 Then Locate , 20: Print ".000";
                     If HW!(K) > 0 And HW!(K) < HW!(K) + HL!(K) Then statPCT! = (HW!(K) / (HW!(K) + HL!(K))): Locate , 20: Print Using ".###"; statPCT!;
                     If R1!(K) = 0 Then Locate , 25: Print "  0.0";
@@ -417,7 +419,9 @@ Sub Hd2Hd_Screen (teamName$)
                     If R1!(K) + R3!(K) > 0 Then Locate , 69: Print Using "###.#"; (R1!(K) + R3!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K));
                     If R2!(K) + R4!(K) = 0 Then Locate , 75: Print "  0.0"
                     If R2!(K) + R4!(K) > 0 Then Locate , 75: Print Using "###.#"; (R2!(K) + R4!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K))
-                    Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179);
+
+                    Color 3
+					Print Tab(36); Chr$(179); Tab(58); Chr$(179);
 
                     THW!(RDD) = THW!(RDD) + HW!(K)
                     THL!(RDD) = THL!(RDD) + HL!(K)
@@ -433,46 +437,63 @@ Sub Hd2Hd_Screen (teamName$)
 
             'Division Team Totals
             Print
+
             Color 11
             Locate , 14: Print Using "##"; THW!(RDD);
+
             If THW!(RDD) = THW!(RDD) + THL!(RDD) And THW!(RDD) <> 0 Then Locate , 19: Print "1.000";
             If THW!(RDD) = 0 Then Locate , 20: Print ".000";
             If THW!(RDD) > 0 And THW!(RDD) < THW!(RDD) + THL!(RDD) Then statPCT! = (THW!(RDD) / (THW!(RDD) + THL!(RDD))): Locate , 20: Print Using ".###"; statPCT!;
             If TR2!(RDD) < 1 Then Locate , 32: Print " 0.0";
             If TR2!(RDD) > 0 Then Locate , 31: Print Using "###.#"; TR2!(RDD) / (THW!(RDD) + THL!(RDD));
+
             Locate , 38: Print Using "##"; TAL!(RDD);
+
             If TR3!(RDD) < 1 Then Locate , 48: Print " 0.0";
             If TR3!(RDD) > 0 Then Locate , 47: Print Using "###.#"; TR3!(RDD) / (TAW!(RDD) + TAL!(RDD));
+
             Locate , 57: Print Using "###"; THW!(RDD) + TAW!(RDD);
-            Color 11: If THW!(RDD) + TAW!(RDD) = THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD) And THW!(RDD) + TAW!(RDD) <> 0 Then Locate , 63: Print "1.000";
+
+            Color 11
+			
+			If THW!(RDD) + TAW!(RDD) = THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD) And THW!(RDD) + TAW!(RDD) <> 0 Then Locate , 63: Print "1.000";
             If THW!(RDD) + TAW!(RDD) = 0 Then Locate , 64: Print ".000";
             If THW!(RDD) + TAW!(RDD) > 0 And THW!(RDD) + TAW!(RDD) < THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD) Then statPCT! = (THW!(RDD) + TAW!(RDD)) / (THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD)): Locate , 64: Print Using ".###"; statPCT!;
             If TR2!(RDD) + TR4!(RDD) < 1 Then Locate , 76: Print " 0.0"
             If TR2!(RDD) + TR4!(RDD) > 0 Then Locate , 75: Print Using "###.#"; (TR2!(RDD) + TR4!(RDD)) / (THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD))
+
             Locate , 5: Print "TOTALS";
+
             If TR1!(RDD) < 1 Then Locate , 26: Print " 0.0";
             If TR1!(RDD) > 0 Then Locate , 25: Print Using "###.#"; TR1!(RDD) / (THW!(RDD) + THL!(RDD));
-            Color 11: If TAW!(RDD) = TAW!(RDD) + TAL!(RDD) And TAW!(RDD) <> 0 Then Locate , 41: Print "1.000";
+
+            Color 11
+			
+			If TAW!(RDD) = TAW!(RDD) + TAL!(RDD) And TAW!(RDD) <> 0 Then Locate , 41: Print "1.000";
             If TAW!(RDD) = 0 Then Locate , 42: Print ".000";
             If TAW!(RDD) > 0 And TAW!(RDD) < TAW!(RDD) + TAL!(RDD) Then statPCT! = (TAW!(RDD) / (TAW!(RDD) + TAL!(RDD))): Locate , 42: Print Using ".###"; statPCT!;
             If TR4!(RDD) < 1 Then Locate , 54: Print " 0.0";
             If TR4!(RDD) > 0 Then Locate , 53: Print Using "###.#"; TR4!(RDD) / (TAW!(RDD) + TAL!(RDD));
             If TR1!(RDD) + TR3!(RDD) = 0 Then Locate , 70: Print " 0.0";
             If TR1!(RDD) + TR3!(RDD) > 0 Then Locate , 69: Print Using "###.#"; (TR1!(RDD) + TR3!(RDD)) / (THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD));
+
             Locate , 16: Print Using "##"; THL!(RDD);
             Locate , 36: Print Using "##"; TAW!(RDD);
             Locate , 59: Print Using "###"; THL!(RDD) + TAL!(RDD)
-            Locate 20, 5: Color 14: Input "HIT ENTER TO CONTINUE"; DUMMY$
+
+			Color 14
+            Locate 20, 5: Input "HIT ENTER TO CONTINUE"; DUMMY$
         End If
 
         If RDD = DIVS_PER_CONFERENCE Then
             'Stats for Division Totals
             Cls
 
-            Color 12: Locate 2, 35
+            'Color 12
+			Locate 2, 35
             Color T%(0), T%(1): Print teamName$
-            Color 0, 0
-            Color 3
+            Color 3, 0
+            'Color 3
             Locate 4
             Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
             Locate 5: Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
@@ -481,30 +502,41 @@ Sub Hd2Hd_Screen (teamName$)
 
             For W = 1 To 2
                 If DV$(W) <> "XXX" And DV$(W) <> "" Then
-                    Color 15: Locate , 1: Print Left$(DV$(W), 10);
-                    Color 7: Locate , 9: Print Using "##"; THW!(W);
+                    Color 15
+					Locate , 1: Print Left$(DV$(W), 10);
+                    
+					Color 7
+					Locate , 9: Print Using "##"; THW!(W);
                     Locate , 12: Print Using "##"; THL!(W);
-                    If THW!(W) = THW!(W) + THL!(W) And THW!(W) <> 0 Then Locate , 15: Print "1.000";
+                    
+					If THW!(W) = THW!(W) + THL!(W) And THW!(W) <> 0 Then Locate , 15: Print "1.000";
                     If THW!(W) = 0 Then Locate , 16: Print ".000";
                     If THW!(W) > 0 And THW!(W) < THW!(W) + THL!(W) Then statPCT! = (THW!(W) / (THW!(W) + THL!(W))): Locate , 16: Print Using ".###"; statPCT!;
                     If TR1!(W) = 0 Then Locate , 21: Print "  0.0";
                     If TR1!(W) > 0 Then Locate , 21: Print Using "###.#"; TR1!(W) / (THW!(W) + THL!(W));
                     If TR2!(W) = 0 Then Locate , 27: Print "  0.0";
                     If TR2!(W) > 0 Then Locate , 27: Print Using "###.#"; TR2!(W) / (THW!(W) + THL!(W));
-                    Color 3: Print Tab(32); Chr$(179);
-                    Color 7: Locate , 33: Print Using "##"; TAW!(W);
+                    
+					Color 3: Print Tab(32); Chr$(179);
+                    
+					Color 7
+					Locate , 33: Print Using "##"; TAW!(W);
                     Locate , 36: Print Using "##"; TAL!(W);
-                    If TAW!(W) = TAW!(W) + TAL!(W) And TAW!(W) <> 0 Then Locate , 39: Print "1.000";
+                    
+					If TAW!(W) = TAW!(W) + TAL!(W) And TAW!(W) <> 0 Then Locate , 39: Print "1.000";
                     If TAW!(W) = 0 Then Locate , 40: Print ".000";
                     If TAW!(W) > 0 And TAW!(W) < TAW!(W) + TAL!(W) Then statPCT! = (TAW!(W) / (TAW!(W) + TAL!(W))): Locate , 40: Print Using ".###"; statPCT!;
                     If TR3!(W) = 0 Then Locate , 45: Print "  0.0";
                     If TR3!(W) > 0 Then Locate , 45: Print Using "###.#"; TR3!(W) / (TAW!(W) + TAL!(W));
                     If TR4!(W) = 0 Then Locate , 51: Print "  0.0";
                     If TR4!(W) > 0 Then Locate , 51: Print Using "###.#"; TR4!(W) / (TAW!(W) + TAL!(W));
-                    Color 3: Print Tab(56); Chr$(179);
-                    Color 7: Locate , 57: Print Using "##"; THW!(W) + TAW!(W);
+                    
+					Color 3: Print Tab(56); Chr$(179);
+                    Color 7
+					Locate , 57: Print Using "##"; THW!(W) + TAW!(W);
                     Locate , 60: Print Using "##"; THL!(W) + TAL!(W);
-                    If THW!(W) + TAW!(W) = THW!(W) + TAW!(W) + THL!(W) + TAL!(W) And THW!(W) + TAW!(W) <> 0 Then Locate , 63: Print "1.000";
+                    
+					If THW!(W) + TAW!(W) = THW!(W) + TAW!(W) + THL!(W) + TAL!(W) And THW!(W) + TAW!(W) <> 0 Then Locate , 63: Print "1.000";
                     If (THW!(W) + TAW!(W)) = 0 Then Locate , 64: Print ".000";
                     If (THW!(W) + TAW!(W)) > 0 And THW!(W) + TAW!(W) < THW!(W) + TAW!(W) + THL!(W) + TAL!(W) Then statPCT! = ((THW!(W) + TAW!(W)) / (THW!(W) + TAW!(W) + THL!(W) + TAL!(W))): Locate , 64: Print Using ".###"; statPCT!;
                     If TR1!(W) + TR3!(W) = 0 Then Locate , 69: Print "  0.0";
@@ -512,7 +544,9 @@ Sub Hd2Hd_Screen (teamName$)
 
                     If TR2!(W) + TR4!(W) = 0 Then Locate , 75: Print "  0.0"
                     If TR2!(W) + TR4!(W) > 0 Then Locate , 75: Print Using "###.#"; (TR2!(W) + TR4!(W)) / (THW!(W) + THL!(W) + TAW!(W) + TAL!(W))
-                    Color 3: Print Tab(32); Chr$(179); Tab(56); Chr$(179);
+                    
+					Color 3
+					Print Tab(32); Chr$(179); Tab(56); Chr$(179);
                 End If
 
             Next W
@@ -532,19 +566,26 @@ Sub Hd2Hd_Screen (teamName$)
             Print
 
             'Division Totals - TOTALS
-            Color 11: Print "TOTALS";
-            Locate , 9: Print Using "##"; THWW;
+            Color 11
+			Print "TOTALS";
+            
+			Locate , 9: Print Using "##"; THWW;
             Locate , 12: Print Using "##"; THLL;
-            If THWW = THWW + THLL And THWW <> 0 Then Locate , 15: Print "1.000";
+            
+			If THWW = THWW + THLL And THWW <> 0 Then Locate , 15: Print "1.000";
             If THWW = 0 Then Locate , 16: Print ".000";
             If THWW > 0 And THWW < THWW + THLL Then Locate , 16: Print Using ".###"; THWW / (THWW + THLL);
             If TR11 = 0 Then Locate , 21: Print "  0.0";
             If TR11 > 0 Then Locate , 21: Print Using "###.#"; TR11 / (THWW + THLL);
             If TR22 = 0 Then Locate , 27: Print "  0.0";
             If TR22 > 0 Then Locate , 27: Print Using "###.#"; TR22 / (THWW + THLL);
-            Color 3: Print Tab(32); Chr$(179);
-            Color 11: Locate , 33: Print Using "##"; TAWW;
+            
+			Color 3: Print Tab(32); Chr$(179);
+            
+			Color 11
+			Locate , 33: Print Using "##"; TAWW;
             Locate , 36: Print Using "##"; TALL;
+
             If TAWW = TAWW + TALL And TAWW <> 0 Then Locate , 39: Print "1.000";
             If TAWW = 0 Then Locate , 40: Print ".000";
             If TAWW > 0 And TAWW < TAWW + TALL Then statPCT! = TAWW / (TAWW + TALL): Locate , 40: Print Using ".###"; statPCT!;
@@ -552,18 +593,24 @@ Sub Hd2Hd_Screen (teamName$)
             If TR33 > 0 Then Locate , 45: Print Using "###.#"; TR33 / (TAWW + TALL);
             If TR44 = 0 Then Locate , 51: Print "  0.0";
             If TR44 > 0 Then Locate , 51: Print Using "###.#"; TR44 / (TAWW + TALL);
+
             Color 3: Print Tab(56); Chr$(179);
-            Color 11: Locate , 57: Print Using "##"; THWW + TAWW;
+            
+			Color 11
+			Locate , 57: Print Using "##"; THWW + TAWW;
             Locate , 60: Print Using "##"; THLL + TALL;
+
             If THWW + TAWW = THWW + TAWW + THLL + TALL And THWW + TAWW <> 0 Then Locate , 63: Print "1.000";
             If THWW + TAWW = 0 Then Locate , 64: Print ".000";
             If THWW + TAWW > 0 And THWW + TAWW < THWW + TAWW + THLL + TALL Then statPCT! = (THWW + TAWW) / (THWW + TAWW + THLL + TALL): Locate , 64: Print Using ".###"; statPCT!;
             If TR11 + TR33 = 0 Then Locate , 69: Print "  0.0";
             If TR11 + TR33 > 0 Then Locate , 69: Print Using "###.#"; (TR11 + TR33) / (THWW + THLL + TAWW + TALL);
-
             If TR22 + TR44 = 0 Then Locate , 75: Print "  0.0"
             If TR22 + TR44 > 0 Then Locate , 75: Print Using "###.#"; (TR22 + TR44) / (THWW + THLL + TAWW + TALL)
-            I$ = GetKeyPress
+
+			Color 14
+            Locate 20, 5: Input "HIT ENTER TO CONTINUE"; DUMMY$
+
         End If
 
     Loop Until RDD = DIVS_PER_CONFERENCE
@@ -588,11 +635,21 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
     Spacing% = 6
     Row% = 4
     Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+    Color , 4
+	Cls
+	Locate , 33
+	Color 14
+    Print "TEAM SELECTION"
+	Color 15
+    Locate 25, 1
+	Color 14
+	Print "ESC";
+	Color 15
+    Print "-SELECT NEW ID  PGDN  PGUP  ";
+	Color 14
+    Print "ENTER";
+	Color 15
+	Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
     MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
@@ -677,6 +734,7 @@ Sub Hd2Hd_Printer (teamName$)
                 LPrint Z1$(K);
                 LPrint Tab(22); Using "#"; HW!(K);
                 LPrint Tab(26); Using "#"; HL!(K);
+
                 If HW!(K) = HW!(K) + HL!(K) And HW!(K) <> 0 Then LPrint Tab(28); "1.000";
                 If HW!(K) = 0 Then LPrint Tab(29); ".000";
                 If HW!(K) > 0 And HW!(K) < HW!(K) + HL!(K) Then statPCT! = (HW!(K) / (HW!(K) + HL!(K))): LPrint Tab(29); Using ".###"; statPCT!;
@@ -684,8 +742,10 @@ Sub Hd2Hd_Printer (teamName$)
                 If R1!(K) > 0 Then LPrint Tab(35); Using "###.#"; R1!(K) / (HW!(K) + HL!(K));
                 If R2!(K) = 0 Then LPrint Tab(42); "  0.0";
                 If R2!(K) > 0 Then LPrint Tab(42); Using "###.#"; R2!(K) / (HW!(K) + HL!(K));
+
                 LPrint Tab(54); Using "#"; AW!(K);
                 LPrint Tab(58); Using "#"; AL!(K);
+
                 If AW!(K) = AW!(K) + AL!(K) And AW!(K) <> 0 Then LPrint Tab(60); "1.000";
                 If AW!(K) = 0 Then LPrint Tab(61); ".000";
                 If AW!(K) > 0 And AW!(K) < AW!(K) + AL!(K) Then statPCT! = (AW!(K) / (AW!(K) + AL!(K))): LPrint Tab(61); Using ".###"; statPCT!;
@@ -693,8 +753,10 @@ Sub Hd2Hd_Printer (teamName$)
                 If R3!(K) > 0 Then LPrint Tab(67); Using "###.#"; R3!(K) / (AW!(K) + AL!(K));
                 If R4!(K) = 0 Then LPrint Tab(74); "  0.0";
                 If R4!(K) > 0 Then LPrint Tab(74); Using "###.#"; R4!(K) / (AW!(K) + AL!(K));
+
                 LPrint Tab(86); Using "##"; HW!(K) + AW!(K);
                 LPrint Tab(91); Using "##"; HL!(K) + AL!(K);
+
                 If HW!(K) + AW!(K) = HW!(K) + AW!(K) + HL!(K) + AL!(K) And HW!(K) + AW!(K) <> 0 Then LPrint Tab(95); "1.000";
                 If (HW!(K) + AW!(K)) = 0 Then LPrint Tab(96); ".000";
                 If (HW!(K) + AW!(K)) > 0 And (HW!(K) + AW!(K)) < (HW!(K) + AW!(K) + HL!(K) + AL!(K)) Then statPCT! = ((HW!(K) + AW!(K)) / (HW!(K) + AW!(K) + HL!(K) + AL!(K))): LPrint Tab(96); Using ".###"; statPCT!;
@@ -702,6 +764,7 @@ Sub Hd2Hd_Printer (teamName$)
                 If R1!(K) + R3!(K) > 0 Then LPrint Tab(102); Using "###.#"; (R1!(K) + R3!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K));
                 If R2!(K) + R4!(K) = 0 Then LPrint Tab(109); "  0.0"
                 If R2!(K) + R4!(K) > 0 Then LPrint Tab(109); Using "###.#"; (R2!(K) + R4!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K))
+
                 THW!(RDD) = THW!(RDD) + HW!(K)
                 THL!(RDD) = THL!(RDD) + HL!(K)
                 TAW!(RDD) = TAW!(RDD) + AW!(K)
@@ -717,6 +780,7 @@ Sub Hd2Hd_Printer (teamName$)
         LPrint Tab(5); "TOTALS";
         LPrint Tab(21); Using "##"; THW!(RDD);
         LPrint Tab(25); Using "##"; THL!(RDD);
+
         If THW!(RDD) = THW!(RDD) + THL!(RDD) And THW!(RDD) <> 0 Then LPrint Tab(28); "1.000";
         If THW!(RDD) = 0 Then LPrint Tab(29); ".000";
         If THW!(RDD) > 0 And THW!(RDD) < THW!(RDD) + THL!(RDD) Then LPrint Tab(29); Using ".###"; (THW!(RDD) / (THW!(RDD) + THL!(RDD)));
@@ -724,8 +788,10 @@ Sub Hd2Hd_Printer (teamName$)
         If TR1!(RDD) > 0 Then LPrint Tab(35); Using "###.#"; TR1!(RDD) / (THW!(RDD) + THL!(RDD));
         If TR2!(RDD) = 0 Then LPrint Tab(42); "  0.0";
         If TR2!(RDD) > 0 Then LPrint Tab(42); Using "###.#"; TR2!(RDD) / (THW!(RDD) + THL!(RDD));
+
         LPrint Tab(53); Using "##"; TAW!(RDD);
         LPrint Tab(57); Using "##"; TAL!(RDD);
+
         If TAW!(RDD) = TAW!(RDD) + TAL!(RDD) And TAW!(RDD) <> 0 Then LPrint Tab(60); "1.000";
         If TAW!(RDD) = 0 Then LPrint Tab(61); ".000";
         If TAW!(RDD) > 0 And TAW!(RDD) < TAW!(RDD) + TAL!(RDD) Then statPCT! = (TAW!(RDD) / (TAW!(RDD) + TAL!(RDD))): LPrint Tab(61); Using ".###"; statPCT!;
@@ -733,8 +799,10 @@ Sub Hd2Hd_Printer (teamName$)
         If TR3!(RDD) > 0 Then LPrint Tab(67); Using "###.#"; TR3!(RDD) / (TAW!(RDD) + TAL!(RDD));
         If TR4!(RDD) = 0 Then LPrint Tab(74); "  0.0";
         If TR4!(RDD) > 0 Then LPrint Tab(74); Using "###.#"; TR4!(RDD) / (TAW!(RDD) + TAL!(RDD));
+
         LPrint Tab(84); Using "###"; THW!(RDD) + TAW!(RDD);
         LPrint Tab(89); Using "###"; THL!(RDD) + TAL!(RDD);
+
         If THW!(RDD) + TAW!(RDD) = THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD) And THW!(RDD) + TAW!(RDD) <> 0 Then LPrint Tab(95); "1.000";
         If THW!(RDD) + TAW!(RDD) = 0 Then LPrint Tab(96); ".000";
         If THW!(RDD) + TAW!(RDD) > 0 And THW!(RDD) + TAW!(RDD) < THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD) Then statPCT! = ((THW!(RDD) + TAW!(RDD)) / (THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD))): LPrint Tab(96); Using ".###"; statPCT!;
@@ -742,12 +810,15 @@ Sub Hd2Hd_Printer (teamName$)
         If TR1!(RDD) + TR3!(RDD) > 0 Then LPrint Tab(102); Using "###.#"; (TR1!(RDD) + TR3!(RDD)) / (THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD));
         If TR2!(RDD) + TR4!(RDD) = 0 Then LPrint Tab(109); "  0.0"
         If TR2!(RDD) + TR4!(RDD) > 0 Then LPrint Tab(109); Using "###.#"; (TR2!(RDD) + TR4!(RDD)) / (THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD))
+
         LPrint
 
     Loop Until RDD = 2
     'If RDD = 2 Then 1401 Else GoTo 1204
 
-    1401 LPrint: LPrint: LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
+    LPrint
+	LPrint
+	LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
     LPrint
 
@@ -756,6 +827,7 @@ Sub Hd2Hd_Printer (teamName$)
             LPrint Tab(2); DV$(W);
             LPrint Tab(21); Using "##"; THW!(W);
             LPrint Tab(25); Using "##"; THL!(W);
+
             If THW!(W) = THW!(W) + THL!(W) And THW!(W) <> 0 Then LPrint Tab(28); "1.000";
             If THW!(W) = 0 Then LPrint Tab(29); ".000";
             If THW!(W) > 0 And THW!(W) < THW!(W) + THL!(W) Then statPCT! = (THW!(W) / (THW!(W) + THL!(W))): LPrint Tab(29); Using ".###"; statPCT!;
@@ -763,8 +835,10 @@ Sub Hd2Hd_Printer (teamName$)
             If TR1!(W) > 0 Then LPrint Tab(35); Using "###.#"; TR1!(W) / (THW!(W) + THL!(W));
             If TR2!(W) = 0 Then LPrint Tab(42); "  0.0";
             If TR2!(W) > 0 Then LPrint Tab(42); Using "###.#"; TR2!(W) / (THW!(W) + THL!(W));
+
             LPrint Tab(53); Using "##"; TAW!(W);
             LPrint Tab(57); Using "##"; TAL!(W);
+
             If TAW!(W) = TAW!(W) + TAL!(W) And TAW!(W) <> 0 Then LPrint Tab(60); "1.000";
             If TAW!(W) = 0 Then LPrint Tab(61); ".000";
             If TAW!(W) > 0 And TAW!(W) < TAW!(W) + TAL!(W) Then statPCT! = (TAW!(W) / (TAW!(W) + TAL!(W))): LPrint Tab(61); Using ".###"; statPCT!;
@@ -772,8 +846,10 @@ Sub Hd2Hd_Printer (teamName$)
             If TR3!(W) > 0 Then LPrint Tab(67); Using "###.#"; TR3!(W) / (TAW!(W) + TAL!(W));
             If TR4!(W) = 0 Then LPrint Tab(74); "  0.0";
             If TR4!(W) > 0 Then LPrint Tab(74); Using "###.#"; TR4!(W) / (TAW!(W) + TAL!(W));
+
             LPrint Tab(84); Using "###"; THW!(W) + TAW!(W);
             LPrint Tab(89); Using "###"; THL!(W) + TAL!(W);
+
             If THW!(W) + TAW!(W) = THW!(W) + TAW!(W) + THL!(W) + TAL!(W) And THW!(W) + TAW!(W) <> 0 Then LPrint Tab(95); "1.000";
             If (THW!(W) + TAW!(W)) = 0 Then LPrint Tab(96); ".000";
             If (THW!(W) + TAW!(W)) > 0 And THW!(W) + TAW!(W) < THW!(W) + TAW!(W) + THL!(W) + TAL!(W) Then statPCT! = ((THW!(W) + TAW!(W)) / (THW!(W) + TAW!(W) + THL!(W) + TAL!(W))): LPrint Tab(96); Using ".###"; statPCT!;
