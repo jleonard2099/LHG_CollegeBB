@@ -15,7 +15,7 @@ LH Games were some of the premier simulators of the 80's. They were a staple of 
 
 ### Visuals ###
 ![college basketball box art](cbb-box.jpg)
-![college basketball in action](cbb-action.jpg)
+![college basketball in action](cbb-screen1.png)
 
 # The Game #
 ### Installation ###

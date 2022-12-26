@@ -175,10 +175,26 @@ PB$(1) = "HAFFNER CLASSIC"
 '       DETERMINE GAME OPTIONS
 '----------------------------------------
 
-Open "DEV.BAS" For Input As #2
-Input #2, diskPaths$(0)
-Input #2, diskPaths$(1)
-Close 2
+If _FileExists ("DEV.BAS") Then
+	Open "DEV.BAS" For Input As #1
+	For I = 0 To 1
+		Input #1, diskPaths$(I)
+	Next
+	Close 1
+Else
+	Open "DEV.BAS" For Output As #1
+	For I = 0 To 1
+		Print #1, _CWD$
+	Next
+	Close 1
+End If
+
+
+If Not _FileExists("DEFAULT") Then
+    Open "DEFAULT" For Output As #1
+    For I = 1 To 11: Print #1, 0: Next
+    Close 1
+End If
 
 Open "DEFAULT" For Input As #1
 Input #1, U5
@@ -193,6 +209,7 @@ Input #1, TF%
 Input #1, N7%
 Input #1, PB%
 Close 1
+
 
 If Not _FileExists("TICKER") Then
     TMT = 0

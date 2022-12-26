@@ -50,13 +50,24 @@ $ExeIcon:'./lhg_ccb.ico'
 _Icon
 _AllowFullScreen
 
-Open "DEV.BAS" For Input As #1
-For I = 0 To 1
-    Input #1, diskPaths$(I)
-Next
-Close 1
+
+If _FileExists ("DEV.BAS") Then
+	Open "DEV.BAS" For Input As #1
+	For I = 0 To 1
+		Input #1, diskPaths$(I)
+	Next
+	Close 1
+Else
+	Open "DEV.BAS" For Output As #1
+	For I = 0 To 1
+		Print #1, _CWD$
+	Next
+	Close 1
+End If
+
 
 Selection% = 1
+
 
 Do
     Call Main_Menu(Selection%)
