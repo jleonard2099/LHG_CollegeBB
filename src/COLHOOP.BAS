@@ -175,13 +175,7 @@ PB$(1) = "HAFFNER CLASSIC"
 '       DETERMINE GAME OPTIONS
 '----------------------------------------
 
-If _FileExists ("DEV.BAS") Then
-	Open "DEV.BAS" For Input As #1
-	For I = 0 To 1
-		Input #1, diskPaths$(I)
-	Next
-	Close 1
-Else
+If Not _FileExists ("DEV.BAS") Then
 	Open "DEV.BAS" For Output As #1
 	For I = 0 To 1
 		Print #1, _CWD$
@@ -189,10 +183,18 @@ Else
 	Close 1
 End If
 
+Open "DEV.BAS" For Input As #1
+For I = 0 To 1
+	Input #1, diskPaths$(I)
+Next
+Close 1
+
 
 If Not _FileExists("DEFAULT") Then
     Open "DEFAULT" For Output As #1
-    For I = 1 To 11: Print #1, 0: Next
+    For I = 1 To 11: 
+		Print #1, 0
+	Next
     Close 1
 End If
 
@@ -232,6 +234,8 @@ Else
     TMT = 1
 End If
 
+
+'Load game in-progress, if there is one
 If _FileExists("GAME82") Then
 
     Open "GAME82" For Input As #2
@@ -259,6 +263,7 @@ If _FileExists("GAME82") Then
 
     AP = 1
 End If
+
 
 If _FileExists("TOURNEY") Then
 

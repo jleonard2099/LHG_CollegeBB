@@ -1,3 +1,4 @@
+
 DefInt A-Z
 
 Declare Sub BoxTicker ()
@@ -81,6 +82,10 @@ Declare Sub EVENTS (COUNT, SPECIAL)
 Declare Sub QUARTERTOTAL ()
 Declare Sub AICOMCOACH ()
 Declare Sub RECORDSCHECK ()
+
+'-------------------------
+' Variable declarations
+'-------------------------
 
 Dim Shared AP, B, C1, C7, DY, CT, D, FO, F3, G9, H, I, IN, J, JJ
 Dim Shared M5, MJ, N, NTMS, P, P9, Q, S2, S9, TMT, TOU, U5, XM, XS
