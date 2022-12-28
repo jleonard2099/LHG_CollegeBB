@@ -1,5 +1,7 @@
+
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
+'$INCLUDE: 'PadRight.BI'
 '$INCLUDE: 'GameRoutines.BI'
 
 On Error GoTo Errhandler
@@ -175,26 +177,26 @@ PB$(1) = "HAFFNER CLASSIC"
 '       DETERMINE GAME OPTIONS
 '----------------------------------------
 
-If Not _FileExists ("DEV.BAS") Then
-	Open "DEV.BAS" For Output As #1
-	For I = 0 To 1
-		Print #1, _CWD$
-	Next
-	Close 1
+If Not _FileExists("DEV.BAS") Then
+    Open "DEV.BAS" For Output As #1
+    For I = 0 To 1
+        Print #1, _CWD$
+    Next
+    Close 1
 End If
 
 Open "DEV.BAS" For Input As #1
 For I = 0 To 1
-	Input #1, diskPaths$(I)
+    Input #1, diskPaths$(I)
 Next
 Close 1
 
 
 If Not _FileExists("DEFAULT") Then
     Open "DEFAULT" For Output As #1
-    For I = 1 To 11: 
-		Print #1, 0
-	Next
+    For I = 1 To 11:
+        Print #1, 0
+    Next
     Close 1
 End If
 
@@ -310,8 +312,10 @@ End If
 If skipUserOptions% = 0 Then
     ' USER SELECTION OF OPTIONS
     Do
+        Color 15, 0
         Cls
         Color 2
+        
         Print ; Tab(29); "SELECT OPENING OPTIONS"
         Print
         Locate 2, 2: Color 14
@@ -373,16 +377,16 @@ If skipUserOptions% = 0 Then
             I$ = GetKeyPress$
 
             If I$ <> Chr$(27) Then
-                I = Val(I$)
-                Call ALPHANUM(I$, I)
-                If I = 0 Then I = 10
+                'I = Val(I$)
+                Call ALPHANUM(I$, iVal)
+                If iVal = 0 Then iVal = 10
             End If
 
-        Loop Until I >= 0 And I <= 15 Or I$ = Chr$(27)
+        Loop Until iVal >= 0 And iVal <= 15 Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
-            Select Case I
+            Select Case iVal
 
                 Case 1:
                     U5 = U5 + 1
@@ -455,7 +459,7 @@ If skipUserOptions% = 0 Then
 
         End If
 
-    Loop Until (I = 8 And B$(0) <> "" And B$(1) <> "") Or I$ = Chr$(27) Or UCase$(I$) = "Q"
+    Loop Until (iVal = 8 And B$(0) <> "" And B$(1) <> "") Or I$ = Chr$(27) Or UCase$(I$) = "Q"
 
     If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
@@ -841,7 +845,7 @@ Do
         Call DRAWBOX
         Do
             U$ = "DISPLAY STATS AGAIN (YN)"
-            Locate , (80 - Len(U$)) / 2
+            Locate 7, (80 - Len(U$)) / 2
             Print U$
             Color 15, 0
             I$ = GetKeyPress$
@@ -859,7 +863,7 @@ If AP <> 1 Then
     Call DRAWBOX
     Do
         U$ = "SAVE STATS (YN)"
-        Locate , (80 - Len(U$)) / 2
+        Locate 7, (80 - Len(U$)) / 2
         Print U$
         Color 15, 0
         I$ = GetKeyPress$
@@ -885,7 +889,7 @@ If AP <> 1 Then
 
     Do
         U$ = "PLAY ANOTHER GAME (YN)"
-        Locate , (80 - Len(U$)) / 2
+        Locate 7, (80 - Len(U$)) / 2
         Print U$
 
         Color 15, 0
@@ -3578,5 +3582,6 @@ End If
 
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
+'$INCLUDE: 'PadRight.BM'
 '$INCLUDE: 'GameRoutines.BM'
 

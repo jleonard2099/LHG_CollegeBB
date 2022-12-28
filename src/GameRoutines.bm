@@ -271,7 +271,7 @@ Sub DISABLEPLAYER ()
         Locate , (80 - Len(U$)) / 2
         Print U$
         Color 15, 0
-        
+
         Print
         Print
         Print "NOTE:: THE COMPUTER WILL AUTOMATICALLY DISABLE PLAYERS BASED ON"
@@ -354,29 +354,29 @@ End Sub
 Sub GETATEAM (I1, YN$)
 
     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-    FIELD #1, 15 AS Q$(0), 2 AS Q$(1), 2 AS Q$(2), 2 AS Q$(3), 2 AS Q$(4), 2 AS Q$(5), 2 AS Q$(6), 2 AS Q$(7), 2 AS Q$(8), 2 AS Q$(9), 2 AS Q$(10), 2 AS Q$(11), 2 AS Q$(12), 2 AS Q$(13), 2 AS Q$(14), 2 AS Q$(15), 2 AS Q$(16), 2 AS Q$(17), 2 AS Q$(18), 2 AS Q$(19), 602 AS X$
+    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
     For I = 0 To 13
-    FIELD #1, 53 + I * 43 AS X$, 15 AS Q$(I * 15 + 20), 2 AS Q$(I * 15 + 21), 2 AS Q$(I * 15 + 22), 2 AS Q$(I * 15 + 23), 2 AS Q$(I * 15 + 24), 2 AS Q$(I * 15 + 25), 2 AS Q$(I * 15 + 26), 2 AS Q$(I * 15 + 27), 2 AS Q$(I * 15 + 28), 2 AS Q$(I * 15 + 29) , 2 AS Q$(I * 15 + 30), 2 AS Q$(I * 15 + 31), 2 AS Q$(I * 15 + 32), 2 AS Q$(I * 15 + 33), 2 AS Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 AS X$
+        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
     Get #1, I1
 
     B$(P9) = RTrim$(Q$(0))
-    
-	S1(P9) = CVI(Q$(1))
-	D1(P9) = CVI(Q$(2))
+
+    S1(P9) = CVI(Q$(1))
+    D1(P9) = CVI(Q$(2))
     V1%(P9) = CVI(Q$(3))
-	V2%(P9) = CVI(Q$(4))
+    V2%(P9) = CVI(Q$(4))
 
-    For I3 = 0 To 4: 
-		L%(P9, I3) = CVI(Q$(I3 + 5))
-	Next
+    For I3 = 0 To 4:
+        L%(P9, I3) = CVI(Q$(I3 + 5))
+    Next
 
-    For I3 = 0 To 9: 
-		TR%(P9, I3) = CVI(Q$(I3 + 10))
-	Next
+    For I3 = 0 To 9:
+        TR%(P9, I3) = CVI(Q$(I3 + 10))
+    Next
 
     For I3 = 0 To 13
-        AA$(P9, I3) = RTRim$(Q$(I3 * 15 + 20))
+        AA$(P9, I3) = RTrim$(Q$(I3 * 15 + 20))
 
         For I4 = 0 To 6
             A!(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
@@ -389,36 +389,36 @@ Sub GETATEAM (I1, YN$)
     FY%(P9) = 2 * TR%(P9, 3) - TR%(P9, 4)
 
     9016 '
-	CNT% = 0
-	CNTX% = 0
-    
-	If TR%(P9, 5) <> 0 Then
+    CNT% = 0
+    CNTX% = 0
 
-		For I = 0 To 13
-			If B%(P9, I, 18) = -1 Then B%(P9, I, 18) = 0
-			RN = Int(Rnd(1) * 100) + 1
-			If UCase$(AA$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
-			If UCase$(AA$(P9, I)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(C(P9, I, 0) / TR%(P9, 5) * 100 + .5)) Then B%(P9, I, 18) = -1
-		Next
+    If TR%(P9, 5) <> 0 Then
 
-		For I = 0 To 13:
-			If B%(P9, I, 18) = 0 Then CNT% = CNT% + 1
-		Next
+        For I = 0 To 13
+            If B%(P9, I, 18) = -1 Then B%(P9, I, 18) = 0
+            RN = Int(Rnd(1) * 100) + 1
+            If UCase$(AA$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
+            If UCase$(AA$(P9, I)) = "XXX" Or (B%(P9, I, 18) = 0 And RN > Int(C(P9, I, 0) / TR%(P9, 5) * 100 + .5)) Then B%(P9, I, 18) = -1
+        Next
 
-		If CNT% < 10 And CNTX% < 4 Then 9016
-		If CNTX% >= 5 And CNT% < 8 Then 9016
+        For I = 0 To 13:
+            If B%(P9, I, 18) = 0 Then CNT% = CNT% + 1
+        Next
 
-	End If
+        If CNT% < 10 And CNTX% < 4 Then 9016
+        If CNTX% >= 5 And CNT% < 8 Then 9016
+
+    End If
 
     9018 '
 
     Open diskPaths$(0) + "COLBBTMS." + YN$ As #1 Len = 566
-    
-	Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-    
-	For I = 0 To 13
-		FIELD #1,74+I*32 AS X$,2 AS Q$(I*16+4),2 AS Q$(I*16+5),2 AS Q$(I*16+6),2 AS Q$(I*16+7),2 AS Q$(I*16+8),2 AS Q$(I*16+9),2 AS Q$(I*16+10),2 AS Q$(I*16+11),2 AS Q$(I*16+12),2 AS Q$(I*16+13),2 AS Q$(I*16+14),2 AS Q$(I*16+15),2 AS Q$(I*16+16),2 AS Q$(I*16+17),2 AS Q$(I*16+18),2 AS Q$(I*16+19)
-		FIELD #1, 522 AS X$,2 AS Q$(228),2 AS Q$(229),2 AS Q$(230),2 AS Q$(231),2 AS Q$(232),2 AS Q$(233),2 AS Q$(234),2 AS Q$(235),2 AS Q$(236),2 AS Q$(237),2 AS Q$(238),2 AS Q$(239),2 AS Q$(240),2 AS Q$(241),2 AS Q$(242),2 AS Q$(243),2 AS Q$(244),2 AS Q$(245),2 AS Q$(246),2 AS Q$(247),2 AS Q$(248),2 AS Q$(249)
+
+    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
+    For I = 0 To 13
+        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
     Get #1, I1
@@ -1906,7 +1906,7 @@ Sub PBP ()
 
     If pbpDelay! <> 0 And PB% <> 1 Then
 
-        U$ = PadRight$(U, 38)
+        U$ = PadRight$(U$, 38)
 
         Locate 8, 1
         If NL% = 1 Then A1$ = U$: VG%(1) = TR%(P, 0): VH%(1) = TR%(P, 1)
@@ -3052,8 +3052,12 @@ Sub MAINSCREEN ()
     If P2(1) > 5 Then Locate , 29: Color 0, 2: Print "BONUS": Color 7, 0
 
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
-    Color 14, 0: Locate 6, 37: Print Using " :##"; X8
 
+    Color 14, 0
+
+    Locate 6, 37: Print Using " :##"; X8
+
+    'If no shot clock, or time less than shot clock, or overtime - don't output it
     If C7 = 0 Or T! < 45 And X8 >= T! And C7 = 1 Or T! < 35 And X8 >= T! And C7 = 2 Or (C7 = 1 Or C7 = 2) And H > 2 And T! = 300 Then Locate 6, 37: Print " :  "
 
     If pbpDelay! <> 0 Then
@@ -4235,6 +4239,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub STEALADJ ()
+
     For I = 0 To 1
         F5%(I, 0) = 0
         F5%(I, 1) = 0
@@ -4243,19 +4248,22 @@ Sub STEALADJ ()
             F5%(I, 1) = F5%(I, 1) + A!(I, B1(I, I1), 18)
         Next I1
     Next I
+
 End Sub
 
 '------------------------------
 '    ALPHANUM Subroutine
 '------------------------------
 ' ...explanation...
-Sub ALPHANUM (I$, J)
-    J = Val(I$)
-    If UCase$(I$) = "A" Then J = 10
-    If UCase$(I$) = "B" Then J = 11
-    If UCase$(I$) = "C" Then J = 12
-    If UCase$(I$) = "D" Then J = 13
-    If UCase$(I$) = "E" Then J = 14
+Sub ALPHANUM (promptVal$, J)
+
+    J = Val(promptVal$)
+    If UCase$(promptVal$) = "A" Then J = 11
+    If UCase$(promptVal$) = "B" Then J = 12
+    If UCase$(promptVal$) = "C" Then J = 13
+    If UCase$(promptVal$) = "D" Then J = 14
+    If UCase$(promptVal$) = "E" Then J = 15
+
 End Sub
 
 '------------------------------
@@ -4407,8 +4415,13 @@ Sub THREEFT ()
     RN = Int(Rnd(1) * 100) + 1
     If F3 = 3 And RN <= 50 Then U$ = "THIRD FREE THROW IS GOOD"
     If F3 = 3 And RN > 50 Then U$ = "HE HITS THE LAST ONE"
-    Call PBP: S!(P, H) = S!(P, H) + 1: S!(P, 0) = S!(P, 0) + 1
+    Call PBP
+
+    S!(P, H) = S!(P, H) + 1
+    S!(P, 0) = S!(P, 0) + 1
+
     Call MAINSCREEN
+
 End Sub
 
 '------------------------------
