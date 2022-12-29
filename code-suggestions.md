@@ -13,6 +13,7 @@
 
 [ ] Integrate team file selection, stat file name functions
 - College BB already has "STATCONVERT" subroutine
+- Team file functions already built, just not tested
 
 [ ] Review all file selection routines
 - Are they overly wordy?
