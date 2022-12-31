@@ -116,7 +116,6 @@ Sub COMPCON ()
 
                 targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                LH$ = WE$
 
                 Cls
 				Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
