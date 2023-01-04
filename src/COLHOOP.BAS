@@ -180,7 +180,7 @@ PB$(1) = "HAFFNER CLASSIC"
 If Not _FileExists("DEV.BAS") Then
     Open "DEV.BAS" For Output As #1
     For I = 0 To 1
-        Print #1, _CWD$
+        Print #1, _CWD$ + "\"
     Next
     Close 1
 End If
