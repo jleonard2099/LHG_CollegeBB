@@ -1623,15 +1623,18 @@ Sub PrintRecords ()
     Print #2, TREC!(125, 0); "- "; TRC$(125, 0);
     Print #2, Using " (###) "; TREC!(125, 1);: Print #2, TRC$(125, 1) + " ";
     Print #2, TRC$(125, 2);: Print #2, Using " (###)"; TREC!(125, 2);: Print #2, ", " + TRC$(125, 3)
-    Print #2, Chr$(12)
 
     Close 2
 
     Open "RECORDS" For Input As #2
-    Do While Not EOF(2)
+    
+	Do While Not EOF(2)
         Line Input #2, X$
         LPrint X$
     Loop
+
+	LPrint Chr$(12)
+	
     Close 2
 
 '300 Exit Sub

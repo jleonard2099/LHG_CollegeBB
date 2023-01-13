@@ -6,33 +6,15 @@ Sub CREATCON ()
 
     Dim B(1, 2), T1(1)
 
-    Dim Z2$(30)
-    Dim Z1%(30)
-
-    Shared Z1$()
+    Shared Z1$(), Z2$()
+    Shared scheduleZ1%()
 
     Shared T%()
 
-    'Dim A(1, 6), A1!(1, 6), A2(1, 6), A3(1, 6), A4(1, 5), A5(1, 5), A6(1, 2), A7(1, 2), A8(1, 2), A9(1, 2)
-    'Dim B1(1, 2), B3(1, 2), B6(11, 7), Q6%(1)
-    'Dim O1!(30), N$(25, 2), NM$(10, 6, 3), O2!(30), O3!(30), O4!(30)
-    'Dim B2(1, 2), K3(1, 6), R9%(1)
-    'Dim J6(1)
-    'Dim S!(1, 10), O$(16), D3%(5, 6), P$(2), P(2), F(4), F1(4)
-    'Dim S1%(7, 6, 4)
-    'Dim W6(1, 1)
-    'Dim A$(1), A1$(1, 6), A2$(1, 5), A3$(1, 2), A4$(1, 2), A5$(1, 2), A6$(1, 2)
-
-    '-----
     ReDim menuChoices$(1 To 3)
 
     FG = 0
     BG = 7
-    'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
-
-    For X = 1 To 30
-        Z1$(X) = "XXX"
-    Next
 
     Do
 
@@ -62,7 +44,12 @@ Sub CREATCON ()
         If ExitCode% <> 27 Then
 
             Select Case Selection%
+
                 Case 1:
+                    For X = 1 To 30
+                        Z1$(X) = "XXX"
+                    Next
+
                     Do
                         Color 15, 0: Cls
                         JJ = 7
@@ -89,20 +76,20 @@ Sub CREATCON ()
 
                         If LG$ <> "" Then
                             LG$ = Left$(LG$, 8)
-							
-							Do
-								Locate 13, 12: Print "ANY CHANGE (YN) "
-								I$ = GetKeyPress$
-							Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                            Do
+                                Locate 13, 12: Print "ANY CHANGE (YN) "
+                                I$ = GetKeyPress$
+                            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                         End If
-						
+
                     Loop Until UCase$(I$) = "N"
 
                     If LG$ <> "" Then
                         Color 15, 0
                         Print
-						Print
+                        Print
                         Locate , 12: Input "ENTER NAME OF DIVISION 1 (ENTER FOR NONE) "; D1$
                         Locate , 12: Input "ENTER NAME OF DIVISION 2 (ENTER FOR NONE) "; D2$
                     End If
@@ -111,16 +98,18 @@ Sub CREATCON ()
                     Call SelectFile_CREATCON(LG$)
 
                     If LG$ <> "" Then
+
                         LG$ = Left$(LG$, Len(LG$) - 4)
 
                         Open diskPaths$(1) + LG$ + ".LIB" For Input As #2
                         Input #2, LG%
                         Input #2, LG$
-                        Input #2, D1$: Input #2, D2$
+                        Input #2, D1$
+                        Input #2, D2$
 
                         For X = 1 To 30
                             Input #2, Z1$(X)
-                            Input #2, Z1%(X)
+                            Input #2, scheduleZ1%(X)
                             Input #2, Z2$(X)
                         Next
 
@@ -128,10 +117,15 @@ Sub CREATCON ()
                     End If
             End Select
 
-            If LG$ <> "" Then
+            'A new routine of it's own?
+            'We call this whether we did a new conf or are reviewing an existing
+            If Selection% < 3 And LG$ <> "" Then
 
                 Do
+                    Color 15, 0
+
                     Cls
+
                     Print
                     Color 14: Print "  "; LG$; " CONFERENCE"
                     Print
@@ -166,7 +160,7 @@ Sub CREATCON ()
 
                         For X = 1 To 30
                             Print #2, Z1$(X) 'Team Name
-                            Print #2, Z1%(X)
+                            Print #2, scheduleZ1%(X) 'Team Index ?
                             Print #2, Z2$(X) 'Year Number
                         Next
 
@@ -219,7 +213,9 @@ Sub CREATCON ()
                         'Add / Remove
                         Do
                             Locate 20, 30: Print "TEAM # (1-30) ";
-                            N = 1: Input teamIndex
+                            '-- what is this???
+                            N = 1
+                            Input teamIndex
                         Loop Until teamIndex >= 1 And teamIndex <= 30
 
                         If I$ = "2" Then ' "Remove"
@@ -227,7 +223,10 @@ Sub CREATCON ()
                         Else
                             Do
                                 'I$ = 1 AKA "Add"
-                                181 Color 15, 0: Cls
+                                Color 15, 0
+
+                                Cls
+
                                 JJ = 7
                                 Locate 6, 8: Color 15, 4
                                 'Print box top
@@ -250,27 +249,35 @@ Sub CREATCON ()
                                 Locate , 12: Print
                                 Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
                                 Locate 7, 27: Input NY$
-								If NY$ = "" And YN$ <> "" Then 
-									Call SelectTeam_CREATCON(YN$, NTMS, A$)
+
+                                If NY$ = "" And YN$ <> "" Then
+                                    Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
+
                                 Else
                                     YN$ = NY$
                                     Erase teamNames$
                                     NTMS = 0
+
                                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
                                     Y = LOF(1)
+
                                     Field #1, 15 As Q$(0), 640 As X$
+
                                     For I1 = 1 To Y / 655
                                         Get #1, I1
                                         NTMS = NTMS + 1
                                         teamNames$(I1) = Q$(0)
                                         teamIndex%(I1) = I1
                                     Next
-                                    Close 1
-                                    NTMS = Y / 655
-                                    TS% = Int((NTMS - 1) / 80)
-                                End If
 
-                                Call SelectTeam_CREATCON(YN$, NTMS, A$)
+                                    Close 1
+
+                                    NTMS = Y / 655
+                                    'TS% = Int((NTMS - 1) / 80)
+
+                                    Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
+
+                                End If
 
                                 If BO% = 1 Then
                                     BO% = 0
@@ -279,16 +286,16 @@ Sub CREATCON ()
                                     Color T%(0), T%(1): Print A$
 
                                     Color 15, 4
-									
-									Do
-										Locate , 33: Print "ANY CHANGE (YN)";
-										prompt$ = GetKeyPress$
-									Loop Until UCase$(prompt$) = "Y" Or UCase$(prompt$) = "N"
+
+                                    Do
+                                        Locate , 33: Print "ANY CHANGE (YN)";
+                                        prompt$ = GetKeyPress$
+                                    Loop Until UCase$(prompt$) = "Y" Or UCase$(prompt$) = "N"
 
                                     If UCase$(prompt$) = "N" Then
                                         Z1$(teamIndex) = A$
                                         Z2$(teamIndex) = YN$
-                                        Z1%(teamIndex) = T1
+                                        scheduleZ1%(teamIndex) = T1
                                     End If
                                 End If
 
@@ -300,13 +307,13 @@ Sub CREATCON ()
 
                 Loop Until I$ = "3" 'Or UCase$(prompt$) = "N"
 
-            End If 'Done checking for blank LG$ file
+            End If 'Done checking for blank LG$ file or Selection% = 3
 
         End If 'Done checking for ESC
 
     Loop Until Selection% = 3 Or ExitCode% = 27
 
-	Color 15, 0
+    Color 15, 0
 
 End Sub
 
@@ -371,20 +378,20 @@ Sub SelectFile_CREATCON (targetFile$)
                     targetFile$ = conferenceFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
 
-					Do
-						Locate , 33: Print "ANY CHANGE (YN)";
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-					
-					Color 15, 0
+                    Do
+                        Locate , 33: Print "ANY CHANGE (YN)";
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                    Color 15, 0
 
                 End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-			If ExitCode% <> 27 Then
-				targetFile$ = RTrim$(targetFile$)
-			End If
+            If ExitCode% <> 27 Then
+                targetFile$ = RTrim$(targetFile$)
+            End If
 
         End If
 
@@ -396,7 +403,7 @@ End Sub
 '----------------------------------------
 '       SelectTeam_CREATCON Routine
 '----------------------------------------
-Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamName$)
+Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamIdx, teamName$)
 
     Shared T%()
 
@@ -422,24 +429,24 @@ Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamName$)
 
     If ExitCode% <> 27 Then
 
-		T1 = teamIndex%(Selection%)
+        teamIdx = teamIndex%(Selection%)
 
-		Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
-		Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-		For I = 0 To 13
-			Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-		Next
-		Get #1, T1
+        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+        For I = 0 To 13
+            Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+        Next
+        Get #1, teamIdx
 
-		teamName$ = RTrim$(Q$(0))
+        teamName$ = RTrim$(Q$(0))
 
-		For I = 0 To 9
-			T%(I) = CVI(Q$(I + 10))
-		Next
+        For I = 0 To 9
+            T%(I) = CVI(Q$(I + 10))
+        Next
 
-		Close 1
-	Else
-		BO% = 1
-	End If
+        Close 1
+    Else
+        BO% = 1
+    End If
 
 End Sub

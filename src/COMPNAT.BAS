@@ -7,7 +7,7 @@ Sub COMPNAT ()
     Dim CRD(100)
     Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
 
-    Dim CN$(40), H1$(40)
+    Dim CN$(1 To 40), H1$(40)
     Dim NOL$(40)
     Dim SITE$(100)
 
@@ -111,13 +111,13 @@ Sub COMPNAT ()
                     Color 15, 1
                     targetFile$ = organizationFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
-                    
-					Do
-						Locate , 33: Print "ANY CHANGE (YN)";
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-				
-					Color 15, 0
+
+                    Do
+                        Locate , 33: Print "ANY CHANGE (YN)";
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                    Color 15, 0
 
                 End If
 
@@ -128,15 +128,15 @@ Sub COMPNAT ()
                 targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
                 LH$ = WE$
-                
-				Cls
-				Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+
+                Cls
+                Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
                 Color 15, 0
 
-				Do
-					I$ = GetKeyPress$
-					finalUpdate$ = UCase$(I$)
-				Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
+                Do
+                    I$ = GetKeyPress$
+                    finalUpdate$ = UCase$(I$)
+                Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
                 If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
@@ -152,47 +152,46 @@ Sub COMPNAT ()
                 Next
 
                 For NC = 1 To 40
+
                     If CN$(NC) <> "XXX" Then
+
                         Cls
 
-                        For X = 0 To 40
-                            OL$(X) = ""
-                            DL$(X) = ""
-                            For X1 = 0 To 20
-                                DL!(X, X1) = 0
-                                OL!(X, X1) = 0
-                            Next
-                        Next
+                        'Initialize values first
+                        Erase DL$, OL$, NDL$, NOL$, NZ0$, NZ3$, Z0$, Z1$, Z3$
+                        Erase DL!, OL!, LD!, PT
 
                         For X = 1 To 40
                             DL!(X, 19) = 9999
                         Next
 
-                        For X = 1 To 250
-                            Z0$(X) = "": Z3$(X) = ""
-                            For X1 = 0 To 2
-                                LD!(X, X1) = 0
-                            Next
-                        Next
-
                         For X = 1 To 30
-                            Z1$(X) = "": O1!(X) = 0: O2!(X) = 0: O3!(X) = 0: O4!(X) = 0: O5!(X) = 0: O6!(X) = 0
+                            O1!(X) = 0
+                            O2!(X) = 0
+                            O3!(X) = 0
+                            O4!(X) = 0
+                            O5!(X) = 0
+                            O6!(X) = 0
                         Next
 
                         Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
                         Input #2, LG$
-                        Input #2, D1$: Input #2, D2$
+                        Input #2, D1$
+                        Input #2, D2$
+
                         For XW = 1 To 30
                             Input #2, H1$(XW)
                             Z1$(XW) = H1$(XW)
                         Next
                         Close 2
 
+                        
                         For XW = 1 To 30
-                            replayWins% = 0
-                            replayLosses% = 0
-                            CW = 0
-                            CL = 0
+
+                            fullWins = 0
+                            fullLosses = 0
+                            confWins = 0
+                            confLosses = 0
 
                             If H1$(XW) = Chr$(42) Then Exit For 'was Return; but where from?
 
@@ -236,7 +235,10 @@ Sub COMPNAT ()
                                 For I = 1 To 100: Input #2, SITE$(I): Next I
                                 Close 2
 
-                                replayWins% = 0: replayLosses% = 0: CW = 0: CL = 0
+                                fullWins = 0
+                                fullLosses = 0
+                                confWins = 0
+                                confLosses = 0
 
                                 '804 GoSub 5500
                                 For I = 1 To numGames%
@@ -261,27 +263,33 @@ Sub COMPNAT ()
 
                                     f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
                                     O$(I) = R$
+                                            
+                                    skipIt = 0
 
                                     For EC = 1 To 30
+
                                         If O$(I) = H1$(EC) Then
-                                            skipper=1: Exit For
+                                            skipIt = 1
+                                            Exit For
                                         End If
+
                                     Next EC
 
-                                    If skipper <> 1 Then
-                                        If O%(I) > compnatT%(I) Then replayWins% = replayWins% + 1
-                                        If O%(I) < compnatT%(I) Then replayLosses% = replayLosses% + 1
+                                    If skipIt <> 1 Then
+                                        If O%(I) > compnatT%(I) Then fullWins = fullWins + 1
+                                        If O%(I) < compnatT%(I) Then fullLosses = fullLosses + 1
                                     Else
-                                        If O%(I) > compnatT%(I) Then CW = CW + 1: replayWins% = replayWins% + 1
-
-                                        If O%(I) < compnatT%(I) Then CL = CL + 1: replayLosses% = replayLosses% + 1
+                                        If O%(I) > compnatT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
+                                        If O%(I) < compnatT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
                                     End If
 
                                     EC = 0
+
                                 Next I
 
                                 'STRENGTH OF SCHEDULE
-                                PW = 0: SS = 0
+                                PW = 0
+                                SS = 0
 
                                 For I = 1 To numGames%
                                     SS = AP%(I, 1) + SS
@@ -307,8 +315,8 @@ Sub COMPNAT ()
                                 NRT = NRT + 1
                                 PT$(NRT) = H1$(XW)
                                 PT(NRT, 1) = PW
-                                PT(NRT, 2) = replayWins%
-                                PT(NRT, 3) = replayLosses%
+                                PT(NRT, 2) = fullWins
+                                PT(NRT, 3) = fullLosses
                                 PT(NRT, 4) = SS
 
                                 Cls
@@ -318,16 +326,19 @@ Sub COMPNAT ()
                                 Print " STATS            "
 
                                 L = Len(H1$(XW)): WT$ = ""
+
                                 For X = 1 To L
                                     A = Asc(Mid$(H1$(XW), X, 1))
-                                WT$ = WT$ + Chr$(A): Next X
+                                    WT$ = WT$ + Chr$(A)
+                                Next X
+
                                 For X = 1 To 30
                                     If Z1$(X) = WT$ Then
-                                        If O1!(X) = replayWins% And O2!(X) = replayLosses% Then GoTo 948
-                                        O1!(X) = replayWins%
-                                        O2!(X) = replayLosses%
-                                        O4!(X) = CW
-                                        O5!(X) = CL
+                                        If O1!(X) = fullWins And O2!(X) = fullLosses Then GoTo 948
+                                        O1!(X) = fullWins
+                                        O2!(X) = fullLosses
+                                        O4!(X) = confWins
+                                        O5!(X) = confLosses
                                         If O1!(X) + O2!(X) = 0 Then
                                             O3!(X) = 0
                                         Else
@@ -355,7 +366,9 @@ Sub COMPNAT ()
                             Close 3
                         Next
 
-                        AA = 1: ZZ = 15
+                        AA = 1
+                        ZZ = 15
+
                         For X = AA To ZZ - 1
                             For Y = X + 1 To ZZ
                                 DiffX = O1!(X) - O2!(X)
@@ -376,7 +389,8 @@ Sub COMPNAT ()
                             Next Y
                         Next X
 
-                        AA = 16: ZZ = 30
+                        AA = 16
+                        ZZ = 30
 
                         For X = AA To ZZ - 1
                             For Y = X + 1 To ZZ
@@ -403,6 +417,7 @@ Sub COMPNAT ()
 
                         Open diskPaths$(1) + CN$(NC) + ".LDR" For Output As #2
                         Print "    POSTING NEW "; CN$(NC); " CONFERENCE LEADERS"
+
                         For X = 1 To 30:
                             Write #2, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
                         Next
@@ -488,7 +503,7 @@ Sub COMPNAT ()
 
         End If 'Done checking for file count
 
-    '...Until we press ESC
+        '...Until we press ESC
     Loop Until ExitCode% = 27 Or Count% = 0 Or I$ = "N"
 
     99 '
@@ -507,10 +522,10 @@ Sub LoadStats (statFile$)
 
     Shared BRC!()
     Shared S!(), W0!(), W1!()
-    Shared DT!(), OT!()
-    Shared compnatN$(), recconTRC$(), recconTRC1$()
+    Shared DT!(), OL!(), OT!()
+    Shared compnatN$(), OL$(), recconTRC$(), recconTRC1$()
 
-    811 For I = 0 To 13
+    For I = 0 To 13
         For J = 0 To 26
             S!(I, J) = 0
         Next
@@ -521,7 +536,7 @@ Sub LoadStats (statFile$)
         Open diskPaths$(1) + statFile$ For Input As #2
         Input #2, TN$
 
-        812 For I = 0 To 13
+        For I = 0 To 13
             Input #2, compnatN$(I)
             For J = 0 To 13
                 Input #2, S!(I, J)
@@ -529,7 +544,9 @@ Sub LoadStats (statFile$)
             Input #2, W0!(I)
             Input #2, W1!(I)
         Next
+
         For L = 1 To 16: Input #2, OT!(L): Next: For L = 1 To 16: Input #2, DT!(L): Next
+
         Close 2
 
         For I = 0 To 13
@@ -614,7 +631,7 @@ Sub LoadStats (statFile$)
         If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): recconTRC$(18) = TN$
         If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): recconTRC$(19) = TN$
         If OT!(11) / numGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numGames%: recconTRC$(20) = TN$
-        If replayWins% > TRC!(21) Then TRC!(21) = replayWins%: recconTRC$(21) = TN$
+        If fullWins > TRC!(21) Then TRC!(21) = fullWins%: recconTRC$(21) = TN$
         If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): recconTRC1$(1) = TN$
         If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): recconTRC1$(2) = TN$
         If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): recconTRC1$(3) = TN$
@@ -635,7 +652,7 @@ Sub LoadStats (statFile$)
         If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): recconTRC1$(18) = TN$
         If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): recconTRC1$(19) = TN$
         If DT!(11) / numGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: recconTRC1$(20) = TN$
-        If replayLosses% > TRC1!(21) Then TRC1!(21) = LS: recconTRC1$(21) = TN$
+        If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: recconTRC1$(21) = TN$
 
     End If
     '1030 Return
@@ -654,11 +671,14 @@ Sub CheckTeam ()
     Shared DT!(), OT!()
 
     Shared compnatN$(), DL$()
-    Shared NDL$(), NZ0$(), NZ3$()
-    Shared Z0$(), Z3$()
+    Shared NDL$(), NOL$(), NZ0$(), NZ3$()
+    Shared OL$(), Z0$(), Z3$()
 
     For X = 0 To 14:
-        Color 14: Print "CHECKING STATS OF ";: Color 15: Print compnatN$(X)
+
+        Color 14
+        Print "CHECKING STATS OF ";
+        Color 15: Print compnatN$(X)
 
         If S!(X, 22) > LD!(20, 1) Then
             LD!(20, 1) = S!(X, 22)
@@ -847,7 +867,7 @@ Sub CheckTeam ()
             Z0$(160) = compnatN$(X)
             Z3$(160) = TN$
             For Z = 151 To 159
-            For Z1 = Z + 1 To 160
+                For Z1 = Z + 1 To 160
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -863,7 +883,7 @@ Sub CheckTeam ()
             Z0$(170) = compnatN$(X)
             Z3$(170) = TN$
             For Z = 161 To 169
-            For Z1 = Z + 1 To 170
+                For Z1 = Z + 1 To 170
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -1013,9 +1033,10 @@ Sub CheckTeam ()
 
     'FOR X=1 TO 40
     If OT!(19) > OL!(40, 19) Then
-        For M = 1 To 20: OL!(40, M) = OT!(M): Next: OL$(40) = TN$
-        For X = 1 To 39: 
-            For X1 = 1 + X To 40: 
+        For M = 1 To 20: OL!(40, M) = OT!(M): Next
+        OL$(40) = TN$
+        For X = 1 To 39:
+            For X1 = 1 + X To 40:
                 If OL!(X, 19) < OL!(X1, 19) Then
                     Swap OL$(X1), OL$(X)
                     For M = 1 To 20: J = OL!(X1, M): OL!(X1, M) = OL!(X, M): OL!(X, M) = J: Next
@@ -1052,7 +1073,7 @@ Sub CheckStatsLeaders (statFile$)
     Shared DT!(), OT!()
 
     Shared compnatN$()
-    Shared NDL$(), NZ0$(), NZ3$()
+    Shared NDL$(), NOL$(), NZ0$(), NZ3$()
 
     Cls: Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
     For X = 0 To 14
@@ -1242,7 +1263,7 @@ Sub CheckStatsLeaders (statFile$)
         End If
 
         'FOR Z=151 TO 160
-            If S!(X, 10) / 60 <= NLD!(160, 1) Then
+        If S!(X, 10) / 60 <= NLD!(160, 1) Then
             NLD!(160, 1) = S!(X, 10) / 60
             NLD!(160, 2) = 0
             NZ0$(160) = compnatN$(X)
@@ -1414,7 +1435,7 @@ Sub CheckStatsLeaders (statFile$)
     Next X
 
     'FOR X=1 TO 40
-    If OT!(19) > NOL!(40, 19) Then  
+    If OT!(19) > NOL!(40, 19) Then
         For M = 1 To 20
             NOL!(40, M) = OT!(M)
         Next

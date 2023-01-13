@@ -102,19 +102,19 @@ Sub ViewExpanded ()
 
             If ExitCode% <> 27 Then
             
-				Color 15, 1
+                Color 15, 1
                 targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
 
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Do
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-				Color 15, 0
+                Color 15, 0
 
             End If
-			
+            
         Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
         If ExitCode% <> 27 Then
@@ -161,7 +161,7 @@ Sub ViewExpanded ()
 
                 Color , 0
                 
-				If ExitCode% <> 27 Then
+                If ExitCode% <> 27 Then
                     Select Case Selection%
                         Case 1: Call PlayerLeaders(printOrView%, sortType%)
                         Case 2: Call TeamTotals(printOrView%, sortType%)
@@ -694,15 +694,15 @@ Sub PrintPlayer (printOrView%, maxRecords, TVN, categoryID)
 
                 If I$ <> Chr$(27) Then
                     Locate 22
-					Print Space$(64)
+                    Print Space$(64)
 
-					Color 14
+                    Color 14
 
-					Do
-						Locate 22
-						Print "VIEW AGAIN (Y/N)"
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+                    Do
+                        Locate 22
+                        Print "VIEW AGAIN (Y/N)"
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
                 End If
 
@@ -710,12 +710,12 @@ Sub PrintPlayer (printOrView%, maxRecords, TVN, categoryID)
 
         Case 2:
 
-            LPrint Chr$(15)
-            'This is not supported by QB64
-            'WIDTH "LPT1:1", 130
-            Color 14, 0:
+            Color 0, 15
+
             Cls
+
             LPrint "     PLAYER                  TEAM                     "; TP$(categoryID)
+
             For W = 1 To LG
 
                 If (W <> 0 AND W MOD 50 = 0) Then
@@ -729,9 +729,7 @@ Sub PrintPlayer (printOrView%, maxRecords, TVN, categoryID)
 
             Next W
 
-            LPrint Chr$(18)
-            'This is not supported in QB64
-            'WIDTH "LPT1:1", 80
+            LPrint Chr$(12)
 
     End Select
 
@@ -772,14 +770,14 @@ Sub PrintIt (printOrView%, maxRecords, TVN, categoryID)
                 I$ = GetKeyPress$
                 If I$ <> Chr$(27) Then
                     Locate 22: Print Space$(64)
-					
-					Color 14
-					
-					Do
-						Locate 22
-						Print "VIEW AGAIN (Y/N)"
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+                    
+                    Color 14
+                    
+                    Do
+                        Locate 22
+                        Print "VIEW AGAIN (Y/N)"
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
                 Else
                     I$ = "N"
@@ -788,20 +786,18 @@ Sub PrintIt (printOrView%, maxRecords, TVN, categoryID)
             Loop Until UCase$(I$) = "N"
 
         Case 2:
-            LPrint Chr$(15)
-            'WIDTH "LPT1:1", 130
-            LPrint "     TEAM                     "; TP1$(categoryID)
-            '-- Should these be LPRINT ???
-            For W = 1 To maxRecords
-                If TVN = 1 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(32); Using "#####"; TYP!(W)
-                If TVN = 2 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using ".###"; TYP!(W)
-                If TVN = 3 Then Color 12: Print Using "###"; W;: Print " ";: Color 3: Print TMM$(W);: Color 15: Print Tab(33); Using "###.#"; TYP!(W)
-            Next W
-            LPrint Chr$(12)
-            LPrint Chr$(18)
 
-            'This is not supported in QB64
-            'WIDTH "LPT1:1", 80
+            Color 0, 15
+
+            LPrint "     TEAM                     "; TP1$(categoryID)
+
+            For W = 1 To maxRecords
+                If TVN = 1 Then LPrint Using "###"; W;: LPrint " "; TMM$(W); Tab(32); Using "#####"; TYP!(W)
+                If TVN = 2 Then LPrint Using "###"; W;: LPrint " "; TMM$(W); Tab(33); Using ".###"; TYP!(W)
+                If TVN = 3 Then LPrint Using "###"; W;: LPrint " "; TMM$(W); Tab(33); Using "###.#"; TYP!(W)
+            Next W
+
+            LPrint Chr$(12)
 
     End Select
 
@@ -954,6 +950,7 @@ Sub BUILDSTATS (statFile$, Z1$())
 
     Shared JB, TS, TMR%, TTS
 
+    Color 15, 0
     Cls
 
     For KK = 1 To 30

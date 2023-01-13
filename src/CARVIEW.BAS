@@ -35,9 +35,9 @@ Sub CARVIEW ()
             Call ReadFile(careerFiles$())
 
             Do
-                Cls
                 Color , 1
                 Cls
+
                 Locate , 28
                 Color 14
                 Print "SELECT FILE TO VIEW": Color 15
@@ -80,10 +80,12 @@ Sub CARVIEW ()
 
             If ExitCode% <> 27 Then
 
+				Color 15, 0
+				Cls
+
                 targetFile$ = RTrim$(targetFile$)
                 Z$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-				Cls                
 				Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
                 'The variables below here clearly need Shared for each sub
@@ -104,11 +106,10 @@ Sub CARVIEW ()
                 Next N
                 Close #2
 
-                Locate 18, 10
-				Color 12: Print "V";: Color 7: Print "iew or ";
-				Color 12: Print "P";: Color 7: Print "rint"
-
-                Do
+				Do
+					Locate 18, 10
+					Color 12: Print "V";: Color 7: Print "iew or ";
+					Color 12: Print "P";: Color 7: Print "rint"
                     A$ = GetKeyPress$
                 Loop Until UCase$(A$) = "P" Or UCase$(A$) = "V"
 
@@ -440,12 +441,12 @@ Sub CareerToPrinter (A$())
     Shared ARS!(), W0S!(), W1S!()
 
     PTN = 0
-    LPrint Chr$(15)
-    'Not supported in QB64
-    'WIDTH "LPT1:1", 130
-    LPrint Tab(59); Z$: LPrint
+
+    LPrint Tab(59); Z$
+	LPrint
     LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
-    For I = 0 To 61
+    
+	For I = 0 To 61
 
         If A$(I) <> "" And A$(I) <> "XXX" Then
             TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0
@@ -514,11 +515,13 @@ Sub CareerToPrinter (A$())
                 TT17 = TT17 + ARS!(V, I, 12)
                 If ARS!(V, I, 13) > TT15 Then TT15 = ARS!(V, I, 13)
             Next V
+
             LPrint "  TOTALS";
             LPrint Tab(15); Using "##"; VV;
             LPrint Tab(17); Using "####"; TT1;
             LPrint Tab(21); Using "#####"; TT2;
             LPrint Tab(27); Using "#####"; TT3;
+
             If TT2 = 0 Then LPrint Tab(34); "--.-";
             If TT2 > 0 Then LPrint Tab(34); Using "###.#"; (TT2 / TT3) * 100;
             LPrint Tab(37); Using "#####"; TT4;
@@ -551,5 +554,7 @@ Sub CareerToPrinter (A$())
         End If
 
     Next I
+
+	LPrint Chr$(12)
 
 End Sub

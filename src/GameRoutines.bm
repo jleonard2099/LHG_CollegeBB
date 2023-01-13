@@ -261,12 +261,14 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub DISABLEPLAYER ()
+
     Color 15, 0
-    Cls
-    I = P9
-    Call DRAWBOX
 
     Do
+        Cls
+        I = P9
+        Call DRAWBOX
+
         U$ = "DISABLE PLAYERS FOR " + B$(P9) + " (YN)"
         Locate , (80 - Len(U$)) / 2
         Print U$
@@ -285,7 +287,8 @@ Sub DISABLEPLAYER ()
 
         DX% = 0
         Cls
-        Print "TEAM ROSTER FOR ";: Color TR%(P9, 0), TR%(P9, 1): Print B$(P9)
+        Print "TEAM ROSTER FOR ";
+        Color TR%(P9, 0), TR%(P9, 1): Print B$(P9)
         Color 15, 0
         Print "# NAME          POS   GP"
 
@@ -295,9 +298,12 @@ Sub DISABLEPLAYER ()
             If I = 11 Then Print "B";
             If I = 12 Then Print "C";
             If I = 13 Then Print "D";
+
             If AA$(P9, I) = "XXX" Then B%(P9, I, 18) = -1: Color TR%(P9, 0), TR%(P9, 1)
             If B%(P9, I, 18) = 1 Or B%(P9, I, 18) = -1 Then Color TR%(P9, 0), TR%(P9, 1)
-            Print " "; AA$(P9, I);: Color 15, 0: Print ; Tab(18); PO$(P9, I); Tab(22); C(P9, I, 0)
+
+            Print " "; AA$(P9, I);
+            Color 15, 0: Print ; Tab(18); PO$(P9, I); Tab(22); C(P9, I, 0)
         Next
 
         Do
@@ -354,7 +360,9 @@ End Sub
 Sub GETATEAM (I1, YN$)
 
     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
     For I = 0 To 13
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
@@ -2456,9 +2464,10 @@ End Sub
 '------------------------------
 ' Prints BoxScore to printer
 Sub BOX2PRINTER ()
-    8900 If N <> 2 Then LPrint "@ "; B$(N): LPrint
+    If N <> 2 Then LPrint "@ "; B$(N): LPrint
 
     For I = 0 To 1
+    
         LPrint B$(I); Tab(17); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
 
         If S!(0, 1) + S!(0, 2) = S!(1, 1) + S!(1, 2) Then LPrint ; Tab(23); Str$(S!(I, 3));
@@ -2491,7 +2500,7 @@ Sub BOX2PRINTER ()
 
         End If
 
-    8913 Next I
+    Next I
 
     For I = 0 To 1:
         LPrint
@@ -2532,7 +2541,7 @@ Sub BOX2PRINTER ()
                 V9(10) = V9(10) + ZZ(I, I1)
             End If
 
-        8920 Next I1
+        Next I1
 
         If V9(3) = 0 Then V9(3) = 1
 
@@ -3096,21 +3105,33 @@ Sub MAINSCREEN ()
 
         Locate 19, 40
 
-        For I1 = 0 To 4: Locate , 40: Color 2, 0: Print Using "# "; I1;
+        For I1 = 0 To 4:
+            Color 2, 0:
+            Locate , 40: Print Using "# "; I1;
             Color 15: Print Left$(AA$(1, B1(1, I1)), 12); Tab(55);
+
             If A!(1, B1(1, I1), 19) >= 7 Then Print "*";
+
             Print ; Tab(56);
+
             J = (A!(1, B1(1, I1), 3)) - A!(1, B1(1, I1), 7) - A!(1, B1(1, I1), 11) - A!(1, B1(1, I1), 12): If J <= 0 Then J = 0
+
             Print Using "## ## "; A!(1, B1(1, I1), 0), A!(1, B1(1, I1), 1);
+
             If P = 1 Then Print Using "##"; A!(1, B1(1, I1), 21) * 2 / 10; Else Print Using "##"; A!(1, B1(1, I1), 2) * 2 / 10;
             If J <= 0 And (H = 1 Or H = 2 And T! > 120) Then Color 12
+
             Print Using "### "; J;
+
             Color 15
+
             If FA%(1, B1(1, I1)) * -1 >= 5 And (H = 1 Or H = 2 And T! > 120) Then Color 12
+
             Print Using "## "; FA%(1, B1(1, I1)) * -1;
             Color 15
             Print Using "##"; A!(1, B1(1, I1), 4);
             Print Using "###  "; A!(1, B1(1, I1), 8) * 2 + A!(1, B1(1, I1), 10) + W%(1, B1(1, I1), 0);
+
             If A!(1, B1(1, I1), 12) >= 4 Then Color 12
             Print Using "#"; A!(1, B1(1, I1), 12)
             Color 15
@@ -3253,6 +3274,7 @@ Sub SCOREBOARD ()
 
         Print Using "#"; A!(1, B1(1, I1), 12)
         Color 15
+
     Next I1
 
     Color 9, 0
@@ -3823,7 +3845,7 @@ Sub AUTOSETUP ()
         Next
         For I = 1 To 16
             For I1 = 1 To 16
-                For I2 = 0 To 3
+                For I2 = 1 To 4
                     Input #2, N$(I, I1, I2): ' SEED SLOT NAME
                     Input #2, N%(I, I1, I2): ' REGION, SEED NUMBER, MODE PLAY/TM#
                 Next
@@ -3866,7 +3888,8 @@ Sub LINEUPS ()
     Cls
     Color TR%(P9, 0), TR%(P9, 1): Print B$(P9);
     Color 15, 0: Print " TEAM ROSTER    COACH: "; C$(P9);
-    Print "  RECORD: ";: Print Using "##"; TR%(P9, 7);: Print "-";: Print Using "##"; TR%(P9, 8)
+    Print "  RECORD: ";
+    Print Using "##"; TR%(P9, 7);: Print "-";: Print Using "##"; TR%(P9, 8)
     Color 14: Print "# NAME         POS FG  FT 3FG %3A ORB DRB RB PA  S  B CX EF  PT  F  FC  PTS/G"
     Locate 3, 1
 
@@ -3883,9 +3906,11 @@ Sub LINEUPS ()
             Locate , 16: Print PO$(P9, R1);
             Locate , 20
 
-            L = 0: L = A!(P9, R1, 3) - A!(P9, R1, 7) - A!(P9, R1, 11) - A!(P9, R1, 12)
+            L = 0
+            L = A!(P9, R1, 3) - A!(P9, R1, 7) - A!(P9, R1, 11) - A!(P9, R1, 12)
 
             If L <= 0 Then L = 0
+
             Print Using "## ###  ##  ##  ##  ## ## "; A!(P9, R1, 0), A!(P9, R1, 1), A!(P9, R1, 20), A!(P9, R1, 19), A!(P9, R1, 21) * 2 / 10, A!(P9, R1, 2) * 2 / 10, (A!(P9, R1, 2) + A!(P9, R1, 21)) / 5;
             Print Using "## ## ##"; A!(P9, R1, 4), A!(P9, R1, 5), A!(P9, R1, 6);
 
@@ -3919,10 +3944,13 @@ Sub LINEUPS ()
 
     For R1 = 1 To 7: Locate R1 + 18, 28: Print Chr$(186);: Next
 
-    Locate 19, 1: Color 14, 0: Print "STARTING LINEUP"
+    Color 14, 0
+    Locate 19, 1: Print "STARTING LINEUP"
 
     If C1 = 1 Then
+
         For M = 0 To 4
+
             Locate M + 20, 1
             Color 2, 0
             Print Using "# "; M;
@@ -3945,18 +3973,27 @@ Sub LINEUPS ()
     Else
 
         For I = 0 To 4
-            Locate I + 20, 1
-            Color 2, 0: Print Using "# "; I;: Color 15: Print "ENTER "; PS$(I); " # ";
 
-            72 '
             Do
+
+                Locate I + 20, 1
+                Color 2, 0
+                Print Using "# "; I;
+                Color 15
+                Print "ENTER "; PS$(I); " # ";
+
                 I$ = GetKeyPress$
                 Call ALPHANUM(I$, J)
-            Loop Until J >= 0 And J <= 13 And A!(P9, J, 12) < NF% And AA$(P9, J) <> "XXX" And B%(P9, J, 18) = 0
 
-            For I2 = 0 To 4
-                If B1(P9, I2) = J Then 72
-            Next I2
+                If J >= 0 And J <= 13 And A!(P9, J, 12) < NF% And AA$(P9, J) <> "XXX" And B%(P9, J, 18) = 0 Then
+
+                    For I2 = 0 To 4
+                        If B1(P9, I2) = J Then Exit For
+                    Next I2
+
+                End If
+
+            Loop Until J >= 0 And J <= 13
 
             B1(P9, I) = J
             Z = J
@@ -3982,11 +4019,12 @@ Sub LINEUPS ()
             Print "# TO CHANGE (0-4) 6=NONE";
             Locate 1, 1
             I$ = GetKeyPress$
-            I1 = Val(I$)
+            K = Val(I$)
 
-        Loop Until I1 >= 0 And I1 <= 4 Or I1 = 6
+        Loop Until K >= 0 And K <= 6
 
-        If I1 = 6 Then
+        If K = 6 Then
+
             skipMenu% = 0
 
             CV% = 0
@@ -4011,36 +4049,49 @@ Sub LINEUPS ()
 
         Else
 
-            If X = 50 And I1 = B And P9 = P Then
+            If X = 50 And K = B And P9 = P Then
 
-                Locate 20, 29: Color 14, 0: Print AA$(P9, B1(P9, I1)); " IS AT THE FT LINE"
+                Color 14, 0
+                Locate 20, 29: Print AA$(P9, B1(P9, K)); " IS AT THE FT LINE"
 
             Else
 
-                Locate 25, 1: Print "                         ";
-                J = B1(P9, I1)
+                Locate 25, 1: Print Space$(25);
+
+                J = B1(P9, K)
                 Z = J
                 TM%(P9, J) = T!
 
                 CV% = 0
+
                 For IP% = 0 To Z
                     If B%(P9, IP%, 18) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then CV% = CV% + 1
                 Next
 
-                Locate J + 3 - CV%, 3: Color 15, 0: Print Left$(AA$(P9, J), 12)
-                Locate I1 + 20, 1: Print "                          ";
-                B1(P9, I1) = -1
-                Locate , 1: Color 2: Print Using "# "; I1;
-                Color 15: Print "ENTER "; PS$(I1); " # ";
+                Locate J + 3 - CV%, 3
+                Color 15, 0: Print Left$(AA$(P9, J), 12)
+                Locate K + 20, 1: Print Space$(26);
 
-                75 I$ = GetKeyPress$
-                Call ALPHANUM(I$, J)
-                If J < 0 Or J > 13 Or A!(P9, J, 12) >= NF% Or AA$(P9, J) = "XXX" Or B%(P9, J, 18) <> 0 Then 75
-                For I2 = 0 To 4
-                    If B1(P9, I2) = J Then 75
-                Next I2
+                B1(P9, K) = -1
 
-                B1(P9, I1) = J
+                Locate , 1: Color 2: Print Using "# "; K;
+                Color 15: Print "ENTER "; PS$(K); " # ";
+
+
+                Do
+                    I$ = GetKeyPress$
+                    Call ALPHANUM(I$, J)
+
+                    If J >= 0 And J <= 13 And A!(P9, J, 12) < NF% And AA$(P9, J) <> "XXX" And B%(P9, J, 18) = 0 Then
+                        For I2 = 0 To 4
+                            If B1(P9, I2) = J Then Exit For
+                        Next I2
+
+                    End If
+
+                Loop Until J >= 0 And J <= 13
+
+                B1(P9, K) = J
                 Z = J
                 'FATIGUE
                 If TM%(P9, J) - T! > 60 And TM%(P9, J) < 120 Then FA%(P9, J) = FA%(P9, J) + 1
@@ -4060,7 +4111,7 @@ Sub LINEUPS ()
 
         End If
 
-    Loop Until I1 = 6
+    Loop Until K = 6
 
 End Sub
 
@@ -4120,7 +4171,12 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub FOULSAFE ()
-    1200 Cls: Color 15: A = 0: S2 = 1: S3 = 1: SW = 0
+
+    Cls
+
+    Color 15
+
+    A = 0: S2 = 1: S3 = 1: SW = 0
 
     For ZZ = 0 To 4
         If A!(P9, B1(P9, ZZ), 22) = 50 Then A = A + 1: If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
@@ -4209,6 +4265,9 @@ Sub FOULSAFE ()
     FO = 99
 
     If H = 1 And T! = 1200 Then FO = 0
+
+    'Call MAINSCREEN
+    Call SCOREBOARD
 
 End Sub
 
@@ -4475,6 +4534,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub PRELOAD ()
+
     NTMS = 0
 
     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
@@ -4505,6 +4565,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub TEAMSELECT ()
+
     Selection% = 1
     Count% = NTMS
     Start% = 1
@@ -4574,6 +4635,7 @@ Sub SELECTID ()
     Locate , 12: Print "(JUST HIT ENTER TO USE PREVIOUS ID, IF SAME)"
     Locate 7, 27: Input NY$
     Color 15, 0
+
     If NY$ = "" Then
         Call TEAMSELECT
     Else

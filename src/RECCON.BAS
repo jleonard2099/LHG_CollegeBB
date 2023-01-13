@@ -425,6 +425,7 @@ Sub PrintSeasonRecords ()
 		LPrint TT$(19); Tab(33); recconTRC1$(19); Tab(52); Using "#####"; TRC1!(19)
 		LPrint TT$(20); Tab(33); recconTRC1$(20); Tab(52); Using "###.#"; TRC1!(20)
 		LPrint "LOSSES"; Tab(33); recconTRC1$(21); Tab(53); Using "####"; TRC1!(21)
+		
 		LPrint Chr$(12)
 
 	End If

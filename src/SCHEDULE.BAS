@@ -60,7 +60,7 @@ Sub SCHEDULE ()
             'action% = 7 | Selection% = 8:BOXSCORE MAINTENANCE / SAVE BOXSCORE PARAMETERS
 
             Select Case Selection%
-			
+
                 Case 1:
                     scheduleAP%(0) = 0
                     NS% = 0
@@ -227,13 +227,13 @@ Sub NewSchedule (scheduleFile$)
                 N$ = RTrim$(Q$(0))
                 scheduleH$(X) = N$
 
-				'Game number
+                'Game number
                 Print Using "####  "; X + NS% * 20;
-				
-				'Date
+
+                'Date
                 Print Using "##/##/##"; NG%(X + NS% * 20, 17); NG%(X + NS% * 20, 16); NG%(X + NS% * 20, 18);
 
-				'Time
+                'Time
                 Locate , 17
                 I$ = "A"
                 HR% = NG%(X + NS% * 20, 15) / 100
@@ -247,10 +247,10 @@ Sub NewSchedule (scheduleFile$)
                 If MIN% < 10 Then TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
                 If MIN% >= 10 Then TM$ = TM$ + Right$(Str$(MIN%), 2)
 
-				'Time
+                'Time
                 TM$ = TM$ + I$
                 Print TM$;
-				
+
                 'Visiting Team
                 Locate , 25: Print scheduleV$(X); " ";
                 If NG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitingScore%(X + NS% * 20);
@@ -268,7 +268,7 @@ Sub NewSchedule (scheduleFile$)
                 '3 Pt
                 Locate , 75: Print TS$(NG%(X + NS% * 20, 3));
 
-				'Shot clock
+                'Shot clock
                 Locate , 78: Print Left$(SC$(NG%(X + NS% * 20, 7)), 2)
 
             End If
@@ -276,13 +276,17 @@ Sub NewSchedule (scheduleFile$)
         Next
 
         I$ = GetKeyPress$
+
         Select Case UCase$(I$)
             Case "A":
                 ' *** ADD A GAME TO THE SCHEDULE ***
                 V$ = ""
                 H$ = ""
+
+                'number of games in schedule
                 scheduleAP%(0) = scheduleAP%(0) + 1
                 targetGame% = scheduleAP%(0)
+
                 BS% = Int((targetGame% - 1) / 20)
                 If NS% < BS% Then NS% = BS%
 
@@ -348,20 +352,6 @@ Sub NewSchedule (scheduleFile$)
 
             Case "C", "X":
                 Call SaveScheduleFile(scheduleFile$)
-
-            Case Chr$(0) + "Q":
-                ' *** PAGE DOWN ***
-                If NS% >= BS% Then
-                    NS% = BS%
-                Else
-                    NS% = NS% + 1
-                End If
-
-            Case Chr$(0) + "I":
-                ' *** PAGE UP ***
-                If NS% <> 0 Then
-                    NS% = NS% - 1
-                End If
 
             Case "Q", Chr$(27): '
 
@@ -448,6 +438,20 @@ Sub NewSchedule (scheduleFile$)
                 For I = 1 To scheduleAP%(0)
                     NG%(I, 13) = 0
                 Next
+
+            Case Chr$(0) + "Q":
+                ' *** PAGE DOWN ***
+                If NS% >= BS% Then
+                    NS% = BS%
+                Else
+                    NS% = NS% + 1
+                End If
+
+            Case Chr$(0) + "I":
+                ' *** PAGE UP ***
+                If NS% <> 0 Then
+                    NS% = NS% - 1
+                End If
 
         End Select
 
@@ -1480,7 +1484,6 @@ Sub LoadSchedule (targetFile$)
                 Y = LOF(1)
 
                 scheduleAP%(0) = Y / 48
-
                 BS% = Int((scheduleAP%(0) - 1) / 20)
 
                 For X = 0 To 18
@@ -1757,6 +1760,7 @@ Sub CreateConferenceSchedule ()
     Loop Until D3% >= 0 And D3% <= 9
 
     If D3% <> 0 Then
+
         Spec$ = diskPaths$(1) + "*.LIB"
         null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
         Count% = DirCount%
@@ -1821,18 +1825,21 @@ Sub CreateConferenceSchedule ()
                 X1 = 0
                 Input #2, LG%
                 Input #2, LG$
-                Input #2, D1$: Input #2, D2$
+                Input #2, D1$
+                Input #2, D2$
+
                 For X = 1 To 30
                     Input #2, D1$
                     Input #2, LG%
                     Input #2, D2$
-                    If D1$ <> "XXX" And D1$ <> "" Then
+                    If D1$ <> "XXX" And D1$ <> "" And D1$ <> "*" Then
                         X1 = X1 + 1
                         Z1$(X1) = D1$
                         scheduleZ1%(X1) = LG%
                         Z2$(X1) = D2$
                     End If
                 Next
+
                 Close 2
 
                 Select Case D3%
@@ -1847,8 +1854,11 @@ Sub CreateConferenceSchedule ()
                     Case 9: F$ = "16TM.SCX"
                 End Select
 
+                'Read in SCX file as a "template" for our SCD
+                'The file literally has 0 values for everything
                 Open F$ For Random As #1 Len = 48
                 Y = LOF(1)
+
                 scheduleAP%(0) = Y / 48
                 BS% = Int((scheduleAP%(0) - 1) / 20)
 
@@ -1862,11 +1872,13 @@ Sub CreateConferenceSchedule ()
                     Get #1, I
                     For X = 0 To 18: NG%(I, X) = CVI(Q$(X + 1)): Next
                     For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
-                    visitingScore%(I) = CVI(Q$(22)): homeScore%(I) = CVI(Q$(23))
+                    visitingScore%(I) = CVI(Q$(22))
+                    homeScore%(I) = CVI(Q$(23))
                 Next
 
                 Close 1
 
+                'Use "Change Global" option to assing defaults
                 Call ChangeGlobalSettings
 
                 Color 15, 0
@@ -1904,9 +1916,15 @@ Sub CreateConferenceSchedule ()
                     Print "GAME"; I
                     Print NG%(I, 0), scheduleYN$(I, 0)
                     Print NG%(I, 1), scheduleYN$(I, 1)
+
+                    'Replace template values with those from global change
                     X = NG%(I, 0)
                     NG%(I, 0) = scheduleZ1%(X)
-                    scheduleYN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = scheduleZ1%(X): scheduleYN$(I, 1) = Z2$(X)
+                    scheduleYN$(I, 0) = Z2$(X)
+
+                    X = NG%(I, 1)
+                    NG%(I, 1) = scheduleZ1%(X)
+                    scheduleYN$(I, 1) = Z2$(X)
                     '    IF D3% < 7 THEN X = NG%(I, 0): NG%(I, 0) = scheduleZ1%(X): scheduleYN$(I, 0) = Z2$(X): X = NG%(I, 1): NG%(I, 1) = scheduleZ1%(X): scheduleYN$(I, 1) = Z2$(X)
                     '    IF D3% = 7 AND NG%(I, 0) <= 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = scheduleZ1%(X): scheduleYN$(I, 0) = Z2$(X): GOTO 3915
                     '    IF D3% = 7 AND NG%(I, 0) > 6 THEN X = NG%(I, 0): PRINT X: NG%(I, 0) = scheduleZ1%(X + 9): scheduleYN$(I, 0) = Z2$(X + 9)
@@ -1932,7 +1950,10 @@ Sub CreateConferenceSchedule ()
                 For I = 1 To scheduleAP%(0)
                     For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(I, X)): Next
                     For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
-                    LSet Q$(22) = MKI$(visitingScore%(I)): LSet Q$(23) = MKI$(homeScore%(I))
+                    LSet Q$(22) = MKI$(visitingScore%(I))
+                    LSet Q$(23) = MKI$(homeScore%(I))
+
+                    'With Y being the EOF, this should be appending items to the end
                     Put #1, I + Y
                 Next
 

@@ -26,6 +26,7 @@ Dim W0!(15), W1!(15)
 Dim Z!(15), Z1!(15)
 
 Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
+
 Dim homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 Dim T%(0 To 9)
 
@@ -36,8 +37,10 @@ Dim T%(0 To 9)
 Dim N%(17, 17, 3) 'REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 Dim NN%(17) 'Number of Teams Per Region (up to 16 Regions)
 
-Dim slotName$(17, 17, 3) 'Team Names for Each Seed Slot
-Dim regionNames$(1 To 16) 'Region Names
+Dim slotName$(17, 17, 0 To 3) 'Team Names for Each Seed Slot
+Dim regionNames$(1 To 17) 'Region Names
+
+
 Dim yearNumber$(MAX_TEAMS, 3)
 
 Dim tourneyDefaults%(14) 'TOURNAMENT DEFAULTS
@@ -76,7 +79,7 @@ Dim S!(0 To 14, 0 To 26)
 Dim DT!(21), OT!(21)
 
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
-Dim Z0$(1 To 250), Z3$(1 To 250)
+'Dim Z0$(1 To 250), Z3$(1 To 250)
 
 '----------------------------------------
 ' Used across DRAFT.BAS routines
@@ -125,7 +128,7 @@ Dim L%, W%
 
 Dim mergeT%(100)
 Dim O%(100), P%(100)
-Dim CP$(25), O$(100)
+'Dim CP$(25), O$(100)
 
 Dim lookyA!(0 To 14, 24)
 
@@ -160,7 +163,7 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 '----------------------------------------
 ' Used across SEECON/SEENAT.BAS routines
 '----------------------------------------
-Dim DL$(60), OL$(60), PR$(1200)
+Dim DL$(60), OL$(60), NOL$(60), PR$(1200)
 Dim DL!(60, 20), OL!(60, 20) ', seeconP(60)
 Dim O1!(30), O2!(30), O3!(30), O4!(30), O5!(30), O6!(30)
 Dim seenatZ!(260), seenatZ1!(260)
@@ -171,3 +174,4 @@ Dim T$(30)
 '----------------------------------------
 ' Used across Game Routines
 '----------------------------------------
+

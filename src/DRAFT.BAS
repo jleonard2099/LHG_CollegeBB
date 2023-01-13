@@ -7,25 +7,7 @@ Sub DRAFT ()
 
     _Title "Courtside College Basketball - Team Draft"
 
-    '-----
     ReDim menuChoices$(4)
-
-    For I = 0 To 1
-        draftT$(I) = "XXX"
-        SP!(I) = 0
-        DA!(I) = 0
-        V1%(I) = 0
-        V2%(I) = 0
-        For I1 = 0 To 4: draftL%(I, I1) = 0: Next
-        For I1 = 0 To 9: draftT%(I, I1) = 0: Next
-        For I1 = 0 To 13
-            draftA$(I, I1) = "XXX"
-            For I2 = 0 To 6
-                draftA!(I, I1, I2) = 0
-                draftX!(I, I1, I2) = 0
-            Next
-        Next
-    Next
 
     Do
 
@@ -56,6 +38,23 @@ Sub DRAFT ()
             Select Case Selection%
                 Case 1:
                     DNT% = 0
+					For I = 0 To 1
+						draftT$(I) = "XXX"
+						SP!(I) = 0
+						DA!(I) = 0
+						V1%(I) = 0
+						V2%(I) = 0
+						For I1 = 0 To 4: draftL%(I, I1) = 0: Next
+						For I1 = 0 To 9: draftT%(I, I1) = 0: Next
+						For I1 = 0 To 13
+							draftA$(I, I1) = "XXX"
+							For I2 = 0 To 6
+								draftA!(I, I1, I2) = 0
+								draftX!(I, I1, I2) = 0
+							Next
+						Next
+					Next
+
                     Call DraftNewTeam(DNT%)
                     'Clear player list; alternatively, don't make this so shared
                     Erase draftA$

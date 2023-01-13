@@ -369,6 +369,7 @@ Sub ViewCareerRecords ()
             Do
                 Color , 1
                 Cls
+
                 Locate , 28
                 Color 14
                 Print "SELECT FILE TO VIEW": Color 15
@@ -409,7 +410,9 @@ Sub ViewCareerRecords ()
 
             If ExitCode% <> 27 Then
 
-                Color 15, 0
+				Color 15, 0
+				Cls
+
                 targetFile$ = RTrim$(targetFile$)
                 ZZ$ = Left$(targetFile$, Len(targetFile$) - 4)
 
@@ -491,6 +494,7 @@ Sub ViewCareerRecords ()
                         LPrint "STEALS";: LPrint Tab(32); Using "#####"; BL(18);: LPrint Tab(47); BL$(18);: LPrint Tab(66); BLYR(18)
                         LPrint "TURNOVERS";: LPrint Tab(32); Using "#####"; BL(19);: LPrint Tab(47); BL$(19);: LPrint Tab(66); BLYR(19)
                         LPrint "HI-GAME (POINTS)";: LPrint Tab(33); Using "####"; BL(20);: LPrint Tab(47); BL$(20);: LPrint Tab(66); BLYR(20)
+
                         LPrint Chr$(12)
 
                 End Select

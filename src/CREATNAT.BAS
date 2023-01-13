@@ -8,12 +8,10 @@ Sub CREATNAT ()
 
     DefInt A-Z
 
-    '-----
     ReDim menuChoices$(1 To 3)
 
     FG = 0
     BG = 7
-    'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
 
     Do
         Cls
@@ -42,11 +40,17 @@ Sub CREATNAT ()
         If ExitCode% <> 27 Then
 
             Select Case Selection%
+
                 Case 1:
+
                     Do
-                        130 Color 15, 0: Cls
+                        Color 15, 0
+
+                        Cls
+
                         JJ = 7
                         Locate 6, 8: Color 15, 1
+
                         'Print box top
                         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
@@ -71,32 +75,34 @@ Sub CREATNAT ()
 
                             LG$ = Left$(LG$, 8)
 
-							Do
-								Locate 13, 12: Print "ANY CHANGE (YN) "
-								I$ = GetKeyPress$
-							Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                            Do
+                                Locate 13, 12: Print "ANY CHANGE (YN) "
+                                I$ = GetKeyPress$
+                            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                         End If
 
                     Loop Until UCase$(I$) = "N"
 
                     If LG$ <> "" Then
-						For X = 1 To MAX_CONFERENCES
-							Z1$(X) = "XXX"
-							'Z2$(X) = "XXX"
-							'Z1%(X) = -1
-						Next
+                        For X = 1 To MAX_CONFERENCES
+                            Z1$(X) = "XXX"
+                            'Z2$(X) = "XXX"
+                            'Z1%(X) = -1
+                        Next
 
                         Call Conference_Menu(LG$, Z1$())
                     End If
 
                 Case 2:
-                    'Add / Delete / Rreview Conferences
+
+                    'Add / Delete / Review Conferences
                     Do
                         'Display list of files...
                         Spec$ = diskPaths$(1) + "*.CON"
                         null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
                         Count% = DirCount%
+
                         If Count% = 0 Then
                             Locate 10, 8
                             Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -142,12 +148,12 @@ Sub CREATNAT ()
                                     targetFile$ = organizationFiles$(Selection%)
                                     Locate 2, 33: Print targetFile$
 
-									Do
-										Locate , 33: Print "ANY CHANGE (YN)";
-										I$ = GetKeyPress$
-									Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                                    Do
+                                        Locate , 33: Print "ANY CHANGE (YN)";
+                                        I$ = GetKeyPress$
+                                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-									Color 15, 0
+                                    Color 15, 0
 
                                 End If
 
@@ -177,6 +183,7 @@ Sub CREATNAT ()
                     Call Conference_Menu(LG$, Z1$())
 
                 Case 3: Cls
+
             End Select
 
         End If
@@ -242,21 +249,21 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
                 targetFile$ = conferenceFiles$(Selection%)
                 Locate 2, 33: Print targetFile$
 
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Do
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-				Color 15, 0
+                Color 15, 0
 
             End If
 
         Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
         If ExitCode% <> 27 Then
-			targetFile$ = RTrim$(targetFile$)
-			targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-		End If 'Done checking for ESC
+            targetFile$ = RTrim$(targetFile$)
+            targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+        End If 'Done checking for ESC
 
     End If 'Done checking file count
 
@@ -266,13 +273,13 @@ End Sub
 '       Conference_Menu Subroutine
 '----------------------------------------
 '...explanation...
-Sub Conference_Menu (conferenceFile$, leagueData$())
+Sub Conference_Menu (leagueFile$, leagueData$())
 
     Do
         Color 14, 0
         Cls
         Print
-        Print "  "; conferenceFile$: Print: Color 12
+        Print "  "; leagueFile$: Print: Color 12
 
         For I = 1 To 10
             Color 2: Print Using "## "; I;
@@ -299,7 +306,7 @@ Sub Conference_Menu (conferenceFile$, leagueData$())
                 Do
                     Locate 20, 30
                     Print "SLOT # (1-40) ";
-					'What does N do?
+                    'What does N do?
                     N = 1
                     Input conferenceIndex
                 Loop Until conferenceIndex >= 1 And conferenceIndex <= MAX_CONFERENCES
@@ -310,20 +317,23 @@ Sub Conference_Menu (conferenceFile$, leagueData$())
             Case "2":
                 Do
                     Locate 20, 30: Print "SLOT # (1-40) ";
-					'What does N do?
+                    'What does N do?
                     N = 1
-                    Input B
+                    Input conferenceIndex
                 Loop Until conferenceIndex >= 1 And conferenceIndex <= MAX_CONFERENCES
+
                 leagueData$(conferenceIndex) = "XXX"
 
             Case "3":
-                Cls
-                Open diskPaths$(1) + conferenceFile$ + ".CON" For Output As #2
-                Print #2, conferenceFile$
+                Open diskPaths$(1) + leagueFile$ + ".CON" For Output As #2
+
+                Print #2, leagueFile$
                 For idx = 1 To MAX_CONFERENCES
                     Print #2, leagueData$(idx)
                 Next
                 Close 2
+
+                Cls
 
         End Select
 

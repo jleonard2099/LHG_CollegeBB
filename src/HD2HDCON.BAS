@@ -2,7 +2,6 @@ Sub HD2HDCON ()
 
     _Title "Courtside College Basketball - Head-to-Head Stats"
 
-    '-----
     ReDim menuChoices$(1 To 2)
 
     Cls
@@ -73,15 +72,15 @@ Sub TeamVsConf ()
     Do
 
         Color 15, 0
-		Cls
+        Cls
         JJ = 6
         SN = 1: Locate 6, 8: Color 15, 4
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-		
-		Locate 7, 32
+
+        Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -99,7 +98,7 @@ Sub TeamVsConf ()
                 NY$ = I$ + NY$
                 Color 15, 0
 
-                If NY$ = "" And YN$ <> "" Then 
+                If NY$ = "" And YN$ <> "" Then
                     Call SelectTeam_HD2HD(YN$, NTMS, QQ$(1))
                 Else
                     YN$ = NY$
@@ -128,11 +127,11 @@ Sub TeamVsConf ()
             Color T%(0), T%(1): Print QQ$(1)
 
             Color 15, 4
-			
-			Do
-				Locate , 33: Print "ANY CHANGE (YN)";
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+            Do
+                Locate , 33: Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
         End If
 
@@ -142,20 +141,25 @@ Sub TeamVsConf ()
 
     B$ = QQ$(1)
 
-    For XX = 4 To 11: 
-		If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
+    For XX = 4 To 11:
+        If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
     Next XX
 
-    For XX = 12 To 14: 
-		If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
+    For XX = 12 To 14:
+        If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
     Next XX
 
     QQ = 8
 
     For XX = 11 To 4 Step -1
-        If Mid$(B$, XX, 1) = "_" Then QQ = XX - 4
+        If Mid$(B$, XX, 1) = "_" Then
+            QQ = XX - 4
+        Else
+            Exit For
+        End If
     Next XX
 
+    test$ = Mid$(B$, 4, QQ)
     Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
     If Not _FileExists(diskPaths$(1) + Z$ + "S") Then
@@ -167,160 +171,160 @@ Sub TeamVsConf ()
         Call CSMsgBox("", 0, Pass)
         Color , 0
 
-	Else
+    Else
 
-		Open diskPaths$(1) + Z$ + "S" For Input As #4
-		Input #4, Y
-		For J = 1 To 100: Input #4, O%(J): Next
-		For J = 1 To 100: Input #4, O$(J): Next
-		For J = 1 To 100: Input #4, TR%(J): Next
-		For J = 1 To 100: Input #4, homeTeam$(J): Next
-		Close #4
+        Open diskPaths$(1) + Z$ + "S" For Input As #4
+        Input #4, Y
+        For J = 1 To 100: Input #4, O%(J): Next
+        For J = 1 To 100: Input #4, O$(J): Next
+        For J = 1 To 100: Input #4, TR%(J): Next
+        For J = 1 To 100: Input #4, homeTeam$(J): Next
+        Close #4
 
-		1440 Spec$ = diskPaths$(1) + "*.LIB"
-		null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-		Count% = DirCount%
-		If Count% = 0 Then
-			Locate 10, 8
-			Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-			I$ = GetKeyPress$
-			Call CSMsgBox("", 0, Pass)
-			Exit Sub
-		End If
+        1440 Spec$ = diskPaths$(1) + "*.LIB"
+        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
+        Count% = DirCount%
+        If Count% = 0 Then
+            Locate 10, 8
+            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
+            Exit Sub
+        End If
 
-		ReDim conferenceFiles$(0 To Count%)
-		For X = 1 To Count%
-			conferenceFiles$(X) = Space$(12)
-		Next
-		conferenceFiles$(0) = Spec$
-		Call ReadFile(conferenceFiles$())
+        ReDim conferenceFiles$(0 To Count%)
+        For X = 1 To Count%
+            conferenceFiles$(X) = Space$(12)
+        Next
+        conferenceFiles$(0) = Spec$
+        Call ReadFile(conferenceFiles$())
 
-		Do
-			Cls
-			Color , 1
-			Cls
-			Locate , 28
-			Color 14
-			Print "SELECT CONFERENCE": Color 15
-			Selection% = 1
-			Start% = 1
-			FileFGColr% = 15: FileBGColr% = 1
-			HiLiteFGColr% = 0: HiLiteBGColr% = 7
-			Rows% = 20
-			Columns% = 4
-			Spacing% = 6
-			Row% = 4
-			Column% = 1
-			Locate 25, 1
-			Color 14
-			Print "ENTER";: Color 15
-			Print "-SELECTS CONFERENCE";
+        Do
+            Cls
+            Color , 1
+            Cls
+            Locate , 28
+            Color 14
+            Print "SELECT CONFERENCE": Color 15
+            Selection% = 1
+            Start% = 1
+            FileFGColr% = 15: FileBGColr% = 1
+            HiLiteFGColr% = 0: HiLiteBGColr% = 7
+            Rows% = 20
+            Columns% = 4
+            Spacing% = 6
+            Row% = 4
+            Column% = 1
+            Locate 25, 1
+            Color 14
+            Print "ENTER";: Color 15
+            Print "-SELECTS CONFERENCE";
 
-			_MouseShow "DEFAULT"
-			MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-			_MouseHide
+            _MouseShow "DEFAULT"
+            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+            _MouseHide
 
-			If ExitCode% <> 27 Then
+            If ExitCode% <> 27 Then
 
-				Color 15, 1
-				
-				targetFile$ = conferenceFiles$(Selection%)
-				Locate 2, 33: Print targetFile$
-				
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Color 15, 1
 
-				Color 15, 0
+                targetFile$ = conferenceFiles$(Selection%)
+                Locate 2, 33: Print targetFile$
 
-			End If
-		
-		Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+                Do
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-		If ExitCode% <> 27 Then
+                Color 15, 0
 
-			targetFile$ = RTrim$(targetFile$)
-			targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-			LG$ = targetFile$
+            End If
 
-			Cls
-			J = 5
-			Locate 8, 8
-			Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-			For II = 1 To J
-				Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-			Next
-			Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-			Locate 10, 15
+        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-			Do
-				Color 7
-				Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-				Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
-				VPP = 0
-				I$ = GetKeyPress$
-			Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
+        If ExitCode% <> 27 Then
 
-			Color 14, 0
-			If UCase$(I$) = "P" Then X1 = 1
-			If UCase$(I$) = "S" Then VPP = 1
+            targetFile$ = RTrim$(targetFile$)
+            targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+            LG$ = targetFile$
 
-			W$ = LG$ + ".LIB"
+            Cls
+            J = 5
+            Locate 8, 8
+            Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+            For II = 1 To J
+                Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+            Next
+            Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+            Locate 10, 15
 
-			Open diskPaths$(1) + W$ For Input As #1
-			Input #1, X
-			Input #1, LG$
-			Input #1, D1$: Input #1, D2$
-			For X = 1 To 30
-				Input #1, Z1$(X)
-				Input #1, hd2hdZ1%(X)
-				Input #1, hd2hdZ2$(X)
-			Next
+            Do
+                Color 7
+                Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
+                Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+                VPP = 0
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
 
-			NTMS = 30
-			Close 1
+            Color 14, 0
+            If UCase$(I$) = "P" Then X1 = 1
+            If UCase$(I$) = "S" Then VPP = 1
 
-			Cls
-			Color 15
-			Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
-			For Q = 1 To 30
-				AW!(Q) = 0: HW!(Q) = 0
-				AL!(Q) = 0: HL!(Q) = 0
-				R1!(Q) = 0: R2!(Q) = 0
-				R3!(Q) = 0: R4!(Q) = 0
-			Next
-			For K = 1 To 2
-				THW!(K) = 0: THL!(K) = 0
-				TAW!(K) = 0: TAL!(K) = 0
-				TR1!(K) = 0: TR2!(K) = 0
-				TR3!(K) = 0: TR4!(K) = 0
-			Next
-			For K = 1 To 30
-				If Not (Z1$(K) = "XXX") Then
-					For I = 1 To Y
-						If O%(I) > TR%(I) And Left$(homeTeam$(I), 1) = "V" And O$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-						If O%(I) > TR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And O$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-						If O%(I) < TR%(I) And Left$(homeTeam$(I), 1) = "V" And O$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
-						If O%(I) < TR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And O$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
-						If O$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + TR%(I)
-						If O$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + O%(I)
-						If O$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + TR%(I)
-						If O$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R3!(K) = R3!(K) + O%(I)
-					Next I
-				End If
+            W$ = LG$ + ".LIB"
 
-			Next K
+            Open diskPaths$(1) + W$ For Input As #1
+            Input #1, X
+            Input #1, LG$
+            Input #1, D1$: Input #1, D2$
+            For X = 1 To 30
+                Input #1, Z1$(X)
+                Input #1, hd2hdZ1%(X)
+                Input #1, hd2hdZ2$(X)
+            Next
 
-			If VPP <> 1 Then
-				Call Hd2Hd_Printer(QQ$(1))
-			Else
-				Call Hd2Hd_Screen(QQ$(1))
-			End If
+            NTMS = 30
+            Close 1
 
-		End If 'Done checking for ESC
+            Cls
+            Color 15
+            Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
+            For Q = 1 To 30
+                AW!(Q) = 0: HW!(Q) = 0
+                AL!(Q) = 0: HL!(Q) = 0
+                R1!(Q) = 0: R2!(Q) = 0
+                R3!(Q) = 0: R4!(Q) = 0
+            Next
+            For K = 1 To 2
+                THW!(K) = 0: THL!(K) = 0
+                TAW!(K) = 0: TAL!(K) = 0
+                TR1!(K) = 0: TR2!(K) = 0
+                TR3!(K) = 0: TR4!(K) = 0
+            Next
+            For K = 1 To 30
+                If Not (Z1$(K) = "XXX") Then
+                    For I = 1 To Y
+                        If O%(I) > TR%(I) And Left$(homeTeam$(I), 1) = "V" And O$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
+                        If O%(I) > TR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And O$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
+                        If O%(I) < TR%(I) And Left$(homeTeam$(I), 1) = "V" And O$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
+                        If O%(I) < TR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And O$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
+                        If O$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + TR%(I)
+                        If O$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + O%(I)
+                        If O$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + TR%(I)
+                        If O$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R3!(K) = R3!(K) + O%(I)
+                    Next I
+                End If
 
-	End If 'Done checking for stats file
+            Next K
+
+            If VPP <> 1 Then
+                Call Hd2Hd_Printer(QQ$(1))
+            Else
+                Call Hd2Hd_Screen(QQ$(1))
+            End If
+
+        End If 'Done checking for ESC
+
+    End If 'Done checking for stats file
 
 End Sub
 
@@ -381,12 +385,12 @@ Sub Hd2Hd_Screen (teamName$)
                 If Z1$(K) <> "XXX" And Z1$(K) <> teamName$ And Z1$(K) <> "*" Then
                     Color 15
                     Locate , 1: Print Left$(Z1$(K), 13);
-                    
-					Color 7
+
+                    Color 7
                     Locate , 15: Print Using "#"; HW!(K);
                     Locate , 17: Print Using "#"; HL!(K);
-                    
-					If HW!(K) = HW!(K) + HL!(K) And HW!(K) <> 0 Then Locate , 19: Print "1.000";
+
+                    If HW!(K) = HW!(K) + HL!(K) And HW!(K) <> 0 Then Locate , 19: Print "1.000";
                     If HW!(K) = 0 Then Locate , 20: Print ".000";
                     If HW!(K) > 0 And HW!(K) < HW!(K) + HL!(K) Then statPCT! = (HW!(K) / (HW!(K) + HL!(K))): Locate , 20: Print Using ".###"; statPCT!;
                     If R1!(K) = 0 Then Locate , 25: Print "  0.0";
@@ -421,7 +425,7 @@ Sub Hd2Hd_Screen (teamName$)
                     If R2!(K) + R4!(K) > 0 Then Locate , 75: Print Using "###.#"; (R2!(K) + R4!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K))
 
                     Color 3
-					Print Tab(36); Chr$(179); Tab(58); Chr$(179);
+                    Print Tab(36); Chr$(179); Tab(58); Chr$(179);
 
                     THW!(RDD) = THW!(RDD) + HW!(K)
                     THL!(RDD) = THL!(RDD) + HL!(K)
@@ -455,8 +459,8 @@ Sub Hd2Hd_Screen (teamName$)
             Locate , 57: Print Using "###"; THW!(RDD) + TAW!(RDD);
 
             Color 11
-			
-			If THW!(RDD) + TAW!(RDD) = THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD) And THW!(RDD) + TAW!(RDD) <> 0 Then Locate , 63: Print "1.000";
+
+            If THW!(RDD) + TAW!(RDD) = THW!(RDD) + THL!(RDD) + TAW!(RDD) + TAL!(RDD) And THW!(RDD) + TAW!(RDD) <> 0 Then Locate , 63: Print "1.000";
             If THW!(RDD) + TAW!(RDD) = 0 Then Locate , 64: Print ".000";
             If THW!(RDD) + TAW!(RDD) > 0 And THW!(RDD) + TAW!(RDD) < THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD) Then statPCT! = (THW!(RDD) + TAW!(RDD)) / (THW!(RDD) + TAW!(RDD) + THL!(RDD) + TAL!(RDD)): Locate , 64: Print Using ".###"; statPCT!;
             If TR2!(RDD) + TR4!(RDD) < 1 Then Locate , 76: Print " 0.0"
@@ -468,8 +472,8 @@ Sub Hd2Hd_Screen (teamName$)
             If TR1!(RDD) > 0 Then Locate , 25: Print Using "###.#"; TR1!(RDD) / (THW!(RDD) + THL!(RDD));
 
             Color 11
-			
-			If TAW!(RDD) = TAW!(RDD) + TAL!(RDD) And TAW!(RDD) <> 0 Then Locate , 41: Print "1.000";
+
+            If TAW!(RDD) = TAW!(RDD) + TAL!(RDD) And TAW!(RDD) <> 0 Then Locate , 41: Print "1.000";
             If TAW!(RDD) = 0 Then Locate , 42: Print ".000";
             If TAW!(RDD) > 0 And TAW!(RDD) < TAW!(RDD) + TAL!(RDD) Then statPCT! = (TAW!(RDD) / (TAW!(RDD) + TAL!(RDD))): Locate , 42: Print Using ".###"; statPCT!;
             If TR4!(RDD) < 1 Then Locate , 54: Print " 0.0";
@@ -481,7 +485,7 @@ Sub Hd2Hd_Screen (teamName$)
             Locate , 36: Print Using "##"; TAW!(RDD);
             Locate , 59: Print Using "###"; THL!(RDD) + TAL!(RDD)
 
-			Color 14
+            Color 14
             Locate 20, 5: Input "HIT ENTER TO CONTINUE"; DUMMY$
         End If
 
@@ -490,7 +494,7 @@ Sub Hd2Hd_Screen (teamName$)
             Cls
 
             'Color 12
-			Locate 2, 35
+            Locate 2, 35
             Color T%(0), T%(1): Print teamName$
             Color 3, 0
             'Color 3
@@ -503,40 +507,40 @@ Sub Hd2Hd_Screen (teamName$)
             For W = 1 To 2
                 If DV$(W) <> "XXX" And DV$(W) <> "" Then
                     Color 15
-					Locate , 1: Print Left$(DV$(W), 10);
-                    
-					Color 7
-					Locate , 9: Print Using "##"; THW!(W);
+                    Locate , 1: Print Left$(DV$(W), 10);
+
+                    Color 7
+                    Locate , 9: Print Using "##"; THW!(W);
                     Locate , 12: Print Using "##"; THL!(W);
-                    
-					If THW!(W) = THW!(W) + THL!(W) And THW!(W) <> 0 Then Locate , 15: Print "1.000";
+
+                    If THW!(W) = THW!(W) + THL!(W) And THW!(W) <> 0 Then Locate , 15: Print "1.000";
                     If THW!(W) = 0 Then Locate , 16: Print ".000";
                     If THW!(W) > 0 And THW!(W) < THW!(W) + THL!(W) Then statPCT! = (THW!(W) / (THW!(W) + THL!(W))): Locate , 16: Print Using ".###"; statPCT!;
                     If TR1!(W) = 0 Then Locate , 21: Print "  0.0";
                     If TR1!(W) > 0 Then Locate , 21: Print Using "###.#"; TR1!(W) / (THW!(W) + THL!(W));
                     If TR2!(W) = 0 Then Locate , 27: Print "  0.0";
                     If TR2!(W) > 0 Then Locate , 27: Print Using "###.#"; TR2!(W) / (THW!(W) + THL!(W));
-                    
-					Color 3: Print Tab(32); Chr$(179);
-                    
-					Color 7
-					Locate , 33: Print Using "##"; TAW!(W);
+
+                    Color 3: Print Tab(32); Chr$(179);
+
+                    Color 7
+                    Locate , 33: Print Using "##"; TAW!(W);
                     Locate , 36: Print Using "##"; TAL!(W);
-                    
-					If TAW!(W) = TAW!(W) + TAL!(W) And TAW!(W) <> 0 Then Locate , 39: Print "1.000";
+
+                    If TAW!(W) = TAW!(W) + TAL!(W) And TAW!(W) <> 0 Then Locate , 39: Print "1.000";
                     If TAW!(W) = 0 Then Locate , 40: Print ".000";
                     If TAW!(W) > 0 And TAW!(W) < TAW!(W) + TAL!(W) Then statPCT! = (TAW!(W) / (TAW!(W) + TAL!(W))): Locate , 40: Print Using ".###"; statPCT!;
                     If TR3!(W) = 0 Then Locate , 45: Print "  0.0";
                     If TR3!(W) > 0 Then Locate , 45: Print Using "###.#"; TR3!(W) / (TAW!(W) + TAL!(W));
                     If TR4!(W) = 0 Then Locate , 51: Print "  0.0";
                     If TR4!(W) > 0 Then Locate , 51: Print Using "###.#"; TR4!(W) / (TAW!(W) + TAL!(W));
-                    
-					Color 3: Print Tab(56); Chr$(179);
+
+                    Color 3: Print Tab(56); Chr$(179);
                     Color 7
-					Locate , 57: Print Using "##"; THW!(W) + TAW!(W);
+                    Locate , 57: Print Using "##"; THW!(W) + TAW!(W);
                     Locate , 60: Print Using "##"; THL!(W) + TAL!(W);
-                    
-					If THW!(W) + TAW!(W) = THW!(W) + TAW!(W) + THL!(W) + TAL!(W) And THW!(W) + TAW!(W) <> 0 Then Locate , 63: Print "1.000";
+
+                    If THW!(W) + TAW!(W) = THW!(W) + TAW!(W) + THL!(W) + TAL!(W) And THW!(W) + TAW!(W) <> 0 Then Locate , 63: Print "1.000";
                     If (THW!(W) + TAW!(W)) = 0 Then Locate , 64: Print ".000";
                     If (THW!(W) + TAW!(W)) > 0 And THW!(W) + TAW!(W) < THW!(W) + TAW!(W) + THL!(W) + TAL!(W) Then statPCT! = ((THW!(W) + TAW!(W)) / (THW!(W) + TAW!(W) + THL!(W) + TAL!(W))): Locate , 64: Print Using ".###"; statPCT!;
                     If TR1!(W) + TR3!(W) = 0 Then Locate , 69: Print "  0.0";
@@ -544,9 +548,9 @@ Sub Hd2Hd_Screen (teamName$)
 
                     If TR2!(W) + TR4!(W) = 0 Then Locate , 75: Print "  0.0"
                     If TR2!(W) + TR4!(W) > 0 Then Locate , 75: Print Using "###.#"; (TR2!(W) + TR4!(W)) / (THW!(W) + THL!(W) + TAW!(W) + TAL!(W))
-                    
-					Color 3
-					Print Tab(32); Chr$(179); Tab(56); Chr$(179);
+
+                    Color 3
+                    Print Tab(32); Chr$(179); Tab(56); Chr$(179);
                 End If
 
             Next W
@@ -567,23 +571,23 @@ Sub Hd2Hd_Screen (teamName$)
 
             'Division Totals - TOTALS
             Color 11
-			Print "TOTALS";
-            
-			Locate , 9: Print Using "##"; THWW;
+            Print "TOTALS";
+
+            Locate , 9: Print Using "##"; THWW;
             Locate , 12: Print Using "##"; THLL;
-            
-			If THWW = THWW + THLL And THWW <> 0 Then Locate , 15: Print "1.000";
+
+            If THWW = THWW + THLL And THWW <> 0 Then Locate , 15: Print "1.000";
             If THWW = 0 Then Locate , 16: Print ".000";
             If THWW > 0 And THWW < THWW + THLL Then Locate , 16: Print Using ".###"; THWW / (THWW + THLL);
             If TR11 = 0 Then Locate , 21: Print "  0.0";
             If TR11 > 0 Then Locate , 21: Print Using "###.#"; TR11 / (THWW + THLL);
             If TR22 = 0 Then Locate , 27: Print "  0.0";
             If TR22 > 0 Then Locate , 27: Print Using "###.#"; TR22 / (THWW + THLL);
-            
-			Color 3: Print Tab(32); Chr$(179);
-            
-			Color 11
-			Locate , 33: Print Using "##"; TAWW;
+
+            Color 3: Print Tab(32); Chr$(179);
+
+            Color 11
+            Locate , 33: Print Using "##"; TAWW;
             Locate , 36: Print Using "##"; TALL;
 
             If TAWW = TAWW + TALL And TAWW <> 0 Then Locate , 39: Print "1.000";
@@ -595,9 +599,9 @@ Sub Hd2Hd_Screen (teamName$)
             If TR44 > 0 Then Locate , 51: Print Using "###.#"; TR44 / (TAWW + TALL);
 
             Color 3: Print Tab(56); Chr$(179);
-            
-			Color 11
-			Locate , 57: Print Using "##"; THWW + TAWW;
+
+            Color 11
+            Locate , 57: Print Using "##"; THWW + TAWW;
             Locate , 60: Print Using "##"; THLL + TALL;
 
             If THWW + TAWW = THWW + TAWW + THLL + TALL And THWW + TAWW <> 0 Then Locate , 63: Print "1.000";
@@ -608,7 +612,7 @@ Sub Hd2Hd_Screen (teamName$)
             If TR22 + TR44 = 0 Then Locate , 75: Print "  0.0"
             If TR22 + TR44 > 0 Then Locate , 75: Print Using "###.#"; (TR22 + TR44) / (THWW + THLL + TAWW + TALL)
 
-			Color 14
+            Color 14
             Locate 20, 5: Input "HIT ENTER TO CONTINUE"; DUMMY$
 
         End If
@@ -636,20 +640,20 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
     Row% = 4
     Column% = 1
     Color , 4
-	Cls
-	Locate , 33
-	Color 14
+    Cls
+    Locate , 33
+    Color 14
     Print "TEAM SELECTION"
-	Color 15
+    Color 15
     Locate 25, 1
-	Color 14
-	Print "ESC";
-	Color 15
+    Color 14
+    Print "ESC";
+    Color 15
     Print "-SELECT NEW ID  PGDN  PGUP  ";
-	Color 14
+    Color 14
     Print "ENTER";
-	Color 15
-	Print "-SELECTS TEAM";
+    Color 15
+    Print "-SELECTS TEAM";
 
     _MouseShow "DEFAULT"
     MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
@@ -702,12 +706,11 @@ Sub Hd2Hd_Printer (teamName$)
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    LPrint Chr$(15)
-    'This is not supported in QB64
-    'WIDTH "LPT1:1", 130
     DV$(1) = D1$
     DV$(2) = D2$
-    LPrint Tab(55); Z$: LPrint
+
+    LPrint Tab(55); Z$
+    LPrint
     LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
 
@@ -817,8 +820,8 @@ Sub Hd2Hd_Printer (teamName$)
     'If RDD = 2 Then 1401 Else GoTo 1204
 
     LPrint
-	LPrint
-	LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
+    LPrint
+    LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
     LPrint
 
@@ -906,9 +909,7 @@ Sub Hd2Hd_Printer (teamName$)
     If TR11 + TR33 > 0 Then LPrint Tab(102); Using "###.#"; (TR11 + TR33) / (THWW + THLL + TAWW + TALL);
     If TR22 + TR44 = 0 Then LPrint Tab(109); "  0.0";
     If TR22 + TR44 > 0 Then LPrint Tab(109); Using "###.#"; (TR22 + TR44) / (THWW + THLL + TAWW + TALL)
-    LPrint Chr$(18)
-    'This is not supported in QB64
-    'WIDTH "LPT1:1", 80
+
     LPrint Chr$(12)
 
 End Sub

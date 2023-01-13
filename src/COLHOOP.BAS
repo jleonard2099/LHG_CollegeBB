@@ -4,6 +4,8 @@
 '$INCLUDE: 'PadRight.BI'
 '$INCLUDE: 'GameRoutines.BI'
 
+Dim Shared B1(0 To 1, 0 To 4)
+
 On Error GoTo Errhandler
 
 '----------------------------------------
@@ -138,11 +140,11 @@ C7$(1) = "45 SEC SHOT CLOCK"
 C7$(2) = "35 SEC SHOT CLOCK"
 'C7$(3) = "30 SEC SHOT CLOCK"
 
-For I = 0 To 1
-    For I1 = 0 To 4
-        B1(I, I1) = -1
-    Next I1
-Next I
+'For I = 0 To 1
+'    For I1 = 0 To 4
+'        B1(I, I1) = -1
+'    Next I1
+'Next I
 
 NL% = 1
 PA% = -1
@@ -311,11 +313,13 @@ End If
 
 If skipUserOptions% = 0 Then
     ' USER SELECTION OF OPTIONS
+    N = 1
+
     Do
         Color 15, 0
         Cls
         Color 2
-        
+
         Print ; Tab(29); "SELECT OPENING OPTIONS"
         Print
         Locate 2, 2: Color 14
@@ -917,6 +921,8 @@ Errhandler:
 Open "errlog" For Append As #9
 Print #9, "Error occurred! " '; Date$; " "; Time$
 Print #9, "Error #"; Err; "on program file line"; _ErrorLine
+Print #9, "Action   :"; U$
+Print #9, "Path/File:"; diskPaths$(1) + R$
 Print #9, ""
 Close #9
 Resume Next ' moves program to code following the error.
@@ -1792,7 +1798,7 @@ If pbpDelay! <> 0 Then
             If AA$(P, B1(P, B)) <> PB$ And PB$ <> "" Then PT% = 10: Call MAKEPBP: Call PBP
             If AA$(P, B1(P, B)) = PB$ Then PT% = 9: Call MAKEPBP: Call PBP
 
-            If X8 <= 0 Then
+            If X8 <= 0 And C7 > 0 Then
                 U$ = "SHOT CLOCK HAS EXPIRED!"
                 SV% = 1
                 Call LASTSHOT

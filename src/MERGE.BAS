@@ -2,13 +2,6 @@ Sub MERGE ()
 
     _Title "Courtside College Basketball - Merge Stats"
 
-    'Dim AR$(1), G$(4), G%(4, 10), B%(26, 11)
-    'Dim TR%(12), GR$(4), GR%(4, 10), BR$(26), BR%(26, 11)
-    'Dim H1(100), O1$(100), V1(100), L1$(100), WG1$(100), LG1$(100), P1(100)
-    'Dim H(100), V(100), L$(100), WG$(100), LG$(100), P(100)
-    'Dim A%(17), APR%(1, 120), CRDR(120), SITER$(120)
-    'Dim P%(100), Z2(14, 14), PRD%(100), ZRD2(14, 14)
-
     ReDim menuChoices$(1 To 3)
 
     Do

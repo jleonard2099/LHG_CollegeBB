@@ -7,31 +7,32 @@ Sub LOOKY ()
     CP% = 1
 
     Color 15, 0
-	Cls
+    Cls
 
     Do
 
         Call TITLE_HEADER
 
         Color 15, 0
-        
-		JJ = 6
+
+        JJ = 6
         Locate 6, 8: Color 15, 4
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
         Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-		
-		Locate 7, 32
+
+        Locate 7, 32
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Print
         Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
+
         I$ = GetKeyPress$
 
         If I$ <> Chr$(27) Then
-		
+
             If I$ = Chr$(13) Then
                 Call SelectTeam_LOOKY(NTMS, YN$)
             Else
@@ -40,7 +41,7 @@ Sub LOOKY ()
                 NY$ = I$ + NY$
                 Color 15, 0
 
-                If NY$ = "" And YN$ <> "" Then 
+                If NY$ = "" And YN$ <> "" Then
                     Call SelectTeam_LOOKY(NTMS, YN$)
                 Else
                     YN$ = NY$
@@ -65,18 +66,18 @@ Sub LOOKY ()
                 BO% = 0
             Else
 
-                A$ = RTRim$(Q$(0))
+                A$ = RTrim$(Q$(0))
                 B$ = A$
 
                 Locate 2, 33
                 Color mergeT%(0), mergeT%(1): Print A$
-				
-				Color 15, 4
 
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Color 15, 4
+
+                Do
+                    Locate , 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                 If UCase$(I$) = "N" Then
 
@@ -99,19 +100,17 @@ Sub LOOKY ()
 
                     Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
+                    If UCase$(Z$) <> "END" Then
+                        Call ReadStats(Z$, totalGames%, menuExit%)
+                    End If
+
                 End If 'Done checking if "N"
-
-                'Loop Until UCase$(I$) = "N"
-
-                If UCase$(Z$) <> "END" Then
-                    Call ReadStats(Z$)
-                End If
 
             End If 'Done checking BO%
 
         End If 'Done checking for ESC
 
-    Loop Until UCase$(Z$) = "END" Or I$ = Chr$(27)
+    Loop Until UCase$(Z$) = "END" Or I$ = Chr$(27) 'Or menuExit% = 1
 
 End Sub
 
@@ -119,7 +118,7 @@ End Sub
 '       ReadStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub ReadStats (statFile$)
+Sub ReadStats (statFile$, totalGames%, menuExit%)
 
     Dim CRD(100)
     Dim AP%(100, 1)
@@ -138,12 +137,14 @@ Sub ReadStats (statFile$)
 
     Shared A$(), homeTeam$(), O$()
 
+    menuExit% = 0
+
     ' *** READ IN TEAM STATS ***
     If Not _FileExists(diskPaths$(1) + statFile$) Then
 
         Locate 10, 8
         Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$=GetKeyPress$
+        I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
 
     Else
@@ -186,7 +187,8 @@ Sub ReadStats (statFile$)
             If O%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "N" Then NL% = NL% + 1
 
             If O%(I) = mergeT%(I) Then X% = X% + 1
-            P%(0) = P%(0) + O%(I): P%(1) = P%(1) + mergeT%(I)
+            P%(0) = P%(0) + O%(I)
+            P%(1) = P%(1) + mergeT%(I)
         Next
 
         Open diskPaths$(1) + statFile$ For Input As #1
@@ -209,15 +211,16 @@ Sub ReadStats (statFile$)
 
         Call TITLE_HEADER
         Color , 1
-		Locate 1, 1: Print Tab(80);
+        Locate 1, 1: Print Tab(80);
         Locate , 31
-		Color 14
-        
-		Y = Len(B$)
+        Color 14
+
+        Y = Len(B$)
         Y = Int((80 - Y) / 2)
-        
-		Locate , Y: Print B$
-        Locate 25, 1: Print Tab(80);: Locate , 1
+        Locate , Y: Print B$
+
+        Locate 25, 1: Print Tab(80);
+        Locate , 1
         Locate 2, 1
         Color , 0
 
@@ -253,14 +256,14 @@ Sub ReadStats (statFile$)
 
         Locate 21, 27
         Color 14: Print "OVERALL RECORD ";
-		Color 15: Print "("; W%; "-"; L%; ")"
-        
-		Locate , 27: Color 14: Print "HOME RECORD    ";
-		Color 15: Print "("; HW%; "-"; HL%; ")"
+        Color 15: Print "("; W%; "-"; L%; ")"
+
+        Locate , 27: Color 14: Print "HOME RECORD    ";
+        Color 15: Print "("; HW%; "-"; HL%; ")"
         Locate , 27: Color 14: Print "ROAD RECORD    ";
-		Color 15: Print "("; VW%; "-"; VL%; ")"
+        Color 15: Print "("; VW%; "-"; VL%; ")"
         Locate , 27: Color 14: Print "NEUTRAL RECORD ";
-		Color 15: Print "("; NW%; "-"; NL%; ")";
+        Color 15: Print "("; NW%; "-"; NL%; ")";
 
         Color 3
         Locate 25, 1
@@ -274,21 +277,27 @@ Sub ReadStats (statFile$)
 
         Do
             I$ = GetKeyPress$
+
             Select Case UCase$(I$)
+
                 'Page Down
                 Case Chr$(0) + "Q":
                     Color , 0
                     Cls
-                    Call ViewStatSummary(statFile$)
+                    Call ViewStatSummary(B$, statFile$, totalGames%)
+
                 Case "D":
                     Kill diskPaths$(1) + statFile$
                     Kill diskPaths$(1) + statFile$ + "S"
-                Case "P": Call PrintTeamStatSummary(B$, totalGames%)
+
+                Case "P":
+                    Call PrintTeamStatSummary(B$, totalGames%)
+
             End Select
 
         Loop Until I$ = Chr$(0) + "Q" Or I$ = Chr$(27)
 
-        'If I$ = Chr$(27) Then Exit Sub
+        If I$ = Chr$(27) Then menuExit% = 1
 
     End If 'Done checking for presence of file
 
@@ -298,7 +307,7 @@ End Sub
 '       PlayerStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub PlayerStats (statFile$, B$)
+Sub PlayerStats (statFile$, B$, totalGames%)
 
     Shared lookyA!()
     Shared W0!(), W1!()
@@ -308,10 +317,11 @@ Sub PlayerStats (statFile$, B$)
 
     '    Do
     Call TITLE_HEADER
+
     Color , 1
-    Locate 24, 1: Print Tab(80);
-	
-	Locate , 1
+
+    Locate 24, 1
+
     Color 15, 1: Print "SCHEDULE ";
     Color 14: Print "[Pg UP]  ";
     Color 15: Print "MORE STATS ";
@@ -319,19 +329,18 @@ Sub PlayerStats (statFile$, B$)
     Color 15: Print "NEW TEAM ";
     Color 14: Print "[ESC]  ";
     Color 15: Print "SORT ";
-    Color 14: Print "<-,-> and [ENTER] ";
-    Locate 25, 1
+    Color 14: Print "<-,-> and [ENTER]    ";
     Color 15: Print "PRINT ";
-	Color 14: Print "[P]  ";
+    Color 14: Print "[P]  ";
     Color 15: Print "DELETE STATS ";
-	Color 14: Print "[D]                    ";
-    
-	Color 12, 0
-	Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
-    
-	Locate 3, 1 ': Color 2, 0
+    Color 14: Print "[D]";
 
+    Color 12, 0
+    Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+
+    Locate 3, 1
     Color 14: Print B$
+
     Print "NAME"; Tab(15);
     Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
@@ -349,15 +358,15 @@ Sub PlayerStats (statFile$, B$)
             If lookyA!(I, 10) > 0 Then Locate , 18: Print Using "####"; Int((lookyA!(I, 10) + 30) / 60);: Locate , 24: Print Using "##"; Int(((lookyA!(I, 10) / 60) / lookyA!(I, 0)) + .5);
 
             Locate , 28: Print Using "#### ####"; lookyA!(I, 2); lookyA!(I, 1);
-			
-			Locate , 38
-            If lookyA!(I, 1) = 0 Then 
+
+            Locate , 38
+            If lookyA!(I, 1) = 0 Then
                 Print ".---";
             Else
-                If lookyA!(I, 2) = lookyA!(I, 1) Then 
+                If lookyA!(I, 2) = lookyA!(I, 1) Then
                     Print "1.00";
                 Else
-                    If lookyA!(I, 2) = 0 Then 
+                    If lookyA!(I, 2) = 0 Then
                         Print ".000";
                     Else
                         statPCT! = lookyA!(I, 2) / lookyA!(I, 1)
@@ -368,13 +377,13 @@ Sub PlayerStats (statFile$, B$)
 
             Locate , 44: Print Using "#### ####"; W0!(I); W1!(I);: Locate , 54
 
-            If W1!(I) = 0 Then 
+            If W1!(I) = 0 Then
                 Print ".---";
             Else
-                If W1!(I) = W0!(I) Then 
+                If W1!(I) = W0!(I) Then
                     Print "1.00";
                 Else
-                    If W0!(I) = 0 Then 
+                    If W0!(I) = 0 Then
                         Print ".000";
                     Else
                         statPCT! = W0!(I) / W1!(I)
@@ -385,13 +394,13 @@ Sub PlayerStats (statFile$, B$)
 
             Locate , 60: Print Using "#### ####"; lookyA!(I, 4); lookyA!(I, 3);: Locate , 70
 
-            If lookyA!(I, 3) = 0 Then 
+            If lookyA!(I, 3) = 0 Then
                 Print ".---"
             Else
-                If lookyA!(I, 3) = lookyA!(I, 4) Then 
+                If lookyA!(I, 3) = lookyA!(I, 4) Then
                     Print "1.00"
                 Else
-                    If lookyA!(I, 4) = 0 Then 
+                    If lookyA!(I, 4) = 0 Then
                         Print ".000"
                     Else
                         statPCT! = lookyA!(I, 4) / lookyA!(I, 3)
@@ -416,7 +425,7 @@ Sub PlayerStats (statFile$, B$)
     If Z!(3) <> 0 Then statPCT! = Z!(4) / Z!(3): Locate , 70: Print Using ".###"; statPCT!
 
     Color 12
-	Locate , 15: Print Using "##"; totalGames%;
+    Locate , 15: Print Using "##"; totalGames%;
 
     Locate , 28: Print Using "#### ####"; Z1!(2); Z1!(1);
     If Z1!(1) <> 0 Then statPCT! = Z1!(2) / Z1!(1): Locate , 38: Print Using ".###"; statPCT!;
@@ -434,11 +443,11 @@ Sub PlayerStats (statFile$, B$)
 
             Case Chr$(0) + "Q"
                 CP% = 14
-                Call TeamStats(statFile$, CP%, totalGames%, B$)
+                Call TeamStats(B$, statFile$, CP%, totalGames%)
 
             Case Chr$(0) + "I"
                 Cls
-                Call ViewStatSummary(statFile$)
+                Call ViewStatSummary(B$, statFile$, totalGames%)
                 'Exit the sub altogether?
 
             Case "d", "D"
@@ -505,11 +514,11 @@ End Sub
 '       TeamStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
+Sub TeamStats (teamName$, statFile$, CP%, totalGames%)
 
     Shared lookyA!()
 
-    Shared W0!()
+    Shared W0!(), W1!()
     Shared Z!(), Z1!()
 
     Shared A$(), CP$()
@@ -520,9 +529,9 @@ Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
     Call TITLE_HEADER
 
     Color , 1
-    Locate 24, 1: Print Tab(80);
-    Locate , 1
-    Locate 24, 1 ': Color 14, 1
+
+    Locate 24, 1
+
     Color 15: Print "MORE STATS ";
     Color 14: Print "[Pg UP]  ";
     Color 15: Print "SELECT NEW TEAM ";
@@ -530,21 +539,22 @@ Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
     Color 15: Print "SORT ";
     Color 14: Print "<-,-> and [ENTER]  ";
     Color 15: Print "PRINT ";
-    Color 14: Print "[P]";
-    Locate 25, 1
-    Color 15: Print "DELETE STATS ";: Color 14: Print "[D]                     ";
+    Color 14: Print "[P]    ";
+    Color 15: Print "DELETE STATS ";
+    Color 14: Print "[D]";
 
     Color 12, 0
-	Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
+    Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
 
     Locate 3, 1
-	Color 2, 0
+    Color 2, 0
 
     Color 14: Print teamName$;: Locate , 15
     Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
     Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
     For I = 0 To 13
+
         If A$(I) <> "XXX" Then
             Color 7
             If I / 2 = Int(I / 2) Then Color 15
@@ -555,6 +565,7 @@ Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
             If lookyA!(I, 0) > 0 Then Locate , 45: Print Using "##.#"; lookyA!(I, 5) / lookyA!(I, 0);
             Locate , 51: Print Using "### ####  ###  ###  ###"; lookyA!(I, 6); lookyA!(I, 8); lookyA!(I, 9); lookyA!(I, 7); lookyA!(I, 11)
         End If
+
     Next I
 
     Print "TEAM";: Locate , 39: Print Using "####"; Z!(15)
@@ -582,7 +593,7 @@ Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
             Case Chr$(0) + "I"
                 Cls
                 CP% = 1
-                Call PlayerStats(statFile$, teamName$)
+                Call PlayerStats(statFile$, teamName$, totalGames%)
 
             Case Chr$(0) + "M"
                 CP% = CP% + 1: If CP% > 25 Then CP% = 14
@@ -639,12 +650,12 @@ Sub TeamStats (statFile$, CP%, totalGames%, teamName$)
 
     Loop Until I$ = Chr$(27)
 
-	'-- Football / Baseball still perform the below
-	'-- (prompting for a reset of stats
-	'-- We should get rid of it altogether as
-	'-- it makes it too easy to wipe your hard-earned
-	'-- work and time. This code was in the
-	'-- original but no logic branches reached it
+    '-- Football / Baseball still perform the below
+    '-- (prompting for a reset of stats
+    '-- We should get rid of it altogether as
+    '-- it makes it too easy to wipe your hard-earned
+    '-- work and time. This code was in the
+    '-- original but no logic branches reached it
 
     '    Cls
     '    Call TITLE_HEADER
@@ -665,7 +676,7 @@ End Sub
 '       ViewStatSummary Subroutine
 '----------------------------------------
 '...explanation...
-Sub ViewStatSummary (statFile$)
+Sub ViewStatSummary (teamName$, statFile$, totalGames%)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
     Shared L%, W%
@@ -683,20 +694,20 @@ Sub ViewStatSummary (statFile$)
     Locate , 31: Color 14
 
     'what is the deal here???
-    Y = Len(B$)
-    Y = Int((80 - Y) / 2)
-    Locate , Y: Print B$
+    Ycoord = Len(B$)
+    Ycoord = Int((80 - Ycoord) / 2)
+    Locate , Ycoord: Print teamName$
 
-    Locate 25, 1: Print Tab(80);: Locate , 1
+    Locate 25, 1: Print Tab(80);
     Locate 2, 1
     Color , 0
 
-    'Logic here must be wrong or else Y is wrong
-    'Currently prints a full page of games
-    'mostly with 0's
-    For I = 1 To Y
+    For I = 1 To totalGames%
+
         Color 7
+
         If I / 2 = Int(I / 2) Then Color 15
+
         If I >= 55 Then
             If I <= 72 Then
                 Print Using "###"; O%(I);
@@ -704,12 +715,13 @@ Sub ViewStatSummary (statFile$)
                 Print Tab(20); Using "###"; mergeT%(I);
                 Print Tab(24); homeTeam$(I)
             Else
-                926 Locate I - 71, 27: Print Using "###"; O%(I);
+                Locate I - 71, 27: Print Using "###"; O%(I);
                 Print Tab(31); Left$(O$(I), 14);
                 Print Tab(46); Using "###"; mergeT%(I);
                 Print Tab(50); homeTeam$(I)
             End If
         End If
+
     Next I
 
     Print
@@ -730,25 +742,26 @@ Sub ViewStatSummary (statFile$)
 
     Do
         I$ = GetKeyPress$
+
         Select Case I$
             'Page Down
             Case Chr$(0) + "Q"
                 Color , 0
                 Cls
-                Call PlayerStats(statFile$, teamName$)
+                Call PlayerStats(statFile$, teamName$, totalGames%)
                 'Page Up
 
             Case Chr$(0) + "I"
                 Color , 0
                 Cls
-                Call ReadStats(statFile$)
+                Call ReadStats(statFile$, totalGames%, menuExit%)
 
             Case "d", "D":
                 Kill diskPaths$(1) + statFile$
                 Kill diskPaths$(1) + statFile$ + "S"
 
             Case "p", "P":
-                Call PrintTeamStatSummary(B$, totalGames%)
+                Call PrintTeamStatSummary(teamName$, totalGames%)
         End Select
 
     Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q"
@@ -764,11 +777,10 @@ Sub PrintTeamStatSummary (B$, totalGames%)
     Shared HL%, HW%, NL%, NW%, VL%, VW%
     Shared L%, W%
 
-    Shared lookyA!()
+    Shared lookyA!(), W0!(), W1!(), Z!(), Z1!()
 
-    Shared mergeT%()
-    Shared homeTeam$(), O$()
-    Shared O%()
+    Shared mergeT%(), O%()
+    Shared A$(), homeTeam$(), O$()
 
     LPrint "SCHEDULE RESULTS FOR "; B$
     LPrint
@@ -803,6 +815,7 @@ Sub PrintTeamStatSummary (B$, totalGames%)
     LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
     LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
     LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+
     LPrint Chr$(12)
 
     LPrint "STATISTICS SUMMARY FOR "; B$
@@ -818,13 +831,13 @@ Sub PrintTeamStatSummary (B$, totalGames%)
         LPrint Tab(28); Using "#### ####"; lookyA!(I, 2); lookyA!(I, 1);
         LPrint Tab(38);
 
-        If lookyA!(I, 1) = 0 Then 
+        If lookyA!(I, 1) = 0 Then
             LPrint ".---";
         Else
-            If lookyA!(I, 2) = lookyA!(I, 1) Then 
+            If lookyA!(I, 2) = lookyA!(I, 1) Then
                 LPrint "1.00";
             Else
-                If lookyA!(I, 2) = 0 Then 
+                If lookyA!(I, 2) = 0 Then
                     LPrint ".000";
                 Else
                     LPrint Using ".###"; lookyA!(I, 2) / lookyA!(I, 1);
@@ -833,13 +846,13 @@ Sub PrintTeamStatSummary (B$, totalGames%)
         End If
 
         LPrint Tab(44); Using "#### ####"; W0!(I); W1!(I);: LPrint Tab(54);
-        If W1!(I) = 0 Then 
+        If W1!(I) = 0 Then
             LPrint ".---";
         Else
-            If W1!(I) = W0!(I) Then 
+            If W1!(I) = W0!(I) Then
                 LPrint "1.00";
             Else
-                If W0!(I) = 0 Then 
+                If W0!(I) = 0 Then
                     LPrint ".000";
                 Else
                     statPCT! = W0!(I) / W1!(I)
@@ -850,13 +863,13 @@ Sub PrintTeamStatSummary (B$, totalGames%)
 
         LPrint Tab(60); Using "#### ####"; lookyA!(I, 4); lookyA!(I, 3);: LPrint Tab(70);
 
-        If lookyA!(I, 3) = 0 Then 
+        If lookyA!(I, 3) = 0 Then
             LPrint ".---"
         Else
-            If lookyA!(I, 3) = lookyA!(I, 4) Then 
+            If lookyA!(I, 3) = lookyA!(I, 4) Then
                 LPrint "1.00"
             Else
-                If lookyA!(I, 4) = 0 Then 
+                If lookyA!(I, 4) = 0 Then
                     LPrint ".000"
                 Else
                     statPCT! = lookyA!(I, 4) / lookyA!(I, 3)
@@ -870,6 +883,7 @@ Sub PrintTeamStatSummary (B$, totalGames%)
     LPrint: LPrint "TOTALS"; Tab(15);
     LPrint Using "##"; totalGames%;
 
+    '1st Row
     LPrint Tab(28); Using "#### ####"; Z!(2); Z!(1);
     If Z!(1) <> 0 Then statPCT! = Z!(2) / Z!(1): LPrint Tab(38); Using ".###"; statPCT!;
 
@@ -879,6 +893,7 @@ Sub PrintTeamStatSummary (B$, totalGames%)
     LPrint Tab(60); Using "#### ####"; Z!(4); Z!(3);
     If Z!(3) <> 0 Then statPCT! = Z!(4) / Z!(3): LPrint Tab(70); Using ".###"; statPCT!
 
+    '2nd Row (Opponents?)
     LPrint Tab(15); Using "##"; totalGames%;
 
     LPrint Tab(28); Using "#### ####"; Z1!(2); Z1!(1);
@@ -906,13 +921,14 @@ Sub PrintTeamStatSummary (B$, totalGames%)
 
     LPrint "TEAM";: LPrint Tab(39); Using "####"; Z!(15)
     LPrint
-	LPrint "TOTALS";
+    LPrint "TOTALS";
     LPrint Tab(14); Using "##### ###.#"; Z!(10); Z!(10) / totalGames%;
     LPrint Tab(29); Using "#### #### ####  ##.#"; Z!(12); Z!(5) - Z!(12) - Z!(15); Z!(5); Z!(5) / totalGames%;
     LPrint Using " #### #### #### #### ####"; Z!(6); Z!(8); Z!(9); Z!(7); Z!(11)
     LPrint Tab(14); Using "##### ###.#"; Z1!(10); Z1!(10) / totalGames%;
     LPrint Tab(29); Using "#### #### ####  ##.#"; Z1!(12); Z1!(5) - Z1!(12) - Z1!(15); Z1!(5); Z1!(5) / totalGames%;
     LPrint Using " #### #### #### #### ####"; Z1!(6); Z1!(8); Z1!(9); Z1!(7); Z1!(11)
+
     LPrint Chr$(12)
 
 End Sub

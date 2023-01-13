@@ -15,6 +15,9 @@ Const MAX_FILES = 1024 '1048576
 '$INCLUDE: 'TITLE.BI'
 '$INCLUDE: 'Variables.BI'
 
+Dim CP$(25), O$(100)
+Dim Z0$(1 To 250), Z3$(1 To 250)
+
 DefInt A-Z
 
 '----------------------------------------
@@ -161,20 +164,25 @@ Sub ConfigureDrives ()
     Locate , 31: Print "C:\COLBB\TEAMS"
 
     Locate 7, 1: QPrint "Path for Teams ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(diskPaths$(0), 30), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(0), 48), FG, BG, -1
     Locate 9, 1: QPrint "Path for Stats ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(diskPaths$(1), 30), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(1), 48), FG, BG, -1
 
     GetDiv1:
     Locate 7, 16 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 30 'specify field parameters
+    CapsOn = 0
+    NumOnly = 0
+    Max = 48 'specify field parameters
     Call TextIn(diskPaths$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
     diskPaths$(0) = _Trim$(diskPaths$(0))
+
     GetDiv2:
     Locate 9, 16 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 30 'specify field parameters
+    CapsOn = 0
+    NumOnly = 0
+    Max = 48 'specify field parameters
     Call TextIn(diskPaths$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data

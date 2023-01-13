@@ -82,6 +82,8 @@ Sub CNGRAT (userChoice)
                     LPrint "PS- PASSING RATING            3FG%- THREE POINT GOAL %"
                     LPrint " D- DEFENSIVE RATING"
 
+					LPrint Chr$(12)
+					
                 Case 3:
                     Call GetTeam_CNGRAT(YN$, T1, A$)
 
@@ -622,14 +624,18 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
                 X!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
             Next
         Next
+
         Close 1
 
         Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
+
         Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
         For I = 0 To 13
             Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
             Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
+
         Get #1, teamIdx%
 
         C$ = Q$(0)
@@ -658,12 +664,15 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
             S$ = ""
             A1$ = ""
             avgAttendance% = 0
+
             For I = 0 To 13
-                DF!(I) = 5: P$(I) = ""
+                DF!(I) = 5
+				P$(I) = ""
                 For I1 = 0 To 13
                     RS!(I, I1) = 0
                 Next
             Next
+
             For I = 0 To 20
                 T1%(I) = 0
             Next
