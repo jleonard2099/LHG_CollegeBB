@@ -4,8 +4,6 @@
 '$INCLUDE: 'PadRight.BI'
 '$INCLUDE: 'GameRoutines.BI'
 
-Dim Shared B1(0 To 1, 0 To 4)
-
 On Error GoTo Errhandler
 
 '----------------------------------------

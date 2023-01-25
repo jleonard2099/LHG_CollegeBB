@@ -111,8 +111,8 @@ Sub SEECON ()
                 Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
                 Locate 10, 15
-
-                Color 7
+                Color 7, 1
+				
                 Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
                 Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
                 Locate , 30: Print "STATS TO ";: Color 15: Print "F";: Color 7: Print "ILE"
@@ -131,6 +131,7 @@ Sub SEECON ()
                 End Select
 
                 Color 15, 0
+
                 Cls
 
                 JJ = 4

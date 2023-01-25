@@ -1977,31 +1977,40 @@ Sub TEAMSETUP ()
     'TEAM SETUP INITIALIZES THE TEAM DATA FILES, LEAGUE ADJUSTMENTS
     'AND SETS UP THE PLAYER DATA
 
-    F5%(P9, 5) = L%(P9, 1): If F5%(P9, 5) = 0 Then F5%(P9, 5) = 4
-    F5%(P9, 6) = L%(P9, 2): If F5%(P9, 6) > 20 Then F5%(P9, 6) = F5%(P9, 6) - 100
-    F5%(P9, 7) = L%(P9, 3): If F5%(P9, 7) > 20 Then F5%(P9, 7) = F5%(P9, 7) - 100
-    F5%(P9, 4) = L%(P9, 0):: If F5%(P9, 4) > 20 Then F5%(P9, 4) = F5%(P9, 4) - 100
-    F5%(P9, 8) = L%(P9, 4)
+    F5%(P9, 5) = L%(P9, 1)
+	If F5%(P9, 5) = 0 Then F5%(P9, 5) = 4
 
+    F5%(P9, 6) = L%(P9, 2)
+	If F5%(P9, 6) > 20 Then F5%(P9, 6) = F5%(P9, 6) - 100
+
+    F5%(P9, 7) = L%(P9, 3)
+	If F5%(P9, 7) > 20 Then F5%(P9, 7) = F5%(P9, 7) - 100
+	
+    F5%(P9, 4) = L%(P9, 0)
+	If F5%(P9, 4) > 20 Then F5%(P9, 4) = F5%(P9, 4) - 100
+
+    F5%(P9, 8) = L%(P9, 4)
     If F5%(P9, 8) <> 99 Then F5%(P9, 4) = 0: F5%(P9, 5) = 4: F5%(P9, 6) = 0: F5%(P9, 7) = 0
 
     For I = 0 To 13
+
         A!(P9, I, 16) = C(P9, I, 6)
         If A!(P9, I, 16) = 0 Then A!(P9, I, 16) = 6
+
         A!(P9, I, 17) = C(P9, I, 5)
         If A!(P9, I, 17) = 0 Then A!(P9, I, 17) = 40
+
         A!(P9, I, 19) = C(P9, I, 3)
         A!(P9, I, 20) = C(P9, I, 2)
         A!(P9, I, 21) = C(P9, I, 4)
         A!(P9, I, 2) = A!(P9, I, 2)
+
     Next I
 
     F5%(P9, 2) = V1%(P9)
-
     If F5%(P9, 2) > 20 Then F5%(P9, 2) = F5%(P9, 2) - 100
 
     F5%(P9, 3) = V2%(P9)
-
     If F5%(P9, 3) > 20 Then F5%(P9, 3) = F5%(P9, 3) - 100
 
 End Sub
@@ -2846,6 +2855,9 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub TOURNEY ()
+
+	Dim fileLength&
+	
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
     Open diskPaths$(0) + FF$ + ".TOU" As #1 Len = 90
     fileLength& = LOF(1)
@@ -4534,6 +4546,8 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub PRELOAD ()
+
+	Dim fileLength&
 
     NTMS = 0
 

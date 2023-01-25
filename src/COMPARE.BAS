@@ -120,18 +120,22 @@ Sub COMPARE ()
                             Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
                         Next
                         Locate 9 + JJ, 8
-                        Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";: Locate 10
+                        Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
-                        Color 7
-                        Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-                        Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
 
                         Do
-                            I$ = GetKeyPress$
-                            If I$ = Chr$(27) Then Exit Sub
-                        Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S"
+							Locate 10
+							Color 7, 1
 
-                        Color 14, 0
+							Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
+							Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+                            I$ = GetKeyPress$
+							
+                            If I$ = Chr$(27) Then Exit Sub
+							
+							Color 14, 0
+
+                        Loop Until UCase$(I$) = "P" Or UCase$(I$) = "S"
 
                         If UCase$(I$) = "S" Then
 

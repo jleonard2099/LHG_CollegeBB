@@ -1,4 +1,3 @@
-
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
@@ -79,7 +78,9 @@ Dim S!(0 To 14, 0 To 26)
 Dim DT!(21), OT!(21)
 
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
-'Dim Z0$(1 To 250), Z3$(1 To 250)
+
+Dim CP$(25), O$(100)
+Dim Z0$(1 To 250), Z3$(1 To 250)
 
 '----------------------------------------
 ' Used across DRAFT.BAS routines
@@ -87,9 +88,9 @@ Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim draftA$(0 To 1, 0 To 13), draftP$(1, 13), draftT$(1), draftYN$(1)
 Dim A1$(1), C$(1), S$(1)
 
-Dim draftA(1, 13, 6), attendance&(1), CK!(1)
+Dim draftA!(1, 13, 6), attendance&(1), CK!(1)
 Dim DA!(1), draftDF!(1, 13)
-Dim draftRS(1, 13, 13), SP!(1), draftX!(1, 13, 6)
+Dim draftRS!(1, 13, 13), SP!(1), draftX!(1, 13, 6)
 
 Dim draftL%(1, 4), draftT%(1, 9), draftT1%(1, 20), TR%(1, 13, 12)
 Dim V1%(1), V2%(1)
@@ -128,7 +129,6 @@ Dim L%, W%
 
 Dim mergeT%(100)
 Dim O%(100), P%(100)
-'Dim CP$(25), O$(100)
 
 Dim lookyA!(0 To 14, 24)
 
@@ -136,7 +136,7 @@ Dim lookyA!(0 To 14, 24)
 ' Used across RECORDS.BAS routines
 '----------------------------------------
 '---> these should be Single
-Dim REC!(50, 2), TREC(125, 2)
+Dim REC!(50, 2), TREC!(125, 2)
 
 Dim recordsA$(5), RC$(50, 4), TRC$(125, 3)
 

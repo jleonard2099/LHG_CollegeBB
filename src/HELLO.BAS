@@ -8,17 +8,14 @@ Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
 Const MAX_FILES = 1024 '1048576
 
+DefInt A-Z
+
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 '$INCLUDE: 'PadRight.BI'
 '$INCLUDE: 'MainRoutines.BI'
 '$INCLUDE: 'TITLE.BI'
 '$INCLUDE: 'Variables.BI'
-
-Dim CP$(25), O$(100)
-Dim Z0$(1 To 250), Z3$(1 To 250)
-
-DefInt A-Z
 
 '----------------------------------------
 '          READ IN ALL DATA

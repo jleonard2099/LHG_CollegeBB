@@ -434,36 +434,11 @@ Sub PlayerLeaders (printOrView%, sortType%)
         End Select
 
         If B9 <> 31 Then
+
             QW = PPP
-            Color , 0
-            Cls
-
-            If Not (printOrView% = 1) Then
-                Do
-                    Print
-                    Print
-                    Print
-                    Print
-                    Print
-                    J = 2
-
-                    Locate 10, 20
-                    Color 4, 15: Print " " + Chr$(214); String$(30, 196); Chr$(183) + " ";
-                    For II = 1 To J
-                        Locate 10 + II, 20
-                        Print " " + Chr$(186); String$(30, 32); Chr$(186) + " ";
-                    Next
-                    Locate 11 + J, 20
-                    Print " " + Chr$(211); String$(30, 196); Chr$(189) + " "
-                    Locate 11
-
-                    'Currently this is showing QW as 0
-                    Locate , 25: Color 1: Print "MAXIMUM = "; QW
-                    Locate , 25: Input "ENTER LENGTH OF LIST"; LG
-                Loop Until LG <= QW
-            End If
 
             Call PrintPlayer(printOrView%, QW, TVN, B9)
+
         End If
 
     Loop Until B9 = 31 'Done selecting number
@@ -666,10 +641,11 @@ Sub PrintPlayer (printOrView%, maxRecords, TVN, categoryID)
                 Color 14, 0
                 Cls
                 Print "     PLAYER                  TEAM                     "; TP$(categoryID)
+
                 For W = 1 To maxRecords
                     '--** If a multiple of 20 we do the same ething no matter what
 
-                    If (W <> 0 AND W MOD 20 = 0)  Then
+                    If W <> 0 AND (W MOD 20 = 0)  Then
                         Locate 22
                         Color 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                         I$ = GetKeyPress$
@@ -710,15 +686,17 @@ Sub PrintPlayer (printOrView%, maxRecords, TVN, categoryID)
 
         Case 2:
 
+			Call GetListLength(QW, length, printOrView%)
+
             Color 0, 15
 
             Cls
 
             LPrint "     PLAYER                  TEAM                     "; TP$(categoryID)
 
-            For W = 1 To LG
+            For W = 1 To length
 
-                If (W <> 0 AND W MOD 50 = 0) Then
+                If W <> 0 AND (W MOD 50 = 0) Then
                     LPrint Chr$(12)
                     LPrint "     PLAYER                  TEAM                     "; TP$(categoryID)
                 End If
@@ -1078,5 +1056,44 @@ Sub SortTeam (sortMax, stpl, sortType%)
         Next J
 
     Next I
+
+End Sub
+
+
+'----------------------------------------
+'       		GetListLength
+'----------------------------------------
+'...explanation...
+Sub GetListLength (maxQW, listLength, printOrView%)
+
+    If printOrView% <> 1 Then
+		'If printing...
+
+        Do
+            Color , 0
+            Cls
+
+            Print
+            Print
+            Print
+            Print
+            Print
+            J = 2
+
+            Locate 10, 20
+            Color 4, 15: Print " " + Chr$(214); String$(30, 196); Chr$(183) + " ";
+
+            For II = 1 To J
+                Locate 10 + II, 20: Print " " + Chr$(186); String$(30, 32); Chr$(186) + " ";
+            Next
+
+            Locate 11 + J, 20: Print " " + Chr$(211); String$(30, 196); Chr$(189) + " ": Locate 11
+
+            Locate , 25: Color 1: Print "MAXIMUM = "; maxQW
+            Locate , 25: Input "ENTER LENGTH OF LIST"; listLength
+
+        Loop Until listLength <= maxQW
+
+    End If
 
 End Sub

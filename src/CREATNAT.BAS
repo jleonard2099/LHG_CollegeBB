@@ -39,11 +39,18 @@ Sub CREATNAT ()
 
         If ExitCode% <> 27 Then
 
+			For X = 1 To MAX_CONFERENCES
+				Z1$(X) = "XXX"
+				'Z2$(X) = "XXX"
+				'Z1%(X) = -1
+			Next
+
             Select Case Selection%
 
                 Case 1:
 
                     Do
+
                         Color 15, 0
 
                         Cls
@@ -85,13 +92,9 @@ Sub CREATNAT ()
                     Loop Until UCase$(I$) = "N"
 
                     If LG$ <> "" Then
-                        For X = 1 To MAX_CONFERENCES
-                            Z1$(X) = "XXX"
-                            'Z2$(X) = "XXX"
-                            'Z1%(X) = -1
-                        Next
 
                         Call Conference_Menu(LG$, Z1$())
+
                     End If
 
                 Case 2:

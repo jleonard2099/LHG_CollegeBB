@@ -107,7 +107,7 @@ Sub CARVIEW ()
                 Close #2
 
 				Do
-					Locate 18, 10
+					Locate 15, 10
 					Color 12: Print "V";: Color 7: Print "iew or ";
 					Color 12: Print "P";: Color 7: Print "rint"
                     A$ = GetKeyPress$

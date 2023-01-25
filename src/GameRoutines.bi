@@ -92,8 +92,6 @@ Dim Shared F5%(0 To 1, 0 To 8)
 Dim Shared A!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared PO$(1, 13)
 
-
-
 Dim Shared AP, B, C1, C7, DY, CT, D, FO, F3, G9, H, I, IN ', J, JJ
 Dim Shared M5, MJ, N, NTMS, P, P9, Q, S2, S9, TMT, TOU, U5, X8, XM, XS
 
@@ -102,6 +100,7 @@ Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, TS%, X3%, X0%, X1%, XX%
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, FF$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
 
+Dim Shared B1(0 To 1, 0 To 4)
 Dim Shared C(1, 13, 6), D1(1), D2(1), D8(4, 3), DP(2, 4)
 Dim Shared F1(13), G4(13), G5(13), P2(1), P4(14), P5(14), P7(1)
 Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), R3!(1), RB(9), RS(1, 13, 13)
@@ -130,5 +129,4 @@ Dim Shared F!, pbpDelay!, R0!, T!, TE!
 'is the most supported?
 Dim Shared avgAttendance&(1), CRD&(100)
 
-Dim Shared fileLength&, actualAttendance&
-
+Dim Shared actualAttendance&

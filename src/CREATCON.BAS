@@ -43,12 +43,13 @@ Sub CREATCON ()
 
         If ExitCode% <> 27 Then
 
+			For X = 1 To 30
+				Z1$(X) = "XXX"
+			Next
+
             Select Case Selection%
 
                 Case 1:
-                    For X = 1 To 30
-                        Z1$(X) = "XXX"
-                    Next
 
                     Do
                         Color 15, 0: Cls

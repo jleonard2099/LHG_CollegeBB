@@ -256,17 +256,21 @@ Sub TeamVsConf ()
                 Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
             Next
             Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-            Locate 10, 15
 
             Do
-                Color 7
+				Locate 10, 15
+                Color 7, 1
+
                 Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
                 Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
-                VPP = 0
                 I$ = GetKeyPress$
+				
+				Color 14, 0
+				
             Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
+                VPP = 0
 
-            Color 14, 0
+
             If UCase$(I$) = "P" Then X1 = 1
             If UCase$(I$) = "S" Then VPP = 1
 

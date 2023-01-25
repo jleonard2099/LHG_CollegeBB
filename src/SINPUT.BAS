@@ -15,7 +15,7 @@ Sub SINPUT ()
 
     Do
         Cls
-        Call Title_SINPUT (1, "")
+        Call TITLE_EDITSTATS (1, "")
 
         Color 15: Print "C";
         Color 3: Print "HANGE/INPUT COMPILED TEAM STATS"
@@ -41,7 +41,7 @@ Sub SINPUT ()
 
             Cls
             X$ = "OFFENSIVE TEAM STATS"
-            Call Title_SINPUT (2, X$)
+            Call TITLE_EDITSTATS (2, X$)
             Locate 3, 1
             Print "1. STAT FILE NAME "; Z$
 
@@ -57,13 +57,13 @@ Sub SINPUT ()
 
             Cls
             X$ = "OFFENSIVE TEAM STATS"
-            Call Title_SINPUT (2, X$)
+            Call TITLE_EDITSTATS (2, X$)
 
             X% = 2
 
             Cls
             X$ = "OFFENSIVE TEAM STATS"
-            Call Title_SINPUT (2, X$)
+            Call TITLE_EDITSTATS (2, X$)
 
             175 Locate 3, 1: Input "1. STAT FILE NAME "; Z$: If C1 = 1 Then 210
             177 Locate 4, 1: Input "2. TM MINUTES "; Z!(0): Z!(0) = Z!(0) * 60: If C1 = 1 Then 210
@@ -99,7 +99,7 @@ Sub SINPUT ()
 
                 365 Cls
                 X$ = "DEFENSIVE TEAM STATS"
-                Call Title_SINPUT (2, X$)
+                Call TITLE_EDITSTATS (2, X$)
 
                 379 Locate 3, 1: Input "1. OPP FGA "; Z1!(1): If C1 = 1 Then 410
                 381 Locate 4, 1: Input "2. OPP FGM "; Z1!(2): If C1 = 1 Then 410
@@ -132,7 +132,7 @@ Sub SINPUT ()
                     For I = 0 To 13
                         Cls
                         X$ = "PLAYER -" + Str$(I + 1)
-                        Call Title_SINPUT (2, X$)
+                        Call TITLE_EDITSTATS (2, X$)
 
                         675 Locate 3, 1: Input "1. NAME "; A$(I): If C1 = 1 Then 1225
                         705 Locate 4, 1: Input "2. GAMES "; Z2(I, 0): If C1 = 1 Then 1225
@@ -172,7 +172,7 @@ Sub SINPUT ()
 
                 Cls
                 X$ = "DEFENSIVE TEAM STATS"
-                Call Title_SINPUT (2, X$)
+                Call TITLE_EDITSTATS (2, X$)
 
                 X% = 2
                 Locate 3, 1
@@ -196,7 +196,7 @@ Sub SINPUT ()
 
             1605 '
             Cls
-            Call Title_SINPUT (1, "")
+            Call TITLE_EDITSTATS (1, "")
             Locate 3, 1: Color 14: Print "CHANGE PLAYERS "
 
             Print
@@ -219,7 +219,7 @@ Sub SINPUT ()
 
                 Cls
                 X$ = "PLAYER -" + Str$(I + 1)
-                Call Title_SINPUT (2, X$)
+                Call TITLE_EDITSTATS (2, X$)
 
                 Locate 3, 1
                 Print "1. NAME "; A$(I)
@@ -255,7 +255,7 @@ Sub SINPUT ()
                 X% = 0  
             Else
                 1925 Cls
-                Call Title_SINPUT (1, "")
+                Call TITLE_EDITSTATS (1, "")
             End if
 
             1935 Open diskPaths$(1) + Z$ For Output As #1

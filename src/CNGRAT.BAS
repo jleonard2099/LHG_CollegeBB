@@ -715,12 +715,14 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     LSet Q$(0) = teamName$
     LSet Q$(1) = MKI$(staminaRating%)
     LSet Q$(2) = MKI$(defFGPctAdj%)
-    LSet Q$(3) = MKI$(V1%): LSet Q$(4) = MKI$(V2%)
+    LSet Q$(3) = MKI$(V1%)
+	LSet Q$(4) = MKI$(V2%)
     For I = 0 To 4: LSet Q$(I + 5) = MKI$(L%(I)): Next
     T%(2) = 999
 
     For I = 0 To 9: LSet Q$(I + 10) = MKI$(T%(I)): Next
 
+	'Players
     For I = 0 To 13
         LSet Q$(I * 15 + 20) = cngratA$(I)
         For I1 = 0 To 6

@@ -356,10 +356,18 @@ Sub CBBINPUT ()
             V% = Int(((W0 / T2) + .005) * 100)
             V2% = V% - Q7
 
+			'DEF 3FGA/3FGA ADJ
+			'-- Here is where 100 is being added to the value
+			'-- This is why our team files and viewer later
+			'-- will show values as 95-99
             If V2% < 0 Then V2% = 100 + V2%
 
             V1% = W1 - Q8
 
+			'DEF 3FG %
+			'-- Here is where 100 is being added to the value
+			'-- This is why our team files and viewer later
+			'-- will show values as 95-99
             If V1% < 0 Then V1% = 100 + V1%
 
             For I = 0 To 13
@@ -412,6 +420,7 @@ Sub CBBINPUT ()
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
             L%(1) = X!
+
             inputY! = (BK - T9) / L5
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
@@ -427,7 +436,6 @@ Sub CBBINPUT ()
             X! = Int((X! * 100) + .5)
 
             If X! > 0 Then L%(3) = X!
-
             If X! < 0 Then L%(3) = X! + 100
 
             If QQ(0) = 1 Then
