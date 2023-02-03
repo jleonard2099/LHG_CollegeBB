@@ -124,6 +124,10 @@ Sub COMPCON ()
 
                 If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
+                'Initialize values first
+                Erase Z1$
+                Erase DL!
+
                 Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
                 Input #2, LG$
                 Input #2, D1$
@@ -134,12 +138,9 @@ Sub COMPCON ()
                 Next
                 Close 2
 
-                'Initialize values first
                 For X = 1 To 40
                     DL!(X, 19) = 9999
                 Next
-
-                Erase DL$, OL$, Z0$, Z1$, Z3$
 
                 For XW = 1 To 30
 
@@ -148,6 +149,7 @@ Sub COMPCON ()
                     confWins = 0
                     confLosses = 0
 
+                    'Look for * as terminating char
                     If H1$(XW) <> Chr$(42) Then
 
                         H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
@@ -209,13 +211,12 @@ Sub COMPCON ()
                                 Next P
 
                                 f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
-
                                 O$(I) = R$
 
                                 confGame = 0
 
                                 For EC = 1 To 30
-									'If team stat file = opponent of a conference game?
+                                    'If team stat file = opponent of a conference game?
                                     If O$(I) = H1$(EC) Then
                                         confGame = 1
                                         Exit For
@@ -254,7 +255,6 @@ Sub COMPCON ()
                     Next X
 
                     timeToGo = 0
-
 
                     For X = 1 To TEAMS_PER_CONFERENCE
 
@@ -426,12 +426,15 @@ Sub COMPCON ()
                             If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: recconTRC1$(21) = TN$
                         End If
 
+                        '-- Beginning of subroutine here
                         For X = 0 To 14:
 
                             Color 14: Print "CHECKING STATS OF ";
                             Color 15: Print compconN$(X)
 
+                            'Division 1, 2 Record
                             If S!(X, 22) > LD!(20, 1) Then
+
                                 LD!(20, 1) = S!(X, 22)
                                 LD!(20, 2) = 0
                                 Z0$(20) = compconN$(X)
@@ -442,14 +445,18 @@ Sub COMPCON ()
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
 
                             End If
 
+                            'Division 3, 4 Record
                             If S!(X, 12) > LD!(40, 1) Then
+
                                 LD!(40, 1) = S!(X, 12)
                                 LD!(40, 2) = 0
                                 Z0$(40) = compconN$(X)
@@ -460,368 +467,487 @@ Sub COMPCON ()
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
 
                             End If
 
+                            'Field Goal %
                             If S!(X, 19) > LD!(60, 1) Then
+
                                 LD!(60, 1) = S!(X, 19)
                                 LD!(60, 2) = S!(X, 1)
                                 Z0$(60) = compconN$(X)
                                 Z3$(60) = TN$
+
                                 For Z = 41 To 59
                                     For Z1 = Z + 1 To 60
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
+                            'Free Throw %
                             If S!(X, 20) > LD!(80, 1) Then
+
                                 LD!(80, 1) = S!(X, 20)
                                 LD!(80, 2) = S!(X, 3)
                                 Z0$(80) = compconN$(X)
                                 Z3$(80) = TN$
+
                                 For Z = 61 To 79
                                     For Z1 = Z + 1 To 80
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
+                            'Steals Per Game
                             If S!(X, 15) > LD!(90, 1) Then
+
                                 LD!(90, 1) = S!(X, 15)
                                 LD!(90, 2) = S!(X, 7)
                                 Z0$(90) = compconN$(X)
                                 Z3$(90) = TN$
+
                                 For Z = 81 To 89
                                     For Z1 = Z + 1 To 90
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
+                            'Steals
                             If S!(X, 7) > LD!(100, 1) Then
+
                                 LD!(100, 1) = S!(X, 7)
                                 LD!(100, 2) = 0
                                 Z0$(100) = compconN$(X)
                                 Z3$(100) = TN$
+
                                 For Z = 91 To 99
                                     For Z1 = Z + 1 To 100
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
+                            'Assist Per Game
                             If S!(X, 16) > LD!(110, 1) Then
+
                                 LD!(110, 1) = S!(X, 16)
                                 LD!(110, 2) = S!(X, 8)
                                 Z0$(110) = compconN$(X)
                                 Z3$(110) = TN$
+
                                 For Z = 101 To 109
                                     For Z1 = Z + 1 To 110
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=111 TO 120
+                            'Assists
                             If S!(X, 8) > LD!(120, 1) Then
+
                                 LD!(120, 1) = S!(X, 8)
                                 LD!(120, 2) = S!(X, 8)
                                 Z0$(120) = compconN$(X)
                                 Z3$(120) = TN$
+
                                 For Z = 111 To 119
                                     For Z1 = Z + 1 To 120
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=121 TO 130
+                            '3 FG %
                             If S!(X, 21) > LD!(130, 1) Then
+
                                 LD!(130, 1) = S!(X, 21)
                                 LD!(130, 2) = W1!(X)
                                 Z0$(130) = compconN$(X)
                                 Z3$(130) = TN$
+
                                 For Z = 121 To 129
                                     For Z1 = Z + 1 To 130
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=131 TO 140
+                            '3 FG MADE
                             If W0!(X) > LD!(140, 1) Then
+
                                 LD!(140, 1) = W0!(X)
                                 LD!(140, 2) = 0
                                 Z0$(140) = compconN$(X)
                                 Z3$(140) = TN$
+
                                 For Z = 131 To 139
                                     For Z1 = Z + 1 To 140
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=141 TO 150
+                            'Minutes Per Game
                             If S!(X, 18) > LD!(150, 1) Then
+
                                 LD!(150, 1) = S!(X, 18)
                                 LD!(150, 2) = 0
                                 Z0$(150) = compconN$(X)
                                 Z3$(150) = TN$
+
                                 For Z = 141 To 149
                                     For Z1 = Z + 1 To 150
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=151 TO 160
+                            'Total Minutes
                             If S!(X, 10) / 60 > LD!(160, 1) Then
+
                                 LD!(160, 1) = S!(X, 10) / 60
                                 LD!(160, 2) = 0
                                 Z0$(160) = compconN$(X)
                                 Z3$(160) = TN$
+
                                 For Z = 151 To 159
                                     For Z1 = Z + 1 To 160
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=161 TO 170
+                            'Rebounds Per Game
                             If S!(X, 13) > LD!(170, 1) Then
+
                                 LD!(170, 1) = S!(X, 13)
                                 LD!(170, 2) = S!(X, 5)
                                 Z0$(170) = compconN$(X)
                                 Z3$(170) = TN$
+
                                 For Z = 161 To 169
                                     For Z1 = Z + 1 To 170
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=171 TO 180
+                            'Rebounds
                             If S!(X, 5) > LD!(180, 1) Then
+
                                 LD!(180, 1) = S!(X, 5)
                                 LD!(18, 2) = 0
                                 Z0$(180) = compconN$(X)
                                 Z3$(180) = TN$
+
                                 For Z = 171 To 179
                                     For Z1 = Z + 1 To 180
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=181 TO 190
+                            'Blocks Per Game
                             If S!(X, 17) > LD!(190, 1) Then
+
                                 LD!(190, 1) = S!(X, 17)
                                 LD!(190, 2) = 0
                                 Z0$(190) = compconN$(X)
                                 Z3$(190) = TN$
+
                                 For Z = 181 To 189
                                     For Z1 = Z + 1 To 190
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=191 TO 200
+                            'Blocks
                             If S!(X, 9) > LD!(200, 1) Then
+
                                 LD!(200, 1) = S!(X, 9)
                                 LD!(200, 2) = 0
                                 Z0$(200) = compconN$(X)
                                 Z3$(200) = TN$
+
                                 For Z = 191 To 199
                                     For Z1 = Z + 1 To 200
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=201 TO 210
+                            'FG Made
                             If S!(X, 2) > LD!(210, 1) Then
+
                                 LD!(210, 1) = S!(X, 2)
                                 LD!(210, 2) = 0
                                 Z0$(210) = compconN$(X)
                                 Z3$(210) = TN$
+
                                 For Z = 201 To 209
                                     For Z1 = Z + 1 To 210
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=211 TO 220
+                            'FT Made
                             If S!(X, 4) > LD!(220, 1) Then
+
                                 LD!(220, 1) = S!(X, 4)
                                 LD!(220, 2) = 0
                                 Z0$(220) = compconN$(X)
                                 Z3$(220) = TN$
+
                                 For Z = 211 To 219
                                     For Z1 = Z + 1 To 220
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=221 TO 230
+                            'Fouls Per Game
                             If S!(X, 14) > LD!(230, 1) Then
+
                                 LD!(230, 1) = S!(X, 14)
                                 LD!(230, 2) = 0
                                 Z0$(230) = compconN$(X)
                                 Z3$(230) = TN$
+
                                 For Z = 221 To 229
                                     For Z1 = Z + 1 To 230
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=231 TO 240
+                            'Fouls
                             If S!(X, 6) > LD!(240, 1) Then
+
                                 LD!(240, 1) = S!(X, 6)
                                 LD!(240, 2) = 0
                                 Z0$(240) = compconN$(X)
                                 Z3$(240) = TN$
+
                                 For Z = 231 To 239
                                     For Z1 = Z + 1 To 240
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
-                            'FOR Z=241 TO 250
+                            'MVP Points
                             If S!(X, 24) > LD!(250, 1) Then
+
                                 LD!(250, 1) = S!(X, 24)
                                 LD!(250, 2) = 0
                                 Z0$(250) = compconN$(X)
                                 Z3$(250) = TN$
+
                                 For Z = 241 To 249
                                     For Z1 = Z + 1 To 250
                                         If LD!(Z, 1) < LD!(Z1, 1) Then
                                             Swap Z0$(Z1), Z0$(Z)
                                             Swap Z3$(Z1), Z3$(Z)
-                                            For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                                            For M = 1 To 2:
+                                                Swap LD!(Z1, M), LD!(Z, M)
+                                            Next
                                         End If
                                     Next Z1
                                 Next Z
+
                             End If
 
                         Next X
-                        'FOR X=1 TO 40
 
+                        'FOR X=1 TO 40
                         If OT!(19) > OL!(40, 19) Then
 
-                            For M = 1 To 20: OL!(40, M) = OT!(M): Next: OL$(40) = TN$
+                            For M = 1 To 20:
+                                OL!(40, M) = OT!(M)
+                            Next
+
+                            OL$(40) = TN$
 
                             For X = 1 To 39
                                 For X1 = 1 + X To 40:
                                     If OL!(X, 19) < OL!(X1, 19) Then
                                         Swap OL$(X1), OL$(X)
-                                        For M = 1 To 20: J! = OL!(X1, M): OL!(X1, M) = OL!(X, M): OL!(X, M) = J!: Next
+                                        For M = 1 To 20:
+                                            Swap OL!(X1, M), OL!(X, M)
+                                        Next
                                     End If
                                 Next X1
                             Next X
+
                         End If
 
                         'FOR X=1 TO 15
                         If DT!(19) < DL!(40, 19) Then
-                            For M = 1 To 20: DL!(40, M) = DT!(M): Next: DL$(40) = TN$
+
+                            For M = 1 To 20:
+                                DL!(40, M) = DT!(M)
+                            Next
+
+                            DL$(40) = TN$
 
                             For X = 1 To 39
                                 For X1 = 1 + X To 40
                                     If DL!(X, 19) > DL!(X1, 19) Then
                                         Swap DL$(X1), DL$(X)
-                                        For M = 1 To 20: J! = DL!(X1, M): DL!(X1, M) = DL!(X, M): DL!(X, M) = J!: Next
+                                        For M = 1 To 20:
+                                            Swap DL!(X1, M), DL!(X, M)
+                                        Next
                                     End If
                                 Next X1
                             Next X
-                        End If
 
+                        End If
 
                     End If
 
                     Close 3
 
                 Next 'Done "checking stats"
+
+                '-- End of subroutine here
+
 
                 'Sort by Wins
                 AA = 1

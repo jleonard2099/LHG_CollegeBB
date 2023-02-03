@@ -119,9 +119,10 @@ Sub LoadLeague_SEENAT (leagueFile$)
     Close 2
 
     Do
+
         Cls
 
-        Call TITLE
+        Call TITLE_STATS
 
         J = 5
 
@@ -137,8 +138,8 @@ Sub LoadLeague_SEENAT (leagueFile$)
         Next
 
         Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-		
-		Locate 10, 15
+
+        Locate 10, 15
         Color 7, 1
 
         Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
@@ -150,10 +151,10 @@ Sub LoadLeague_SEENAT (leagueFile$)
 
         Select Case UCase$(I$)
             Case "P":
-                Call PrintReport_SEENAT(SF$)
+                Call PrintReport_SEENAT(SF$, NRT, leagueFile$)
 
             Case "S":
-                Call PrintScreen_SEENAT
+                Call PrintScreen_SEENAT(NRT, leagueFile$)
 
             Case "F":
                 X1 = 1
@@ -196,11 +197,12 @@ Sub LoadLeague_SEENAT (leagueFile$)
 
                 Color 15, 0
 
-                Call PrintReport_SEENAT(SF$)
+                Call PrintReport_SEENAT(SF$, NRT, leagueFile$)
 
         End Select
 
         Color 15, 0
+
         Cls
 
         JJ = 4
@@ -238,7 +240,7 @@ End Sub
 '     PrintScreen_SEENAT Subroutine
 '----------------------------------------
 '...explanation...
-Sub PrintScreen_SEENAT ()
+Sub PrintScreen_SEENAT (NRT, FF$)
 
     Shared DL$(), OL$(), PR$()
     Shared DL!(), OL!(), seenatZ!()
@@ -251,10 +253,10 @@ Sub PrintScreen_SEENAT ()
     Cls
 
     Color 12
-	Print FF$ + " OVERALL RANKINGS"
+    Print FF$ + " OVERALL RANKINGS"
     Locate , 1
     Color 14
-	Print "                    RATING     W    L    STRENGTH OF SCHEDULE"
+    Print "                    RATING     W    L    STRENGTH OF SCHEDULE"
     Color 15
 
     For P = 1 To NRT
@@ -279,9 +281,8 @@ Sub PrintScreen_SEENAT ()
     Cls
 
     Color 14
-    Print "FIELD GOAL % (MIN 5 FGM/G)"; Tab(41); "FREE THROW % (MIN 2.5 FTM/G)"
-    Print
-    Print "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
+    Print "FIELD GOAL % (MIN 5 FGA/G)"
+    Print "                            PCT   FGA"
     Color 15
 
     For P = 41 To 60
@@ -293,13 +294,18 @@ Sub PrintScreen_SEENAT ()
         End If
     Next
 
-    Locate 4
+    Color 14
+    Locate 1, 41
+    Print "FREE THROW % (MIN 2 FTA/G)"
+    Locate , 41
+    Print "                            PCT   FTA"
+    Color 15
 
     For P = 61 To 80
         If seenatZ2$(P) <> "" Then
             Locate , 41
-			Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
-            Locate , 67
+            Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
+            Locate , 68
             Print Using "###.#  "; seenatZ!(P) * 100;
             Print "  " + seenatZ1$(P)
         End If
@@ -351,9 +357,9 @@ Sub PrintScreen_SEENAT ()
         End If
     Next
 
-	Color 14
+    Color 14
     Locate 1, 41: Print "STEALS"
-	Color 15
+    Color 15
 
     For P = 91 To 100
         If seenatZ2$(P) <> "" Then
@@ -391,8 +397,8 @@ Sub PrintScreen_SEENAT ()
     Locate VT, HZ: Print Space$(26);
     QK$ = GetKeyPress$
     Cls
-    
-	Color 14: Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
+
+    Color 14: Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
     Color 15
 
     For P = 121 To 130
@@ -406,7 +412,7 @@ Sub PrintScreen_SEENAT ()
     Next P
 
     Color 14
-	Locate 1, 41: Print "MINUTES PER GAME"
+    Locate 1, 41: Print "MINUTES PER GAME"
     Color 15
 
     For P = 141 To 150
@@ -418,7 +424,7 @@ Sub PrintScreen_SEENAT ()
     Next P
 
     Color 14
-	Locate 13: Print "THREE POINT FIELD GOALS MADE"
+    Locate 13: Print "THREE POINT FIELD GOALS MADE"
     Color 15
 
     For P = 131 To 140
@@ -429,9 +435,9 @@ Sub PrintScreen_SEENAT ()
         End If
     Next
 
-	Color 14
+    Color 14
     Locate 13, 41: Print "TOTAL MINUTES"
-	Color 15
+    Color 15
 
     For P = 151 To 160
         If seenatZ2$(P) <> "" Then
@@ -445,7 +451,7 @@ Sub PrintScreen_SEENAT ()
     Locate VT, HZ: Print Space$(26);
     QK$ = GetKeyPress$
     Cls
-	
+
     Color 14: Print "REBOUNDS PER GAME   "
     Color 15
 
@@ -458,7 +464,7 @@ Sub PrintScreen_SEENAT ()
     Next
 
     Color 14
-	Locate 1, 41: Print "REBOUNDS"
+    Locate 1, 41: Print "REBOUNDS"
     Color 15
 
     For P = 171 To 180
@@ -470,7 +476,7 @@ Sub PrintScreen_SEENAT ()
     Next
 
     Color 14
-	Locate 13: Print "BLOCKS PER GAME"
+    Locate 13: Print "BLOCKS PER GAME"
     Color 15
 
     For P = 181 To 190
@@ -482,7 +488,7 @@ Sub PrintScreen_SEENAT ()
     Next
 
     Color 14
-	Locate 13, 41: Print "BLOCKS"
+    Locate 13, 41: Print "BLOCKS"
     Color 15
 
     For P = 191 To 200
@@ -497,7 +503,7 @@ Sub PrintScreen_SEENAT ()
     Locate VT, HZ: Print Space$(26);
     QK$ = GetKeyPress$
     Cls
-	
+
     Color 14: Print "FIELD GOALS MADE "
     Color 15
 
@@ -509,7 +515,7 @@ Sub PrintScreen_SEENAT ()
     Next
 
     Color 14
-	Locate 1, 41: Print "FREE THROWS MADE"
+    Locate 1, 41: Print "FREE THROWS MADE"
     Color 15
 
     For P = 211 To 220
@@ -519,9 +525,9 @@ Sub PrintScreen_SEENAT ()
             Print Using "####"; seenatZ!(P)
         End If
     Next
-    
+
     Color 14
-	Locate 13: Print "FOULS PER GAME"
+    Locate 13: Print "FOULS PER GAME"
     Color 15
 
     For P = 221 To 230
@@ -532,7 +538,7 @@ Sub PrintScreen_SEENAT ()
     Next
 
     Color 14
-	Locate 13, 41: Print "FOULS"
+    Locate 13, 41: Print "FOULS"
     Color 15
 
     For P = 231 To 240
@@ -548,7 +554,7 @@ Sub PrintScreen_SEENAT ()
     Locate VT, HZ: Print Space$(26);
     QK$ = GetKeyPress$
     Cls
-	
+
     Color 14: Print "MOST VALUABLE PLAYER POINTS"
     Color 15
 
@@ -566,9 +572,9 @@ Sub PrintScreen_SEENAT ()
 
     Cls
     Color 12
-	Print "                         OFFENSIVE TOTALS"
+    Print "                         OFFENSIVE TOTALS"
     Color 14
-	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
@@ -587,11 +593,11 @@ Sub PrintScreen_SEENAT ()
     Locate VT, HZ: Print Space$(26);
     QK$ = GetKeyPress$
     Cls
-	
+
     Color 12
-	Print "                         DEFENSIVE TOTALS"
+    Print "                         DEFENSIVE TOTALS"
     Color 14
-	Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
@@ -628,7 +634,7 @@ End Sub
 'We should do this with other routines
 '   and simply use a temp file
 
-Sub PrintReport_SEENAT (targetFile$)
+Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
 
     Shared DL$(), OL$(), PR$()
     Shared DL!(), OL!(), seenatZ!()

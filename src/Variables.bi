@@ -163,7 +163,7 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 '----------------------------------------
 ' Used across SEECON/SEENAT.BAS routines
 '----------------------------------------
-Dim DL$(60), OL$(60), NOL$(60), PR$(1200)
+Dim DL$(60), OL$(60), NOL$(1 to 60), PR$(1200)
 Dim DL!(60, 20), OL!(60, 20) ', seeconP(60)
 Dim O1!(30), O2!(30), O3!(30), O4!(30), O5!(30), O6!(30)
 Dim seenatZ!(260), seenatZ1!(260)

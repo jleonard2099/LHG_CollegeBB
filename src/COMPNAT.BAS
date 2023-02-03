@@ -8,11 +8,12 @@ Sub COMPNAT ()
     Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
 
     Dim CN$(1 To 40), H1$(40)
-    Dim NOL$(40)
     Dim SITE$(100)
 
-    ReDim PT(1200, 4)
-    ReDim PT$(1200)
+    'Dim PT#(1 To 1200, 4)
+    Dim PT$(1 To 1200)
+
+    Shared PT#()
 
     Shared BRC!(), DL!()
     Shared LD!(), NDL!(), NLD!(), NOL!(), OL!()
@@ -22,7 +23,7 @@ Sub COMPNAT ()
     Shared DT!(), OT!()
 
     Shared BRC$(), compnatH$(), DL$(), O$(), OL$()
-    Shared NDL$(), NZ0$(), NZ1$(), NZ3$()
+    Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
     Shared recconTRC$(), recconTRC1$()
     Shared Z0$(), Z1$(), Z3$()
 
@@ -140,6 +141,8 @@ Sub COMPNAT ()
 
                 If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
+                Erase NDL!
+
                 Open diskPaths$(1) + WE$ + ".CON" For Input As #2
                 Input #2, X$
                 For I = 1 To 40
@@ -157,9 +160,8 @@ Sub COMPNAT ()
 
                         Cls
 
-                        'Initialize values first
-                        Erase DL$, OL$, NDL$, NOL$, NZ0$, NZ3$, Z0$, Z1$, Z3$
-                        Erase DL!, OL!, LD!, PT
+                        Erase Z1$
+                        Erase DL!, O1!, O2!, O3!, O4!, O5!, O6!
 
                         For X = 1 To 40
                             DL!(X, 19) = 9999
@@ -185,7 +187,6 @@ Sub COMPNAT ()
                         Next
                         Close 2
 
-                        
                         For XW = 1 To 30
 
                             fullWins = 0
@@ -193,178 +194,199 @@ Sub COMPNAT ()
                             confWins = 0
                             confLosses = 0
 
-                            If H1$(XW) = Chr$(42) Then Exit For 'was Return; but where from?
+                            'Look for * as terminating char
+                            If H1$(XW) <> Chr$(42) Then
 
-                            H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
+                                H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
 
-                            For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
-                            Next XX
+                                For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
+                                Next XX
 
-                            For XX = 12 To 14: If Mid$(H1$(XW), XX, 2) = "ST" Then Mid$(H1$(XW), 9, 1) = "_": Mid$(H1$(XW), 10, 2) = "ST"
-                            Next XX
+                                For XX = 12 To 14: If Mid$(H1$(XW), XX, 2) = "ST" Then Mid$(H1$(XW), 9, 1) = "_": Mid$(H1$(XW), 10, 2) = "ST"
+                                Next XX
 
-                            QQ = 8
+                                QQ = 8
 
-                            For XX = 11 To 4 Step -1
-                                If Mid$(H1$(XW), XX, 1) = "_" Then
-                                    QQ = XX - 4
-                                Else
-                                    Exit For
-                                End If
-                            Next XX
-
-                            G$ = H1$(XW): H1$(XW) = Right$(H1$(XW), Len(H1$(XW)) - 3): YR$ = Left$(G$, 2)
-                            If Len(H1$(XW)) > 8 Then H1$(XW) = Left$(H1$(XW), 8)
-                            H1$(XW) = H1$(XW) + "." + YR$
-
-                            If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-
-                                Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
-
-                                Input #2, numGames%
-                                For I = 1 To 100: Input #2, O%(I): Next I
-                                For I = 1 To 100: Input #2, O$(I): Next I
-
-                                For I = 1 To 100: Input #2, compnatT%(I): Next I
-                                For I = 1 To 100: Input #2, compnatH$(I): Next I
-                                For I = 1 To 100
-                                    For I1 = 0 To 1
-                                        Input #2, AP%(I, I1)
-                                Next: Next
-                                For I = 1 To 100: Input #2, CRD(I): Next I
-                                For I = 1 To 100: Input #2, SITE$(I): Next I
-                                Close 2
-
-                                fullWins = 0
-                                fullLosses = 0
-                                confWins = 0
-                                confLosses = 0
-
-                                '804 GoSub 5500
-                                For I = 1 To numGames%
-
-                                    'GoSub 5600
-                                    For P = 4 To 11
-                                        If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
-                                    Next P
-
-                                    For P = 12 To 14
-                                        If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
-                                    Next P
-
-                                    QQ = 8
-                                    For P = 11 To 4 Step -1:
-                                        If Mid$(O$(I), P, 1) = "_" Then
-                                            QQ = P - 4
-                                        Else
-                                            Exit For
-                                        End If
-                                    Next P
-
-                                    f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
-                                    O$(I) = R$
-                                            
-                                    skipIt = 0
-
-                                    For EC = 1 To 30
-
-                                        If O$(I) = H1$(EC) Then
-                                            skipIt = 1
-                                            Exit For
-                                        End If
-
-                                    Next EC
-
-                                    If skipIt <> 1 Then
-                                        If O%(I) > compnatT%(I) Then fullWins = fullWins + 1
-                                        If O%(I) < compnatT%(I) Then fullLosses = fullLosses + 1
+                                For XX = 11 To 4 Step -1
+                                    If Mid$(H1$(XW), XX, 1) = "_" Then
+                                        QQ = XX - 4
                                     Else
-                                        If O%(I) > compnatT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                                        If O%(I) < compnatT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                                        Exit For
+                                    End If
+                                Next XX
+
+                                G$ = H1$(XW): H1$(XW) = Right$(H1$(XW), Len(H1$(XW)) - 3): YR$ = Left$(G$, 2)
+                                If Len(H1$(XW)) > 8 Then H1$(XW) = Left$(H1$(XW), 8)
+                                H1$(XW) = H1$(XW) + "." + YR$
+
+                                If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
+
+                                    Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
+
+                                    Input #2, numGames%
+                                    For I = 1 To 100: Input #2, O%(I): Next I
+                                    For I = 1 To 100: Input #2, O$(I): Next I
+
+                                    For I = 1 To 100: Input #2, compnatT%(I): Next I
+                                    For I = 1 To 100: Input #2, compnatH$(I): Next I
+                                    For I = 1 To 100
+                                        For I1 = 0 To 1
+                                            Input #2, AP%(I, I1)
+                                        Next
+                                    Next
+                                    For I = 1 To 100: Input #2, CRD(I): Next I
+                                    For I = 1 To 100: Input #2, SITE$(I): Next I
+                                    Close 2
+
+                                    fullWins = 0
+                                    fullLosses = 0
+                                    confWins = 0
+                                    confLosses = 0
+
+                                    '804 GoSub 5500
+                                    For I = 1 To numGames%
+
+                                        For P = 4 To 11
+                                            If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
+                                        Next P
+
+                                        For P = 12 To 14
+                                            If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
+                                        Next P
+
+                                        QQ = 8
+                                        For P = 11 To 4 Step -1:
+                                            If Mid$(O$(I), P, 1) = "_" Then
+                                                QQ = P - 4
+                                            Else
+                                                Exit For
+                                            End If
+                                        Next P
+
+                                        f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
+                                        O$(I) = R$
+
+                                        confGame = 0
+
+                                        For EC = 1 To 30
+
+                                            If O$(I) = H1$(EC) Then
+                                                confGame = 1
+                                                Exit For
+                                            End If
+
+                                        Next EC
+
+                                        If confGame <> 1 Then
+                                            If O%(I) > compnatT%(I) Then fullWins = fullWins + 1
+                                            If O%(I) < compnatT%(I) Then fullLosses = fullLosses + 1
+                                        Else
+                                            If O%(I) > compnatT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
+                                            If O%(I) < compnatT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                                        End If
+
+                                        EC = 0
+
+                                    Next I
+
+                                    '-- This is all extra compared to COMPCON
+                                    'STRENGTH OF SCHEDULE
+                                    PW = 0
+                                    SS = 0
+
+                                    For I = 1 To numGames%
+                                        SS = AP%(I, 1) + SS
+                                    Next
+
+                                    SS = SS / numGames%
+                                    'INDIVIDUAL GAME POWER RATINGS
+                                    GL = 0
+                                    PW = 0
+
+                                    For I = 1 To numGames%
+                                        RAT = O%(I) - compnatT%(I) + AP%(I, 1)
+                                        If Left$(compnatH$(I), 1) = "H" Then RAT = RAT - 4.5
+                                        If Left$(compnatH$(I), 1) = "A" Then RAT = RAT + 4.5
+                                        PW = PW + RAT
+                                    Next
+
+                                    If numGames% <= 4 Then
+                                        GL = 5 - numGames%
+                                        PW = PW + GL * AP%(1, 0)
                                     End If
 
-                                    EC = 0
+                                    PW = PW / (numGames% + GL)
+                                    NRT = NRT + 1
+                                    PT$(NRT) = H1$(XW)
+                                    PT#(NRT, 1) = PW
+                                    PT#(NRT, 2) = fullWins
+                                    PT#(NRT, 3) = fullLosses
+                                    PT#(NRT, 4) = SS
+                                    '-- This is all extra compared to COMPCON
 
-                                Next I
+                                    Cls
+                                    Locate 4, 5
+                                    Color 14: Print "FINDING ";
+                                    Color 15: Print H1$(XW);: Color 14
+                                    Print " STATS            "
+                                    'End If
 
-                                'STRENGTH OF SCHEDULE
-                                PW = 0
-                                SS = 0
+                                    'End If
 
-                                For I = 1 To numGames%
-                                    SS = AP%(I, 1) + SS
-                                Next
+                                    L = Len(H1$(XW))
+                                    WT$ = ""
 
-                                SS = SS / numGames%
-                                'INDIVIDUAL GAME POWER RATINGS
-                                GL = 0: PW = 0
+                                    For X = 1 To L
+                                        A = Asc(Mid$(H1$(XW), X, 1))
+                                        WT$ = WT$ + Chr$(A)
+                                    Next X
 
-                                For I = 1 To numGames%
-                                    RAT = O%(I) - compnatT%(I) + AP%(I, 1)
-                                    If Left$(compnatH$(I), 1) = "H" Then RAT = RAT - 4.5
-                                    If Left$(compnatH$(I), 1) = "A" Then RAT = RAT + 4.5
-                                    PW = PW + RAT
-                                Next
+                                    timeToGo = 0
 
-                                If numGames% <= 4 Then
-                                    GL = 5 - numGames%
-                                    PW = PW + GL * AP%(1, 0)
+                                    For X = 1 To 30
+
+                                        If Z1$(X) = WT$ Then
+                                            If O1!(X) = fullWins And O2!(X) = fullLosses Then
+                                                timeToGo = 1
+                                                Exit For
+                                            End If
+
+                                            O1!(X) = fullWins
+                                            O2!(X) = fullLosses
+                                            O4!(X) = confWins
+                                            O5!(X) = confLosses
+
+                                            If O1!(X) + O2!(X) = 0 Then
+                                                O3!(X) = 0
+                                            Else
+                                                O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                            End If
+                                            If O4!(X) + O5!(X) = 0 Then
+                                                O6!(X) = 0
+                                            Else
+                                                O6!(X) = O4!(X) / (O4!(X) + O5!(X))
+                                            End If
+                                        End If
+
+                                    Next X
+
+                                End If 'Done checkin for stat file
+
+                                If timeToGo <> 1 Then
+                                    Call LoadStats(H1$(XW), TN$, numGames%)
+                                    Call CheckTeam(TN$)
                                 End If
 
-                                PW = PW / (numGames% + GL)
-                                NRT = NRT + 1
-                                PT$(NRT) = H1$(XW)
-                                PT(NRT, 1) = PW
-                                PT(NRT, 2) = fullWins
-                                PT(NRT, 3) = fullLosses
-                                PT(NRT, 4) = SS
+                                948 '
+                                If H1$(XW) <> "*" And _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
+                                    Call CheckStatsLeaders(H1$(XW), TN$)
+                                End If
 
-                                Cls
-                                Locate 4, 5
-                                Color 14: Print "FINDING ";
-                                Color 15: Print H1$(XW);: Color 14
-                                Print " STATS            "
+                                Close 3
 
-                                L = Len(H1$(XW)): WT$ = ""
+                            End If 'Done looking for * as char
 
-                                For X = 1 To L
-                                    A = Asc(Mid$(H1$(XW), X, 1))
-                                    WT$ = WT$ + Chr$(A)
-                                Next X
-
-                                For X = 1 To 30
-                                    If Z1$(X) = WT$ Then
-                                        If O1!(X) = fullWins And O2!(X) = fullLosses Then GoTo 948
-                                        O1!(X) = fullWins
-                                        O2!(X) = fullLosses
-                                        O4!(X) = confWins
-                                        O5!(X) = confLosses
-                                        If O1!(X) + O2!(X) = 0 Then
-                                            O3!(X) = 0
-                                        Else
-                                            O3!(X) = O1!(X) / (O1!(X) + O2!(X))
-                                        End If
-                                        If O4!(X) + O5!(X) = 0 Then
-                                            O6!(X) = 0
-                                        Else
-                                            O6!(X) = O4!(X) / (O4!(X) + O5!(X))
-                                        End If
-                                    End If
-                                Next X
-
-                                Call LoadStats(H1$(XW))
-
-                            End If 'Done checkin for stat file
-
-                            Call CheckTeam
-
-                            948 '
-                            If H1$(XW) <> "*" And _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-                                Call CheckStatsLeaders(H1$(XW))
-                            End If
-
-                            Close 3
-                        Next
+                        Next XW
 
                         AA = 1
                         ZZ = 15
@@ -466,10 +488,10 @@ Sub COMPNAT ()
 
                 For Z = 1 To NRT - 1
                     For Z1 = Z + 1 To NRT
-                        If PT(Z, 1) < PT(Z1, 1) Then
+                        If PT#(Z, 1) < PT#(Z1, 1) Then
                             Swap PT$(Z1), PT$(Z)
                             For MN = 1 To 4
-                                Swap PT(Z1, MN), PT(Z, MN)
+                                Swap PT#(Z1, MN), PT#(Z, MN)
                             Next MN
                         End If
                     Next Z1
@@ -479,7 +501,7 @@ Sub COMPNAT ()
                 Print "POSTING "; WE$; " POLL"
                 Write #2, NRT
                 For X = 1 To 1200
-                    Write #2, PT$(X), PT(X, 1), PT(X, 2), PT(X, 3), PT(X, 4)
+                    Write #2, PT$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
                 Next
                 Close 2
 
@@ -515,7 +537,7 @@ End Sub
 '       LoadStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub LoadStats (statFile$)
+Sub LoadStats (statFile$, TN$, numGames%)
 
     Dim BRC$(32, 1)
     Dim TRC!(21), TRC1!(21)
@@ -550,10 +572,13 @@ Sub LoadStats (statFile$)
         Close 2
 
         For I = 0 To 13
+
             S!(I, 25) = S!(I, 13)
             S!(I, 26) = S!(I, 12)
             S!(I, 12) = S!(I, 2) * 2 + W0!(I) + S!(I, 4): ' *** PTS ***
+
             If S!(I, 0) <> 0 Then
+
                 S!(I, 13) = S!(I, 5) / S!(I, 0): ' *** RB/G ***
                 S!(I, 14) = S!(I, 6) / S!(I, 0): ' *** FOULS/G ***
                 S!(I, 15) = S!(I, 7) / S!(I, 0): ' *** STEALS/G ***
@@ -575,12 +600,15 @@ Sub LoadStats (statFile$)
                 End If
 
                 S!(I, 22) = S!(I, 12) / S!(I, 0): ' *** PTS/G ***
+
                 If S!(I, 0) > BRC!(1) Then BRC!(1) = S!(I, 0): BRC$(1, 0) = compnatN$(I): BRC$(1, 1) = TN$
                 If S!(I, 1) > BRC!(2) Then BRC!(2) = S!(I, 1): BRC$(2, 0) = compnatN$(I): BRC$(2, 1) = TN$
                 If S!(I, 2) > BRC!(3) Then BRC!(3) = S!(I, 2): BRC$(3, 0) = compnatN$(I): BRC$(3, 1) = TN$
                 If S!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And S!(I, 2) / numGames% >= 5 Then BRC!(4) = S!(I, 19): BRC$(4, 0) = compnatN$(I): BRC$(4, 1) = TN$
+
                 If W1!(I) > BRC!(5) Then BRC!(5) = W1!(I): BRC$(5, 0) = compnatN$(I): BRC$(5, 1) = TN$
                 If W0!(I) > BRC!(6) Then BRC!(6) = W0!(I): BRC$(6, 0) = compnatN$(I): BRC$(6, 1) = TN$
+
                 If S!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And W0!(I) / numGames% >= 1.5 Then BRC!(7) = S!(I, 21): BRC$(7, 0) = compnatN$(I): BRC$(7, 1) = TN$
                 If S!(I, 3) > BRC!(8) Then BRC!(8) = S!(I, 3): BRC$(8, 0) = compnatN$(I): BRC$(8, 1) = TN$
                 If S!(I, 4) > BRC!(9) Then BRC!(9) = S!(I, 4): BRC$(9, 0) = compnatN$(I): BRC$(9, 1) = TN$
@@ -655,14 +683,13 @@ Sub LoadStats (statFile$)
         If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: recconTRC1$(21) = TN$
 
     End If
-    '1030 Return
 
 End Sub
 
 '----------------------------------------
-'       CheckStatsLeaders Subroutine
+'           CheckTeam Subroutine
 '----------------------------------------
-Sub CheckTeam ()
+Sub CheckTeam (TN$)
 
     Shared DL!(), LD!()
     Shared NDL!(), NOL!(), NLD!()
@@ -680,383 +707,512 @@ Sub CheckTeam ()
         Print "CHECKING STATS OF ";
         Color 15: Print compnatN$(X)
 
+        'Division 1, 2 Record
         If S!(X, 22) > LD!(20, 1) Then
+
             LD!(20, 1) = S!(X, 22)
             LD!(20, 2) = 0
             Z0$(20) = compnatN$(X)
             Z3$(20) = TN$
+
             For Z = 1 To 19:
                 For Z1 = Z + 1 To 20
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Division 3, 4 Record
         If S!(X, 12) > LD!(40, 1) Then
+
             LD!(40, 1) = S!(X, 12)
             LD!(40, 2) = 0
             Z0$(40) = compnatN$(X)
             Z3$(40) = TN$
+
             For Z = 21 To 39
                 For Z1 = Z + 1 To 40
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Field Goal %
         If S!(X, 19) > LD!(60, 1) Then
+
             LD!(60, 1) = S!(X, 19)
             LD!(60, 2) = S!(X, 1)
             Z0$(60) = compnatN$(X)
             Z3$(60) = TN$
+
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Free Throw %
         If S!(X, 20) > LD!(80, 1) Then
+
             LD!(80, 1) = S!(X, 20)
             LD!(80, 2) = S!(X, 3)
             Z0$(80) = compnatN$(X)
             Z3$(80) = TN$
+
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Steals Per Game
         If S!(X, 15) > LD!(90, 1) Then
+
             LD!(90, 1) = S!(X, 15)
             LD!(90, 2) = S!(X, 7)
             Z0$(90) = compnatN$(X)
             Z3$(90) = TN$
+
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Steals
         If S!(X, 7) > LD!(100, 1) Then
+
             LD!(100, 1) = S!(X, 7)
             LD!(100, 2) = 0
             Z0$(100) = compnatN$(X)
             Z3$(100) = TN$
+
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Assists Per Game
         If S!(X, 16) > LD!(110, 1) Then
+
             LD!(110, 1) = S!(X, 16)
             LD!(110, 2) = S!(X, 8)
             Z0$(110) = compnatN$(X)
             Z3$(110) = TN$
+
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=111 TO 120
+        'Assists
         If S!(X, 8) > LD!(120, 1) Then
+
             LD!(120, 1) = S!(X, 8)
             LD!(120, 2) = S!(X, 8)
             Z0$(120) = compnatN$(X)
             Z3$(120) = TN$
+
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=121 TO 130
+        '3 FG Percent
         If S!(X, 21) > LD!(130, 1) Then
+
             LD!(130, 1) = S!(X, 21)
             LD!(130, 2) = W1!(X)
             Z0$(130) = compnatN$(X)
             Z3$(130) = TN$
+
             For Z = 121 To 129
                 For Z1 = Z + 1 To 130
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=131 TO 140
+        '3 FG MADE
         If W0!(X) > LD!(140, 1) Then
+
             LD!(140, 1) = W0!(X)
             LD!(140, 2) = 0
             Z0$(140) = compnatN$(X)
             Z3$(140) = TN$
+
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=141 TO 150
+        'Minutes Per Game
         If S!(X, 18) > LD!(150, 1) Then
+
             LD!(150, 1) = S!(X, 18)
             LD!(150, 2) = 0
             Z0$(150) = compnatN$(X)
             Z3$(150) = TN$
+
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=151 TO 160
+        'Total Minutes
         If S!(X, 10) / 60 > LD!(160, 1) Then
+
             LD!(160, 1) = S!(X, 10) / 60
             LD!(160, 2) = 0
             Z0$(160) = compnatN$(X)
             Z3$(160) = TN$
+
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
-            3537 Next Z1: Next Z
+                Next Z1
+            Next Z
+
         End If
 
-        'FOR Z=161 TO 170
+        'Rebounds Per Game
         If S!(X, 13) > LD!(170, 1) Then
+
             LD!(170, 1) = S!(X, 13)
             LD!(170, 2) = S!(X, 5)
             Z0$(170) = compnatN$(X)
             Z3$(170) = TN$
+
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=171 TO 180
+        'Rebounds
         If S!(X, 5) > LD!(180, 1) Then
+
             LD!(180, 1) = S!(X, 5)
             LD!(18, 2) = 0
             Z0$(180) = compnatN$(X)
             Z3$(180) = TN$
+
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=181 TO 190
+        'Blocks Per Game
         If S!(X, 17) > LD!(190, 1) Then
+
             LD!(190, 1) = S!(X, 17)
             LD!(190, 2) = 0
             Z0$(190) = compnatN$(X)
             Z3$(190) = TN$
+
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=191 TO 200
+        'Blocks
         If S!(X, 9) > LD!(200, 1) Then
+
             LD!(200, 1) = S!(X, 9)
             LD!(200, 2) = 0
             Z0$(200) = compnatN$(X)
             Z3$(200) = TN$
+
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=201 TO 210
+        'Field Goals Made
         If S!(X, 2) > LD!(210, 1) Then
+
             LD!(210, 1) = S!(X, 2)
             LD!(210, 2) = 0
             Z0$(210) = compnatN$(X)
             Z3$(210) = TN$
+
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=211 TO 220
+        'Free Throws Made
         If S!(X, 4) > LD!(220, 1) Then
+
             LD!(220, 1) = S!(X, 4)
             LD!(220, 2) = 0
             Z0$(220) = compnatN$(X)
             Z3$(220) = TN$
+
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=221 TO 230
+        'Fouls Per Game
         If S!(X, 14) > LD!(230, 1) Then
+
             LD!(230, 1) = S!(X, 14)
             LD!(230, 2) = 0
             Z0$(230) = compnatN$(X)
             Z3$(230) = TN$
+
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=231 TO 240
+        'Fouls
         If S!(X, 6) > LD!(240, 1) Then
+
             LD!(240, 1) = S!(X, 6)
             LD!(240, 2) = 0
             Z0$(240) = compnatN$(X)
             Z3$(240) = TN$
+
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=241 TO 250
+        'MVP Points
         If S!(X, 24) > LD!(250, 1) Then
+
             LD!(250, 1) = S!(X, 24)
             LD!(250, 2) = 0
             Z0$(250) = compnatN$(X)
             Z3$(250) = TN$
+
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
                     If LD!(Z, 1) < LD!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
-                        For M = 1 To 2: Swap LD!(Z1, M), LD!(Z, M): Next
+                        For M = 1 To 2:
+                            Swap LD!(Z1, M), LD!(Z, M)
+                        Next
                     End If
                 Next Z1
             Next Z
+
         End If
 
     Next X
 
     'FOR X=1 TO 40
     If OT!(19) > OL!(40, 19) Then
-        For M = 1 To 20: OL!(40, M) = OT!(M): Next
+
+        For M = 1 To 20:
+            OL!(40, M) = OT!(M)
+        Next
+
         OL$(40) = TN$
+
         For X = 1 To 39:
             For X1 = 1 + X To 40:
                 If OL!(X, 19) < OL!(X1, 19) Then
                     Swap OL$(X1), OL$(X)
-                    For M = 1 To 20: J = OL!(X1, M): OL!(X1, M) = OL!(X, M): OL!(X, M) = J: Next
+                    For M = 1 To 20:
+                        Swap OL!(X1, M), OL!(X, M)
+                    Next
                 End If
             Next X1
         Next X
+
     End If
 
     'FOR X=1 TO 15
     If DT!(19) < DL!(40, 19) Then
-        For M = 1 To 20: DL!(40, M) = DT!(M): Next:
+
+        For M = 1 To 20:
+            DL!(40, M) = DT!(M)
+        Next
+
         DL$(40) = TN$
+
         For X = 1 To 39
             For X1 = 1 + X To 40:
                 If DL!(X, 19) > DL!(X1, 19) Then
                     Swap DL$(X1), DL$(X)
-                    For M = 1 To 20: J! = DL!(X1, M): DL!(X1, M) = DL!(X, M): DL!(X, M) = J!: Next
+                    For M = 1 To 20:
+                        Swap DL!(X1, M), DL!(X, M)
+                    Next
                 End If
             Next X1
         Next X
+
     End If
 
 End Sub
@@ -1065,7 +1221,7 @@ End Sub
 '       CheckStatsLeaders Subroutine
 '----------------------------------------
 '...explanation...
-Sub CheckStatsLeaders (statFile$)
+Sub CheckStatsLeaders (statFile$, TN$)
 
     Shared NDL!(), NOL!(), NLD!()
     Shared S!(), W0!(), W1!()
@@ -1077,16 +1233,18 @@ Sub CheckStatsLeaders (statFile$)
 
     Cls: Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
     For X = 0 To 14
-        Color 14: Print "CHECKING STATS OF ";: Color 15: Print compnatN$(X)
+
+        Color 14: Print "CHECKING STATS OF ";
+        Color 15: Print compnatN$(X)
+
+        'Division 1, 2 Record
         If S!(X, 22) > NLD!(20, 1) Then
+
             NLD!(20, 1) = S!(X, 22)
             NLD!(20, 2) = 0
             NZ0$(20) = compnatN$(X)
             NZ3$(20) = TN$
-            'Is this logic accurate?
-            'It leads to this only be updating occassionally
-            'This makes it hard for things to work without
-            'Manually assigning values to the arrays
+
             For Z = 1 To 19
                 For Z1 = Z + 1 To 20
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1096,13 +1254,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Division 3, 4 Record
         If S!(X, 12) > NLD!(40, 1) Then
+
             NLD!(40, 1) = S!(X, 12)
             NLD!(40, 2) = 0
             NZ0$(40) = compnatN$(X)
             NZ3$(40) = TN$
+
             For Z = 21 To 39
                 For Z1 = Z + 1 To 40
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1112,13 +1274,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Field Goal %
         If S!(X, 19) > NLD!(60, 1) Then
+
             NLD!(60, 1) = S!(X, 19)
             NLD!(60, 2) = S!(X, 1)
             NZ0$(60) = compnatN$(X)
             NZ3$(60) = TN$
+
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1128,13 +1294,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Free Throw %
         If S!(X, 20) > NLD!(80, 1) Then
+
             NLD!(80, 1) = S!(X, 20)
             NLD!(80, 2) = S!(X, 3)
             NZ0$(80) = compnatN$(X)
             NZ3$(80) = TN$
+
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1144,13 +1314,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Steals Per Game
         If S!(X, 15) > NLD!(90, 1) Then
+
             NLD!(90, 1) = S!(X, 15)
             NLD!(90, 2) = S!(X, 7)
             NZ0$(90) = compnatN$(X)
             NZ3$(90) = TN$
+
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1160,13 +1334,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Steals
         If S!(X, 7) > NLD!(100, 1) Then
+
             NLD!(100, 1) = S!(X, 7)
             NLD!(100, 2) = 0
             NZ0$(100) = compnatN$(X)
             NZ3$(100) = TN$
+
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1176,13 +1354,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
+        'Assist Per Game
         If S!(X, 16) > NLD!(110, 1) Then
+
             NLD!(110, 1) = S!(X, 16)
             NLD!(110, 2) = S!(X, 8)
             NZ0$(110) = compnatN$(X)
             NZ3$(110) = TN$
+
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1192,14 +1374,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=111 TO 120
+        'Assists
         If S!(X, 8) > NLD!(120, 1) Then
+
             NLD!(120, 1) = S!(X, 8)
             NLD!(120, 2) = S!(X, 8)
             NZ0$(120) = compnatN$(X)
             NZ3$(120) = TN$
+
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1209,14 +1394,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=121 TO 130
+        '3 FG %
         If S!(X, 21) > NLD!(130, 1) Then
+
             NLD!(130, 1) = S!(X, 21)
             NLD!(130, 2) = W1!(X)
             NZ0$(130) = compnatN$(X)
             NZ3$(130) = TN$
+
             For Z = 121 To 129
                 For Z1 = Z + 1 To 130
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1226,14 +1414,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
         'FOR Z=131 TO 140
         If W0!(X) > NLD!(140, 1) Then
+
             NLD!(140, 1) = W0!(X)
             NLD!(140, 2) = 0
             NZ0$(140) = compnatN$(X)
             NZ3$(140) = TN$
+
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1243,14 +1434,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=141 TO 150
+        'Minutes Per Game
         If S!(X, 18) > NLD!(150, 1) Then
+
             NLD!(150, 1) = S!(X, 18)
             NLD!(150, 2) = 0
             NZ0$(150) = compnatN$(X)
             NZ3$(150) = TN$
+
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1260,14 +1454,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=151 TO 160
-        If S!(X, 10) / 60 <= NLD!(160, 1) Then
+        'Total Minutes
+        If S!(X, 10) / 60 > NLD!(160, 1) Then
+
             NLD!(160, 1) = S!(X, 10) / 60
             NLD!(160, 2) = 0
             NZ0$(160) = compnatN$(X)
             NZ3$(160) = TN$
+
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1277,14 +1474,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
         'FOR Z=161 TO 170
         If S!(X, 13) > NLD!(170, 1) Then
+
             NLD!(170, 1) = S!(X, 13)
             NLD!(170, 2) = S!(X, 5)
             NZ0$(170) = compnatN$(X)
             NZ3$(170) = TN$
+
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1294,14 +1494,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=171 TO 180
+        'Rebounds
         If S!(X, 5) > NLD!(180, 1) Then
+
             NLD!(180, 1) = S!(X, 5)
             NLD!(18, 2) = 0
             NZ0$(180) = compnatN$(X)
             NZ3$(180) = TN$
+
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1311,14 +1514,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=181 TO 190
+        'Blocks Per Game
         If S!(X, 17) > NLD!(190, 1) Then
+
             NLD!(190, 1) = S!(X, 17)
             NLD!(190, 2) = 0
             NZ0$(190) = compnatN$(X)
             NZ3$(190) = TN$
+
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1328,14 +1534,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=191 TO 200
+        'Blocks
         If S!(X, 9) > NLD!(200, 1) Then
+
             NLD!(200, 1) = S!(X, 9)
             NLD!(200, 2) = 0
             NZ0$(200) = compnatN$(X)
             NZ3$(200) = TN$
+
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1345,14 +1554,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=201 TO 210
+        'FG Made
         If S!(X, 2) > NLD!(210, 1) Then
+
             NLD!(210, 1) = S!(X, 2)
             NLD!(210, 2) = 0
             NZ0$(210) = compnatN$(X)
             NZ3$(210) = TN$
+
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1362,14 +1574,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=211 TO 220
+        'FT Made
         If S!(X, 4) > NLD!(220, 1) Then
+
             NLD!(220, 1) = S!(X, 4)
             NLD!(220, 2) = 0
             NZ0$(220) = compnatN$(X)
             NZ3$(220) = TN$
+
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1379,14 +1594,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=221 TO 230
+        'Fouls Per Game
         If S!(X, 14) > NLD!(230, 1) Then
+
             NLD!(230, 1) = S!(X, 14)
             NLD!(230, 2) = 0
             NZ0$(230) = compnatN$(X)
             NZ3$(230) = TN$
+
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1396,14 +1614,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=231 TO 240
+        'Fouls
         If S!(X, 6) > NLD!(240, 1) Then
+
             NLD!(240, 1) = S!(X, 6)
             NLD!(240, 2) = 0
             NZ0$(240) = compnatN$(X)
             NZ3$(240) = TN$
+
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1413,14 +1634,17 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
-        'FOR Z=241 TO 250
+        'MVP Points
         If S!(X, 24) > NLD!(250, 1) Then
+
             NLD!(250, 1) = S!(X, 24)
             NLD!(250, 2) = 0
             NZ0$(250) = compnatN$(X)
             NZ3$(250) = TN$
+
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
                     If NLD!(Z, 1) < NLD!(Z1, 1) Then
@@ -1430,12 +1654,14 @@ Sub CheckStatsLeaders (statFile$)
                     End If
                 Next Z1
             Next Z
+
         End If
 
     Next X
 
     'FOR X=1 TO 40
     If OT!(19) > NOL!(40, 19) Then
+
         For M = 1 To 20
             NOL!(40, M) = OT!(M)
         Next
@@ -1447,17 +1673,17 @@ Sub CheckStatsLeaders (statFile$)
                 If NOL!(X, 19) < NOL!(X1, 19) Then
                     Swap NOL$(X1), NOL$(X)
                     For M = 1 To 20
-                        J! = NOL!(X1, M)
-                        NOL!(X1, M) = NOL!(X, M)
-                        NOL!(X, M) = J!
+                        Swap NOL!(X1, M), NOL!(X, M)
                     Next
                 End If
             Next X1
         Next X
+
     End If
 
     'FOR X=1 TO 15
     If DT!(19) < NDL!(40, 19) Then
+
         For M = 1 To 20
             NDL!(40, M) = DT!(M)
         Next
@@ -1469,14 +1695,12 @@ Sub CheckStatsLeaders (statFile$)
                 If NDL!(X, 19) > NDL!(X1, 19) Then
                     Swap NDL$(X1), NDL$(X)
                     For M = 1 To 20
-                        J! = NDL!(X1, M)
-                        NDL!(X1, M) = NDL!(X, M)
-                        NDL!(X, M) = J!
+                        Swap NDL!(X1, M), NDL!(X, M)
                     Next
                 End If
             Next X1
         Next X
+
     End If
-    '4840 Return
 
 End Sub

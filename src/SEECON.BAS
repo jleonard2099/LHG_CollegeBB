@@ -271,10 +271,9 @@ Sub DisplayConToScreen (confFile$)
     QK$ = GetKeyPress$
     Cls
 
-    Color 14
-    Print "FIELD GOAL % (MIN 5 FGM/G)"; Tab(41); "FREE THROW % (MIN 2.5 FTM/G)"
-    Print
-    Print "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
+	Color 14
+    Print "FIELD GOAL % (MIN 5 FGA/G)"
+    Print "                            PCT   FGA"
     Color 15
 
     For P = 41 To 60
@@ -285,13 +284,18 @@ Sub DisplayConToScreen (confFile$)
         End If
     Next
 
-    Locate 4
+	Color 14
+    Locate 1, 41
+	Print "FREE THROW % (MIN 2 FTA/G)"
+	Locate , 41
+	Print "                            PCT   FTA"
+    Color 15
 
     For P = 61 To 80
         If seenatZ2$(P) <> "" Then
             Locate , 41
 			Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
-			Locate , 67
+			Locate , 68
             Print Using "###.#  ####"; seenatZ!(P) * 100; seenatZ1!(P)
         End If
     Next

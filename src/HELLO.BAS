@@ -1,5 +1,5 @@
 
-Const GAME_VERSION$ = "4.29"
+Const GAME_VERSION$ = "4.29R"
 Const MAX_CONFERENCES = 40
 Const TEAMS_PER_CONFERENCE = 30
 Const TEAMS_PER_DIV = 15
@@ -314,7 +314,7 @@ Sub Leaders_Menu ()
     Do
         Cls
 
-        800 Call TITLE
+        Call TITLE
         ReDim menuChoices$(1 To 14)
         'Erase menuChoices$
         menuChoices$(1) = "CREATE/ EDIT A CONFERENCE"

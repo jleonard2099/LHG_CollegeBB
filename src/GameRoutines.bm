@@ -2404,8 +2404,10 @@ Sub BOX2FILE ()
 
             If AA$(I, I1) <> "XXX" Then
 
+                'Player Name
                 Print #2, AA$(I, I1); Tab(14);
 
+				'Player Time
                 If ZZ(I, I1) = 0 Then
 
                     Print #2, ; Tab(15); "DNP";
@@ -2423,10 +2425,23 @@ Sub BOX2FILE ()
                 End If
 
                 Print #2, ; Tab(21);
-                Print #2, Using "##"; A!(I, I1, 8);
-                Print #2, "-";: Print #2, Using "##"; A!(I, I1, 7);
-                Print #2, Using "  ##"; W%(I, I1, 0);: Print #2, "-";: Print #2, Using "##"; W%(I, I1, 1);
-                Print #2, Using "  ##"; A!(I, I1, 10);: Print #2, "-";: Print #2, Using "##"; A!(I, I1, 9);
+
+				'FGM - FGA
+                Print #2, Using "##"; A!(I, I1, 8); 
+				Print #2, "-";
+				Print #2, Using "##"; A!(I, I1, 7);
+
+				'3FGM - 3FGA
+                Print #2, Using "  ##"; W%(I, I1, 0);
+				Print #2, "-";
+				Print #2, Using "##"; W%(I, I1, 1);
+
+				'FTM - FTA
+                Print #2, Using "  ##"; A!(I, I1, 10);
+				Print #2, "-";
+				Print #2, Using "##"; A!(I, I1, 9);
+
+                'Rebounds / PT / F / A /  B / S / TO				
                 Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A!(I, I1, 24), A!(I, I1, 11), A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0), A!(I, I1, 12), A!(I, I1, 14), A!(I, I1, 15), A!(I, I1, 13), A!(I, I1, 23)
 
                 V9(0) = V9(0) + A!(I, I1, 8)
@@ -2435,7 +2450,8 @@ Sub BOX2FILE ()
                 V9(3) = V9(3) + A!(I, I1, 9)
                 V9(4) = V9(4) + A!(I, I1, 11)
                 V9(5) = V9(5) + (A!(I, I1, 8) * 2) + A!(I, I1, 10) + W%(I, I1, 0)
-                V9(13) = V9(13) + W%(I, I1, 0): V9(14) = V9(14) + W%(I, I1, 1)
+                V9(13) = V9(13) + W%(I, I1, 0)
+				V9(14) = V9(14) + W%(I, I1, 1)
                 V9(6) = V9(6) + A!(I, I1, 12)
                 V9(7) = V9(7) + A!(I, I1, 14)
                 V9(8) = V9(8) + A!(I, I1, 15)
@@ -2451,11 +2467,26 @@ Sub BOX2FILE ()
         If V9(3) = 0 Then V9(3) = 1
 
         Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
-        Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
-        Print #2, ; Tab(28);: Print Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
-        Print #2, ; Tab(35);: Print Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
-        Print #2, ; Tab(42);: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
-        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I)
+
+        Print #2, Using "##"; V9(0);
+		Print #2, "-";
+		Print #2, Using "###"; V9(1);
+
+        Print #2, ; Tab(28);: Print Using "##"; V9(13);
+		Print #2, "-";
+		Print #2, Using "##"; V9(14);
+        
+		Print #2, ; Tab(35);: Print Using "##"; V9(2);
+		Print #2, "-";
+		Print #2, Using "##"; V9(3);
+
+        Print #2, ; Tab(42);
+		Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
+
+        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%"
+
+		Print #2,
+		Print #2, "TOTAL TURNOVERS -"; T0(I)
         Print #2, "TOTAL REBOUNDS  -"; R3!(I)
 
         For I2 = 0 To 14: V9(I2) = 0: Next I2
@@ -2525,11 +2556,30 @@ Sub BOX2PRINTER ()
                 If ZZ(I, I1) = 0 Then
                     LPrint ; Tab(15); "DNP";
                 Else
-                    LPrint Using "##"; Int(ZZ(I, I1) / 60);: LPrint ":";
-                    If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then LPrint Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else LPrint "0";: LPrint Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+                    LPrint Using "##"; Int(ZZ(I, I1) / 60);
+					LPrint ":";
+                    If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then 
+						LPrint Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; 
+					Else 
+						LPrint "0";
+						LPrint Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+					End If
+
                 End If
 
-                LPrint ; Tab(21);: LPrint Using "##"; A!(I, I1, 8);: LPrint "-";: LPrint Using "##"; A!(I, I1, 7);: LPrint Using "  ##"; W%(I, I1, 0);: LPrint "-";: LPrint Using "##"; W%(I, I1, 1);: LPrint Using "  ##"; A!(I, I1, 10);: LPrint "-";: LPrint Using "##"; A!(I, I1, 9);
+                LPrint ; Tab(21);
+				
+				LPrint Using "##"; A!(I, I1, 8);
+				LPrint "-";
+				LPrint Using "##"; A!(I, I1, 7);
+				
+				LPrint Using "  ##"; W%(I, I1, 0);
+				LPrint "-";
+				LPrint Using "##"; W%(I, I1, 1);
+				
+				LPrint Using "  ##"; A!(I, I1, 10);
+				LPrint "-";
+				LPrint Using "##"; A!(I, I1, 9);
 
                 LPrint Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A!(I, I1, 24), A!(I, I1, 11), A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0), A!(I, I1, 12), A!(I, I1, 14), A!(I, I1, 15), A!(I, I1, 13), A!(I, I1, 23)
 
@@ -2554,11 +2604,33 @@ Sub BOX2PRINTER ()
 
         If V9(3) = 0 Then V9(3) = 1
 
-        LPrint: LPrint "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);: LPrint Using "##"; V9(0);: LPrint "-";: LPrint Using "###"; V9(1);
-        LPrint ; Tab(28);: LPrint Using "##"; V9(13);: LPrint "-";: LPrint Using "##"; V9(14);
-        LPrint ; Tab(35);: LPrint Using "##"; V9(2);: LPrint "-";: LPrint Using "##"; V9(3);
-        LPrint ; Tab(42);: LPrint Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
-        LPrint ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": LPrint: LPrint "TOTAL TURNOVERS -"; T0(I): LPrint "TOTAL REBOUNDS  -"; R3!(I)
+        LPrint
+		LPrint "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
+
+		LPrint Using "##"; V9(0);
+		LPrint "-";
+		LPrint Using "###"; V9(1);
+
+        LPrint ; Tab(28);
+		
+		LPrint Using "##"; V9(13);
+		LPrint "-";
+		LPrint Using "##"; V9(14);
+        
+		LPrint ; Tab(35);
+		LPrint Using "##"; V9(2);
+		LPrint "-";
+		LPrint Using "##"; V9(3);
+        
+		LPrint ; Tab(42);
+		
+		LPrint Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
+        
+		LPrint ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%"
+		
+		LPrint
+		LPrint "TOTAL TURNOVERS -"; T0(I)
+		LPrint "TOTAL REBOUNDS  -"; R3!(I)
 
         For I2 = 0 To 14: V9(I2) = 0: Next I2
 
@@ -2645,10 +2717,20 @@ Sub BOX2SPC (NM$)
                     If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then Print #2, Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else Print #2, "0";: Print #2, Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
                 End If
 
-                Print #2, ; Tab(21);: Print #2, Using "##"; A!(I, I1, 8);
-                Print #2, "-";: Print #2, Using "##"; A!(I, I1, 7);
-                Print #2, Using "  ##"; W%(I, I1, 0);: Print #2, "-";: Print #2, Using "##"; W%(I, I1, 1);
-                Print #2, Using "  ##"; A!(I, I1, 10);: Print #2, "-";: Print #2, Using "##"; A!(I, I1, 9);
+                Print #2, ; Tab(21);
+				
+				Print #2, Using "##"; A!(I, I1, 8);
+                Print #2, "-";
+				Print #2, Using "##"; A!(I, I1, 7);
+				
+                Print #2, Using "  ##"; W%(I, I1, 0);
+				Print #2, "-";
+				Print #2, Using "##"; W%(I, I1, 1);
+
+                Print #2, Using "  ##"; A!(I, I1, 10);
+				Print #2, "-";
+				Print #2, Using "##"; A!(I, I1, 9);
+
                 Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A!(I, I1, 24), A!(I, I1, 11), A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0), A!(I, I1, 12), A!(I, I1, 14), A!(I, I1, 15), A!(I, I1, 13), A!(I, I1, 23)
 
                 V9(0) = V9(0) + A!(I, I1, 8)
@@ -2671,12 +2753,27 @@ Sub BOX2SPC (NM$)
 
         If V9(3) = 0 Then V9(3) = 1
 
-        Print #2,: Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
-        Print #2, Using "##"; V9(0);: Print #2, "-";: Print #2, Using "###"; V9(1);
-        Print #2, Tab(28); Using "##"; V9(13);: Print #2, "-";: Print #2, Using "##"; V9(14);
-        Print #2, ; Tab(35); Using "##"; V9(2);: Print #2, "-";: Print #2, Using "##"; V9(3);
+        Print #2,
+		Print #2, "TOTALS"; Tab(14); Int(V9(10) / 60); Tab(21);
+
+        Print #2, Using "##"; V9(0);
+		Print #2, "-";
+		Print #2, Using "###"; V9(1);
+
+        Print #2, Tab(28); Using "##"; V9(13);
+		Print #2, "-";
+		Print #2, Using "##"; V9(14);
+
+        Print #2, ; Tab(35); Using "##"; V9(2);
+		Print #2, "-";
+		Print #2, Using "##"; V9(3);
+
         Print #2, ; Tab(42); Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
-        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%": Print #2,: Print #2, "TOTAL TURNOVERS -"; T0(I): Print #2, "TOTAL REBOUNDS  -"; R3!(I)
+
+        Print #2, ; Tab(22); Int(((V9(0) / V9(1)) * 100) + .5); "%"; Tab(35); Int(((V9(2) / V9(3)) * 100) + .5); "%"
+		Print #2,
+		Print #2, "TOTAL TURNOVERS -"; T0(I)
+		Print #2, "TOTAL REBOUNDS  -"; R3!(I)
 
         For I2 = 0 To 14: V9(I2) = 0: Next I2
 
@@ -4356,10 +4453,33 @@ Sub BOXSCREEN ()
 
                 Print AA$(I, I1); Tab(14);
 
-                If ZZ(I, I1) <> 0 Then Print Using "##"; Int(ZZ(I, I1) / 60);: Print ":";: If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then Print Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; Else Print "0";: Print Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
-                Locate , 21: Print Using "##"; A!(I, I1, 8);: Print "-";: Print Using "##"; A!(I, I1, 7);
-                Print Using "  ##"; W%(I, I1, 0);: Print "-";: Print Using "##"; W%(I, I1, 1);
-                Print Using "  ##"; A!(I, I1, 10);: Print "-";: Print Using "##"; A!(I, I1, 9);
+                If ZZ(I, I1) <> 0 Then 
+					Print Using "##"; Int(ZZ(I, I1) / 60);
+					Print ":";
+					
+					If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then 
+						Print Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60; 
+					Else 
+						Print "0";
+						Print Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
+					End If
+
+				End If
+				
+                Locate , 21
+				
+				Print Using "##"; A!(I, I1, 8);
+				Print "-";: Print Using "##"; A!(I, I1, 7);
+
+                Print Using "  ##"; W%(I, I1, 0);
+				Print "-";
+				Print Using "##"; W%(I, I1, 1);
+
+                Print Using "  ##"; A!(I, I1, 10);
+				Print "-";
+				Print Using "##"; A!(I, I1, 9);
+
+                'Rebounds / PT / F / A /  B / S / TO
                 Print Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; A!(I, I1, 24), A!(I, I1, 11), A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0), A!(I, I1, 12), A!(I, I1, 14), A!(I, I1, 15), A!(I, I1, 13), A!(I, I1, 23);
 
                 If ZZ(I, I1) = 0 Then Locate , 15: Print "DNP" Else Print
@@ -4379,6 +4499,7 @@ Sub BOXSCREEN ()
                 V9(11) = V9(11) + A!(I, I1, 24)
                 V9(12) = V9(12) + A!(I, I1, 23)
                 V9(10) = V9(10) + ZZ(I, I1)
+
             End If
 
         Next I1
@@ -4390,9 +4511,19 @@ Sub BOXSCREEN ()
         Print "TOTALS";
         Color 15
         Print ; Tab(14); Int(V9(10) / 60);
-        Locate , 21: Print Using "##"; V9(0);: Print "-";: Print Using "###"; V9(1);
-        Locate , 28: Print Using "##"; V9(13);: Print "-";: Print Using "##"; V9(14);
-        Locate , 35: Print Using "##"; V9(2);: Print "-";: Print Using "##"; V9(3);
+
+        Locate , 21: Print Using "##"; V9(0);
+		Print "-";
+		Print Using "###"; V9(1);
+
+        Locate , 28: Print Using "##"; V9(13);
+		Print "-";
+		Print Using "##"; V9(14);
+
+        Locate , 35: Print Using "##"; V9(2);
+		Print "-";
+		Print Using "##"; V9(3);
+
         Locate , 42: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
 
         Print ; Tab(22);
@@ -4402,8 +4533,10 @@ Sub BOXSCREEN ()
         If V9(3) <> 0 Then Print Int(((V9(2) / V9(3)) * 100) + .5); "%"
 
         Print
-        Color 14: Print "TOTAL TURNOVERS -";: Color 15: Print T0(I)
-        Color 14: Print "TOTAL REBOUNDS  -";: Color 15: Print R3!(I)
+        Color 14: Print "TOTAL TURNOVERS -";
+		Color 15: Print T0(I)
+        Color 14: Print "TOTAL REBOUNDS  -";
+		Color 15: Print R3!(I)
 
         For I2 = 0 To 14: V9(I2) = 0: Next I2
 
@@ -4473,19 +4606,36 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub THREEFT ()
+
     A!(P, B1(P, B), 10) = A!(P, B1(P, B), 10) + 1
 
     RN = Int(Rnd(1) * 100) + 1
-    If F3 = 1 And RN <= 50 Then U$ = "FREE THROW IS GOOD"
-    If F3 = 1 And RN > 50 Then U$ = "FREE THROW IS GOOD"
 
-    RN = Int(Rnd(1) * 100) + 1
-    If F3 = 2 And RN <= 50 Then U$ = "SECOND FREE THROW IS GOOD"
-    If F3 = 2 And RN > 50 Then U$ = "HE HITS THE SECOND ONE"
+	Select Case F3
 
-    RN = Int(Rnd(1) * 100) + 1
-    If F3 = 3 And RN <= 50 Then U$ = "THIRD FREE THROW IS GOOD"
-    If F3 = 3 And RN > 50 Then U$ = "HE HITS THE LAST ONE"
+        Case 1
+            If RN <= 50 Then
+                U$ = "FREE THROW IS GOOD"
+            Else
+                U$ = "HE HITS THE FIRST FREE THROW"
+            End If
+
+        Case 2
+            If RN <= 50 Then
+                U$ = "SECOND FREE THROW IS GOOD"
+            Else
+                U$ = "HE HITS THE SECOND ONE"
+            End If
+
+        Case 3
+            If RN <= 50 Then
+                U$ = "THIRD FREE THROW IS GOOD"
+            Else
+                U$ = "HE HITS THE LAST ONE"
+            End If
+
+    End Select
+
     Call PBP
 
     S!(P, H) = S!(P, H) + 1
@@ -4503,7 +4653,11 @@ Sub MADEFT ()
 
     A!(P, B1(P, B), 10) = A!(P, B1(P, B), 10) + 1
 
-    If pbpDelay! <> 0 Then Locate F3 + 9, 1: Call DELAY: Print F3; " GOOD"
+    If pbpDelay! <> 0 Then
+        Locate F3 + 9, 1
+        Call DELAY
+        Print F3; " GOOD"
+    End If
 
     S!(P, H) = S!(P, H) + 1
     S!(P, 0) = S!(P, 0) + 1
@@ -5460,14 +5614,20 @@ Sub SAVESTATS ()
             TG = 0
 
             For I = 0 To 13
+
                 If A!(Q, I, 2) * 2 + A!(Q, I, 4) + W0!(Q, I) > Z2!(I, 13) Then Z2!(I, 13) = A!(Q, I, 2) * 2 + A!(Q, I, 4) + W0!(Q, I)
+
                 If A!(Q, I, 10) > 0 Then Z2!(I, 0) = Z2!(I, 0) + 1
 
                 For J = 1 To 12
+
                     Z2!(I, J) = Z2!(I, J) + A!(Q, I, J)
+
                     If J <> 5 And J <> 10 And J <> 11 Then
-                        Z!(J) = Z!(J) + A!(Q, I, J): Z1!(J) = Z1!(J) + A!(1 - Q, I, J)
+                        Z!(J) = Z!(J) + A!(Q, I, J)
+						Z1!(J) = Z1!(J) + A!(1 - Q, I, J)
                     End If
+
                 Next J
 
                 Z!(0) = Z!(0) + A!(Q, I, 10)
@@ -5484,11 +5644,14 @@ Sub SAVESTATS ()
 
             Z!(15) = Z!(15) + R3!(Q) - V9(Q)
             Z1!(15) = Z1!(15) + R3!(1 - Q) - V9(1 - Q)
-            Z!(5) = Z!(5) + R3!(Q): Z1!(5) = Z1!(5) + R3!(1 - Q)
+            Z!(5) = Z!(5) + R3!(Q)
+			Z1!(5) = Z1!(5) + R3!(1 - Q)
             Z!(11) = Z!(11) + T0(Q)
             Z1!(11) = Z1!(11) + T0(1 - Q)
 
-            For J = 0 To 13: Z!(13) = Z!(13) + W0!(Q, J): Z!(14) = Z!(14) + W1!(Q, J)
+            For J = 0 To 13: 
+				Z!(13) = Z!(13) + W0!(Q, J)
+				Z!(14) = Z!(14) + W1!(Q, J)
                 Z1!(13) = Z1!(13) + W0!(1 - Q, J)
                 Z1!(14) = Z1!(14) + W1!(1 - Q, J)
                 W2(Q, J) = W2(Q, J) + W0!(Q, J)
@@ -5605,7 +5768,9 @@ Sub SAVESTATS ()
                 Next K
             Next J
 
-            For L = 0 To 15: Z!(L) = 0: Z1!(L) = 0: Next L
+            For L = 0 To 15: 
+				Z!(L) = 0: Z1!(L) = 0
+			Next L
 
         End If
 
@@ -6278,8 +6443,8 @@ Sub RECORDSCHECK ()
             End If
 
             ' FREE THROWS -  MOST MADE NO MISSES, MOST ATT NONE MADE
-            If A!(I, I1, 9) = A!(I, I1, 10) And A!(I, I1, 10) > REC!(23, 0) Then
-                REC!(23, 0) = A!(I, I1, 10) ' MOST FTM
+            If A!(I, I1, 9) = A!(I, I1, 10) And A!(I, I1, 9) > REC!(23, 0) Then
+                REC!(23, 0) = A!(I, I1, 9) ' MOST FTM
                 RC$(23, 0) = AA$(I, I1) ' NAME
                 RC$(23, 1) = B$(I) ' TEAM
                 RC$(23, 2) = VERSUS$(I) ' AT/VS
@@ -6288,7 +6453,7 @@ Sub RECORDSCHECK ()
             End If
 
             If A!(I, I1, 10) = 0 And A!(I, I1, 9) > REC!(24, 0) Then
-                REC!(24, 0) = A!(I, I1, 9) ' 0 FTM /FTA
+                REC!(24, 0) = A!(I, I1, 10) ' 0 FTM /FTA
                 RC$(24, 0) = AA$(I, I1) ' NAME
                 RC$(24, 1) = B$(I) ' TEAM
                 RC$(24, 2) = VERSUS$(I) ' AT/VS
