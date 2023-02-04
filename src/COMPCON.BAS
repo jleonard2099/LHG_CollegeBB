@@ -954,11 +954,16 @@ Sub COMPCON ()
                 ZZ = 15
 
                 For X = AA To ZZ - 1
+
                     For Y = X + 1 To ZZ
-                        DiffX = O1!(X) - O2!(X)
-                        DiffY = O1!(Y) - O2!(Y)
-                        If DiffX <= DiffY Then
-                            If DiffX = DiffY Then
+
+                        diffX = O1!(X) - O2!(X)
+                        diffY = O1!(Y) - O2!(Y)
+
+                        If diffX <= diffY Then
+
+                            If diffX = diffY Then
+
                                 If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
                                     Swap Z1$(X), Z1$(Y)
                                     Swap O1!(X), O1!(Y)
@@ -968,20 +973,27 @@ Sub COMPCON ()
                                     Swap O5!(X), O5!(Y)
                                     Swap O6!(X), O6!(Y)
                                 End If
+
                             End If
+
                         End If
+
                     Next Y
+
                 Next X
 
                 AA = 16
                 ZZ = 30
 
                 For X = AA To ZZ - 1
+
                     For Y = X + 1 To ZZ
-                        DiffX = O1!(X) - O2!(X)
-                        DiffY = O1!(Y) - O2!(Y)
-                        If DiffX <= DiffY Then
-                            If DiffX = DiffY Then
+
+                        diffX = O1!(X) - O2!(X)
+                        diffY = O1!(Y) - O2!(Y)
+
+                        If diffX <= diffY Then
+                            If diffX = diffY Then
                                 If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
                                     Swap Z1$(X), Z1$(Y)
                                     Swap O1!(X), O1!(Y)
@@ -993,7 +1005,9 @@ Sub COMPCON ()
                                 End If
                             End If
                         End If
+
                     Next Y
+
                 Next X
 
                 Cls

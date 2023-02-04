@@ -360,13 +360,15 @@ Sub Hd2Hd_Screen (teamName$)
 
         'Stats for Division Teams
         Cls
-        Color 12: Locate 2, 35
+        Locate 2, 35
         Color T%(0), T%(1): Print teamName$
-        Color 0, 0
-        Color 3
+        Color 3, 0
+
+		'Table header
         Locate 4
         Print Tab(15); String$(7, 196); " HOME "; String$(8, 196); Tab(36); Chr$(194); String$(7, 196); " AWAY "; String$(8, 196); Tab(58); Chr$(194); String$(6, 196); " TOTALS "; String$(7, 196)
-        Locate 5: Print Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(36); Chr$(179); Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(58); Chr$(179); Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
+        Locate 5
+		Print Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(36); Chr$(179); Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(58); Chr$(179); Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
 
         RDD = RDD + 1
 
@@ -386,8 +388,10 @@ Sub Hd2Hd_Screen (teamName$)
             Color 3: Print Tab(36); Chr$(179); Tab(58); Chr$(179)
 
             For K = DD To EE
+
                 If Z1$(K) <> "XXX" And Z1$(K) <> teamName$ And Z1$(K) <> "*" Then
                     Color 15
+
                     Locate , 1: Print Left$(Z1$(K), 13);
 
                     Color 7
@@ -496,15 +500,14 @@ Sub Hd2Hd_Screen (teamName$)
         If RDD = DIVS_PER_CONFERENCE Then
             'Stats for Division Totals
             Cls
+			Locate 2, 35
+			Color T%(0), T%(1): Print teamName$
+			Color 3, 0
 
-            'Color 12
-            Locate 2, 35
-            Color T%(0), T%(1): Print teamName$
-            Color 3, 0
-            'Color 3
             Locate 4
             Print Tab(9); String$(8, 196); " HOME "; String$(9, 196); Tab(32); Chr$(194); String$(8, 196); " AWAY "; String$(9, 196); Tab(56); Chr$(194); String$(7, 196); " TOTALS "; String$(8, 196)
-            Locate 5: Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
+            Locate 5
+			Print Tab(10); "W"; Tab(13); "L"; Tab(17); "PCT."; Tab(22); "PF/G"; Tab(28); "PA/G"; Tab(32); Chr$(179); Tab(34); "W"; Tab(37); "L"; Tab(41); "PCT."; Tab(46); "PF/G"; Tab(52); "PA/G"; Tab(56); Chr$(179); Tab(58); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
             Color 3
             Print Tab(32); Chr$(179); Tab(56); Chr$(179)
 
