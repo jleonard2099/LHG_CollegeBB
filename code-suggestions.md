@@ -1,5 +1,27 @@
 #### SIDENOTE: Do any of these fall into the "Issues" realm? If so, create GitHub issue items ####
 
+[ ] Consolidate FT routines
+
+THREEFT
+	print made FT
+	increase FTM + FTA
+	PBP = 0
+
+MADEFT
+	print made FT
+	increase FTM + FTA
+	PBP = 1
+
+
+BADFT
+	print bad FT
+	PBP = 0
+
+
+MISSFT
+	print bad FT	
+	PBP = 1
+
 [ ] Paths / folders
 - add "Boxes" subfolder to structure and adapt code
 - add "Leaders" subfolder to structure and adapt code

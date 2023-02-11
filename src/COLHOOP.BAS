@@ -379,8 +379,12 @@ If skipUserOptions% = 0 Then
             I$ = GetKeyPress$
 
             If I$ <> Chr$(27) Then
-                'I = Val(I$)
-                Call ALPHANUM(I$, iVal)
+                iVal = Val(I$)
+                If UCase$(I$) = "A" Then iVal = 11
+                If UCase$(I$) = "B" Then iVal = 12
+                If UCase$(I$) = "C" Then iVal = 13
+                If UCase$(I$) = "D" Then iVal = 14
+                If UCase$(I$) = "E" Then iVal = 15
                 If iVal = 0 Then iVal = 10
             End If
 
@@ -714,7 +718,12 @@ If H < 3 Then
 
     Call MAINSCREEN
 
-    For I = 0 To 1: For I1 = 0 To 13: TM%(I, I1) = 1200: FA%(I, I1) = 0: Next: Next
+    For I = 0 To 1
+        For I1 = 0 To 13:
+            TM%(I, I1) = 1200
+            FA%(I, I1) = 0
+        Next
+    Next
 
     GoTo 250
 
@@ -767,7 +776,9 @@ If S!(0, 0) = S!(1, 0) Then
     Call MAINSCREEN
 
     For I = 0 To 1
-        For I1 = 0 To 13: TM%(I, I1) = 300: FA%(I, I1) = 0
+        For I1 = 0 To 13:
+            TM%(I, I1) = 300
+            FA%(I, I1) = 0
         Next
     Next
 
@@ -2118,35 +2129,38 @@ Select Case caseVar%
 
                 End If
 
+                'Two FT Attempts
                 For F3 = 1 To 2:
 
                     S = Int(Rnd(1) * 100) + 1
+
+                    'FT Success Chance
                     FX% = A!(P, B1(P, B), 1)
 
                     If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
-					If S <= FX% Then
+                    If S <= FX% Then
 
-						If PB% = 0 Then
-							Call THREEFT
-						Else
-							'PB% = 1
-							Call MADEFT
-						End If
-					Else
-						'S > FX% And
-						If PB% = 0 Then
-							Call BADFT
-						Else
-							'PB% = 1
-							Call MISSFT
+                        If PB% = 0 Then
+                            Call THREEFT
+                        Else
+                            'PB% = 1
+                            Call MADEFT
+                        End If
+                    Else
+                        'S > FX% And
+                        If PB% = 0 Then
+                            Call BADFT
+                        Else
+                            'PB% = 1
+                            Call MISSFT
 
-						End If
-					End If
+                        End If
+                    End If
 
                 Next F3
 
-				'Increase FT ATT
+                'Increase FT ATT
                 A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 2
 
                 LT = 0
@@ -2210,13 +2224,13 @@ Select Case caseVar%
             If PZ% = 8 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call PBP: GoTo 617
 
             F3 = 1
-            If PB% = 0 Then 
-				U$ = "BASKET GOOD BY " + AA$(P, B1(P, B))
-				Call PBP
-			Else
-				'PB% = 1 
-				If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B)): Call DELAY
-			End If
+            If PB% = 0 Then
+                U$ = "BASKET GOOD BY " + AA$(P, B1(P, B))
+                Call PBP
+            Else
+                'PB% = 1
+                If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B)): Call DELAY
+            End If
 
             617 U$ = "... AND HE'S FOULED !!!"
 
@@ -2245,25 +2259,25 @@ Select Case caseVar%
 
             X = 0
             
-			S = Int(Rnd(1) * 100) + 1
+            S = Int(Rnd(1) * 100) + 1
 
-            If PB% = 1 And pbpDelay! <> 0 Then 
-				Call WINDEX
-				Print B$(P)
-				Print "1 FT: "; AA$(P, B1(P, B)); "   "; A!(P, B1(P, B), 1); " %"
-			End If
+            If PB% = 1 And pbpDelay! <> 0 Then
+                Call WINDEX
+                Print B$(P)
+                Print "1 FT: "; AA$(P, B1(P, B)); "   "; A!(P, B1(P, B), 1); " %"
+            End If
 
             FX% = A!(P, B1(P, B), 1)
             If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
             If S <= FX% And PB% = 0 Then
-				'Increase FTM
+                'Increase FTM
                 A!(P, B1(P, B), 10) = A!(P, B1(P, B), 10) + 1
 
                 If pbpDelay! <> 0 Then U$ = "FREE THROW IS GOOD": Call PBP
 
                 S!(P, H) = S!(P, H) + 1
-				S!(P, 0) = S!(P, 0) + 1
+                S!(P, 0) = S!(P, 0) + 1
 
                 Call MAINSCREEN
 
@@ -2273,8 +2287,8 @@ Select Case caseVar%
             If S > FX% And PB% = 0 Then If pbpDelay! <> 0 Then U$ = "FREE THROW IS MISSED": Call PBP
             If S > FX% And PB% = 1 Then Call MISSFT
 
-			'Increase FT ATT
-			A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
+            'Increase FT ATT
+            A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
 
             If T! <= 0 Then TE! = T!: Call PlayingTime: GoTo 170
 
@@ -2580,9 +2594,9 @@ Select Case caseVar%
             If I2 = 43 And TF% = 1 And S > F3S% Then
 
                 A!(P, B1(P, B), 7) = A!(P, B1(P, B), 7) - 1
-				W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) - 1
+                W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) - 1
                 
-				Call ResetShotClock
+                Call ResetShotClock
 
                 9055 '
                 T! = T! - 4
@@ -2626,32 +2640,33 @@ Select Case caseVar%
 
                 End If
 
-				'Increase FT ATT
+                'Increase FT ATT
                 A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 3
 
-                9057 '
+                '3 FT Attempts
                 For F3 = 1 To 3:
 
                     S = Int(Rnd(1) * 100) + 1
 
+                    'FT Success Chance
                     FX% = A!(P, B1(P, B), 1)
                     If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
-					If S <= FX% Then
-						If PB% = 0 Then
-							Call THREEFT
-						Else
-							'PB% = 1
-							Call MADEFT
-						End If
-					Else
-						'S > FX%
-						If PB% = 0 Then
-							Call BADFT
-						Else
-							Call MISSFT
-						End If
-					End If
+                    If S <= FX% Then
+                        If PB% = 0 Then
+                            Call THREEFT
+                        Else
+                            'PB% = 1
+                            Call MADEFT
+                        End If
+                    Else
+                        'S > FX%
+                        If PB% = 0 Then
+                            Call BADFT
+                        Else
+                            Call MISSFT
+                        End If
+                    End If
 
                 Next F3
 
@@ -2775,33 +2790,36 @@ If pbpDelay! <> 0 Then
 End If
 
 572 '
+'2 FT Attempts
 For F3 = 1 To 2
 
-	'Increase FT ATT
+    'Increase FT ATT
     A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
 
     S = Int(Rnd(1) * 100) + 1
+
+    'FT Success Chance
     FX% = A!(P, B1(P, B), 1)
     If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
-        If S <= FX% Then
+    If S <= FX% Then
 
-            If PB% = 0 Then
-				Call THREEFT
-            Else
-                'PB% = 1 Then
-				Call MADEFT
-            End If
+        If PB% = 0 Then
+            Call THREEFT
         Else
-            'S > FX% And
-            If PB% = 0 Then
-                Call BADFT
-            Else
-                'PB% = 1
-                Call MISSFT
-            End If
-
+            'PB% = 1 Then
+            Call MADEFT
         End If
+    Else
+        'S > FX% And
+        If PB% = 0 Then
+            Call BADFT
+        Else
+            'PB% = 1
+            Call MISSFT
+        End If
+
+    End If
 
     If F3 = 1 And S > A!(P, B1(P, B), 1) Then Exit For
 
@@ -3506,22 +3524,25 @@ If IN% = 1 Or (TB% = 1 And P2(D) >= 10) Then
         End If
     End If
 
-    For F3 = 1 To 2: 
-		
-		'Increase FT ATT
-		A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
-		
-		S = Int(Rnd(1) * 100) + 1
+    '2 FT Attempts
+    For F3 = 1 To 2:
+        
+        'Increase FT ATT
+        A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
+        
+        S = Int(Rnd(1) * 100) + 1
+
+        'FT Success Chance
         FX% = A!(P, B1(P, B), 1)
         If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
         If S <= FX% Then
 
             If PB% = 0 Then
-				Call THREEFT
+                Call THREEFT
             Else
                 'PB% = 1
-				Call MADEFT
+                Call MADEFT
             End If
         Else
             'S > FX% And
@@ -3631,23 +3652,34 @@ Else
 
     F3 = 1
 
-	'Increase FT ATT
+    'Increase FT ATT
     A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
-	
+
     S = Int(Rnd(1) * 100) + 1
     FX% = A!(P, B1(P, B), 1)
     If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
 
-    If S <= FX% Then 
-		Call THREEFT
-	Else
-		'S > FX% 
-		Call BADFT
-	End If
+    If S <= FX% Then
+        If PB% = 0 Then
+            Call THREEFT
+        Else
+            'PB% = 1
+            Call MADEFT
+        End If
+    Else
+        'S > FX%
+        If PB% = 0 Then
+            Call BADFT
+        Else
+            'PB% = 1
+            Call MISSFT
+        End If
+    End If
 
     LT = 0
 
     If T! <= 0 Then TE! = T!: Call PlayingTime: GoTo 170
+    
     If S > FX% Then 650
 
     PB$ = ""
@@ -3686,4 +3718,3 @@ End If
 '$INCLUDE: 'QPProEqu.BM'
 '$INCLUDE: 'PadRight.BM'
 '$INCLUDE: 'GameRoutines.BM'
-
