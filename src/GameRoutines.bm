@@ -3725,10 +3725,10 @@ End Sub
 ' ...explanation...
 Sub DEFENSEMENU ()
 
-    wrongChoice% = 0
-
     Do
         Cls
+
+        wrongChoice% = 0
 
         Print ; Tab(33); "DEFENSIVE STYLE"
         Print
@@ -3765,8 +3765,6 @@ Sub DEFENSEMENU ()
             Case 5, 6
                 P7(P9) = 2
 
-                'original if statement had this ranging to <= 10
-                'however the next statement was > 9
             Case 7 To 9
                 P7(P9) = 3
 
