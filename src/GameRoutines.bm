@@ -3373,7 +3373,8 @@ Sub SCOREBOARD ()
         Color 15
     Next I1
 
-    Locate 17, 40: Color TR%(1, 0), TR%(1, 1): Print B$(1);
+    Locate 17, 40
+	Color TR%(1, 0), TR%(1, 1): Print B$(1);
     Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
 
     Color 14, 0: Locate , 40: Print "# NAME          FG FT RB CX EF PA PT  F"
@@ -3567,13 +3568,16 @@ Sub EDITCX ()
         Color 15, 0: Cls
         Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
         Print
-        Color 14: Print "(0) - ";: Color TR%(0, 0), TR%(0, 1)
+        Color 14
+		Print "(0) - ";: Color TR%(0, 0), TR%(0, 1)
         Print B$(0): Color , 0
         Print
-        Color 14: Print "(1) - ";: Color TR%(1, 0), TR%(1, 1)
+        Color 14
+		Print "(1) - ";: Color TR%(1, 0), TR%(1, 1)
         Print B$(1): Color , 0
         Print
-        Color 14: Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
+        Color 14
+		Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
         Color 15, 0
         Print
         Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
@@ -3592,7 +3596,8 @@ Sub EDITCX ()
             For I1 = 0 To 13: A!(I, I1, 3) = A!(I, I1, 3) / TX * 100: Next
 
             9305 '
-            Locate 2, 1: Print "CONTRIBUTION RATINGS FOR ";: Color TR%(I, 0), TR%(I, 1): Print B$(I)
+            Locate 2, 1: Print "CONTRIBUTION RATINGS FOR ";
+			Color TR%(I, 0), TR%(I, 1): Print B$(I)
             Color 15, 0
             Print
             Print " #  PLAYER             CX"
@@ -3817,6 +3822,7 @@ Sub SETSTAMINA ()
         If TR%(P9, 5) <> 0 And C(P9, I, 0) <> 0 And B%(P9, I, 18) = 0 Then SQ% = SQ% + A!(P9, I, 3) * TR%(P9, 5) / C(P9, I, 0): A!(P9, I, 3) = A!(P9, I, 3) * TR%(P9, 5) / C(P9, I, 0)
     Next
 
+	'So SQ% is a sum of A!(P9, X, 3) values...
     For I = 0 To 13
         If TR%(P9, 5) = 0 And C(P9, I, 0) = 0 And B%(P9, I, 18) = 0 Then A!(P9, I, 3) = Int(A!(P9, I, 3) / SQ% * S9 + .5)
         If TR%(P9, 5) <> 0 And C(P9, I, 0) <> 0 And B%(P9, I, 18) = 0 Then A!(P9, I, 3) = Int(A!(P9, I, 3) / SQ% * S9 + .5)
@@ -4236,7 +4242,8 @@ Sub LINEUPS ()
                 Next
 
                 Print AA$(P9, J);
-                Locate J + 3 - CV%, 3: Color TR%(P9, 0), TR%(P9, 1): Print Left$(AA$(P9, J), 12)
+                Locate J + 3 - CV%, 3
+				Color TR%(P9, 0), TR%(P9, 1): Print Left$(AA$(P9, J), 12)
                 Color 15, 0
 
             End If
@@ -4839,8 +4846,8 @@ Sub SELECTID ()
         BO% = 0
     Else
         Locate 2, 33
-        Color TR%(P9, 0), TR%(P9, 1): Print B$(P9)
-
+        Color TR%(P9, 0), TR%(P9, 1)
+		Print B$(P9)
         Color 15, 4
 
         Do
@@ -5248,9 +5255,13 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub BOXTOP ()
-    If N <> 2 Then Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N): Print: Color 14, 0
+    If N <> 2 Then 
+		Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N)
+		Print: Color 14, 0
+	End If
 
-    For I = 0 To 1: Print B$(I); Tab(17); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
+    For I = 0 To 1: 
+		Print B$(I); Tab(17); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
         If S!(0, 1) + S!(0, 2) = S!(1, 1) + S!(1, 2) Then Print ; Tab(23); Str$(S!(I, 3));
         If S!(0, 1) + S!(0, 2) <> S!(1, 1) + S!(1, 2) Then Print ; Tab(23); "- "; S!(I, 0): GoTo 8513
         If S!(0, 1) + S!(0, 2) + S!(0, 3) = S!(1, 1) + S!(1, 2) + S!(1, 3) Then Print ; Tab(26); Str$(S!(I, 4));
