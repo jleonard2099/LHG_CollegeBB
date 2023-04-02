@@ -4594,8 +4594,11 @@ Sub SHOTPERCENT ()
 
     F! = FX% + D1(D) + D8(0, D2(D)): J8% = 0
 
-    If N = P Then F! = F! + HF%(0, TR%(P, 6))
-    If N <> P And N <> 2 Then F! = F! + HF%(1, TR%(P, 6))
+    If N = P Then 
+		F! = F! + HF%(0, TR%(P, 6))
+	Else
+		If N <> 2 Then F! = F! + HF%(1, TR%(P, 6))
+	End If
 
     F3S% = Int(Rnd(1) * 100) + 1
     TPA% = 0
@@ -4606,7 +4609,8 @@ Sub SHOTPERCENT ()
     skipCalcs% = 0
 
     If OF%(P) = 9 And (F3S% > A!(P, B1(P, B), 19) + F5%(D, 3) + TPA% Or A!(P, B1(P, B), 19) = 0) Then
-        F3S% = Int(Rnd(1) * 5) + 11: J8% = 1
+        F3S% = Int(Rnd(1) * 5) + 11
+		J8% = 1
     Else
         If OF%(P) <> 9 Then
 

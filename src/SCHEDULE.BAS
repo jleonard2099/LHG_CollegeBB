@@ -38,7 +38,7 @@ Sub SCHEDULE ()
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
-        Row% = 6
+        Row% = 7
         Column% = 16
         Call box0(6, 15, 16, 65, 2, 15, 1)
 
@@ -172,9 +172,11 @@ Sub NewSchedule (scheduleFile$)
     MO$(2) = "CH"
     MO$(3) = "CC"
 
-    SC$(0) = "24"
-    SC$(1) = "30"
-    TS$(0) = "N":
+    SC$(0) = "NO SHOT CLOCK       "
+    SC$(1) = "45 SECOND SHOT CLOCK"
+    SC$(2) = "35 SECOND SHOT CLOCK"
+
+    TS$(0) = "N"
     TS$(1) = "Y"
 
     Do
@@ -300,7 +302,7 @@ Sub NewSchedule (scheduleFile$)
 
                 DT$ = "10-01-96"
                 TM$ = "07:30P"
-                Call NewGame(V$, H$, targetGame%)
+                Call NewGame(V$, H$, YN$, NTMS, targetGame%)
 
             Case "E":
                 Call EditGame
@@ -467,6 +469,7 @@ Sub EditGame ()
 
     Shared scheduleAP%()
     Shared scheduleH$(), scheduleV$()
+    Shared scheduleYN$()
     Shared NG%()
 
     ' *** EDIT A GAME ***
@@ -475,11 +478,16 @@ Sub EditGame ()
         Locate 23, 1: Input "ENTER GAME # TO EDIT "; targetGame%
     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
-    V$ = scheduleV$(targetGame% - Int(targetGame% / 20) * 20)
-    H$ = scheduleH$(targetGame% - Int(targetGame% / 20) * 20)
-
-    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then V$ = scheduleV$(20): H$ = scheduleH$(20)
-
+    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then 
+        V$ = scheduleV$(20)
+        H$ = scheduleH$(20)
+        YN$ = scheduleYN$(20, 0)
+    Else
+        V$ = scheduleV$(targetGame% - Int(targetGame% / 20) * 20)
+        H$ = scheduleH$(targetGame% - Int(targetGame% / 20) * 20)
+        YN$ = scheduleYN$(targetGame% - Int(targetGame% / 20) * 20, 0)
+    End If
+    
     I$ = "A"
     HR% = Int(NG%(targetGame%, 15) / 100)
     MIN% = NG%(targetGame%, 15) - HR% * 100
@@ -489,19 +497,25 @@ Sub EditGame ()
 
     TM$ = Right$(Str$(HR%), 2) + ":"
 
-    If MIN% < 10 Then TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
-    If MIN% >= 10 Then TM$ = TM$ + Right$(Str$(MIN%), 2)
+    If MIN% < 10 Then 
+		TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
+	Else
+		TM$ = TM$ + Right$(Str$(MIN%), 2)
+	End If
 
     TM$ = TM$ + I$
     DT$ = Right$(Str$(NG%(targetGame%, 17)), 2) + "/"
-    DY = Val(Right$(Str$(NG%(targetGame%, 16)), 2))
+    DYMO% = Val(Right$(Str$(NG%(targetGame%, 16)), 2))
 
-    If DY < 10 Then DAY$ = "0" + Right$(Str$(NG%(targetGame%, 16)), 1)
-    If DY >= 10 Then DAY$ = Right$(Str$(NG%(targetGame%, 16)), 2)
+    If DYMO% < 10 Then 
+		DYMO$ = "0" + Right$(Str$(NG%(targetGame%, 16)), 1)
+	Else
+		DYMO$ = Right$(Str$(NG%(targetGame%, 16)), 2)
+	End If
 
-    DT$ = DT$ + DAY$ + "/" + Right$(Str$(NG%(targetGame%, 18)), 2)
+    DT$ = DT$ + DYMO$ + "/" + Right$(Str$(NG%(targetGame%, 18)), 2)
 
-    Call NewGame(V$, H$, targetGame%)
+    Call NewGame(V$, H$, YN$, NTMS, targetGame%)
 
 End Sub
 
@@ -509,7 +523,7 @@ End Sub
 '           NewGame SubRoutine
 '----------------------------------------
 '...explanation...
-Sub NewGame (visitor$, home$, gameIndex%)
+Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
     Dim CM$(0 To 1), LC$(0 To 2), SC$(0 To 2)
     Dim TE$(0 To 2), TF$(0 To 1), TS$(0 To 1), U5$(0 To 4)
@@ -597,7 +611,7 @@ Sub NewGame (visitor$, home$, gameIndex%)
 
                         If NY$ = "" And YN$ <> "" Then
                             NY$ = YN$
-                            Call GetTeam_Schedule(NTMS, YN$, T1)
+                            Call GetTeam_Schedule(NTMS, NY$, T1)
                         Else
                             YN$ = NY$
                             Erase teamNames$
