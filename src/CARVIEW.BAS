@@ -2,7 +2,8 @@ Sub CARVIEW ()
 
     _Title "Courtside College Basketball - View Career Files"
 
-    Dim A$(62)
+    Dim carviewA$(62)
+
     Shared ARS!(), W0S!(), W1S!()
 
     'Dim AR$(62)
@@ -64,15 +65,15 @@ Sub CARVIEW ()
                 If ExitCode% <> 27 Then
 
                     Color 15, 1
-					targetFile$ = careerFiles$(Selection%)
+                    targetFile$ = careerFiles$(Selection%)
                     Locate 2, 33: Print targetFile$
                     
-					Do
-						Locate , 33: Print "ANY CHANGE (YN)";
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-					
-					Color 15, 0
+                    Do
+                        Locate 3, 33: Print "ANY CHANGE (YN)";
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    
+                    Color 15, 0
 
                 End If
 
@@ -80,45 +81,45 @@ Sub CARVIEW ()
 
             If ExitCode% <> 27 Then
 
-				Color 15, 0
-				Cls
+                Color 15, 0
+                Cls
 
                 targetFile$ = RTrim$(targetFile$)
                 Z$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-				Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
+                Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
                 'The variables below here clearly need Shared for each sub
                 Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
                 Input #2, NB%, B$
                 For N = 1 To 15
                     For I = 0 To 61
-                        Input #2, A$(I)
+                        Input #2, carviewA$(I)
                         For J = 0 To 15
                             Input #2, ARS!(N, I, J)
                         Next J
                         Input #2, W0S!(N, I)
                         Input #2, W1S!(N, I)
                         Color 5: Locate 12, 52
-						TMR% = TMR% - 1
-						Print Using "####"; TMR%
+                        TMR% = TMR% - 1
+                        Print Using "####"; TMR%
                     Next I
                 Next N
                 Close #2
 
-				Do
-					Locate 15, 10
-					Color 12: Print "V";: Color 7: Print "iew or ";
-					Color 12: Print "P";: Color 7: Print "rint"
+                Do
+                    Locate 15, 10
+                    Color 12: Print "V";: Color 7: Print "iew or ";
+                    Color 12: Print "P";: Color 7: Print "rint"
                     A$ = GetKeyPress$
                 Loop Until UCase$(A$) = "P" Or UCase$(A$) = "V"
 
                 If UCase$(A$) = "P" Then
-                    Call CareerToPrinter(A$())
+                    Call CareerToPrinter(carviewA$())
                 Else
                     '"V" for viewing info
                     '--confirm we should view options after sending to printer
-                    Call CareerViewOptions(A$())
+                    Call CareerViewOptions(carviewA$())
                 End If
 
             End If 'Done checking for ESC
@@ -134,7 +135,7 @@ End Sub
 '       CareerViewOptions subroutine
 '----------------------------------------
 '...explanation...
-Sub CareerViewOptions (A$())
+Sub CareerViewOptions (carviewA$())
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -150,17 +151,17 @@ Sub CareerViewOptions (A$())
             Case "P":
                 Cls
                 Color 12: Print Z$
-                For I = 0 To 15: Locate I + 2: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
-                For I = 16 To 31: Locate I - 14, 20: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
-                For I = 32 To 46: Locate I - 30, 40: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
-                For I = 47 To 61: Locate I - 45, 60: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print A$(I): Next
+                For I = 0 To 15: Locate I + 2: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print carviewA$(I): Next
+                For I = 16 To 31: Locate I - 14, 20: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print carviewA$(I): Next
+                For I = 32 To 46: Locate I - 30, 40: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print carviewA$(I): Next
+                For I = 47 To 61: Locate I - 45, 60: Color 3: Print Using "##"; I;: Print " ";: Color 7: Print carviewA$(I): Next
                 Print
                 Locate 22, 48: Color 15: Input "ENTER # OF PLAYER TO VIEW"; B9
                 Cls
                 TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0: TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
                 Color 11: Locate 1: Print Z$
                 Color 12: Locate 2: Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
-                Locate 3: Color 15: Print Left$(A$(B9), 13);
+                Locate 3: Color 15: Print Left$(carviewA$(B9), 13);
                 VV = ARS!(1, B9, 14) + ARS!(2, B9, 14) + ARS!(3, B9, 14) + ARS!(4, B9, 14) + ARS!(5, B9, 14) + ARS!(6, B9, 14) + ARS!(7, B9, 14) + ARS!(8, B9, 14) + ARS!(9, B9, 14) + ARS!(10, B9, 14) + ARS!(11, B9, 14) + ARS!(12, B9, 14) + ARS!(13, B9, 14) + ARS!(14, B9, 14) + ARS!(15, B9, 14)
                 For V = 1 To VV
                     Color 7: Print Tab(15); ARS!(V, B9, 15);
@@ -218,7 +219,7 @@ Sub CareerViewOptions (A$())
                 Cls
                 Color 11: Locate 1: Print Z$
                 Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
-                Locate 3: Color 15: Print Left$(A$(B9), 13);
+                Locate 3: Color 15: Print Left$(carviewA$(B9), 13);
                 For V = 1 To VV
                     Color 7: Print Tab(15); ARS!(V, B9, 15);
                     Print Tab(21); Using "####"; ARS!(V, B9, 12);
@@ -278,12 +279,12 @@ Sub CareerViewOptions (A$())
                 Do
                     Cls
                     For I = 0 To 61
-                        If A$(I) <> "" And A$(I) <> "XXX" Then
+                        If carviewA$(I) <> "" And carviewA$(I) <> "XXX" Then
                             TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0: TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
                             Color 11: Locate 1: Print Z$
                             Color 12: Locate 2
                             Print "PLAYER         YEAR  G FGM  FGA   PCT FTM FTA   PCT 3FGM 3FGA PCT  PTS  AVG"
-                            Locate 3: Color 15: Print Left$(A$(I), 13);
+                            Locate 3: Color 15: Print Left$(carviewA$(I), 13);
                             VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
                             For V = 1 To VV
                                 Color 7: Print Tab(15); ARS!(V, I, 15);
@@ -342,7 +343,7 @@ Sub CareerViewOptions (A$())
                             Cls
                             Color 11: Locate 1: Print Z$
                             Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
-                            Locate 3: Color 15: Print Left$(A$(I), 13);
+                            Locate 3: Color 15: Print Left$(carviewA$(I), 13);
                             For V = 1 To VV
                                 Color 7: Print Tab(15); ARS!(V, I, 15);
                                 Print Tab(21); Using "####"; ARS!(V, I, 12);
@@ -414,13 +415,13 @@ Sub CareerViewOptions (A$())
 
                     Cls
                     
-					Color 14
-					
-					Do
-						Locate 5, 20
-						Print "VIEW AGAIN (Y/N)"
-						I$ = GetKeyPress$
-					Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+                    Color 14
+                    
+                    Do
+                        Locate 5, 20
+                        Print "VIEW AGAIN (Y/N)"
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
                 Loop Until UCase$(I$) = "N"
 
@@ -436,19 +437,19 @@ End Sub
 '       CareerToPrinter subroutine
 '----------------------------------------
 '...explanation...
-Sub CareerToPrinter (A$())
+Sub CareerToPrinter (carviewA$())
 
     Shared ARS!(), W0S!(), W1S!()
 
     PTN = 0
 
     LPrint Tab(59); Z$
-	LPrint
+    LPrint
     LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
     
-	For I = 0 To 61
+    For I = 0 To 61
 
-        If A$(I) <> "" And A$(I) <> "XXX" Then
+        If carviewA$(I) <> "" And carviewA$(I) <> "XXX" Then
             TT1 = 0: TT2 = 0: TT3 = 0: TT4 = 0: TT5 = 0: TT6 = 0: TT7 = 0: TT8 = 0: TT9 = 0
             TT10 = 0: TT11 = 0: TT12 = 0: TT13 = 0: TT14 = 0: TT15 = 0: TT16 = 0: TT17 = 0
             VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
@@ -460,7 +461,7 @@ Sub CareerToPrinter (A$())
                 PTN = 0
             End If
 
-            LPrint Left$(A$(I), 11);
+            LPrint Left$(carviewA$(I), 11);
             For V = 1 To VV
                 PTN = PTN + 1
                 LPrint Tab(12); ARS!(V, I, 15);
@@ -555,6 +556,6 @@ Sub CareerToPrinter (A$())
 
     Next I
 
-	LPrint Chr$(12)
+    LPrint Chr$(12)
 
 End Sub

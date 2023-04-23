@@ -2,10 +2,10 @@ Sub COMPARE ()
 
     _Title "Courtside College Basketball - Stats Comparison"
 
-    Shared B$()
+    Shared compareB$(), T$()
     Shared compareA!()
     Shared compareT%()
-    Dim posn$(0 To 13), T$(0)
+    Dim posn$(0 To 13)
 
     ReDim menuChoices$(1 To 2)
 
@@ -101,7 +101,7 @@ Sub COMPARE ()
                                 Color 15, 4
 
                                 Do
-                                    Locate , 33: Print "ANY CHANGE (YN)";
+                                    Locate 3, 33: Print "ANY CHANGE (YN)";
                                     I$ = GetKeyPress$
                                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -171,9 +171,9 @@ End Sub
 '...explanation...
 Sub TeamComparison ()
 
-    Shared B$()
-    Shared compareT%(), T1%()
-    Shared Z!(), Z1!()
+    Shared compareB$()
+    Shared compareT%(), compT1%()
+    Shared statsZ!(), statsZ1!()
 
     Shared replayLosses%, replayWins%
 
@@ -189,7 +189,7 @@ Sub TeamComparison ()
     Locate 11, 31: Print Space$(18)
 
     Color 11
-    Locate 11, 33: Print B$(0)
+    Locate 11, 33: Print compareB$(0)
 
     'Color 15, 12
     Color 15, 2
@@ -259,108 +259,108 @@ Sub TeamComparison ()
     Locate 7, 45: Print Using "####"; replayLosses%;: Print " ";
 
     Color 3, 0
-    Locate 4, 10: Print Using "######"; T1%(1) / 100 * T1%(3);
-    Locate 5, 10: Print Using "######"; T1%(1);
+    Locate 4, 10: Print Using "######"; compT1%(1) / 100 * compT1%(3);
+    Locate 5, 10: Print Using "######"; compT1%(1);
 
-    If T1%(1) = 0 Then Locate 6, 10: Print "  .000";
-    If T1%(1) > 0 Then statPCT! = T1%(3) / 100: Locate 6, 10: Print "  ";: Print Using ".###"; statPCT!;
+    If compT1%(1) = 0 Then Locate 6, 10: Print "  .000";
+    If compT1%(1) > 0 Then statPCT! = compT1%(3) / 100: Locate 6, 10: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 7, 10: Print Using "######"; T1%(5) / 100 * T1%(7);
-    Locate 8, 10: Print Using "######"; T1%(5);
+    Locate 7, 10: Print Using "######"; compT1%(5) / 100 * compT1%(7);
+    Locate 8, 10: Print Using "######"; compT1%(5);
 
-    If T1%(5) = 0 Then Locate 9, 10: Print "  .000";
-    If T1%(5) > 0 Then statPCT! = T1%(7) / 100: Locate 9, 10: Print "  ";: Print Using ".###"; statPCT!;
+    If compT1%(5) = 0 Then Locate 9, 10: Print "  .000";
+    If compT1%(5) > 0 Then statPCT! = compT1%(7) / 100: Locate 9, 10: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 10: Print Using "######"; .35 * T1%(9);
-    Locate 11, 10: Print Using "######"; .65 * T1%(9);
-    Locate 12, 10: Print Using "######"; T1%(9);
-    Locate 13, 10: Print Using "######"; T1%(11);
-    Locate 14, 10: Print Using "######"; T1%(13);
-    Locate 15, 10: Print Using "######"; T1%(17);
-    Locate 16, 10: Print Using "######"; T1%(15);
+    Locate 10, 10: Print Using "######"; .35 * compT1%(9);
+    Locate 11, 10: Print Using "######"; .65 * compT1%(9);
+    Locate 12, 10: Print Using "######"; compT1%(9);
+    Locate 13, 10: Print Using "######"; compT1%(11);
+    Locate 14, 10: Print Using "######"; compT1%(13);
+    Locate 15, 10: Print Using "######"; compT1%(17);
+    Locate 16, 10: Print Using "######"; compT1%(15);
     Locate 17, 10: Print "   ---"
     Locate 18, 10: Print "   ---"
     Locate 19, 10: Print "   ---"
     Locate 20, 10: Print "   ---"
 
     Color 3, 0
-    Locate 4, 62: Print Using "######"; T1%(2) / 100 * T1%(4);
-    Locate 5, 62: Print Using "######"; T1%(2);
+    Locate 4, 62: Print Using "######"; compT1%(2) / 100 * compT1%(4);
+    Locate 5, 62: Print Using "######"; compT1%(2);
 
     If compareT%(2) = 0 Then Locate 6, 62: Print "  .000";
-    If compareT%(2) > 0 Then statPCT! = T1%(4) / 100: Locate 6, 62: Print "  ";: Print Using ".###"; statPCT!;
+    If compareT%(2) > 0 Then statPCT! = compT1%(4) / 100: Locate 6, 62: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 7, 62: Print Using "######"; T1%(6) / 100 * T1%(8);
-    Locate 8, 62: Print Using "######"; T1%(6);
+    Locate 7, 62: Print Using "######"; compT1%(6) / 100 * compT1%(8);
+    Locate 8, 62: Print Using "######"; compT1%(6);
 
     If compareT%(6) = 0 Then Locate 9, 62: Print "  .000";
-    If compareT%(6) > 0 Then statPCT! = T1%(8) / 100: Locate 9, 62: Print "  ";: Print Using ".###"; statPCT!;
+    If compareT%(6) > 0 Then statPCT! = compT1%(8) / 100: Locate 9, 62: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 62: Print Using "######"; .35 * T1%(10);
-    Locate 11, 62: Print Using "######"; .65 * T1%(10);
-    Locate 12, 62: Print Using "######"; T1%(10);
-    Locate 13, 62: Print Using "######"; T1%(12);
-    Locate 14, 62: Print Using "######"; T1%(14);
-    Locate 15, 62: Print Using "######"; T1%(18);
-    Locate 16, 62: Print Using "######"; T1%(16);
+    Locate 10, 62: Print Using "######"; .35 * compT1%(10);
+    Locate 11, 62: Print Using "######"; .65 * compT1%(10);
+    Locate 12, 62: Print Using "######"; compT1%(10);
+    Locate 13, 62: Print Using "######"; compT1%(12);
+    Locate 14, 62: Print Using "######"; compT1%(14);
+    Locate 15, 62: Print Using "######"; compT1%(18);
+    Locate 16, 62: Print Using "######"; compT1%(16);
     Locate 17, 62: Print "   ---"
-    Locate 18, 62: Print Using "######"; T1%(19) * T1%(20) / 100;
-    Locate 19, 62: Print Using "######"; T1%(19);
+    Locate 18, 62: Print Using "######"; compT1%(19) * compT1%(20) / 100;
+    Locate 19, 62: Print Using "######"; compT1%(19);
 
     If compareT%(19) = 0 Then Locate 20, 62: Print "  .000";
-    If compareT%(19) > 0 Then statPCT! = T1%(20) / 100: Locate 20, 62: Print "  ";: Print Using ".###"; statPCT!;
+    If compareT%(19) > 0 Then statPCT! = compT1%(20) / 100: Locate 20, 62: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 4, 16: Print Using "#########"; Z!(2);
-    Locate 5, 16: Print Using "#########"; Z!(1);
+    Locate 4, 16: Print Using "#########"; statsZ!(2);
+    Locate 5, 16: Print Using "#########"; statsZ!(1);
 
-    If Z!(1) = 0 Then Locate 6, 16: Print "     .000";
-    If Z!(1) > 0 Then statPCT! = (Z!(2) / Z!(1)): Locate 6, 16: Print "     ";: Print Using ".###"; statPCT!;
+    If statsZ!(1) = 0 Then Locate 6, 16: Print "     .000";
+    If statsZ!(1) > 0 Then statPCT! = (statsZ!(2) / statsZ!(1)): Locate 6, 16: Print "     ";: Print Using ".###"; statPCT!;
 
-    Locate 7, 16: Print Using "#########"; Z!(4);
-    Locate 8, 16: Print Using "#########"; Z!(3);
+    Locate 7, 16: Print Using "#########"; statsZ!(4);
+    Locate 8, 16: Print Using "#########"; statsZ!(3);
 
-    If Z!(3) = 0 Then Locate 9, 16: Print "     .000";
-    If Z!(3) > 0 Then statPCT! = (Z!(4) / Z!(3)): Locate 9, 16: Print "     ";: Print Using ".###"; statPCT!;
+    If statsZ!(3) = 0 Then Locate 9, 16: Print "     .000";
+    If statsZ!(3) > 0 Then statPCT! = (statsZ!(4) / statsZ!(3)): Locate 9, 16: Print "     ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 16: Print Using "#########"; Z!(12);
-    Locate 11, 16: Print Using "#########"; Z!(5) - Z!(12) - Z!(15);
-    Locate 12, 16: Print Using "#########"; Z!(5) - Z!(15);
-    Locate 13, 16: Print Using "#########"; Z!(8);
-    Locate 14, 16: Print Using "#########"; Z!(6);
-    Locate 15, 16: Print Using "#########"; Z!(7);
-    Locate 16, 16: Print Using "#########"; Z!(11);
-    Locate 17, 16: Print Using "#########"; Z!(9);
-    Locate 18, 16: Print Using "#########"; Z!(13);
-    Locate 19, 16: Print Using "#########"; Z!(14);
-    Locate 4, 68: Print Using "########"; Z1!(2);
-    Locate 5, 68: Print Using "########"; Z1!(1);
+    Locate 10, 16: Print Using "#########"; statsZ!(12);
+    Locate 11, 16: Print Using "#########"; statsZ!(5) - statsZ!(12) - statsZ!(15);
+    Locate 12, 16: Print Using "#########"; statsZ!(5) - statsZ!(15);
+    Locate 13, 16: Print Using "#########"; statsZ!(8);
+    Locate 14, 16: Print Using "#########"; statsZ!(6);
+    Locate 15, 16: Print Using "#########"; statsZ!(7);
+    Locate 16, 16: Print Using "#########"; statsZ!(11);
+    Locate 17, 16: Print Using "#########"; statsZ!(9);
+    Locate 18, 16: Print Using "#########"; statsZ!(13);
+    Locate 19, 16: Print Using "#########"; statsZ!(14);
+    Locate 4, 68: Print Using "########"; statsZ1!(2);
+    Locate 5, 68: Print Using "########"; statsZ1!(1);
 
-    If Z1!(1) = 0 Then Locate 6, 68: Print "    .000";
-    If Z1!(1) > 0 Then statPCT! = (Z1!(2) / Z1!(1)): Locate 6, 68: Print "    ";: Print Using ".###"; statPCT!;
+    If statsZ1!(1) = 0 Then Locate 6, 68: Print "    .000";
+    If statsZ1!(1) > 0 Then statPCT! = (statsZ1!(2) / statsZ1!(1)): Locate 6, 68: Print "    ";: Print Using ".###"; statPCT!;
 
-    Locate 7, 68: Print Using "########"; Z1!(4);
-    Locate 8, 68: Print Using "########"; Z1!(3);
+    Locate 7, 68: Print Using "########"; statsZ1!(4);
+    Locate 8, 68: Print Using "########"; statsZ1!(3);
 
-    If Z1!(3) = 0 Then Locate 9, 68: Print "    .000";
-    If Z1!(3) > 0 Then statPCT! = (Z1!(4) / Z1!(3)): Locate 9, 68: Print "    ";: Print Using ".###"; statPCT!;
+    If statsZ1!(3) = 0 Then Locate 9, 68: Print "    .000";
+    If statsZ1!(3) > 0 Then statPCT! = (statsZ1!(4) / statsZ1!(3)): Locate 9, 68: Print "    ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 68: Print Using "########"; Z1!(12);
-    Locate 11, 68: Print Using "########"; Z1!(5) - Z1!(12) - Z1!(15);
-    Locate 12, 68: Print Using "########"; Z1!(5) - Z1!(15);
-    Locate 13, 68: Print Using "########"; Z1!(8);
-    Locate 14, 68: Print Using "########"; Z1!(6);
-    Locate 15, 68: Print Using "########"; Z1!(7);
-    Locate 16, 68: Print Using "########"; Z1!(11);
-    Locate 17, 68: Print Using "########"; Z1!(9);
-    Locate 18, 68: Print Using "########"; Z1!(13);
-    Locate 19, 68: Print Using "########"; Z1!(14);
+    Locate 10, 68: Print Using "########"; statsZ1!(12);
+    Locate 11, 68: Print Using "########"; statsZ1!(5) - statsZ1!(12) - statsZ1!(15);
+    Locate 12, 68: Print Using "########"; statsZ1!(5) - statsZ1!(15);
+    Locate 13, 68: Print Using "########"; statsZ1!(8);
+    Locate 14, 68: Print Using "########"; statsZ1!(6);
+    Locate 15, 68: Print Using "########"; statsZ1!(7);
+    Locate 16, 68: Print Using "########"; statsZ1!(11);
+    Locate 17, 68: Print Using "########"; statsZ1!(9);
+    Locate 18, 68: Print Using "########"; statsZ1!(13);
+    Locate 19, 68: Print Using "########"; statsZ1!(14);
 
-    If Z1!(13) = 0 Then Locate 20, 68: Print "    .000";
-    If Z1!(13) > 0 Then statPCT! = (Z1!(13) / Z1!(14)): Locate 20, 68: Print "    ";: Print Using ".###"; statPCT!;
+    If statsZ1!(13) = 0 Then Locate 20, 68: Print "    .000";
+    If statsZ1!(13) > 0 Then statPCT! = (statsZ1!(13) / statsZ1!(14)): Locate 20, 68: Print "    ";: Print Using ".###"; statPCT!;
 
-    If Z!(13) = 0 Then Locate 20, 16: Print "     .000";
+    If statsZ!(13) = 0 Then Locate 20, 16: Print "     .000";
 
-    If Z!(13) > 0 Then statPCT! = (Z!(13) / Z!(14)): Locate 20, 16: Print "     ";: Print Using ".###"; statPCT!;
+    If statsZ!(13) > 0 Then statPCT! = (statsZ!(13) / statsZ!(14)): Locate 20, 16: Print "     ";: Print Using ".###"; statPCT!;
 
 End Sub
 
@@ -372,14 +372,14 @@ Sub PlayerComparison (loopChoice, PS$())
 
     Shared compareA!()
 
-    Shared A$(), B$(), T$()
-    Shared RS!(), X1!(), W0!(), W1!()
+    Shared A$(), compareB$(), T$()
+    Shared RS!(), X1!(), statsW0!(), statsW1!()
 
     Do
         Cls
         Color 9
         Locate 3, 12: Print "STAT COMPARISONS FOR ";
-        Color 15: Print B$(0)
+        Color 15: Print compareB$(0)
 
         'Print names of all 14 characters
         For I = 0 To 13
@@ -431,10 +431,16 @@ Sub PlayerComparison (loopChoice, PS$())
 
             If A$(I) <> "XXX" And A$(I) <> "END" And A$(I) <> "" Then
 
-                Color 11: Locate 2, 2: Print T$(0)
-                Color 15, 0: Locate 2, 14: Print String$(34, 177): Color 14
+                Color 11
+				Locate 2, 2: Print T$(0)
+                Color 15, 0
+				Locate 2, 14: Print String$(34, 177)
+				
+				Color 14
+
                 'Player Name
                 Locate 2, 14: Print A$(I);
+
                 'Player Position
                 Print " - ";: Color 11: Print PS$(I)
                 Color 12
@@ -624,18 +630,18 @@ Sub PlayerComparison (loopChoice, PS$())
                 If compareA!(I, 0) > 0 And compareA!(I, 9) = 0 Then Locate , 18: Print "    0.0";
                 If compareA!(I, 0) > 0 And compareA!(I, 9) > 0 Then Locate , 18: Print Using "#####.#"; compareA!(I, 9) / compareA!(I, 0);
 
-                Locate , 25: Print Using "#######"; W0!(I);
-                Locate , 32: Print Using "#######"; W1!(I);
+                Locate , 25: Print Using "#######"; statsW0!(I);
+                Locate , 32: Print Using "#######"; statsW1!(I);
 
-                If W0!(I) = 0 Then Locate , 39: Print "      0.0";: Print "%";
-                If W0!(I) > 0 Then Locate , 39: Print Using "#######.#"; W0!(I) / W1!(I) * 100;: Print "%";
+                If statsW0!(I) = 0 Then Locate , 39: Print "      0.0";: Print "%";
+                If statsW0!(I) > 0 Then Locate , 39: Print Using "#######.#"; statsW0!(I) / statsW1!(I) * 100;: Print "%";
 
                 statVal = compareA!(I, 5) / compareA!(I, 0)
                 Locate , 49: Print Using "#####.#"; statVal;
-                Locate , 56: Print Using "######"; (compareA!(I, 2) * 2) + compareA!(I, 4) + W0!(I);
+                Locate , 56: Print Using "######"; (compareA!(I, 2) * 2) + compareA!(I, 4) + statsW0!(I);
 
-                If (compareA!(I, 2) * 2) + compareA!(I, 4) + W0!(I) = 0 Then Locate , 62: Print "   0.0";
-                If (compareA!(I, 2) * 2) + compareA!(I, 4) + W0!(I) > 0 Then Locate , 62: Print Using "####.#"; ((compareA!(I, 2) * 2) + compareA!(I, 4) + W0!(I)) / compareA!(I, 0);
+                If (compareA!(I, 2) * 2) + compareA!(I, 4) + statsW0!(I) = 0 Then Locate , 62: Print "   0.0";
+                If (compareA!(I, 2) * 2) + compareA!(I, 4) + statsW0!(I) > 0 Then Locate , 62: Print Using "####.#"; ((compareA!(I, 2) * 2) + compareA!(I, 4) + statsW0!(I)) / compareA!(I, 0);
                 If compareA!(I, 10) = 0 Then Locate , 68: Print "    0.0";
                 If compareA!(I, 10) > 0 Then Locate , 68: Print Using "#####.#"; ((compareA!(I, 10) + 30) / 60) / compareA!(I, 0);
 
@@ -674,16 +680,16 @@ End Sub
 '...explanation...
 Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
 
-    Shared A1$, C$, S$
+    Shared mascot$, coach$, stadium$
     Shared avgAttendance%, CK, defFGPctAdj%, replayLosses%, staminaRating%, replayWins%
     Shared V1%, V2%
-    Shared A$(), B$(), HP$(), OP$(), P$()
-    Shared HP%(), OP%(), compareL%(), compareT%(), T1%()
+    Shared A$(), compareB$(), HP$(), OP$(), P$()
+    Shared HP%(), OP%(), compareL%(), compareT%(), compT1%()
     Shared A1!(), compareA!(), DF!(), RS!(), X1!()
-    Shared W0!(), W1!()
-    Shared Z!(), Z1!()
+    Shared statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
 
-    'Dim A$(), B$()
+    'Dim A$(), compareB$()
 
     Selection% = 1
     Count% = numberTeams
@@ -731,8 +737,9 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
         Next
         Close 1
 
-        B$(0) = RTrim$(Q$(0))
-        B$ = B$(0)
+        'compareB$(0) = RTrim$(Q$(0))
+        'B$ = compareB$(0)
+		B$ = RTrim$(Q$(0))
 
         For XX = 4 To 11
             If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
@@ -763,9 +770,9 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
             Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
         Get #1, t1
-        C$ = Q$(0)
-        S$ = Q$(1)
-        A1$ = Q$(2)
+        coach$ = Q$(0)
+        stadium$ = Q$(1)
+        mascot$ = Q$(2)
         avgAttendance% = CVL(Q$(3))
         For I = 0 To 13
             DF!(I) = CVI(Q$(I * 16 + 4))
@@ -776,7 +783,7 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
         Next
 
         For I = 0 To 20
-            T1%(I) = CVI(Q$(228 + I))
+            compT1%(I) = CVI(Q$(228 + I))
         Next
 
         CK = CVI(Q$(249))
@@ -784,7 +791,10 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
         Close 1
 
         If CK <> 999 Then
-            C$ = "": S$ = "": A1$ = "": avgAttendance% = 0
+            coach$ = ""
+			stadium$ = ""
+			mascot$ = ""
+			avgAttendance% = 0
             For I = 0 To 13
                 DF!(I) = 5
                 P$(I) = ""
@@ -792,7 +802,7 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
                     RS!(I, I1) = 0
                 Next
             Next
-            For I = 0 To 20: T1%(I) = 0: Next
+            For I = 0 To 20: compT1%(I) = 0: Next
         End If
 
 
@@ -812,11 +822,11 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
                 For J = 0 To 13
                     Input #1, compareA!(I, J)
                 Next
-                Input #1, W0!(I)
-                Input #1, W1!(I)
+                Input #1, statsW0!(I)
+                Input #1, statsW1!(I)
             Next
-            For L = 0 To 15: Input #1, Z!(L): Next
-            For L = 0 To 15: Input #1, Z1!(L): Next
+            For L = 0 To 15: Input #1, statsZ!(L): Next
+            For L = 0 To 15: Input #1, statsZ1!(L): Next
 
             Close #1
 

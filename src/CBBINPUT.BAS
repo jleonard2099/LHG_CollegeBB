@@ -2,13 +2,15 @@ Sub CBBINPUT ()
 
     _Title "Courtside College Basketball - Ratings Input"
 
-    Dim E0(16), A(14, 19), DF(13)
-    Dim QQ(3), RS(13, 13), XX(13), X(14, 6)
-    Dim L%(9), T%(9)
-    Dim N$(14), P$(14), X$(3)
+    Dim E0(16), inputA(14, 19), inputDF(13)
+    Dim inputQQ(3), inputRS(13, 13), XX(13), X(14, 6)
+    Dim inputL%(9)
+    Dim inputN$(14), inputP$(14), inputX$(3)
 
-    X$(0) = "COLLEGE BASKETBALL"
-    X$(1) = "H S BASKETBALL"
+    Shared T%()
+    
+    inputX$(0) = "COLLEGE BASKETBALL"
+    inputX$(1) = "H S BASKETBALL"
 
     Cls
 
@@ -34,7 +36,7 @@ Sub CBBINPUT ()
 
         Cls
 
-        Print X$(H)
+        Print inputX$(H)
         If H = 0 Then
             L7 = 6: L3 = 20: L6 = 14
         Else
@@ -98,18 +100,19 @@ Sub CBBINPUT ()
             Print "DO YOU HAVE THE FOLLOWING:"
             Print
 
-            Input "ASSISTS (YN) "; I$: QQ(0) = 0
-            If I$ = "N" Then QQ(0) = 1
+            Input "ASSISTS (YN) "; I$: inputQQ(0) = 0
+            If I$ = "N" Then inputQQ(0) = 1
 
-            Input "PERSONAL FOULS (YN) "; I$: QQ(1) = 0
-            If I$ = "N" Then QQ(1) = 1
+            Input "PERSONAL FOULS (YN) "; I$: inputQQ(1) = 0
+            If I$ = "N" Then inputQQ(1) = 1
 
-            Input "STEALS & TURNOVERS (YN) "; I$: QQ(2) = 0
-            If I$ = "N" Then QQ(2) = 1
+            Input "STEALS & TURNOVERS (YN) "; I$: inputQQ(2) = 0
+            If I$ = "N" Then inputQQ(2) = 1
 
-            Input "BLOCKS (YN) "; I$: QQ(3) = 0
-            If I$ = "N" Then QQ(3) = 1
+            Input "BLOCKS (YN) "; I$: inputQQ(3) = 0
+            If I$ = "N" Then inputQQ(3) = 1
             Print
+            
             Input "ANY CHANGE (YN) "; I$
 
         Loop Until UCase$(I$) = "N"
@@ -121,7 +124,7 @@ Sub CBBINPUT ()
 
             'C1 should be 0 our first time through
             308
-            Locate 1: Print X$(H)
+            Locate 1: Print inputX$(H)
             Locate 2: Input " 0. TEAM # (0-EXIT)"; T
 
             If T > 0 And T < 999 Then
@@ -133,12 +136,12 @@ Sub CBBINPUT ()
                     311 Locate 5: Input " 3. GAMES "; L5: If C1 = 1 Then 326
                     157 Locate 6: Input "17. TEXT COLOR (0-15) "; T%(0): If C1 = 1 Then 326
                     158 Locate 7: Input "18. BACKGROUND (0-7) "; T%(1): Locate 8, 1: Color T%(0), T%(1): Print A$: Color 15, 0: If C1 = 1 Then 326
-                    159 Locate 2, 37: Input "19. NICKNAME "; A1$: If C1 = 1 Then 326
+                    159 Locate 2, 37: Input "19. NICKNAME "; mascot$: If C1 = 1 Then 326
                     160 Locate 3, 37: Input "20. WINS "; T%(7): If C1 = 1 Then 326
                     161 Locate 4, 37: Input "21. LOSSES "; T%(8): If C1 = 1 Then 326
                     162 Locate 5, 37: Input "22. POWER RATING "; T%(9): If C1 = 1 Then 326
-                    163 Locate 6, 37: Input "23. COACH "; C$: If C1 = 1 Then 326
-                    165 Locate 7, 37: Input "24. ARENA "; S$: If C1 = 1 Then 326
+                    163 Locate 6, 37: Input "23. COACH "; coach$: If C1 = 1 Then 326
+                    165 Locate 7, 37: Input "24. ARENA "; stadium$: If C1 = 1 Then 326
                     166 Locate 8, 37: Input "25. AVG ATT "; avgAttendance%: If C1 = 1 Then 326
                     312 Locate 9, 10: Print A$;: Locate 9, 30: Print "OPPONENTS"
                     313 Locate 10, 1: Print "4. FGA ";: Locate 10, 15: Input T1
@@ -208,28 +211,28 @@ Sub CBBINPUT ()
             For I = 0 To 13
 
                 Cls
-                Print X$(H); " PLAYER- "; I + 1
+                Print inputX$(H); " PLAYER- "; I + 1
 
-                331 Locate 3: Input " 1. NAME (XXX TO QUIT) "; N$(I): If C1 = 1 Then 345
+                331 Locate 3: Input " 1. NAME (XXX TO QUIT) "; inputN$(I): If C1 = 1 Then 345
 
-                If N$(I) <> "XXX" Then
+                If inputN$(I) <> "XXX" Then
 
-                    349 Locate 4: Input "16. POSITION "; P$(I): If C1 = 1 Then 345
-                    332 Locate 5: Input " 2. GAMES "; A(I, 7): X(I, 0) = A(I, 7): If C1 = 1 Then 345
-                    333 Locate 6: Input " 3. MP "; A(I, 8): If C1 = 1 Then 345
-                    334 Locate 7: Input " 4. FGM "; RS(I, 3): If C1 = 1 Then 345
-                    335 Locate 8: Input " 5. FGA "; A(I, 9): X(I, 1) = A(I, 9): If C1 = 1 Then 345
-                    337 Locate 9: Input " 7. FTM "; RS(I, 5): If C1 = 1 Then 345
-                    336 Locate 10: Input " 6. FTA "; A(I, 16): If C1 = 1 Then 345
-                    359 Locate 11: Input " 8. ORB "; A(I, 19): If C1 = 1 Then 345
-                    338 Locate 12: Input " 9. TOT RB "; A(I, 10): If C1 = 1 Then 345
-                    340 Locate 13: Input "10. PF "; A(I, 12): If C1 = 1 Then 345
-                    339 Locate 14: Input "11. AST "; A(I, 11): If C1 = 1 Then 345
-                    342 Locate 15: Input "12. BLK "; A(I, 14): If C1 = 1 Then 345
-                    341 Locate 16: Input "13. STL "; A(I, 13): If C1 = 1 Then 345
-                    344 Locate 17: Input "14. 3 FGM "; RS(I, 13): If C1 = 1 Then 345
-                    343 Locate 18: Input "15. 3 FGA "; A(I, 17): If C1 = 1 Then 345
-                    350 Locate 19: Input "17. DEFENSE (1-9) "; DF(I): If C1 = 1 Then 345
+                    349 Locate 4: Input "16. POSITION "; inputP$(I): If C1 = 1 Then 345
+                    332 Locate 5: Input " 2. GAMES "; inputA(I, 7): X(I, 0) = inputA(I, 7): If C1 = 1 Then 345
+                    333 Locate 6: Input " 3. MP "; inputA(I, 8): If C1 = 1 Then 345
+                    334 Locate 7: Input " 4. FGM "; inputRS(I, 3): If C1 = 1 Then 345
+                    335 Locate 8: Input " 5. FGA "; inputA(I, 9): X(I, 1) = inputA(I, 9): If C1 = 1 Then 345
+                    337 Locate 9: Input " 7. FTM "; inputRS(I, 5): If C1 = 1 Then 345
+                    336 Locate 10: Input " 6. FTA "; inputA(I, 16): If C1 = 1 Then 345
+                    359 Locate 11: Input " 8. ORB "; inputA(I, 19): If C1 = 1 Then 345
+                    338 Locate 12: Input " 9. TOT RB "; inputA(I, 10): If C1 = 1 Then 345
+                    340 Locate 13: Input "10. PF "; inputA(I, 12): If C1 = 1 Then 345
+                    339 Locate 14: Input "11. AST "; inputA(I, 11): If C1 = 1 Then 345
+                    342 Locate 15: Input "12. BLK "; inputA(I, 14): If C1 = 1 Then 345
+                    341 Locate 16: Input "13. STL "; inputA(I, 13): If C1 = 1 Then 345
+                    344 Locate 17: Input "14. 3 FGM "; inputRS(I, 13): If C1 = 1 Then 345
+                    343 Locate 18: Input "15. 3 FGA "; inputA(I, 17): If C1 = 1 Then 345
+                    350 Locate 19: Input "17. DEFENSE (1-9) "; inputDF(I): If C1 = 1 Then 345
 
                     345 C1 = 1: Locate 22: Input "# TO CHANGE (0 TO CONTINUE) "; B9
                     'As earlier in the file this can be made into a case/select
@@ -237,38 +240,38 @@ Sub CBBINPUT ()
                     On B9 GOTO 331, 332, 333, 334, 335, 336, 337, 359, 338, 340, 339, 342, 341, 344, 343, 349, 350
 
                     C1 = 0
-                    RS(I, 0) = A(I, 7)
-                    RS(I, 1) = A(I, 8)
-                    RS(I, 2) = A(I, 9)
+                    inputRS(I, 0) = inputA(I, 7)
+                    inputRS(I, 1) = inputA(I, 8)
+                    inputRS(I, 2) = inputA(I, 9)
 
-                    If RS(I, 2) = 0 Then
-                        A(I, 0) = 0
+                    If inputRS(I, 2) = 0 Then
+                        inputA(I, 0) = 0
                     Else
-                        A(I, 0) = Int(RS(I, 3) / RS(I, 2) * 100 + .5)
+                        inputA(I, 0) = Int(inputRS(I, 3) / inputRS(I, 2) * 100 + .5)
                     End If
 
-                    RS(I, 4) = A(I, 16)
+                    inputRS(I, 4) = inputA(I, 16)
 
-                    If RS(I, 4) = 0 Then
-                        A(I, 1) = 0
+                    If inputRS(I, 4) = 0 Then
+                        inputA(I, 1) = 0
                     Else
-                        A(I, 1) = Int(RS(I, 5) / RS(I, 4) * 100 + .5)
+                        inputA(I, 1) = Int(inputRS(I, 5) / inputRS(I, 4) * 100 + .5)
                     End If
 
-                    RS(I, 6) = A(I, 19)
-                    RS(I, 7) = A(I, 10)
-                    RS(I, 8) = A(I, 12)
-                    RS(I, 9) = A(I, 11)
-                    RS(I, 10) = A(I, 14)
-                    RS(I, 11) = A(I, 13)
-                    RS(I, 12) = A(I, 17)
-                    If RS(I, 12) = 0 Then
-                        A(I, 18) = 0: X(I, 2) = 0
+                    inputRS(I, 6) = inputA(I, 19)
+                    inputRS(I, 7) = inputA(I, 10)
+                    inputRS(I, 8) = inputA(I, 12)
+                    inputRS(I, 9) = inputA(I, 11)
+                    inputRS(I, 10) = inputA(I, 14)
+                    inputRS(I, 11) = inputA(I, 13)
+                    inputRS(I, 12) = inputA(I, 17)
+                    If inputRS(I, 12) = 0 Then
+                        inputA(I, 18) = 0: X(I, 2) = 0
                     Else
-                        A(I, 18) = Int(RS(I, 13) / RS(I, 12) * 100 + .5): X(I, 2) = A(I, 18)
+                        inputA(I, 18) = Int(inputRS(I, 13) / inputRS(I, 12) * 100 + .5): X(I, 2) = inputA(I, 18)
                     End If
                 Else
-                    For I1 = I To 13: N$(I1) = "XXX": Next
+                    For I1 = I To 13: inputN$(I1) = "XXX": Next
                     Exit For
                 End If 'Done checking for XXX
 
@@ -283,7 +286,7 @@ Sub CBBINPUT ()
                 If X1 > 52 And X1 < 58 Then X2 = .7
                 T7 = Int((T7 * X2) + .5)
                 BF = Int((BF * X2) + .5)
-                For I = 0 To 13: A(I, 16) = Int((A(I, 16) * X2) + .5): Next I
+                For I = 0 To 13: inputA(I, 16) = Int((inputA(I, 16) * X2) + .5): Next I
             End If
 
             346 X9 = 0
@@ -300,30 +303,30 @@ Sub CBBINPUT ()
             1404 If H = 2 Then M7 = ((44 + RD) / L2)
 
             347 For I = 0 To 13
-                If N$(I) <> "XXX" Then
-                    X9 = X9 + A(I, 10) + A(I, 9)
+                If inputN$(I) <> "XXX" Then
+                    X9 = X9 + inputA(I, 10) + inputA(I, 9)
                 End If
             100 Next I
 
             348 For I = 0 To 13
-                If N$(I) <> "XXX" Then
-                    If A(I, 8) <> 0 And H = 0 Then M = 40 / (A(I, 8) / A(I, 7))
-                    If A(I, 8) <> 0 And H = 1 Then M = 32 / (A(I, 8) / A(I, 7))
-                    If A(I, 8) = 0 Then M = (X9 / 5) / (A(I, 9) + A(I, 10)): MI = (A(I, 9) + A(I, 10)) / (X9 / 5)
-                    If A(I, 8) = 0 And M < 1.1 Then M = 1.1
-                    A(I, 2) = Int((((A(I, 10) / A(I, 7)) * M) * M7) + .5)
-                    3500 X = Int(((((A(I, 10) / A(I, 7)) * M) * M7) * 10) + .5)
-                    If A(I, 19) = 0 Then
+                If inputN$(I) <> "XXX" Then
+                    If inputA(I, 8) <> 0 And H = 0 Then M = 40 / (inputA(I, 8) / inputA(I, 7))
+                    If inputA(I, 8) <> 0 And H = 1 Then M = 32 / (inputA(I, 8) / inputA(I, 7))
+                    If inputA(I, 8) = 0 Then M = (X9 / 5) / (inputA(I, 9) + inputA(I, 10)): MI = (inputA(I, 9) + inputA(I, 10)) / (X9 / 5)
+                    If inputA(I, 8) = 0 And M < 1.1 Then M = 1.1
+                    inputA(I, 2) = Int((((inputA(I, 10) / inputA(I, 7)) * M) * M7) + .5)
+                    3500 X = Int(((((inputA(I, 10) / inputA(I, 7)) * M) * M7) * 10) + .5)
+                    If inputA(I, 19) = 0 Then
                         X(I, 4) = Int((X * .35) + .5)
                     Else
-                        X(I, 4) = Int((X * (A(I, 19) / A(I, 10))) + .5)
+                        X(I, 4) = Int((X * (inputA(I, 19) / inputA(I, 10))) + .5)
                     End If
 
-                    3505 A(I, 2) = X - X(I, 4)
+                    3505 inputA(I, 2) = X - X(I, 4)
 
-                    If QQ(0) = 0 Then A(I, 4) = Int(((A(I, 11) / A(I, 7)) * M) * (L6 / (T0 / L5)) + .5)
-                    If QQ(2) = 0 Then A(I, 5) = Int(((A(I, 13) / A(I, 7)) * M) + .5)
-                    If QQ(3) = 0 Then A(I, 6) = ((A(I, 14) / A(I, 7)) * M): A(I, 6) = Int(A(I, 6) + .5)
+                    If inputQQ(0) = 0 Then inputA(I, 4) = Int(((inputA(I, 11) / inputA(I, 7)) * M) * (L6 / (T0 / L5)) + .5)
+                    If inputQQ(2) = 0 Then inputA(I, 5) = Int(((inputA(I, 13) / inputA(I, 7)) * M) + .5)
+                    If inputQQ(3) = 0 Then inputA(I, 6) = ((inputA(I, 14) / inputA(I, 7)) * M): inputA(I, 6) = Int(inputA(I, 6) + .5)
                 End If
 
             Next I
@@ -347,62 +350,62 @@ Sub CBBINPUT ()
             D = OE - L4 + BY - U7
 
             366 For I = 0 To 13
-                If N$(I) <> "XXX" Then
-                    A(I, 3) = (A(I, 9) + A(I, 10)) / X9
-                    A(I, 3) = Int((100 * A(I, 3)) + .5)
+                If inputN$(I) <> "XXX" Then
+                    inputA(I, 3) = (inputA(I, 9) + inputA(I, 10)) / X9
+                    inputA(I, 3) = Int((100 * inputA(I, 3)) + .5)
                 End If
             Next I
 
             V% = Int(((W0 / T2) + .005) * 100)
             V2% = V% - Q7
 
-			'DEF 3FGA/3FGA ADJ
-			'-- Here is where 100 is being added to the value
-			'-- This is why our team files and viewer later
-			'-- will show values as 95-99
+            'DEF 3FGA/3FGA ADJ
+            '-- Here is where 100 is being added to the value
+            '-- This is why our team files and viewer later
+            '-- will show values as 95-99
             If V2% < 0 Then V2% = 100 + V2%
 
             V1% = W1 - Q8
 
-			'DEF 3FG %
-			'-- Here is where 100 is being added to the value
-			'-- This is why our team files and viewer later
-			'-- will show values as 95-99
+            'DEF 3FG %
+            '-- Here is where 100 is being added to the value
+            '-- This is why our team files and viewer later
+            '-- will show values as 95-99
             If V1% < 0 Then V1% = 100 + V1%
 
             For I = 0 To 13
-                If N$(I) <> "XXX" Then
-                    If A(I, 9) <> 0 Then X(I, 3) = Int(A(I, 17) / A(I, 9) * 100 + .5)
-                    If A(I, 8) <> 0 And H = 0 Then M = 40 / (A(I, 8) / A(I, 7))
-                    If A(I, 8) <> 0 And H = 1 Then M = 32 / (A(I, 8) / A(I, 7))
-                    If A(I, 8) = 0 Then M = (X9 / 5) / (A(I, 9) + A(I, 10))
-                    If A(I, 8) = 0 And M < 1 Then M = 1
+                If inputN$(I) <> "XXX" Then
+                    If inputA(I, 9) <> 0 Then X(I, 3) = Int(inputA(I, 17) / inputA(I, 9) * 100 + .5)
+                    If inputA(I, 8) <> 0 And H = 0 Then M = 40 / (inputA(I, 8) / inputA(I, 7))
+                    If inputA(I, 8) <> 0 And H = 1 Then M = 32 / (inputA(I, 8) / inputA(I, 7))
+                    If inputA(I, 8) = 0 Then M = (X9 / 5) / (inputA(I, 9) + inputA(I, 10))
+                    If inputA(I, 8) = 0 And M < 1 Then M = 1
 
-                    B3 = (A(I, 12) / A(I, 7)) * M: B3 = Int((B3 * 10) + .5)
+                    B3 = (inputA(I, 12) / inputA(I, 7)) * M: B3 = Int((B3 * 10) + .5)
                     X(I, 5) = B3
-                    B3 = A(I, 9) * (A(I, 0) / 100): B4 = A(I, 17) * (A(I, 18) / 100)
+                    B3 = inputA(I, 9) * (inputA(I, 0) / 100): B4 = inputA(I, 17) * (inputA(I, 18) / 100)
 
-                    If A(I, 9) - A(I, 17) <> 0 Then A(I, 0) = ((B3 - B4) / (A(I, 9) - A(I, 17))) + .005
-                    A(I, 0) = Int((A(I, 0) * 100) + .5)
+                    If inputA(I, 9) - inputA(I, 17) <> 0 Then inputA(I, 0) = ((B3 - B4) / (inputA(I, 9) - inputA(I, 17))) + .005
+                    inputA(I, 0) = Int((inputA(I, 0) * 100) + .5)
                 End If
             Next I
 
             For I = 0 To 13
-                If N$(I) <> "XXX" Then
-                    A(I, 0) = A(I, 0) - BC + U7
+                If inputN$(I) <> "XXX" Then
+                    inputA(I, 0) = inputA(I, 0) - BC + U7
                 End If
             Next I
 
-            L%(4) = 99
+            inputL%(4) = 99
 
             For I = 0 To 13
-                If N$(I) <> "XXX" Then
-                    X! = ((A(I, 9) * A(I, 0)) / 100): MI = (A(I, 8) / A(I, 7)) / 40
-                    If A(I, 8) = 0 Then MI = (A(I, 9) + A(I, 10)) / (X9 / 5)
-                    X! = X! * .1: If MI > 1 And A(I, 8) = 0 Then MI = 1
-                    X! = X! + ((A(I, 7) * 1.64) * MI)
-                    X! = ((A(I, 16) - X!) / 2)
-                    X! = Int(((X! / (A(I, 9) + X!)) * 100) + .5): If X! < 0 Then X! = 0
+                If inputN$(I) <> "XXX" Then
+                    X! = ((inputA(I, 9) * inputA(I, 0)) / 100): MI = (inputA(I, 8) / inputA(I, 7)) / 40
+                    If inputA(I, 8) = 0 Then MI = (inputA(I, 9) + inputA(I, 10)) / (X9 / 5)
+                    X! = X! * .1: If MI > 1 And inputA(I, 8) = 0 Then MI = 1
+                    X! = X! + ((inputA(I, 7) * 1.64) * MI)
+                    X! = ((inputA(I, 16) - X!) / 2)
+                    X! = Int(((X! / (inputA(I, 9) + X!)) * 100) + .5): If X! < 0 Then X! = 0
                     X(I, 6) = X!
                 End If
             Next I
@@ -413,21 +416,21 @@ Sub CBBINPUT ()
             X! = (inputY! - 7) / .4
             X! = Int(X! + .5)
 
-            If X! < 0 Then L%(0) = 100 + X!
-            If X! > 0 Then L%(0) = X!
+            If X! < 0 Then inputL%(0) = 100 + X!
+            If X! > 0 Then inputL%(0) = X!
 
             inputY! = (BJ - BH) / L5
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
-            L%(1) = X!
+            inputL%(1) = X!
 
             inputY! = (BK - T9) / L5
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
             X! = X! - 4
 
-            If X! < 0 Then L%(2) = 100 + X!
-            If X! > 0 Then L%(2) = X!
+            If X! < 0 Then inputL%(2) = 100 + X!
+            If X! > 0 Then inputL%(2) = X!
 
             R1! = Int(((T2 * BE) / 100) + .5)
             X! = (R1! * .1) + (L5 * 8.2)
@@ -435,10 +438,10 @@ Sub CBBINPUT ()
             X! = (X! / (T2 + X!)) - .09
             X! = Int((X! * 100) + .5)
 
-            If X! > 0 Then L%(3) = X!
-            If X! < 0 Then L%(3) = X! + 100
+            If X! > 0 Then inputL%(3) = X!
+            If X! < 0 Then inputL%(3) = X! + 100
 
-            If QQ(0) = 1 Then
+            If inputQQ(0) = 1 Then
                 Cls: Print "INPUT ASSIST RATINGS"
                 Print "AA SHOULD = APPROX. 3 WHEN FINISHED"
                 Print "FORWARDS,CENTERS ARE USUALLY 0,1,2,3 ; GUARDS ARE USUALLY 3,4,5,6"
@@ -447,7 +450,7 @@ Sub CBBINPUT ()
 
                 Print
                 For I = 0 To 13
-                    1702 Locate I + 6, 1: Print I; " "; N$(I);
+                    1702 Locate I + 6, 1: Print I; " "; inputN$(I);
                     Locate I + 6, 20: Input E0(I)
                     If C1 = 1 Then Exit For
                 Next I
@@ -455,7 +458,7 @@ Sub CBBINPUT ()
                 C1 = 1
                 AA = 0
                 For I1 = 0 To 13
-                    AA = AA + E0(I1) * Int(A(I1, 3))
+                    AA = AA + E0(I1) * Int(inputA(I1, 3))
                 Next I1
 
                 Locate 20, 1
@@ -470,13 +473,13 @@ Sub CBBINPUT ()
                 End If
 
                 For I = 0 To 13
-                    A(I, 4) = A(I, 4) + E0(I)
+                    inputA(I, 4) = inputA(I, 4) + E0(I)
                 Next I
                 C1 = 0
 
             End If
 
-            If QQ(1) = 1 Then
+            If inputQQ(1) = 1 Then
                 C1 = 0
                 Cls
                 Print "INPUT FOUL COMMITING RATINGS"
@@ -487,7 +490,7 @@ Sub CBBINPUT ()
 
                 For I = 0 To 13
                     1802 Locate I + 6, 1
-                    Print I; " "; N$(I);
+                    Print I; " "; inputN$(I);
                     Locate I + 6, 20: Input E0(I)
                     If C1 = 1 Then Exit For
                 Next I
@@ -497,7 +500,7 @@ Sub CBBINPUT ()
                 TP = 0
 
                 For I1 = 0 To 13
-                    If N$(I1) <> "XXX" Then
+                    If inputN$(I1) <> "XXX" Then
                         TP = TP + 1
                         PF = PF + E0(I1)
                     End If
@@ -520,7 +523,7 @@ Sub CBBINPUT ()
 
             End If
 
-            If QQ(2) = 1 Then
+            If inputQQ(2) = 1 Then
                 HQ = T1 - T2
                 HR = T7 - BF
                 HW = HR / 350: If HW > 1 Then HW = 1
@@ -529,7 +532,7 @@ Sub CBBINPUT ()
                 HS = HS / 2: HX = Int((HR + HS - HQ) + .5): HX = Int(((HX / L5) * 10) + .5)
 
                 Cls
-                L%(4) = 99
+                inputL%(4) = 99
                 Print "INPUT STEALS & TURNOVERS RATINGS. THIS TEAMS ST SHOULD = APPROX. "; HX / 10
                 Print "IND. STL RATINGS: AVG=1 RANGE = 0 TO 4"
                 Print "TM OFF STL ADJ: AVG=0 RANGE=-10 TO 10": C1 = 0
@@ -538,7 +541,7 @@ Sub CBBINPUT ()
 
                 1906 '
                 For I = 0 To 13
-                    Locate I + 6, 1: Print I; " "; N$(I);
+                    Locate I + 6, 1: Print I; " "; inputN$(I);
                     Locate I + 6, 20: Input E0(I)
                     If C1 = 1 Then Exit For 'GoTo 1911
                 Next I
@@ -550,7 +553,7 @@ Sub CBBINPUT ()
 
                 1911 C1 = 1
 
-                ST = 0: For I = 0 To 13: ST = ST + E0(I) * Int(A(I, 3)): Next I
+                ST = 0: For I = 0 To 13: ST = ST + E0(I) * Int(inputA(I, 3)): Next I
                 ST = ST / 20: SY = 7 + E0(14) * .4
                 SV = (R * E0(15)) / 100: SW = ((4 + E0(16)) * R) / 100
                 ST = ST - SY - SV + SW: Locate 10, 26: Print "ST = "; ST;
@@ -562,16 +565,16 @@ Sub CBBINPUT ()
 
                 If UCase$(I$) = "N" Then
                     For I = 0 To 13
-                        A(I, 5) = A(I, 5) + E0(I)
+                        inputA(I, 5) = inputA(I, 5) + E0(I)
                     Next I
                     If E0(14) < 0 Then E0(14) = 100 + E0(14)
 
                     If E0(16) < 0 Then E0(16) = 100 + E0(16)
                     For I = 0 To 2
-                        L%(I) = E0(I + 14)
+                        inputL%(I) = E0(I + 14)
                     Next
                     For I = 0 To 4
-                        Print "L%("; I; ")="; L%(I)
+                        Print "inputL%("; I; ")="; inputL%(I)
                     Next
                     I$ = GetKeyPress$
 
@@ -591,7 +594,7 @@ Sub CBBINPUT ()
 
             End If
 
-            If QQ(3) = 1 Then
+            If inputQQ(3) = 1 Then
 
                 Cls
                 Print "INPUT BLOCK RATINGS"
@@ -603,7 +606,7 @@ Sub CBBINPUT ()
                 For I = 0 To 13
 
                     2102 '
-                    Locate I + 6, 1: Print I; " "; N$(I);
+                    Locate I + 6, 1: Print I; " "; inputN$(I);
                     Locate I + 6, 20: Input E0(I)
 
                     If C1 = 1 Then Exit For '2105
@@ -620,7 +623,7 @@ Sub CBBINPUT ()
                     I = Val(I$)
                     GoTo 2102
                 Else
-                    For I = 0 To 13: A(I, 6) = A(I, 6) + E0(I): Next I
+                    For I = 0 To 13: inputA(I, 6) = inputA(I, 6) + E0(I): Next I
                     C1 = 0
                 End If
 
@@ -641,16 +644,16 @@ Sub CBBINPUT ()
             LSet Q$(3) = MKI$(V1%)
             LSet Q$(4) = MKI$(V2%)
 
-            For I = 0 To 4: LSet Q$(I + 5) = MKI$(L%(I)): Next
+            For I = 0 To 4: LSet Q$(I + 5) = MKI$(inputL%(I)): Next
 
             T%(2) = 999
 
             For I = 0 To 9: LSet Q$(I + 10) = MKI$(T%(I)): Next
 
             For I = 0 To 13
-                LSet Q$(I * 15 + 20) = N$(I)
+                LSet Q$(I * 15 + 20) = inputN$(I)
                 For I1 = 0 To 6
-                    LSet Q$(I * 15 + I1 + 21) = MKI$(A(I, I1))
+                    LSet Q$(I * 15 + I1 + 21) = MKI$(inputA(I, I1))
                     LSet Q$(I * 15 + I1 + 28) = MKI$(X(I, I1))
                 Next
             Next
@@ -666,15 +669,15 @@ Sub CBBINPUT ()
                 Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
             Next
 
-            LSet Q$(0) = C$
-            LSet Q$(1) = S$
-            LSet Q$(2) = A1$
+            LSet Q$(0) = coach$
+            LSet Q$(1) = stadium$
+            LSet Q$(2) = mascot$
             LSet Q$(3) = MKL$(avgAttendance%)
             For I = 0 To 13
-                LSet Q$(I * 16 + 4) = MKI$(DF(I))
-                LSet Q$(I * 16 + 5) = P$(I)
+                LSet Q$(I * 16 + 4) = MKI$(inputDF(I))
+                LSet Q$(I * 16 + 5) = inputP$(I)
                 For I1 = 0 To 13
-                    LSet Q$(I * 16 + I1 + 6) = MKI$(RS(I, I1))
+                    LSet Q$(I * 16 + I1 + 6) = MKI$(inputRS(I, I1))
                 Next
             Next
 
@@ -706,18 +709,21 @@ Sub CBBINPUT ()
 
             For I = 0 To 13
                 For I1 = 0 To 19
-                    A(I, I1) = 0
+                    inputA(I, I1) = 0
                 Next I1
                 For I1 = 0 To 6
                     X(I, 0) = 0
                 Next I1
                 For I1 = 0 To 13
-                    RS(I, I1) = 0
+                    inputRS(I, I1) = 0
                 Next I1
-                DF(I) = 0: P$(I) = ""
+                inputDF(I) = 0: inputP$(I) = ""
             Next I
 
-            A1$ = "": S$ = "": avgAttendance% = 0: C$ = ""
+            mascot$ = ""
+            stadium$ = ""
+            coach$ = ""
+            avgAttendance% = 0
 
             Erase N$
 

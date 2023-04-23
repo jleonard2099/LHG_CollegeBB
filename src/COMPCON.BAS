@@ -7,16 +7,16 @@ Sub COMPCON ()
 
     Shared BRC!(), DL!()
     Shared LD!(), OL!()
-    Shared S!(), TRC!(), TRC1!()
-    Shared W0!(), W1!()
+    Shared compS!(), TRC!(), TRC1!()
+    Shared statsW0!(), statsW1!()
     Shared DT!(), OT!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
-    Shared BRC$(), DL$(), O$(), OL$()
+    Shared BRC$(), DL$(), compO$(), OL$()
     Shared recconTRC1$(), recconTRC$()
     Shared Z0$(), Z1$(), Z3$()
 
-    Shared O%()
+    Shared mergeO%()
 
     Cls
 
@@ -98,7 +98,7 @@ Sub COMPCON ()
                     Locate 2, 33: Print targetFile$
 
                     Do
-                        Locate , 33: Print "ANY CHANGE (YN)";
+                        Locate 3, 33: Print "ANY CHANGE (YN)";
                         I$ = GetKeyPress$
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -181,8 +181,8 @@ Sub COMPCON ()
 
                             Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
                             Input #2, numGames%
-                            For I = 1 To 100: Input #2, O%(I): Next I
-                            For I = 1 To 100: Input #2, O$(I): Next I
+                            For I = 1 To 100: Input #2, mergeO%(I): Next I
+                            For I = 1 To 100: Input #2, compO$(I): Next I
                             For I = 1 To 100: Input #2, compconT%(I): Next I
                             Close 2
 
@@ -194,30 +194,30 @@ Sub COMPCON ()
                             For I = 1 To numGames%
 
                                 For P = 4 To 11
-                                    If Mid$(O$(I), P, 1) = " " Or Mid$(O$(I), P, 1) = "." Then Mid$(O$(I), P, 1) = "_"
+                                    If Mid$(compO$(I), P, 1) = " " Or Mid$(compO$(I), P, 1) = "." Then Mid$(compO$(I), P, 1) = "_"
                                 Next P
 
                                 For P = 12 To 14
-                                    If Mid$(O$(I), P, 2) = "ST" Then Mid$(O$(I), 9, 1) = "_": Mid$(O$(I), 10, 2) = "ST"
+                                    If Mid$(compO$(I), P, 2) = "ST" Then Mid$(compO$(I), 9, 1) = "_": Mid$(compO$(I), 10, 2) = "ST"
                                 Next P
 
                                 QQ = 8
                                 For P = 11 To 4 Step -1
-                                    If Mid$(O$(I), P, 1) = "_" Then
+                                    If Mid$(compO$(I), P, 1) = "_" Then
                                         QQ = P - 4
                                     Else
                                         Exit For '5605 GoTo 5608
                                     End If
                                 Next P
 
-                                f$ = Mid$(O$(I), 4, QQ): R$ = f$ + "." + Left$(O$(I), 2)
-                                O$(I) = R$
+                                f$ = Mid$(compO$(I), 4, QQ): R$ = f$ + "." + Left$(compO$(I), 2)
+                                compO$(I) = R$
 
                                 confGame = 0
 
                                 For EC = 1 To 30
                                     'If team stat file = opponent of a conference game?
-                                    If O$(I) = H1$(EC) Then
+                                    If compO$(I) = H1$(EC) Then
                                         confGame = 1
                                         Exit For
                                     End If
@@ -225,11 +225,11 @@ Sub COMPCON ()
                                 Next EC
 
                                 If confGame <> 1 Then
-                                    If O%(I) > compconT%(I) Then fullWins = fullWins + 1
-                                    If O%(I) < compconT%(I) Then fullLosses = fullLosses + 1
+                                    If mergeO%(I) > compconT%(I) Then fullWins = fullWins + 1
+                                    If mergeO%(I) < compconT%(I) Then fullLosses = fullLosses + 1
                                 Else
-                                    If O%(I) > compconT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                                    If O%(I) < compconT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                                    If mergeO%(I) > compconT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
+                                    If mergeO%(I) < compconT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
                                 End If
 
                                 EC = 0
@@ -290,7 +290,7 @@ Sub COMPCON ()
 
                         For I = 0 To 13:
                             For J = 0 To 22
-                                S!(I, J) = 0
+                                compS!(I, J) = 0
                             Next
                         Next
 
@@ -301,9 +301,9 @@ Sub COMPCON ()
 
                             For I = 0 To 13
                                 Input #2, compconN$(I)
-                                For J = 0 To 13: Input #2, S!(I, J): Next
-                                Input #2, W0!(I)
-                                Input #2, W1!(I)
+                                For J = 0 To 13: Input #2, compS!(I, J): Next
+                                Input #2, statsW0!(I)
+                                Input #2, statsW1!(I)
                             Next
 
                             For L = 1 To 16: Input #2, OT!(L): Next
@@ -313,58 +313,58 @@ Sub COMPCON ()
 
                             For I = 0 To 13
 
-                                S!(I, 25) = S!(I, 13)
-                                S!(I, 26) = S!(I, 12)
-                                S!(I, 12) = S!(I, 2) * 2 + W0!(I) + S!(I, 4) ' *** PTS ***
+                                compS!(I, 25) = compS!(I, 13)
+                                compS!(I, 26) = compS!(I, 12)
+                                compS!(I, 12) = compS!(I, 2) * 2 + statsW0!(I) + compS!(I, 4) ' *** PTS ***
 
-                                If S!(I, 0) <> 0 Then
-                                    S!(I, 13) = S!(I, 5) / S!(I, 0) ' *** RB/G ***
-                                    S!(I, 14) = S!(I, 6) / S!(I, 0) ' *** FOULS/G ***
-                                    S!(I, 15) = S!(I, 7) / S!(I, 0) ' *** STEALS/G ***
-                                    S!(I, 16) = S!(I, 8) / S!(I, 0) ' *** ASSISTS/G ***
-                                    S!(I, 17) = S!(I, 9) / S!(I, 0) ' *** BLOCKS/G ***
-                                    S!(I, 24) = S!(I, 5) + S!(I, 12) - S!(I, 6) + S!(I, 8) + S!(I, 9) + S!(I, 7) - 2 * S!(I, 11)
-                                    S!(I, 18) = S!(I, 10) / 60 / S!(I, 0) ' *** MIN/G ***
+                                If compS!(I, 0) <> 0 Then
+                                    compS!(I, 13) = compS!(I, 5) / compS!(I, 0) ' *** RB/G ***
+                                    compS!(I, 14) = compS!(I, 6) / compS!(I, 0) ' *** FOULS/G ***
+                                    compS!(I, 15) = compS!(I, 7) / compS!(I, 0) ' *** STEALS/G ***
+                                    compS!(I, 16) = compS!(I, 8) / compS!(I, 0) ' *** ASSISTS/G ***
+                                    compS!(I, 17) = compS!(I, 9) / compS!(I, 0) ' *** BLOCKS/G ***
+                                    compS!(I, 24) = compS!(I, 5) + compS!(I, 12) - compS!(I, 6) + compS!(I, 8) + compS!(I, 9) + compS!(I, 7) - 2 * compS!(I, 11)
+                                    compS!(I, 18) = compS!(I, 10) / 60 / compS!(I, 0) ' *** MIN/G ***
 
-                                    If Not (S!(I, 1) = 0 Or (S!(I, 2) / numGames% < 5)) Then
-                                        S!(I, 19) = S!(I, 2) / S!(I, 1) ' *** FG% ***
+                                    If Not (compS!(I, 1) = 0 Or (compS!(I, 2) / numGames% < 5)) Then
+                                        compS!(I, 19) = compS!(I, 2) / compS!(I, 1) ' *** FG% ***
                                     End If
 
-                                    If Not (S!(I, 3) = 0 Or (S!(I, 4) / numGames%) < 2.5) Then
-                                        S!(I, 20) = S!(I, 4) / S!(I, 3) ' *** FT% ***
+                                    If Not (compS!(I, 3) = 0 Or (compS!(I, 4) / numGames%) < 2.5) Then
+                                        compS!(I, 20) = compS!(I, 4) / compS!(I, 3) ' *** FT% ***
                                     End If
 
-                                    If Not (W1!(I) = 0 Or W0!(I) / numGames% < 1.5) Then
-                                        S!(I, 21) = W0!(I) / W1!(I) ' *** 3FG% ***
+                                    If Not (statsW1!(I) = 0 Or statsW0!(I) / numGames% < 1.5) Then
+                                        compS!(I, 21) = statsW0!(I) / statsW1!(I) ' *** 3FG% ***
                                     End If
 
-                                    S!(I, 22) = S!(I, 12) / S!(I, 0) ' *** PTS/G ***
+                                    compS!(I, 22) = compS!(I, 12) / compS!(I, 0) ' *** PTS/G ***
 
-                                    If S!(I, 0) > BRC!(1) Then BRC!(1) = S!(I, 0): BRC$(1, 0) = compconN$(I): BRC$(1, 1) = TN$
-                                    If S!(I, 1) > BRC!(2) Then BRC!(2) = S!(I, 1): BRC$(2, 0) = compconN$(I): BRC$(2, 1) = TN$
-                                    If S!(I, 2) > BRC!(3) Then BRC!(3) = S!(I, 2): BRC$(3, 0) = compconN$(I): BRC$(3, 1) = TN$
-                                    If S!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And S!(I, 2) / numGames% >= 5 Then BRC!(4) = S!(I, 19): BRC$(4, 0) = compconN$(I): BRC$(4, 1) = TN$
-                                    If W1!(I) > BRC!(5) Then BRC!(5) = W1!(I): BRC$(5, 0) = compconN$(I): BRC$(5, 1) = TN$
-                                    If W0!(I) > BRC!(6) Then BRC!(6) = W0!(I): BRC$(6, 0) = compconN$(I): BRC$(6, 1) = TN$
-                                    If S!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And W0!(I) / numGames% >= 1.5 Then BRC!(7) = S!(I, 21): BRC$(7, 0) = compconN$(I): BRC$(7, 1) = TN$
-                                    If S!(I, 3) > BRC!(8) Then BRC!(8) = S!(I, 3): BRC$(8, 0) = compconN$(I): BRC$(8, 1) = TN$
-                                    If S!(I, 4) > BRC!(9) Then BRC!(9) = S!(I, 4): BRC$(9, 0) = compconN$(I): BRC$(9, 1) = TN$
-                                    If S!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And S!(I, 4) / numGames% >= 2.5 Then BRC!(10) = S!(I, 20): BRC$(10, 0) = compconN$(I): BRC$(10, 1) = TN$
-                                    If S!(I, 10) / 60 > BRC!(11) Then BRC!(11) = S!(I, 10) / 60: BRC$(11, 0) = compconN$(I): BRC$(11, 1) = TN$
-                                    If S!(I, 12) > BRC!(12) Then BRC!(12) = S!(I, 12): BRC$(12, 0) = compconN$(I): BRC$(12, 1) = TN$
-                                    If S!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = S!(I, 22): BRC$(13, 0) = compconN$(I): BRC$(13, 1) = TN$
-                                    If S!(I, 25) > BRC!(14) Then BRC!(14) = S!(I, 25): BRC$(14, 0) = compconN$(I): BRC$(14, 1) = TN$
-                                    If S!(I, 26) > BRC!(15) Then BRC!(15) = S!(I, 26): BRC$(15, 0) = compconN$(I): BRC$(15, 1) = TN$
-                                    If S!(I, 5) - S!(I, 26) > BRC!(16) Then BRC!(16) = S!(I, 5) - S!(I, 26): BRC$(16, 0) = compconN$(I): BRC$(16, 1) = TN$
-                                    If S!(I, 5) > BRC!(17) Then BRC!(17) = S!(I, 5): BRC$(17, 0) = compconN$(I): BRC$(17, 1) = TN$
-                                    If S!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = S!(I, 13): BRC$(18, 0) = compconN$(I): BRC$(18, 1) = TN$
-                                    If S!(I, 6) > BRC!(19) Then BRC!(19) = S!(I, 6): BRC$(19, 0) = compconN$(I): BRC$(19, 1) = TN$
-                                    If S!(I, 7) > BRC!(20) Then BRC!(20) = S!(I, 7): BRC$(20, 0) = compconN$(I): BRC$(20, 1) = TN$
-                                    If S!(I, 8) > BRC!(21) Then BRC!(21) = S!(I, 8): BRC$(21, 0) = compconN$(I): BRC$(21, 1) = TN$
-                                    If S!(I, 9) > BRC!(22) Then BRC!(22) = S!(I, 9): BRC$(22, 0) = compconN$(I): BRC$(22, 1) = TN$
-                                    If S!(I, 11) > BRC!(23) Then BRC!(23) = S!(I, 11): BRC$(23, 0) = compconN$(I): BRC$(23, 1) = TN$
-                                    If S!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = S!(I, 18): BRC$(24, 0) = compconN$(I): BRC$(24, 1) = TN$
-                                    If S!(I, 24) > BRC!(25) Then BRC!(25) = S!(I, 24): BRC$(25, 0) = compconN$(I): BRC$(25, 1) = TN$
+                                    If compS!(I, 0) > BRC!(1) Then BRC!(1) = compS!(I, 0): BRC$(1, 0) = compconN$(I): BRC$(1, 1) = TN$
+                                    If compS!(I, 1) > BRC!(2) Then BRC!(2) = compS!(I, 1): BRC$(2, 0) = compconN$(I): BRC$(2, 1) = TN$
+                                    If compS!(I, 2) > BRC!(3) Then BRC!(3) = compS!(I, 2): BRC$(3, 0) = compconN$(I): BRC$(3, 1) = TN$
+                                    If compS!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numGames% >= 5 Then BRC!(4) = compS!(I, 19): BRC$(4, 0) = compconN$(I): BRC$(4, 1) = TN$
+                                    If statsW1!(I) > BRC!(5) Then BRC!(5) = statsW1!(I): BRC$(5, 0) = compconN$(I): BRC$(5, 1) = TN$
+                                    If statsW0!(I) > BRC!(6) Then BRC!(6) = statsW0!(I): BRC$(6, 0) = compconN$(I): BRC$(6, 1) = TN$
+                                    If compS!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numGames% >= 1.5 Then BRC!(7) = compS!(I, 21): BRC$(7, 0) = compconN$(I): BRC$(7, 1) = TN$
+                                    If compS!(I, 3) > BRC!(8) Then BRC!(8) = compS!(I, 3): BRC$(8, 0) = compconN$(I): BRC$(8, 1) = TN$
+                                    If compS!(I, 4) > BRC!(9) Then BRC!(9) = compS!(I, 4): BRC$(9, 0) = compconN$(I): BRC$(9, 1) = TN$
+                                    If compS!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numGames% >= 2.5 Then BRC!(10) = compS!(I, 20): BRC$(10, 0) = compconN$(I): BRC$(10, 1) = TN$
+                                    If compS!(I, 10) / 60 > BRC!(11) Then BRC!(11) = compS!(I, 10) / 60: BRC$(11, 0) = compconN$(I): BRC$(11, 1) = TN$
+                                    If compS!(I, 12) > BRC!(12) Then BRC!(12) = compS!(I, 12): BRC$(12, 0) = compconN$(I): BRC$(12, 1) = TN$
+                                    If compS!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = compS!(I, 22): BRC$(13, 0) = compconN$(I): BRC$(13, 1) = TN$
+                                    If compS!(I, 25) > BRC!(14) Then BRC!(14) = compS!(I, 25): BRC$(14, 0) = compconN$(I): BRC$(14, 1) = TN$
+                                    If compS!(I, 26) > BRC!(15) Then BRC!(15) = compS!(I, 26): BRC$(15, 0) = compconN$(I): BRC$(15, 1) = TN$
+                                    If compS!(I, 5) - compS!(I, 26) > BRC!(16) Then BRC!(16) = compS!(I, 5) - compS!(I, 26): BRC$(16, 0) = compconN$(I): BRC$(16, 1) = TN$
+                                    If compS!(I, 5) > BRC!(17) Then BRC!(17) = compS!(I, 5): BRC$(17, 0) = compconN$(I): BRC$(17, 1) = TN$
+                                    If compS!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = compS!(I, 13): BRC$(18, 0) = compconN$(I): BRC$(18, 1) = TN$
+                                    If compS!(I, 6) > BRC!(19) Then BRC!(19) = compS!(I, 6): BRC$(19, 0) = compconN$(I): BRC$(19, 1) = TN$
+                                    If compS!(I, 7) > BRC!(20) Then BRC!(20) = compS!(I, 7): BRC$(20, 0) = compconN$(I): BRC$(20, 1) = TN$
+                                    If compS!(I, 8) > BRC!(21) Then BRC!(21) = compS!(I, 8): BRC$(21, 0) = compconN$(I): BRC$(21, 1) = TN$
+                                    If compS!(I, 9) > BRC!(22) Then BRC!(22) = compS!(I, 9): BRC$(22, 0) = compconN$(I): BRC$(22, 1) = TN$
+                                    If compS!(I, 11) > BRC!(23) Then BRC!(23) = compS!(I, 11): BRC$(23, 0) = compconN$(I): BRC$(23, 1) = TN$
+                                    If compS!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = compS!(I, 18): BRC$(24, 0) = compconN$(I): BRC$(24, 1) = TN$
+                                    If compS!(I, 24) > BRC!(25) Then BRC!(25) = compS!(I, 24): BRC$(25, 0) = compconN$(I): BRC$(25, 1) = TN$
 
                                 End If
 
@@ -433,9 +433,9 @@ Sub COMPCON ()
                             Color 15: Print compconN$(X)
 
                             'Division 1, 2 Record
-                            If S!(X, 22) > LD!(20, 1) Then
+                            If compS!(X, 22) > LD!(20, 1) Then
 
-                                LD!(20, 1) = S!(X, 22)
+                                LD!(20, 1) = compS!(X, 22)
                                 LD!(20, 2) = 0
                                 Z0$(20) = compconN$(X)
                                 Z3$(20) = TN$
@@ -455,9 +455,9 @@ Sub COMPCON ()
                             End If
 
                             'Division 3, 4 Record
-                            If S!(X, 12) > LD!(40, 1) Then
+                            If compS!(X, 12) > LD!(40, 1) Then
 
-                                LD!(40, 1) = S!(X, 12)
+                                LD!(40, 1) = compS!(X, 12)
                                 LD!(40, 2) = 0
                                 Z0$(40) = compconN$(X)
                                 Z3$(40) = TN$
@@ -477,10 +477,10 @@ Sub COMPCON ()
                             End If
 
                             'Field Goal %
-                            If S!(X, 19) > LD!(60, 1) Then
+                            If compS!(X, 19) > LD!(60, 1) Then
 
-                                LD!(60, 1) = S!(X, 19)
-                                LD!(60, 2) = S!(X, 1)
+                                LD!(60, 1) = compS!(X, 19)
+                                LD!(60, 2) = compS!(X, 1)
                                 Z0$(60) = compconN$(X)
                                 Z3$(60) = TN$
 
@@ -499,10 +499,10 @@ Sub COMPCON ()
                             End If
 
                             'Free Throw %
-                            If S!(X, 20) > LD!(80, 1) Then
+                            If compS!(X, 20) > LD!(80, 1) Then
 
-                                LD!(80, 1) = S!(X, 20)
-                                LD!(80, 2) = S!(X, 3)
+                                LD!(80, 1) = compS!(X, 20)
+                                LD!(80, 2) = compS!(X, 3)
                                 Z0$(80) = compconN$(X)
                                 Z3$(80) = TN$
 
@@ -521,10 +521,10 @@ Sub COMPCON ()
                             End If
 
                             'Steals Per Game
-                            If S!(X, 15) > LD!(90, 1) Then
+                            If compS!(X, 15) > LD!(90, 1) Then
 
-                                LD!(90, 1) = S!(X, 15)
-                                LD!(90, 2) = S!(X, 7)
+                                LD!(90, 1) = compS!(X, 15)
+                                LD!(90, 2) = compS!(X, 7)
                                 Z0$(90) = compconN$(X)
                                 Z3$(90) = TN$
 
@@ -543,9 +543,9 @@ Sub COMPCON ()
                             End If
 
                             'Steals
-                            If S!(X, 7) > LD!(100, 1) Then
+                            If compS!(X, 7) > LD!(100, 1) Then
 
-                                LD!(100, 1) = S!(X, 7)
+                                LD!(100, 1) = compS!(X, 7)
                                 LD!(100, 2) = 0
                                 Z0$(100) = compconN$(X)
                                 Z3$(100) = TN$
@@ -565,10 +565,10 @@ Sub COMPCON ()
                             End If
 
                             'Assist Per Game
-                            If S!(X, 16) > LD!(110, 1) Then
+                            If compS!(X, 16) > LD!(110, 1) Then
 
-                                LD!(110, 1) = S!(X, 16)
-                                LD!(110, 2) = S!(X, 8)
+                                LD!(110, 1) = compS!(X, 16)
+                                LD!(110, 2) = compS!(X, 8)
                                 Z0$(110) = compconN$(X)
                                 Z3$(110) = TN$
 
@@ -587,10 +587,10 @@ Sub COMPCON ()
                             End If
 
                             'Assists
-                            If S!(X, 8) > LD!(120, 1) Then
+                            If compS!(X, 8) > LD!(120, 1) Then
 
-                                LD!(120, 1) = S!(X, 8)
-                                LD!(120, 2) = S!(X, 8)
+                                LD!(120, 1) = compS!(X, 8)
+                                LD!(120, 2) = compS!(X, 8)
                                 Z0$(120) = compconN$(X)
                                 Z3$(120) = TN$
 
@@ -609,10 +609,10 @@ Sub COMPCON ()
                             End If
 
                             '3 FG %
-                            If S!(X, 21) > LD!(130, 1) Then
+                            If compS!(X, 21) > LD!(130, 1) Then
 
-                                LD!(130, 1) = S!(X, 21)
-                                LD!(130, 2) = W1!(X)
+                                LD!(130, 1) = compS!(X, 21)
+                                LD!(130, 2) = statsW1!(X)
                                 Z0$(130) = compconN$(X)
                                 Z3$(130) = TN$
 
@@ -631,9 +631,9 @@ Sub COMPCON ()
                             End If
 
                             '3 FG MADE
-                            If W0!(X) > LD!(140, 1) Then
+                            If statsW0!(X) > LD!(140, 1) Then
 
-                                LD!(140, 1) = W0!(X)
+                                LD!(140, 1) = statsW0!(X)
                                 LD!(140, 2) = 0
                                 Z0$(140) = compconN$(X)
                                 Z3$(140) = TN$
@@ -653,9 +653,9 @@ Sub COMPCON ()
                             End If
 
                             'Minutes Per Game
-                            If S!(X, 18) > LD!(150, 1) Then
+                            If compS!(X, 18) > LD!(150, 1) Then
 
-                                LD!(150, 1) = S!(X, 18)
+                                LD!(150, 1) = compS!(X, 18)
                                 LD!(150, 2) = 0
                                 Z0$(150) = compconN$(X)
                                 Z3$(150) = TN$
@@ -675,9 +675,9 @@ Sub COMPCON ()
                             End If
 
                             'Total Minutes
-                            If S!(X, 10) / 60 > LD!(160, 1) Then
+                            If compS!(X, 10) / 60 > LD!(160, 1) Then
 
-                                LD!(160, 1) = S!(X, 10) / 60
+                                LD!(160, 1) = compS!(X, 10) / 60
                                 LD!(160, 2) = 0
                                 Z0$(160) = compconN$(X)
                                 Z3$(160) = TN$
@@ -697,10 +697,10 @@ Sub COMPCON ()
                             End If
 
                             'Rebounds Per Game
-                            If S!(X, 13) > LD!(170, 1) Then
+                            If compS!(X, 13) > LD!(170, 1) Then
 
-                                LD!(170, 1) = S!(X, 13)
-                                LD!(170, 2) = S!(X, 5)
+                                LD!(170, 1) = compS!(X, 13)
+                                LD!(170, 2) = compS!(X, 5)
                                 Z0$(170) = compconN$(X)
                                 Z3$(170) = TN$
 
@@ -719,9 +719,9 @@ Sub COMPCON ()
                             End If
 
                             'Rebounds
-                            If S!(X, 5) > LD!(180, 1) Then
+                            If compS!(X, 5) > LD!(180, 1) Then
 
-                                LD!(180, 1) = S!(X, 5)
+                                LD!(180, 1) = compS!(X, 5)
                                 LD!(18, 2) = 0
                                 Z0$(180) = compconN$(X)
                                 Z3$(180) = TN$
@@ -741,9 +741,9 @@ Sub COMPCON ()
                             End If
 
                             'Blocks Per Game
-                            If S!(X, 17) > LD!(190, 1) Then
+                            If compS!(X, 17) > LD!(190, 1) Then
 
-                                LD!(190, 1) = S!(X, 17)
+                                LD!(190, 1) = compS!(X, 17)
                                 LD!(190, 2) = 0
                                 Z0$(190) = compconN$(X)
                                 Z3$(190) = TN$
@@ -763,9 +763,9 @@ Sub COMPCON ()
                             End If
 
                             'Blocks
-                            If S!(X, 9) > LD!(200, 1) Then
+                            If compS!(X, 9) > LD!(200, 1) Then
 
-                                LD!(200, 1) = S!(X, 9)
+                                LD!(200, 1) = compS!(X, 9)
                                 LD!(200, 2) = 0
                                 Z0$(200) = compconN$(X)
                                 Z3$(200) = TN$
@@ -785,9 +785,9 @@ Sub COMPCON ()
                             End If
 
                             'FG Made
-                            If S!(X, 2) > LD!(210, 1) Then
+                            If compS!(X, 2) > LD!(210, 1) Then
 
-                                LD!(210, 1) = S!(X, 2)
+                                LD!(210, 1) = compS!(X, 2)
                                 LD!(210, 2) = 0
                                 Z0$(210) = compconN$(X)
                                 Z3$(210) = TN$
@@ -807,9 +807,9 @@ Sub COMPCON ()
                             End If
 
                             'FT Made
-                            If S!(X, 4) > LD!(220, 1) Then
+                            If compS!(X, 4) > LD!(220, 1) Then
 
-                                LD!(220, 1) = S!(X, 4)
+                                LD!(220, 1) = compS!(X, 4)
                                 LD!(220, 2) = 0
                                 Z0$(220) = compconN$(X)
                                 Z3$(220) = TN$
@@ -829,9 +829,9 @@ Sub COMPCON ()
                             End If
 
                             'Fouls Per Game
-                            If S!(X, 14) > LD!(230, 1) Then
+                            If compS!(X, 14) > LD!(230, 1) Then
 
-                                LD!(230, 1) = S!(X, 14)
+                                LD!(230, 1) = compS!(X, 14)
                                 LD!(230, 2) = 0
                                 Z0$(230) = compconN$(X)
                                 Z3$(230) = TN$
@@ -851,9 +851,9 @@ Sub COMPCON ()
                             End If
 
                             'Fouls
-                            If S!(X, 6) > LD!(240, 1) Then
+                            If compS!(X, 6) > LD!(240, 1) Then
 
-                                LD!(240, 1) = S!(X, 6)
+                                LD!(240, 1) = compS!(X, 6)
                                 LD!(240, 2) = 0
                                 Z0$(240) = compconN$(X)
                                 Z3$(240) = TN$
@@ -873,9 +873,9 @@ Sub COMPCON ()
                             End If
 
                             'MVP Points
-                            If S!(X, 24) > LD!(250, 1) Then
+                            If compS!(X, 24) > LD!(250, 1) Then
 
-                                LD!(250, 1) = S!(X, 24)
+                                LD!(250, 1) = compS!(X, 24)
                                 LD!(250, 2) = 0
                                 Z0$(250) = compconN$(X)
                                 Z3$(250) = TN$

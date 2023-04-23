@@ -4,7 +4,7 @@ Sub CREATCON ()
 
     DefInt A-Z
 
-    Dim B(1, 2), T1(1)
+    Dim creatB(1, 2), creatT1(1)
 
     Shared Z1$(), Z2$()
     Shared scheduleZ1%()
@@ -43,9 +43,9 @@ Sub CREATCON ()
 
         If ExitCode% <> 27 Then
 
-			For X = 1 To 30
-				Z1$(X) = "XXX"
-			Next
+            For X = 1 To 30
+                Z1$(X) = "XXX"
+            Next
 
             Select Case Selection%
 
@@ -289,7 +289,7 @@ Sub CREATCON ()
                                     Color 15, 4
 
                                     Do
-                                        Locate , 33: Print "ANY CHANGE (YN)";
+                                        Locate 3, 33: Print "ANY CHANGE (YN)";
                                         prompt$ = GetKeyPress$
                                     Loop Until UCase$(prompt$) = "Y" Or UCase$(prompt$) = "N"
 
@@ -380,7 +380,7 @@ Sub SelectFile_CREATCON (targetFile$)
                     Locate 2, 33: Print targetFile$
 
                     Do
-                        Locate , 33: Print "ANY CHANGE (YN)";
+                        Locate 3, 33: Print "ANY CHANGE (YN)";
                         I$ = GetKeyPress$
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 

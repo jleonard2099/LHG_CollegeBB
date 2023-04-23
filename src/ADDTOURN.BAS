@@ -8,7 +8,7 @@ Sub ADDTOURN ()
 
     Shared consolationSetting%()
     Shared homeScore%(), visitingScore%()
-    Shared N%(), NG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), NN%()
 
     Dim NR$
 
@@ -67,7 +67,7 @@ Sub ADDTOURN ()
                         For I1 = 1 To 16
                             For I2 = 0 To 3
                                 slotName$(I, I1, I2) = ""
-                                N%(I, I1, I2) = 0
+                                tourneyN%(I, I1, I2) = 0
                             Next
                         Next
                     Next
@@ -94,14 +94,18 @@ End Sub
 ' Creates .TNY file
 Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
-    Dim CM$(1), HC$(2)
-    Dim SC$(2), TE$(1), TS$(1), TF$(1)
+    Dim HC$(2)
+    Dim SC$(2), TE$(1), TF$(1)
+
+	Dim tourneyCM$(1), tourneyTS$(1)
+
     Shared tourneyDefaults%()
+
     Dim U6!
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%(), T%()
-    Shared N%(), NG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), NN%()
 
     tourneyDefaults%(3) = 1
     tourneyDefaults%(7) = 2
@@ -110,8 +114,8 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     tourneyDefaults%(10) = 1
     tourneyDefaults%(14) = 0
 
-    TS$(0) = "N"
-    TS$(1) = "Y"
+    tourneyTS$(0) = "N"
+    tourneyTS$(1) = "Y"
     SC$(0) = "NO SHOT CLOCK"
     SC$(1) = "45 SEC CLOCK "
     SC$(2) = "35 SEC CLOCK "
@@ -122,8 +126,8 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     TF$(1) = "Y"
     TE$(0) = "SHOOT 1+1"
     TE$(1) = "SHOOT 2  "
-    CM$(0) = "COACH AND SELECT SHOTS           "
-    CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+    tourneyCM$(0) = "COACH AND SELECT SHOTS           "
+    tourneyCM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
     If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
 
@@ -136,24 +140,18 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Color 0
     Locate , 19: Print "SELECT GENERAL TOURNAMENT OPTIONS"
 
-    Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
+    Locate 25, 1: Print Tab(80);
+	Locate , 1: Color , 0
 
     Do
-        154 Locate 5, 2: Color 14: Print "(1) ";: Color 15: Print "3-POINT SHOT: "; TS$(tourneyDefaults%(3))
-
-        155 Locate 6, 2: Color 14: Print "(2) ";: Color 15: Print SC$(tourneyDefaults%(7))
-
-        157 Locate 7, 2: Color 14: Print "(3) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; tourneyDefaults%(4) / 10
-
-        158 Locate 8, 2: Color 14: Print "(4) ";: Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
-
-        162 Locate 9, 2: Color 14: Print "(5) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(tourneyDefaults%(6))
-
-        164 Locate 10, 2: Color 14: Print "(6) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(tourneyDefaults%(10))
-
+        Locate 5, 2: Color 14: Print "(1) ";: Color 15: Print "3-POINT SHOT: "; tourneyTS$(tourneyDefaults%(3))
+        Locate 6, 2: Color 14: Print "(2) ";: Color 15: Print SC$(tourneyDefaults%(7))
+        Locate 7, 2: Color 14: Print "(3) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; tourneyDefaults%(4) / 10
+        Locate 8, 2: Color 14: Print "(4) ";: Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
+        Locate 9, 2: Color 14: Print "(5) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(tourneyDefaults%(6))
+        Locate 10, 2: Color 14: Print "(6) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(tourneyDefaults%(10))
         Locate 11, 2: Color 14: Print "(7) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(tourneyDefaults%(14))
-
-        163 Locate 12, 2: Color 14: Print "(8) ";: Color 15: Print "ACCEPT SETTINGS"
+        Locate 12, 2: Color 14: Print "(8) ";: Color 15: Print "ACCEPT SETTINGS"
 
         Do
             I$ = GetKeyPress$
@@ -167,7 +165,10 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         Select Case I
             Case 1: tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
             Case 2: tourneyDefaults%(7) = tourneyDefaults%(7) + 1: If tourneyDefaults%(7) > 2 Then tourneyDefaults%(7) = 0
-            Case 3: Locate 7, 32: Input U6!: tourneyDefaults%(4) = U6! * 10
+            Case 3: 
+				Locate 7, 32
+				Input U6!
+				tourneyDefaults%(4) = U6! * 10
             Case 4: tourneyDefaults%(5) = tourneyDefaults%(5) + 1: If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
             Case 5: tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
             Case 6: tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
@@ -177,11 +178,9 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
     Loop Until I = 8
 
-    ' -- Why does having CAPS LOCK on break this???
     Color 15, 1
     FG = 0
     BG = 7
-    'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
 
     GetData:
     Cls
@@ -296,7 +295,7 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%(), T%()
-    Shared N%(), NG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), NN%()
 
     Cls
     Color 15, 1
@@ -509,7 +508,7 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                                 Color 15, 4
 
                                 Do
-                                    Locate , 33: Print "ANY CHANGE (YN)";
+                                    Locate 3, 33: Print "ANY CHANGE (YN)";
                                     I$ = GetKeyPress$
                                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -519,11 +518,11 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                         slotName$(NR, B, 0) = A$
                         slotName$(NR, B, 1) = YN$
-                        N%(NR, B, 0) = teamIdx
-                        N%(NR, B, 1) = 3
-                        N%(NR, B, 2) = T%(0)
-                        N%(NR, B, 3) = T%(1)
-                        N%(NR, B, 1) = 1
+                        tourneyN%(NR, B, 0) = teamIdx
+                        tourneyN%(NR, B, 1) = 3
+                        tourneyN%(NR, B, 2) = T%(0)
+                        tourneyN%(NR, B, 3) = T%(1)
+                        tourneyN%(NR, B, 1) = 1
 
                     Else
                         'Clear a slot
@@ -649,7 +648,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%()
-    Shared N%(), NN%()
+    Shared tourneyN%(), NN%()
     Shared tourneyDefaults%()
 
     Do
@@ -710,7 +709,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                 Color 15, 1
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -751,7 +750,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                             For I1 = 1 To 16
                                 For I2 = 0 To 3
                                     Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                                    Input #2, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                                    Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                                 Next
                             Next
                         Next
@@ -798,7 +797,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
 
-    Shared L%(), T%()
+    Shared statsL%(), T%()
 
     Selection% = 1
     Count% = numberTeams
@@ -835,7 +834,7 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
         V2% = CVI(Q$(4))
 
         For I = 0 To 4
-            L%(I) = CVI(Q$(I + 5))
+            statsL%(I) = CVI(Q$(I + 5))
         Next
 
         For I = 0 To 9
@@ -860,7 +859,7 @@ Sub PickIt (var%, currRegion, saveFile$)
     Shared homeTeam$(), visitingTeam$()
     Shared regionNames$(), slotName$(), yearNumber$()
     Shared consolationSetting%()
-    Shared N%(), NG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), NN%()
 
     Select Case var%
 
@@ -873,11 +872,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = N%(currRegion, 3, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 3, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 3, 1)
@@ -890,11 +889,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 4, 0)
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 4, 0)
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 4, 1)
@@ -908,11 +907,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 3
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 801
-                NG%(TC!, 1) = 802
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 801
+                scheduleNG%(TC!, 1) = 802
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -924,11 +923,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 4
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 901
-                NG%(TC!, 1) = 902
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 901
+                scheduleNG%(TC!, 1) = 902
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -941,11 +940,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 3
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 901
-                NG%(TC!, 1) = 902
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 901
+                scheduleNG%(TC!, 1) = 902
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -961,11 +960,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -977,11 +976,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -993,11 +992,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 3, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 3, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 3, 1)
@@ -1010,11 +1009,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 4
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 802
-                NG%(TC!, 1) = 803
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 802
+                scheduleNG%(TC!, 1) = 803
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1026,11 +1025,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 5
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 902
-                NG%(TC!, 1) = 903
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 902
+                scheduleNG%(TC!, 1) = 903
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1044,11 +1043,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 4
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 902
-                NG%(TC!, 1) = 903
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 902
+                scheduleNG%(TC!, 1) = 903
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1064,11 +1063,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -1080,11 +1079,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 6, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
@@ -1096,11 +1095,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1112,11 +1111,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1129,11 +1128,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 5
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 803
-                NG%(TC!, 1) = 804
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 803
+                scheduleNG%(TC!, 1) = 804
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1145,11 +1144,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 6
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 903
-                NG%(TC!, 1) = 904
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 903
+                scheduleNG%(TC!, 1) = 904
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1162,11 +1161,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 5
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 903
-                NG%(TC!, 1) = 904
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 903
+                scheduleNG%(TC!, 1) = 904
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1182,11 +1181,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 6, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
@@ -1198,11 +1197,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 7, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 7, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 7, 1)
@@ -1214,11 +1213,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -1230,11 +1229,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1246,11 +1245,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1263,11 +1262,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 6
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 804
-                NG%(TC!, 1) = 805
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 804
+                scheduleNG%(TC!, 1) = 805
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1279,11 +1278,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 7
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 904
-                NG%(TC!, 1) = 905
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 904
+                scheduleNG%(TC!, 1) = 905
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1296,11 +1295,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 6
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 904
-                NG%(TC!, 1) = 905
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 904
+                scheduleNG%(TC!, 1) = 905
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1316,11 +1315,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 7, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 7, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 7, 1)
@@ -1332,11 +1331,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 6, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
@@ -1348,11 +1347,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -1364,11 +1363,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 8, 0)
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 8, 0)
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 8, 1)
@@ -1380,11 +1379,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1396,11 +1395,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1413,11 +1412,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 7
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 805
-                NG%(TC!, 1) = 806
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 805
+                scheduleNG%(TC!, 1) = 806
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1429,11 +1428,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 8
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 905
-                NG%(TC!, 1) = 906
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 905
+                scheduleNG%(TC!, 1) = 906
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1446,11 +1445,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 7
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 905
-                NG%(TC!, 1) = 906
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 905
+                scheduleNG%(TC!, 1) = 906
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1466,11 +1465,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -1482,11 +1481,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 7, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 7, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 7, 1)
@@ -1498,11 +1497,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 6, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
@@ -1514,11 +1513,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -1530,11 +1529,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1546,11 +1545,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1562,11 +1561,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1579,11 +1578,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 8
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 806
-                NG%(TC!, 1) = 807
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 806
+                scheduleNG%(TC!, 1) = 807
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1595,11 +1594,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 9
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 906
-                NG%(TC!, 1) = 907
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 906
+                scheduleNG%(TC!, 1) = 907
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1612,11 +1611,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 8
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 906
-                NG%(TC!, 1) = 907
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 906
+                scheduleNG%(TC!, 1) = 907
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1632,11 +1631,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -1648,11 +1647,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -1664,11 +1663,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1680,11 +1679,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 6, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
@@ -1696,11 +1695,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -1712,11 +1711,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1728,11 +1727,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1744,11 +1743,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 905
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 905
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1761,11 +1760,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 9
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 807
-                NG%(TC!, 1) = 808
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 807
+                scheduleNG%(TC!, 1) = 808
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1777,11 +1776,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 10
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 907
-                NG%(TC!, 1) = 908
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 907
+                scheduleNG%(TC!, 1) = 908
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1794,11 +1793,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 9
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 907
-                NG%(TC!, 1) = 908
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 907
+                scheduleNG%(TC!, 1) = 908
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1814,11 +1813,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -1830,11 +1829,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 11, 0)
-            NG%(TC!, 1) = N%(currRegion, 6, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
             homeTeam$(TC!) = slotName$(currRegion, 6, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
@@ -1846,11 +1845,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -1862,11 +1861,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1878,11 +1877,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1894,11 +1893,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 5, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
@@ -1910,11 +1909,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -1926,11 +1925,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1942,11 +1941,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 9
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 906
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 906
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -1959,11 +1958,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 10
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 808
-                NG%(TC!, 1) = 809
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 808
+                scheduleNG%(TC!, 1) = 809
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1975,11 +1974,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 11
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 908
-                NG%(TC!, 1) = 909
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 908
+                scheduleNG%(TC!, 1) = 909
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -1992,11 +1991,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 10
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 908
-                NG%(TC!, 1) = 909
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 908
+                scheduleNG%(TC!, 1) = 909
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2012,11 +2011,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -2028,11 +2027,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 11, 0)
-            NG%(TC!, 1) = N%(currRegion, 6, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
             homeTeam$(TC!) = slotName$(currRegion, 6, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
@@ -2044,11 +2043,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 12, 0)
-            NG%(TC!, 1) = N%(currRegion, 5, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
             homeTeam$(TC!) = slotName$(currRegion, 5, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
@@ -2060,11 +2059,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -2076,11 +2075,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2092,11 +2091,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2108,11 +2107,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2124,11 +2123,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2140,11 +2139,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 9
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 905
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 905
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2156,11 +2155,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 10
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 907
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 907
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2173,11 +2172,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 11
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 809
-                NG%(TC!, 1) = 810
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 809
+                scheduleNG%(TC!, 1) = 810
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2189,11 +2188,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 12
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 909
-                NG%(TC!, 1) = 910
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 909
+                scheduleNG%(TC!, 1) = 910
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2206,11 +2205,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 11
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 909
-                NG%(TC!, 1) = 910
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 909
+                scheduleNG%(TC!, 1) = 910
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2226,11 +2225,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 13, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
@@ -2242,11 +2241,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 12, 0)
-            NG%(TC!, 1) = N%(currRegion, 5, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
             homeTeam$(TC!) = slotName$(currRegion, 5, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
@@ -2258,11 +2257,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -2274,11 +2273,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -2290,11 +2289,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 11, 0)
-            NG%(TC!, 1) = N%(currRegion, 6, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
             homeTeam$(TC!) = slotName$(currRegion, 6, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
@@ -2306,11 +2305,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2322,11 +2321,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2338,11 +2337,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2354,11 +2353,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 9
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 905
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 905
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2370,11 +2369,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 10
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 906
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 906
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2386,11 +2385,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 11
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 908
-            NG%(TC!, 1) = 909
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 908
+            scheduleNG%(TC!, 1) = 909
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2403,11 +2402,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 12
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 810
-                NG%(TC!, 1) = 811
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 810
+                scheduleNG%(TC!, 1) = 811
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2419,11 +2418,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 13
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 910
-                NG%(TC!, 1) = 911
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 910
+                scheduleNG%(TC!, 1) = 911
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2436,11 +2435,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 12
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 910
-                NG%(TC!, 1) = 911
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 910
+                scheduleNG%(TC!, 1) = 911
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2456,11 +2455,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 14, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 14, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 14, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 14, 1)
@@ -2472,11 +2471,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 13, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
@@ -2488,11 +2487,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 12, 0)
-            NG%(TC!, 1) = N%(currRegion, 5, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
             homeTeam$(TC!) = slotName$(currRegion, 5, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
@@ -2504,11 +2503,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 11, 0)
-            NG%(TC!, 1) = N%(currRegion, 6, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
             homeTeam$(TC!) = slotName$(currRegion, 6, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
@@ -2520,11 +2519,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -2536,11 +2535,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -2552,11 +2551,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2568,11 +2567,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 905
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 905
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2584,11 +2583,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 9
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2600,11 +2599,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 10
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 906
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 906
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2616,11 +2615,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 11
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 907
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 907
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2632,11 +2631,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 12
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 910
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 910
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2649,11 +2648,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 13
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 811
-                NG%(TC!, 1) = 812
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 811
+                scheduleNG%(TC!, 1) = 812
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2665,11 +2664,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 14
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 911
-                NG%(TC!, 1) = 912
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 911
+                scheduleNG%(TC!, 1) = 912
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2682,11 +2681,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 13
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 911
-                NG%(TC!, 1) = 912
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 911
+                scheduleNG%(TC!, 1) = 912
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2702,11 +2701,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 15, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 15, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 15, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 15, 1)
@@ -2718,11 +2717,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 14, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 14, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 14, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 14, 1)
@@ -2734,11 +2733,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 13, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
@@ -2750,11 +2749,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 12, 0)
-            NG%(TC!, 1) = N%(currRegion, 5, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
             homeTeam$(TC!) = slotName$(currRegion, 5, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
@@ -2766,11 +2765,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 11, 0)
-            NG%(TC!, 1) = N%(currRegion, 6, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
             homeTeam$(TC!) = slotName$(currRegion, 6, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
@@ -2782,11 +2781,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -2798,11 +2797,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -2814,11 +2813,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2830,11 +2829,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 9
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2846,11 +2845,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 10
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2862,11 +2861,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 11
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 907
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 907
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = "XXX"
@@ -2878,11 +2877,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 12
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 908
-            NG%(TC!, 1) = 909
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 908
+            scheduleNG%(TC!, 1) = 909
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2894,11 +2893,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 13
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 911
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 911
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -2911,11 +2910,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 14
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 812
-                NG%(TC!, 1) = 813
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 812
+                scheduleNG%(TC!, 1) = 813
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2927,11 +2926,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 15
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 912
-                NG%(TC!, 1) = 913
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 912
+                scheduleNG%(TC!, 1) = 913
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2944,11 +2943,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 14
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 912
-                NG%(TC!, 1) = 913
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 912
+                scheduleNG%(TC!, 1) = 913
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -2964,11 +2963,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 16, 0)
-            NG%(TC!, 1) = N%(currRegion, 1, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 16, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 16, 0)
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 16, 1)
@@ -2980,11 +2979,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 15, 0)
-            NG%(TC!, 1) = N%(currRegion, 2, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 15, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 15, 0)
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 15, 1)
@@ -2996,11 +2995,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 14, 0)
-            NG%(TC!, 1) = N%(currRegion, 3, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 14, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 14, 0)
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 14, 1)
@@ -3012,11 +3011,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 13, 0)
-            NG%(TC!, 1) = N%(currRegion, 4, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
@@ -3028,11 +3027,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 12, 0)
-            NG%(TC!, 1) = N%(currRegion, 5, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
             homeTeam$(TC!) = slotName$(currRegion, 5, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
@@ -3044,11 +3043,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 11, 0)
-            NG%(TC!, 1) = N%(currRegion, 6, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
             homeTeam$(TC!) = slotName$(currRegion, 6, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
@@ -3060,11 +3059,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 10, 0)
-            NG%(TC!, 1) = N%(currRegion, 7, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
             homeTeam$(TC!) = slotName$(currRegion, 7, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
@@ -3076,11 +3075,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 1
             Call SETTINGS
-            NG%(TC!, 0) = N%(currRegion, 9, 0)
-            NG%(TC!, 1) = N%(currRegion, 8, 0)
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
             homeTeam$(TC!) = slotName$(currRegion, 8, 0)
             yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
@@ -3092,11 +3091,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 9
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3108,11 +3107,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 10
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3124,11 +3123,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 11
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3140,11 +3139,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 12
             ROUND = 2
             Call SETTINGS
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3156,11 +3155,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 13
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 910
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 910
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3172,11 +3171,11 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 14
             ROUND = 3
             Call SETTINGS
-            NG%(TC!, 0) = 911
-            NG%(TC!, 1) = 912
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 911
+            scheduleNG%(TC!, 1) = 912
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3189,11 +3188,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 15
                 ROUND = 88
                 Call SETTINGS
-                NG%(TC!, 0) = 813
-                NG%(TC!, 1) = 814
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 813
+                scheduleNG%(TC!, 1) = 814
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3205,11 +3204,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 16
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 913
-                NG%(TC!, 1) = 914
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 913
+                scheduleNG%(TC!, 1) = 914
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3222,11 +3221,11 @@ Sub PickIt (var%, currRegion, saveFile$)
                 GAME = 15
                 ROUND = 89
                 Call SETTINGS
-                NG%(TC!, 0) = 913
-                NG%(TC!, 1) = 914
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 913
+                scheduleNG%(TC!, 1) = 914
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3247,7 +3246,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
     Shared TC!
 
-    Shared consolationSetting%(), NG%()
+    Shared consolationSetting%(), scheduleNG%()
     ' Shared homeScore%(), visitingScore%()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
 
@@ -3264,11 +3263,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 99
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3285,11 +3284,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3302,11 +3301,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 99
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3323,11 +3322,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3340,11 +3339,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3358,11 +3357,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1001
-                NG%(TC!, 1) = 1002
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1001
+                scheduleNG%(TC!, 1) = 1002
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 1 LOSER"
                 homeTeam$(TC!) = "GAME 2 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3375,11 +3374,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1101
-                NG%(TC!, 1) = 1102
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1101
+                scheduleNG%(TC!, 1) = 1102
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 1 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3395,11 +3394,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1101
-                NG%(TC!, 1) = 1102
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1101
+                scheduleNG%(TC!, 1) = 1102
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 1 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3419,11 +3418,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 905
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 905
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 5 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3436,11 +3435,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3453,11 +3452,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3471,11 +3470,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1003
-                NG%(TC!, 1) = 1002
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1003
+                scheduleNG%(TC!, 1) = 1002
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 LOSER"
                 homeTeam$(TC!) = "GAME 2 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3488,11 +3487,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1103
-                NG%(TC!, 1) = 1102
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1103
+                scheduleNG%(TC!, 1) = 1102
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3507,11 +3506,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1103
-				NG%(TC!, 1) = 1102
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1103
+				scheduleNG%(TC!, 1) = 1102
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 3 WINNER"
 				homeTeam$(TC!) = "GAME 2 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -3529,11 +3528,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 905
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 905
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 5 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3546,11 +3545,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3563,11 +3562,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3580,11 +3579,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3598,11 +3597,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1003
-                NG%(TC!, 1) = 1004
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1003
+                scheduleNG%(TC!, 1) = 1004
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 LOSER"
                 homeTeam$(TC!) = "GAME 4 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3615,11 +3614,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1103
-                NG%(TC!, 1) = 1104
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1103
+                scheduleNG%(TC!, 1) = 1104
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 WINNER"
                 homeTeam$(TC!) = "GAME 4 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3635,11 +3634,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1103
-				NG%(TC!, 1) = 1104
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1103
+				scheduleNG%(TC!, 1) = 1104
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 3 WINNER"
 				homeTeam$(TC!) = "GAME 4 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -3658,11 +3657,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3675,11 +3674,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3692,11 +3691,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3709,11 +3708,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 1101
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 1101
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3726,11 +3725,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1103
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1103
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3744,11 +3743,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1005
-                NG%(TC!, 1) = 1004
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1005
+                scheduleNG%(TC!, 1) = 1004
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 LOSER"
                 homeTeam$(TC!) = "GAME 4 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3761,11 +3760,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1105
-                NG%(TC!, 1) = 1104
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1105
+                scheduleNG%(TC!, 1) = 1104
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 WINNER"
                 homeTeam$(TC!) = "GAME 4 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3781,11 +3780,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1105
-				NG%(TC!, 1) = 1104
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1105
+				scheduleNG%(TC!, 1) = 1104
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 5 WINNER"
 				homeTeam$(TC!) = "GAME 4 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -3803,11 +3802,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3820,11 +3819,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3837,11 +3836,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3854,11 +3853,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3871,11 +3870,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 1102
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 1102
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3888,11 +3887,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1103
-            NG%(TC!, 1) = 1104
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1103
+            scheduleNG%(TC!, 1) = 1104
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3906,11 +3905,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1005
-                NG%(TC!, 1) = 1006
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1005
+                scheduleNG%(TC!, 1) = 1006
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 LOSER"
                 homeTeam$(TC!) = "GAME 6 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3923,11 +3922,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1105
-                NG%(TC!, 1) = 1106
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1105
+                scheduleNG%(TC!, 1) = 1106
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 WINNER"
                 homeTeam$(TC!) = "GAME 6 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -3944,11 +3943,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1105
-				NG%(TC!, 1) = 1106
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1105
+				scheduleNG%(TC!, 1) = 1106
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 5 WINNER"
 				homeTeam$(TC!) = "GAME 6 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -3967,11 +3966,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -3984,11 +3983,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4001,11 +4000,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4018,11 +4017,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4035,11 +4034,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 1101
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 1101
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4052,11 +4051,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 1103
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 1103
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4069,11 +4068,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1104
-            NG%(TC!, 1) = 1105
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1104
+            scheduleNG%(TC!, 1) = 1105
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4087,11 +4086,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1007
-                NG%(TC!, 1) = 1006
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1007
+                scheduleNG%(TC!, 1) = 1006
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 LOSER"
                 homeTeam$(TC!) = "GAME 6 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4104,11 +4103,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1107
-                NG%(TC!, 1) = 1106
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1107
+                scheduleNG%(TC!, 1) = 1106
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 6 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4124,11 +4123,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1107
-				NG%(TC!, 1) = 1106
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1107
+				scheduleNG%(TC!, 1) = 1106
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 7 WINNER"
 				homeTeam$(TC!) = "GAME 6 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -4146,11 +4145,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4163,11 +4162,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 908
-            NG%(TC!, 1) = 909
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 908
+            scheduleNG%(TC!, 1) = 909
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 8 WINNER"
             homeTeam$(TC!) = "REGION 9 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4180,11 +4179,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4197,11 +4196,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4214,11 +4213,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4231,11 +4230,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 1102
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 1102
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4248,11 +4247,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1103
-            NG%(TC!, 1) = 1104
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1103
+            scheduleNG%(TC!, 1) = 1104
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4265,11 +4264,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1105
-            NG%(TC!, 1) = 1106
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1105
+            scheduleNG%(TC!, 1) = 1106
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 5 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4283,11 +4282,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1007
-                NG%(TC!, 1) = 1008
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1007
+                scheduleNG%(TC!, 1) = 1008
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 LOSER"
                 homeTeam$(TC!) = "GAME 8 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4300,11 +4299,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1107
-                NG%(TC!, 1) = 1108
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1107
+                scheduleNG%(TC!, 1) = 1108
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 8 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4320,11 +4319,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1107
-				NG%(TC!, 1) = 1108
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1107
+				scheduleNG%(TC!, 1) = 1108
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 7 WINNER"
 				homeTeam$(TC!) = "GAME 8 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -4343,11 +4342,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4360,11 +4359,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 911
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 911
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4377,11 +4376,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4394,11 +4393,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4411,11 +4410,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 1102
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 1102
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4428,11 +4427,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4445,11 +4444,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 1103
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 1103
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4462,11 +4461,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1104
-            NG%(TC!, 1) = 1105
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1104
+            scheduleNG%(TC!, 1) = 1105
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4479,11 +4478,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1106
-            NG%(TC!, 1) = 1107
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1106
+            scheduleNG%(TC!, 1) = 1107
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 6 WINNER"
             homeTeam$(TC!) = "GAME 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4497,11 +4496,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1009
-                NG%(TC!, 1) = 1008
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1009
+                scheduleNG%(TC!, 1) = 1008
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 LOSER"
                 homeTeam$(TC!) = "GAME 8 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4514,11 +4513,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1109
-                NG%(TC!, 1) = 1108
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1109
+                scheduleNG%(TC!, 1) = 1108
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 WINNER"
                 homeTeam$(TC!) = "GAME 8 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4533,11 +4532,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1109
-				NG%(TC!, 1) = 1108
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1109
+				scheduleNG%(TC!, 1) = 1108
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 7 WINNER"
 				homeTeam$(TC!) = "GAME 8 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -4555,11 +4554,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4572,11 +4571,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 911
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 911
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4589,11 +4588,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 912
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 912
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4606,11 +4605,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4623,11 +4622,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 902
-            NG%(TC!, 1) = 1101
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 902
+            scheduleNG%(TC!, 1) = 1101
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4640,11 +4639,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4657,11 +4656,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 904
-            NG%(TC!, 1) = 1103
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 904
+            scheduleNG%(TC!, 1) = 1103
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4674,11 +4673,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1104
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1104
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4691,11 +4690,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1106
-            NG%(TC!, 1) = 1105
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1106
+            scheduleNG%(TC!, 1) = 1105
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 6 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4708,11 +4707,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1107
-            NG%(TC!, 1) = 1108
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1107
+            scheduleNG%(TC!, 1) = 1108
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4726,11 +4725,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1009
-                NG%(TC!, 1) = 1010
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1009
+                scheduleNG%(TC!, 1) = 1010
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 LOSER"
                 homeTeam$(TC!) = "GAME 10 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4743,11 +4742,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1109
-                NG%(TC!, 1) = 1110
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1109
+                scheduleNG%(TC!, 1) = 1110
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 WINNER"
                 homeTeam$(TC!) = "GAME 10 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4764,11 +4763,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1109
-				NG%(TC!, 1) = 1110
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1109
+				scheduleNG%(TC!, 1) = 1110
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 9 WINNER"
 				homeTeam$(TC!) = "GAME 10 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -4787,11 +4786,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 913
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 913
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4804,11 +4803,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 912
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 912
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4821,11 +4820,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4838,11 +4837,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4855,11 +4854,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 906
-            NG%(TC!, 1) = 911
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 906
+            scheduleNG%(TC!, 1) = 911
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 6 WINNER"
             homeTeam$(TC!) = "REGION 11 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4872,11 +4871,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 1102
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 1102
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4889,11 +4888,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 901
-            NG%(TC!, 1) = 1103
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 901
+            scheduleNG%(TC!, 1) = 1103
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4906,11 +4905,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1104
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1104
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4923,11 +4922,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 903
-            NG%(TC!, 1) = 1105
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 903
+            scheduleNG%(TC!, 1) = 1105
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4940,11 +4939,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1107
-            NG%(TC!, 1) = 1106
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1107
+            scheduleNG%(TC!, 1) = 1106
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4957,11 +4956,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1103
-            NG%(TC!, 1) = 1109
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1103
+            scheduleNG%(TC!, 1) = 1109
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 9 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -4975,11 +4974,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1011
-                NG%(TC!, 1) = 1010
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1011
+                scheduleNG%(TC!, 1) = 1010
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 11 LOSER"
                 homeTeam$(TC!) = "GAME 10 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -4992,11 +4991,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1111
-                NG%(TC!, 1) = 1110
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1111
+                scheduleNG%(TC!, 1) = 1110
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 11 WINNER"
                 homeTeam$(TC!) = "GAME 10 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5012,11 +5011,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1111
-				NG%(TC!, 1) = 1110
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1111
+				scheduleNG%(TC!, 1) = 1110
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 11 WINNER"
 				homeTeam$(TC!) = "GAME 10 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -5035,11 +5034,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 914
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 914
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 14 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5052,11 +5051,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 913
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 913
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5069,11 +5068,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 912
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 912
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5086,11 +5085,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 911
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 911
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5103,11 +5102,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5120,11 +5119,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 909
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 909
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5137,11 +5136,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1104
-            NG%(TC!, 1) = 1101
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1104
+            scheduleNG%(TC!, 1) = 1101
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5154,11 +5153,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1105
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1105
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 5 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5171,11 +5170,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 1103
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 1103
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5188,11 +5187,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1106
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1106
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 6 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5205,11 +5204,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1107
-            NG%(TC!, 1) = 1108
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1107
+            scheduleNG%(TC!, 1) = 1108
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5222,11 +5221,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1109
-            NG%(TC!, 1) = 1110
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1109
+            scheduleNG%(TC!, 1) = 1110
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 9 WINNER"
             homeTeam$(TC!) = "GAME 10 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5240,11 +5239,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1012
-                NG%(TC!, 1) = 1011
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1012
+                scheduleNG%(TC!, 1) = 1011
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 LOSER"
                 homeTeam$(TC!) = "GAME 11 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5257,11 +5256,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1112
-                NG%(TC!, 1) = 1111
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1112
+                scheduleNG%(TC!, 1) = 1111
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 WINNER"
                 homeTeam$(TC!) = "GAME 11 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5277,11 +5276,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1111
-				NG%(TC!, 1) = 1112
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1111
+				scheduleNG%(TC!, 1) = 1112
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 11 WINNER"
 				homeTeam$(TC!) = "GAME 12 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -5300,11 +5299,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 915
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 915
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 15 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5317,11 +5316,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 914
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 914
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 14 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5334,11 +5333,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 913
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 913
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5351,11 +5350,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 912
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 912
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5368,11 +5367,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 911
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 911
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5385,11 +5384,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5402,11 +5401,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5419,11 +5418,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 1106
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 1106
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5436,11 +5435,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 1105
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 1105
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5453,11 +5452,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1103
-            NG%(TC!, 1) = 1104
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1103
+            scheduleNG%(TC!, 1) = 1104
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5470,11 +5469,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1107
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1107
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5487,11 +5486,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1109
-            NG%(TC!, 1) = 1108
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1109
+            scheduleNG%(TC!, 1) = 1108
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 9 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5504,11 +5503,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1110
-            NG%(TC!, 1) = 1111
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1110
+            scheduleNG%(TC!, 1) = 1111
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 10 WINNER"
             homeTeam$(TC!) = "GAME 11 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5522,11 +5521,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1012
-                NG%(TC!, 1) = 1013
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1012
+                scheduleNG%(TC!, 1) = 1013
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 LOSER"
                 homeTeam$(TC!) = "GAME 13 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5539,11 +5538,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1112
-                NG%(TC!, 1) = 1113
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1112
+                scheduleNG%(TC!, 1) = 1113
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 WINNER"
                 homeTeam$(TC!) = "GAME 13 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5559,11 +5558,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1112
-				NG%(TC!, 1) = 1113
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1112
+				scheduleNG%(TC!, 1) = 1113
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 12 WINNER"
 				homeTeam$(TC!) = "GAME 13 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -5582,11 +5581,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 916
-            NG%(TC!, 1) = 901
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 916
+            scheduleNG%(TC!, 1) = 901
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 16 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5599,11 +5598,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 915
-            NG%(TC!, 1) = 902
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 915
+            scheduleNG%(TC!, 1) = 902
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 15 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5616,11 +5615,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 914
-            NG%(TC!, 1) = 903
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 914
+            scheduleNG%(TC!, 1) = 903
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 14 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5633,11 +5632,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 913
-            NG%(TC!, 1) = 904
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 913
+            scheduleNG%(TC!, 1) = 904
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5650,11 +5649,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 912
-            NG%(TC!, 1) = 905
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 912
+            scheduleNG%(TC!, 1) = 905
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5667,11 +5666,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 911
-            NG%(TC!, 1) = 906
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 911
+            scheduleNG%(TC!, 1) = 906
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5684,11 +5683,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 910
-            NG%(TC!, 1) = 907
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 910
+            scheduleNG%(TC!, 1) = 907
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5701,11 +5700,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 1
             Call SETTINGS
 
-            NG%(TC!, 0) = 909
-            NG%(TC!, 1) = 908
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 909
+            scheduleNG%(TC!, 1) = 908
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5718,11 +5717,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1101
-            NG%(TC!, 1) = 1108
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1101
+            scheduleNG%(TC!, 1) = 1108
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5735,11 +5734,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1104
-            NG%(TC!, 1) = 1105
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1104
+            scheduleNG%(TC!, 1) = 1105
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5752,11 +5751,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1103
-            NG%(TC!, 1) = 1106
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1103
+            scheduleNG%(TC!, 1) = 1106
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5769,11 +5768,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 2
             Call SETTINGS
 
-            NG%(TC!, 0) = 1102
-            NG%(TC!, 1) = 1107
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1102
+            scheduleNG%(TC!, 1) = 1107
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 7 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5786,11 +5785,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1109
-            NG%(TC!, 1) = 1110
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1109
+            scheduleNG%(TC!, 1) = 1110
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 9 WINNER"
             homeTeam$(TC!) = "GAME 10 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5803,11 +5802,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             ROUND = 3
             Call SETTINGS
 
-            NG%(TC!, 0) = 1111
-            NG%(TC!, 1) = 1112
-            NG%(TC!, 15) = REGION
-            NG%(TC!, 16) = ROUND
-            NG%(TC!, 17) = GAME
+            scheduleNG%(TC!, 0) = 1111
+            scheduleNG%(TC!, 1) = 1112
+            scheduleNG%(TC!, 15) = REGION
+            scheduleNG%(TC!, 16) = ROUND
+            scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 11 WINNER"
             homeTeam$(TC!) = "GAME 12 WINNER"
             yearNumber$(TC!, 0) = "XXX"
@@ -5821,11 +5820,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 98
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1014
-                NG%(TC!, 1) = 1013
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1014
+                scheduleNG%(TC!, 1) = 1013
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 14 LOSER"
                 homeTeam$(TC!) = "GAME 13 LOSER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5838,11 +5837,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 ROUND = 99
                 Call SETTINGS
 
-                NG%(TC!, 0) = 1114
-                NG%(TC!, 1) = 1113
-                NG%(TC!, 15) = REGION
-                NG%(TC!, 16) = ROUND
-                NG%(TC!, 17) = GAME
+                scheduleNG%(TC!, 0) = 1114
+                scheduleNG%(TC!, 1) = 1113
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 14 WINNER"
                 homeTeam$(TC!) = "GAME 13 WINNER"
                 yearNumber$(TC!, 0) = "XXX"
@@ -5858,11 +5857,11 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 				ROUND = 99
 				Call SETTINGS
 
-				NG%(TC!, 0) = 1114
-				NG%(TC!, 1) = 1113
-				NG%(TC!, 15) = REGION
-				NG%(TC!, 16) = ROUND
-				NG%(TC!, 17) = GAME
+				scheduleNG%(TC!, 0) = 1114
+				scheduleNG%(TC!, 1) = 1113
+				scheduleNG%(TC!, 15) = REGION
+				scheduleNG%(TC!, 16) = ROUND
+				scheduleNG%(TC!, 17) = GAME
 				visitingTeam$(TC!) = "GAME 14 WINNER"
 				homeTeam$(TC!) = "GAME 13 WINNER"
 				yearNumber$(TC!, 0) = "XXX"
@@ -5880,14 +5879,14 @@ End Sub
 Sub SETTINGS ()
 
     Shared TC!
-    Shared NG%(), tourneyDefaults%()
+    Shared scheduleNG%(), tourneyDefaults%()
 
     For I = 0 To 14
-        NG%(TC!, I) = tourneyDefaults%(I)
+        scheduleNG%(TC!, I) = tourneyDefaults%(I)
     Next
 
-    NG%(TC!, 8) = 3
-    NG%(TC!, 2) = 2
+    scheduleNG%(TC!, 8) = 3
+    scheduleNG%(TC!, 2) = 2
 
 End Sub
 
@@ -5904,7 +5903,7 @@ Sub WRITEGAME (outputFile$)
 
     Shared TC!
 
-    Shared homeScore%(), NG%(), visitingScore%()
+    Shared homeScore%(), scheduleNG%(), visitingScore%()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
 
     'WRITE OUT A GAME
@@ -5919,7 +5918,7 @@ Sub WRITEGAME (outputFile$)
     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(TC!, X)): Next
+    For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X)): Next
     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC!, X): Next
 
     LSet Q$(16) = MKI$(visitingScore%(TC!))
@@ -5928,7 +5927,7 @@ Sub WRITEGAME (outputFile$)
     LSet Q$(19) = homeTeam$(TC!)
 
     For X = 24 To 26
-        LSet Q$(X) = MKI$(NG%(TC!, X - 9))
+        LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
     Next
 
     Put #1, TC!
@@ -5945,7 +5944,7 @@ Sub WRITEGAME (outputFile$)
     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(TC!, X)): Next
+    For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X)): Next
     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC!, X): Next
     LSet Q$(16) = MKI$(visitingScore%(TC!))
     LSet Q$(17) = MKI$(homeScore%(TC!))
@@ -5953,7 +5952,7 @@ Sub WRITEGAME (outputFile$)
     LSet Q$(19) = homeTeam$(TC!)
 
     For X = 24 To 26
-        LSet Q$(X) = MKI$(NG%(TC!, X - 9))
+        LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
     Next
     Put #1, TC!
     Close 1
@@ -5969,7 +5968,7 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
 
     Shared TC!
 
-    Shared consolationSetting%(), N%(), NN%()
+    Shared consolationSetting%(), tourneyN%(), NN%()
     Shared slotName$(), regionNames$()
 
     'SAVE TOURNAMENT INFO AND QUIT
@@ -5987,7 +5986,7 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
         For I1 = 1 To 16
             For I2 = 0 To 3
                 Print #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                Print #2, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                Print #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
             Next
         Next
     Next
@@ -6022,7 +6021,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
 
     Shared TC!
 
-    Shared NG%()
+    Shared scheduleNG%()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
     Shared homeScore%(), visitingScore%()
 
@@ -6048,7 +6047,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                         Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
                         Get #1, AP
 
-                        For X = 0 To 14: NG%(0, X) = CVI(Q$(X + 1)): Next
+                        For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
                         For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
 
                         visitingScore%(0) = CVI(Q$(16))
@@ -6057,12 +6056,12 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                         homeTeam$(0) = Q$(19)
 
                         For X = 1 To 3
-                            NG%(0, X + 14) = CVI(Q$(X + 23))
+                            scheduleNG%(0, X + 14) = CVI(Q$(X + 23))
                         Next
                         Close 1
 
                         'Create matches in .TOU file
-                        If NG%(0, 16) = RD And NG%(0, 15) = NR Then
+                        If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = NR Then
 
                             MATCH = MATCH + 1
 
@@ -6076,7 +6075,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                             Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                             Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(0, X)): Next
+                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
                             For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
 
                             LSet Q$(16) = MKI$(visitingScore%(0))
@@ -6085,7 +6084,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                             LSet Q$(19) = homeTeam$(0)
 
                             For X = 24 To 26
-                                LSet Q$(X) = MKI$(NG%(0, X - 9))
+                                LSet Q$(X) = MKI$(scheduleNG%(0, X - 9))
                             Next
 
                             Put #1, MATCH
@@ -6123,7 +6122,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
 
                 Get #1, AP
 
-                For X = 0 To 14: NG%(0, X) = CVI(Q$(X + 1)): Next
+                For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
                 For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
 
                 visitingScore%(0) = CVI(Q$(16))
@@ -6131,11 +6130,11 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                 visitingTeam$(0) = Q$(18)
                 homeTeam$(0) = Q$(19)
 
-                For X = 1 To 3: NG%(0, X + 14) = CVI(Q$(X + 23)): Next
+                For X = 1 To 3: scheduleNG%(0, X + 14) = CVI(Q$(X + 23)): Next
 
                 Close 1
 
-                If NG%(0, 16) = RD And NG%(0, 15) = NR Then
+                If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = NR Then
 
                     MATCH = MATCH + 1
 
@@ -6149,13 +6148,13 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-                    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(0, X)): Next
+                    For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
                     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
 
                     LSet Q$(16) = MKI$(visitingScore%(0)): LSet Q$(17) = MKI$(homeScore%(0))
                     LSet Q$(18) = visitingTeam$(0): LSet Q$(19) = homeTeam$(0)
 
-                    For X = 24 To 26: LSet Q$(X) = MKI$(NG%(0, X - 9)): Next
+                    For X = 24 To 26: LSet Q$(X) = MKI$(scheduleNG%(0, X - 9)): Next
 
                     Put #1, MATCH
 

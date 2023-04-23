@@ -1,6 +1,6 @@
 Sub CREATNAT ()
 
-    Dim Z1$(MAX_CONFERENCES)
+    Dim creatZ1$(MAX_CONFERENCES)
     'Din Z2$(MAX_CONFERENCES)
     'Dim Z1%(MAX_CONFERENCES)
 
@@ -40,7 +40,7 @@ Sub CREATNAT ()
         If ExitCode% <> 27 Then
 
 			For X = 1 To MAX_CONFERENCES
-				Z1$(X) = "XXX"
+				creatZ1$(X) = "XXX"
 				'Z2$(X) = "XXX"
 				'Z1%(X) = -1
 			Next
@@ -93,7 +93,7 @@ Sub CREATNAT ()
 
                     If LG$ <> "" Then
 
-                        Call Conference_Menu(LG$, Z1$())
+                        Call Conference_Menu(LG$, creatZ1$())
 
                     End If
 
@@ -152,7 +152,7 @@ Sub CREATNAT ()
                                     Locate 2, 33: Print targetFile$
 
                                     Do
-                                        Locate , 33: Print "ANY CHANGE (YN)";
+                                        Locate 3, 33: Print "ANY CHANGE (YN)";
                                         I$ = GetKeyPress$
                                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -170,7 +170,7 @@ Sub CREATNAT ()
                                 Open diskPaths$(1) + LG$ + ".CON" For Input As #2
                                 Input #2, LG$
                                 For X = 1 To MAX_CONFERENCES
-                                    Input #2, Z1$(X)
+                                    Input #2, creatZ1$(X)
                                 Next
                                 Close 2
 
@@ -183,7 +183,7 @@ Sub CREATNAT ()
                         '...Until we press ESC
                     Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
-                    Call Conference_Menu(LG$, Z1$())
+                    Call Conference_Menu(LG$, creatZ1$())
 
                 Case 3: Cls
 
@@ -253,7 +253,7 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
                 Locate 2, 33: Print targetFile$
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 

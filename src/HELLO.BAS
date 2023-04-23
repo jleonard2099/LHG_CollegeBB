@@ -1,22 +1,33 @@
 
-Const GAME_VERSION$ = "4.30"
+Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 500
 Const MAX_GAMES = 1500
-Const MAX_FILES = 10240 
+Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
 Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 15
 Const DIVS_PER_CONFERENCE = 2
 Const TEAMS_PER_CONFERENCE = 30
 
+'Const NUM_STATRECORDS = 162
+
 DefInt A-Z
 
 '$INCLUDE: 'KeyInput.BI'
 '$INCLUDE: 'QPProEqu.BI'
 '$INCLUDE: 'PadRight.BI'
+
+' For Utils
 '$INCLUDE: 'MainRoutines.BI'
 '$INCLUDE: 'TITLE.BI'
 '$INCLUDE: 'Variables.BI'
+
+' For Game
+'$INCLUDE: 'GameRoutines.BI'
+
+
+On Error GoTo Errhandler
+
 
 '----------------------------------------
 '          READ IN ALL DATA
@@ -46,6 +57,96 @@ Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,OFFENSIVE REBOUNDS,DEFE
 Data PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,POINTS,POINTS PER GAME
 For I = 1 To 20: Read TT$(I): Next
 
+
+Data L,1,1,1,1,1,1,H,H,2,2,2,2,2,F
+For I = 0 To 14: Read R$(I): Next
+
+Data 0,1,1,2,2,2,-1,-1,-1,-1,-2,-3
+For I = 0 To 1
+    For I1 = 1 To 6
+        Read HF%(I, I1)
+    Next
+Next
+
+Data 1,4,2,5,15,29,22,36,7,9,7,12
+For I = 0 To 2
+    For I1 = 1 To 4
+        Read DP(I, I1)
+    Next
+Next
+
+Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
+For I = 0 To 4
+    For I1 = 0 To 3
+        Read D8(I, I1)
+    Next
+Next
+
+Data "NORMAL"
+Data "AGGRESSIVE"
+Data "SAFE"
+Data "QUICK OFFENSE (LAST 3 MIN)"
+Data "DELAY OFFENSE (LAST 3 MIN)"
+Data "MILK CLOCK TO 15 SEC (IF USING SHOT CLOCK)"
+Data "STALL-ONLY REAL GOOD SHOT (MUST BE WITHIN 10 POINTS)"
+Data "TOTAL STALL (LAST 3 MIN)"
+Data "HOLD BALL VS PASSIVE ZONE (MUST BE AHEAD, WITH NO SHOT CLOCK)"
+Data "SHOOT ONLY THREE POINTERS (LAST 3 MIN)"
+For I = 0 To 9: Read O$(I): Next
+
+Data "SOLID MAN TO MAN"
+Data "PRESSURE MAN TO MAN"
+Data "PASSIVE 2-3 ZONE"
+Data "1-3-1 TRAPPING ZONE"
+Data "FULL COURT MAN TO MAN PRESS/SOLID MAN TO MAN"
+Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/SOLID MAN TO MAN"
+Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/PRESSURE MAN TO MAN"
+Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE"
+Data "PASSIVE 2-2-1 ZONE PRESS/SOLID MAN TO MAN"
+Data "PASSIVE 2-2-1 ZONE PRESS/PRESSURE MAN TO MAN"
+Data "TRAPPING 1-2-1-1 ZONE PRESS/SOLID MAN TO MAN"
+Data "TRAPPING 1-2-1-1 ZONE PRESS/PRESSURE MAN TO MAN"
+Data "TRAPPING 1-2-1-1 ZONE PRESS/2-3 ZONE  "
+Data "TRAPPING 1-2-1-1 ZONE PRESS/1-3-1 TRAPPING ZONE"
+Data "FULL COURT M-M DENIAL & FOUL (LAST 3 MIN WHEN DOWN)"
+For I = 0 To 14
+    Read D$(I)
+Next I
+
+Data "NORMAL                            "
+Data "AGGRESSIVE                        "
+Data "SAFE                              "
+Data "QUICK OFFENSE (LAST 3 MIN)        "
+Data "DELAY OFFENSE (LAST 3 MIN)        "
+Data "MILK CLOCK TO 15 SEC-IF USING S.C."
+Data "STALL-GOOD SHOT-MUST BE WITHIN 10 "
+Data "TOTAL STALL (LAST 3 MIN)          "
+Data "HOLD BALL VS PASS.ZN-AHEAD-NO S.C."
+Data "SHOOT ONLY THREES (LAST 3 MIN)    "
+For I = 0 To 9
+    Read OB$(I)
+Next
+
+Data "SOLID MAN TO MAN                  "
+Data "PRESSURE MAN TO MAN               "
+Data "PASSIVE 2-3 ZONE                  "
+Data "1-3-1 TRAPPING ZONE               "
+Data "FULL COURT M-M PRESS/SOLID M-M    "
+Data "M-M (RUN & JUMP) PRESS/SOLID M-M  "
+Data "M-M (RUN & JMP) PRESS/PRESSURE M-M"
+Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE "
+Data "PASSIVE 2-2-1 ZONE PRESS/SOLID M-M"
+Data "PASSIVE 2-2-1 ZN PRSS/PRESSURE M-M"
+Data "TRAP 1-2-1-1 ZONE PRESS/SOLID M-M "
+Data "TRAP 1-2-1-1 ZN PRESS/PRESSURE M-M"
+Data "TRAP 1-2-1-1 ZONE PRESS/2-3 ZONE  "
+Data "TRAP 1-2-1-1 ZN PRSS/1-3-1 TRAP ZN"
+Data "DENIAL & FOUL-LAST 3 MIN WHEN DOWN"
+For I = 0 To 14
+    Read DB$(I)
+Next I
+
+
 '----------------------------------------
 '               MAIN CODE
 '----------------------------------------
@@ -53,7 +154,6 @@ _Title "Courtside College Basketball - Menu"
 $ExeIcon:'./lhg_ccb.ico'
 _Icon
 _AllowFullScreen
-
 
 If Not _FileExists("DEV.BAS") Then
     Open "DEV.BAS" For Output As #1
@@ -71,7 +171,6 @@ Close 1
 
 Selection% = 1
 
-
 Do
     Call Main_Menu(Selection%)
 Loop Until Selection% = 9
@@ -79,6 +178,16 @@ Loop Until Selection% = 9
 End
 
 System
+
+
+'----------------------------------------
+
+Errhandler:
+Open "errlog" For Append As #9
+Print #9, "Error #"; Err; "on program file line"; _ErrorLine
+Print #9,
+Close #9
+Resume Next ' moves program to code following the error.
 
 '----------------------------------------
 '       Main_Menu Subroutine
@@ -102,6 +211,7 @@ Sub Main_Menu (menuSelection%)
         menuChoices$(7) = "HARD DRIVE INSTALLATION         "
         menuChoices$(8) = "CONFIGURE DRIVES FOR TEAMS,STATS"
         menuChoices$(9) = "EXIT TO DOS                     "
+
         Selection% = 1
         Count% = 9
         Start% = 1
@@ -118,9 +228,10 @@ Sub Main_Menu (menuSelection%)
         _MouseHide
 
         Color , 0
+        
         If ExitCode% <> 27 Then
             Select Case menuSelection%
-                Case 1: Run "COLHOOP.EXE"
+                Case 1: Call COLHOOP
                 Case 2: Call TeamMgt_Menu
                 Case 3: Call Replay_Menu
                 Case 4: Call Leaders_Menu
@@ -137,6 +248,7 @@ Sub Main_Menu (menuSelection%)
     If ExitCode% = 27 Then menuSelection% = 9
 
 End Sub
+
 
 '----------------------------------------
 '       ConfigureDrives Subroutine
@@ -207,8 +319,9 @@ Sub ConfigureDrives ()
 
 End Sub
 
+
 '----------------------------------------
-'       TeamMgmt_Menu Subroutine
+'        TeamMgmt_Menu Subroutine
 '----------------------------------------
 '...explanation...
 Sub TeamMgt_Menu ()
@@ -256,8 +369,9 @@ Sub TeamMgt_Menu ()
 
 End Sub
 
+
 '----------------------------------------
-'       ReadStats Subroutine
+'         Replay_Menu Subroutine
 '----------------------------------------
 '...explanation...
 Sub Replay_Menu ()
@@ -306,8 +420,9 @@ Sub Replay_Menu ()
 
 End Sub
 
+
 '----------------------------------------
-'       Leaders_Menu Subroutine
+'        Leaders_Menu Subroutine
 '----------------------------------------
 '...explanation...
 Sub Leaders_Menu ()
@@ -389,9 +504,12 @@ Sub Leaders_Menu ()
 
 End Sub
 
+
 '$INCLUDE: 'KeyInput.BM'
 '$INCLUDE: 'QPProEqu.BM'
 '$INCLUDE: 'PadRight.BM'
+
+' For Utils
 '$INCLUDE: 'TITLE.BM'
 '$INCLUDE: 'ADDTOURN.BAS'
 '$INCLUDE: 'ALIGN.BAS'
@@ -419,4 +537,8 @@ End Sub
 '$INCLUDE: 'SEENAT.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TOURNEY.BAS'
+
+' For Game
+'$INCLUDE: 'COLHOOP.BAS'
+'$INCLUDE: 'GameRoutines.BM'
 

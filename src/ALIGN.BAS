@@ -2,15 +2,16 @@ Sub ALIGN ()
 
     _Title "Courtside College Basketball - Align Stats"
 
-    Dim A$(15), AN$(15), AR$(15)
-
-	'Should any of these be SINGLE?
-	'In the original code they were!!
+    Dim AN$(15), alignAR$(15)
+	
     Dim A(15, 14), AN(15, 14), R(15, 14)
-    Dim W0!(15), W1!(15), W0R(15), WR1(15), W0N(15), WN1(15)
+    Dim W0R(15), WR1(15), W0N(15), WN1(15)
     Dim ZR(15), ZR1(15)
 
-	Dim Z!(15), Z1!(15)
+	Shared A$()
+
+	Shared statsW0!(), statsW1!()
+	Shared Z!(), Z1!()
 
 	Do
 
@@ -70,7 +71,7 @@ Sub ALIGN ()
 			Open PR$ + "\" + Z$ For Input As #1
 			Input #1, BR$
 			For I = 0 To 13: 
-				Input #1, AR$(I)
+				Input #1, alignAR$(I)
 				For J = 0 To 13: Input #1, AR(I, J): Next
 				Input #1, W0R(I)
 				Input #1, WR1(I)
@@ -92,8 +93,8 @@ Sub ALIGN ()
 				Input #1, B$
 				For I = 0 To 13: Input #1, A$(I)
 					For J = 0 To 13: Input #1, A(I, J): Next
-					Input #1, W0!(I)
-					Input #1, W1!(I)
+					Input #1, statsW0!(I)
+					Input #1, statsW1!(I)
 				Next
 
 				For L = 0 To 15: Input #1, Z!(L): Next
@@ -110,7 +111,7 @@ Sub ALIGN ()
 					Color 12: Print Using "##"; I;: Print " ";
 					Color 15: Print A$(I);
 					Color 12: Print Tab(44); Using "##"; I;: Print " ";
-					Color 7: Print AR$(I)
+					Color 7: Print alignAR$(I)
 				Next
 
 				Color 11: Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
@@ -120,8 +121,8 @@ Sub ALIGN ()
 
 				Do
 					For J = 0 To 13
-						If A$(N) = AR$(J) Then 
-							AN$(N) = AR$(J)
+						If A$(N) = alignAR$(J) Then 
+							AN$(N) = alignAR$(J)
 							For K = 0 To 13
 								AN(N, K) = AR(J, K): W0N(N) = W0R(J): WN1(N) = WR1(J)
 							Next K
