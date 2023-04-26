@@ -3944,78 +3944,6 @@ Sub FATIGUE ()
 
 End Sub
 
-'------------------------------
-'    AUTOSETUP Subroutine
-'------------------------------
-' ...explanation...
-Sub AUTOSETUP ()
-    X3% = NG%(3)
-    U5 = NG%(8)
-    NF% = NG%(5)
-    C7 = NG%(7)
-    N = NG%(2)
-    pbpDelay! = NG%(4) / 10
-    CM% = NG%(9)
-    ST% = NG%(12)
-    TB% = NG%(6)
-    TF% = NG%(10)
-    N7% = NG%(14)
-
-    For P9 = 0 To 1
-        I1 = NG%(P9)
-        YN$ = YN$(P9)
-        Call GETATEAM(I1, YN$)
-        Call TEAMSETUP
-    Next P9
-
-    If TOU = 1 Then
-
-        FF$ = RTrim$(FF$)
-        YN$(0) = RTrim$(YN$(0))
-        YN$(1) = RTrim$(YN$(1))
-
-        Open diskPaths$(0) + FF$ + ".INF" For Input As #2
-        Input #2, X$
-        Input #2, X$: ' NUMBER OF REGIONS
-        For I = 1 To 16
-            Input #2, X$: ' NUMBER OF TEAMS IN REGION
-            Input #2, X$: ' NAME OF REGION
-        Next
-        For I = 1 To 16
-            For I1 = 1 To 16
-                For I2 = 1 To 4
-                    Input #2, N$(I, I1, I2): ' SEED SLOT NAME
-                    Input #2, N%(I, I1, I2): ' REGION, SEED NUMBER, MODE PLAY/TM#
-                Next
-            Next
-        Next
-
-        Close 2
-
-        TOU = 0
-        For I = 1 To 16
-            For I1 = 1 To 16
-                'PRINT LEN(YN$(0)),LEN(YN$(1)),LEN( N$(I,I1,1) )
-                If NG%(0) = N%(I, I1, 0) And YN$(0) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
-                    TOU = 1
-                    exitAll% = 1
-                    Exit For
-                End If
-
-                If NG%(1) = N%(I, I1, 0) And YN$(1) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
-                    TOU = 1
-                    exitAll% = 1
-                    Exit For
-                End If
-            Next
-
-            If exitAll% = 1 Then Exit For
-
-        Next
-
-    End If
-
-End Sub
 
 '------------------------------
 '    LINEUPS Subroutine
@@ -4594,7 +4522,7 @@ Sub SHOTPERCENT ()
 
     F! = FX% + D1(D) + D8(0, D2(D)): J8% = 0
 
-    If N = P Then 
+    If N = P Then
         F! = F! + HF%(0, TR%(P, 6))
     Else
         If N <> 2 Then F! = F! + HF%(1, TR%(P, 6))
@@ -5259,12 +5187,13 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub BOXTOP ()
-    If N <> 2 Then 
+
+    If N <> 2 Then
         Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N)
         Print: Color 14, 0
     End If
 
-    For I = 0 To 1: 
+    For I = 0 To 1:
         Print B$(I); Tab(17); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
         If S!(0, 1) + S!(0, 2) = S!(1, 1) + S!(1, 2) Then Print ; Tab(23); Str$(S!(I, 3));
         If S!(0, 1) + S!(0, 2) <> S!(1, 1) + S!(1, 2) Then Print ; Tab(23); "- "; S!(I, 0): GoTo 8513
@@ -5827,6 +5756,83 @@ Sub SAVESTATS ()
     If AP <> 1 And AD = 1 Then End
 
 End Sub
+
+
+'------------------------------
+'    AUTOSETUP Subroutine
+'------------------------------
+' ...explanation...
+Sub AUTOSETUP ()
+
+    X3% = NG%(3)
+    U5 = NG%(8)
+    NF% = NG%(5)
+    C7 = NG%(7)
+    N = NG%(2)
+    pbpDelay! = NG%(4) / 10
+    CM% = NG%(9)
+    ST% = NG%(12)
+    TB% = NG%(6)
+    TF% = NG%(10)
+    N7% = NG%(14)
+
+    For P9 = 0 To 1
+        I1 = NG%(P9)
+        YN$ = YN$(P9)
+        Call GETATEAM(I1, YN$)
+        Call TEAMSETUP
+    Next P9
+
+    If TOU = 1 Then
+
+        FF$ = RTrim$(FF$)
+        YN$(0) = RTrim$(YN$(0))
+        YN$(1) = RTrim$(YN$(1))
+
+        Open diskPaths$(0) + FF$ + ".INF" For Input As #2
+        Input #2, X$
+        Input #2, X$ ' NUMBER OF REGIONS
+        For I = 1 To 16
+            Input #2, X$ ' NUMBER OF TEAMS IN REGION
+            Input #2, X$ ' NAME OF REGION
+        Next
+        For I = 1 To 16
+            For I1 = 1 To 16
+                For I2 = 1 To 4
+                    Input #2, N$(I, I1, I2) ' SEED SLOT NAME
+                    Input #2, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                Next
+            Next
+        Next
+
+        Close 2
+
+        TOU = 0
+
+        For I = 1 To 16
+            For I1 = 1 To 16
+                'PRINT LEN(YN$(0)),LEN(YN$(1)),LEN( N$(I,I1,1) )
+                If NG%(0) = N%(I, I1, 0) And YN$(0) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
+                    TOU = 1
+                    exitAll% = 1
+                    Exit For
+                End If
+
+                If NG%(1) = N%(I, I1, 0) And YN$(1) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
+                    TOU = 1
+                    exitAll% = 1
+                    Exit For
+                End If
+            Next
+
+            If exitAll% = 1 Then Exit For
+
+        Next
+
+    End If
+
+End Sub
+
 
 '------------------------------
 '    EVENTS Subroutine
@@ -7906,3 +7912,4 @@ Sub RECORDSCHECK ()
     Close 1
 
 End Sub
+

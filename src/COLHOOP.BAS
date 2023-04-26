@@ -36,7 +36,6 @@ Sub COLHOOP ()
     Next
     Close 1
 
-
     If Not _FileExists("DEFAULT") Then
         Open "DEFAULT" For Output As #1
         For I = 1 To 11:
@@ -44,7 +43,6 @@ Sub COLHOOP ()
         Next
         Close 1
     End If
-
 
     Open "DEFAULT" For Input As #1
     Input #1, U5
@@ -60,10 +58,7 @@ Sub COLHOOP ()
     Input #1, PB%
     Close 1
 
-
-    If Not _FileExists("TICKER") Then
-        TMT = 0
-    Else
+    If _FileExists("TICKER") Then
         Open "TICKER" For Input As #2
 
         For I = 1 To 32
@@ -87,9 +82,9 @@ Sub COLHOOP ()
         Close 2
 
         TMT = 1
-
+    Else
+        TMT = 0
     End If
-
 
     'Load game in-progress, if there is one
     If _FileExists("GAME82") Then
@@ -120,53 +115,68 @@ Sub COLHOOP ()
         Close 1
 
         AP = 1
-    End If
 
+    End If
 
     If _FileExists("TOURNEY") Then
 
         Open "TOURNEY" For Input As #2
         Input #2, FF$
-        For I = 0 To 2: Input #2, AP%(I): Next
+        For I = 0 To 2:
+            Input #2, AP%(I)
+        Next
         Close 2
 
-        If AP%(2) = AP%(1) Then Kill "TOURNEY": End
+        'If start game = end game,
+        'we're all done!
+        If AP%(2) = AP%(1) Then
+            Kill "TOURNEY"
+            'System
+            'End
+            Exit Sub
 
-        Open diskPaths$(0) + FF$ + ".TOU" As #1 Len = 90
-        For X = 0 To 14
-            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-        Next
+        Else
 
-        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+            Open diskPaths$(0) + FF$ + ".TOU" As #1 Len = 90
+            For X = 0 To 14
+                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+            Next
 
-        Get #1, AP%(0) + AP%(2)
+            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-        VS% = CVI(Q$(16))
-        HS% = CVI(Q$(17))
-        VT$ = Q$(18)
-        W$ = Q$(19)
+            Get #1, AP%(0) + AP%(2)
 
-        For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
-        For X = 0 To 3: YN$(X) = Q$(20 + X): Next
-        For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
-        Close 1
+            VS% = CVI(Q$(16))
+            HS% = CVI(Q$(17))
+            VT$ = Q$(18)
+            W$ = Q$(19)
 
-        AP = 1
-        TOU = 1
+            For X = 0 To 14: NG%(X) = CVI(Q$(X + 1)): Next
+            For X = 0 To 3: YN$(X) = Q$(20 + X): Next
+            For X = 1 To 3: NG%(X + 14) = CVI(Q$(X + 23)): Next
+            Close 1
+
+            AP = 1
+            TOU = 1
+
+        End If
+
     End If
-
-    skipUserOptions% = 0
 
     If AP = 1 Then
         'AUTO-PLAY OPTIONS
         Call AUTOSETUP
-        If TOU = 0 Then skipUserOptions% = 1
+        skipUserOpts% = 1
     End If
 
+    'AUTOSETUP will reset TOU = 0
+    'in many circumstances
+    If TOU = 1 Then skipUserOpts% = 0
 
-    If skipUserOptions% = 0 Then
+    If skipUserOpts% = 0 Then
+
         ' USER SELECTION OF OPTIONS
         N = 1
 
@@ -245,7 +255,7 @@ Sub COLHOOP ()
                     If iVal = 0 Then iVal = 10
                 End If
 
-            Loop Until iVal >= 0 And iVal <= 15 Or I$ = Chr$(27)
+            Loop Until iVal >= 0 And iVal <= 15 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
 
             If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
@@ -322,7 +332,7 @@ Sub COLHOOP ()
 
             End If
 
-        Loop Until (iVal = 8 And B$(0) <> "" And B$(1) <> "") Or I$ = Chr$(27) Or UCase$(I$) = "Q"
+        Loop Until (iVal = 8 And B$(0) <> "" And B$(1) <> "") Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
@@ -368,7 +378,6 @@ Sub COLHOOP ()
             ST% = Int(TM / 30 - 18)
 
             Call EDITCX
-
         Else
 
             'End
@@ -376,6 +385,7 @@ Sub COLHOOP ()
             Exit Sub
 
         End If
+
 
     End If
 
@@ -678,12 +688,10 @@ Sub COLHOOP ()
         If AP = 1 And U5 = 2 Then
             X = 2
         Else
-
             Do
                 I$ = GetKeyPress$
                 X = Val(I$)
             Loop Until X >= 0 And X <= 2
-
         End If
 
         Select Case X
@@ -698,7 +706,7 @@ Sub COLHOOP ()
 
         If X <> 1 Then
             Call BOXTOP
-            'Print box score to creen
+            'Print box score to screen
             Call BoxTicker
         End If
 
@@ -762,33 +770,19 @@ Sub COLHOOP ()
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-        If UCase$(I$) = "N" Then
-            'End
-            'System
-            Exit Sub
-        End If
+    End If
 
-    Else
-        'Autoplay
+    If UCase$(I$) = "Y" Or AP = 1 Then
         Cls
         Print "PLEASE WAIT ..."
         Call COLHOOP
-
     End If
+
+    Exit Sub
 
     '----------------------------------------
     '           END OF GAME!!!
     '----------------------------------------
-
-    '================================================================================
-
-    Errhandler:
-    Open "errlog" For Append As #9
-    Print #9, "Error occurred! " '; Date$; " "; Time$
-    Print #9, "Error #"; Err; "on program file line"; _ErrorLine
-    Print #9, ""
-    Close #9
-    Resume Next ' moves program to code following the error.
 
     '================================================================================
     ' Below are all the different GoTo branches for the gameplay
@@ -797,6 +791,7 @@ Sub COLHOOP ()
     '================================================================================
 
     TIMEEXP:
+
     TE! = T!
     Call PlayingTime
     T! = 0
@@ -2114,7 +2109,7 @@ Sub COLHOOP ()
                 Next
 
                 X = 0
-                
+
                 S = Int(Rnd(1) * 100) + 1
 
                 If PB% = 1 And pbpDelay! <> 0 Then
@@ -2452,7 +2447,7 @@ Sub COLHOOP ()
 
                     A!(P, B1(P, B), 7) = A!(P, B1(P, B), 7) - 1
                     W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) - 1
-                    
+
                     Call ResetShotClock
 
                     9055 '
@@ -3380,10 +3375,10 @@ Sub COLHOOP ()
 
         '2 FT Attempts
         For F3 = 1 To 2:
-            
+
             'Increase FT ATT
             A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
-            
+
             S = Int(Rnd(1) * 100) + 1
 
             'FT Success Chance
@@ -3530,7 +3525,7 @@ Sub COLHOOP ()
         LT = 0
 
         If T! <= 0 Then TE! = T!: Call PlayingTime: GoTo 170
-        
+
         If S > FX% Then 650
 
         PB$ = ""
@@ -3693,6 +3688,7 @@ Sub InitVar ()
     R0! = 0
     TE! = 0
     actualAttendance& = 0
+    skipUserOpts% = 0
 
     Erase B1
     Erase C, D1, D2, DF
@@ -3719,3 +3715,4 @@ Sub InitVar ()
     Erase avgAttendance&, CRD&
 
 End Sub
+

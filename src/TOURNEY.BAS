@@ -10,8 +10,8 @@ Sub TOURNEY ()
 
     Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS), YR%(MAX_TEAMS)
 
-    Dim coachOpt$(1), location$(2), sclockOpt$(2)
-    Dim foulShotOpt$(1), threeFtOpt$(1), threePtOpt$(1)
+    Dim coachOpt$(1), foulShotOpt$(1), location$(2)
+    Dim playMode$(0 To 3), sclockOpt$(2), threeFtOpt$(1), threePtOpt$(1)
 
     coachOpt$(0) = "COACH AND SELECT SHOTS           "
     coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
@@ -41,9 +41,9 @@ Sub TOURNEY ()
         'This was added to handle if no TOU files are available
         'Original game would just try to push ahead anyway
         Locate 10
-        Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, Pass)
+        Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
     Else
         ReDim tournamentFiles$(0 To Count%)
 
@@ -107,14 +107,14 @@ Sub TOURNEY ()
                 T1 = Selection%
 
                 Locate 2, 33: Print targetFile$
-                
+
                 Do
                     Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             End If
-            
+
             Color 15, 0
 
         Loop Until UCase$(I$) = "N" Or ExitCode% = 27
@@ -217,11 +217,12 @@ Sub TOURNEY ()
                         Call EditGame_TOURNEY
 
                     Case "P":
-                        350 ' *** SAVE SCHEDULE FILE ***
+                        ' *** SAVE SCHEDULE FILE ***
                         '    IF _FILEEXISTS(diskPaths$(0) + targetFile$ + ".TNY") THEN
                         '       KILL diskPaths$(0) + targetFile$ + ".TNY"
                         '    END IF
 
+						'-- This code actually loads the TOU file
                         Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                         For X = 0 To 14
@@ -252,7 +253,7 @@ Sub TOURNEY ()
                         Locate 7 + JJ, 8
                         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-                        Do                      
+                        Do
                             'Locate 7, 32
                             Locate 8, 12: Print "TOTAL GAMES ="; scheduleAP%(0)
                             Locate 9, 12: Print "SELECT GAME # TO START AND END WITH": Print
@@ -264,6 +265,7 @@ Sub TOURNEY ()
 
                         If SG% <= 0 Then SG% = 1
                         If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
+
                         Open "TOURNEY" For Output As #2
                         Print #2, targetFile$ ' + ".TNY"
                         Print #2, SG%
@@ -285,16 +287,47 @@ Sub TOURNEY ()
                         Next
 
                         Open "TICKER" For Output As #2
-                        For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
-                        Print #2, -1: Next: Next: Next
-                        For I = 1 To 32: For I1 = 0 To 1: Print #2, "XXX"
-                        Next: Next
+                        For I = 1 To 32:
+                            For I1 = 0 To 1:
+                                For I2 = 1 To 14
+                                    Print #2, -1
+                                Next
+                            Next
+                        Next
+                        For I = 1 To 32:
+                            For I1 = 0 To 1:
+                                Print #2, "XXX"
+                            Next
+                        Next
                         For I = SG% To SG% + 31
                             Print #2, scheduleNG%(I, 12)
                         Next
                         Close 2
 
-                        Run "COLHOOP.EXE"
+                        Call COLHOOP
+
+						'-- This code actually loads the TOU file
+                        Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+
+                        For X = 0 To 14
+                            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                        Next
+
+                        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+                        For I = 1 To scheduleAP%(0)
+                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
+                            For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
+                            LSet Q$(16) = MKI$(visitingScore%(I)): LSet Q$(17) = MKI$(homeScore%(I))
+                            LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
+                            For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
+                            Put #1, I
+                        Next
+
+                        Close 1
+
                     Case "Q":
                         'Exit Sub
                 End Select
@@ -425,3 +458,4 @@ Sub EditGame_TOURNEY ()
     Loop Until I8% = 0
 
 End Sub
+

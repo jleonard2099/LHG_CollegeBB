@@ -390,7 +390,7 @@ Sub NewSchedule (scheduleFile$)
                     Locate 11, 12: Input "ENTER END GAME #:"; EG%: Print
 
                     Do
-						Locate 13, 12: Print "ANY CHANGE (YN)"
+                        Locate 13, 12: Print "ANY CHANGE (YN)"
                         I$ = GetKeyPress$
                     Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
@@ -436,8 +436,8 @@ Sub NewSchedule (scheduleFile$)
 
                 Call COLHOOP
 
-				'-- This code actually loads a schedule
-                Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+                '-- This code actually loads a schedule
+                Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = 48
                 Y = LOF(1)
 
                 scheduleAP%(0) = Y / 48
@@ -512,7 +512,7 @@ Sub EditGame ()
         Locate 23, 1: Input "ENTER GAME # TO EDIT "; targetGame%
     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
-    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then 
+    If targetGame% - Int(targetGame% / 20) * 20 = 0 Then
         V$ = scheduleV$(20)
         H$ = scheduleH$(20)
         YN$ = scheduleYN$(20, 0)
@@ -521,7 +521,7 @@ Sub EditGame ()
         H$ = scheduleH$(targetGame% - Int(targetGame% / 20) * 20)
         YN$ = scheduleYN$(targetGame% - Int(targetGame% / 20) * 20, 0)
     End If
-    
+
     I$ = "A"
     HR% = Int(scheduleNG%(targetGame%, 15) / 100)
     MIN% = scheduleNG%(targetGame%, 15) - HR% * 100
@@ -531,21 +531,21 @@ Sub EditGame ()
 
     TM$ = Right$(Str$(HR%), 2) + ":"
 
-    If MIN% < 10 Then 
-		TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
-	Else
-		TM$ = TM$ + Right$(Str$(MIN%), 2)
-	End If
+    If MIN% < 10 Then
+        TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
+    Else
+        TM$ = TM$ + Right$(Str$(MIN%), 2)
+    End If
 
     TM$ = TM$ + I$
     DT$ = Right$(Str$(scheduleNG%(targetGame%, 17)), 2) + "/"
     DYMO% = Val(Right$(Str$(scheduleNG%(targetGame%, 16)), 2))
 
-    If DYMO% < 10 Then 
-		DYMO$ = "0" + Right$(Str$(scheduleNG%(targetGame%, 16)), 1)
-	Else
-		DYMO$ = Right$(Str$(scheduleNG%(targetGame%, 16)), 2)
-	End If
+    If DYMO% < 10 Then
+        DYMO$ = "0" + Right$(Str$(scheduleNG%(targetGame%, 16)), 1)
+    Else
+        DYMO$ = Right$(Str$(scheduleNG%(targetGame%, 16)), 2)
+    End If
 
     DT$ = DT$ + DYMO$ + "/" + Right$(Str$(scheduleNG%(targetGame%, 18)), 2)
 
@@ -743,7 +743,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
             End Select
 
-        Loop Until (I8% >= 0 And I% <= 15)
+        Loop Until (I8% >= 0 And I8% <= 15)
 
         If visitor$ <> "" And home$ <> "" And TM$ <> "" And DT$ <> "" Then
 
@@ -845,9 +845,9 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 If Count% = 0 Then
                     Locate 10, 8
                     Locate , 12
-                    Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+                    Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
                     I$ = GetKeyPress$
-                    Call CSMsgBox("", 0, Pass)
+                    Call CSMsgBox("", 0, PASS)
                 Else
                     ReDim leagueFiles$(0 To Count%)
 
@@ -1166,9 +1166,9 @@ Sub BoxscoreMaintenance ()
                     Count% = DirCount%
                     If Count% = 0 Then
                         Locate 10, 8
-                        Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
+                        Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, PASS)
                         I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
+                        Call CSMsgBox("", 0, PASS)
                     Else
                         ReDim boxFiles$(0 To Count%)
                         For X = 1 To Count%
@@ -1346,9 +1346,9 @@ Sub ChangeGlobalSettings ()
     DT$ = "10-01-96"
     TM$ = "07:30P"
     threeFtOpt$(0) = "N"
-	threeFtOpt$(1) = "Y"
+    threeFtOpt$(1) = "Y"
     threePtOpt$(0) = "N"
-	threePtOpt$(1) = "Y"
+    threePtOpt$(1) = "Y"
     sclockOpt$(0) = "NO SHOT CLOCK       "
     sclockOpt$(1) = "45 SECOND SHOT CLOCK"
     sclockOpt$(2) = "35 SECOND SHOT CLOCK"
@@ -1469,9 +1469,9 @@ Sub LoadSchedule (targetFile$)
 
         If Count% = 0 Then
             Locate 10, 8
-            Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
         Else
             ReDim scheduleFiles$(0 To Count%)
 
@@ -1667,14 +1667,14 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
         Select Case fileChoice%
             Case 3
                 Locate 10, 8
-                Call CSMsgBox("NO BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
+                Call CSMsgBox("NO BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, PASS)
                 I$ = GetKeyPress$
-                Call CSMsgBox("", 0, Pass)
+                Call CSMsgBox("", 0, PASS)
             Case 4
                 Locate 10, 8
-                Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, Pass)
+                Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, PASS)
                 I$ = GetKeyPress$
-                Call CSMsgBox("", 0, Pass)
+                Call CSMsgBox("", 0, PASS)
             Case 5: '
 
         End Select
@@ -1710,9 +1710,9 @@ Sub EditBoxscore (boxName$)
 
     If Not _FileExists(boxName$) Then
         Locate 10, 8
-        Call CSMsgBox("BOXSCORE DOES NOT EXIST PRESS ANY KEY TO RETURN TO MAIN MENU", 23, Pass)
+        Call CSMsgBox("BOXSCORE DOES NOT EXIST PRESS ANY KEY TO RETURN TO MAIN MENU", 23, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
     Else
 
         Open boxName$ For Input As #1
@@ -1758,9 +1758,9 @@ Sub EditBoxscore (boxName$)
                 Next
                 Close 1
 
-                Call CSMsgBox("REVISED BOXSCORE HAS BEEN SAVED...PRESS ANY KEY TO CONTINUE", 31, Pass)
+                Call CSMsgBox("REVISED BOXSCORE HAS BEEN SAVED...PRESS ANY KEY TO CONTINUE", 31, PASS)
                 I$ = GetKeyPress$
-                Call CSMsgBox("", 0, Pass)
+                Call CSMsgBox("", 0, PASS)
 
             End If
 
@@ -1817,9 +1817,9 @@ Sub CreateConferenceSchedule ()
 
         If Count% = 0 Then
             Locate 10, 8
-            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
         Else
             ReDim leagueFiles$(0 To Count%)
             For X = 1 To Count%
@@ -2076,3 +2076,4 @@ Sub SelectConferenceFile (targetFile$, scheduleFiles$(), Count%)
     End If
 
 End Sub
+
