@@ -1,9 +1,6 @@
 Sub SCHEDULE ()
 
-    DefInt A-Z
-
     Dim scheduleFile$
-
     ReDim menuChoices$(1 To 9)
 
     Shared NS%
@@ -436,38 +433,7 @@ Sub NewSchedule (scheduleFile$)
 
                 Call COLHOOP
 
-                '-- This code actually loads a schedule
-                Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = 48
-                Y = LOF(1)
-
-                scheduleAP%(0) = Y / 48
-                BS% = Int((scheduleAP%(0) - 1) / 20)
-
-                For X = 0 To 18
-                    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-                Next
-
-                Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-
-                For I = 1 To scheduleAP%(0)
-                    Get #1, I
-
-                    For X = 0 To 18
-                        scheduleNG%(I, X) = CVI(Q$(X + 1))
-                    Next
-
-                    For X = 0 To 1
-                        scheduleYN$(I, X) = Q$(20 + X)
-                    Next
-
-                    visitingScore%(I) = CVI(Q$(22))
-                    homeScore%(I) = CVI(Q$(23))
-
-                Next
-
-                Close 1
-
-                NS% = 0
+				Call LoadScheduleInfo (scheduleFile$)
 
             Case "R":
                 ' *** RESET GAMES ***
@@ -1452,17 +1418,9 @@ End Sub
 '...explanation...
 Sub LoadSchedule (targetFile$)
 
-    Shared BS%, NS%
-
-    Shared scheduleAP%(), homeScore%(), visitingScore%()
-    Shared scheduleNG%()
-    Shared scheduleYN$()
-
-    ' *** LOAD IN A SAVED SCHEDULE ***
     Spec$ = diskPaths$(0) + "*.SCD"
 
     Do
-
         'Display list of files...
         null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
         Count% = DirCount%
@@ -1471,7 +1429,7 @@ Sub LoadSchedule (targetFile$)
             Locate 10, 8
             Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
+            Call CSMsgBox("", 0, Pass)
         Else
             ReDim scheduleFiles$(0 To Count%)
 
@@ -1483,94 +1441,127 @@ Sub LoadSchedule (targetFile$)
 
             Call ReadFile(scheduleFiles$())
 
-            '-- start of a routine, SelectScheduleFile
+			Call SelectScheduleFile(targetFile$, scheduleFiles$(), Count%, menuExit%)
+
+		End If
+
+    Loop Until Count% = 0 Or targetFile$ <> "" Or menuExit% = 27
+
+End Sub
+
+
+'----------------------------------------
+'       SelectScheduleFile SubRoutine
+'----------------------------------------
+'...explanation...
+Sub SelectScheduleFile (targetFile$, scheduleFiles$(), Count%, ExitCode%)
+
+    Do
+        Cls
+        Color , 1
+        Cls
+        Locate , 28
+        Color 14
+        Print "SELECT SCHEDULE TO VIEW"
+        Color 15
+        'Count% = ???
+        Selection% = 1
+        Start% = 1
+        FileFGColr% = 15: FileBGColr% = 1
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Rows% = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
+        Locate 25, 1
+        Color 14
+        Print "ENTER";: Color 15
+        Print "-SELECTS SCHEDULE";
+
+        _MouseShow "DEFAULT"
+        MAMenu scheduleFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
+
+        If ExitCode% <> 27 Then
+            Color 15, 1
+            targetFile$ = RTrim$(scheduleFiles$(Selection%))
+            Locate 2, 33: Print targetFile$
+
             Do
-                Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT SCHEDULE TO VIEW": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS SCHEDULE";
+                Locate 3, 33: Print "ANY CHANGE (YN)";
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-                _MouseShow "DEFAULT"
-                MAMenu scheduleFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-                    Color 15, 1
-                    targetFile$ = scheduleFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                End If
-
-            Loop Until ExitCode% = 27 Or UCase$(I$) = "N"
-
-            If ExitCode% <> 27 Then
-                targetFile$ = RTrim$(targetFile$)
-                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                targetFile$ = WE$
-
-                Color 15, 0
-
-                Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
-                Y = LOF(1)
-
-                scheduleAP%(0) = Y / 48
-                BS% = Int((scheduleAP%(0) - 1) / 20)
-
-                For X = 0 To 18
-                    Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-                Next
-
-                Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-
-                For I = 1 To scheduleAP%(0)
-                    Get #1, I
-
-                    For X = 0 To 18
-                        scheduleNG%(I, X) = CVI(Q$(X + 1))
-                    Next
-
-                    For X = 0 To 1
-                        scheduleYN$(I, X) = Q$(20 + X)
-                    Next
-
-                    visitingScore%(I) = CVI(Q$(22))
-                    homeScore%(I) = CVI(Q$(23))
-
-                Next
-
-                Close 1
-
-                NS% = 0
-
-            End If
+            Color 15, 0
 
         End If
 
-        '-- end of a routine, SelectScheduleFile
+    Loop Until ExitCode% = 27 Or UCase$(I$) = "N"
 
-    Loop Until Count% = 0 Or ExitCode% = 27 Or UCase$(I$) = "N"
+    If ExitCode% <> 27 Then
+
+        targetFile$ = RTrim$(targetFile$)
+
+		'-- This is where we strip the file extension
+		'-- If we remove this, we can drop the .SCD in the rest of the code
+        fileNoExt$ = Left$(targetFile$, Len(targetFile$) - 4)
+        targetFile$ = fileNoExt$
+        Color 15, 0
+		
+		Call LoadScheduleInfo (targetFile$)
+
+    End If
 
 End Sub
+
+
+'----------------------------------------
+'      LoadScheduleInfo SubRoutine
+'----------------------------------------
+'...explanation...
+Sub LoadScheduleInfo (targetFile$)
+
+    Shared BS%, NS%
+
+    Shared scheduleAP%(), scheduleNG%()
+	Shared homeScore%(), visitingScore%()
+    Shared scheduleYN$()
+
+	Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+	Y = LOF(1)
+
+	scheduleAP%(0) = Y / 48
+	BS% = Int((scheduleAP%(0) - 1) / 20)
+
+	For X = 0 To 18
+		Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+	Next
+
+	Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+
+	For I = 1 To scheduleAP%(0)
+		Get #1, I
+
+		For X = 0 To 18
+			scheduleNG%(I, X) = CVI(Q$(X + 1))
+		Next
+
+		For X = 0 To 1
+			scheduleYN$(I, X) = RTrim$(Q$(20 + X))
+		Next
+
+		visitingScore%(I) = CVI(Q$(22))
+		homeScore%(I) = CVI(Q$(23))
+
+	Next
+
+	Close 1
+
+	NS% = 0
+
+End Sub
+
 
 '----------------------------------------
 '     SelectTeam_Schedule SubRoutine
