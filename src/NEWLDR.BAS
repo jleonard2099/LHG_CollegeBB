@@ -107,7 +107,7 @@ Sub ViewExpanded ()
                 Locate 2, 33: Print targetFile$
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -387,8 +387,7 @@ Sub PlayerLeaders (printOrView%, sortType%)
                 TVN = 1
 
             Case 17:
-                Cls
-                PPP = 0
+                Cls: PPP = 0
                 For I = 1 To JB
                     If statsAL!(I, X) <> 0 Then
                         PPP = PPP + 1: Locate 1, 5: Print "CHANGING PLAYER "; PPP
@@ -453,7 +452,7 @@ Sub TeamTotals (printOrView%, sortType%)
 
     Dim GM!(1 To 40)
 
-    Shared TS, TTS
+    Shared tStats, ttStats
 
     Shared expanTT$(), TMM$(), TP1$(), TT1$()
     Shared GM1!(), TT!(), TYP!(), TT1!()
@@ -479,7 +478,8 @@ Sub TeamTotals (printOrView%, sortType%)
         For I = 0 To 19: Locate I + 2, 8: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
         For I = 20 To 38: Locate I - 18, 38: Color 11: Print Using "##"; I;: Print " ";: Color 0: Print TP1$(I): Next
 
-        3050 Color 14: Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
+        Color 14
+		Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
 
         Select Case B9
             Case 0: X = 1: stpl = 0
@@ -529,95 +529,95 @@ Sub TeamTotals (printOrView%, sortType%)
 
         Select Case B9
             Case 0 TO 1, 3 TO 4, 6 TO 7, 9, 11, 13 TO 17:
-                For I = 1 To TS
+                For I = 1 To tStats
                     TMM$(I) = expanTT$(I, X)
                     TYP!(I) = TT!(I, X)
                 Next
-                Call SortTeam (TS, stpl, sortType%)
+                Call SortTeam (tStats, stpl, sortType%)
                 TVN = 1
 
             Case 2, 5, 8:
-                For I = 1 To TS
+                For I = 1 To tStats
                     If TT!(I, X1) = 0 Then
                         TMM$(I) = expanTT$(I, X): TYP!(I) = 0
                     Else
                         TMM$(I) = expanTT$(I, X): TYP!(I) = TT!(I, X) / TT!(I, X1)
                     End If
                 Next
-                Call SortTeam (TS, stpl, sortType%)
+                Call SortTeam (tStats, stpl, sortType%)
                 TVN = 2
 
             Case 10:
-                For I = 1 To TS
+                For I = 1 To tStats
                     TMM$(I) = expanTT$(I, X)
                     TYP!(I) = TT!(I, X) - TT!(I, X1)
                 Next
-                Call SortTeam (TS, stpl, sortType%)
+                Call SortTeam (tStats, stpl, sortType%)
                 TVN = 1
 
             Case 12:
-                For I = 1 To TS
+                For I = 1 To tStats
                     TMM$(I) = expanTT$(I, X)
                     TYP!(I) = TT!(I, X) / GM!(I)
                 Next
-                Call SortTeam (TS, stpl, sortType%)
+                Call SortTeam (tStats, stpl, sortType%)
                 TVN = 3
 
             Case 18:
-                For I = 1 To TS
+                For I = 1 To tStats
                     TMM$(I) = expanTT$(I, X)
                     TYP!(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / GM!(I)
                 Next
-                Call SortTeam (TS, stpl, sortType%)
+                Call SortTeam (tStats, stpl, sortType%)
                 TVN = 3
 
             Case 19 TO 20, 22 TO 23, 25 TO 26, 28, 30:
-                For I = 1 To TTS
+                For I = 1 To ttStats
                     TMM$(I) = TT1$(I, X)
                     TYP!(I) = TT1!(I, X)
                 Next
-                Call SortTeam (TTS, stpl, sortType%)
+                Call SortTeam (ttStats, stpl, sortType%)
                 TVN = 1
 
             Case 21, 24, 27:
-                For I = 1 To TTS
+                For I = 1 To ttStats
                     If TT1!(I, X1) = 0 Then
                         TMM$(I) = TT1$(I, X): TYP!(I) = 0
                     Else
                         TMM$(I) = TT1$(I, X): TYP!(I) = TT1!(I, X) / TT1!(I, X1)
                     End If
                 Next
-                Call SortTeam (TTS, stpl, sortType%)
+                Call SortTeam (ttStats, stpl, sortType%)
                 TVN = 2
 
             Case 29:
-                For I = 1 To TTS
+                For I = 1 To ttStats
                     TMM$(I) = TT1$(I, X)
                     TYP!(I) = TT1!(I, X) - TT1!(I, X1)
                 Next
-                Call SortTeam (TTS, stpl, sortType%)
+                Call SortTeam (ttStats, stpl, sortType%)
                 TVN = 1
 
             Case 31 TO 36:
-                For I = 1 To TTS
+                For I = 1 To ttStats
                     TMM$(I) = TT1$(I, X)
                     TYP!(I) = TT1!(I, X) / GM1!(I)
                 Next
-                Call SortTeam (TTS, stpl, sortType%)
+                Call SortTeam (ttStats, stpl, sortType%)
                 TVN = 3
 
             Case 37:
-                For I = 1 To TTS
+                For I = 1 To ttStats
                     TMM$(I) = TT1$(I, X)
                     TYP!(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / GM1!(I)
                 Next
-                Call SortTeam (TTS, stpl, sortType%)
+                Call SortTeam (ttStats, stpl, sortType%)
                 TVN = 3
 
         End Select
 
         If B9 <> 38 Then
-            QW = TTS
+            QW = ttStats
             Call PrintIt(printOrView%, QW, TVN, B9)
         End If
 
@@ -920,13 +920,13 @@ Sub BUILDSTATS (statFile$, Z1$())
     Shared A$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
-    Shared A!(), statsAL!()
+    Shared statsA!(), statsAL!()
     Shared GMA!(), GM1!()
     Shared TT!(), TT1!()
-    Shared W0!(), W1!(), W0L!(), W1L!()
-    Shared Z!(), Z1!()
+    Shared statsW0!(), statsW1!(), W0L!(), W1L!()
+    Shared statsZ!(), statsZ1!()
 
-    Shared JB, TS, TMR%, TTS
+    Shared JB, tStats, TMR%, ttStats
 
     Color 15, 0
     Cls
@@ -945,20 +945,33 @@ Sub BUILDSTATS (statFile$, Z1$())
                 Input #1, B$
                 For I = 0 To 13
                     Input #1, A$(I)
-                    For J = 0 To 13: Input #1, A(I, J): Next
-                    Input #1, W0!(I)
-                    Input #1, W1!(I)
+                    For J = 0 To 13: Input #1, statsA!(I, J): Next
+                    Input #1, statsW0!(I)
+                    Input #1, statsW1!(I)
                 Next
-                For L = 0 To 15: Input #1, Z!(L): Next
-                For L = 0 To 15: Input #1, Z1!(L): Next
+                For L = 0 To 15: Input #1, statsZ!(L): Next
+                For L = 0 To 15: Input #1, statsZ1!(L): Next
                 Close #1
 
                 Open diskPaths$(1) + Z1$(KK) + "S" For Input As #1
                 Input #1, year
                 Close #1
 
-                TS = TS + 1: For I = 0 To 14: TT!(TS, I) = Z!(I): expanTT$(TS, I) = B$: GM!(TS) = year: Next
-                TTS = TTS + 1: For I = 0 To 14: TT1!(TTS, I) = Z1!(I): TT1$(TTS, I) = B$: GM1!(TTS) = year: Next
+                tStats = tStats + 1
+				
+				For I = 0 To 14
+					TT!(tStats, I) = statsZ!(I)
+					expanTT$(tStats, I) = B$
+					GM!(tStats) = year
+				Next
+
+                ttStats = ttStats + 1
+				
+				For I = 0 To 14: 
+					TT1!(ttStats, I) = statsZ1!(I)
+					TT1$(ttStats, I) = B$
+					GM1!(ttStats) = year
+				Next
 
                 For I = 0 To 14
                     If A$(I) <> "XXX" Then
@@ -970,11 +983,11 @@ Sub BUILDSTATS (statFile$, Z1$())
                         K1 = 0
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            statsAL!(JB, K1) = A(I, I1)
+                            statsAL!(JB, K1) = statsA!(I, I1)
                         Next I1
                     End If
-                    W0L!(JB) = W0!(I)
-                    W1L!(JB) = W1!(I)
+                    W0L!(JB) = statsW0!(I)
+                    W1L!(JB) = statsW1!(I)
                 Next I
 
             End If
@@ -984,7 +997,7 @@ Sub BUILDSTATS (statFile$, Z1$())
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
     Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
-    Write #1, JB, TS, TTS
+    Write #1, JB, tStats, ttStats
     For I = 1 To 600:
         Write #1, AL$(I), TMA$(I), GMA!(I)
         Color 14: TMR% = TMR% - 1

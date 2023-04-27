@@ -456,9 +456,9 @@ Sub GETATEAM (I1, YN$)
 
     Get #1, I1
 
-    C$(P9) = Q$(0)
-    S$(P9) = Q$(1)
-    A1$(P9) = Q$(2)
+    gameCoach$(P9) = Q$(0)
+    gameStadium$(P9) = Q$(1)
+    gameMascot$(P9) = Q$(2)
     avgAttendance&(P9) = CVL(Q$(3))
 
     For I = 0 To 13
@@ -480,9 +480,9 @@ Sub GETATEAM (I1, YN$)
     Close 1
 
     If CK <> 999 Then
-        C$(P9) = ""
-        S$(P9) = ""
-        A1$(P9) = ""
+        gameCoach$(P9) = ""
+        gameStadium$(P9) = ""
+        gameMascot$(P9) = ""
         avgAttendance&(P9) = 0
 
         For I = 0 To 13:
@@ -1942,15 +1942,15 @@ Sub PBP ()
         U$ = PadRight$(U$, 38)
 
         Locate 8, 1
-        If NL% = 1 Then A1$ = U$: VG%(1) = TR%(P, 0): VH%(1) = TR%(P, 1)
-        If NL% = 2 Then B1$ = U$: VG%(2) = TR%(P, 0): VH%(2) = TR%(P, 1)
-        If NL% = 3 Then C1$ = U$: VG%(3) = TR%(P, 0): VH%(3) = TR%(P, 1)
-        If NL% = 4 Then D1$ = U$: VG%(4) = TR%(P, 0): VH%(4) = TR%(P, 1)
-        If NL% = 5 Then E1$ = U$: VG%(5) = TR%(P, 0): VH%(5) = TR%(P, 1)
-        If NL% = 6 Then F1$ = U$: VG%(6) = TR%(P, 0): VH%(6) = TR%(P, 1)
-        If NL% = 7 Then G1$ = U$: VG%(7) = TR%(P, 0): VH%(7) = TR%(P, 1)
-        If NL% = 8 Then H1$ = U$: VG%(8) = TR%(P, 0): VH%(8) = TR%(P, 1)
-        If NL% > 8 Then
+        If nbrLines% = 1 Then A1$ = U$: VG%(1) = TR%(P, 0): VH%(1) = TR%(P, 1)
+        If nbrLines% = 2 Then B1$ = U$: VG%(2) = TR%(P, 0): VH%(2) = TR%(P, 1)
+        If nbrLines% = 3 Then C1$ = U$: VG%(3) = TR%(P, 0): VH%(3) = TR%(P, 1)
+        If nbrLines% = 4 Then D1$ = U$: VG%(4) = TR%(P, 0): VH%(4) = TR%(P, 1)
+        If nbrLines% = 5 Then E1$ = U$: VG%(5) = TR%(P, 0): VH%(5) = TR%(P, 1)
+        If nbrLines% = 6 Then F1$ = U$: VG%(6) = TR%(P, 0): VH%(6) = TR%(P, 1)
+        If nbrLines% = 7 Then G1$ = U$: VG%(7) = TR%(P, 0): VH%(7) = TR%(P, 1)
+        If nbrLines% = 8 Then H1$ = U$: VG%(8) = TR%(P, 0): VH%(8) = TR%(P, 1)
+        If nbrLines% > 8 Then
             A1$ = B1$
             B1$ = C1$
             C1$ = D1$
@@ -1967,7 +1967,7 @@ Sub PBP ()
             VH%(8) = TR%(P, 1)
         End If
 
-        NL% = NL% + 1
+        nbrLines% = nbrLines% + 1
 
         Color VG%(1), VH%(1): Print A1$
         Color VG%(2), VH%(2): Print B1$
@@ -2973,10 +2973,10 @@ Sub COMCOACH ()
 End Sub
 
 '------------------------------
-'    TOURNEY Subroutine
+'   TOURNEY_Game Subroutine
 '------------------------------
 ' ...explanation...
-Sub TOURNEY ()
+Sub TOURNEY_Game ()
 
     Dim fileLength&
 
@@ -3374,7 +3374,7 @@ Sub SCOREBOARD ()
     Next I1
 
     Locate 17, 40
-	Color TR%(1, 0), TR%(1, 1): Print B$(1);
+    Color TR%(1, 0), TR%(1, 1): Print B$(1);
     Print Using " [##"; Z5(1);: Print "-";: Print Using "##]"; Z6(1)
 
     Color 14, 0: Locate , 40: Print "# NAME          FG FT RB CX EF PA PT  F"
@@ -3439,10 +3439,10 @@ End Sub
 '---- RESUME HERE ----
 
 '------------------------------
-'    LOADSTATS Subroutine
+'    LOADSTATS_Game Subroutine
 '------------------------------
 ' ...explanation...
-Sub LOADSTATS ()
+Sub LOADSTATS_Game ()
 
     If TR%(1, 0) = TR%(0, 0) And TR%(1, 1) = TR%(0, 1) Then Call COLCNG
 
@@ -3569,15 +3569,15 @@ Sub EDITCX ()
         Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
         Print
         Color 14
-		Print "(0) - ";: Color TR%(0, 0), TR%(0, 1)
+        Print "(0) - ";: Color TR%(0, 0), TR%(0, 1)
         Print B$(0): Color , 0
         Print
         Color 14
-		Print "(1) - ";: Color TR%(1, 0), TR%(1, 1)
+        Print "(1) - ";: Color TR%(1, 0), TR%(1, 1)
         Print B$(1): Color , 0
         Print
         Color 14
-		Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
+        Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
         Color 15, 0
         Print
         Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
@@ -3597,7 +3597,7 @@ Sub EDITCX ()
 
             9305 '
             Locate 2, 1: Print "CONTRIBUTION RATINGS FOR ";
-			Color TR%(I, 0), TR%(I, 1): Print B$(I)
+            Color TR%(I, 0), TR%(I, 1): Print B$(I)
             Color 15, 0
             Print
             Print " #  PLAYER             CX"
@@ -3661,7 +3661,7 @@ End Sub
 Sub CLEARPBP ()
 
     If pbpDelay! <> 0 And PB% <> 1 Then
-        NL% = 1
+        nbrLines% = 1
         A1$ = ""
         B1$ = ""
         C1$ = ""
@@ -3822,7 +3822,7 @@ Sub SETSTAMINA ()
         If TR%(P9, 5) <> 0 And C(P9, I, 0) <> 0 And B%(P9, I, 18) = 0 Then SQ% = SQ% + A!(P9, I, 3) * TR%(P9, 5) / C(P9, I, 0): A!(P9, I, 3) = A!(P9, I, 3) * TR%(P9, 5) / C(P9, I, 0)
     Next
 
-	'So SQ% is a sum of A!(P9, X, 3) values...
+    'So SQ% is a sum of A!(P9, X, 3) values...
     For I = 0 To 13
         If TR%(P9, 5) = 0 And C(P9, I, 0) = 0 And B%(P9, I, 18) = 0 Then A!(P9, I, 3) = Int(A!(P9, I, 3) / SQ% * S9 + .5)
         If TR%(P9, 5) <> 0 And C(P9, I, 0) <> 0 And B%(P9, I, 18) = 0 Then A!(P9, I, 3) = Int(A!(P9, I, 3) / SQ% * S9 + .5)
@@ -3944,78 +3944,6 @@ Sub FATIGUE ()
 
 End Sub
 
-'------------------------------
-'    AUTOSETUP Subroutine
-'------------------------------
-' ...explanation...
-Sub AUTOSETUP ()
-    X3% = NG%(3)
-    U5 = NG%(8)
-    NF% = NG%(5)
-    C7 = NG%(7)
-    N = NG%(2)
-    pbpDelay! = NG%(4) / 10
-    CM% = NG%(9)
-    ST% = NG%(12)
-    TB% = NG%(6)
-    TF% = NG%(10)
-    N7% = NG%(14)
-
-    For P9 = 0 To 1
-        I1 = NG%(P9)
-        YN$ = YN$(P9)
-        Call GETATEAM(I1, YN$)
-        Call TEAMSETUP
-    Next P9
-
-    If TOU = 1 Then
-
-        FF$ = RTrim$(FF$)
-        YN$(0) = RTrim$(YN$(0))
-        YN$(1) = RTrim$(YN$(1))
-
-        Open diskPaths$(0) + FF$ + ".INF" For Input As #2
-        Input #2, X$
-        Input #2, X$: ' NUMBER OF REGIONS
-        For I = 1 To 16
-            Input #2, X$: ' NUMBER OF TEAMS IN REGION
-            Input #2, X$: ' NAME OF REGION
-        Next
-        For I = 1 To 16
-            For I1 = 1 To 16
-                For I2 = 1 To 4
-                    Input #2, N$(I, I1, I2): ' SEED SLOT NAME
-                    Input #2, N%(I, I1, I2): ' REGION, SEED NUMBER, MODE PLAY/TM#
-                Next
-            Next
-        Next
-
-        Close 2
-
-        TOU = 0
-        For I = 1 To 16
-            For I1 = 1 To 16
-                'PRINT LEN(YN$(0)),LEN(YN$(1)),LEN( N$(I,I1,1) )
-                If NG%(0) = N%(I, I1, 0) And YN$(0) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
-                    TOU = 1
-                    exitAll% = 1
-                    Exit For
-                End If
-
-                If NG%(1) = N%(I, I1, 0) And YN$(1) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
-                    TOU = 1
-                    exitAll% = 1
-                    Exit For
-                End If
-            Next
-
-            If exitAll% = 1 Then Exit For
-
-        Next
-
-    End If
-
-End Sub
 
 '------------------------------
 '    LINEUPS Subroutine
@@ -4025,7 +3953,7 @@ Sub LINEUPS ()
 
     Cls
     Color TR%(P9, 0), TR%(P9, 1): Print B$(P9);
-    Color 15, 0: Print " TEAM ROSTER    COACH: "; C$(P9);
+    Color 15, 0: Print " TEAM ROSTER    COACH: "; gameCoach$(P9);
     Print "  RECORD: ";
     Print Using "##"; TR%(P9, 7);: Print "-";: Print Using "##"; TR%(P9, 8)
     Color 14: Print "# NAME         POS FG  FT 3FG %3A ORB DRB RB PA  S  B CX EF  PT  F  FC  PTS/G"
@@ -4243,7 +4171,7 @@ Sub LINEUPS ()
 
                 Print AA$(P9, J);
                 Locate J + 3 - CV%, 3
-				Color TR%(P9, 0), TR%(P9, 1): Print Left$(AA$(P9, J), 12)
+                Color TR%(P9, 0), TR%(P9, 1): Print Left$(AA$(P9, J), 12)
                 Color 15, 0
 
             End If
@@ -4594,11 +4522,11 @@ Sub SHOTPERCENT ()
 
     F! = FX% + D1(D) + D8(0, D2(D)): J8% = 0
 
-    If N = P Then 
-		F! = F! + HF%(0, TR%(P, 6))
-	Else
-		If N <> 2 Then F! = F! + HF%(1, TR%(P, 6))
-	End If
+    If N = P Then
+        F! = F! + HF%(0, TR%(P, 6))
+    Else
+        If N <> 2 Then F! = F! + HF%(1, TR%(P, 6))
+    End If
 
     F3S% = Int(Rnd(1) * 100) + 1
     TPA% = 0
@@ -4610,7 +4538,7 @@ Sub SHOTPERCENT ()
 
     If OF%(P) = 9 And (F3S% > A!(P, B1(P, B), 19) + F5%(D, 3) + TPA% Or A!(P, B1(P, B), 19) = 0) Then
         F3S% = Int(Rnd(1) * 5) + 11
-		J8% = 1
+        J8% = 1
     Else
         If OF%(P) <> 9 Then
 
@@ -4851,11 +4779,11 @@ Sub SELECTID ()
     Else
         Locate 2, 33
         Color TR%(P9, 0), TR%(P9, 1)
-		Print B$(P9)
+        Print B$(P9)
         Color 15, 4
 
         Do
-            Locate , 33: Print "ANY CHANGE (YN)";
+            Locate 3, 33: Print "ANY CHANGE (YN)";
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -5259,13 +5187,14 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub BOXTOP ()
-    If N <> 2 Then 
-		Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N)
-		Print: Color 14, 0
-	End If
 
-    For I = 0 To 1: 
-		Print B$(I); Tab(17); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
+    If N <> 2 Then
+        Color TR%(N, 0), TR%(N, 1): Print "@ "; B$(N)
+        Print: Color 14, 0
+    End If
+
+    For I = 0 To 1:
+        Print B$(I); Tab(17); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
         If S!(0, 1) + S!(0, 2) = S!(1, 1) + S!(1, 2) Then Print ; Tab(23); Str$(S!(I, 3));
         If S!(0, 1) + S!(0, 2) <> S!(1, 1) + S!(1, 2) Then Print ; Tab(23); "- "; S!(I, 0): GoTo 8513
         If S!(0, 1) + S!(0, 2) + S!(0, 3) = S!(1, 1) + S!(1, 2) + S!(1, 3) Then Print ; Tab(26); Str$(S!(I, 4));
@@ -5565,7 +5494,7 @@ Sub SAVESTATS ()
             Next
             Close 2
 
-            Call TOURNEY
+            Call TOURNEY_Game
 
             'AD = AllDone?
             If AP%(1) < AP%(0) + AP%(2) Then
@@ -5765,12 +5694,12 @@ Sub SAVESTATS ()
             APT%(YY%, 0) = TR%(Q, 9)
             APT%(YY%, 1) = TR%(1 - Q, 9)
 
-            If S$(1) = "" Then S$(1) = "MEMORIAL COLISEUM"
+            If gameStadium$(1) = "" Then gameStadium$(1) = "MEMORIAL COLISEUM"
 
             If N = 2 Then
                 SITE$(YY%) = "NEUTRAL SITE"
             Else
-                SITE$(YY%) = S$(1)
+                SITE$(YY%) = gameStadium$(1)
             End If
 
             Open diskPaths$(1) + R$ For Output As #1
@@ -5827,6 +5756,83 @@ Sub SAVESTATS ()
     If AP <> 1 And AD = 1 Then End
 
 End Sub
+
+
+'------------------------------
+'    AUTOSETUP Subroutine
+'------------------------------
+' ...explanation...
+Sub AUTOSETUP ()
+
+    X3% = NG%(3)
+    U5 = NG%(8)
+    NF% = NG%(5)
+    C7 = NG%(7)
+    N = NG%(2)
+    pbpDelay! = NG%(4) / 10
+    CM% = NG%(9)
+    ST% = NG%(12)
+    TB% = NG%(6)
+    TF% = NG%(10)
+    N7% = NG%(14)
+
+    For P9 = 0 To 1
+        I1 = NG%(P9)
+        YN$ = YN$(P9)
+        Call GETATEAM(I1, YN$)
+        Call TEAMSETUP
+    Next P9
+
+    If TOU = 1 Then
+
+        FF$ = RTrim$(FF$)
+        YN$(0) = RTrim$(YN$(0))
+        YN$(1) = RTrim$(YN$(1))
+
+        Open diskPaths$(0) + FF$ + ".INF" For Input As #2
+        Input #2, X$
+        Input #2, X$ ' NUMBER OF REGIONS
+        For I = 1 To 16
+            Input #2, X$ ' NUMBER OF TEAMS IN REGION
+            Input #2, X$ ' NAME OF REGION
+        Next
+        For I = 1 To 16
+            For I1 = 1 To 16
+                For I2 = 1 To 4
+                    Input #2, N$(I, I1, I2) ' SEED SLOT NAME
+                    Input #2, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                Next
+            Next
+        Next
+
+        Close 2
+
+        TOU = 0
+
+        For I = 1 To 16
+            For I1 = 1 To 16
+                'PRINT LEN(YN$(0)),LEN(YN$(1)),LEN( N$(I,I1,1) )
+                If NG%(0) = N%(I, I1, 0) And YN$(0) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
+                    TOU = 1
+                    exitAll% = 1
+                    Exit For
+                End If
+
+                If NG%(1) = N%(I, I1, 0) And YN$(1) = N$(I, I1, 1) And N%(I, I1, 1) = 0 Then
+                    TOU = 1
+                    exitAll% = 1
+                    Exit For
+                End If
+            Next
+
+            If exitAll% = 1 Then Exit For
+
+        Next
+
+    End If
+
+End Sub
+
 
 '------------------------------
 '    EVENTS Subroutine
@@ -7906,3 +7912,4 @@ Sub RECORDSCHECK ()
     Close 1
 
 End Sub
+

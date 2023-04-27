@@ -3,37 +3,37 @@ Sub TOURNEY ()
     _Title "Courtside College Basketball - Tournament"
 
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
-    Shared homeScore%(), NG%(), visitingScore%()
+    Shared homeScore%(), scheduleNG%(), visitingScore%()
     Shared scheduleAP%()
 
     Dim NGG(MAX_TEAMS)
 
-    Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS)
-    Dim yr%(MAX_TEAMS)
+    Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS), YR%(MAX_TEAMS)
 
-    Dim CM$(1), LC$(2), SC$(2)
-    Dim TE$(1), TF$(1), TS$(1), U5$(3)
+    Dim coachOpt$(1), foulShotOpt$(1), location$(2)
+    Dim playMode$(0 To 3), sclockOpt$(2), threeFtOpt$(1), threePtOpt$(1)
 
-    CM$(0) = "COACH AND SELECT SHOTS           "
-    CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-    LC$(1) = "HOME COURT ADVANTAGE"
-    LC$(2) = "NEUTRAL SITE        "
-    SC$(0) = "NO SHOT CLOCK"
-    SC$(1) = "45 SEC CLOCK "
-    SC$(2) = "35 SEC CLOCK "
-    TE$(0) = "SHOOT 1+1"
-    TE$(1) = "SHOOT 2  "
-    TF$(0) = "N": TF$(1) = "Y"
-    TS$(0) = "N"
-    TS$(1) = "Y"
-    U5$(0) = "HUMAN OPPONENT            "
-    U5$(1) = "COMPUTER IS VISITING TEAM "
-    U5$(2) = "COMPUTER IS HOME TEAM     "
-    U5$(3) = "COMPUTER VS COMPUTER      "
+    coachOpt$(0) = "COACH AND SELECT SHOTS           "
+    coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+    location$(1) = "HOME COURT ADVANTAGE"
+    location$(2) = "NEUTRAL SITE        "
+    sclockOpt$(0) = "NO SHOT CLOCK"
+    sclockOpt$(1) = "45 SEC CLOCK "
+    sclockOpt$(2) = "35 SEC CLOCK "
+    foulShotOpt$(0) = "SHOOT 1+1"
+    foulShotOpt$(1) = "SHOOT 2  "
+    threeFtOpt$(0) = "N"
+    threeFtOpt$(1) = "Y"
+    threePtOpt$(0) = "N"
+    threePtOpt$(1) = "Y"
+    playMode$(0) = "HUMAN OPPONENT            "
+    playMode$(1) = "COMPUTER IS VISITING TEAM "
+    playMode$(2) = "COMPUTER IS HOME TEAM     "
+    playMode$(3) = "COMPUTER VS COMPUTER      "
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
 
-    10 Spec$ = diskPaths$(0) + "*.TOU"
+    Spec$ = diskPaths$(0) + "*.TOU"
     null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
     Count% = DirCount%
 
@@ -41,9 +41,9 @@ Sub TOURNEY ()
         'This was added to handle if no TOU files are available
         'Original game would just try to push ahead anyway
         Locate 10
-        Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, Pass)
+        Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
     Else
         ReDim tournamentFiles$(0 To Count%)
 
@@ -59,16 +59,16 @@ Sub TOURNEY ()
         'WE have to make all this a sub to keep the logic cleaner
         Color 7, 0
         Cls
-        NG%(0, 8) = 0
-        NG%(0, 3) = 1
-        NG%(0, 7) = 0
-        NG%(0, 2) = 1
-        NG%(0, 5) = 5
+        scheduleNG%(0, 8) = 0
+        scheduleNG%(0, 3) = 1
+        scheduleNG%(0, 7) = 0
+        scheduleNG%(0, 2) = 1
+        scheduleNG%(0, 5) = 5
         yearNumber$(0, 0) = ""
         yearNumber$(0, 1) = ""
 
         For I = 1 To 500
-            visitingTeam$(I) = "": NG%(I, 13) = 0
+            visitingTeam$(I) = "": scheduleNG%(I, 13) = 0
             homeTeam$(I) = ""
         Next
 
@@ -107,15 +107,15 @@ Sub TOURNEY ()
                 T1 = Selection%
 
                 Locate 2, 33: Print targetFile$
-				
-				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
-					I$ = GetKeyPress$
-				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                Do
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
             End If
-			
-			Color 15, 0
+
+            Color 15, 0
 
         Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
@@ -144,13 +144,13 @@ Sub TOURNEY ()
                 Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
                 Get #1, I
 
-                For X = 0 To 14: NG%(I, X) = CVI(Q$(X + 1)): Next
+                For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
                 For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
 
                 visitingScore%(I) = CVI(Q$(16)): homeScore%(I) = CVI(Q$(17))
                 visitingTeam$(I) = Q$(18): homeTeam$(I) = Q$(19)
 
-                For X = 1 To 3: NG%(I, X + 14) = CVI(Q$(X + 23)): Next
+                For X = 1 To 3: scheduleNG%(I, X + 14) = CVI(Q$(X + 23)): Next
                 For X = 2 To 3
                     yearNumber$(I, X) = RTrim$(yearNumber$(I, X))
                 Next
@@ -185,15 +185,15 @@ Sub TOURNEY ()
                 For X = 1 To 20
                     Locate X + 2, 1
                     If X + NS% * 20 > scheduleAP%(0) Then Exit For
-                    Print Using "###      ##   ##   ##"; X + NS% * 20; NG%(X + NS% * 20, 15); NG%(X + NS% * 20, 16); NG%(X + NS% * 20, 17);
+                    Print Using "###      ##   ##   ##"; X + NS% * 20; scheduleNG%(X + NS% * 20, 15); scheduleNG%(X + NS% * 20, 16); scheduleNG%(X + NS% * 20, 17);
                     'LOCATE , 17: PRINT yearNumber$(X + NS% * 20, 2);
                     Locate , 25: Print visitingTeam$(X + NS% * 20); " ";
-                    If NG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitingScore%(X + NS% * 20);
+                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitingScore%(X + NS% * 20);
                     Locate , 46: Print homeTeam$(X + NS% * 20); " ";
-                    If NG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScore%(X + NS% * 20);
-                    Locate , 67: If NG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
-                    Locate , 71: Print TS$(NG%(X + NS% * 20, 3));
-                    Locate , 74: Print Left$(SC$(NG%(X + NS% * 20, 7)), 2)
+                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScore%(X + NS% * 20);
+                    Locate , 67: If scheduleNG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
+                    Locate , 71: Print threePtOpt$(scheduleNG%(X + NS% * 20, 3));
+                    Locate , 74: Print Left$(sclockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
                 Next
 
                 I$ = GetKeyPress$
@@ -217,11 +217,12 @@ Sub TOURNEY ()
                         Call EditGame_TOURNEY
 
                     Case "P":
-                        350 ' *** SAVE SCHEDULE FILE ***
+                        ' *** SAVE SCHEDULE FILE ***
                         '    IF _FILEEXISTS(diskPaths$(0) + targetFile$ + ".TNY") THEN
                         '       KILL diskPaths$(0) + targetFile$ + ".TNY"
                         '    END IF
 
+						'-- This code actually loads the TOU file
                         Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                         For X = 0 To 14
@@ -233,37 +234,38 @@ Sub TOURNEY ()
                         Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                         For I = 1 To scheduleAP%(0)
-                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(I, X)): Next
+                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
                             For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
                             LSet Q$(16) = MKI$(visitingScore%(I)): LSet Q$(17) = MKI$(homeScore%(I))
                             LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
-                            For X = 1 To 3: LSet Q$(X + 23) = MKI$(NG%(I, X + 14)): Next
+                            For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
                             Put #1, I
                         Next
 
                         Close 1
 
-						' *** PLAY GAMES ***
-						Color , 0: Cls
-						JJ = 7
-						Locate 6, 8: Color 15, 4
-						Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-						Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-						Locate 7 + JJ, 8
-						Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+                        ' *** PLAY GAMES ***
+                        Color , 0: Cls
+                        JJ = 7
+                        Locate 6, 8: Color 15, 4
+                        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+                        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+                        Locate 7 + JJ, 8
+                        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-                        Do						
-							Locate 7, 32
-                            Locate , 12: Print "TOTAL GAMES ="; scheduleAP%(0)
-                            Locate , 12: Print "SELECT GAME # TO START AND END WITH": Print
-                            Locate , 12: Input "ENTER START GAME #: "; SG%: Print
-                            Locate , 12: Input "ENTER END GAME #:"; EG%
-                            Locate , 12: Print "ANY CHANGE (YN)"
+                        Do
+                            'Locate 7, 32
+                            Locate 8, 12: Print "TOTAL GAMES ="; scheduleAP%(0)
+                            Locate 9, 12: Print "SELECT GAME # TO START AND END WITH": Print
+                            Locate 10, 12: Input "ENTER START GAME #: "; SG%: Print
+                            Locate 11, 12: Input "ENTER END GAME #:"; EG%
+                            Locate 13, 12: Print "ANY CHANGE (YN)"
                             I$ = GetKeyPress$
                         Loop Until UCase$(I$) = "N"
 
                         If SG% <= 0 Then SG% = 1
                         If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
+
                         Open "TOURNEY" For Output As #2
                         Print #2, targetFile$ ' + ".TNY"
                         Print #2, SG%
@@ -277,24 +279,55 @@ Sub TOURNEY ()
                             If L = 6 Then HR = Val(Left$(yearNumber$(I, 2), 2)): MIN = Val(Mid$(yearNumber$(I, 2), 4, 2))
                             MON%(I) = Val(Left$(yearNumber$(I, 3), 2))
                             DY%(I) = Val(Mid$(yearNumber$(I, 3), 4, 2))
-                            yr%(I) = Val(Mid$(yearNumber$(I, 3), 7, 2))
+                            YR%(I) = Val(Mid$(yearNumber$(I, 3), 7, 2))
                             T$ = Right$(yearNumber$(I, 2), 1)
                             If UCase$(T$) = "P" And Left$(yearNumber$(I, 2), 2) <> "12" Then HR = HR + 12
                             TM = HR * 60 + MIN
-                            NGG(I) = Int(TM / 30 - 18): NG%(I, 12) = NGG(I)
+                            NGG(I) = Int(TM / 30 - 18): scheduleNG%(I, 12) = NGG(I)
                         Next
 
                         Open "TICKER" For Output As #2
-                        For I = 1 To 32: For I1 = 0 To 1: For I2 = 1 To 14
-                        Print #2, -1: Next: Next: Next
-                        For I = 1 To 32: For I1 = 0 To 1: Print #2, "XXX"
-                        Next: Next
+                        For I = 1 To 32:
+                            For I1 = 0 To 1:
+                                For I2 = 1 To 14
+                                    Print #2, -1
+                                Next
+                            Next
+                        Next
+                        For I = 1 To 32:
+                            For I1 = 0 To 1:
+                                Print #2, "XXX"
+                            Next
+                        Next
                         For I = SG% To SG% + 31
-                            Print #2, NG%(I, 12)
+                            Print #2, scheduleNG%(I, 12)
                         Next
                         Close 2
 
-                        Run "COLHOOP.EXE"
+                        Call COLHOOP
+
+						'-- This code actually loads the TOU file
+                        Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+
+                        For X = 0 To 14
+                            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                        Next
+
+                        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+                        For I = 1 To scheduleAP%(0)
+                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
+                            For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
+                            LSet Q$(16) = MKI$(visitingScore%(I)): LSet Q$(17) = MKI$(homeScore%(I))
+                            LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
+                            For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
+                            Put #1, I
+                        Next
+
+                        Close 1
+
                     Case "Q":
                         'Exit Sub
                 End Select
@@ -314,29 +347,29 @@ End Sub
 Sub EditGame_TOURNEY ()
 
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
-    Shared NG%(), scheduleAP%()
+    Shared scheduleNG%(), scheduleAP%()
 
-    Dim CM$(1), LC$(2), SC$(2)
-    Dim TE$(1), TF$(1), TS$(1), U5$(3)
+    Dim coachOpt$(1), location$(2), sclockOpt$(2)
+    Dim foulShotOpt$(1), threeFtOpt$(1), threePtOpt$(1), playMode$(3)
 
-    Dim U6!
+    Dim displayPause!
 
-    CM$(0) = "COACH AND SELECT SHOTS           "
-    CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-    LC$(1) = "HOME COURT ADVANTAGE"
-    LC$(2) = "NEUTRAL SITE        "
-    SC$(0) = "NO SHOT CLOCK"
-    SC$(1) = "45 SEC CLOCK "
-    SC$(2) = "35 SEC CLOCK "
-    TE$(0) = "SHOOT 1+1"
-    TE$(1) = "SHOOT 2  "
-    TF$(0) = "N": TF$(1) = "Y"
-    TS$(0) = "N"
-    TS$(1) = "Y"
-    U5$(0) = "HUMAN OPPONENT            "
-    U5$(1) = "COMPUTER IS VISITING TEAM "
-    U5$(2) = "COMPUTER IS HOME TEAM     "
-    U5$(3) = "COMPUTER VS COMPUTER      "
+    coachOpt$(0) = "COACH AND SELECT SHOTS           "
+    coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+    location$(1) = "HOME COURT ADVANTAGE"
+    location$(2) = "NEUTRAL SITE        "
+    sclockOpt$(0) = "NO SHOT CLOCK"
+    sclockOpt$(1) = "45 SEC CLOCK "
+    sclockOpt$(2) = "35 SEC CLOCK "
+    foulShotOpt$(0) = "SHOOT 1+1"
+    foulShotOpt$(1) = "SHOOT 2  "
+    threeFtOpt$(0) = "N": threeFtOpt$(1) = "Y"
+    threePtOpt$(0) = "N"
+    threePtOpt$(1) = "Y"
+    playMode$(0) = "HUMAN OPPONENT            "
+    playMode$(1) = "COMPUTER IS VISITING TEAM "
+    playMode$(2) = "COMPUTER IS HOME TEAM     "
+    playMode$(3) = "COMPUTER VS COMPUTER      "
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
 
@@ -355,16 +388,16 @@ Sub EditGame_TOURNEY ()
         149 Cls: Color 2: Print Tab(29); "SELECT GAME OPTIONS": Print
         151 Locate 2, 2: Color 14: Print "    ";: Color 15: Print "VISITING TEAM: "; V$
         152 Locate 3, 2: Color 14: Print "    ";: Color 15: Print "HOME TEAM: "; H$
-        153 Locate 4, 2: Color 14: Print "(1) ";: Color 15: Print U5$(NG%(NG%, 8))
-        154 Locate 5, 2: Color 14: Print "(2) ";: Color 15: Print "3-POINT SHOT: "; TS$(NG%(NG%, 3))
-        155 Locate 6, 2: Color 14: Print "(3) ";: Color 15: Print "SHOT CLOCK "; SC$(NG%(NG%, 7))
-        156 Locate 7, 2: Color 14: Print "(4) ";: Color 15: Print "HOME COURT ADVANTAGE: "; LC$(NG%(NG%, 2))
-        157 Locate 8, 2: Color 14: Print "(5) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; NG%(NG%, 4) / 10
-        158 Locate 9, 2: Color 14: Print "(6) ";: Color 15: Print "FOULS TO DISQUALIFY: "; NG%(NG%, 5)
-        159 Locate 10, 2: Color 14: Print "(7) ";: Color 15: Print "HUMAN COACHES WILL: "; CM$(NG%(NG%, 9))
-        162 Locate 11, 2: Color 14: Print "(8) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(NG%(NG%, 6))
-        164 Locate 12, 2: Color 14: Print "(9) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(NG%(NG%, 10))
-        165 Locate 13, 2: Color 14: Print "(A) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(NG%(NG%, 14))
+        153 Locate 4, 2: Color 14: Print "(1) ";: Color 15: Print playMode$(scheduleNG%(NG%, 8))
+        154 Locate 5, 2: Color 14: Print "(2) ";: Color 15: Print "3-POINT SHOT: "; threePtOpt$(scheduleNG%(NG%, 3))
+        155 Locate 6, 2: Color 14: Print "(3) ";: Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(NG%, 7))
+        156 Locate 7, 2: Color 14: Print "(4) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
+        157 Locate 8, 2: Color 14: Print "(5) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(NG%, 4) / 10
+        158 Locate 9, 2: Color 14: Print "(6) ";: Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)
+        159 Locate 10, 2: Color 14: Print "(7) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(scheduleNG%(NG%, 9))
+        162 Locate 11, 2: Color 14: Print "(8) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
+        164 Locate 12, 2: Color 14: Print "(9) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; threeFtOpt$(scheduleNG%(NG%, 10))
+        165 Locate 13, 2: Color 14: Print "(A) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; threeFtOpt$(scheduleNG%(NG%, 14))
         163 Locate 14, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT SETTINGS"
 
         Do
@@ -376,48 +409,48 @@ Sub EditGame_TOURNEY ()
 
         Select Case I8%
             Case 1:
-                180 NG%(NG%, 8) = NG%(NG%, 8) + 1
-                If NG%(NG%, 8) > 3 Then NG%(NG%, 8) = 0
+                180 scheduleNG%(NG%, 8) = scheduleNG%(NG%, 8) + 1
+                If scheduleNG%(NG%, 8) > 3 Then scheduleNG%(NG%, 8) = 0
                 GoTo 151
 
             Case 2:
-                184 NG%(NG%, 3) = 1 - NG%(NG%, 3)
+                184 scheduleNG%(NG%, 3) = 1 - scheduleNG%(NG%, 3)
                 GoTo 154
 
             Case 3:
-                185 NG%(NG%, 7) = 1 + NG%(NG%, 7)
-                If NG%(NG%, 7) > 2 Then NG%(NG%, 7) = 0
+                185 scheduleNG%(NG%, 7) = 1 + scheduleNG%(NG%, 7)
+                If scheduleNG%(NG%, 7) > 2 Then scheduleNG%(NG%, 7) = 0
                 GoTo 155
 
             Case 4:
-                186 N = 1 - (NG%(NG%, 2) - 1)
-                NG%(NG%, 2) = N + 1
+                186 N = 1 - (scheduleNG%(NG%, 2) - 1)
+                scheduleNG%(NG%, 2) = N + 1
                 GoTo 156
 
             Case 5:
-                187 Locate 8, 32: Input U6!
-                NG%(NG%, 4) = U6! * 10
+                187 Locate 8, 32: Input displayPause!
+                scheduleNG%(NG%, 4) = displayPause! * 10
                 GoTo 157
 
             Case 6:
-                188 NG%(NG%, 5) = 1 + NG%(NG%, 5)
-                If NG%(NG%, 5) > 6 Then NG%(NG%, 5) = 5
+                188 scheduleNG%(NG%, 5) = 1 + scheduleNG%(NG%, 5)
+                If scheduleNG%(NG%, 5) > 6 Then scheduleNG%(NG%, 5) = 5
                 GoTo 158
 
             Case 7:
-                189 NG%(NG%, 9) = 1 - NG%(NG%, 9)
+                189 scheduleNG%(NG%, 9) = 1 - scheduleNG%(NG%, 9)
                 GoTo 159
 
             Case 8:
-                192 NG%(NG%, 6) = 1 - NG%(NG%, 6)
+                192 scheduleNG%(NG%, 6) = 1 - scheduleNG%(NG%, 6)
                 GoTo 162
 
             Case 9:
-                193 NG%(NG%, 10) = 1 - NG%(NG%, 10)
+                193 scheduleNG%(NG%, 10) = 1 - scheduleNG%(NG%, 10)
                 GoTo 149
 
             Case 10:
-                194 NG%(NG%, 14) = 1 - NG%(NG%, 14)
+                194 scheduleNG%(NG%, 14) = 1 - scheduleNG%(NG%, 14)
                 GoTo 149
 
         End Select
@@ -425,3 +458,4 @@ Sub EditGame_TOURNEY ()
     Loop Until I8% = 0
 
 End Sub
+

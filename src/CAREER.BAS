@@ -75,14 +75,14 @@ End Sub
 ' ...explanation...
 Sub CreateCareerFile ()
 
-    Dim NB%, TMR%
+    Dim NB%, careerTMR
 
-    TMR% = 945
+    careerTMR = 945
 
-    Dim A$(62)
+    Dim careerA$(62)
     Dim A(62, 14)
-    Dim W0!(62), W1!(62)
-    Dim Z!(15), Z1!(15)
+    Dim careerW0!(62), careerW1!(62)
+    Dim careerZ!(15), careerZ1!(15)
 
     Shared AR$()
     Shared ARS!()
@@ -158,21 +158,21 @@ Sub CreateCareerFile ()
 
                     Open diskPaths$(1) + Z1$ For Input As #1
                     Input #1, B$
-                    For I = 0 To 13: Input #1, A$(I)
-                        For J = 0 To 13: Input #1, A(I, J): Next: Input #1, W0!(I)
-                        Input #1, W1!(I)
-                        Locate 21, 38: Color 5: TMR% = TMR% - 1
-                        Print Using "####"; TMR%
+                    For I = 0 To 13: Input #1, careerA$(I)
+                        For J = 0 To 13: Input #1, A(I, J): Next: Input #1, careerW0!(I)
+                        Input #1, careerW1!(I)
+                        Locate 21, 38: Color 5: careerTMR = careerTMR - 1
+                        Print Using "####"; careerTMR
                     Next
-                    For L = 0 To 15: Input #1, Z!(L): Next
-                    For L = 0 To 15: Input #1, Z1!(L): Next
+                    For L = 0 To 15: Input #1, careerZ!(L): Next
+                    For L = 0 To 15: Input #1, careerZ1!(L): Next
                     Close #1
                     For I = 0 To 61
                         N = 1
-                        If A$(I) <> "END" And A$(I) <> "XXX" And A$(I) <> "" Then
+                        If careerA$(I) <> "END" And careerA$(I) <> "XXX" And careerA$(I) <> "" Then
                             NB% = NB% + 1
                         Else
-                            A$(I) = ""
+                            careerA$(I) = ""
                         End If
 
                         For J = 0 To 13
@@ -180,10 +180,10 @@ Sub CreateCareerFile ()
                         Next J
                         ARS!(N, I, 14) = 1
                         ARS!(N, I, 15) = statYear
-                        W0S!(N, I) = W0!(I)
-                        W1S!(N, I) = W1!(I)
+                        W0S!(N, I) = careerW0!(I)
+                        W1S!(N, I) = careerW1!(I)
                     Next I
-                    For I = 0 To 61: AR$(I) = A$(I): Next
+                    For I = 0 To 61: AR$(I) = careerA$(I): Next
 
                     'Are 0/1 the only values this can have?
                     If finalUpdate% = 1 Then Call MergeCareerFile(Z$)
@@ -207,8 +207,8 @@ Sub CreateCareerFile ()
                             Write #2, W0S!(N, I)
                             Write #2, W1S!(N, I)
                             Locate 21, 38
-                            TMR% = TMR% - 1
-                            Color 5: Print Using "####"; TMR%
+                            careerTMR = careerTMR - 1
+                            Color 5: Print Using "####"; careerTMR
                         Next I
                     Next N
                     Close #2
@@ -398,7 +398,7 @@ Sub ViewCareerRecords ()
                     Locate 2, 33: Print targetFile$
 
                     Do
-                        Locate , 33: Print "ANY CHANGE (YN)";
+                        Locate 3, 33: Print "ANY CHANGE (YN)";
                         I$ = GetKeyPress
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -585,7 +585,7 @@ Sub DiskSelection_CAREER ()
                 Color 15, 4
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -610,10 +610,10 @@ Sub DoTheMerge ()
     TMR1% = 1875
     NB% = -1
 
-    Dim A$(62)
+    Dim careerA$(62)
     Dim A(62, 14)
-    Dim W0!(62), W1!(62)
-    Dim Z!(15), Z1!(15)
+    Dim careerW0!(62), careerW1!(62)
+    Dim careerZ!(15), careerZ1!(15)
 
     Shared AR$()
     Shared ARS!(), W0S!(), W1S!()
@@ -671,7 +671,7 @@ Sub DoTheMerge ()
                 Locate 2, 33: Print targetFile$
 
                 Do
-                    Locate , 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -754,22 +754,22 @@ Sub DoTheMerge ()
 
                     Open diskPaths$(1) + Z1$ For Input As #1
                     Input #1, B$
-                    For I = 0 To 13: Input #1, A$(I)
+                    For I = 0 To 13: Input #1, careerA$(I)
                         For J = 0 To 13: Input #1, A(I, J): Next
-                        Input #1, W0!(I)
-                        Input #1, W1!(I)
+                        Input #1, careerW0!(I)
+                        Input #1, careerW1!(I)
                         Locate 21, 38: Color 5
                         TMR1% = TMR1% - 1: Print Using "####"; TMR1%
                     Next
-                    For L = 0 To 15: Input #1, Z!(L): Next
-                    For L = 0 To 15: Input #1, Z1!(L): Next
+                    For L = 0 To 15: Input #1, careerZ!(L): Next
+                    For L = 0 To 15: Input #1, careerZ1!(L): Next
                     Close #1
                     For I = 0 To 13
                         RR = 0
                         CHK = 0
                         For J = 0 To 61
 
-                            If AR$(J) = A$(I) Then
+                            If AR$(J) = careerA$(I) Then
 
                                 For W = 1 To 15
                                     If ARS!(W, J, 15) = statYear Then
@@ -795,26 +795,26 @@ Sub DoTheMerge ()
 
                                 ARS!(N, J, 14) = 1
                                 ARS!(N, J, 15) = statYear
-                                W0S!(N, J) = W0!(J)
-                                W1S!(N, J) = W1!(J)
+                                W0S!(N, J) = careerW0!(J)
+                                W1S!(N, J) = careerW1!(J)
 
                             Else
                                 RR = RR + 1
                                 If RR = 62 Then
-                                    If A$(I) <> "END" And A$(I) <> "XXX" And A$(I) <> "" Then
+                                    If careerA$(I) <> "END" And careerA$(I) <> "XXX" And careerA$(I) <> "" Then
                                         NB% = NB% + 1
-                                        AR$(NB%) = A$(I)
+                                        AR$(NB%) = careerA$(I)
                                         N = 1
                                         For K = 0 To 13: ARS!(N, NB%, K) = A(I, K): Next
                                         ARS!(N, NB%, 14) = 1
                                         ARS!(N, NB%, 15) = statYear
-                                        W0S!(N, NB%) = W0!(NB%)
-                                        W1S!(N, NB%) = W1!(NB%)
+                                        W0S!(N, NB%) = careerW0!(NB%)
+                                        W1S!(N, NB%) = careerW1!(NB%)
                                     End If
 
                                 End If
 
-                            End If 'Done comparing AR$() to A$()
+                            End If 'Done comparing AR$() to careerA$()
 
                         Next J
 
@@ -857,7 +857,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_CAREER (yearNumber$, numberTeams)
 
-    Shared L%(), careerT%()
+    Shared statsL%(), careerT%()
 
     Selection% = 1
     Count% = numberTeams
@@ -898,7 +898,7 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams)
         defFGPctAdj% = CVI(Q$(2))
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
-        For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: careerT%(I) = CVI(Q$(I + 10)): Next
         Close 1
 

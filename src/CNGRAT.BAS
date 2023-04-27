@@ -4,11 +4,11 @@ Sub CNGRAT (userChoice)
 
     Shared V1%, V2%
     Shared defFGPctAdj%, staminaRating%
-    Shared A1$, C$, S$
+    Shared mascot$, coach$, stadium$
 
-    Shared A!(), DF!(), X!()
+    Shared statsA!(), DF!(), X!()
     Shared cngratA$(), P$()
-    Shared L%(), T%(), T1%()
+    Shared statsL%(), T%(), compT1%()
 
     Do
         ReDim menuChoices$(1 To 4)
@@ -58,10 +58,10 @@ Sub CNGRAT (userChoice)
                     LPrint "AVG SHOTS PER GAME = "; T%(3); "      DEF FG ADJ = "; defFGPctAdj%
                     LPrint "OPP PCT OF 3FG ATT ADJ = "; V2%; "  OPP 3FG PCT ADJ = "; V1%
                     LPrint
-                    LPrint "DEF STEAL ADJ "; L%(0)
-                    LPrint "OFF TURNOVER ADJ "; L%(1)
-                    LPrint "DEF TURNOVER ADJ "; L%(2)
-                    LPrint "OFF FOUL ADJ "; L%(3)
+                    LPrint "DEF STEAL ADJ "; statsL%(0)
+                    LPrint "OFF TURNOVER ADJ "; statsL%(1)
+                    LPrint "DEF TURNOVER ADJ "; statsL%(2)
+                    LPrint "OFF FOUL ADJ "; statsL%(3)
                     LPrint
                     LPrint "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
                     LPrint
@@ -69,8 +69,8 @@ Sub CNGRAT (userChoice)
                     For I = 0 To 13
                         If cngratA$(I) <> "XXX" Then
                             LPrint cngratA$(I); Tab(15);
-                            LPrint Using "### ### ### ### ### "; A!(I, 0); A!(I, 1); X!(I, 4); A!(I, 2); A!(I, 3);
-                            LPrint Using "## ## ## ## ## ### ###"; A!(I, 4); A!(I, 5); A!(I, 6); X!(I, 5); X!(I, 6); X!(I, 3); X!(I, 2)
+                            LPrint Using "### ### ### ### ### "; statsA!(I, 0); statsA!(I, 1); X!(I, 4); statsA!(I, 2); statsA!(I, 3);
+                            LPrint Using "## ## ## ## ## ### ###"; statsA!(I, 4); statsA!(I, 5); statsA!(I, 6); X!(I, 5); X!(I, 6); X!(I, 3); X!(I, 2)
                         End If
                     Next I
 
@@ -103,21 +103,21 @@ Sub CNGRAT (userChoice)
                     Color 14, 0: Print "  OPP 3FG PCT ADJ = ";
                     Color 15, 0: Print V1%;
                     Color 14, 0: Print "   DEF STEAL ADJ ";
-                    Color 15, 0: Print L%(0)
+                    Color 15, 0: Print statsL%(0)
                     Color 14, 0: Print "OFF TURNOVER ADJ ";
-                    Color 15, 0: Print L%(1);
+                    Color 15, 0: Print statsL%(1);
                     Color 14, 0: Print "    DEF TURNOVER ADJ ";
-                    Color 15, 0: Print L%(2);
+                    Color 15, 0: Print statsL%(2);
                     Color 14, 0: Print "    OFF FOUL ADJ ";
-                    Color 15, 0: Print L%(3)
+                    Color 15, 0: Print statsL%(3)
                     Print
                     Color 2, 0: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
                     Color 15, 0
                     For I = 0 To 13
                         If cngratA$(I) <> "XXX" Then
                             Print cngratA$(I); Tab(16);
-                            Print Using "### ### ### ### ### "; A!(I, 0); A!(I, 1); X!(I, 4); A!(I, 2); A!(I, 3);
-                            Print Using "## ## ## ### ##  ###  ###"; A!(I, 4); A!(I, 5); A!(I, 6); X!(I, 5); X!(I, 6); X!(I, 3); X!(I, 2)
+                            Print Using "### ### ### ### ### "; statsA!(I, 0); statsA!(I, 1); X!(I, 4); statsA!(I, 2); statsA!(I, 3);
+                            Print Using "## ## ## ### ##  ###  ###"; statsA!(I, 4); statsA!(I, 5); statsA!(I, 6); X!(I, 5); X!(I, 6); X!(I, 3); X!(I, 2)
                         End If
                     Next I
                     Print " B- BLOCK SHOT RATING           FC- FOUL COMMIT RATING"
@@ -185,7 +185,7 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
             Color 15, 4
 
             Do
-                Locate , 33
+                Locate 3, 33
                 Print "ANY CHANGE (YN)";
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -210,11 +210,11 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
 
     Shared V1%, V2%
     Shared avgAttendance%, defFGPctAdj%, staminaRating%
-    Shared A1$, C$, S$
+    Shared mascot$, coach$, stadium$
 
-    Shared L%(), T%(), T1%()
+    Shared statsL%(), T%(), compT1%()
     Shared cngratA$(), P$()
-    Shared A!(), DF!(), RS!(), X!()
+    Shared statsA!(), DF!(), RS!(), X!()
 
     '-- these singular variables all need values
     '   Do
@@ -223,23 +223,23 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
     Print "CHANGE LEAGUE INFORMATION": X% = 2: Color 15
     Print " 1. TEAM NUMBER "; teamIdx%
     Print " 2. DISK ID "; yearNumber$
-    Print " 3. TEAM NAME "; teamName$; Tab(40); "20. NICKNAME "; A1$
-    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "21. COACH "; C$
+    Print " 3. TEAM NAME "; teamName$; Tab(40); "20. NICKNAME "; mascot$
+    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "21. COACH "; coach$
     Print " 5. DEF FG% ADJ "; defFGPctAdj%
     Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(40); "22. AVG ATTENDANCE "; avgAttendance%
     Print " 7. DEF 3FG% ADJ "; V1%; Tab(40); "23. WINS "; T%(7)
-    Print " 8. OFF STEAL RATING "; L%(0); Tab(40); "24. LOSSES "; T%(8)
-    Print " 9. OFF TURNOVER RATING "; L%(1); Tab(40); "25. POWER RATING "; T%(9)
-    Print "10. DEF TURNOVER ADJ "; L%(2)
-    Print "11. DEF FOUL ADJ "; L%(3)
-    Print "12. ENTER 99 IF USING 6-9 "; L%(4)
+    Print " 8. OFF STEAL RATING "; statsL%(0); Tab(40); "24. LOSSES "; T%(8)
+    Print " 9. OFF TURNOVER RATING "; statsL%(1); Tab(40); "25. POWER RATING "; T%(9)
+    Print "10. DEF TURNOVER ADJ "; statsL%(2)
+    Print "11. DEF FOUL ADJ "; statsL%(3)
+    Print "12. ENTER 99 IF USING 6-9 "; statsL%(4)
     Print "13. TEXT COLOR (0-15) "; T%(0)
     Print "14. BACKGROUND (0-7) "; T%(1)
     Print "15. TEAM FGA/G "; T%(3)
     Print "16. LEAGUE FGA/G "; T%(4)
     Print "17. TEAM GAMES PLAYED "; T%(5)
     Print "18. HOMECOURT FACTOR "; T%(6)
-    Print "19. ARENA NAME "; S$
+    Print "19. ARENA NAME "; stadium$
 
     Do
         C1 = 1
@@ -273,20 +273,20 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             149 Locate 6: Input " 5. DEF FG% ADJ "; defFGPctAdj%: If C1 = 1 Then 190
             150 Locate 7: Input " 6. DEF 3FGA/FGA ADJ "; V2%: If C1 = 1 Then 190
             151 Locate 8: Input " 7. DEF 3FG% ADJ "; V1%: If C1 = 1 Then 190
-            152 Locate 9: Input " 8. OFF STEAL RATING "; L%(0): If C1 = 1 Then 190
-            153 Locate 10: Input " 9. OFF TURNOVER RATING "; L%(1): If C1 = 1 Then 190
-            154 Locate 11: Input "10. DEF TURNOVER ADJ "; L%(2): If C1 = 1 Then 190
-            155 Locate 12: Input "11. DEF FOUL ADJ "; L%(3): If C1 = 1 Then 190
-            156 Locate 13: Input "12. ENTER 99 IF USING 6-9 "; L%(4): If C1 = 1 Then 190
+            152 Locate 9: Input " 8. OFF STEAL RATING "; statsL%(0): If C1 = 1 Then 190
+            153 Locate 10: Input " 9. OFF TURNOVER RATING "; statsL%(1): If C1 = 1 Then 190
+            154 Locate 11: Input "10. DEF TURNOVER ADJ "; statsL%(2): If C1 = 1 Then 190
+            155 Locate 12: Input "11. DEF FOUL ADJ "; statsL%(3): If C1 = 1 Then 190
+            156 Locate 13: Input "12. ENTER 99 IF USING 6-9 "; statsL%(4): If C1 = 1 Then 190
             157 Locate 14: Input "13. TEXT COLOR (0-15) "; T%(0): If C1 = 1 Then 190
             158 Locate 15: Input "14. BACKGROUND (0-7) "; T%(1): If C1 = 1 Then 190
             159 Locate 16: Input "15. TEAM FGA/G "; T%(3): If C1 = 1 Then 190
             160 Locate 17: Input "16. LEAGUE FGA/G "; T%(4): If C1 = 1 Then 190
             161 Locate 18: Input "17. TEAM GAMES PLAYED "; T%(5): If C1 = 1 Then 190
             164 Locate 19: Input "18. HOMECOURT FACTOR "; T%(6): If C1 = 1 Then 190
-            165 Locate 20: Input "19. ARENA NAME "; S$: If C1 = 1 Then 190
-            166 Locate 4, 40: Input "20. NICKNAME "; A1$: If C1 = 1 Then 190
-            167 Locate 5, 40: Input "21. COACH "; C$: If C1 = 1 Then 190
+            165 Locate 20: Input "19. ARENA NAME "; stadium$: If C1 = 1 Then 190
+            166 Locate 4, 40: Input "20. NICKNAME "; mascot$: If C1 = 1 Then 190
+            167 Locate 5, 40: Input "21. COACH "; coach$: If C1 = 1 Then 190
             168 Locate 7, 40: Input "22. AVG ATTENDANCE "; avgAttendance%: If C1 = 1 Then 190
             169 Locate 8, 40: Input "23. WINS "; T%(7): If C1 = 1 Then 190
             170 Locate 9, 40: Input "24. LOSSES "; T%(8): If C1 = 1 Then 190
@@ -338,13 +338,13 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             1885 Cls: Print " 1. NAME "; cngratA$(I); Tab(40); "17. GAMES "; RS!(I, 0)
             Print " 2. POSITION "; P$(I); Tab(40); "18. MINUTES "; RS!(I, 1)
             Print " 3. GAMES PLAYED "; X!(I, 0); Tab(40); "19. FGM "; RS!(I, 3)
-            Print " 4. ADJ FG% "; A!(I, 0); Tab(40); "20. FGA "; RS!(I, 2)
-            Print " 5. FT% "; A!(I, 1); Tab(40); "21. FTM "; RS!(I, 5)
+            Print " 4. ADJ FG% "; statsA!(I, 0); Tab(40); "20. FGA "; RS!(I, 2)
+            Print " 5. FT% "; statsA!(I, 1); Tab(40); "21. FTM "; RS!(I, 5)
             Print " 6. OFF RB/40 MIN X 10 "; X!(I, 4); Tab(40); "22. FTA "; RS!(I, 4)
-            Print " 7. DEF RB/40 MIN X 10 "; A!(I, 2); Tab(40); "23. OFF REB "; RS!(I, 6)
-            Print " 8. ASSIST RATING "; A!(I, 4); Tab(40); "24. TOTAL REB "; RS!(I, 7)
-            Print " 9. STEAL RATING "; A!(I, 5); Tab(40); "25. PER FOULS "; RS!(I, 8)
-            Print "10. BLOCK RATING "; A!(I, 6); Tab(40); "26. ASSISTS "; RS!(I, 9)
+            Print " 7. DEF RB/40 MIN X 10 "; statsA!(I, 2); Tab(40); "23. OFF REB "; RS!(I, 6)
+            Print " 8. ASSIST RATING "; statsA!(I, 4); Tab(40); "24. TOTAL REB "; RS!(I, 7)
+            Print " 9. STEAL RATING "; statsA!(I, 5); Tab(40); "25. PER FOULS "; RS!(I, 8)
+            Print "10. BLOCK RATING "; statsA!(I, 6); Tab(40); "26. ASSISTS "; RS!(I, 9)
             Print "11. FGA "; X!(I, 1); Tab(40); "27. BLOCKS "; RS!(I, 10)
             Print "12. FOUL COMMIT RATING "; X!(I, 5); Tab(40); "28. STEALS "; RS!(I, 11)
             Print "13. FOUL DRAWING RATING "; X!(I, 6); Tab(40); "29. 3 FGM "; RS!(I, 13)
@@ -356,13 +356,13 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             210 Locate 1: Input " 1. NAME "; cngratA$(I): If C1 = 1 Then 250
             224 Locate 2: Input " 2. POSITION "; P$(I): If C1 = 1 Then 250
             211 Locate 3: Input " 3. GAMES PLAYED "; X!(I, 0): If C1 = 1 Then 250
-            212 Locate 4: Input " 4. ADJ FG% "; A!(I, 0): If C1 = 1 Then 250
-            213 Locate 5: Input " 5. FT% "; A!(I, 1): If C1 = 1 Then 250
+            212 Locate 4: Input " 4. ADJ FG% "; statsA!(I, 0): If C1 = 1 Then 250
+            213 Locate 5: Input " 5. FT% "; statsA!(I, 1): If C1 = 1 Then 250
             214 Locate 6: Input " 6. OFF RB/40 MIN X 10 "; X!(I, 4): If C1 = 1 Then 250
-            215 Locate 7: Input " 7. DEF RB/40 MIN X 10 "; A!(I, 2): If C1 = 1 Then 250
-            216 Locate 8: Input " 8. ASSIST RATING "; A!(I, 4): If C1 = 1 Then 250
-            217 Locate 9: Input " 9. STEAL RATING "; A!(I, 5): If C1 = 1 Then 250
-            218 Locate 10: Input "10. BLOCK RATING "; A!(I, 6): If C1 = 1 Then 250
+            215 Locate 7: Input " 7. DEF RB/40 MIN X 10 "; statsA!(I, 2): If C1 = 1 Then 250
+            216 Locate 8: Input " 8. ASSIST RATING "; statsA!(I, 4): If C1 = 1 Then 250
+            217 Locate 9: Input " 9. STEAL RATING "; statsA!(I, 5): If C1 = 1 Then 250
+            218 Locate 10: Input "10. BLOCK RATING "; statsA!(I, 6): If C1 = 1 Then 250
             219 Locate 11: Input "11. FGA "; X!(I, 1): If C1 = 1 Then 250
             220 Locate 12: Input "12. FOUL COMMIT RATING "; X!(I, 5): If C1 = 1 Then 250
             221 Locate 13: Input "13. FOUL DRAWING RATING "; X!(I, 6): If C1 = 1 Then 250
@@ -454,9 +454,9 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             Print Using "## "; I + 1;
             Print cngratA$(I);
             Locate , 17
-            Print A!(I, 3)
+            Print statsA!(I, 3)
             Locate , 1
-            T3 = T3 + A!(I, 3)
+            T3 = T3 + statsA!(I, 3)
         Next I
         Print
         Color 14
@@ -509,7 +509,7 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             Print cngratA$(X9)
             Locate , 1
             Locate 23, 1
-            Input "ENTER CP: "; A!(X9, 3)
+            Input "ENTER CP: "; statsA!(X9, 3)
         End If
 
     Loop Until X9 = 0
@@ -565,11 +565,11 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
 
     Shared V1%, V2%
     Shared avgAttendance%, defFGPctAdj%, staminaRating%
-    Shared A1$, C$, S$
+    Shared mascot$, coach$, stadium$
 
-    Shared L%(), T%(), T1%()
+    Shared statsL%(), T%(), compT1%()
     Shared cngratA$(), P$()
-    Shared A!(), DF!(), RS!(), X!()
+    Shared statsA!(), DF!(), RS!(), X!()
 
     NS% = 0
 
@@ -613,14 +613,14 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
 
-        For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
         For I = 0 To 13
 
             cngratA$(I) = RTrim$(Q$(I * 15 + 20))
 
             For I1 = 0 To 6
-                A!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
+                statsA!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
                 X!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
             Next
         Next
@@ -638,9 +638,9 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
 
         Get #1, teamIdx%
 
-        C$ = Q$(0)
-        S$ = Q$(1)
-        A1$ = Q$(2)
+        coach$ = Q$(0)
+        stadium$ = Q$(1)
+        mascot$ = Q$(2)
         avgAttendance% = CVL(Q$(3))
 
         For I = 0 To 13
@@ -652,7 +652,7 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
         Next
 
         For I = 0 To 20
-            T1%(I) = CVI(Q$(228 + I))
+            compT1%(I) = CVI(Q$(228 + I))
         Next
 
         CK = CVI(Q$(249))
@@ -660,9 +660,9 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
         Close 1
 
         If CK <> 999 Then
-            C$ = ""
-            S$ = ""
-            A1$ = ""
+            coach$ = ""
+            stadium$ = ""
+            mascot$ = ""
             avgAttendance% = 0
 
             For I = 0 To 13
@@ -674,7 +674,7 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
             Next
 
             For I = 0 To 20
-                T1%(I) = 0
+                compT1%(I) = 0
             Next
 
         End If 'done checking for '999
@@ -692,11 +692,11 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
 
     Shared V1%, V2%
     Shared defFGPctAdj%, staminaRating%
-    Shared A1$, C$, S$
+    Shared mascot$, coach$, stadium$
 
-    Shared L%(), T%(), T1%()
+    Shared statsL%(), T%(), compT1%()
     Shared cngratA$(), P$()
-    Shared A!(), DF!(), RS!(), X!()
+    Shared statsA!(), DF!(), RS!(), X!()
 
     If newID% = 1 Then
         Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
@@ -717,7 +717,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     LSet Q$(2) = MKI$(defFGPctAdj%)
     LSet Q$(3) = MKI$(V1%)
 	LSet Q$(4) = MKI$(V2%)
-    For I = 0 To 4: LSet Q$(I + 5) = MKI$(L%(I)): Next
+    For I = 0 To 4: LSet Q$(I + 5) = MKI$(statsL%(I)): Next
     T%(2) = 999
 
     For I = 0 To 9: LSet Q$(I + 10) = MKI$(T%(I)): Next
@@ -726,7 +726,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     For I = 0 To 13
         LSet Q$(I * 15 + 20) = cngratA$(I)
         For I1 = 0 To 6
-            LSet Q$(I * 15 + I1 + 21) = MKI$(A!(I, I1))
+            LSet Q$(I * 15 + I1 + 21) = MKI$(statsA!(I, I1))
             LSet Q$(I * 15 + I1 + 28) = MKI$(X!(I, I1))
         Next
     Next
@@ -742,9 +742,9 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
         Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
-    LSet Q$(0) = C$
-    LSet Q$(1) = S$
-    LSet Q$(2) = A1$
+    LSet Q$(0) = coach$
+    LSet Q$(1) = stadium$
+    LSet Q$(2) = mascot$
     LSet Q$(3) = MKL$(avgAttendance%)
 
     For I = 0 To 13
@@ -756,7 +756,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     Next
 
     For I = 0 To 20
-        LSet Q$(228 + I) = MKI$(T1%(I))
+        LSet Q$(228 + I) = MKI$(compT1%(I))
     Next
 
     LSet Q$(249) = MKI$(999)

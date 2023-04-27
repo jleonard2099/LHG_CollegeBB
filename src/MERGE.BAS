@@ -52,10 +52,10 @@ Sub MergeIt ()
 
     'Dim A$(14)
     Dim ARP$(14), mergeB$(26), mergeH$(100), HRP$(100)
-    Dim O$(100), ORP$(100), SITE$(100), SITERP$(100)
+    Dim mergeO$(100), ORP$(100), gameSite$(100), SITERP$(100)
 
-    Dim AP%(100, 1), APRD%(100, 1)
-    Dim O%(100), ORD%(100), TRD%(100)
+    Dim mergeAP%(100, 1), APRD%(100, 1)
+    Dim ORD%(100), TRD%(100)
 
     Dim mergeA(14, 14), ARD(14, 14), CRD(100), CRDRD(100)
     Dim W0RD(15), W1RD(15)
@@ -63,9 +63,9 @@ Sub MergeIt ()
 	Dim ZRD!(15), ZRD1!(15)
 
     Shared A$()
-    Shared L%(), mergeT%()
-    Shared W0!(), W1!()
-	Shared Z!(), Z1!()
+    Shared statsL%(), mergeO%(), mergeT%()
+    Shared statsW0!(), statsW1!()
+	Shared statsZ!(), statsZ1!()
 
 	Do
 
@@ -160,7 +160,7 @@ Sub MergeIt ()
 				Color 15, 4
 				
 				Do
-					Locate , 33: Print "ANY CHANGE (YN)";
+					Locate 3, 33: Print "ANY CHANGE (YN)";
 					I$ = GetKeyPress$
 				Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -252,21 +252,21 @@ Sub MergeIt ()
 					Open PC$ + "\" + Z$ For Input As #1
 					Input #1, B$
 					For I = 0 To 13: Input #1, A$(I)
-					For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, W0!(I): Input #1, W1!(I): Next
-					For L = 0 To 15: Input #1, Z!(L): Next
-					For L = 0 To 15: Input #1, Z1!(L): Next
+					For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, statsW0!(I): Input #1, statsW1!(I): Next
+					For L = 0 To 15: Input #1, statsZ!(L): Next
+					For L = 0 To 15: Input #1, statsZ1!(L): Next
 					Close #1
 
 					Open PR$ + "\" + Z$ + "S" For Input As #1
 					Input #1, Y%
-					For I = 1 To 100: Input #1, O%(I): Next I
-					For I = 1 To 100: Input #1, O$(I): Next I
+					For I = 1 To 100: Input #1, mergeO%(I): Next I
+					For I = 1 To 100: Input #1, mergeO$(I): Next I
 					For I = 1 To 100: Input #1, mergeT%(I): Next I
 					For I = 1 To 100: Input #1, mergeH$(I): Next I
 					For I = 1 To 100
-					For I1 = 0 To 1: Input #1, AP%(I, I1): Next: Next
+					For I1 = 0 To 1: Input #1, mergeAP%(I, I1): Next: Next
 					For I = 1 To 100: Input #1, CRD(I): Next I
-					For I = 1 To 100: Input #1, SITE$(I): Next I
+					For I = 1 To 100: Input #1, gameSite$(I): Next I
 					Close #1
 
 					SEQ = 0
@@ -282,46 +282,46 @@ Sub MergeIt ()
 					If SEQ = 0 Then
 						For K = 1 To YR%
 							Y% = Y% + 1
-							O%(Y%) = ORD%(K)
-							O$(Y%) = ORP$(K)
+							mergeO%(Y%) = ORD%(K)
+							mergeO$(Y%) = ORP$(K)
 							mergeT%(Y%) = TRD%(K)
 							mergeH$(Y%) = HRP$(K)
-							AP%(Y%, 0) = APRD%(Y%, 0)
-							AP%(Y%, 1) = APRD%(Y%, 1)
+							mergeAP%(Y%, 0) = APRD%(Y%, 0)
+							mergeAP%(Y%, 1) = APRD%(Y%, 1)
 							CRD(Y%) = CRDRD(Y%)
-							SITE$(Y%) = SITERP$(Y%)
+							gameSite$(Y%) = SITERP$(Y%)
 						Next
 
 						Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
 						For I = 0 To 13
 							For J = 0 To 12: mergeA(I, J) = mergeA(I, J) + ARD(I, J): Next J
-							W0!(I) = W0!(I) + W0RD(I)
-							W1!(I) = W1!(I) + W1RD(I)
+							statsW0!(I) = statsW0!(I) + W0RD(I)
+							statsW1!(I) = statsW1!(I) + W1RD(I)
 							If mergeA(I, 13) < ARD(I, 13) Then mergeA(I, 13) = ARD(I, 13) Else mergeA(I, 13) = mergeA(I, 13)
 						Next I
 
-						For L = 0 To 15: Z!(L) = Z!(L) + ZRD!(L): Z1!(L) = Z1!(L) + ZRD1!(L): Next
+						For L = 0 To 15: statsZ!(L) = statsZ!(L) + ZRD!(L): statsZ1!(L) = statsZ1!(L) + ZRD1!(L): Next
 
 						Open PC$ + "\" + Z$ For Output As #1
 						Write #1, B$
 						For I = 0 To 13: Write #1, A$(I)
-						For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, W0!(I): Write #1, W1!(I): Next
-						For L = 0 To 15: Write #1, Z!(L): Next
-						For L = 0 To 15: Write #1, Z1!(L): Next
+						For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, statsW0!(I): Write #1, statsW1!(I): Next
+						For L = 0 To 15: Write #1, statsZ!(L): Next
+						For L = 0 To 15: Write #1, statsZ1!(L): Next
 						Close #1
 
 						Open PC$ + "\" + Z$ + "S" For Output As #1
 						Write #1, Y%
-						For I = 1 To 100: Write #1, O%(I): Next I
-						For I = 1 To 100: Write #1, O$(I): Next I
+						For I = 1 To 100: Write #1, mergeO%(I): Next I
+						For I = 1 To 100: Write #1, mergeO$(I): Next I
 						For I = 1 To 100: Write #1, mergeT%(I): Next I
 						For I = 1 To 100: Write #1, mergeH$(I): Next I
 						For I = 1 To 100
-							For I1 = 0 To 1: Write #1, AP%(I, I1): Next
+							For I1 = 0 To 1: Write #1, mergeAP%(I, I1): Next
 						Next
 						For I = 1 To 100: Write #1, CRD(I): Next I
-						For I = 1 To 100: Write #1, SITE$(I): Next I
+						For I = 1 To 100: Write #1, gameSite$(I): Next I
 
 						Close #1
 
@@ -364,7 +364,7 @@ End Sub
 '...explanation...
 Sub GetTeamFile_MERGE (yearNumber$, numberTeams)
 
-    Shared mergeT%(), L%()
+    Shared mergeT%(), statsL%()
 
     Selection% = 1
     Count% = numberTeams
@@ -399,7 +399,7 @@ Sub GetTeamFile_MERGE (yearNumber$, numberTeams)
     Get #1, T1
 
     staminaRating% = CVI(Q$(1)): defFGPctAdj% = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
-    For I = 0 To 4: L%(I) = CVI(Q$(I + 5)): Next
+    For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
     For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
     Close 1
 

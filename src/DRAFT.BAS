@@ -1,7 +1,7 @@
 Sub DRAFT ()
 
     Shared DA!(), draftA!(), draftX!(), SP!()
-    Shared V1%(), V2%()
+    Shared draftV1%(), draftV2%()
     Shared draftL%(), draftT%()
     Shared draftA$(), draftT$()
 
@@ -42,8 +42,8 @@ Sub DRAFT ()
 						draftT$(I) = "XXX"
 						SP!(I) = 0
 						DA!(I) = 0
-						V1%(I) = 0
-						V2%(I) = 0
+						draftV1%(I) = 0
+						draftV2%(I) = 0
 						For I1 = 0 To 4: draftL%(I, I1) = 0: Next
 						For I1 = 0 To 9: draftT%(I, I1) = 0: Next
 						For I1 = 0 To 13
@@ -178,7 +178,7 @@ Sub DraftExistingTeam (draftNew%)
 			Color 15, 4
 			
 			Do
-				Locate , 33: Print "ANY CHANGE (YN)";
+				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -197,13 +197,13 @@ End Sub
 Sub DoTheDraft (draftNew%, teamPosition%)
 
     Shared draftA$(), draftP$(), draftT$(), draftYN$()
-    Shared A1$(), C$(), S$()
+    Shared teamMascots$(), teamCoaches$(), teamStadiums$()
 
     Shared draftA!(), attendance&(), DA!(), draftDF!()
     Shared draftRS!(), draftX!(), SP!()
 
     Shared draftL%(), draftT%(), draftT1%()
-    Shared TR%(), V1%(), V2%()
+    Shared draftTR%(), draftV1%(), draftV2%()
 
     Do
 
@@ -287,7 +287,7 @@ Sub DoTheDraft (draftNew%, teamPosition%)
 						Color 15, 4
 
 						Do
-							Locate , 33: Print "ANY CHANGE (YN)";
+							Locate 3, 33: Print "ANY CHANGE (YN)";
 							I$ = GetKeyPress$
 						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
                     End If
@@ -319,7 +319,7 @@ Sub DoTheDraft (draftNew%, teamPosition%)
                 Next
 
                 For I = 1 To 12
-                    TR%(0, B, I) = TR%(1, B1, I)
+                    draftTR%(0, B, I) = draftTR%(1, B1, I)
                 Next
 
                 For I = 0 To 6
@@ -397,26 +397,26 @@ Sub DoTheDraft (draftNew%, teamPosition%)
     For I = 0 To 13
         If draftA$(0, I) <> "XXX" Then
             NP% = NP% + 1
-            SP!(0) = SP!(0) + TR%(0, I, 1)
-            DA!(0) = DA!(0) + TR%(0, I, 2)
-            V2%(0) = V2%(0) + TR%(0, I, 3)
-            V1%(0) = V1%(0) + TR%(0, I, 4)
-            draftL%(0, 0) = draftL%(0, 0) + TR%(0, I, 5)
-            draftL%(0, 2) = draftL%(0, 2) + TR%(0, I, 6)
-            draftL%(0, 3) = draftL%(0, 3) + TR%(0, I, 7)
-            draftT%(0, 3) = draftT%(0, 3) + TR%(0, I, 9)
-            draftT%(0, 4) = draftT%(0, 4) + TR%(0, I, 10)
-            draftT%(0, 5) = draftT%(0, 5) + TR%(0, I, 11)
-            draftT%(0, 6) = draftT%(0, 6) + TR%(0, I, 12)
+            SP!(0) = SP!(0) + draftTR%(0, I, 1)
+            DA!(0) = DA!(0) + draftTR%(0, I, 2)
+            draftV2%(0) = draftV2%(0) + draftTR%(0, I, 3)
+            draftV1%(0) = draftV1%(0) + draftTR%(0, I, 4)
+            draftL%(0, 0) = draftL%(0, 0) + draftTR%(0, I, 5)
+            draftL%(0, 2) = draftL%(0, 2) + draftTR%(0, I, 6)
+            draftL%(0, 3) = draftL%(0, 3) + draftTR%(0, I, 7)
+            draftT%(0, 3) = draftT%(0, 3) + draftTR%(0, I, 9)
+            draftT%(0, 4) = draftT%(0, 4) + draftTR%(0, I, 10)
+            draftT%(0, 5) = draftT%(0, 5) + draftTR%(0, I, 11)
+            draftT%(0, 6) = draftT%(0, 6) + draftTR%(0, I, 12)
         End If
     Next
 
     SP!(0) = SP!(0) / (NP% - 1)
     DA!(0) = DA!(0) / (NP% - 1)
-    V2%(0) = V2%(0) / (NP% - 1)
-    If V2%(0) > 20 Then V2%(0) = 100 - V2%(0)
-    V1%(0) = V1%(0) / (NP% - 1)
-    If V1%(0) > 20 Then V1%(0) = 100 - V1%(0)
+    draftV2%(0) = draftV2%(0) / (NP% - 1)
+    If draftV2%(0) > 20 Then draftV2%(0) = 100 - draftV2%(0)
+    draftV1%(0) = draftV1%(0) / (NP% - 1)
+    If draftV1%(0) > 20 Then draftV1%(0) = 100 - draftV1%(0)
     draftL%(0, 0) = draftL%(0, 0) / (NP% - 1)
     If draftL%(0, 0) > 20 Then draftL%(0, 0) = 100 - draftL%(0, 0)
     draftL%(0, 2) = draftL%(0, 2) / (NP% - 1)
@@ -439,8 +439,8 @@ Sub DoTheDraft (draftNew%, teamPosition%)
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
 
-    LSet Q$(0) = draftT$(0): LSet Q$(1) = MKI$(SP!(0)): LSet Q$(2) = MKI$(DA!(0)): LSet Q$(3) = MKI$(V1%(0))
-    LSet Q$(4) = MKI$(V2%(0)): For I = 0 To 4: LSet Q$(I + 5) = MKI$(draftL%(0, I)): Next
+    LSet Q$(0) = draftT$(0): LSet Q$(1) = MKI$(SP!(0)): LSet Q$(2) = MKI$(DA!(0)): LSet Q$(3) = MKI$(draftV1%(0))
+    LSet Q$(4) = MKI$(draftV2%(0)): For I = 0 To 4: LSet Q$(I + 5) = MKI$(draftL%(0, I)): Next
     draftT%(0, 2) = 999
 
     For I = 0 To 9: LSet Q$(I + 10) = MKI$(draftT%(0, I)): Next
@@ -460,9 +460,9 @@ Sub DoTheDraft (draftNew%, teamPosition%)
         Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
-    LSet Q$(0) = C$(0)
-    LSet Q$(1) = S$(0)
-    LSet Q$(2) = A1$(0)
+    LSet Q$(0) = teamCoaches$(0)
+    LSet Q$(1) = teamStadiums$(0)
+    LSet Q$(2) = teamMascots$(0)
     LSet Q$(3) = MKL$(attendance&(0))
 
     For I = 0 To 13
@@ -515,7 +515,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_DRAFT (numberTeams)
 
-    Shared A1$(), C$(), S$()
+    Shared teamMascots$(), teamCoaches$(), teamStadiums$()
 
     Shared draftA$(), draftP$(), draftT$(), draftYN$()
 
@@ -523,7 +523,7 @@ Sub SelectTeam_DRAFT (numberTeams)
     Shared attendance&(), DA!(), draftDF!(), draftRS!(), SP!()
 
     Shared draftL%(), draftT%(), draftT1%()
-    Shared TR%(), V1%(), V2%()
+    Shared draftTR%(), draftV1%(), draftV2%()
 
     Selection% = 1
     Count% = numberTeams
@@ -557,7 +557,7 @@ Sub SelectTeam_DRAFT (numberTeams)
         draftT$(1) = RTrim$(Q$(0))
 
         SP!(1) = CVI(Q$(1)): DA!(1) = CVI(Q$(2))
-        V1%(1) = CVI(Q$(3)): V2%(1) = CVI(Q$(4))
+        draftV1%(1) = CVI(Q$(3)): draftV2%(1) = CVI(Q$(4))
         For I = 0 To 4: draftL%(1, I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: draftT%(1, I) = CVI(Q$(I + 10)): Next
         For I = 0 To 13
@@ -570,8 +570,8 @@ Sub SelectTeam_DRAFT (numberTeams)
         Next
         Close 1
 
-        If V2%(1) > 20 Then V2%(1) = 100 - V2%(1)
-        If V1%(1) > 20 Then V1%(1) = 100 - V1%(1)
+        If draftV2%(1) > 20 Then draftV2%(1) = 100 - draftV2%(1)
+        If draftV1%(1) > 20 Then draftV1%(1) = 100 - draftV1%(1)
         If draftL%(1, 0) > 20 Then draftL%(1, 0) = 100 - draftL%(1, 0)
         If draftL%(1, 2) > 20 Then draftL%(1, 2) = 100 - draftL%(1, 2)
         If draftL%(1, 3) > 20 Then draftL%(1, 3) = 100 - draftL%(1, 3)
@@ -584,9 +584,9 @@ Sub SelectTeam_DRAFT (numberTeams)
         Next
         Get #1, D
 
-        C$(1) = Q$(0)
-        S$(1) = Q$(1)
-        A1$(1) = Q$(2)
+        teamCoaches$(1) = Q$(0)
+        teamStadiums$(1) = Q$(1)
+        teamMascots$(1) = Q$(2)
         attendance&(1) = CVL(Q$(3))
 
         For I = 0 To 13
@@ -606,25 +606,25 @@ Sub SelectTeam_DRAFT (numberTeams)
         Close 1
 
         For I = 0 To 13
-            TR%(1, I, 1) = SP!(1)
-            TR%(1, I, 2) = DA!(1)
-            TR%(1, I, 3) = V2%(1)
-            TR%(1, I, 4) = V1%(1)
-            TR%(1, I, 5) = draftL%(1, 0)
-            TR%(1, I, 6) = draftL%(1, 2)
-            TR%(1, I, 7) = draftL%(1, 3)
-            TR%(1, I, 8) = 99
-            TR%(1, I, 9) = draftT%(1, 3)
-            TR%(1, I, 10) = draftT%(1, 4)
-            TR%(1, I, 11) = draftT%(1, 5)
-            TR%(1, I, 12) = draftT%(1, 6)
+            draftTR%(1, I, 1) = SP!(1)
+            draftTR%(1, I, 2) = DA!(1)
+            draftTR%(1, I, 3) = draftV2%(1)
+            draftTR%(1, I, 4) = draftV1%(1)
+            draftTR%(1, I, 5) = draftL%(1, 0)
+            draftTR%(1, I, 6) = draftL%(1, 2)
+            draftTR%(1, I, 7) = draftL%(1, 3)
+            draftTR%(1, I, 8) = 99
+            draftTR%(1, I, 9) = draftT%(1, 3)
+            draftTR%(1, I, 10) = draftT%(1, 4)
+            draftTR%(1, I, 11) = draftT%(1, 5)
+            draftTR%(1, I, 12) = draftT%(1, 6)
         Next
 
         If CK!(1) <> 999 Then
 
-            C$(1) = ""
-            S$(1) = ""
-            A1$(1) = ""
+            teamCoaches$(1) = ""
+            teamStadiums$(1) = ""
+            teamMascots$(1) = ""
             attendance&(1) = 0
 
             For I = 0 To 13: draftDF!(1, I) = 5: draftP$(1, I) = ""
@@ -650,11 +650,11 @@ Sub MoreTeam (teamPosition%)
     Shared attendance&(), CK!(), DA!(), draftA!(), draftDF!()
     Shared draftRS!(), draftX!(), SP!()
 
-    Shared TR%(), V1%(), V2%()
+    Shared draftTR%(), draftV1%(), draftV2%()
     Shared draftL%(), draftT%(), draftT1%()
 
     Shared draftA$(), draftT$(), draftP$(), draftYN$()
-    Shared A1$(), C$(), S$()
+    Shared teamMascots$(), teamCoaches$(), teamStadiums$()
 
     1200 Cls
     Open diskPaths$(0) + "BASK." + draftYN$(0) For Random As #1 Len = 655
@@ -700,7 +700,7 @@ Sub MoreTeam (teamPosition%)
     draftT$(0) = RTrim$(Q$(0))
 
     SP!(0) = CVI(Q$(1)): DA!(0) = CVI(Q$(2))
-    V1%(0) = CVI(Q$(3)): V2%(0) = CVI(Q$(4))
+    draftV1%(0) = CVI(Q$(3)): draftV2%(0) = CVI(Q$(4))
     For I = 0 To 4: draftL%(0, I) = CVI(Q$(I + 5)): Next
     For I = 0 To 9: draftT%(0, I) = CVI(Q$(I + 10)): Next
     For I = 0 To 13
@@ -713,8 +713,8 @@ Sub MoreTeam (teamPosition%)
     Next
     Close 1
 
-    If V1%(0) > 20 Then V1%(0) = 100 - V1%(0)
-    If V2%(0) > 20 Then V2%(0) = 100 - V2%(0)
+    If draftV1%(0) > 20 Then draftV1%(0) = 100 - draftV1%(0)
+    If draftV2%(0) > 20 Then draftV2%(0) = 100 - draftV2%(0)
     If draftL%(0, 0) > 20 Then draftL%(0, 0) = 100 - draftL%(0, 0)
     If draftL%(0, 2) > 20 Then draftL%(0, 2) = 100 - draftL%(0, 2)
     If draftL%(0, 3) > 20 Then draftL%(0, 3) = 100 - draftL%(0, 3)
@@ -726,44 +726,58 @@ Sub MoreTeam (teamPosition%)
         Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
     Get #1, teamPosition%
-    C$(0) = Q$(0)
-    S$(0) = Q$(1)
-    A1$(0) = Q$(2)
+
+    teamCoaches$(0) = Q$(0)
+    teamStadiums$(0) = Q$(1)
+    teamMascots$(0) = Q$(2)
     attendance&(0) = CVL(Q$(3))
+
     For I = 0 To 13
         draftDF!(0, I) = CVI(Q$(I * 16 + 4))
         draftP$(0, I) = Q$(I * 16 + 5)
         For I1 = 0 To 13
             draftRS!(0, I, I1) = CVI(Q$(I * 16 + I1 + 6))
-    Next: Next
+		Next
+	Next
+
     For I = 0 To 20
         draftT1%(0, I) = CVI(Q$(228 + I))
     Next
+
     CK!(0) = CVI(Q$(249))
     Close 1
 
     For I = 0 To 13
-        TR%(0, I, 1) = SP!(0)
-        TR%(0, I, 2) = DA!(0)
-        TR%(0, I, 3) = V2%(0)
-        TR%(0, I, 4) = V1%(0)
-        TR%(0, I, 5) = draftL%(0, 0)
-        TR%(0, I, 6) = draftL%(0, 2)
-        TR%(0, I, 7) = draftL%(0, 3)
-        TR%(0, I, 8) = 99
-        TR%(0, I, 9) = draftT%(0, 3)
-        TR%(0, I, 10) = draftT%(0, 4)
-        TR%(0, I, 11) = draftT%(0, 5)
-        TR%(0, I, 12) = draftT%(0, 6)
+        draftTR%(0, I, 1) = SP!(0)
+        draftTR%(0, I, 2) = DA!(0)
+        draftTR%(0, I, 3) = draftV2%(0)
+        draftTR%(0, I, 4) = draftV1%(0)
+        draftTR%(0, I, 5) = draftL%(0, 0)
+        draftTR%(0, I, 6) = draftL%(0, 2)
+        draftTR%(0, I, 7) = draftL%(0, 3)
+        draftTR%(0, I, 8) = 99
+        draftTR%(0, I, 9) = draftT%(0, 3)
+        draftTR%(0, I, 10) = draftT%(0, 4)
+        draftTR%(0, I, 11) = draftT%(0, 5)
+        draftTR%(0, I, 12) = draftT%(0, 6)
     Next
+
     If CK!(0) <> 999 Then
-        C$(0) = "": S$(0) = "": A1$(0) = "": attendance&(0) = 0
-        For I = 0 To 13: draftDF!(0, I) = 5: draftP$(0, I) = ""
+        teamCoaches$(0) = ""
+		teamStadiums$(0) = ""
+		teamMascots$(0) = ""
+		attendance&(0) = 0
+        
+		For I = 0 To 13: 
+			draftDF!(0, I) = 5
+			draftP$(0, I) = ""
             For I1 = 0 To 13
                 draftRS!(0, I, I1) = 0
             Next
         Next
+
         For I = 0 To 20: draftT1%(0, I) = 0: Next
+
     End If
 
     '9110 Return
