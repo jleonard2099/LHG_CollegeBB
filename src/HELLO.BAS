@@ -155,10 +155,17 @@ $ExeIcon:'./lhg_ccb.ico'
 _Icon
 _AllowFullScreen
 
+opSys$ = _OS$
+y% = Len(s$)
+osSpec$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
+
 If Not _FileExists("DEV.BAS") Then
     Open "DEV.BAS" For Output As #1
     For I = 0 To 1
-        Print #1, _CWD$ + "\"
+        Select Case osSpec$
+            Case "[WINDOWS]": Print #1, _CWD$ + "\"
+            Case "[MAC]","[LINUX]": Print #1, _CWD$ + "/"
+        End Select
     Next
     Close 1
 End If
@@ -270,8 +277,17 @@ Sub ConfigureDrives ()
     Print
     Locate , 31: Print "PATHNAME EXAMPLES:"
     Print
-    Locate , 31: Print "A:"
-    Locate , 31: Print "C:\COLBB\TEAMS"
+	Select Case osSpec$
+		Case "[WINDOWS]": 
+			Locate , 31: Print "A:"
+			Locate , 31: Print "C:\COLBB\TEAMS"	
+		Case "[LINUX]": 
+			Locate , 31: Print "/mnt/floppy"
+			Locate , 31: Print "/usr/bin/colbb/teams"
+		Case "[MAC]": 			
+			Locate , 31: Print "/Volumes/floppy"
+			Locate , 31: Print "/Applications/colbb/teams"
+	End Select
 
     Locate 7, 1: QPrint "Path for Teams ", 14, 1, -1
     Locate , 16: QPrint PadRight$(diskPaths$(0), 48), FG, BG, -1
@@ -311,8 +327,10 @@ Sub ConfigureDrives ()
 
     Open "DEV.BAS" For Output As #1
     For R = 0 To 1:
-        diskPaths$(R) = diskPaths$(R) + "\"
-        Print #1, diskPaths$(R)
+        Select Case osSpec$
+            Case "[WINDOWS]": diskPaths$(R) = diskPaths$(R) + "\"
+            Case "[MAC]","[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
+		End Select
     Next R
 
     Close #1
