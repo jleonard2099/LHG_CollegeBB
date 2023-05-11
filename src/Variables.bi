@@ -12,8 +12,8 @@ Dim Shared DirCount%
 'File size - does this really need shared?
 Dim Shared Y As Long
 
-
 Dim mascot$, coach$, stadium$
+Dim opSysType$
 
 Dim CK
 
@@ -33,9 +33,31 @@ Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
 Dim homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
 Dim T%(0 To 9)
 
+
 '----------------------------------------
-' Used across ADDTOURN.BAS,
-'   BRACKET.BAS routines
+' Used across ALIGN, MERGE routines
+'----------------------------------------
+Dim alignAR$(15)	
+Dim AN$(15)
+Dim mergeH$(100), HRP$(100)
+Dim mergeO$(100), ORP$(100), gameSite$(100), SITERP$(100)
+
+Dim AN(15, 14)
+Dim APRD%(100, 1), AR(15, 14)
+Dim mergeAP%(100, 1)
+Dim mergeA(14, 14), ARD(14, 14), CRD(100), CRDRD(100)
+Dim ORD%(100), TRD%(100)
+Dim W0N(15), WN1(15)
+Dim W0R(15), WR1(15)
+Dim W0RD(15), W1RD(15)
+Dim ZR(15), ZR1(15)
+
+Dim ZRD!(15), ZRD1!(15)
+
+
+'----------------------------------------
+' Used across ADDTOURN,
+'   BRACKET routines
 '----------------------------------------
 Dim tourneyN%(17, 17, 3) 'REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 Dim NN%(17) 'Number of Teams Per Region (up to 16 Regions)
@@ -50,7 +72,7 @@ Dim tourneyDefaults%(14) 'TOURNAMENT DEFAULTS
 Dim consolationSetting%(1) '0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
 
 '----------------------------------------
-' Used across CARVIEW.BAS routines
+' Used across CARVIEW routines
 '----------------------------------------
 Dim AR$(62)
 Dim ARS!(15, 62, 15)
@@ -58,13 +80,13 @@ Dim W0S!(15, 62), W1S!(15, 62)
 Dim careerT%(0 To 34)
 
 '----------------------------------------
-' Used across CNGRAT.BAS routines
+' Used across CNGRAT routines
 '----------------------------------------
 '14 positions, 0 to 13 array index
 Dim cngratA$(0 To 13), P$(0 To 13)
 
 '----------------------------------------
-' Used across COMPARE.BAS routines
+' Used across COMPARE routines
 '----------------------------------------
 Dim compareA!(15, 14)
 Dim A1!(13, 6), X1!(13, 6)
@@ -72,7 +94,7 @@ Dim HP%(100), compareL%(6), OP%(100), compareT%(34)
 Dim compareB$(14), HP$(100), OP$(100)
 
 '----------------------------------------
-' Used across COMPNAT.BAS routines
+' Used across COMPNAT routines
 '----------------------------------------
 Dim compH$(100), compN$(0 To 14)
 Dim LD!(1 To 250, 0 To 2)
@@ -87,7 +109,7 @@ Dim CP$(25), compO$(100)
 Dim Z0$(1 To 250), Z3$(1 To 250)
 
 '----------------------------------------
-' Used across DRAFT.BAS routines
+' Used across DRAFT routines
 '----------------------------------------
 Dim draftA$(0 To 1, 0 To 13), draftP$(1, 13), draftT$(1), draftYN$(1)
 Dim teamMascots$(1), teamCoaches$(1), teamStadiums$(1)
@@ -100,7 +122,7 @@ Dim draftL%(1, 4), draftT%(1, 9), draftT1%(1, 20), draftTR%(1, 13, 12)
 Dim draftV1%(1), draftV2%(1)
 
 '----------------------------------------
-' Used across NEWLDR.BAS routines
+' Used across NEWLDR routines
 '----------------------------------------
 Dim JB, tStats, ttStats
 Dim TMR%
@@ -118,7 +140,7 @@ ReDim TYP!(600)
 Dim W0L!(600), W1L!(600)
 
 '----------------------------------------
-' Used across HD2HD.BAS routines
+' Used across HD2HD routines
 '----------------------------------------
 Dim AL!(50), AW!(50), HL!(50), HW!(50)
 Dim R1!(50), R2!(50), hd2hdR3!(50), R4!(50)
@@ -126,7 +148,7 @@ Dim TAW!(40), THW!(40), THL!(40), TAL!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
 '----------------------------------------
-' Used across LOOKY/MERGE.BAS routines
+' Used across LOOKY/MERGE routines
 '----------------------------------------
 Dim HL%, HW%, NL%, NW%, VL%, VW%
 Dim L%, W%
@@ -137,7 +159,7 @@ Dim mergeO%(100), P%(100)
 Dim lookyA!(0 To 14, 24)
 
 '----------------------------------------
-' Used across RECORDS.BAS routines
+' Used across RECORDS routines
 '----------------------------------------
 '---> these should be Single
 Dim REC!(50, 2), TREC!(125, 2)
@@ -145,7 +167,7 @@ Dim REC!(50, 2), TREC!(125, 2)
 Dim recordsA$(5), RC$(50, 4), TRC$(125, 3)
 
 '----------------------------------------
-' Used across RECCON.BAS routines
+' Used across RECCON routines
 '----------------------------------------
 Dim BRC!(32), TRC!(21), TRC1!(21)
 Dim BRC$(32, 1), recconTRC$(21), recconTRC1$(21)
@@ -153,7 +175,7 @@ Dim BRC$(32, 1), recconTRC$(21), recconTRC1$(21)
 Dim TT$(20), recconTB$(25)
 
 '----------------------------------------
-' Used across SCHEDULE.BAS routines
+' Used across SCHEDULE routines
 '----------------------------------------
 Dim BS%, NS%
 Dim N$
@@ -165,7 +187,7 @@ Dim scheduleYN$(MAX_GAMES, 1)
 Dim Z1$(1 To 30), Z2$(1 To 30)
 
 '----------------------------------------
-' Used across SEECON/SEENAT.BAS routines
+' Used across SEECON/SEENAT routines
 '----------------------------------------
 Dim DL$(60), OL$(60), NOL$(1 To 60), PR$(1200)
 Dim DL!(60, 20), OL!(60, 20) ', seeconP(60)

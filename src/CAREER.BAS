@@ -57,7 +57,7 @@ Sub CAREER ()
                     Print: Print
                     Color 12: Locate , 25: Print "DO YOU WISH TO CONTINUE? (Y/N)"
                     2018 I$ = GetKeyPress$
-                    If UCase$(I$) = "Y" Then Call DoTheMerge
+                    If UCase$(I$) = "Y" Then Call MergeCareerRecords
 
                 Case 3, 4: Call CARVIEW: Color , 0
                 Case 5: Call ViewCareerRecords
@@ -508,102 +508,12 @@ Sub ViewCareerRecords ()
 
 End Sub
 
-'----------------------------------------
-'     DiskSelection_CAREER Subroutine
-'----------------------------------------
-' ...explanation...
-Sub DiskSelection_CAREER ()
-
-    Shared careerT%()
-
-    Do
-        Color 15, 0: Cls
-        JJ = 6
-        Locate 6, 8: Color 15, 4
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-        Locate , 12: Print "ENTER DISK ID: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
-        I$ = GetKeyPress$
-
-        If I$ <> Chr$(27) Then
-
-            If I$ = Chr$(13) Then
-                Call SelectTeam_CAREER(YN$, NTMS)
-            Else
-                Locate 7, 27: Print I$
-                Locate 7, 28: Line Input NY$
-                NY$ = I$ + NY$
-                Color 15, 0
-
-                If NY$ = "" And YN$ <> "" Then
-                    Call SelectTeam_CAREER(YN$, NTMS)
-                Else
-                    YN$ = NY$
-                    Erase teamNames$
-
-                    Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-                    Y = LOF(1)
-                    Field #1, 15 As Q$(0), 640 As X$
-                    For I1 = 1 To Y / 655
-                        Get #1, I1
-                        teamNames$(I1) = Q$(0)
-                        teamIndex%(I1) = I1
-                    Next
-                    Close 1
-                    NTMS = Y / 655
-
-                    Call SelectTeam_CAREER(YN$, NTMS)
-
-                End If
-
-            End If
-
-            A$ = Q$(0)
-
-            If BO% = 1 Then
-                BO% = 0
-            Else
-                Locate 2, 33
-                Color careerT%(0), careerT%(1): Print A$
-
-                Color 15, 4
-
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-            End If
-
-        End If 'Done checking if ESC was pressed
-
-    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
-
-    Color 15, 0
-
-End Sub
 
 '------------------------------
-'    DoTheMerge Subroutine
+'    MergeCareerRecords Subroutine
 '------------------------------
 ' ...explanation...
-Sub DoTheMerge ()
+Sub MergeCareerRecords ()
 
     Dim NB%, TMR1%
 
@@ -850,6 +760,99 @@ Sub DoTheMerge ()
     End If 'If we had files to process
 
 End Sub
+
+
+'----------------------------------------
+'     DiskSelection_CAREER Subroutine
+'----------------------------------------
+' ...explanation...
+Sub DiskSelection_CAREER ()
+
+    Shared careerT%()
+
+    Do
+        Color 15, 0: Cls
+        JJ = 6
+        Locate 6, 8: Color 15, 4
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        'Print box sides
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        'Print box bottom
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+        Locate , 12: Print "ENTER DISK ID: ": Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Print
+        Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
+        I$ = GetKeyPress$
+
+        If I$ <> Chr$(27) Then
+
+            If I$ = Chr$(13) Then
+                Call SelectTeam_CAREER(YN$, NTMS)
+            Else
+                Locate 7, 27: Print I$
+                Locate 7, 28: Line Input NY$
+                NY$ = I$ + NY$
+                Color 15, 0
+
+                If NY$ = "" And YN$ <> "" Then
+                    Call SelectTeam_CAREER(YN$, NTMS)
+                Else
+                    YN$ = NY$
+                    Erase teamNames$
+
+                    Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+                    Y = LOF(1)
+                    Field #1, 15 As Q$(0), 640 As X$
+                    For I1 = 1 To Y / 655
+                        Get #1, I1
+                        teamNames$(I1) = Q$(0)
+                        teamIndex%(I1) = I1
+                    Next
+                    Close 1
+                    NTMS = Y / 655
+
+                    Call SelectTeam_CAREER(YN$, NTMS)
+
+                End If
+
+            End If
+
+            A$ = Q$(0)
+
+            If BO% = 1 Then
+                BO% = 0
+            Else
+                Locate 2, 33
+                Color careerT%(0), careerT%(1): Print A$
+
+                Color 15, 4
+
+                Do
+                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+            End If
+
+        End If 'Done checking if ESC was pressed
+
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+
+    Color 15, 0
+
+End Sub
+
 
 '----------------------------------------
 '   SelectTeam_CAREER subroutine
