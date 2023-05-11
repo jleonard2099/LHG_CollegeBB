@@ -177,7 +177,9 @@ Close 1
 Selection% = 1
 
 Do
+
     Call Main_Menu(Selection%)
+
 Loop Until Selection% = 9
 
 End
@@ -276,7 +278,6 @@ Sub ConfigureDrives ()
     Locate , 16: Print "SPECIFY PATHS FOR YOUR TEAMS AND COMPILED STATS"
     Print
     Locate , 31: Print "PATHNAME EXAMPLES:"
-    Print
     Select Case opSysType$
         Case "[WINDOWS]": 
             Locate , 31: Print "A:"
@@ -289,16 +290,17 @@ Sub ConfigureDrives ()
             Locate , 31: Print "/Applications/colbb/teams"
     End Select
 
+    Print
     Locate 7, 1: QPrint "Path for Teams ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(diskPaths$(0), 48), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(0), 61), FG, BG, -1
     Locate 9, 1: QPrint "Path for Stats ", 14, 1, -1
-    Locate , 16: QPrint PadRight$(diskPaths$(1), 48), FG, BG, -1
+    Locate , 16: QPrint PadRight$(diskPaths$(1), 61), FG, BG, -1
 
     GetDiv1:
     Locate 7, 16 'location of beginning of field
     CapsOn = 0
-    NumOnly = 0
-    Max = 48 'specify field parameters
+	NumOnly = 0
+	Max = 50
     Call TextIn(diskPaths$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -307,8 +309,8 @@ Sub ConfigureDrives ()
     GetDiv2:
     Locate 9, 16 'location of beginning of field
     CapsOn = 0
-    NumOnly = 0
-    Max = 48 'specify field parameters
+	NumOnly = 0
+	Max = 50
     Call TextIn(diskPaths$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -316,6 +318,7 @@ Sub ConfigureDrives ()
 
     Done:
     Locate 23, 1
+    Color 14, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
     Call YesNoB(X$, XCode, FG, BG)
@@ -331,6 +334,7 @@ Sub ConfigureDrives ()
             Case "[WINDOWS]": diskPaths$(R) = diskPaths$(R) + "\"
             Case "[MAC]","[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
         End Select
+        Print #1, diskPaths$(R)
     Next R
 
     Close #1
