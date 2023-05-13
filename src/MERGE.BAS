@@ -347,7 +347,7 @@ Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
                 Locate , 5: Print "           /usr/bin/haffner"
                 Locate , 5: Print "           /usr/bin/haffner/1960"
                 Locate , 5: Print "           /home/haffner/cbasket"
-            Case "[MAC]":
+            Case "[MAC]","[MACOSX]":
                 Locate 4, 5: Print "EXAMPLE - /Volumes/floppy"
                 Locate , 5: Print "           /Applications/haffner"
                 Locate , 5: Print "           /Applications/haffner/1960"
@@ -383,7 +383,7 @@ Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
                 pathRoadStats$ = pathRoadStats$ + "\"
             End If
 
-        Case "[MAC]", "[LINUX]":
+        Case "[MAC]", "[MACOSX]", "[LINUX]":
             If Not (Right$(pathCurrentStats$, 1) = "/") Then
                 pathCurrentStats$ = pathCurrentStats$ + "/"
             End If

@@ -162,7 +162,7 @@ If Not _FileExists("DEV.BAS") Then
     For I = 0 To 1
         Select Case opSysType$
             Case "[WINDOWS]": Print #1, _CWD$ + "\"
-            Case "[MAC]", "[LINUX]": Print #1, _CWD$ + "/"
+            Case "[MAC]", "[MACOSX]", "[LINUX]": Print #1, _CWD$ + "/"
         End Select
     Next
     Close 1
@@ -285,7 +285,7 @@ Sub ConfigureDrives ()
         Case "[LINUX]":
             Locate , 31: Print "/mnt/floppy"
             Locate , 31: Print "/usr/bin/colbb/teams"
-        Case "[MAC]":
+        Case "[MAC]","[MACOSX]":
             Locate , 31: Print "/Volumes/floppy"
             Locate , 31: Print "/Applications/colbb/teams"
     End Select
@@ -332,7 +332,7 @@ Sub ConfigureDrives ()
     For R = 0 To 1:
         Select Case opSysType$
             Case "[WINDOWS]": diskPaths$(R) = diskPaths$(R) + "\"
-            Case "[MAC]", "[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
+            Case "[MAC]", "[MACOSX]", "[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
         End Select
         Print #1, diskPaths$(R)
     Next R
