@@ -37,21 +37,21 @@ Dim T%(0 To 9)
 '----------------------------------------
 ' Used across ALIGN, MERGE routines
 '----------------------------------------
-Dim alignAR$(15)	
+Dim alignAR$(15)
 Dim AN$(15)
 Dim mergeH$(100), HRP$(100)
 Dim mergeO$(100), ORP$(100), gameSite$(100), SITERP$(100)
 
-Dim AN(15, 14)
-Dim APRD%(100, 1), AR(15, 14)
+Dim APRD%(100, 1)
 Dim mergeAP%(100, 1)
 Dim mergeA(14, 14), ARD(14, 14), CRD(100), CRDRD(100)
 Dim ORD%(100), TRD%(100)
-Dim W0N(15), WN1(15)
-Dim W0R(15), WR1(15)
-Dim W0RD(15), W1RD(15)
-Dim ZR(15), ZR1(15)
 
+Dim AN!(15, 14), AR!(15, 14)
+Dim W0N!(15), WN1!(15)
+Dim W0R!(15), WR1!(15)
+Dim W0RD!(15), W1RD!(15)
+Dim ZR!(15), ZR1!(15)
 Dim ZRD!(15), ZRD1!(15)
 
 
@@ -64,7 +64,6 @@ Dim NN%(17) 'Number of Teams Per Region (up to 16 Regions)
 
 Dim slotName$(17, 17, 0 To 3) 'Team Names for Each Seed Slot
 Dim regionNames$(1 To 17) 'Region Names
-
 
 Dim yearNumber$(MAX_TEAMS, 3)
 

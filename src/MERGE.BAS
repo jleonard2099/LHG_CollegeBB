@@ -44,7 +44,7 @@ Sub MERGE ()
 End Sub
 
 '----------------------------------------
-'       MergeStats Subroutine
+'          MergeStats Subroutine
 '----------------------------------------
 '...explanation...
 Sub MergeStats ()
@@ -55,14 +55,16 @@ Sub MergeStats ()
     Shared mergeH$(), HRP$()
     Shared mergeO$(), ORP$(), gameSite$(), SITERP$()
 
-    Shared APRD%(), ARD(), CRD(), CRDRD()
+	Shared ARD(), CRD(), CRDRD()
+
+    Shared APRD%()
     Shared mergeO%(), mergeT%()
     Shared mergeA(), mergeAP%()
     Shared ORD%(), TRD%()
-    Shared W0RD(), W1RD()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
+    Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
 
     Do
@@ -94,8 +96,9 @@ Sub MergeStats ()
 
             statFile$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
+			Color , 0
             Cls
-            
+
             Locate 10, 15: Print "ROAD STATS ARE ON DRIVE "; pathRoadStats$
             Locate , 15: Print "MASTER STATS ARE ON DRIVE "; pathCurrentStats$
             Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; A$
@@ -108,12 +111,12 @@ Sub MergeStats ()
             If UCase$(I$) = "N" Then
 
                 If _FileExists(pathRoadStats$ + "\" + statFile$) Then
-                
+
                     Open pathRoadStats$ + "\" + statFile$ For Input As #1
                     Input #1, B$
 
                     For I = 0 To 13: Input #1, ARP$(I)
-                    For J = 0 To 13: Input #1, ARD(I, J): Next: Input #1, W0RD(I): Input #1, W1RD(I): Next
+                    For J = 0 To 13: Input #1, ARD(I, J): Next: Input #1, W0RD!(I): Input #1, W1RD!(I): Next
                     For L = 0 To 15: Input #1, ZRD!(L): Next
                     For L = 0 To 15: Input #1, ZRD1!(L): Next
                     Close #1
@@ -169,7 +172,7 @@ Sub MergeStats ()
                         Next
 
                         If SEQ = 0 Then
-                        
+
                             Call DoTheMerge(pathCurrentStats$, statFile$)
 
                             For J = 13 To 23
@@ -195,7 +198,7 @@ Sub MergeStats ()
                         End If 'Done checking sequence
 
                     Else
-                    
+
                         Cls
                         Color 7
                         Locate 2, 10: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
@@ -213,11 +216,11 @@ Sub MergeStats ()
                             Print "HIT ENTER TO RE-ENTER INFORMATION"
                             I$ = GetKeyPress$
                         End If
-                    
+
                     End If 'Done checking if home file exists
 
                 Else
-                
+
                     Cls
                     Locate 2, 10
                     Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
@@ -235,13 +238,13 @@ Sub MergeStats ()
                         Print "HIT ENTER TO RE-ENTER INFORMATION"
                         I$ = GetKeyPress$
                     End If
-                
+
                 End If 'Done checking if road file exists
 
             End If 'Done checking if ready to proceed
 
         End If 'Done checking for ESC
-        
+
     Loop Until DUMMY$ <> "" Or UCase$(I$) = "N"
 
 End Sub
@@ -261,7 +264,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$)
     Shared mergeO%(), mergeT%()
     Shared mergeA(), mergeAP%()
     Shared ORD%(), TRD%()
-    Shared W0RD(), W1RD()
+    Shared W0RD!(), W1RD!()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -283,8 +286,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$)
 
     For I = 0 To 13
         For J = 0 To 12: mergeA(I, J) = mergeA(I, J) + ARD(I, J): Next J
-        statsW0!(I) = statsW0!(I) + W0RD(I)
-        statsW1!(I) = statsW1!(I) + W1RD(I)
+        statsW0!(I) = statsW0!(I) + W0RD!(I)
+        statsW1!(I) = statsW1!(I) + W1RD!(I)
         If mergeA(I, 13) < ARD(I, 13) Then mergeA(I, 13) = ARD(I, 13) Else mergeA(I, 13) = mergeA(I, 13)
     Next I
 
@@ -371,12 +374,12 @@ Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
 
     'Adjust path terminator for OS type
     Select Case opSysType$
-        Case "[WINDOWS]": 
-            If Not (Right$(pathCurrentStats$,1) = "\") Then
+        Case "[WINDOWS]":
+            If Not (Right$(pathCurrentStats$, 1) = "\") Then
                 pathCurrentStats$ = pathCurrentStats$ + "\"
             End If
 
-            If Not (Right$(pathRoadStats$,1) = "\") Then
+            If Not (Right$(pathRoadStats$, 1) = "\") Then
                 pathRoadStats$ = pathRoadStats$ + "\"
             End If
 
@@ -441,7 +444,7 @@ Sub GetDiskID_MERGE (A$)
                 NY$ = I$ + NY$
                 Color 15, 0
 
-                If NY$ = "" And yearNumber$ <> "" Then 
+                If NY$ = "" And yearNumber$ <> "" Then
                     Call SelectTeam_MERGE(yearNumber$, numberTeams)
                 Else
                     yearNumber$ = NY$
@@ -473,7 +476,7 @@ Sub GetDiskID_MERGE (A$)
                 Color mergeT%(0), mergeT%(1): Print A$
 
                 Color 15, 4
-                
+
                 Do
                     Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
@@ -528,9 +531,9 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
         If Not _FileExists(diskPaths$(0) + "BASK." + yearNumber$) Then
             BO% = 1
             Locate 10, 8
-            Call CSMsgBox("NO TEAM FILES WERE FOUND MATCHING THIS ID.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO TEAM FILES WERE FOUND MATCHING THIS ID.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
         Else
 
             Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
@@ -560,4 +563,3 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
     End If
 
 End Sub
-

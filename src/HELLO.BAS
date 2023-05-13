@@ -162,7 +162,7 @@ If Not _FileExists("DEV.BAS") Then
     For I = 0 To 1
         Select Case opSysType$
             Case "[WINDOWS]": Print #1, _CWD$ + "\"
-            Case "[MAC]","[LINUX]": Print #1, _CWD$ + "/"
+            Case "[MAC]", "[LINUX]": Print #1, _CWD$ + "/"
         End Select
     Next
     Close 1
@@ -279,13 +279,13 @@ Sub ConfigureDrives ()
     Print
     Locate , 31: Print "PATHNAME EXAMPLES:"
     Select Case opSysType$
-        Case "[WINDOWS]": 
+        Case "[WINDOWS]":
             Locate , 31: Print "A:"
-            Locate , 31: Print "C:\COLBB\TEAMS" 
-        Case "[LINUX]": 
+            Locate , 31: Print "C:\COLBB\TEAMS"
+        Case "[LINUX]":
             Locate , 31: Print "/mnt/floppy"
             Locate , 31: Print "/usr/bin/colbb/teams"
-        Case "[MAC]":           
+        Case "[MAC]":
             Locate , 31: Print "/Volumes/floppy"
             Locate , 31: Print "/Applications/colbb/teams"
     End Select
@@ -299,8 +299,8 @@ Sub ConfigureDrives ()
     GetDiv1:
     Locate 7, 16 'location of beginning of field
     CapsOn = 0
-	NumOnly = 0
-	Max = 50
+    NumOnly = 0
+    Max = 50
     Call TextIn(diskPaths$(0), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -309,8 +309,8 @@ Sub ConfigureDrives ()
     GetDiv2:
     Locate 9, 16 'location of beginning of field
     CapsOn = 0
-	NumOnly = 0
-	Max = 50
+    NumOnly = 0
+    Max = 50
     Call TextIn(diskPaths$(1), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -332,7 +332,7 @@ Sub ConfigureDrives ()
     For R = 0 To 1:
         Select Case opSysType$
             Case "[WINDOWS]": diskPaths$(R) = diskPaths$(R) + "\"
-            Case "[MAC]","[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
+            Case "[MAC]", "[LINUX]": diskPaths$(R) = diskPaths$(R) + "/"
         End Select
         Print #1, diskPaths$(R)
     Next R
@@ -563,4 +563,3 @@ End Sub
 ' For Game
 '$INCLUDE: 'COLHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
-

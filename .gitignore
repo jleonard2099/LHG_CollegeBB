@@ -11,3 +11,6 @@ src/GAME82
 src/EVENTS.BOX
 src/TICKER
 src/*.SCX
+bin/TICKER
+bin/errlog
+src/errlog
