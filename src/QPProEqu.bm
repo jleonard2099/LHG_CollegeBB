@@ -31,7 +31,7 @@ Function FCount% (dirSpec$)
             Case "[WINDOWS]":
                 Shell _Hide "dir /on /b " + dirSpec$ + " > " + TmpFile$
             Case "[LINUX]", "[MAC]", "[MACOSX]":
-                Shell _Hide "find $(dirname " + dirSpec$ + ") -name $(basename " + dirSpec$ + ") -type f -exec basename {} \; | sort | tee " + TmpFile$
+                Shell _Hide "ls -A1 " + dirSpec$ + " | awk -F/ '{print $NF}' | sort | tee " + TmpFile$			
         End Select
 
         Index% = 0
@@ -232,7 +232,7 @@ Function READDIR$ (dirSpec$)
             Case "[WINDOWS]":
                 Shell _Hide "dir /on /b " + dirSpec$ + " > " + TmpFile$
             Case "[LINUX]", "[MAC]", "[MACOSX]":
-                Shell _Hide "find $(dirname " + dirSpec$ + ") -name $(basename " + dirSpec$ + ") -type f -exec basename {} \; | sort | tee " + TmpFile$
+                Shell _Hide "ls -A1 " + dirSpec$ + " | awk -F/ '{print $NF}' | sort | tee " + TmpFile$			
         End Select
 
         Index% = 0
@@ -1136,7 +1136,7 @@ Sub ReadFile (fileList$())
         Case "[WINDOWS]":
             Shell _Hide "dir /on /b " + dirSpec$ + " > " + TmpFile$
         Case "[LINUX]", "[MAC]", "[MACOSX]":
-            Shell _Hide "find $(dirname " + dirSpec$ + ") -name $(basename " + dirSpec$ + ") -type f -exec basename {} \; | sort | tee " + TmpFile$
+			Shell _Hide "ls -A1 " + dirSpec$ + " | awk -F/ '{print $NF}' | sort | tee " + TmpFile$			
     End Select
 
     dirEntry = 0
