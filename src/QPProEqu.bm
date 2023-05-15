@@ -9,7 +9,7 @@ Function FCount% (dirSpec$)
 
     '-- The max # of files in a folder for most OS = 1024 * 1024 = 4294967295
 
-    Const TmpFile$ = "DIR$INF0.INF", ListMAX~& = 8388608
+    Const TmpFile$ = "DIRINF0", ListMAX~& = 8388608
 
     Static emptyFile%, Ready%, Index%
     Static DirList$()
@@ -216,7 +216,7 @@ Function READDIR$ (dirSpec$)
     'efficiency and speed.
 
     '-- The max # of files in a folder for most OS = 1024 * 1024 = 4294967295
-    Const TmpFile$ = "DIR$INF0.INF", ListMAX~& = 131072
+    Const TmpFile$ = "DIRINF0", ListMAX~& = 131072
 
     Shared DirCount%
 
