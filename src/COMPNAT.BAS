@@ -65,9 +65,9 @@ Sub COMPNAT ()
 
     Do
         'Display list of files...
-
-        Spec$ = diskPaths$(1) + "*.CON"
+		Spec$ = diskPaths$(1) + "*.CON"
         Count% = FCount%(Spec$)
+
         If Count% = 0 Then
             Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
@@ -78,6 +78,7 @@ Sub COMPNAT ()
             For X = 1 To Count%
                 organizationFiles$(X) = Space$(12)
             Next
+			
             organizationFiles$(0) = Spec$
             Call ReadFile(organizationFiles$())
 

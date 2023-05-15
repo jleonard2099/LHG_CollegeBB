@@ -49,8 +49,7 @@ Sub COMPCON ()
 
     Do
         'Display list of files...
-
-        Spec$ = diskPaths$(1) + "*.LIB"
+		Spec$ = diskPaths$(1) + "*.LIB"
         Count% = FCount%(Spec$)
 
         If Count% = 0 Then
@@ -63,6 +62,7 @@ Sub COMPCON ()
             For X = 1 To Count%
                 conferenceFiles$(X) = Space$(12)
             Next
+			
             conferenceFiles$(0) = Spec$
             Call ReadFile(conferenceFiles$())
 

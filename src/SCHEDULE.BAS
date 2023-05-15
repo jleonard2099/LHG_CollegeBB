@@ -433,7 +433,7 @@ Sub NewSchedule (scheduleFile$)
 
                 Call COLHOOP
 
-				Call LoadScheduleInfo (scheduleFile$)
+                Call LoadScheduleInfo(scheduleFile$)
 
             Case "R":
                 ' *** RESET GAMES ***
@@ -805,8 +805,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
             Case 3:
                 Spec$ = diskPaths$(1) + "*.LIB"
-                null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-                Count% = DirCount%
+				Count% = FCount%(Spec$)
 
                 If Count% = 0 Then
                     Locate 10, 8
@@ -822,7 +821,6 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                     Next
 
                     leagueFiles$(0) = Spec$
-
                     Call ReadFile(leagueFiles$())
 
                     Call SelectConferenceFile(leagueFile$, leagueFiles$(), Count%)
@@ -1128,8 +1126,8 @@ Sub BoxscoreMaintenance ()
                     Call EditParameters
                 Case 2:
                     Spec$ = diskPaths$(1) + "*.SPC"
-                    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-                    Count% = DirCount%
+					Count% = FCount%(Spec$)
+
                     If Count% = 0 Then
                         Locate 10, 8
                         Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, PASS)
@@ -1140,6 +1138,7 @@ Sub BoxscoreMaintenance ()
                         For X = 1 To Count%
                             boxFiles$(X) = Space$(12)
                         Next
+
                         boxFiles$(0) = Spec$
                         Call ReadFile(boxFiles$())
 
@@ -1418,19 +1417,20 @@ End Sub
 '...explanation...
 Sub LoadSchedule (targetFile$)
 
-    Spec$ = diskPaths$(0) + "*.SCD"
-
     Do
         'Display list of files...
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(0) + "*.SCD"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
+
             Locate 10, 8
             Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
+
         Else
+
             ReDim scheduleFiles$(0 To Count%)
 
             For X = 1 To Count%
@@ -1438,12 +1438,11 @@ Sub LoadSchedule (targetFile$)
             Next
 
             scheduleFiles$(0) = Spec$
-
             Call ReadFile(scheduleFiles$())
 
-			Call SelectScheduleFile(targetFile$, scheduleFiles$(), Count%, menuExit%)
+            Call SelectScheduleFile(targetFile$, scheduleFiles$(), Count%, menuExit%)
 
-		End If
+        End If
 
     Loop Until Count% = 0 Or targetFile$ <> "" Or menuExit% = 27
 
@@ -1503,13 +1502,13 @@ Sub SelectScheduleFile (targetFile$, scheduleFiles$(), Count%, ExitCode%)
 
         targetFile$ = RTrim$(targetFile$)
 
-		'-- This is where we strip the file extension
-		'-- If we remove this, we can drop the .SCD in the rest of the code
+        '-- This is where we strip the file extension
+        '-- If we remove this, we can drop the .SCD in the rest of the code
         fileNoExt$ = Left$(targetFile$, Len(targetFile$) - 4)
         targetFile$ = fileNoExt$
         Color 15, 0
-		
-		Call LoadScheduleInfo (targetFile$)
+
+        Call LoadScheduleInfo(targetFile$)
 
     End If
 
@@ -1525,40 +1524,40 @@ Sub LoadScheduleInfo (targetFile$)
     Shared BS%, NS%
 
     Shared scheduleAP%(), scheduleNG%()
-	Shared homeScore%(), visitingScore%()
+    Shared homeScore%(), visitingScore%()
     Shared scheduleYN$()
 
-	Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
-	Y = LOF(1)
+    Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
+    Y = LOF(1)
 
-	scheduleAP%(0) = Y / 48
-	BS% = Int((scheduleAP%(0) - 1) / 20)
+    scheduleAP%(0) = Y / 48
+    BS% = Int((scheduleAP%(0) - 1) / 20)
 
-	For X = 0 To 18
-		Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
-	Next
+    For X = 0 To 18
+        Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+    Next
 
-	Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-	For I = 1 To scheduleAP%(0)
-		Get #1, I
+    For I = 1 To scheduleAP%(0)
+        Get #1, I
 
-		For X = 0 To 18
-			scheduleNG%(I, X) = CVI(Q$(X + 1))
-		Next
+        For X = 0 To 18
+            scheduleNG%(I, X) = CVI(Q$(X + 1))
+        Next
 
-		For X = 0 To 1
-			scheduleYN$(I, X) = RTrim$(Q$(20 + X))
-		Next
+        For X = 0 To 1
+            scheduleYN$(I, X) = RTrim$(Q$(20 + X))
+        Next
 
-		visitingScore%(I) = CVI(Q$(22))
-		homeScore%(I) = CVI(Q$(23))
+        visitingScore%(I) = CVI(Q$(22))
+        homeScore%(I) = CVI(Q$(23))
 
-	Next
+    Next
 
-	Close 1
+    Close 1
 
-	NS% = 0
+    NS% = 0
 
 End Sub
 
@@ -1651,8 +1650,8 @@ End Sub
 '...explanation...
 Sub DeleteSchedules (fileChoice%, fileSpec$)
 
-    null$ = READDIR$(fileSpec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+    Spec$ = diskPaths$(0) + fileSpec$
+	Count% = FCount%(Spec$)
 
     If Count% = 0 Then
         Select Case fileChoice%
@@ -1678,7 +1677,6 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
         Next
 
         boxFiles$(0) = fileSpec$
-
         Call ReadFile(boxFiles$())
 
         For X = 1 To Count%
@@ -1803,8 +1801,7 @@ Sub CreateConferenceSchedule ()
     If D3% <> 0 Then
 
         Spec$ = diskPaths$(1) + "*.LIB"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8

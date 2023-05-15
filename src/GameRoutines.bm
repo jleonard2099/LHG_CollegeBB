@@ -5838,8 +5838,10 @@ End Sub
 '    EVENTS Subroutine
 '------------------------------
 ' ...explanation...
-Sub EVENTS (COUNT, SPECIAL)
+Sub EVENTS (specialCount, specialOccured)
+
     If _FileExists("EVENTS.BOX") Then
+
         Open "EVENTS.BOX" For Input As #1
         For X = 1 To 13
             Input #1, E%(X)
@@ -5848,20 +5850,20 @@ Sub EVENTS (COUNT, SPECIAL)
 
         'Team / game conditions for special box score
         If H - 3 > E%(1) Or S!(1, 0) + S!(0, 0) > E%(2) Or R3!(0) + R3!(1) > E%(3) Or S!(1, 0) > E%(4) Or S!(0, 0) > E%(4) Or R3!(1) > E%(5) Or R3!(0) > E%(5) Then
-            Spec$ = diskPaths$(1) + "*.SPC"
-            COUNT = FCount%(Spec$)
-            COUNT = COUNT + 1
-            SPECIAL = 1
+
+			specialCount = FCount%(diskPaths$(1) + "*.SPC")
+            specialCount = specialCount + 1
+            specialOccured = 1
+
         Else
 
             For I = 0 To 1
                 For I1 = 0 To 13
                     'Player conditions for special box score
                     If A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) > E%(6) Or A!(I, I1, 11) > E%(7) Or A!(I, I1, 14) > E%(8) Or A!(I, I1, 15) > E%(9) Or A!(I, I1, 13) > E%(10) Or W%(I, I1, 0) > E%(11) Then
-                        Spec$ = diskPaths$(1) + "*.SPC"
-                        COUNT = FCount%(Spec$)
-                        COUNT = COUNT + 1
-                        SPECIAL = 1
+						specialCount = FCount%(diskPaths$(1) + "*.SPC")
+                        specialCount = specialCount + 1
+                        specialOccured = 1
                     End If
 
                 Next

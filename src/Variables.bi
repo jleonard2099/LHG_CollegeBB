@@ -37,6 +37,8 @@ Dim T%(0 To 9)
 '----------------------------------------
 ' Used across ALIGN, MERGE routines
 '----------------------------------------
+Dim Ycurr%, Yroad%
+
 Dim alignAR$(15)
 Dim AN$(15)
 Dim mergeH$(100), HRP$(100)

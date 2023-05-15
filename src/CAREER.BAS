@@ -344,9 +344,8 @@ Sub ViewCareerRecords ()
         'Display list of files...
         Cls
 
-        Spec$ = diskPaths$(1) + "*.CLD"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(1) + "*.CLD"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             'GoSub 4600
@@ -528,9 +527,9 @@ Sub MergeCareerRecords ()
     Shared AR$()
     Shared ARS!(), W0S!(), W1S!()
 
-    1150 Spec$ = diskPaths$(1) + "*.CAR"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+	Spec$ = diskPaths$(1) + "*.CAR"
+	Count% = FCount%(Spec$)
+
     If Count% = 0 Then
         'This was a box around which text was printed
         'I've replaced it with CSMsgBox instead for GUI consistency
@@ -546,7 +545,6 @@ Sub MergeCareerRecords ()
         Next
 
         careerFiles$(0) = Spec$
-
         Call ReadFile(careerFiles$())
 
         Do

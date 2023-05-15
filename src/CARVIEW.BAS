@@ -18,7 +18,7 @@ Sub CARVIEW ()
 
         Cls
 
-        Spec$ = diskPaths$(1) + "*.CAR"
+		Spec$ = diskPaths$(1) + "*.CAR"
         Count% = FCount%(Spec$)
 
         If Count% = 0 Then
@@ -32,6 +32,7 @@ Sub CARVIEW ()
             For X = 1 To Count%
                 careerFiles$(X) = Space$(12)
             Next
+			
             careerFiles$(0) = Spec$
             Call ReadFile(careerFiles$())
 

@@ -12,8 +12,8 @@ Sub SEECON ()
 
     H$ = " 1/2"
 
-    Spec$ = diskPaths$(1) + "*.LDR"
-    Count% = FCount%(Spec$)
+	Spec$ = diskPaths$(1) + "*.LDR"
+	Count% = FCount%(Spec$)
 
     If Count% = 0 Then
         Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -25,6 +25,7 @@ Sub SEECON ()
         For X = 1 To Count%
             conferenceLeaderFiles$(X) = Space$(12)
         Next
+
         conferenceLeaderFiles$(0) = Spec$
         Call ReadFile(conferenceLeaderFiles$())
 

@@ -11,9 +11,8 @@ Sub BLANKORG ()
         'Display list of files...
         Cls
 
-        Spec$ = diskPaths$(1) + "*.CON"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(1) + "*.CON"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -27,6 +26,7 @@ Sub BLANKORG ()
             For X = 1 To Count%
                 organizationFiles$(X) = Space$(12)
             Next
+			
             organizationFiles$(0) = Spec$
             Call ReadFile(organizationFiles$())
 

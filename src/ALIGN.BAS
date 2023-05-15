@@ -21,7 +21,7 @@ Sub ALIGN ()
             Locate 16, 5: Print Space$(55)
             Color 11
 
-			Call GetDiskID_ALIGN(A$)
+            Call GetDiskID_ALIGN(A$)
 
             B$ = A$
 
@@ -145,9 +145,9 @@ Sub AlignStats (pathRoadStats$, statFile$)
     Next
 
     Color 11
-	Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
+    Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
     Color 11
-	Locate 22: Print "ALIGNING FILES . . .             "
+    Locate 22: Print "ALIGNING FILES . . .             "
 
     N = 0
 
@@ -226,9 +226,9 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Next
 
     Color 11
-	Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
+    Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
     Color 11
-	Locate 22: Print "ALIGNING FILES . . .             "
+    Locate 22: Print "ALIGNING FILES . . .             "
 
     Open pathRoadStats$ + statFile$ For Output As #1
     Write #1, BR$
@@ -291,7 +291,7 @@ Sub GetDiskID_ALIGN (A$)
         If I$ <> Chr$(27) Then
 
             If I$ = Chr$(13) Then
-                Call SelectTeam_MERGE(yearNumber$, numberTeams)
+                Call SelectTeam_ALIGN(yearNumber$, numberTeams)
             Else
                 Locate 7, 27: Print I$
                 Locate 7, 28: Line Input NY$
@@ -299,7 +299,7 @@ Sub GetDiskID_ALIGN (A$)
                 Color 15, 0
 
                 If NY$ = "" And yearNumber$ <> "" Then
-                    Call SelectTeam_MERGE(yearNumber$, numberTeams)
+                    Call SelectTeam_ALIGN(yearNumber$, numberTeams)
                 Else
                     yearNumber$ = NY$
                     Erase teamNames$
@@ -316,7 +316,7 @@ Sub GetDiskID_ALIGN (A$)
                     Close 1
                     numberTeams = Y / 655
 
-                    Call SelectTeam_MERGE(yearNumber$, numberTeams)
+                    Call SelectTeam_ALIGN(yearNumber$, numberTeams)
                 End If
 
             End If

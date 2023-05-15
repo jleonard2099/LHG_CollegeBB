@@ -7,8 +7,7 @@ Sub SEENAT ()
 
     Do
         'Display list of files...
-
-        Spec$ = diskPaths$(1) + "*.NLD"
+		Spec$ = diskPaths$(1) + "*.NLD"
         Count% = FCount%(Spec$)
 
         If Count% = 0 Then
@@ -20,6 +19,7 @@ Sub SEENAT ()
             For X = 1 To Count%
                 organizationLeaderFiles$(X) = Space$(12)
             Next
+
             organizationLeaderFiles$(0) = Spec$
             Call ReadFile(organizationLeaderFiles$())
 

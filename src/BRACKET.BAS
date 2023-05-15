@@ -67,9 +67,8 @@ Sub ViewTourneyInfo (ACTION%)
 
     Do
         ' *** LOAD IN A SAVED TOURNAMENT ***
-        Spec$ = diskPaths$(0) + "*.TOU"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(1) + "*.TOU"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -83,6 +82,7 @@ Sub ViewTourneyInfo (ACTION%)
             For X = 1 To Count%
                 tournamentFiles$(X) = Space$(12)
             Next
+			
             tournamentFiles$(0) = Spec$
             Call ReadFile(tournamentFiles$())
 

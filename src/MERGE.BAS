@@ -44,18 +44,20 @@ Sub MERGE ()
 End Sub
 
 '----------------------------------------
-'          MergeStats Subroutine
+'          MergeStats  + routine
 '----------------------------------------
 '...explanation...
 Sub MergeStats ()
 
     Dim ARP$(14)
 
+    Shared Ycurr%, Yroad%
+
     Shared A$()
     Shared mergeH$(), HRP$()
     Shared mergeO$(), ORP$(), gameSite$(), SITERP$()
 
-	Shared ARD(), CRD(), CRDRD()
+    Shared ARD(), CRD(), CRDRD()
 
     Shared APRD%()
     Shared mergeO%(), mergeT%()
@@ -69,7 +71,7 @@ Sub MergeStats ()
 
     Do
 
-        Call GetMergePaths (pathCurrentStats$, pathRoadStats$, I$)
+        Call GetMergePaths(pathCurrentStats$, pathRoadStats$, I$)
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
@@ -96,7 +98,7 @@ Sub MergeStats ()
 
             statFile$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-			Color , 0
+            Color , 0
             Cls
 
             Locate 10, 15: Print "ROAD STATS ARE ON DRIVE "; pathRoadStats$
@@ -110,9 +112,9 @@ Sub MergeStats ()
 
             If UCase$(I$) = "N" Then
 
-                If _FileExists(pathRoadStats$ + "\" + statFile$) Then
+                If _FileExists(pathRoadStats$ + statFile$) Then
 
-                    Open pathRoadStats$ + "\" + statFile$ For Input As #1
+                    Open pathRoadStats$ + statFile$ For Input As #1
                     Input #1, B$
 
                     For I = 0 To 13: Input #1, ARP$(I)
@@ -121,8 +123,8 @@ Sub MergeStats ()
                     For L = 0 To 15: Input #1, ZRD1!(L): Next
                     Close #1
 
-                    Open pathRoadStats$ + "\" + statFile$ + "S" For Input As #1
-                    Input #1, YR%
+                    Open pathRoadStats$ + statFile$ + "S" For Input As #1
+                    Input #1, Yroad%
                     For I = 1 To 100: Input #1, ORD%(I): Next I
                     For I = 1 To 100: Input #1, ORP$(I): Next I
                     For I = 1 To 100: Input #1, TRD%(I): Next I
@@ -140,9 +142,9 @@ Sub MergeStats ()
                         Print Space$(64)
                     Next
 
-                    If _FileExists(pathCurrentStats$ + "\" + statFile$) Then
+                    If _FileExists(pathCurrentStats$ + statFile$) Then
 
-                        Open pathCurrentStats$ + "\" + statFile$ For Input As #1
+                        Open pathCurrentStats$ + statFile$ For Input As #1
                         Input #1, B$
 
                         For I = 0 To 13: Input #1, A$(I)
@@ -151,8 +153,8 @@ Sub MergeStats ()
                         For L = 0 To 15: Input #1, statsZ1!(L): Next
                         Close #1
 
-                        Open pathRoadStats$ + "\" + statFile$ + "S" For Input As #1
-                        Input #1, Y%
+                        Open pathRoadStats$ + statFile$ + "S" For Input As #1
+                        Input #1, Ycurr%
                         For I = 1 To 100: Input #1, mergeO%(I): Next I
                         For I = 1 To 100: Input #1, mergeO$(I): Next I
                         For I = 1 To 100: Input #1, mergeT%(I): Next I
@@ -173,7 +175,7 @@ Sub MergeStats ()
 
                         If SEQ = 0 Then
 
-                            Call DoTheMerge(pathCurrentStats$, statFile$)
+                            Call DoTheMerge(pathCurrentStats$, statFile$, B$)
 
                             For J = 13 To 23
                                 Locate J
@@ -251,10 +253,12 @@ End Sub
 
 
 '----------------------------------------
-'       DoTheMerge Subroutine
+'       DoTheMerge  + routine
 '----------------------------------------
 '...explanation...
-Sub DoTheMerge (pathCurrentStats$, statFile$)
+Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
+
+    Shared Ycurr%, Yroad%
 
     Shared A$()
     Shared mergeH$(), HRP$()
@@ -270,46 +274,69 @@ Sub DoTheMerge (pathCurrentStats$, statFile$)
     Shared statsZ!(), statsZ1!()
     Shared ZRD!(), ZRD1!()
 
-    For K = 1 To YR%
-        Y% = Y% + 1
-        mergeO%(Y%) = ORD%(K)
-        mergeO$(Y%) = ORP$(K)
-        mergeT%(Y%) = TRD%(K)
-        mergeH$(Y%) = HRP$(K)
-        mergeAP%(Y%, 0) = APRD%(Y%, 0)
-        mergeAP%(Y%, 1) = APRD%(Y%, 1)
-        CRD(Y%) = CRDRD(Y%)
-        gameSite$(Y%) = SITERP$(Y%)
+    For K = 1 To Yroad%
+        Ycurr% = Ycurr% + 1
+        mergeO%(Ycurr%) = ORD%(K)
+        mergeO$(Ycurr%) = ORP$(K)
+        mergeT%(Ycurr%) = TRD%(K)
+        mergeH$(Ycurr%) = HRP$(K)
+        mergeAP%(Ycurr%, 0) = APRD%(Ycurr%, 0)
+        mergeAP%(Ycurr%, 1) = APRD%(Ycurr%, 1)
+        CRD(Ycurr%) = CRDRD(Ycurr%)
+        gameSite$(Ycurr%) = SITERP$(Ycurr%)
     Next
 
     Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
     For I = 0 To 13
-        For J = 0 To 12: mergeA(I, J) = mergeA(I, J) + ARD(I, J): Next J
+
+        For J = 0 To 12: 
+            mergeA(I, J) = mergeA(I, J) + ARD(I, J)
+        Next J
+
         statsW0!(I) = statsW0!(I) + W0RD!(I)
         statsW1!(I) = statsW1!(I) + W1RD!(I)
-        If mergeA(I, 13) < ARD(I, 13) Then mergeA(I, 13) = ARD(I, 13) Else mergeA(I, 13) = mergeA(I, 13)
+
+        If mergeA(I, 13) < ARD(I, 13) Then 
+            mergeA(I, 13) = ARD(I, 13) 
+        Else 
+            mergeA(I, 13) = mergeA(I, 13)
+        End If
+
     Next I
 
-    For L = 0 To 15: statsZ!(L) = statsZ!(L) + ZRD!(L): statsZ1!(L) = statsZ1!(L) + ZRD1!(L): Next
+    For L = 0 To 15:
+        statsZ!(L) = statsZ!(L) + ZRD!(L)
+        statsZ1!(L) = statsZ1!(L) + ZRD1!(L)
+    Next
 
-    Open pathCurrentStats$ + "\" + statFile$ For Output As #1
+    Open pathCurrentStats$ + statFile$ For Output As #1
     Write #1, B$
-    For I = 0 To 13: Write #1, A$(I)
-    For J = 0 To 13: Write #1, mergeA(I, J): Next: Write #1, statsW0!(I): Write #1, statsW1!(I): Next
+
+    For I = 0 To 13: 
+        Write #1, A$(I)
+        For J = 0 To 13: Write #1, mergeA(I, J): Next
+        Write #1, statsW0!(I)
+        Write #1, statsW1!(I)
+    Next
+
     For L = 0 To 15: Write #1, statsZ!(L): Next
     For L = 0 To 15: Write #1, statsZ1!(L): Next
+
     Close #1
 
-    Open pathCurrentStats$ + "\" + statFile$ + "S" For Output As #1
-    Write #1, Y%
+    Open pathCurrentStats$ + statFile$ + "S" For Output As #1
+    Write #1, Ycurr%
+
     For I = 1 To 100: Write #1, mergeO%(I): Next I
     For I = 1 To 100: Write #1, mergeO$(I): Next I
     For I = 1 To 100: Write #1, mergeT%(I): Next I
     For I = 1 To 100: Write #1, mergeH$(I): Next I
+
     For I = 1 To 100
         For I1 = 0 To 1: Write #1, mergeAP%(I, I1): Next
     Next
+
     For I = 1 To 100: Write #1, CRD(I): Next I
     For I = 1 To 100: Write #1, gameSite$(I): Next I
 
@@ -323,7 +350,7 @@ End Sub
 
 
 '----------------------------------------
-'       GetMergePaths Subroutine
+'       GetMergePaths  + routine
 '----------------------------------------
 '...explanation...
 Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
@@ -347,7 +374,7 @@ Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
                 Locate , 5: Print "           /usr/bin/haffner"
                 Locate , 5: Print "           /usr/bin/haffner/1960"
                 Locate , 5: Print "           /home/haffner/cbasket"
-            Case "[MAC]","[MACOSX]":
+            Case "[MAC]", "[MACOSX]":
                 Locate 4, 5: Print "EXAMPLE - /Volumes/floppy"
                 Locate , 5: Print "           /Applications/haffner"
                 Locate , 5: Print "           /Applications/haffner/1960"
@@ -397,7 +424,7 @@ End Sub
 
 
 '----------------------------------------
-'       GetDiskID_MERGE  Subroutine
+'       GetDiskID_MERGE   + routine
 '----------------------------------------
 '...explanation...
 Sub GetDiskID_MERGE (A$)
@@ -494,7 +521,7 @@ End Sub
 
 
 '----------------------------------------
-'       SelectTeam_MERGE Subroutine
+'       SelectTeam_MERGE  + routine
 '----------------------------------------
 '...explanation...
 Sub SelectTeam_MERGE (yearNumber$, numberTeams)
@@ -563,3 +590,4 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
     End If
 
 End Sub
+

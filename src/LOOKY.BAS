@@ -6,23 +6,29 @@ Sub LOOKY ()
 
     CP% = 1
 
-    Color 15, 0
-    Cls
-
     Do
 
-        Call TITLE_HEADER
-
         Color 15, 0
+        Cls
 
         JJ = 6
         Locate 6, 8: Color 15, 4
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        'Print box sides
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        'Print box bottom
         Locate 7 + JJ, 8
         Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
         Locate 7, 32
+
         Locate , 12: Print "ENTER DISK ID: ": Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -46,18 +52,22 @@ Sub LOOKY ()
                 Else
                     YN$ = NY$
                     Erase teamNames$
+                    NTMS = 0
 
                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
                     Y = LOF(1)
                     Field #1, 15 As Q$(0), 640 As X$
+
                     For I1 = 1 To Y / 655
                         Get #1, I1
                         teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
                     Next
                     Close 1
+
                     NTMS = Y / 655
 
                     Call SelectTeam_LOOKY(NTMS, YN$)
+
                 End If
 
             End If
@@ -100,17 +110,17 @@ Sub LOOKY ()
 
                     Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
 
-                    If UCase$(Z$) <> "END" Then
-                        Call ReadStats(Z$, totalGames%, menuExit%)
-                    End If
-
                 End If 'Done checking if "N"
+
+				If UCase$(Z$) <> "END" Then
+					Call ReadStats(Z$, totalGames%, menuExit%)
+				End If
 
             End If 'Done checking BO%
 
         End If 'Done checking for ESC
 
-    Loop Until UCase$(Z$) = "END" Or I$ = Chr$(27) 'Or menuExit% = 1
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27) Or Z$ = "END"
 
 End Sub
 
@@ -143,9 +153,9 @@ Sub ReadStats (statFile$, totalGames%, menuExit%)
     If Not _FileExists(diskPaths$(1) + statFile$) Then
 
         Locate 10, 8
-        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -161,8 +171,8 @@ Sub ReadStats (statFile$, totalGames%, menuExit%)
         VL% = 0
         NL% = 0
 
+        zoob$ = diskPaths$(1) + statFile$ + "S"
         Open diskPaths$(1) + statFile$ + "S" For Input As #2
-        '# of games?
         Input #2, totalGames%
 
         For I = 1 To 100: Input #2, mergeO%(I): Next I
@@ -918,64 +928,13 @@ Sub PrintTeamStatSummary (B$, totalGames%)
 End Sub
 
 '----------------------------------------
-'       SelectTeam_LOOKY Subroutine
-'----------------------------------------
-'...explanation...
-Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
-
-    Shared statsL%(), mergeT%()
-
-    Selection% = 1
-    Count% = numberTeams
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
-
-    If ExitCode% <> 27 Then
-
-        T1 = teamIndex%(Selection%)
-
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
-        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-        For I = 0 To 13
-            Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-        Next
-        Get #1, T1
-
-        staminaRating% = CVI(Q$(1)): defFGPctAdj% = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
-        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
-        Close 1
-
-    Else
-        BO% = 1
-    End If
-
-End Sub
-
-
-'----------------------------------------
 '       ResetStatPrompt Subroutine
 '----------------------------------------
 ' Prompts user with choice to reset stats
 ' If they chose so, and confirm, then
 ' it will proceed to delete the files.
 Sub ResetStatPrompt (statFile$)
-    
+
     Cls
 
     JJ = 1
@@ -1046,3 +1005,55 @@ Sub ResetStatPrompt (statFile$)
     End If 'Done checking if reset stats
 
 End Sub
+
+
+'----------------------------------------
+'       SelectTeam_LOOKY Subroutine
+'----------------------------------------
+'...explanation...
+Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
+
+    Shared statsL%(), mergeT%()
+
+    Selection% = 1
+    Count% = numberTeams
+    Start% = 1
+    FileFGColr% = 15: FileBGColr% = 4
+    HiLiteFGColr% = 0: HiLiteBGColr% = 7
+    Rows% = 20
+    Columns% = 4
+    Spacing% = 6
+    Row% = 4
+    Column% = 1
+    Color , 4: Cls: Locate , 33: Color 14
+    Print "TEAM SELECTION": Color 15
+    Locate 25, 1: Color 14: Print "ESC";: Color 15
+    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
+    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+    _MouseShow "DEFAULT"
+    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+    _MouseHide
+
+    If ExitCode% <> 27 Then
+
+        T1 = teamIndex%(Selection%)
+
+        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+        For I = 0 To 13
+            Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+        Next
+        Get #1, T1
+
+        staminaRating% = CVI(Q$(1)): defFGPctAdj% = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
+        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
+        Close 1
+
+    Else
+        BO% = 1
+    End If
+
+End Sub
+

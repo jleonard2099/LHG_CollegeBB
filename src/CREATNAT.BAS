@@ -102,9 +102,8 @@ Sub CREATNAT ()
                     'Add / Delete / Review Conferences
                     Do
                         'Display list of files...
-                        Spec$ = diskPaths$(1) + "*.CON"
-                        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-                        Count% = DirCount%
+						Spec$ = diskPaths$(1) + "*.CON"
+						Count% = FCount%(Spec$)
 
                         If Count% = 0 Then
                             Locate 10, 8
@@ -117,6 +116,7 @@ Sub CREATNAT ()
                             For X = 1 To Count%
                                 organizationFiles$(X) = Space$(12)
                             Next
+
                             organizationFiles$(0) = Spec$
                             Call ReadFile(organizationFiles$())
 
@@ -202,9 +202,9 @@ End Sub
 Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
     '310 'GoSub 1440
 
-    Spec$ = diskPaths$(1) + "*.LIB"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+	Spec$ = diskPaths$(1) + "*.LIB"
+	Count% = FCount%(Spec$)
+
     If Count% = 0 Then
         Locate 10, 8
         Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
@@ -218,7 +218,6 @@ Sub SelectFile_CREATNAT (leagueData$(), targetFile$)
         Next
 
         conferenceFiles$(0) = Spec$
-
         Call ReadFile(conferenceFiles$())
 
         Do

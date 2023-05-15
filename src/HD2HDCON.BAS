@@ -182,152 +182,157 @@ Sub TeamVsConf ()
         For J = 1 To 100: Input #4, homeTeam$(J): Next
         Close #4
 
-        1440 Spec$ = diskPaths$(1) + "*.LIB"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(1) + "*.LIB"
+		Count% = FCount%(Spec$)
+
         If Count% = 0 Then
+
             Locate 10, 8
             Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
-            Exit Sub
-        End If
 
-        ReDim conferenceFiles$(0 To Count%)
-        For X = 1 To Count%
-            conferenceFiles$(X) = Space$(12)
-        Next
-        conferenceFiles$(0) = Spec$
-        Call ReadFile(conferenceFiles$())
+        Else
 
-        Do
-            Cls
-            Color , 1
-            Cls
-            Locate , 28
-            Color 14
-            Print "SELECT CONFERENCE": Color 15
-            Selection% = 1
-            Start% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1
-            Color 14
-            Print "ENTER";: Color 15
-            Print "-SELECTS CONFERENCE";
+			ReDim conferenceFiles$(0 To Count%)
+			For X = 1 To Count%
+				conferenceFiles$(X) = Space$(12)
+			Next
 
-            _MouseShow "DEFAULT"
-            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
+			conferenceFiles$(0) = Spec$
+			Call ReadFile(conferenceFiles$())
 
-            If ExitCode% <> 27 Then
+			Do
+				Cls
+				Color , 1
+				Cls
+				Locate , 28
+				Color 14
+				Print "SELECT CONFERENCE": Color 15
+				Selection% = 1
+				Start% = 1
+				FileFGColr% = 15: FileBGColr% = 1
+				HiLiteFGColr% = 0: HiLiteBGColr% = 7
+				Rows% = 20
+				Columns% = 4
+				Spacing% = 6
+				Row% = 4
+				Column% = 1
+				Locate 25, 1
+				Color 14
+				Print "ENTER";: Color 15
+				Print "-SELECTS CONFERENCE";
 
-                Color 15, 1
+				_MouseShow "DEFAULT"
+				MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+				_MouseHide
 
-                targetFile$ = conferenceFiles$(Selection%)
-                Locate 2, 33: Print targetFile$
+				If ExitCode% <> 27 Then
 
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+					Color 15, 1
 
-                Color 15, 0
+					targetFile$ = conferenceFiles$(Selection%)
+					Locate 2, 33: Print targetFile$
 
-            End If
+					Do
+						Locate 3, 33: Print "ANY CHANGE (YN)";
+						I$ = GetKeyPress$
+					Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+					Color 15, 0
 
-        If ExitCode% <> 27 Then
+				End If
 
-            targetFile$ = RTrim$(targetFile$)
-            targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-            LG$ = targetFile$
+			Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-            Cls
-            J = 5
-            Locate 8, 8
-            Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-            For II = 1 To J
-                Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-            Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+			If ExitCode% <> 27 Then
 
-            Do
-                Locate 10, 15
-                Color 7, 1
+				targetFile$ = RTrim$(targetFile$)
+				targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
+				LG$ = targetFile$
 
-                Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-                Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
-                I$ = GetKeyPress$
-                
-                Color 14, 0
-                
-            Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
-                VPP = 0
+				Cls
+				J = 5
+				Locate 8, 8
+				Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+				For II = 1 To J
+					Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+				Next
+				Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+				Do
+					Locate 10, 15
+					Color 7, 1
+
+					Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
+					Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
+					I$ = GetKeyPress$
+					
+					Color 14, 0
+					
+				Loop Until UCase$(I$) = "S" Or UCase$(I$) = "P"
+					VPP = 0
 
 
-            If UCase$(I$) = "P" Then X1 = 1
-            If UCase$(I$) = "S" Then VPP = 1
+				If UCase$(I$) = "P" Then X1 = 1
+				If UCase$(I$) = "S" Then VPP = 1
 
-            W$ = LG$ + ".LIB"
+				W$ = LG$ + ".LIB"
 
-            Open diskPaths$(1) + W$ For Input As #1
-            Input #1, X
-            Input #1, LG$
-            Input #1, D1$: Input #1, D2$
-            For X = 1 To 30
-                Input #1, Z1$(X)
-                Input #1, hd2hdZ1%(X)
-                Input #1, hd2hdZ2$(X)
-            Next
+				Open diskPaths$(1) + W$ For Input As #1
+				Input #1, X
+				Input #1, LG$
+				Input #1, D1$: Input #1, D2$
+				For X = 1 To 30
+					Input #1, Z1$(X)
+					Input #1, hd2hdZ1%(X)
+					Input #1, hd2hdZ2$(X)
+				Next
 
-            NTMS = 30
-            Close 1
+				NTMS = 30
+				Close 1
 
-            Cls
-            Color 15
-            Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
-            For Q = 1 To 30
-                AW!(Q) = 0: HW!(Q) = 0
-                AL!(Q) = 0: HL!(Q) = 0
-                R1!(Q) = 0: R2!(Q) = 0
-                hd2hdR3!(Q) = 0: R4!(Q) = 0
-            Next
-            For K = 1 To 2
-                THW!(K) = 0: THL!(K) = 0
-                TAW!(K) = 0: TAL!(K) = 0
-                TR1!(K) = 0: TR2!(K) = 0
-                TR3!(K) = 0: TR4!(K) = 0
-            Next
-            For K = 1 To 30
-                If Not (Z1$(K) = "XXX") Then
-                    For I = 1 To Y
-                        If mergeO%(I) > hd2hdTR%(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-                        If mergeO%(I) > hd2hdTR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-                        If mergeO%(I) < hd2hdTR%(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
-                        If mergeO%(I) < hd2hdTR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
-                        If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + hd2hdTR%(I)
-                        If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + mergeO%(I)
-                        If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + hd2hdTR%(I)
-                        If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then hd2hdR3!(K) = hd2hdR3!(K) + mergeO%(I)
-                    Next I
-                End If
+				Cls
+				Color 15
+				Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
+				For Q = 1 To 30
+					AW!(Q) = 0: HW!(Q) = 0
+					AL!(Q) = 0: HL!(Q) = 0
+					R1!(Q) = 0: R2!(Q) = 0
+					hd2hdR3!(Q) = 0: R4!(Q) = 0
+				Next
+				For K = 1 To 2
+					THW!(K) = 0: THL!(K) = 0
+					TAW!(K) = 0: TAL!(K) = 0
+					TR1!(K) = 0: TR2!(K) = 0
+					TR3!(K) = 0: TR4!(K) = 0
+				Next
+				For K = 1 To 30
+					If Not (Z1$(K) = "XXX") Then
+						For I = 1 To Y
+							If mergeO%(I) > hd2hdTR%(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
+							If mergeO%(I) > hd2hdTR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
+							If mergeO%(I) < hd2hdTR%(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
+							If mergeO%(I) < hd2hdTR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
+							If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + hd2hdTR%(I)
+							If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + mergeO%(I)
+							If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + hd2hdTR%(I)
+							If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then hd2hdR3!(K) = hd2hdR3!(K) + mergeO%(I)
+						Next I
+					End If
 
-            Next K
+				Next K
 
-            If VPP <> 1 Then
-                Call Hd2Hd_Printer(QQ$(1))
-            Else
-                Call Hd2Hd_Screen(QQ$(1))
-            End If
+				If VPP <> 1 Then
+					Call Hd2Hd_Printer(QQ$(1))
+				Else
+					Call Hd2Hd_Screen(QQ$(1))
+				End If
 
-        End If 'Done checking for ESC
+			End If 'Done checking for ESC
+
+		
+		End If
 
     End If 'Done checking for stats file
 

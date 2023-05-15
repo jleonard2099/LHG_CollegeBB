@@ -12,9 +12,8 @@ Sub BLANK ()
 
         Cls
 
-        Spec$ = diskPaths$(1) + "*.LIB"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+		Spec$ = diskPaths$(1) + "*.LIB"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -28,6 +27,7 @@ Sub BLANK ()
             For X = 1 To Count%
                 conferenceFiles$(X) = Space$(12)
             Next
+
             conferenceFiles$(0) = Spec$
             Call ReadFile(conferenceFiles$())
 

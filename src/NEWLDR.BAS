@@ -55,9 +55,8 @@ Sub ViewExpanded ()
         expanZ1$(X) = "XXX"
     Next
 
-    Spec$ = diskPaths$(1) + "*.TMS"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+	Spec$ = diskPaths$(1) + "*.TMS"
+	Count% = FCount%(Spec$)
 
     If Count% = 0 Then
         Locate 10, 8
@@ -72,7 +71,6 @@ Sub ViewExpanded ()
         Next
 
         conferenceFiles$(0) = Spec$
-
         Call ReadFile(conferenceFiles$())
 
         Do

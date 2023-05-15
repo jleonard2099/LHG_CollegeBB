@@ -34,8 +34,7 @@ Sub TOURNEY ()
     yearNumber$(0, 2) = "07:30P"
 
     Spec$ = diskPaths$(0) + "*.TOU"
-    null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-    Count% = DirCount%
+	Count% = FCount%(Spec$)
 
     If Count% = 0 Then
         'This was added to handle if no TOU files are available
@@ -54,8 +53,6 @@ Sub TOURNEY ()
         tournamentFiles$(0) = Spec$
         Call ReadFile(tournamentFiles$())
 
-        'nf% = Count%
-
         'WE have to make all this a sub to keep the logic cleaner
         Color 7, 0
         Cls
@@ -72,11 +69,10 @@ Sub TOURNEY ()
             homeTeam$(I) = ""
         Next
 
-        600 ' *** LOAD IN A SAVED SCHEDULE ***
-
+        ' *** LOAD IN A SAVED SCHEDULE ***
         Do
 
-            2100 Cls
+            Cls
             Color , 1
             Cls
             Locate , 28

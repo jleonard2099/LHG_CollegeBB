@@ -15,6 +15,8 @@ Sub ADDTOURN ()
     ReDim menuChoices$(1 To 6)
 
     Do
+        Color , 0
+
         Cls
 
         Call TITLE_TOURN
@@ -97,7 +99,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Dim HC$(2)
     Dim SC$(2), TE$(1), TF$(1)
 
-	Dim tourneyCM$(1), tourneyTS$(1)
+    Dim tourneyCM$(1), tourneyTS$(1)
 
     Shared tourneyDefaults%()
 
@@ -141,7 +143,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Locate , 19: Print "SELECT GENERAL TOURNAMENT OPTIONS"
 
     Locate 25, 1: Print Tab(80);
-	Locate , 1: Color , 0
+    Locate , 1: Color , 0
 
     Do
         Locate 5, 2: Color 14: Print "(1) ";: Color 15: Print "3-POINT SHOT: "; tourneyTS$(tourneyDefaults%(3))
@@ -165,10 +167,10 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         Select Case I
             Case 1: tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
             Case 2: tourneyDefaults%(7) = tourneyDefaults%(7) + 1: If tourneyDefaults%(7) > 2 Then tourneyDefaults%(7) = 0
-            Case 3: 
-				Locate 7, 32
-				Input U6!
-				tourneyDefaults%(4) = U6! * 10
+            Case 3:
+                Locate 7, 32
+                Input U6!
+                tourneyDefaults%(4) = U6! * 10
             Case 4: tourneyDefaults%(5) = tourneyDefaults%(5) + 1: If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
             Case 5: tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
             Case 6: tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
@@ -189,12 +191,15 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Color 15
     Locate , 22: Print "TOURNAMENT  - GENERAL INFORMATION"
     Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
-    Locate 7, 1: QPrint "FILE NAME (32 CHARACTERS) ", 14, 1, -1
-    Locate , 26: QPrint PadRight$(sourceFile$, 32), FG, BG, -1
+    Locate 7, 1: QPrint "FILE NAME (48 CHARACTERS) ", 14, 1, -1
+    Locate , 27: QPrint PadRight$(sourceFile$, 48), FG, BG, -1
+
     Locate 9, 1: QPrint "NAME OF TOURNAMENT ", 14, 1, -1
-    Locate , 20: QPrint PadRight$(tourneyName$, 40), FG, BG, -1
+    Locate , 20: QPrint PadRight$(tourneyName$, 55), FG, BG, -1
+
     Locate 11, 1: QPrint "CONSOLATION GAMES IN REGIONALS/FINALS ", 14, 1, -1
-    Locate , 40: QPrint PadRight$(C$, 1), FG, BG, -1
+    Locate , 39: QPrint PadRight$(C$, 1), FG, BG, -1
+
     Locate 13, 1: QPrint "NUMBER OF BRACKETS/REGIONS (1-16) ", 14, 1, -1
     Locate , 35: QPrint PadRight$(numberRegions$, 2), FG, BG, -1
 
@@ -250,9 +255,9 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         If sourceFile$ = "" Then
 
             Locate 10
-            Call CSMsgBox("TOUNAMENT FILE NAME IS BLANK PRESS ANY KEY TO CONTINUE SELECTING", 28, Pass)
+            Call CSMsgBox("TOUNAMENT FILE NAME IS BLANK PRESS ANY KEY TO CONTINUE SELECTING", 28, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
             GoTo GetData
 
         Else
@@ -402,9 +407,9 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                             If slotName$(NR, I, 0) = "" Then
                                 Locate 10
-                                Call CSMsgBox("ALL SEEDS HAVE NOT BEEN FILLED PRESS ANY KEY TO CONTINUE SELECTING", 30, Pass)
+                                Call CSMsgBox("ALL SEEDS HAVE NOT BEEN FILLED PRESS ANY KEY TO CONTINUE SELECTING", 30, PASS)
                                 I$ = GetKeyPress$
-                                Call CSMsgBox("", 0, Pass)
+                                Call CSMsgBox("", 0, PASS)
 
                                 NF = 1
                                 'Return
@@ -471,9 +476,9 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                                 If Not _FileExists(diskPaths$(0) + "BASK." + YN$) Then
                                     Locate 10, 8
 
-                                    Call CSMsgBox("NO TEAMS MATCHING ID WERE FOUND... PRESS ANY KEY TO SELECT ANOTHER ID", 26, Pass)
+                                    Call CSMsgBox("NO TEAMS MATCHING ID WERE FOUND... PRESS ANY KEY TO SELECT ANOTHER ID", 26, PASS)
                                     I$ = GetKeyPress$
-                                    Call CSMsgBox("", 0, Pass)
+                                    Call CSMsgBox("", 0, PASS)
 
                                     BO% = 1
                                 Else
@@ -653,15 +658,14 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
     Do
         ' *** LOAD IN A SAVED TOURNAMENT ***
-        Spec$ = diskPaths$(0) + "*.TOU"
-        null$ = READDIR$(Spec$) 'use a file spec ONCE to find the last file name listed
-        Count% = DirCount%
+        Spec$ = diskPaths$(1) + "*.TOU"
+		Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
-            Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
         Else
 
             ReDim tournamentFiles$(0 To Count%)
@@ -671,7 +675,6 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             Next
 
             tournamentFiles$(0) = Spec$
-
             Call ReadFile(tournamentFiles$())
 
             Cls
@@ -727,9 +730,9 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                         Call FCopy(diskPaths$(0) + loadFile$ + ".TCX", diskPaths$(0) + loadFile$ + ".TOU", BUFFER$, ERRCODE%)
                         Locate 10
 
-                        Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, Pass)
+                        Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
                         I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
+                        Call CSMsgBox("", 0, PASS)
 
                         ACTION% = 1
 
@@ -3499,25 +3502,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
-			Else
-				5405 TC! = TC! + 1
-				REGION = 17
-				GAME = 4
-				ROUND = 99
-				Call SETTINGS
+            Else
+                5405 TC! = TC! + 1
+                REGION = 17
+                GAME = 4
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1103
-				scheduleNG%(TC!, 1) = 1102
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 3 WINNER"
-				homeTeam$(TC!) = "GAME 2 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1103
+                scheduleNG%(TC!, 1) = 1102
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 3 WINNER"
+                homeTeam$(TC!) = "GAME 2 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 6:
@@ -3626,26 +3629,26 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
-			Else
+            Else
 
-				5505 TC! = TC! + 1
-				REGION = 17
-				GAME = 5
-				ROUND = 99
-				Call SETTINGS
+                5505 TC! = TC! + 1
+                REGION = 17
+                GAME = 5
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1103
-				scheduleNG%(TC!, 1) = 1104
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 3 WINNER"
-				homeTeam$(TC!) = "GAME 4 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1103
+                scheduleNG%(TC!, 1) = 1104
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 3 WINNER"
+                homeTeam$(TC!) = "GAME 4 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -3773,25 +3776,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				5605 TC! = TC! + 1
-				REGION = 17
-				GAME = 6
-				ROUND = 99
-				Call SETTINGS
+            Else
+                5605 TC! = TC! + 1
+                REGION = 17
+                GAME = 6
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1105
-				scheduleNG%(TC!, 1) = 1104
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 5 WINNER"
-				homeTeam$(TC!) = "GAME 4 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1105
+                scheduleNG%(TC!, 1) = 1104
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 5 WINNER"
+                homeTeam$(TC!) = "GAME 4 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 8:
@@ -3934,30 +3937,30 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
-            
-			Else
 
-				5705 TC! = TC! + 1
-				REGION = 17
-				GAME = 7
-				ROUND = 99
-				Call SETTINGS
+            Else
 
-				scheduleNG%(TC!, 0) = 1105
-				scheduleNG%(TC!, 1) = 1106
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 5 WINNER"
-				homeTeam$(TC!) = "GAME 6 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                5705 TC! = TC! + 1
+                REGION = 17
+                GAME = 7
+                ROUND = 99
+                Call SETTINGS
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
-			
-			End If
-			
+                scheduleNG%(TC!, 0) = 1105
+                scheduleNG%(TC!, 1) = 1106
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 5 WINNER"
+                homeTeam$(TC!) = "GAME 6 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
+
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
+
+            End If
+
         Case 9:
             5800 '9 REGIONS
             TC! = TC! + 1
@@ -4116,25 +4119,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				5805 TC! = TC! + 1
-				REGION = 17
-				GAME = 8
-				ROUND = 99
-				Call SETTINGS
+            Else
+                5805 TC! = TC! + 1
+                REGION = 17
+                GAME = 8
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1107
-				scheduleNG%(TC!, 1) = 1106
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 7 WINNER"
-				homeTeam$(TC!) = "GAME 6 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1107
+                scheduleNG%(TC!, 1) = 1106
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 7 WINNER"
+                homeTeam$(TC!) = "GAME 6 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 10:
@@ -4312,25 +4315,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				5905 TC! = TC! + 1
-				REGION = 17
-				GAME = 9
-				ROUND = 99
-				Call SETTINGS
+            Else
+                5905 TC! = TC! + 1
+                REGION = 17
+                GAME = 9
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1107
-				scheduleNG%(TC!, 1) = 1108
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 7 WINNER"
-				homeTeam$(TC!) = "GAME 8 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1107
+                scheduleNG%(TC!, 1) = 1108
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 7 WINNER"
+                homeTeam$(TC!) = "GAME 8 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -4525,25 +4528,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
-			Else
-				6005 TC! = TC! + 1
-				REGION = 17
-				GAME = 10
-				ROUND = 99
-				Call SETTINGS
+            Else
+                6005 TC! = TC! + 1
+                REGION = 17
+                GAME = 10
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1109
-				scheduleNG%(TC!, 1) = 1108
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 7 WINNER"
-				homeTeam$(TC!) = "GAME 8 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1109
+                scheduleNG%(TC!, 1) = 1108
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 7 WINNER"
+                homeTeam$(TC!) = "GAME 8 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 12:
@@ -4754,30 +4757,30 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
-            
-			Else
 
-				6105 TC! = TC! + 1
-				REGION = 17
-				GAME = 11
-				ROUND = 99
-				Call SETTINGS
+            Else
 
-				scheduleNG%(TC!, 0) = 1109
-				scheduleNG%(TC!, 1) = 1110
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 9 WINNER"
-				homeTeam$(TC!) = "GAME 10 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                6105 TC! = TC! + 1
+                REGION = 17
+                GAME = 11
+                ROUND = 99
+                Call SETTINGS
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
-			
-			End If
-			
+                scheduleNG%(TC!, 0) = 1109
+                scheduleNG%(TC!, 1) = 1110
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 9 WINNER"
+                homeTeam$(TC!) = "GAME 10 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
+
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
+
+            End If
+
         Case 13:
             6200 '13 REGIONS
             TC! = TC! + 1
@@ -5004,25 +5007,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				6205 TC! = TC! + 1
-				REGION = 17
-				GAME = 12
-				ROUND = 99
-				Call SETTINGS
+            Else
+                6205 TC! = TC! + 1
+                REGION = 17
+                GAME = 12
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1111
-				scheduleNG%(TC!, 1) = 1110
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 11 WINNER"
-				homeTeam$(TC!) = "GAME 10 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1111
+                scheduleNG%(TC!, 1) = 1110
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 11 WINNER"
+                homeTeam$(TC!) = "GAME 10 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 14:
@@ -5269,25 +5272,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				6305 TC! = TC! + 1
-				REGION = 17
-				GAME = 13
-				ROUND = 99
-				Call SETTINGS
+            Else
+                6305 TC! = TC! + 1
+                REGION = 17
+                GAME = 13
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1111
-				scheduleNG%(TC!, 1) = 1112
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 11 WINNER"
-				homeTeam$(TC!) = "GAME 12 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1111
+                scheduleNG%(TC!, 1) = 1112
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 11 WINNER"
+                homeTeam$(TC!) = "GAME 12 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 15:
@@ -5551,25 +5554,25 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				6405 TC! = TC! + 1
-				REGION = 17
-				GAME = 14
-				ROUND = 99
-				Call SETTINGS
+            Else
+                6405 TC! = TC! + 1
+                REGION = 17
+                GAME = 14
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1112
-				scheduleNG%(TC!, 1) = 1113
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 12 WINNER"
-				homeTeam$(TC!) = "GAME 13 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1112
+                scheduleNG%(TC!, 1) = 1113
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 12 WINNER"
+                homeTeam$(TC!) = "GAME 13 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
 
-				Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourney(saveFile$, numberRegions, tournName$)
             End If
 
         Case 16:
@@ -5850,23 +5853,23 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
-			Else
-				6505 TC! = TC! + 1
-				REGION = 17
-				GAME = 15
-				ROUND = 99
-				Call SETTINGS
+            Else
+                6505 TC! = TC! + 1
+                REGION = 17
+                GAME = 15
+                ROUND = 99
+                Call SETTINGS
 
-				scheduleNG%(TC!, 0) = 1114
-				scheduleNG%(TC!, 1) = 1113
-				scheduleNG%(TC!, 15) = REGION
-				scheduleNG%(TC!, 16) = ROUND
-				scheduleNG%(TC!, 17) = GAME
-				visitingTeam$(TC!) = "GAME 14 WINNER"
-				homeTeam$(TC!) = "GAME 13 WINNER"
-				yearNumber$(TC!, 0) = "XXX"
-				yearNumber$(TC!, 1) = "XXX"
-				Call WRITEGAME(saveFile$)
+                scheduleNG%(TC!, 0) = 1114
+                scheduleNG%(TC!, 1) = 1113
+                scheduleNG%(TC!, 15) = REGION
+                scheduleNG%(TC!, 16) = ROUND
+                scheduleNG%(TC!, 17) = GAME
+                visitingTeam$(TC!) = "GAME 14 WINNER"
+                homeTeam$(TC!) = "GAME 13 WINNER"
+                yearNumber$(TC!, 0) = "XXX"
+                yearNumber$(TC!, 1) = "XXX"
+                Call WRITEGAME(saveFile$)
             End If
 
     End Select
@@ -6004,9 +6007,9 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
 
     Locate 10
 
-    Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, Pass)
+    Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
     I$ = GetKeyPress$
-    Call CSMsgBox("", 0, Pass)
+    Call CSMsgBox("", 0, PASS)
 
 End Sub
 
@@ -6171,3 +6174,4 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
     If _FileExists(tempFile$) Then Kill tempFile$
 
 End Sub
+

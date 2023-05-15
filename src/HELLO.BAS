@@ -285,7 +285,7 @@ Sub ConfigureDrives ()
         Case "[LINUX]":
             Locate , 31: Print "/mnt/floppy"
             Locate , 31: Print "/usr/bin/colbb/teams"
-        Case "[MAC]","[MACOSX]":
+        Case "[MAC]", "[MACOSX]":
             Locate , 31: Print "/Volumes/floppy"
             Locate , 31: Print "/Applications/colbb/teams"
     End Select
@@ -563,3 +563,4 @@ End Sub
 ' For Game
 '$INCLUDE: 'COLHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
+
