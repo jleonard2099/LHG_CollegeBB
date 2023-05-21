@@ -613,15 +613,16 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
                             NY$ = YN$
                             Call GetTeam_Schedule(NTMS, NY$, T1)
                         Else
-                            YN$ = NY$
+                            YN$ = RTrim$(NY$)
                             Erase teamNames$
                             NTMS = 0
+
                             Call SelectTeam_Schedule(NTMS, YN$)
                             Call GetTeam_Schedule(NTMS, YN$, T1)
                         End If
 
                         Call CheckTeam_Schedule(T1, YN$)
-                        'N$ = RTrim$(Q$(0))
+
                         N$ = teamNames$(T1)
 
                         If BO% = 1 Then
@@ -909,14 +910,14 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                     If NY$ = "" And YN$ <> "" Then
                         Call GetTeam_Schedule(NTMS, YN$, T1)
                     Else
-                        YN$ = NY$
+                        YN$ = RTrim$(NY$)
                         Erase teamNames$
+
                         Call SelectTeam_Schedule(NTMS, YN$)
                         Call GetTeam_Schedule(NTMS, YN$, T1)
                     End If
 
                     Call CheckTeam_Schedule(T1, YN$)
-                    'N$ = RTrim$(Q$(0))
                     N$ = teamNames$(T1)
 
                     If BO% = 1 Then
@@ -949,7 +950,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                 I1 = Val(I$)
                             Loop Until I1 = 0 Or I1 = 1
 
-                            Input "ENTER DISPLAY VARIABLE FOR THESE GAMES "; displayPause!
+                            Input "ENTER DISPLAY PAUSE FOR THESE GAMES "; displayPause!
 
                         End If
 
@@ -1569,8 +1570,9 @@ End Sub
 Sub SelectTeam_Schedule (numberTeams, yearNumber$)
 
     numberTeams = 0
-
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+	teamYear$ = RTrim$(yearNumber$)
+	
+    Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
     Y = LOF(1)
 
@@ -1630,7 +1632,9 @@ Sub CheckTeam_Schedule (teamIdx, yearNumber$)
 
     Shared scheduleT%()
 
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+	teamYear$ = RTrim$(yearNumber$)
+    
+	Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19)
 

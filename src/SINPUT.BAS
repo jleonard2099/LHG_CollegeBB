@@ -319,22 +319,27 @@ Sub SelectTeam_SINPUT (B$)
                 If NY$ = "" And YN$ <> "" Then 
                     Call GetTeam_SINPUT (YN$, NTMS)
                 Else
-                    YN$ = NY$
+                    YN$ = RTrim$(NY$)
                     Erase teamNames$
 
                     Open diskPaths$(0) + "BASK." + YN$ As #1 Len = 655
+
                     Y = LOF(1)
+
                     Field #1, 15 As Q$(0), 640 As X$
+
                     For I1 = 1 To Y / 655
                         Get #1, I1
                         teamNames$(I1) = Q$(0)
                     Next
+
                     Close 1
 
                     NTMS = Y / 655
-                    'TS% = Int((NTMS - 1) / 80)
+
                     Call GetTeam_SINPUT (YN$, NTMS)
                 End If
+
             End If
 
             If BO% = 1 Then 
@@ -404,8 +409,7 @@ Sub GetTeam_SINPUT (YN$, numberTeams)
 
         Get #1, T1
 
-        A$ = RTRim$(Q$(0))
-        B$ = A$
+        B$ = RTRim$(Q$(0))
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
         V1% = CVI(Q$(3))

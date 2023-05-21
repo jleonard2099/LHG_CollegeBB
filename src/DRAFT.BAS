@@ -163,9 +163,12 @@ Sub DraftExistingTeam (draftNew%)
         If NY$ = "" And draftYN$(0) <> "" Then 
             Call SelectTeam_DRAFT(NTMS)
         Else
-            draftYN$(0) = NY$
+
+            draftYN$(0) = RTrim$(NY$)
             Erase teamNames$
+
             Call MoreTeam(Index%)
+
         End If
 
         If BO% = 1 Then
@@ -261,21 +264,27 @@ Sub DoTheDraft (draftNew%, teamPosition%)
                     If NY$ = "" And draftYN$(1) <> "" Then 
                         Call SelectTeam_DRAFT(NTMS)
                     Else
-                        draftYN$(1) = NY$
+                        draftYN$(1) = RTrim$(NY$)
                         Erase teamNames$
-                        Cls
+
                         Open diskPaths$(0) + "BASK." + draftYN$(1) For Random As #1 Len = 655
+
                         Y = LOF(1)
+
                         Field #1, 15 As Q$(0), 640 As X$
+
                         For I1 = 1 To Y / 655
                             Get #1, I1
                             teamNames$(I1) = Q$(0)
                             teamIndex%(I1) = I1
                         Next
+
                         Close 1
+
                         NTMS = Y / 655
 
                         Call SelectTeam_DRAFT(NTMS)
+
                     End If
 
                     If BO% = 1 Then
@@ -548,16 +557,24 @@ Sub SelectTeam_DRAFT (numberTeams)
     If ExitCode% <> 27 Then
 
         D = teamIndex%(Selection%)
+
         Open diskPaths$(0) + "BASK." + draftYN$(1) For Random As #1 Len = 655
+
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
         For I = 0 To 13
             Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
         Next
+
         Get #1, D
+
         draftT$(1) = RTrim$(Q$(0))
 
-        SP!(1) = CVI(Q$(1)): DA!(1) = CVI(Q$(2))
-        draftV1%(1) = CVI(Q$(3)): draftV2%(1) = CVI(Q$(4))
+        SP!(1) = CVI(Q$(1))
+		DA!(1) = CVI(Q$(2))
+        draftV1%(1) = CVI(Q$(3))
+		draftV2%(1) = CVI(Q$(4))
+
         For I = 0 To 4: draftL%(1, I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: draftT%(1, I) = CVI(Q$(I + 10)): Next
         For I = 0 To 13
@@ -577,16 +594,19 @@ Sub SelectTeam_DRAFT (numberTeams)
         If draftL%(1, 3) > 20 Then draftL%(1, 3) = 100 - draftL%(1, 3)
 
         Open diskPaths$(0) + "COLBBTMS." + draftYN$(1) For Random As #1 Len = 566
-        Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-        For I = 0 To 13
+        
+		Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+        
+		For I = 0 To 13
             Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
             Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
+
         Get #1, D
 
-        teamCoaches$(1) = Q$(0)
-        teamStadiums$(1) = Q$(1)
-        teamMascots$(1) = Q$(2)
+        teamCoaches$(1) = RTrim$(Q$(0))
+        teamStadiums$(1) = RTrim$(Q$(1))
+        teamMascots$(1) = RTrim$(Q$(2))
         attendance&(1) = CVL(Q$(3))
 
         For I = 0 To 13

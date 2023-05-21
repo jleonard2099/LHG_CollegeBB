@@ -154,31 +154,36 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
 
     Do
 
-        Call GetDiskID_CNGRAT(yearNumber$)
+		teamYear$ = RTrim$(yearNumber$)
 
-        If yearNumber$ = "" Then
-            Call SelectTeam_CNGRAT(teamIdx%, NTMS, yearNumber$, teamName$)
+        Call GetDiskID_CNGRAT(teamYear$)
+
+        If teamYear$ = "" Then
+            Call SelectTeam_CNGRAT(teamIdx%, NTMS, teamYear$, teamName$)
         Else
-            Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+
+            Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+
             Y = LOF(1)
+
             Field #1, 15 As Q$(0), 640 As X$
 
             For I1 = 1 To Y / 655
                 Get #1, I1
                 teamNames$(I1) = Q$(0)
             Next
+
             Close 1
 
             NTMS = Y / 655
             TS% = Int((NTMS - 1) / 80)
 
-            Call SelectTeam_CNGRAT(teamIdx%, NTMS, yearNumber$, teamName$)
+            Call SelectTeam_CNGRAT(teamIdx%, NTMS, teamYear$, teamName$)
             'We have at least 1 condition where we have to rewind to 1100
         End If
 
         If BO% <> 1 Then
-            'This is more than calling the subroutine,
-            '   it's starting from that point in the code!!!
+
             Locate 2, 33
             Color T%(0), T%(1): Print teamName$
 
@@ -596,14 +601,16 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
     If ExitCode% <> 27 Then
 
         teamIdx% = Selection%
-
-        '-- This could be it's own subroutine
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		teamYear$ = RTrim$(yearNumber$)
+		
+        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
         For I = 0 To 13
             Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
         Next
+
         Get #1, teamIdx%
 
         selectedTeamName$ = RTrim$(Q$(0))
@@ -616,7 +623,6 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
         For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
         For I = 0 To 13
-
             cngratA$(I) = RTrim$(Q$(I * 15 + 20))
 
             For I1 = 0 To 6
@@ -627,7 +633,7 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
 
         Close 1
 
-        Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
+        Open diskPaths$(0) + "COLBBTMS." + teamYear$ For Random As #1 Len = 566
 
         Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
@@ -698,26 +704,37 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     Shared cngratA$(), P$()
     Shared statsA!(), DF!(), RS!(), X!()
 
+	teamYear$ = RTrim$(yearNumber$)
+
     If newID% = 1 Then
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+
+        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+
         Y = LOF(1) / 655
+
         Close 1
+
         teamIdx% = Y + 1
+
     End If
 
-    Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+    Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
     For I = 0 To 13
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
 
-    LSet Q$(0) = teamName$
+    LSet Q$(0) = RTrim$(teamName$)
+
     LSet Q$(1) = MKI$(staminaRating%)
     LSet Q$(2) = MKI$(defFGPctAdj%)
     LSet Q$(3) = MKI$(V1%)
 	LSet Q$(4) = MKI$(V2%)
+
     For I = 0 To 4: LSet Q$(I + 5) = MKI$(statsL%(I)): Next
+
     T%(2) = 999
 
     For I = 0 To 9: LSet Q$(I + 10) = MKI$(T%(I)): Next
@@ -732,9 +749,11 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     Next
 
     Put #1, teamIdx%
+
     Close 1
 
-    Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
+    Open diskPaths$(0) + "COLBBTMS." + teamYear$ For Random As #1 Len = 566
+
     Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
     For I = 0 To 13
@@ -742,9 +761,9 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
         Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
-    LSet Q$(0) = coach$
-    LSet Q$(1) = stadium$
-    LSet Q$(2) = mascot$
+    LSet Q$(0) = RTrim$(coach$)
+    LSet Q$(1) = RTrim$(stadium$)
+    LSet Q$(2) = RTRim$(mascot$)
     LSet Q$(3) = MKL$(avgAttendance%)
 
     For I = 0 To 13
@@ -760,8 +779,9 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     Next
 
     LSet Q$(249) = MKI$(999)
-    'issue here
+
     Put #1, teamIdx%
+
     Close 1
 
 End Sub

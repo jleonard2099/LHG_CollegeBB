@@ -255,7 +255,7 @@ Sub CREATCON ()
                                     Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
 
                                 Else
-                                    YN$ = NY$
+                                    YN$ = RTrim$(NY$)
                                     Erase teamNames$
                                     NTMS = 0
 
@@ -274,7 +274,6 @@ Sub CREATCON ()
                                     Close 1
 
                                     NTMS = Y / 655
-                                    'TS% = Int((NTMS - 1) / 80)
 
                                     Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
 
@@ -428,12 +427,16 @@ Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamIdx, teamName$)
     If ExitCode% <> 27 Then
 
         teamIdx = teamIndex%(Selection%)
+		teamYear$ = RTrim$(yearNumber$)
 
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
         For I = 0 To 13
             Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
         Next
+
         Get #1, teamIdx
 
         teamName$ = RTrim$(Q$(0))

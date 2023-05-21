@@ -50,12 +50,14 @@ Sub LOOKY ()
                 If NY$ = "" And YN$ <> "" Then
                     Call SelectTeam_LOOKY(NTMS, YN$)
                 Else
-                    YN$ = NY$
+                    YN$ = RTrim$(NY$)
                     Erase teamNames$
                     NTMS = 0
 
                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+
                     Y = LOF(1)
+
                     Field #1, 15 As Q$(0), 640 As X$
 
                     For I1 = 1 To Y / 655
@@ -1038,22 +1040,32 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
+		teamYear$ = RTrim$(yearNumber$)
 
         Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
         For I = 0 To 13
             Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
         Next
+
         Get #1, T1
 
-        staminaRating% = CVI(Q$(1)): defFGPctAdj% = CVI(Q$(2)): V1% = CVI(Q$(3)): V2% = CVI(Q$(4))
+        staminaRating% = CVI(Q$(1))
+		defFGPctAdj% = CVI(Q$(2))
+		V1% = CVI(Q$(3))
+		V2% = CVI(Q$(4))
+
         For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
+
         Close 1
 
     Else
+
         BO% = 1
+
     End If
 
 End Sub
-

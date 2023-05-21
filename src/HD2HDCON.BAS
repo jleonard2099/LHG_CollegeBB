@@ -102,18 +102,25 @@ Sub TeamVsConf ()
                 If NY$ = "" And YN$ <> "" Then
                     Call SelectTeam_HD2HD(YN$, NTMS, QQ$(1))
                 Else
-                    YN$ = NY$
+                    YN$ = RTrim$(NY$)
                     Erase teamNames$
+
                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+
                     Y = LOF(1)
+
                     Field #1, 15 As Q$(0), 640 As X$
+
                     For I1 = 1 To Y / 655
                         Get #1, I1
                         teamNames$(I1) = Q$(0)
                         teamIndex%(I1) = I1
                     Next
+
                     Close 1
+
                     NTMS = Y / 655
+
                     Call SelectTeam_HD2HD(NY$, NTMS, QQ$(1))
 
                 End If
@@ -675,8 +682,9 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+		teamYear$ = RTrim$(yearNumber$)
+		
+        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
@@ -691,11 +699,16 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
         defFGPctAdj% = CVI(Q$(2))
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
+
         For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+
         Close 1
+
     Else
+
         BO% = 1
+
     End If
 
 End Sub

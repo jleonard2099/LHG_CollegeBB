@@ -1,7 +1,7 @@
 Sub COLHOOP ()
 
     _Title "Courtside College Basketball v" + GAME_VERSION$ + " - HOOPS!"
-    '$ExeIcon:'./lhg_ccb.ico'
+    ''$ExeIcon:'./lhg_ccb.ico'
     '_Icon
     '_AllowFullScreen
 
@@ -15,7 +15,6 @@ Sub COLHOOP ()
     '----------------------------------------
     '        INITIALIZE ALL VARIABLES
     '----------------------------------------
-
     Call InitVar
 
     '----------------------------------------
@@ -59,6 +58,7 @@ Sub COLHOOP ()
     Close 1
 
     If _FileExists("TICKER") Then
+
         Open "TICKER" For Input As #2
 
         For I = 1 To 32
@@ -178,7 +178,8 @@ Sub COLHOOP ()
     If skipUserOpts% = 0 Then
 
         ' USER SELECTION OF OPTIONS
-        N = 1
+        'N = 1 is neutral site
+        N = 1   
 
         Do
             Color 15, 0
@@ -397,6 +398,14 @@ Sub COLHOOP ()
         Next
     Next
 
+    'Determine attendance
+    ' N = 2 is a non-neutral site
+    If N = 2 Or avgAttendance&(1) = 0 Then
+        actualAttendance& = Int(Rnd(1) * 2000) + 9000
+    Else
+        actualAttendance& = Int(Rnd(1) * 2000) + avgAttendance&(1) - 1000
+    End If
+
     '----------------------------------------
     '    AUTO-DETERMINE OTHER OPTIONS
     '----------------------------------------
@@ -559,7 +568,11 @@ Sub COLHOOP ()
                 Call DELAY
         End Select
 
-        Call BoxTicker
+        Call BOXOPTIONS (0)
+
+        endOfGame = 0
+        Call TICKER
+        Call FOULHARD
 
     End If
 
@@ -661,105 +674,22 @@ Sub COLHOOP ()
         I$ = GetKeyPress
     End If
 
-    'CHECK SPECIAL EVENTS
+    Call POSTGAME
 
-    If N = 2 Or avgAttendance&(1) = 0 Then
-        actualAttendance& = Int(Rnd(1) * 2000) + 9000
-    Else
-        actualAttendance& = Int(Rnd(1) * 2000) + avgAttendance&(1) - 1000
-    End If
+    If AP <> 1 And AD = 1 Then Exit Sub
 
-    Call RECORDSCHECK
-
-    Call EVENTS(COUNT, SPECIAL)
-
-    If SPECIAL = 1 Then
-        NM$ = "BOX" + Mid$(Str$(COUNT), 2, Len(Str$(COUNT))) + ".SPC"
-        Call BOX2SPC(NM$)
-    End If
-
-    Do
-
-        Cls
-        Color 14: Print "(0) ";: Color 15: Print "STATS TO SCREEN": Print
-        Color 14: Print "(1) ";: Color 15: Print "STATS TO PRINTER": Print
-        Color 14: Print "(2) ";: Color 15: Print "STATS TO TEXT FILE"
-
-        If AP = 1 And U5 = 2 Then
-            X = 2
-        Else
-            Do
-                I$ = GetKeyPress$
-                X = Val(I$)
-            Loop Until X >= 0 And X <= 2
-        End If
-
-        Select Case X
-            Case 0: 'Call BOXTOSCREEN
-            Case 1: Call BOX2PRINTER
-            Case 2: Call BOX2FILE
-        End Select
-
-        If X >= 1 Then X = 0
-
-        Cls
-
-        If X <> 1 Then
-            Call BOXTOP
-            'Print box score to screen
-            Call BoxTicker
-        End If
-
-        If X >= 1 Then X = 0
-
-        Color 15, 0
-        Cls
-        I = 1
-
-        If AP <> 1 Or U5 <> 2 Then
-            Call DRAWBOX
-            Do
-                U$ = "DISPLAY STATS AGAIN (YN)"
-                Locate 7, (80 - Len(U$)) / 2
-                Print U$
-                Color 15, 0
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-        End If
-
-    Loop Until UCase$(I$) = "N" Or AP = 1 And U5 = 2
-
-    Color 15, 0
-    Cls
-    I = 1
-
-    If AP <> 1 Then
-        Call DRAWBOX
-        Do
-            U$ = "SAVE STATS (YN)"
-            Locate 7, (80 - Len(U$)) / 2
-            Print U$
-            Color 15, 0
-            I$ = GetKeyPress$
-        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-    End If
-
-    If AP = 1 Or UCase$(I$) = "Y" Then
-        Call SAVESTATS
-    End If
-
-    Cls
-
-    'Is this needed for DRAWBOX?
-    'It's a poorly named var
-    'if that is the case
-    I = 1
-
-    Call DRAWBOX
+    'If Not (AP = 1 And AD <> 1) Then
+    ''If AP <> 1 Then
+    '    If AD = 1 Then Exit Sub
+    'End If
 
     ' Prompt to play another game
+    Cls
 
     If AP <> 1 Then
+
+        'Using Home Team's color for the box
+        Call TEAMBOX (1, 1)
 
         Do
             U$ = "PLAY ANOTHER GAME (YN)"
@@ -1888,8 +1818,18 @@ Sub COLHOOP ()
 
         530 I$ = GetKeyPress$
 
-        If UCase$(I$) = "T" Then Call TICKER: Call SCOREBOARD: GoTo 529
-        If UCase$(I$) = "D" Then Call ZONECHANGE: Call SCOREBOARD: GoTo 529
+        If UCase$(I$) = "T" Then 
+            Call TICKER
+            Call SCOREBOARD
+            GoTo 529
+        End If
+
+        If UCase$(I$) = "D" Then 
+            Call ZONECHANGE
+            Call SCOREBOARD
+            GoTo 529
+        End If
+
         P6 = Val(I$)
         If P6 < 1 Or P6 > 4 Then P6 = 0
         If P6 = 4 Then FT% = 1
@@ -3558,161 +3498,4 @@ Sub COLHOOP ()
 
     End If
 
-
 End Sub
-
-
-'----------------------------------------
-'           InitVar Subroutine
-'----------------------------------------
-' Initializes variables for the game
-' Does not process any that will be read
-' in from file or assigned elsewhere
-Sub InitVar ()
-
-    T! = 1200
-    H = 1
-    T1(1) = 5
-    T1(0) = 5
-
-    X$(0) = "A "
-    X$(1) = "B "
-    X$(2) = "C "
-    X$(3) = "D "
-
-    C7$(0) = "NO SHOT CLOCK    "
-    C7$(1) = "45 SEC SHOT CLOCK"
-    C7$(2) = "35 SEC SHOT CLOCK"
-    'C7$(3) = "30 SEC SHOT CLOCK"
-
-    'For I = 0 To 1
-    '    For I1 = 0 To 4
-    '        B1(I, I1) = -1
-    '    Next I1
-    'Next I
-
-    nbrLines% = 1
-    PA% = -1
-
-    TR%(0, 0) = 15
-    TR%(0, 1) = 1
-    TR%(1, 0) = 15
-    TR%(1, 1) = 1
-
-    TS$(0) = "N"
-    TS$(1) = "Y"
-
-    CM$(0) = "COACH AND SELECT SHOTS           "
-    CM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-
-    U5$(0) = "HUMAN OPPONENT           "
-    U5$(1) = "COMPUTER IS VISITING TEAM"
-    U5$(2) = "COMPUTER IS HOME TEAM    "
-    U5$(3) = "COMPUTER VS COMPUTER     "
-
-    LC$(0) = "@ TEAM 1    "
-    LC$(1) = "HOME COURT ADVANTAGE"
-    LC$(2) = "NEUTRAL SITE        "
-
-    TB$(0) = "SHOOT 1+1"
-    TB$(1) = "SHOOT 2  "
-
-    PB$(0) = "VERBOSE        "
-    PB$(1) = "HAFFNER CLASSIC"
-
-    J = 0
-    JJ = 0
-    AP = 0
-    B = 0
-    C1 = 0
-    DY = 0
-    CT = 0
-    D = 0
-    FO = 0
-    F3 = 0
-    G9 = 0
-    I = 0
-    IN = 0
-    M5 = 0
-    MJ = 0
-    NTMS = 0
-    P = 0
-    P9 = 0
-    Q = 0
-    S2 = 0
-    S9 = 0
-    TMT = 0
-    TOU = 0
-    X8 = 0
-    XM = 0
-    XS = 0
-
-    BO% = 0
-    BU% = 0
-    DK% = 0
-    EG% = 0
-    F3S% = 0
-    FB% = 0
-    FT% = 0
-    HT% = 0
-    J8% = 0
-    LC% = 0
-    PASS% = 0
-    PT% = 0
-    PZ% = 0
-    ST% = 0
-    TS% = 0
-    X0% = 0
-    X1% = 0
-    XX% = 0
-
-    A1$ = ""
-    B1$ = ""
-    C1$ = ""
-    D1$ = ""
-    E1$ = ""
-    F1$ = ""
-    FF$ = ""
-    G1$ = ""
-    H1$ = ""
-    J$ = ""
-    PB$ = ""
-    U$ = ""
-    VT$ = ""
-    VT1$ = ""
-    W$ = ""
-    W1$ = ""
-    YN$ = ""
-
-    F! = 0
-    R0! = 0
-    TE! = 0
-    actualAttendance& = 0
-    skipUserOpts% = 0
-
-    Erase B1
-    Erase C, D1, D2, DF
-    Erase F1, G4, G5, P2, P4, P5, P7
-    Erase QQ, QR, RB, RS
-    Erase S1, S3, T0, V9
-    Erase W2, W3, Z5, Z6, ZZ
-
-    Erase AP%, APT%, B%, CZ%, DT%, E%, FA%, F5%, FY%
-    Erase G9%, HT%, L%, N%, NG%, NG1%
-    Erase O%, OF%, PR%, ST%, SX%
-    Erase T2%, TF%, TM%, TP%, teamIndex%, V1%, V2%
-    Erase VG%, VH%, W%
-
-    Erase AA$, B$
-    Erase gameMascot$, gameStadium$, gameCoach$
-    Erase H$, HO$, N$
-    Erase PO$, PS$, Q$, SITE$, SX$
-    Erase teamNames$, Y$, YN$, YN1$
-
-    Erase A!, R3!, S!, W0!, W1!
-    Erase Z!, Z1!, Z2!
-
-    Erase avgAttendance&, CRD&
-
-End Sub
-

@@ -9,9 +9,6 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 Dim Shared DirCount%
 
-'File size - does this really need shared?
-Dim Shared Y As Long
-
 Dim mascot$, coach$, stadium$
 Dim opSysType$
 
@@ -210,7 +207,7 @@ Dim Shared PO$(1, 13)
 Dim Shared AP, B, C1, C7, DY, CT, D, FO, F3, G9, H, I, IN ', J, JJ
 Dim Shared M5, MJ, N, NTMS, P, P9, Q, S2, S9, TMT, TOU, U5, X8, XM, XS
 
-Dim Shared BO%, BU%, CM%, DK%, EG%, F3S%, FB%, FT%, HT%, J8%, LC%, N7%, NF%, nbrLines%
+Dim Shared BO%, BU%, CM%, DK%, endOfGame%, F3S%, FB%, FT%, HT%, J8%, LC%, N7%, NF%, nbrLines%
 Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, TS%, X3%, X0%, X1%, XX%
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, FF$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
@@ -243,9 +240,9 @@ Dim Shared Z!(15), Z1!(15), Z2!(13, 13)
 Dim Shared F!, pbpDelay!, R0!, T!, TE!
 
 'CRD stores attendance for stat files
-'I think this is because the files are
-'operated on linearly, so 100 records
-'is the most supported?
+'  I think this is because files are
+'  operated on linearly, so 100 records
+'  is the most supported?
 Dim Shared avgAttendance&(1), CRD&(100)
 
 Dim Shared actualAttendance&

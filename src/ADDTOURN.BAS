@@ -467,10 +467,8 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                                 Call SelectTeam_TOURN(YN$, numberTeams, A$, teamIdx)
 
                             Else
-                                YN$ = NY$
+                                YN$ = RTrim$(NY$)
                                 Erase teamNames$
-                                Cls
-
                                 numberTeams = 0
 
                                 If Not _FileExists(diskPaths$(0) + "BASK." + YN$) Then
@@ -825,9 +823,12 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
         'Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  LEFT/RIGHT ARROW  UP/DOWN ARROW  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
         selectedIndex = teamIndex%(Selection%)
+		teamYear$ = RTRim$(yearNumber$)
 
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
         Get #1, selectedIndex
 
         teamName$ = RTrim$(Q$(0))

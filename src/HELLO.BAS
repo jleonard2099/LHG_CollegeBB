@@ -13,6 +13,7 @@ Const TEAMS_PER_CONFERENCE = 30
 
 DefInt A-Z
 
+'INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'KeyInput.bi'
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
@@ -192,6 +193,10 @@ System
 Errhandler:
 Open "errlog" For Append As #9
 Print #9, "Error #"; Err; "on program file line"; _ErrorLine
+If _FileExists("GAME82") Then
+    Print #9, "Schedule game # "; Using "###"; AP%(0) + AP%(2)
+    Print #9, B$(0) + " vs. " + B$(1)
+End If
 Print #9,
 Close #9
 Resume Next ' moves program to code following the error.
@@ -527,6 +532,7 @@ Sub Leaders_Menu ()
 End Sub
 
 
+'INCLUDE: 'FileTeamSelection.bm'
 '$INCLUDE: 'KeyInput.bm'
 '$INCLUDE: 'QPProEqu.bm'
 '$INCLUDE: 'PadRight.bm'

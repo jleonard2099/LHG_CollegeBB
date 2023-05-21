@@ -75,17 +75,22 @@ Sub COMPARE ()
                             If NY$ = "" And YN$ <> "" Then
                                 Call SelectTeam_COMPARE(NTMS, YN$, posn$(), B$)
                             Else
-                                YN$ = NY$
+                                YN$ = RTrim$(NY$)
                                 Erase teamNames$
 
                                 Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+
                                 Y = LOF(1)
+
                                 Field #1, 15 As Q$(0), 640 As X$
+
                                 For I1 = 1 To Y / 655
                                     Get #1, I1
                                     teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
                                 Next
+
                                 Close 1
+
                                 NTMS = Y / 655
 
                                 Call SelectTeam_COMPARE(NTMS, YN$, posn$(), B$)
@@ -714,20 +719,26 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
     If ExitCode% <> 27 Then
 
         t1 = teamIndex%(Selection%)
+		teamYear$ = RTrim$(yearNumber$)
 
-        Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+
         Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
         For I = 0 To 13
             Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
         Next
+
         Get #1, t1
 
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
+
         For I = 0 To 4: compareL%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: compareT%(I) = CVI(Q$(I + 10)): Next
+
         For I = 0 To 13
             A$(I) = RTrim$(Q$(I * 15 + 20))
             For I1 = 0 To 6
@@ -735,10 +746,11 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
                 X1!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
             Next
         Next
+
         Close 1
 
-        'compareB$(0) = RTrim$(Q$(0))
-        'B$ = compareB$(0)
+
+		'-- start of stat routine - move elsewhere!?!
 		B$ = RTrim$(Q$(0))
 
         For XX = 4 To 11
@@ -760,20 +772,25 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
         Next XX
 
         Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+		'--- end of stat routine
+		
 
-
-        '-- this belongs in it's own routine
         Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
+
         Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
         For I = 0 To 13
             Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
             Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
+
         Get #1, t1
-        coach$ = Q$(0)
-        stadium$ = Q$(1)
-        mascot$ = Q$(2)
+
+        coach$ = RTrim$(Q$(0))
+        stadium$ = RTrim$(Q$(1))
+        mascot$ = RTrim$(Q$(2))
         avgAttendance% = CVL(Q$(3))
+
         For I = 0 To 13
             DF!(I) = CVI(Q$(I * 16 + 4))
             P$(I) = Q$(I * 16 + 5)
@@ -790,11 +807,15 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
 
         Close 1
 
+
+		'-- Everything from here down needs to be in the calling routine
         If CK <> 999 Then
+
             coach$ = ""
 			stadium$ = ""
 			mascot$ = ""
 			avgAttendance% = 0
+
             For I = 0 To 13
                 DF!(I) = 5
                 P$(I) = ""
@@ -802,7 +823,9 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
                     RS!(I, I1) = 0
                 Next
             Next
+
             For I = 0 To 20: compT1%(I) = 0: Next
+
         End If
 
 
