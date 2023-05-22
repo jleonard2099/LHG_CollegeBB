@@ -155,6 +155,76 @@ End Sub
 
 
 '------------------------------
+'    ALPHANUM Subroutine
+'------------------------------
+' ...explanation...
+Sub ALPHANUM (promptVal$, J)
+
+    J = Val(promptVal$)
+    If UCase$(promptVal$) = "A" Then J = 10
+    If UCase$(promptVal$) = "B" Then J = 11
+    If UCase$(promptVal$) = "C" Then J = 12
+    If UCase$(promptVal$) = "D" Then J = 13
+    If UCase$(promptVal$) = "E" Then J = 14
+
+End Sub
+
+
+'------------------------------
+'      TEAMBOX Subroutine
+'------------------------------
+' ...explanation...
+Sub TEAMBOX (JJ, teamIdx)
+
+    Locate 6, 8
+    Color TR%(teamIdx, 0), TR%(teamIdx, 1)
+
+    'Print box top
+    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
+    'Print box sides
+    For II = 1 To JJ
+        Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
+    Locate 7 + JJ, 8
+    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+
+    Locate 7
+
+End Sub
+
+
+'------------------------------
+'    FRAMEOPTION Subroutine
+'------------------------------
+' ...explanation...
+Sub FRAMEOPTION (JJ, teamIdx)
+
+    Locate 8, 8
+    Color TR%(teamIdx, 0), TR%(teamIdx, 1)
+
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    'Print box sides
+    For II = 1 To JJ
+        Locate 8 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
+    Locate 9 + JJ, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+    Locate 10, 15
+
+End Sub
+
+
+'------------------------------
 '  ResetShotClock Subroutine
 '------------------------------
 ' ...explanation...
@@ -196,24 +266,8 @@ End Sub
 '...explanation...
 Sub HalfCourt ()
 
-    Locate 8, 8
-    Color TR%(P, 0), TR%(P, 1)
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    JJ = 8
-    For II = 1 To JJ
-        Locate 8 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 9 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-    Locate 10, 15
+    Call FRAMEOPTION(8, P)
+    
     Print B$(P); " HALF COURT OPTION"
     Locate 12, 14
     Locate , 14: Print Using "TIME REMAINING #.#"; T!
@@ -383,10 +437,10 @@ Sub GoodBasket ()
 End Sub
 
 '------------------------------
-'   DISABLEPLAYER Subroutine
+'   DISABLEPLAYERS Subroutine
 '------------------------------
 ' ...explanation...
-Sub DISABLEPLAYER ()
+Sub DISABLEPLAYERS ()
 
     Color 15, 0
 
@@ -481,31 +535,6 @@ Sub DISABLEPLAYER ()
 
 End Sub
 
-'------------------------------
-'      TEAMBOX Subroutine
-'------------------------------
-' ...explanation...
-Sub TEAMBOX (JJ, teamIdx)
-
-    Locate 6, 8
-    Color TR%(teamIdx, 0), TR%(teamIdx, 1)
-
-    'Print box top
-    Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-    'Print box sides
-    JJ = 1
-    For II = 1 To JJ
-        Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 7 + JJ, 8
-    Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-    Locate 7
-
-End Sub
 
 '------------------------------
 '      GETATEAM Subroutine
@@ -2106,14 +2135,14 @@ Sub PBP ()
 
         nbrLines% = nbrLines% + 1
 
-        Color VG%(1), VH%(1): Print A1$
-        Color VG%(2), VH%(2): Print B1$
-        Color VG%(3), VH%(3): Print C1$
-        Color VG%(4), VH%(4): Print D1$
-        Color VG%(5), VH%(5): Print E1$
-        Color VG%(6), VH%(6): Print F1$
-        Color VG%(7), VH%(7): Print G1$
-        Color VG%(8), VH%(8): Print H1$
+        Color VG%(1), VH%(1): Print Left$(A1$, 38)
+        Color VG%(2), VH%(2): Print Left$(B1$, 38)
+        Color VG%(3), VH%(3): Print Left$(C1$, 38)
+        Color VG%(4), VH%(4): Print Left$(D1$, 38)
+        Color VG%(5), VH%(5): Print Left$(E1$, 38)
+        Color VG%(6), VH%(6): Print Left$(F1$, 38)
+        Color VG%(7), VH%(7): Print Left$(G1$, 38)
+        Color VG%(8), VH%(8): Print Left$(H1$, 38)
 
         Color 15, 0
         Call DELAY
@@ -2703,7 +2732,6 @@ End Sub
 '...explanation
 Sub TickerTime ()
 
-
     TS% = TE! + (ST% - ST%(X)) * 3
 
     If TS% < 0 Then TS% = 0
@@ -3074,33 +3102,50 @@ Sub MAINSCREEN ()
     If pbpDelay! <> 0 Then
         Locate 9, 41
         Color TR%(D, 0), TR%(D, 1): Print "DEF-"; DB$(DT%(D))
-        Locate , 41: Color TR%(P, 0), TR%(P, 1): Print "OFF-"; OB$(OF%(P))
+        Locate , 41
+        Color TR%(P, 0), TR%(P, 1): Print "OFF-"; OB$(OF%(P))
+
         Color 15, 0
-        Locate 11, 41: Color 14: Print "ENTER ";: Color 15: Print "PASS"
-        Locate , 41: Color 14: Print "(1)  ";: Color 15: Print "SHOOT"
-        Locate , 41: Color 14: Print "(2)  ";: Color 15: Print B$(P); " CALL TIMEOUT     "
-        Locate , 41: Color 14: Print "(T)  ";: Color 15: Print "10 MIN TICKER"
-        Locate , 41: Color 14: Print "(D)  ";: Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
+        Locate 11, 41
+        Color 14: Print "ENTER ";: Color 15: Print "PASS"
+        Locate , 41
+        Color 14: Print "(1)  ";: Color 15: Print "SHOOT"
+        Locate , 41
+        Color 14: Print "(2)  ";: Color 15: Print B$(P); " CALL TIMEOUT     "
+        Locate , 41
+        Color 14: Print "(T)  ";: Color 15: Print "10 MIN TICKER"
+        Locate , 41
+        Color 14: Print "(D)  ";: Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
         Color 15, 0
+
         Locate 19, 1
 
-        For I1 = 0 To 4: Color 2, 0: Print Using "# "; I1;
-            Color 3
-            Color 15: Print Left$(AA$(0, B1(0, I1)), 12); Tab(15);
+        For I1 = 0 To 4: 
+            Color 2, 0
+            Print Using "# "; I1;
+
+            Color 15
+            Print Left$(AA$(0, B1(0, I1)), 12); Tab(15);
+
             If A!(0, B1(0, I1), 19) >= 7 Then Print "*";
             Print ; Tab(16);
             J = (A!(0, B1(0, I1), 3)) - A!(0, B1(0, I1), 7) - A!(0, B1(0, I1), 11) - A!(0, B1(0, I1), 12): If J <= 0 Then J = 0
+
             Print Using "## ## "; A!(0, B1(0, I1), 0), A!(0, B1(0, I1), 1);
             If P = 0 Then Print Using "##"; A!(0, B1(0, I1), 21) * 2 / 10; Else Print Using "##"; A!(0, B1(0, I1), 2) * 2 / 10;
             If J <= 0 And (H = 1 Or H = 2 And T! > 120) Then Color 12
+
             Print Using "### "; J;
+
             Color 15
             If FA%(0, B1(0, I1)) * -1 >= 5 And (H = 1 Or H = 2 And T! > 120) Then Color 12
             Print Using "## "; FA%(0, B1(0, I1)) * -1;
+
             Color 15
             Print Using "##"; A!(0, B1(0, I1), 4);
             Print Using "###  "; A!(0, B1(0, I1), 8) * 2 + A!(0, B1(0, I1), 10) + W%(0, B1(0, I1), 0);
             If A!(0, B1(0, I1), 12) >= 4 Then Color 12
+
             Print Using "#"; A!(0, B1(0, I1), 12)
             Color 15
         Next I1
@@ -3424,10 +3469,10 @@ Sub DEFREBOUND ()
 End Sub
 
 '------------------------------
-'    EDITCX Subroutine
+'    SETUPRATINGS Subroutine
 '------------------------------
 ' ...explanation...
-Sub EDITCX ()
+Sub SETUPRATINGS ()
 
     9300 '
 
@@ -3710,31 +3755,6 @@ Sub SETSTAMINA ()
 
     If S9 > 114 Then DY = (114 / S9) * DY: DY = Int(DY + .5)
 
-End Sub
-
-'------------------------------
-'       FRAME Subroutine
-'------------------------------
-' ...explanation...
-Sub FRAMEOPTION (JJ, teamIdx)
-
-    Locate 8, 8
-    Color TR%(teamIdx, 0), TR%(teamIdx, 1)
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    For II = 1 To JJ
-        Locate 8 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 9 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-    Locate 10, 15
 End Sub
 
 '------------------------------
@@ -4243,20 +4263,6 @@ Sub STEALADJ ()
 
 End Sub
 
-'------------------------------
-'    ALPHANUM Subroutine
-'------------------------------
-' ...explanation...
-Sub ALPHANUM (promptVal$, J)
-
-    J = Val(promptVal$)
-    If UCase$(promptVal$) = "A" Then J = 10
-    If UCase$(promptVal$) = "B" Then J = 11
-    If UCase$(promptVal$) = "C" Then J = 12
-    If UCase$(promptVal$) = "D" Then J = 13
-    If UCase$(promptVal$) = "E" Then J = 14
-
-End Sub
 
 '------------------------------
 '    SHOTPERCENT Subroutine
@@ -4487,9 +4493,9 @@ End Sub
 Sub SELECTID ()
 
     Color 15, 0
+
     Cls
 
-    SN = 1
     Locate 6, 8
 
     Color 15, 4
@@ -4509,6 +4515,7 @@ Sub SELECTID ()
     Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
     Locate 7, 32
+
     Locate , 12: Print "ENTER DISK ID: ": Print
     Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
     Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
@@ -4544,7 +4551,7 @@ Sub SELECTID ()
         If UCase$(I$) <> "Y" Then
             Color 15, 0
             Call TEAMSETUP
-            Call DISABLEPLAYER
+            Call DISABLEPLAYERS
         End If
     End If
 
@@ -4873,25 +4880,12 @@ End Sub
 ' ...explanation...
 Sub LASTFIVEMENU ()
 
-    Locate 8, 8
-    Color TR%(P, 0), TR%(P, 1)
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    JJ = 12
-    For II = 1 To JJ
-        Locate 8 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 9 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+    Call FRAMEOPTION(12, P)
 
     Locate 10, 15
+
     Print B$(P); " LAST 5 SEC STRATEGY:"
+
     Locate 12, 14
     Locate , 14: Print Using "TIME REMAINING #.#"; T!
     Locate , 14: Print "                                     TIME REQD"
@@ -4901,6 +4895,7 @@ Sub LASTFIVEMENU ()
     Locate , 14: Print "3 - GET TO HALF COURT, CALL TIME OUT 1.5 - 2.5"
     Locate , 14: Print "4 - WORK DOWN THE FLOOR FOR A 3      3.0 - 4.0"
     Locate , 14: Print "5 - WORK DOWN THE FLOOR FOR A 2      3.0 - 5.0"
+
 End Sub
 
 '------------------------------
@@ -5132,12 +5127,13 @@ Sub SAVESTATS ()
         If _FileExists("GAME82") Then
 
             Open "GAME82" For Input As #2
-
             Input #2, FF$
 
-            For I = 0 To 2: Input #2, AP%(I): Next: Close 2
+            For I = 0 To 2: Input #2, AP%(I): Next
+            Close 2
 
             If AP%(2) <= 31 Then
+
                 For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X): Next
 
                 Open "TICKER" For Output As #2
@@ -5175,9 +5171,9 @@ Sub SAVESTATS ()
             For X = 0 To 18: LSet Q$(X + 1) = MKI$(NG%(X)): Next
             For X = 0 To 1: LSet Q$(20 + X) = YN$(X): Next
 
-            LSet Q$(22) = MKI$(S!(0, 0)): LSet Q$(23) = MKI$(S!(1, 0))
+            LSet Q$(22) = MKI$(S!(0, 0))
+            LSet Q$(23) = MKI$(S!(1, 0))
             Put #1, AP%(0) + AP%(2)
-
             Close 1
 
             AP%(2) = AP%(2) + 1
@@ -5185,19 +5181,15 @@ Sub SAVESTATS ()
 
             'AD = AllDone?
             If AP%(1) < AP%(0) + AP%(2) Then
-
                 Kill "GAME82"
                 AD = 1
-
             Else
-
                 Open "GAME82" For Output As #2
                 Print #2, FF$
                 For I = 0 To 2
                     Print #2, AP%(I)
                 Next
                 Close 2
-
             End If
 
         Else
@@ -7779,6 +7771,7 @@ Sub POSTGAME ()
 
         Call BOXOPTIONS(X)
         Call TICKER
+        endOfGame = 0
 
         'Reset option for next call
         If X <> 0 Then X = 0
@@ -7907,8 +7900,9 @@ Sub BOX2SCREEN ()
         Cls
 
         Color TR%(I, 0), TR%(I, 1)
-        Print B$(I): Color 14, 0
+        Print B$(I)
 
+        Color 14, 0
         Print "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
 
         For I1 = 0 To 13
@@ -7917,30 +7911,34 @@ Sub BOX2SCREEN ()
 
                 Color 15
 
+                'Name
                 Print AA$(I, I1); Tab(14);
 
+                'Minutes
                 If ZZ(I, I1) <> 0 Then
                     Print Using "##"; Int(ZZ(I, I1) / 60);
                     Print ":";
-
                     If ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60 > 9 Then
                         Print Using "##"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
                     Else
                         Print "0";
                         Print Using "#"; ZZ(I, I1) - Int(ZZ(I, I1) / 60) * 60;
                     End If
-
                 End If
 
                 Locate , 21
 
+                'FG
                 Print Using "##"; A!(I, I1, 8);
-                Print "-";: Print Using "##"; A!(I, I1, 7);
+                Print "-";
+                Print Using "##"; A!(I, I1, 7);
 
+                '3FG
                 Print Using "  ##"; W%(I, I1, 0);
                 Print "-";
                 Print Using "##"; W%(I, I1, 1);
 
+                'FT
                 Print Using "  ##"; A!(I, I1, 10);
                 Print "-";
                 Print Using "##"; A!(I, I1, 9);
@@ -7975,8 +7973,9 @@ Sub BOX2SCREEN ()
         Print
         Color 14
         Print "TOTALS";
+
         Color 15
-        Print ; Tab(14); Int(V9(10) / 60);
+        Print Tab(14); Int(V9(10) / 60);
 
         Locate , 21: Print Using "##"; V9(0);
         Print "-";
@@ -7992,15 +7991,16 @@ Sub BOX2SCREEN ()
 
         Locate , 42: Print Using "##  ## ### ##  ##  ##  ##  ##"; V9(11), V9(4), V9(5), V9(6), V9(7), V9(8), V9(9), V9(12)
 
-        Print ; Tab(22);
+        Print Tab(22);
         If V9(1) <> 0 Then Print Int(((V9(0) / V9(1)) * 100) + .5); "%";
 
-        Print ; Tab(35);
+        Print Tab(35);
         If V9(3) <> 0 Then Print Int(((V9(2) / V9(3)) * 100) + .5); "%"
 
         Print
         Color 14: Print "TOTAL TURNOVERS -";
         Color 15: Print T0(I)
+
         Color 14: Print "TOTAL REBOUNDS  -";
         Color 15: Print R3!(I)
 
@@ -8018,7 +8018,7 @@ End Sub
 '------------------------------
 '   ScoreSummary Subroutine
 '------------------------------
-' ...explanation...
+' Prints score by period for each team
 Sub ScoreSummary ()
 
     Locate 4, 17
@@ -8026,6 +8026,7 @@ Sub ScoreSummary ()
     Print "H1  H2  ";
 
     If S!(0, 1) + S!(0, 2) = S!(1, 1) + S!(1, 2) Then
+
         Locate , 26
         Print "O1  ";
 
@@ -8068,45 +8069,46 @@ Sub ScoreSummary ()
     Color 15, 0
 
     For I = 0 To 1:
-        'TEAM                   Half 1 SCORE            Half 2 Score
         Locate 5 + I
         Color TR%(I, 0), TR%(I, 1)
         Print B$(I);
+
         Color 15, 0
         Print Tab(16); Str$(S!(I, 1)); Tab(20); Str$(S!(I, 2));
 
         If S!(0, 1) + S!(0, 2) = S!(1, 1) + S!(1, 2) Then
-            Locate 5 + I, 25: Print Str$(S!(I, 3));
+            Locate , 25: Print Str$(S!(I, 3));
 
             If S!(0, 1) + S!(0, 2) + S!(0, 3) = S!(1, 1) + S!(1, 2) + S!(1, 3) Then
-                Locate 5 + I, 29: Print Str$(S!(I, 4));
+                Locate , 29: Print Str$(S!(I, 4));
 
                 If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) Then
-                    Locate 5 + I, 33: Print Str$(S!(I, 5));
+                    Locate , 33: Print Str$(S!(I, 5));
 
                     If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) + S!(0, 5) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) + S!(1, 5) Then
-                        Locate 5 + I, 37: Print Str$(S!(I, 6));
+                        Locate , 37: Print Str$(S!(I, 6));
 
                         If S!(0, 1) + S!(0, 2) + S!(0, 3) + S!(0, 4) + S!(0, 5) + S!(0, 6) = S!(1, 1) + S!(1, 2) + S!(1, 3) + S!(1, 4) + S!(1, 5) + S!(1, 6) Then
-                            Locate 5 + I, 41: Print Str$(S!(I, 7)); Tab(38); Str$(S!(I, 0))
+                            Locate , 38: Print Str$(S!(I, 0));
+                            Locate , 41: Print Str$(S!(I, 7))
                         Else
-                            Locate 5 + I, 40: Print " - "; Str$(S!(I, 0))
+                            Locate , 40: Print " - "; Str$(S!(I, 0))
                         End If
 
                     Else
-                        Locate 5 + I, 36: Print " - "; Str$(S!(I, 0))
+                        Locate , 36: Print " - "; Str$(S!(I, 0))
                     End If
 
                 Else
-                    Locate 5 + I, 32: Print " - "; Str$(S!(I, 0))
+                    Locate , 32: Print " - "; Str$(S!(I, 0))
                 End If
 
             Else
-                Locate 5 + I, 28: Print " - "; S!(I, 0)
+                Locate , 28: Print " - "; S!(I, 0)
             End If
 
         Else
-            Locate 5 + I, 24: Print " - "; S!(I, 0)
+            Locate , 24: Print " - "; S!(I, 0)
         End If
 
     Next I

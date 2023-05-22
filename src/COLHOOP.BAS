@@ -341,29 +341,14 @@ Sub COLHOOP ()
             Cls
             Color 3
 
-            SN = 1
-            Locate 6, 8
-            Color TR%(1, 0), TR%(1, 1)
-
-            'Print box top
-            Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-            'Print box sides
-            JJ = 6
-            For II = 1 To JJ
-                Locate 6 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-            Locate 7 + JJ, 8
-
-            'Print box bottom
-            Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+            Call TEAMBOX (6, 1)
 
             Locate 7, 11
 
             Print "IF YOU ARE USING THE 10 MINUTE TICKER OPTION FOR THIS GAME,"
             Locate , 11: Print "ENTER STARTING TIME FOR GAME IN THIS FORMAT"
-            Locate , 11: Print "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER": Print
+            Locate , 11: Print "(EXAMPLES: 1:00P, 11:30A). OTHERWISE, JUST HIT ENTER"
+            Print
             Locate , 11: Input "START TIME: "; ST$
 
             L = Len(ST$)
@@ -378,7 +363,8 @@ Sub COLHOOP ()
             TM = HR * 60 + MIN
             ST% = Int(TM / 30 - 18)
 
-            Call EDITCX
+            Call SETUPRATINGS
+
         Else
 
             'End
@@ -386,7 +372,6 @@ Sub COLHOOP ()
             Exit Sub
 
         End If
-
 
     End If
 
@@ -410,6 +395,7 @@ Sub COLHOOP ()
     '    AUTO-DETERMINE OTHER OPTIONS
     '----------------------------------------
 
+    ' Determine computer team
     If U5 = 1 Then
         CT = 0
     Else
