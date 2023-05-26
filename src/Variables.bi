@@ -198,6 +198,8 @@ Dim T$(30)
 '----------------------------------------
 ' Used across Game Routines
 '----------------------------------------
+Dim scheduleFile$
+
 Dim Shared J, JJ
 Dim Shared DF(1, 13)
 Dim Shared F5%(0 To 1, 0 To 8)
@@ -210,7 +212,7 @@ Dim Shared M5, MJ, N, NTMS, P, P9, Q, S2, S9, TMT, TOU, U5, X8, XM, XS
 Dim Shared BO%, BU%, CM%, DK%, endOfGame%, F3S%, FB%, FT%, HT%, J8%, LC%, N7%, NF%, nbrLines%
 Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, TS%, X3%, X0%, X1%, XX%
 
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, FF$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
+Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
 
 Dim Shared B1(0 To 1, 0 To 4)
 Dim Shared C(1, 13, 6), D1(1), D2(1), D8(4, 3), DP(2, 4)

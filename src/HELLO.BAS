@@ -1,3 +1,4 @@
+$Debug
 
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 1000

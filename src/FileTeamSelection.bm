@@ -94,8 +94,8 @@ Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
                             BO% = 0
 
                         Else
-                            Locate 2, 33
-                            Color 31: Print "LOADING..."
+                            'Locate 2, 33
+                            'Color 31: Print "LOADING..."
 
                             Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$)
 

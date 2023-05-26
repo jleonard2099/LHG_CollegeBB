@@ -6,6 +6,7 @@ Sub COLHOOP ()
     '_AllowFullScreen
 
     'Open "pbplog" For Output As #7
+    Shared scheduleFile$
 
     Color 7, 0
     Cls
@@ -90,13 +91,13 @@ Sub COLHOOP ()
     If _FileExists("GAME82") Then
 
         Open "GAME82" For Input As #2
-        Input #2, FF$
+        Input #2, scheduleFile$
         For I = 0 To 2:
             Input #2, AP%(I)
         Next
         Close 2
 
-        Open diskPaths$(0) + FF$ For Random As #1 Len = 48
+        Open diskPaths$(0) + scheduleFile$ For Random As #1 Len = 48
 
         For X = 0 To 18
             Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -165,17 +166,11 @@ Sub COLHOOP ()
 
     End If
 
-    If AP = 1 Then
-        'AUTO-PLAY OPTIONS
-        Call AUTOSETUP
-        skipUserOpts% = 1
-    End If
+    If AP = 1 Then Call AUTOSETUP
 
     'AUTOSETUP will reset TOU = 0
     'in many circumstances
-    If TOU = 1 Then skipUserOpts% = 0
-
-    If skipUserOpts% = 0 Then
+    If AP <> 1 And TOU <> 1 Then 
 
         ' USER SELECTION OF OPTIONS
         'N = 1 is neutral site
@@ -341,7 +336,7 @@ Sub COLHOOP ()
             Cls
             Color 3
 
-            Call TEAMBOX (6, 1)
+            Call TEAMBOX (7, 1)
 
             Locate 7, 11
 
@@ -555,8 +550,7 @@ Sub COLHOOP ()
         End Select
 
         Call BOXOPTIONS (0)
-
-        endOfGame = 0
+        endGame = 0
         Call TICKER
         Call FOULHARD
 
@@ -660,14 +654,8 @@ Sub COLHOOP ()
         I$ = GetKeyPress
     End If
 
+    '--Start "EndOfGame" routine
     Call POSTGAME
-
-    If AP <> 1 And AD = 1 Then Exit Sub
-
-    'If Not (AP = 1 And AD <> 1) Then
-    ''If AP <> 1 Then
-    '    If AD = 1 Then Exit Sub
-    'End If
 
     ' Prompt to play another game
     Cls
@@ -694,6 +682,8 @@ Sub COLHOOP ()
         Call COLHOOP
     End If
 
+    '--End "EndOfGame" routine
+
     Exit Sub
 
     '----------------------------------------
@@ -707,7 +697,6 @@ Sub COLHOOP ()
     '================================================================================
 
     TIMEEXP:
-
     TE! = T!
     Call PlayingTime
     T! = 0
