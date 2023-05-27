@@ -5141,7 +5141,6 @@ Sub SAVESTATS ()
 
             Call TickerSchedule
 
-            'AD = AllDone?
             If AP%(1) < AP%(0) + AP%(2) Then
                 Kill "GAME82"
                 endGame = 1
@@ -5174,13 +5173,18 @@ Sub SAVESTATS ()
                 Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                 Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                 Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                
                 NG%(13) = 1
+
                 For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG%(X)): Next
                 For X = 0 To 3: LSet Q$(20 + X) = YN$(X): Next
                 For X = 1 To 3: LSet Q$(X + 23) = MKI$(NG%(X + 14)): Next
+
                 LSet Q$(16) = MKI$(S!(0, 0)): LSet Q$(17) = MKI$(S!(1, 0))
                 LSet Q$(18) = VT$: LSet Q$(19) = W$
+
                 Put #1, AP%(0) + AP%(2)
+
                 Close 1
 
                 AP%(2) = AP%(2) + 1
@@ -5273,12 +5277,6 @@ Sub TickerSchedule
 
     Shared scheduleFile$
     
-    Open "GAME82" For Input As #2
-    Input #2, scheduleFile$
-
-    For I = 0 To 2: Input #2, AP%(I): Next
-    Close 2
-
     If AP%(2) <= 31 Then
 
         For X = 0 To 1: SX$(AP%(2) + 1, X) = B$(X): Next
@@ -7870,14 +7868,6 @@ Sub BOXOPTIONS (outputChoice)
                     Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input NM$
                     NM$ = NM$ + ".SPC"
                 Else
-                    ' Determine game #
-                    Open "GAME82" For Input As #1
-                    Input #1, scheduleFile$
-                    For I = 0 To 2
-                        Input #1, AP%(I)
-                    Next
-                    Close 1
-
                     ' NM$ = "BOXSCORE." + MID$(STR$(AP%(0) + AP%(2)), 2, LEN(STR$(AP%(0) + AP%(2))))
                     NM$ = "BOX" + Mid$(Str$(AP%(0) + AP%(2)), 2, Len(Str$(AP%(0) + AP%(2))))
                 End If
