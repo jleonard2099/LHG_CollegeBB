@@ -129,7 +129,7 @@ Sub ViewTourneyInfo (ACTION%)
                     targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
                 End If
 
-                Open diskPaths$(0) + targetFile$ + ".INF" For Input As #2
+                Open diskPaths$(1) + targetFile$ + ".INF" For Input As #2
                 Input #2, FF$
                 Input #2, R% ' NUMBER OF REGIONS
                 For I = 1 To 16
@@ -149,7 +149,7 @@ Sub ViewTourneyInfo (ACTION%)
                 Input #2, consolationSetting%(1): ' CONSOLATION GAME
                 Close 2
 
-                Open diskPaths$(0) + targetFile$ + ".TNY" For Input As #1
+                Open diskPaths$(1) + targetFile$ + ".TNY" For Input As #1
                 For I = 0 To 14
                     Input #1, tourneyDefaults%(I)
                 Next
@@ -158,15 +158,15 @@ Sub ViewTourneyInfo (ACTION%)
                 If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
                 NR$ = Str$(R%)
 
-                Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
-                Y = LOF(1)
+                Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                fileLength& = LOF(1)
                 Close 1
 
                 scheduleAP%(0) = Y / 90
                 BS% = Int((scheduleAP%(0) - 1) / 20)
 
                 For I = 1 To scheduleAP%(0)
-                    Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                    Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                     For X = 0 To 14
                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$

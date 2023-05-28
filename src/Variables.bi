@@ -1,35 +1,34 @@
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
-Dim Shared DT$, TM$
+Dim CK, defFGPctAdj%, finalUpdate%
+Dim replayLosses%, staminaRating%, replayWins%
+Dim teamAttendance%, V1%, V2%
 
-Dim Shared diskPaths$(3), Q$(0 To 500)
-Dim Shared teamNames$(MAX_TEAMS)
-Dim Shared teamIndex%(MAX_TEAMS)
+Dim TC!
 
-Dim Shared DirCount%
-
-Dim mascot$, coach$, stadium$
+Dim coach$, mascot$, stadium$
 Dim opSysType$
 
-Dim CK
-
-'Dim BO%
-Dim avgAttendance%, defFGPctAdj%, finalUpdate%
-Dim replayLosses%, staminaRating%, TC!, replayWins%
-Dim V1%, V2%
-
 Dim A$(0 To 15)
-Dim statsL%(0 To 4), compT1%(20)
+
+Dim compT1%(20), statsL%(0 To 4)
+Dim T%(0 To 9)
+
 Dim statsA!(0 To 14, 0 To 13), DF!(13), RS!(13, 13), X!(13, 13)
 Dim statsW0!(15), statsW1!(15)
 Dim statsZ!(15), statsZ1!(15)
 
 Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
-
 Dim homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
-Dim T%(0 To 9)
 
+Dim Shared fileLength&
+
+Dim Shared DT$, TM$
+
+Dim Shared diskPaths$(3), Q$(0 To 500)
+Dim Shared teamNames$(MAX_TEAMS)
+Dim Shared teamIndex%(MAX_TEAMS)
 
 '----------------------------------------
 ' Used across ALIGN, MERGE routines

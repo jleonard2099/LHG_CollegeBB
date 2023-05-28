@@ -269,11 +269,11 @@ Sub DoTheDraft (draftNew%, teamPosition%)
 
                         Open diskPaths$(0) + "BASK." + draftYN$(1) For Random As #1 Len = 655
 
-                        Y = LOF(1)
+                        fileLength& = LOF(1)
 
                         Field #1, 15 As Q$(0), 640 As X$
 
-                        For I1 = 1 To Y / 655
+                        For I1 = 1 to fileLength& / 655
                             Get #1, I1
                             teamNames$(I1) = Q$(0)
                             teamIndex%(I1) = I1
@@ -439,7 +439,7 @@ Sub DoTheDraft (draftNew%, teamPosition%)
     draftT%(0, 6) = draftT%(0, 6) / (NP% - 1)
 
     Open diskPaths$(0) + "BASK." + draftYN$(0) For Random As #1 Len = 655
-    Y = LOF(1)
+    fileLength& = LOF(1)
 
     If draftNew% = 0 Then teamPosition% = Y / 655 + 1
 
@@ -678,9 +678,9 @@ Sub MoreTeam (teamPosition%)
 
     1200 Cls
     Open diskPaths$(0) + "BASK." + draftYN$(0) For Random As #1 Len = 655
-    Y = LOF(1)
+    fileLength& = LOF(1)
     Field #1, 15 As Q$(0), 640 As X$
-    For I1 = 1 To Y / 655
+    For I1 = 1 to fileLength& / 655
         Get #1, I1
         teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
     Next

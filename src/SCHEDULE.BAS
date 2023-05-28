@@ -856,7 +856,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                     Print "FOUND A MATCH"
 
                                     Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = 48
-                                    Y = LOF(1)
+                                    fileLength& = LOF(1)
 
                                     targetGame% = Y / 48
 
@@ -975,7 +975,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                     Locate 1, 1: Print numberGames% + 1; " MATCHES"
 
                                     Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = 48
-                                    Y = LOF(1)
+                                    fileLength& = LOF(1)
 
                                     numberGames% = Y / 48
 
@@ -1529,7 +1529,7 @@ Sub LoadScheduleInfo (targetFile$)
     Shared scheduleYN$()
 
     Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
-    Y = LOF(1)
+    fileLength& = LOF(1)
 
     scheduleAP%(0) = Y / 48
     BS% = Int((scheduleAP%(0) - 1) / 20)
@@ -1574,11 +1574,11 @@ Sub SelectTeam_Schedule (numberTeams, yearNumber$)
 	
     Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
-    Y = LOF(1)
+    fileLength& = LOF(1)
 
     Field #1, 15 As Q$(0), 640 As X$
 
-    For I1 = 1 To Y / 655
+    For I1 = 1 to fileLength& / 655
         Get #1, I1
         numberTeams = numberTeams + 1
         teamNames$(I1) = Q$(0)
@@ -1899,7 +1899,7 @@ Sub CreateConferenceSchedule ()
                 'Read in SCX file as a "template" for our SCD
                 'The file literally has 0 values for everything
                 Open F$ For Random As #1 Len = 48
-                Y = LOF(1)
+                fileLength& = LOF(1)
 
                 scheduleAP%(0) = Y / 48
                 BS% = Int((scheduleAP%(0) - 1) / 20)
@@ -1981,7 +1981,7 @@ Sub CreateConferenceSchedule ()
                 '-- Save file -- reference the routine?????
                 Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = 48
 
-                Y = LOF(1) / 48
+                fileLength& = LOF(1) / 48
 
                 For X = 0 To 18
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$

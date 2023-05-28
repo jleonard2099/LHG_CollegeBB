@@ -809,11 +809,11 @@ Sub DiskSelection_CAREER ()
 
                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
 
-                    Y = LOF(1)
+                    fileLength& = LOF(1)
 
                     Field #1, 15 As Q$(0), 640 As X$
 
-                    For I1 = 1 To Y / 655
+                    For I1 = 1 to fileLength& / 655
                         Get #1, I1
                         teamNames$(I1) = Q$(0)
                         teamIndex%(I1) = I1

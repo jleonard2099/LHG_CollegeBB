@@ -33,7 +33,7 @@ Sub TOURNEY ()
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
 
-    Spec$ = diskPaths$(0) + "*.TOU"
+    Spec$ = diskPaths$(1) + "*.TOU"
 	Count% = FCount%(Spec$)
 
     If Count% = 0 Then
@@ -121,15 +121,15 @@ Sub TOURNEY ()
             WE$ = Left$(targetFile$, Len(targetFile$) - 4)
             targetFile$ = WE$
 
-            Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
-            Y = LOF(1)
+            Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
+            fileLength& = LOF(1)
             Close 1
 
             scheduleAP%(0) = Y / 90
             BS% = Int((scheduleAP%(0) - 1) / 20)
 
             For I = 1 To scheduleAP%(0)
-                Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                 For X = 0 To 14
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -214,12 +214,12 @@ Sub TOURNEY ()
 
                     Case "P":
                         ' *** SAVE SCHEDULE FILE ***
-                        '    IF _FILEEXISTS(diskPaths$(0) + targetFile$ + ".TNY") THEN
-                        '       KILL diskPaths$(0) + targetFile$ + ".TNY"
+                        '    IF _FILEEXISTS(diskPaths$(1) + targetFile$ + ".TNY") THEN
+                        '       KILL diskPaths$(1) + targetFile$ + ".TNY"
                         '    END IF
 
 						'-- This code actually loads the TOU file
-                        Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                        Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                         For X = 0 To 14
                             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -303,7 +303,7 @@ Sub TOURNEY ()
                         Call COLHOOP
 
 						'-- This code actually loads the TOU file
-                        Open diskPaths$(0) + targetFile$ + ".TOU" For Random As #1 Len = 90
+                        Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                         For X = 0 To 14
                             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$

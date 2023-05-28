@@ -80,11 +80,11 @@ Sub COMPARE ()
 
                                 Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
 
-                                Y = LOF(1)
+                                fileLength& = LOF(1)
 
                                 Field #1, 15 As Q$(0), 640 As X$
 
-                                For I1 = 1 To Y / 655
+                                For I1 = 1 to fileLength& / 655
                                     Get #1, I1
                                     teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
                                 Next
@@ -686,7 +686,7 @@ End Sub
 Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
 
     Shared mascot$, coach$, stadium$
-    Shared avgAttendance%, CK, defFGPctAdj%, replayLosses%, staminaRating%, replayWins%
+    Shared teamAttendance%, CK, defFGPctAdj%, replayLosses%, staminaRating%, replayWins%
     Shared V1%, V2%
     Shared A$(), compareB$(), HP$(), OP$(), P$()
     Shared HP%(), OP%(), compareL%(), compareT%(), compT1%()
@@ -789,7 +789,7 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
         coach$ = RTrim$(Q$(0))
         stadium$ = RTrim$(Q$(1))
         mascot$ = RTrim$(Q$(2))
-        avgAttendance% = CVL(Q$(3))
+        teamAttendance% = CVL(Q$(3))
 
         For I = 0 To 13
             DF!(I) = CVI(Q$(I * 16 + 4))
@@ -814,7 +814,7 @@ Sub SelectTeam_COMPARE (numberTeams, yearNumber$, PS$(), B$)
             coach$ = ""
 			stadium$ = ""
 			mascot$ = ""
-			avgAttendance% = 0
+			teamAttendance% = 0
 
             For I = 0 To 13
                 DF!(I) = 5

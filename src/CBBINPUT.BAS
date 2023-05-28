@@ -142,7 +142,7 @@ Sub CBBINPUT ()
                     162 Locate 5, 37: Input "22. POWER RATING "; T%(9): If C1 = 1 Then 326
                     163 Locate 6, 37: Input "23. COACH "; coach$: If C1 = 1 Then 326
                     165 Locate 7, 37: Input "24. ARENA "; stadium$: If C1 = 1 Then 326
-                    166 Locate 8, 37: Input "25. AVG ATT "; avgAttendance%: If C1 = 1 Then 326
+                    166 Locate 8, 37: Input "25. AVG ATT "; teamAttendance%: If C1 = 1 Then 326
                     312 Locate 9, 10: Print A$;: Locate 9, 30: Print "OPPONENTS"
                     313 Locate 10, 1: Print "4. FGA ";: Locate 10, 15: Input T1
                     Locate 10, 30: Input T2: If C1 = 1 Then 326
@@ -672,7 +672,7 @@ Sub CBBINPUT ()
             LSet Q$(0) = coach$
             LSet Q$(1) = stadium$
             LSet Q$(2) = mascot$
-            LSet Q$(3) = MKL$(avgAttendance%)
+            LSet Q$(3) = MKL$(teamAttendance%)
             For I = 0 To 13
                 LSet Q$(I * 16 + 4) = MKI$(inputDF(I))
                 LSet Q$(I * 16 + 5) = inputP$(I)
@@ -723,7 +723,7 @@ Sub CBBINPUT ()
             mascot$ = ""
             stadium$ = ""
             coach$ = ""
-            avgAttendance% = 0
+            teamAttendance% = 0
 
             Erase N$
 

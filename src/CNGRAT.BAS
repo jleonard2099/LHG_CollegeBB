@@ -164,11 +164,11 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
 
             Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
-            Y = LOF(1)
+            fileLength& = LOF(1)
 
             Field #1, 15 As Q$(0), 640 As X$
 
-            For I1 = 1 To Y / 655
+            For I1 = 1 to fileLength& / 655
                 Get #1, I1
                 teamNames$(I1) = Q$(0)
             Next
@@ -214,7 +214,7 @@ End Sub
 Sub EditTeam (yearNumber$, teamIdx%, teamName$)
 
     Shared V1%, V2%
-    Shared avgAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, stadium$
 
     Shared statsL%(), T%(), compT1%()
@@ -231,7 +231,7 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
     Print " 3. TEAM NAME "; teamName$; Tab(40); "20. NICKNAME "; mascot$
     Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "21. COACH "; coach$
     Print " 5. DEF FG% ADJ "; defFGPctAdj%
-    Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(40); "22. AVG ATTENDANCE "; avgAttendance%
+    Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(40); "22. AVG ATTENDANCE "; teamAttendance%
     Print " 7. DEF 3FG% ADJ "; V1%; Tab(40); "23. WINS "; T%(7)
     Print " 8. OFF STEAL RATING "; statsL%(0); Tab(40); "24. LOSSES "; T%(8)
     Print " 9. OFF TURNOVER RATING "; statsL%(1); Tab(40); "25. POWER RATING "; T%(9)
@@ -292,7 +292,7 @@ Sub EditTeam (yearNumber$, teamIdx%, teamName$)
             165 Locate 20: Input "19. ARENA NAME "; stadium$: If C1 = 1 Then 190
             166 Locate 4, 40: Input "20. NICKNAME "; mascot$: If C1 = 1 Then 190
             167 Locate 5, 40: Input "21. COACH "; coach$: If C1 = 1 Then 190
-            168 Locate 7, 40: Input "22. AVG ATTENDANCE "; avgAttendance%: If C1 = 1 Then 190
+            168 Locate 7, 40: Input "22. AVG ATTENDANCE "; teamAttendance%: If C1 = 1 Then 190
             169 Locate 8, 40: Input "23. WINS "; T%(7): If C1 = 1 Then 190
             170 Locate 9, 40: Input "24. LOSSES "; T%(8): If C1 = 1 Then 190
             171 Locate 10, 40: Input "25. POWER RATING "; T%(9): If C1 = 1 Then 190
@@ -569,7 +569,7 @@ End Sub
 Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
 
     Shared V1%, V2%
-    Shared avgAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, stadium$
 
     Shared statsL%(), T%(), compT1%()
@@ -647,7 +647,7 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
         coach$ = Q$(0)
         stadium$ = Q$(1)
         mascot$ = Q$(2)
-        avgAttendance% = CVL(Q$(3))
+        teamAttendance% = CVL(Q$(3))
 
         For I = 0 To 13
             DF!(I) = CVI(Q$(I * 16 + 4))
@@ -669,7 +669,7 @@ Sub SelectTeam_CNGRAT (teamIdx%, numberTeams%, yearNumber$, selectedTeamName$)
             coach$ = ""
             stadium$ = ""
             mascot$ = ""
-            avgAttendance% = 0
+            teamAttendance% = 0
 
             For I = 0 To 13
                 DF!(I) = 5
@@ -710,7 +710,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
 
         Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
-        Y = LOF(1) / 655
+        fileLength& = LOF(1) / 655
 
         Close 1
 
@@ -764,7 +764,7 @@ Sub SaveTeam_CNGRAT (yearNumber$, newID%, teamIdx%, teamName$)
     LSet Q$(0) = RTrim$(coach$)
     LSet Q$(1) = RTrim$(stadium$)
     LSet Q$(2) = RTRim$(mascot$)
-    LSet Q$(3) = MKL$(avgAttendance%)
+    LSet Q$(3) = MKL$(teamAttendance%)
 
     For I = 0 To 13
         LSet Q$(I * 16 + 4) = MKI$(DF!(I))

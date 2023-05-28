@@ -266,7 +266,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
             If numberRegions < 1 Or numberRegions > 16 Then GoTo GETDIV4
 
-            Open diskPaths$(0) + sourceFile$ + ".TNY" For Output As #1
+            Open diskPaths$(1) + sourceFile$ + ".TNY" For Output As #1
             For I = 0 To 14
                 Print #1, tourneyDefaults%(I)
             Next
@@ -482,9 +482,9 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                                 Else
 
                                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-                                    Y = LOF(1)
+                                    fileLength& = LOF(1)
                                     Field #1, 15 As Q$(0)
-                                    For I1 = 1 To Y / 655
+                                    For I1 = 1 to fileLength& / 655
                                         Get #1, I1
                                         For I2 = 1 To 15
                                             If Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then nullTeam = 1: Exit For
@@ -625,9 +625,9 @@ Sub ScheduleAndSave (saveFile$, numberRegions, tourneyName$)
 
     Shared NN%()
 
-    If _FileExists(diskPaths$(0) + saveFile$ + ".TMP") Then Kill diskPaths$(0) + saveFile$ + ".TMP"
-    If _FileExists(diskPaths$(0) + saveFile$ + ".TCX") Then Kill diskPaths$(0) + saveFile$ + ".TCX"
-    If _FileExists(diskPaths$(0) + saveFile$ + ".TOU") Then Kill diskPaths$(0) + saveFile$ + ".TOU"
+    If _FileExists(diskPaths$(1) + saveFile$ + ".TMP") Then Kill diskPaths$(1) + saveFile$ + ".TMP"
+    If _FileExists(diskPaths$(1) + saveFile$ + ".TCX") Then Kill diskPaths$(1) + saveFile$ + ".TCX"
+    If _FileExists(diskPaths$(1) + saveFile$ + ".TOU") Then Kill diskPaths$(1) + saveFile$ + ".TOU"
 
     For NR = 1 To numberRegions
         If NN%(NR) >= 4 Then
@@ -724,8 +724,8 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                         'Reset tournament
 
                         'Create TOU file as backup of TCX
-                        'Call FCopy(diskPaths$(0) + loadFile$ + ".TOU", diskPaths$(0) + loadFile$ + ".TCX", BUFFER$, ERRCODE%)
-                        Call FCopy(diskPaths$(0) + loadFile$ + ".TCX", diskPaths$(0) + loadFile$ + ".TOU", BUFFER$, ERRCODE%)
+                        'Call FCopy(diskPaths$(1) + loadFile$ + ".TOU", diskPaths$(1) + loadFile$ + ".TCX", BUFFER$, ERRCODE%)
+                        Call FCopy(diskPaths$(1) + loadFile$ + ".TCX", diskPaths$(1) + loadFile$ + ".TOU", BUFFER$, ERRCODE%)
                         Locate 10
 
                         Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
@@ -738,7 +738,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
                     Else
 
-                        Open diskPaths$(0) + loadFile$ + ".INF" For Input As #2
+                        Open diskPaths$(1) + loadFile$ + ".INF" For Input As #2
                         Input #2, tourneyName$
                         Input #2, numberRegions ' NUMBER OF REGIONS
 
@@ -760,7 +760,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
                         Close 2
 
-                        Open diskPaths$(0) + loadFile$ + ".TNY" For Input As #1
+                        Open diskPaths$(1) + loadFile$ + ".TNY" For Input As #1
 
                         For I = 0 To 14
                             Input #1, tourneyDefaults%(I)
@@ -5912,7 +5912,7 @@ Sub WRITEGAME (outputFile$)
 
     'WRITE OUT A GAME
     'TMP file
-    Open diskPaths$(0) + outputFile$ + ".TMP" For Random As #1 Len = 90
+    Open diskPaths$(1) + outputFile$ + ".TMP" For Random As #1 Len = 90
 
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5939,7 +5939,7 @@ Sub WRITEGAME (outputFile$)
     Close 1
 
     'TCX file
-    Open diskPaths$(0) + outputFile$ + ".TCX" For Random As #1 Len = 90
+    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #1 Len = 90
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
     Next
@@ -5976,7 +5976,7 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
     Shared slotName$(), regionNames$()
 
     'SAVE TOURNAMENT INFO AND QUIT
-    Open diskPaths$(0) + saveFile$ + ".INF" For Output As #2
+    Open diskPaths$(1) + saveFile$ + ".INF" For Output As #2
 
     Print #2, tourneyName$
     Print #2, numberRegions ' NUMBER OF REGIONS
@@ -6042,7 +6042,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                     For AP = 1 To TC!
 
                         'Read data from .TMP file
-                        Open diskPaths$(0) + tourneyFile$ + ".TMP" For Random As #1 Len = 90
+                        Open diskPaths$(1) + tourneyFile$ + ".TMP" For Random As #1 Len = 90
                         For X = 0 To 14
                             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
                         Next
@@ -6069,7 +6069,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
 
                             MATCH = MATCH + 1
 
-                            Open diskPaths$(0) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
 
                             For X = 0 To 14
                                 Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -6106,7 +6106,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
 
     NR = 17
 
-    tempFile$ = diskPaths$(0) + tourneyFile$ + ".TMP"
+    tempFile$ = diskPaths$(1) + tourneyFile$ + ".TMP"
 
     For RD = 1 To 99
 
@@ -6142,7 +6142,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
 
                     MATCH = MATCH + 1
 
-                    Open diskPaths$(0) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
 
                     For X = 0 To 14
                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
