@@ -125,7 +125,7 @@ Sub TOURNEY ()
             fileLength& = LOF(1)
             Close 1
 
-            scheduleAP%(0) = Y / 90
+            scheduleAP%(0) = fileLength& / 90
             BS% = Int((scheduleAP%(0) - 1) / 20)
 
             For I = 1 To scheduleAP%(0)

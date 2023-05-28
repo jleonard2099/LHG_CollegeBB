@@ -175,7 +175,7 @@ Sub GetTeam_CNGRAT (yearNumber$, teamIdx%, teamName$)
 
             Close 1
 
-            NTMS = Y / 655
+            NTMS = fileLength& / 655
             TS% = Int((NTMS - 1) / 80)
 
             Call SelectTeam_CNGRAT(teamIdx%, NTMS, teamYear$, teamName$)

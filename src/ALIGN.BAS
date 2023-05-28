@@ -319,7 +319,7 @@ Sub GetDiskID_ALIGN (A$)
 
                     Close 1
 
-                    numberTeams = Y / 655
+                    numberTeams = fileLength& / 655
 
                     Call SelectTeam_ALIGN(yearNumber$, numberTeams)
 

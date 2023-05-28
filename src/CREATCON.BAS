@@ -273,7 +273,7 @@ Sub CREATCON ()
 
                                     Close 1
 
-                                    NTMS = Y / 655
+                                    NTMS = fileLength& / 655
 
                                     Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
 

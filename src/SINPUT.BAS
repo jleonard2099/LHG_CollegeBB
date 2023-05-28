@@ -335,7 +335,7 @@ Sub SelectTeam_SINPUT (B$)
 
                     Close 1
 
-                    NTMS = Y / 655
+                    NTMS = fileLength& / 655
 
                     Call GetTeam_SINPUT (YN$, NTMS)
                 End If

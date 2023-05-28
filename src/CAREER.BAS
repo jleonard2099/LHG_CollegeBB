@@ -821,7 +821,7 @@ Sub DiskSelection_CAREER ()
 
                     Close 1
 
-                    NTMS = Y / 655
+                    NTMS = fileLength& / 655
 
                     Call SelectTeam_CAREER(YN$, NTMS)
 

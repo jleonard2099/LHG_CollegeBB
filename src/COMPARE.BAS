@@ -91,7 +91,7 @@ Sub COMPARE ()
 
                                 Close 1
 
-                                NTMS = Y / 655
+                                NTMS = fileLength& / 655
 
                                 Call SelectTeam_COMPARE(NTMS, YN$, posn$(), B$)
                             End If

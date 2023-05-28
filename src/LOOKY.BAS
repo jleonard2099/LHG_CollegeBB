@@ -66,7 +66,7 @@ Sub LOOKY ()
                     Next
                     Close 1
 
-                    NTMS = Y / 655
+                    NTMS = fileLength& / 655
 
                     Call SelectTeam_LOOKY(NTMS, YN$)
 

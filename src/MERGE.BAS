@@ -492,7 +492,7 @@ Sub GetDiskID_MERGE (A$)
 
                     Close 1
 
-                    numberTeams = Y / 655
+                    numberTeams = fileLength& / 655
 
                     Call SelectTeam_MERGE(yearNumber$, numberTeams)
                 End If

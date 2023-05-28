@@ -858,7 +858,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                     Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = 48
                                     fileLength& = LOF(1)
 
-                                    targetGame% = Y / 48
+                                    targetGame% = fileLength& / 48
 
                                     For X = 0 To 18
                                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -977,7 +977,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                     Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #1 Len = 48
                                     fileLength& = LOF(1)
 
-                                    numberGames% = Y / 48
+                                    numberGames% = fileLength& / 48
 
                                     For X = 0 To 18
                                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -1531,7 +1531,7 @@ Sub LoadScheduleInfo (targetFile$)
     Open diskPaths$(0) + targetFile$ + ".SCD" For Random As #1 Len = 48
     fileLength& = LOF(1)
 
-    scheduleAP%(0) = Y / 48
+    scheduleAP%(0) = fileLength& / 48
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
     For X = 0 To 18
@@ -1586,7 +1586,7 @@ Sub SelectTeam_Schedule (numberTeams, yearNumber$)
     Next
     Close 1
 
-    numberTeams = Y / 655
+    numberTeams = fileLength& / 655
 
 End Sub
 
@@ -1901,7 +1901,7 @@ Sub CreateConferenceSchedule ()
                 Open F$ For Random As #1 Len = 48
                 fileLength& = LOF(1)
 
-                scheduleAP%(0) = Y / 48
+                scheduleAP%(0) = fileLength& / 48
                 BS% = Int((scheduleAP%(0) - 1) / 20)
 
                 For X = 0 To 18
