@@ -20,15 +20,21 @@ Dim statsW0!(15), statsW1!(15)
 Dim statsZ!(15), statsZ1!(15)
 
 Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
-Dim homeScore%(MAX_GAMES), visitingScore%(MAX_GAMES)
+Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
 
 Dim Shared fileLength&
-
-Dim Shared DT$, TM$
 
 Dim Shared diskPaths$(3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
+
+' Game Options
+Dim Shared DT$, TM$
+
+Dim coachOpt$(0 To 1), foulShotOpt$(0 To 2)
+Dim location$(0 To 2), MO$(0 To 3), modeAbbrev$(0 To 3)
+Dim sclockOpt$(0 To 2), threeFtOpt$(0 To 1), threePtOpt$(0 To 1)
+Dim yesNo$(0 To 1)
 
 '----------------------------------------
 ' Used across ALIGN, MERGE routines
@@ -151,7 +157,7 @@ Dim HL%, HW%, NL%, NW%, VL%, VW%
 Dim L%, W%
 
 Dim mergeT%(100)
-Dim mergeO%(100), P%(100)
+Dim mergeO%(100)
 
 Dim lookyA!(0 To 14, 24)
 
@@ -199,46 +205,39 @@ Dim T$(30)
 '----------------------------------------
 Dim scheduleFile$
 
-Dim Shared J, JJ
-Dim Shared DF(1, 13)
-Dim Shared F5%(0 To 1, 0 To 8)
-Dim Shared A!(0 To 1, 0 To 13, 0 To 24)
-Dim Shared PO$(1, 13)
+Dim Shared AP, B, C1, C7, DY, CT, D, endOfGame, FO, F3, G9, H, I, J, IN, halfTime
+Dim Shared M5, MJ, N, nbrLines, NTMS, P, P9, Q, S2, S9, tickerIdx, TMT, TOU, U5, X8, XM, XS
 
-Dim Shared AP, B, C1, C7, DY, CT, D, FO, F3, G9, H, I, IN ', J, JJ
-Dim Shared M5, MJ, N, NTMS, P, P9, Q, S2, S9, TMT, TOU, U5, X8, XM, XS
+Dim Shared BO%, BU%, CM%, DK%, F3S%, FB%, FT%, J8%, LC%, N7%, NF%
+Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, X3%, X0%, X1%, XX%
 
-Dim Shared BO%, BU%, CM%, DK%, endOfGame%, F3S%, FB%, FT%, HT%, J8%, LC%, N7%, NF%, nbrLines%
-Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, TS%, X3%, X0%, X1%, XX%
+Dim Shared F!, R0!
+
+Dim Shared gameClock!, pbpDelay!, timeElapsed!
+
+Dim Shared actualAttendance&
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
 
-Dim Shared B1(0 To 1, 0 To 4)
-Dim Shared C(1, 13, 6), D1(1), D2(1), D8(4, 3), DP(2, 4)
-Dim Shared F1(13), G4(13), G5(13), P2(1), P4(14), P5(14), P7(1)
-Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9), RS(1, 13, 13)
-Dim Shared S1(1), S3(13), T0(1), T1(1), V9(14)
-Dim Shared W2(1, 13), W3(1, 13), Z5(1), Z6(1), ZZ(1, 13)
-
-Dim Shared R3!(1), S!(1, 9), W0!(1, 13), W1!(1, 13)
-
 '-- FA%() I believe is related to tracking player fatigue
-Dim Shared AP%(2), APT%(100, 1), B%(1, 13, 18), CZ%(1), DT%(1), E%(13), FA%(1, 13), FY%(2)
+Dim Shared AP%(2), APT%(100, 1), B%(1, 13), CZ%(1), DT%(1), E%(13), FA%(1, 13), FY%(2)
 Dim Shared G9%(1), HF%(1, 6), HT%(100), L%(1, 4), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
 Dim Shared O%(100), OF%(1), PC%(1), PR%(1, 1), ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TF%(1), TM%(1, 13), TP%(1), TR%(1, 9), V1%(1), V2%(1)
 Dim Shared VG%(8), VH%(8), W%(1, 13, 1)
 
-Dim Shared C7$(2) 'C7$(3) would allow for the 30-second shot clock option
-Dim Shared AA$(1, 13), B$(1), CM$(1), D$(15), DB$(14)
-Dim Shared gameMascot$(1), gameStadium$(1), gameCoach$(1)
-Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
-Dim Shared PB$(1), PS$(4), R$(14), SITE$(100), SX$(32, 2)
-Dim Shared TB$(1), TS$(1), U5$(3), X$(3), Y$(1), YN$(5), YN1$(3)
+Dim Shared B1(0 To 1, 0 To 4)
+Dim Shared C(1, 13, 6), D1(1), D2(1), D8(4, 3), DP(2, 4)
+Dim Shared DF(1, 13)
+Dim Shared F1(13), G4(13), G5(13), P2(1), P4(14), P5(14), P7(1)
+Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9), RS(1, 13, 13)
+Dim Shared S1(1), S3(13), T0(1), T1(1), V9(14)
+Dim Shared W2(1, 13), W3(1, 13), Z5(1), Z6(1), timePlayed(1, 13)
 
-Dim Shared Z!(15), Z1!(15), Z2!(13, 13)
+Dim Shared F5%(0 To 1, 0 To 8)
 
-Dim Shared F!, pbpDelay!, R0!, T!, TE!
+Dim Shared A!(0 To 1, 0 To 13, 0 To 24)
+Dim Shared R3!(1), S!(1, 9), W0!(1, 13), W1!(1, 13)
 
 'CRD stores attendance for stat files
 '  I think this is because files are
@@ -246,4 +245,12 @@ Dim Shared F!, pbpDelay!, R0!, T!, TE!
 '  is the most supported?
 Dim Shared avgAttendance&(1), CRD&(100)
 
-Dim Shared actualAttendance&
+Dim Shared AA$(1, 13), B$(1), D$(15), DB$(14)
+Dim Shared gameMascot$(1), gameStadium$(1), gameCoach$(1)
+Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
+Dim Shared PB$(1), PS$(4), R$(14), SITE$(100), SX$(32, 2)
+Dim Shared PO$(1, 13)
+Dim Shared X$(3), Y$(1), YN$(5), YN1$(3)
+
+Dim Shared Z!(15), Z1!(15), Z2!(13, 13)
+

@@ -1,0 +1,7 @@
+
+When manually scheduling games the last thing you need to do is change date and time. 
+If you do it first. Then enter the teams it reverts back to original
+
+Also on Tournament. 
+If you set up a region then save it and move to next region you have to select year again. 
+It doesn’t remember by just hitting enter.

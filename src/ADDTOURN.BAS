@@ -7,7 +7,7 @@ Sub ADDTOURN ()
     Shared slotName$(), regionNames$()
 
     Shared consolationSetting%()
-    Shared homeScore%(), visitingScore%()
+    Shared homeScores(), visitorScores()
     Shared tourneyN%(), scheduleNG%(), NN%()
 
     Dim NR$
@@ -508,9 +508,8 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                                 Locate 2, 33
                                 Color T%(0), T%(1): Print A$
 
-                                Color 15, 4
-
                                 Do
+                                    Color 15, 4
                                     Locate 3, 33: Print "ANY CHANGE (YN)";
                                     I$ = GetKeyPress$
                                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -707,9 +706,8 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
                 Locate 2, 33: Print loadFile$
 
-                Color 15, 1
-
                 Do
+                    Color 15, 1
                     Locate 3, 33: Print "ANY CHANGE (YN)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -3251,7 +3249,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
     Shared TC!
 
     Shared consolationSetting%(), scheduleNG%()
-    ' Shared homeScore%(), visitingScore%()
+    ' Shared homeScores(), visitorScores()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
 
     Select Case numberRegions
@@ -5907,7 +5905,7 @@ Sub WRITEGAME (outputFile$)
 
     Shared TC!
 
-    Shared homeScore%(), scheduleNG%(), visitingScore%()
+    Shared homeScores(), scheduleNG%(), visitorScores()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
 
     'WRITE OUT A GAME
@@ -5925,8 +5923,8 @@ Sub WRITEGAME (outputFile$)
     For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X)): Next
     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC!, X): Next
 
-    LSet Q$(16) = MKI$(visitingScore%(TC!))
-    LSet Q$(17) = MKI$(homeScore%(TC!))
+    LSet Q$(16) = MKI$(visitorScores(TC!))
+    LSet Q$(17) = MKI$(homeScores(TC!))
     LSet Q$(18) = visitingTeam$(TC!)
     LSet Q$(19) = homeTeam$(TC!)
 
@@ -5950,8 +5948,8 @@ Sub WRITEGAME (outputFile$)
 
     For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X)): Next
     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC!, X): Next
-    LSet Q$(16) = MKI$(visitingScore%(TC!))
-    LSet Q$(17) = MKI$(homeScore%(TC!))
+    LSet Q$(16) = MKI$(visitorScores(TC!))
+    LSet Q$(17) = MKI$(homeScores(TC!))
     LSet Q$(18) = visitingTeam$(TC!)
     LSet Q$(19) = homeTeam$(TC!)
 
@@ -6027,7 +6025,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
 
     Shared scheduleNG%()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
-    Shared homeScore%(), visitingScore%()
+    Shared homeScores(), visitorScores()
 
     For RD = 1 To 89
 
@@ -6054,8 +6052,8 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                         For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
                         For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
 
-                        visitingScore%(0) = CVI(Q$(16))
-                        homeScore%(0) = CVI(Q$(17))
+                        visitorScores(0) = CVI(Q$(16))
+                        homeScores(0) = CVI(Q$(17))
                         visitingTeam$(0) = Q$(18)
                         homeTeam$(0) = Q$(19)
 
@@ -6082,8 +6080,8 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                             For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
                             For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
 
-                            LSet Q$(16) = MKI$(visitingScore%(0))
-                            LSet Q$(17) = MKI$(homeScore%(0))
+                            LSet Q$(16) = MKI$(visitorScores(0))
+                            LSet Q$(17) = MKI$(homeScores(0))
                             LSet Q$(18) = visitingTeam$(0)
                             LSet Q$(19) = homeTeam$(0)
 
@@ -6129,8 +6127,8 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                 For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
                 For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
 
-                visitingScore%(0) = CVI(Q$(16))
-                homeScore%(0) = CVI(Q$(17))
+                visitorScores(0) = CVI(Q$(16))
+                homeScores(0) = CVI(Q$(17))
                 visitingTeam$(0) = Q$(18)
                 homeTeam$(0) = Q$(19)
 
@@ -6155,7 +6153,7 @@ Sub SORTGAMES (tourneyFile$, numberRegions)
                     For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
                     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
 
-                    LSet Q$(16) = MKI$(visitingScore%(0)): LSet Q$(17) = MKI$(homeScore%(0))
+                    LSet Q$(16) = MKI$(visitorScores(0)): LSet Q$(17) = MKI$(homeScores(0))
                     LSet Q$(18) = visitingTeam$(0): LSet Q$(19) = homeTeam$(0)
 
                     For X = 24 To 26: LSet Q$(X) = MKI$(scheduleNG%(0, X - 9)): Next

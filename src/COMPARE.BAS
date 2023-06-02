@@ -103,9 +103,8 @@ Sub COMPARE ()
                                 Locate 2, 33
                                 Color compareT%(0), compareT%(1): Print B$
 
-                                Color 15, 4
-
                                 Do
+                                    Color 15, 4
                                     Locate 3, 33: Print "ANY CHANGE (YN)";
                                     I$ = GetKeyPress$
                                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"

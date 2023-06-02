@@ -9,6 +9,8 @@ Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 15
 Const DIVS_PER_CONFERENCE = 2
 Const TEAMS_PER_CONFERENCE = 30
+Const TEAM_SIZE_BYTES = 655
+Const DATA_SIZE_BYTES = 566
 
 'Const NUM_STATRECORDS = 162
 
@@ -148,6 +150,34 @@ For I = 0 To 14
     Read DB$(I)
 Next I
 
+
+' Game options
+modeAbbrev$(0) = "HH"
+modeAbbrev$(1) = "CV"
+modeAbbrev$(2) = "CH"
+modeAbbrev$(3) = "CC"
+
+MO$(0) = "HUMAN OPPONENT           "
+MO$(1) = "COMPUTER IS VISITING TEAM"
+MO$(2) = "COMPUTER IS HOME TEAM    "
+MO$(3) = "COMPUTER VS COMPUTER     "
+
+sclockOpt$(0) = "NO SHOT CLOCK       "
+sclockOpt$(1) = "45 SECOND SHOT CLOCK"
+sclockOpt$(2) = "35 SECOND SHOT CLOCK"
+
+yesNo$(0) = "N"
+yesNo$(1) = "Y"
+
+foulShotOpt$(0) = "SHOOT 1+1"
+foulShotOpt$(1) = "SHOOT 2  "
+
+location$(0) = "@ TEAM 1            "
+location$(1) = "HOME COURT ADVANTAGE"
+location$(2) = "NEUTRAL SITE        "
+
+coachOpt$(0) = "COACH AND SELECT SHOTS           "
+coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
 '----------------------------------------
 '               MAIN CODE

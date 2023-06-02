@@ -177,10 +177,9 @@ Sub DraftExistingTeam (draftNew%)
 
             Locate 2, 33
 			Color draftT%(0, 0), draftT%(0, 1): Print draftT$(0)
-			
-			Color 15, 4
-			
+						
 			Do
+                Color 15, 4
 				Locate 3, 33: Print "ANY CHANGE (YN)";
 				I$ = GetKeyPress$
 			Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -293,9 +292,8 @@ Sub DoTheDraft (draftNew%, teamPosition%)
                         Locate 2, 33
 						Color draftT%(1, 0), draftT%(1, 1): Print draftT$(1)
 						
-						Color 15, 4
-
 						Do
+                            Color 15, 4
 							Locate 3, 33: Print "ANY CHANGE (YN)";
 							I$ = GetKeyPress$
 						Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"

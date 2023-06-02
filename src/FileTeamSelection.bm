@@ -72,13 +72,13 @@ Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
                     Else
 
-                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." yearNumber$ For Random As #1 Len = TEAM_BIN_SIZE
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
 
                         fileLength& = LOF(1)
 
                         Field #1, 15 As Q$(0)
 
-                        numberTeams = fileLength& / TEAM_BIN_SIZE
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
 
                         For teamIdx = 1 To fileLength&
                             Get #1, teamIdx
@@ -180,7 +180,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
     Shared L%(), T%()
     'Shared varB%()
 
-    Open diskPaths$(0) +  TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_BIN_SIZE
+    Open diskPaths$(0) +  TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
     '--- This will vary from game / module
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$

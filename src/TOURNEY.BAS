@@ -3,7 +3,7 @@ Sub TOURNEY ()
     _Title "Courtside College Basketball - Tournament"
 
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
-    Shared homeScore%(), scheduleNG%(), visitingScore%()
+    Shared homeScores(), scheduleNG%(), visitorScores()
     Shared scheduleAP%()
 
     Dim NGG(MAX_TEAMS)
@@ -143,7 +143,7 @@ Sub TOURNEY ()
                 For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
                 For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
 
-                visitingScore%(I) = CVI(Q$(16)): homeScore%(I) = CVI(Q$(17))
+                visitorScores(I) = CVI(Q$(16)): homeScores(I) = CVI(Q$(17))
                 visitingTeam$(I) = Q$(18): homeTeam$(I) = Q$(19)
 
                 For X = 1 To 3: scheduleNG%(I, X + 14) = CVI(Q$(X + 23)): Next
@@ -184,9 +184,9 @@ Sub TOURNEY ()
                     Print Using "###      ##   ##   ##"; X + NS% * 20; scheduleNG%(X + NS% * 20, 15); scheduleNG%(X + NS% * 20, 16); scheduleNG%(X + NS% * 20, 17);
                     'LOCATE , 17: PRINT yearNumber$(X + NS% * 20, 2);
                     Locate , 25: Print visitingTeam$(X + NS% * 20); " ";
-                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitingScore%(X + NS% * 20);
+                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * 20);
                     Locate , 46: Print homeTeam$(X + NS% * 20); " ";
-                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScore%(X + NS% * 20);
+                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScores(X + NS% * 20);
                     Locate , 67: If scheduleNG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
                     Locate , 71: Print threePtOpt$(scheduleNG%(X + NS% * 20, 3));
                     Locate , 74: Print Left$(sclockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
@@ -232,7 +232,7 @@ Sub TOURNEY ()
                         For I = 1 To scheduleAP%(0)
                             For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
                             For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
-                            LSet Q$(16) = MKI$(visitingScore%(I)): LSet Q$(17) = MKI$(homeScore%(I))
+                            LSet Q$(16) = MKI$(visitorScores(I)): LSet Q$(17) = MKI$(homeScores(I))
                             LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
                             For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
                             Put #1, I
@@ -316,7 +316,7 @@ Sub TOURNEY ()
                         For I = 1 To scheduleAP%(0)
                             For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
                             For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
-                            LSet Q$(16) = MKI$(visitingScore%(I)): LSet Q$(17) = MKI$(homeScore%(I))
+                            LSet Q$(16) = MKI$(visitorScores(I)): LSet Q$(17) = MKI$(homeScores(I))
                             LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
                             For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
                             Put #1, I
