@@ -5401,9 +5401,6 @@ Sub SAVESTATS ()
                 Input #2, tourneyFile$
 
                 For I = 0 To 2
-                    'AP(0) = Start Game
-                    'AP(1) = End Game
-                    'AP(2) = games played???
                     Input #2, AP%(I)
                 Next
 
@@ -5675,12 +5672,24 @@ Sub COMPILESTATFILES (teamIdx)
     Color 15, 0
 
     Open diskPaths$(1) + R$ For Output As #1
+
     Print #1, Y$(teamIdx)
-    For I = 0 To 13: Print #1, AA$(teamIdx, I)
-        For J = 0 To 13: Print #1, Z2!(I, J): Next J
-    Print #1, W2(teamIdx, I): Print #1, W3(teamIdx, I): Next I
+
+    For I = 0 To 13:
+
+        Print #1, AA$(teamIdx, I)
+        For J = 0 To 13:
+            Print #1, Z2!(I, J)
+        Next J
+
+        Print #1, W2(teamIdx, I):
+        Print #1, W3(teamIdx, I)
+    Next I
+
     For L = 0 To 15: Print #1, Z!(L): Next L
+
     For L = 0 To 15: Print #1, Z1!(L): Next L
+
     Close #1
 
     Print
@@ -8072,7 +8081,7 @@ Sub POSTGAME ()
         'Append special events
         Call BOX2SPC(NM$)
 
-        Call BOX2FILE(2, NM$)
+        Call BOX2FILE(2, NM$, specialStat)
 
     End If
 
@@ -8123,7 +8132,7 @@ Sub BOXOPTIONS (outputChoice)
 
             End If
 
-            Call BOX2FILE(outputChoice, boxFile$)
+            Call BOX2FILE(outputChoice, boxFile$, specialStat)
 
     End Select
 
@@ -8421,9 +8430,14 @@ End Sub
 '   send to printer, the file
 '   is also looped through to
 '   print, line-by-line
-Sub BOX2FILE (printChoice, NM$)
+Sub BOX2FILE (printChoice, NM$, isSpecial)
 
-    Open diskPaths$(1) + NM$ For Append As #2
+    If isSpecial = 1 Then
+        'special scores come after the events
+        Open diskPaths$(1) + NM$ For Append As #2
+    Else
+        Open diskPaths$(1) + NM$ For Output As #2
+    End If
 
     If N = 2 Then
         Print #2, "SITE: NEUTRAL"
@@ -8604,13 +8618,15 @@ Sub BOX2FILE (printChoice, NM$)
     Next I
 
     Print #2,
-    Print #2, "BENCH WARMERS"
+    'Print #2, "BENCH WARMERS"
+    Print #2, "DISABLED BUT PLAYED"
 
     For I = 0 To 1
 
         For I1 = 0 To 13
 
-            If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
+            'If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
+            If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 And timePlayed(I, I1) > 0 Then
                 Print #2, AA$(I, I1); " ["; B$(I); "]"
             End If
 
@@ -8670,6 +8686,8 @@ Sub BOX2SPC (NM$)
             If W%(I, I1, 0) > E%(11) Then Print #2, AA$(I, I1);: Print #2, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
         Next
     Next
+
+    Print #2,
 
     Close #2
 

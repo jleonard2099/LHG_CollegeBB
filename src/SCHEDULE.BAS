@@ -156,7 +156,7 @@ Sub NewSchedule (scheduleFile$)
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
-    Shared modeAbbrev$(), sclockOpt$(), threePtOpt$()
+    Shared modeAbbrev$(), sclockOpt$(), yesNo$()
 
     Do
 
@@ -252,7 +252,7 @@ Sub NewSchedule (scheduleFile$)
                 Locate , 72: If scheduleNG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
 
                 '3 Pt Option
-                Locate , 75: Print threePtOpt$(scheduleNG%(X + NS% * 20, 3));
+                Locate , 75: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
 
                 'Shot Clock
                 Locate , 78: Print Left$(sclockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)

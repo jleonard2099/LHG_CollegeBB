@@ -12,6 +12,7 @@ Sub LOOKY ()
         Cls
 
         JJ = 6
+
         Locate 6, 8: Color 15, 4
 
         'Print box top
@@ -263,8 +264,6 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Ycoord = Int((80 - Ycoord) / 2)
     Locate , Ycoord
     Print teamName$
-
-    Color 15, 0
 
     Locate 25, 1: Print Tab(80);
     Locate 2, 1
@@ -529,7 +528,7 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
             End Select
 
-        Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q"
+        Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q" Or I$ = Chr$(13)
 
         If I$ = Chr$(27) Then menuExit = 1
 
