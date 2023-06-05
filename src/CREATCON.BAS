@@ -2,11 +2,10 @@ Sub CREATCON ()
 
     _Title "Courtside College Basketball - Manage Conference"
 
-    DefInt A-Z
-
     Dim creatB(1, 2), creatT1(1)
 
     Shared Z1$(), Z2$()
+
     Shared scheduleZ1%()
 
     Shared T%()

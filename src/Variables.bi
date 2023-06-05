@@ -205,8 +205,10 @@ Dim T$(30)
 '----------------------------------------
 Dim scheduleFile$
 
-Dim Shared AP, B, C1, C7, DY, CT, D, endOfGame, FO, F3, G9, H, I, J, IN, halfTime
-Dim Shared M5, MJ, N, nbrLines, NTMS, P, P9, Q, S2, S9, tickerIdx, TMT, TOU, U5, X8, XM, XS
+Dim Shared AP, B, C1, DY, CT, D, endGame, endAllGames, FO, F3, G9
+Dim Shared H, halfTime, I, J, IN, M5, MJ, N, nbrLines, NTMS
+Dim Shared P, P9, Q, S2, S9, sClockVal, shotClock
+Dim Shared tickerIdx, TMT, TOU, U5, XM, XS
 
 Dim Shared BO%, BU%, CM%, DK%, F3S%, FB%, FT%, J8%, LC%, N7%, NF%
 Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, X3%, X0%, X1%, XX%
@@ -217,7 +219,8 @@ Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared actualAttendance&
 
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, PB$, U$, VT$, VT1$, W$, W1$, YN$
+Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, PB$
+Dim Shared tourneyFile$, U$, VT$, VT1$, W$, W1$, YN$
 
 '-- FA%() I believe is related to tracking player fatigue
 Dim Shared AP%(2), APT%(100, 1), B%(1, 13), CZ%(1), DT%(1), E%(13), FA%(1, 13), FY%(2)

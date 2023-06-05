@@ -10,7 +10,6 @@ Sub COMPNAT ()
     Dim CN$(1 To 40), H1$(40)
     Dim gameSite$(100)
 
-    'Dim PT#(1 To 1200, 4)
     Dim PT$(1 To 1200)
 
     Shared PT#()

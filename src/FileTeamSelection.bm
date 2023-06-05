@@ -5,6 +5,7 @@
 Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
     Shared T%()
+
     Shared teamNames$()
 
     Do

@@ -4,14 +4,18 @@ Sub CNGRAT (userChoice)
 
     Shared V1%, V2%
     Shared defFGPctAdj%, staminaRating%
+
     Shared mascot$, coach$, stadium$
 
-    Shared statsA!(), DF!(), X!()
-    Shared cngratA$(), P$()
     Shared statsL%(), T%(), compT1%()
 
+    Shared statsA!(), DF!(), X!()
+
+    Shared cngratA$(), P$()
+
+    ReDim menuChoices$(1 To 4)
+
     Do
-        ReDim menuChoices$(1 To 4)
 
         Cls
 

@@ -2,8 +2,6 @@ Sub ADDTOURN ()
 
     _Title "Courtside College Basketball - Create Tournament"
 
-    DefInt A-Z
-
     Shared slotName$(), regionNames$()
 
     Shared consolationSetting%()

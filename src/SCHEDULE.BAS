@@ -1,12 +1,13 @@
 Sub SCHEDULE ()
 
+    _Title "Courtside College Basketball - Scheduler"
+
     Dim scheduleFile$
     ReDim menuChoices$(1 To 9)
 
     Shared NS%
-    Shared scheduleAP%(), scheduleNG%()
 
-    _Title "Courtside College Basketball - Scheduler"
+    Shared scheduleAP%(), scheduleNG%()
 
     scheduleNG%(0, 8) = 3
     scheduleNG%(0, 3) = 1

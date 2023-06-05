@@ -3,9 +3,11 @@ Sub RECORDS (action%)
     _Title "Courtside College Basketball - Game Records"
 
     Shared REC!(), TREC!()
+    
     Shared recordsA$(), RC$(), TRC$()
 
     Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
+
     For I = 0 To 48
         For I1 = 0 To 2
             Input #1, REC!(I, I1)
@@ -14,6 +16,7 @@ Sub RECORDS (action%)
             Input #1, RC$(I, I1)
         Next
     Next
+
     For I = 0 To 125
         For I1 = 0 To 2
             Input #1, TREC!(I, I1)
@@ -22,6 +25,7 @@ Sub RECORDS (action%)
             Input #1, TRC$(I, I1)
         Next
     Next
+
     Close 1
 
     Select Case action%

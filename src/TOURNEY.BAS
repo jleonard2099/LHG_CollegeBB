@@ -3,38 +3,21 @@ Sub TOURNEY ()
     _Title "Courtside College Basketball - Tournament"
 
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
-    Shared homeScores(), scheduleNG%(), visitorScores()
-    Shared scheduleAP%()
+    Shared homeScores(), visitorScores()
+    Shared scheduleAP%(), scheduleNG%()
 
     Dim NGG(MAX_TEAMS)
 
     Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS), YR%(MAX_TEAMS)
 
-    Dim coachOpt$(1), foulShotOpt$(1), location$(2)
-    Dim playMode$(0 To 3), sclockOpt$(2), threeFtOpt$(1), threePtOpt$(1)
+    Shared coachOpt$(), foulShotOpt$(), location$()
+    Shared MO$(), sclockOpt$(), yesNo$()
 
-    coachOpt$(0) = "COACH AND SELECT SHOTS           "
-    coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-    location$(1) = "HOME COURT ADVANTAGE"
-    location$(2) = "NEUTRAL SITE        "
-    sclockOpt$(0) = "NO SHOT CLOCK"
-    sclockOpt$(1) = "45 SEC CLOCK "
-    sclockOpt$(2) = "35 SEC CLOCK "
-    foulShotOpt$(0) = "SHOOT 1+1"
-    foulShotOpt$(1) = "SHOOT 2  "
-    threeFtOpt$(0) = "N"
-    threeFtOpt$(1) = "Y"
-    threePtOpt$(0) = "N"
-    threePtOpt$(1) = "Y"
-    playMode$(0) = "HUMAN OPPONENT            "
-    playMode$(1) = "COMPUTER IS VISITING TEAM "
-    playMode$(2) = "COMPUTER IS HOME TEAM     "
-    playMode$(3) = "COMPUTER VS COMPUTER      "
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
 
     Spec$ = diskPaths$(1) + "*.TOU"
-	Count% = FCount%(Spec$)
+    Count% = FCount%(Spec$)
 
     If Count% = 0 Then
         'This was added to handle if no TOU files are available
@@ -121,39 +104,7 @@ Sub TOURNEY ()
             WE$ = Left$(targetFile$, Len(targetFile$) - 4)
             targetFile$ = WE$
 
-            Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
-            fileLength& = LOF(1)
-            Close 1
-
-            scheduleAP%(0) = fileLength& / 90
-            BS% = Int((scheduleAP%(0) - 1) / 20)
-
-            For I = 1 To scheduleAP%(0)
-                Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
-
-                For X = 0 To 14
-                    Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-                Next
-
-                Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-                Get #1, I
-
-                For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
-
-                visitorScores(I) = CVI(Q$(16)): homeScores(I) = CVI(Q$(17))
-                visitingTeam$(I) = Q$(18): homeTeam$(I) = Q$(19)
-
-                For X = 1 To 3: scheduleNG%(I, X + 14) = CVI(Q$(X + 23)): Next
-                For X = 2 To 3
-                    yearNumber$(I, X) = RTrim$(yearNumber$(I, X))
-                Next
-
-                Close 1
-
-            Next
+            Call ReadTourneyFile(targetFile$)
 
             Do
 
@@ -188,7 +139,7 @@ Sub TOURNEY ()
                     Locate , 46: Print homeTeam$(X + NS% * 20); " ";
                     If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScores(X + NS% * 20);
                     Locate , 67: If scheduleNG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
-                    Locate , 71: Print threePtOpt$(scheduleNG%(X + NS% * 20, 3));
+                    Locate , 71: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
                     Locate , 74: Print Left$(sclockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
                 Next
 
@@ -218,7 +169,6 @@ Sub TOURNEY ()
                         '       KILL diskPaths$(1) + targetFile$ + ".TNY"
                         '    END IF
 
-						'-- This code actually loads the TOU file
                         Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
 
                         For X = 0 To 14
@@ -230,18 +180,34 @@ Sub TOURNEY ()
                         Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                         For I = 1 To scheduleAP%(0)
-                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
-                            For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
-                            LSet Q$(16) = MKI$(visitorScores(I)): LSet Q$(17) = MKI$(homeScores(I))
-                            LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
-                            For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
+
+                            For X = 0 To 14:
+                                LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
+                            Next
+
+                            For X = 0 To 3:
+                                LSet Q$(20 + X) = yearNumber$(I, X)
+                            Next
+
+                            LSet Q$(16) = MKI$(visitorScores(I))
+                            LSet Q$(17) = MKI$(homeScores(I))
+                            LSet Q$(18) = visitingTeam$(I)
+                            LSet Q$(19) = homeTeam$(I)
+
+                            For X = 1 To 3:
+                                LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14))
+                            Next
+
                             Put #1, I
+
                         Next
 
                         Close 1
 
                         ' *** PLAY GAMES ***
-                        Color , 0: Cls
+                        Color , 0
+                        Cls
+
                         JJ = 7
                         Locate 6, 8: Color 15, 4
                         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
@@ -283,6 +249,7 @@ Sub TOURNEY ()
                         Next
 
                         Open "TICKER" For Output As #2
+
                         For I = 1 To 32:
                             For I1 = 0 To 1:
                                 For I2 = 1 To 14
@@ -290,39 +257,22 @@ Sub TOURNEY ()
                                 Next
                             Next
                         Next
+
                         For I = 1 To 32:
                             For I1 = 0 To 1:
                                 Print #2, "XXX"
                             Next
                         Next
+
                         For I = SG% To SG% + 31
                             Print #2, scheduleNG%(I, 12)
                         Next
+
                         Close 2
 
                         Call COLHOOP
 
-						'-- This code actually loads the TOU file
-                        Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
-
-                        For X = 0 To 14
-                            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-                        Next
-
-                        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-
-                        For I = 1 To scheduleAP%(0)
-                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
-                            For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(I, X): Next
-                            LSet Q$(16) = MKI$(visitorScores(I)): LSet Q$(17) = MKI$(homeScores(I))
-                            LSet Q$(18) = visitingTeam$(I): LSet Q$(19) = homeTeam$(I)
-                            For X = 1 To 3: LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14)): Next
-                            Put #1, I
-                        Next
-
-                        Close 1
+                        Call ReadTourneyFile(targetFile$)
 
                     Case "Q":
                         'Exit Sub
@@ -336,6 +286,66 @@ Sub TOURNEY ()
 
 End Sub
 
+
+'----------------------------------------
+'       ReadTourneyFile Subroutine
+'----------------------------------------
+'...explanation...
+Sub ReadTourneyFile (targetFile$)
+
+    Shared homeTeam$(), visitingTeam$(), yearNumber$()
+    Shared homeScores(), visitorScores()
+    Shared scheduleAP%(), scheduleNG%()
+
+    Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
+    fileLength& = LOF(1)
+    Close 1
+
+    scheduleAP%(0) = fileLength& / 90
+    BS% = Int((scheduleAP%(0) - 1) / 20)
+
+    For I = 1 To scheduleAP%(0)
+
+        Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
+
+        For X = 0 To 14
+            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+        Next
+
+        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+        Get #1, I
+
+        For X = 0 To 14:
+            scheduleNG%(I, X) = CVI(Q$(X + 1))
+        Next
+
+        For X = 0 To 3:
+            yearNumber$(I, X) = Q$(20 + X)
+        Next
+
+        visitorScores(I) = CVI(Q$(16))
+        homeScores(I) = CVI(Q$(17))
+        visitingTeam$(I) = Q$(18)
+        homeTeam$(I) = Q$(19)
+
+        For X = 1 To 3:
+            scheduleNG%(I, X + 14) = CVI(Q$(X + 23))
+        Next
+
+        For X = 2 To 3
+            yearNumber$(I, X) = RTrim$(yearNumber$(I, X))
+        Next
+
+        Close 1
+
+    Next
+
+End Sub
+
+
 '----------------------------------------
 '       EditGame_TOURNEY Subroutine
 '----------------------------------------
@@ -345,27 +355,11 @@ Sub EditGame_TOURNEY ()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
     Shared scheduleNG%(), scheduleAP%()
 
-    Dim coachOpt$(1), location$(2), sclockOpt$(2)
-    Dim foulShotOpt$(1), threeFtOpt$(1), threePtOpt$(1), playMode$(3)
+    Shared coachOpt$(), foulShotOpt$(), location$()
+    Shared MO$(), sclockOpt$(), yesNo$()
 
     Dim displayPause!
 
-    coachOpt$(0) = "COACH AND SELECT SHOTS           "
-    coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-    location$(1) = "HOME COURT ADVANTAGE"
-    location$(2) = "NEUTRAL SITE        "
-    sclockOpt$(0) = "NO SHOT CLOCK"
-    sclockOpt$(1) = "45 SEC CLOCK "
-    sclockOpt$(2) = "35 SEC CLOCK "
-    foulShotOpt$(0) = "SHOOT 1+1"
-    foulShotOpt$(1) = "SHOOT 2  "
-    threeFtOpt$(0) = "N": threeFtOpt$(1) = "Y"
-    threePtOpt$(0) = "N"
-    threePtOpt$(1) = "Y"
-    playMode$(0) = "HUMAN OPPONENT            "
-    playMode$(1) = "COMPUTER IS VISITING TEAM "
-    playMode$(2) = "COMPUTER IS HOME TEAM     "
-    playMode$(3) = "COMPUTER VS COMPUTER      "
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
 
@@ -384,16 +378,16 @@ Sub EditGame_TOURNEY ()
         149 Cls: Color 2: Print Tab(29); "SELECT GAME OPTIONS": Print
         151 Locate 2, 2: Color 14: Print "    ";: Color 15: Print "VISITING TEAM: "; V$
         152 Locate 3, 2: Color 14: Print "    ";: Color 15: Print "HOME TEAM: "; H$
-        153 Locate 4, 2: Color 14: Print "(1) ";: Color 15: Print playMode$(scheduleNG%(NG%, 8))
-        154 Locate 5, 2: Color 14: Print "(2) ";: Color 15: Print "3-POINT SHOT: "; threePtOpt$(scheduleNG%(NG%, 3))
+        153 Locate 4, 2: Color 14: Print "(1) ";: Color 15: Print MO$(scheduleNG%(NG%, 8))
+        154 Locate 5, 2: Color 14: Print "(2) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(NG%, 3))
         155 Locate 6, 2: Color 14: Print "(3) ";: Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(NG%, 7))
         156 Locate 7, 2: Color 14: Print "(4) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
         157 Locate 8, 2: Color 14: Print "(5) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(NG%, 4) / 10
         158 Locate 9, 2: Color 14: Print "(6) ";: Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)
         159 Locate 10, 2: Color 14: Print "(7) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(scheduleNG%(NG%, 9))
         162 Locate 11, 2: Color 14: Print "(8) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
-        164 Locate 12, 2: Color 14: Print "(9) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; threeFtOpt$(scheduleNG%(NG%, 10))
-        165 Locate 13, 2: Color 14: Print "(A) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; threeFtOpt$(scheduleNG%(NG%, 14))
+        164 Locate 12, 2: Color 14: Print "(9) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(scheduleNG%(NG%, 10))
+        165 Locate 13, 2: Color 14: Print "(A) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(scheduleNG%(NG%, 14))
         163 Locate 14, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT SETTINGS"
 
         Do

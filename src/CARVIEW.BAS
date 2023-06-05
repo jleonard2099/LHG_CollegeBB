@@ -6,11 +6,6 @@ Sub CARVIEW ()
 
     Shared ARS!(), W0S!(), W1S!()
 
-    'Dim AR$(62)
-    'Dim A(72, 11), AR(62, 11), TT(62)
-    'Dim W0!(62), W1!(62), W0R(62), W1R(62)
-
-    '-----
     TMR% = 930
 
     Do

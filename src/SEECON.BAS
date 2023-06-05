@@ -2,7 +2,6 @@ Sub SEECON ()
 
     _Title "Courtside College Basketball - Conference Stats"
 
-    'Dim seeconP(60), BA$(120), ER$(20), P$(260), S$(60), TT(120, 4)
     Shared DL!(), OL!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seenatZ!(), seenatZ1!()

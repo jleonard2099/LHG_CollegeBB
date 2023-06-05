@@ -4,8 +4,6 @@ Sub NEWLDR ()
 
     Dim sortType%
 
-    Cls
-
     Do
 
         Cls

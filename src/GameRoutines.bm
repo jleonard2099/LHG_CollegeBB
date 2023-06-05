@@ -6,8 +6,21 @@
 ' in from file or assigned elsewhere
 Sub InitVar ()
 
+    Shared scheduleFile$
+
+    For I = 0 To 1
+        For I1 = 0 To 4
+            B1(I, I1) = -1
+        Next I1
+    Next I
+
     gameClock! = 1200
+
+    nbrLines = 1
+
     H = 1
+
+    ' # of timeouts
     T1(1) = 5
     T1(0) = 5
 
@@ -16,13 +29,6 @@ Sub InitVar ()
     X$(2) = "C "
     X$(3) = "D "
 
-    'For I = 0 To 1
-    '    For I1 = 0 To 4
-    '        B1(I, I1) = -1
-    '    Next I1
-    'Next I
-
-    nbrLines = 1
     PA% = -1
 
     TR%(0, 0) = 15
@@ -33,17 +39,20 @@ Sub InitVar ()
     PB$(0) = "VERBOSE        "
     PB$(1) = "HAFFNER CLASSIC"
 
-    J = 0
     AP = 0
     B = 0
     C1 = 0
     DY = 0
     CT = 0
     D = 0
+    endGame = 0
+    endAllGames = 0
     FO = 0
     F3 = 0
     G9 = 0
+    halfTime = 0
     I = 0
+    J = 0
     IN = 0
     M5 = 0
     MJ = 0
@@ -51,22 +60,22 @@ Sub InitVar ()
     P = 0
     P9 = 0
     Q = 0
+    shotClock = 0
+    statSpecial = 0
     S2 = 0
     S9 = 0
+    timeElapsed! = 0
     TMT = 0
     TOU = 0
-    X8 = 0
     XM = 0
     XS = 0
 
     BO% = 0
     BU% = 0
     DK% = 0
-    endGame = 0
     F3S% = 0
     FB% = 0
     FT% = 0
-    halfTime = 0
     J8% = 0
     LC% = 0
     PASS% = 0
@@ -76,30 +85,29 @@ Sub InitVar ()
     X1% = 0
     XX% = 0
 
+    skipUserOpts% = 0
+
+    F! = 0
+    R0! = 0
+
     A1$ = ""
     B1$ = ""
     C1$ = ""
     D1$ = ""
     E1$ = ""
     F1$ = ""
-    FF$ = ""
     G1$ = ""
     H1$ = ""
     J$ = ""
     PB$ = ""
+    scheduleFile$ = ""
+    tourneyFile$ = ""
     U$ = ""
     VT$ = ""
     VT1$ = ""
     W$ = ""
     W1$ = ""
     YN$ = ""
-
-    F! = 0
-    R0! = 0
-    timeElapsed! = 0
-
-    statSpecial = 0
-    skipUserOpts% = 0
 
     Erase B1
     Erase C, D1, D2, DF
@@ -142,7 +150,7 @@ Sub AUTOSETUP ()
     pbpDelay! = NG%(4) / 10
     NF% = NG%(5)
     TB% = NG%(6)
-    C7 = NG%(7)
+    sClockVal = NG%(7)
     U5 = NG%(8)
     CM% = NG%(9)
     TF% = NG%(10)
@@ -158,17 +166,21 @@ Sub AUTOSETUP ()
 
     If TOU = 1 Then
 
-        FF$ = RTrim$(FF$)
+        tourneyFile$ = RTrim$(tourneyFile$)
         YN$(0) = RTrim$(YN$(0))
         YN$(1) = RTrim$(YN$(1))
 
-        Open diskPaths$(0) + FF$ + ".INF" For Input As #2
+        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #2
+
         Input #2, X$
+
         Input #2, X$ ' NUMBER OF REGIONS
+
         For I = 1 To 16
             Input #2, X$ ' NUMBER OF TEAMS IN REGION
             Input #2, X$ ' NAME OF REGION
         Next
+
         For I = 1 To 16
             For I1 = 1 To 16
                 For I2 = 1 To 4
@@ -292,17 +304,17 @@ End Sub
 ' ...explanation...
 Sub ResetShotClock ()
 
-    If C7 > 0 Then
+    If sClockVal > 0 Then
 
-        Select Case C7
-            Case 1: X8 = 45
-            Case 2: X8 = 35
-            Case 3: X8 = 30
+        Select Case sClockVal
+            Case 1: shotClock = 45
+            Case 2: shotClock = 35
+            Case 3: shotClock = 30
         End Select
 
         LS = 4
 
-        If gameClock! < 46 And X8 >= gameClock! Or H > 2 And gameClock! = 300 Then Locate 5, 5: Print "     "
+        If gameClock! < 46 And shotClock >= gameClock! Or H > 2 And gameClock! = 300 Then Locate 5, 5: Print "     "
 
         If gameClock! < 6 And LS = 4 And LT <> 4 Then F! = 5
 
@@ -311,14 +323,25 @@ Sub ResetShotClock ()
 End Sub
 
 '------------------------------
-'       ShotClock Subroutine
+'  AdjustShotClock Subroutine
 '------------------------------
 ' Subtract time off shot clock
-Sub ShotClock ()
+Sub AdjustShotClock ()
 
-    If C7 >= 1 Then X8 = X8 - timeElapsed!
+    If sClockVal >= 1 Then
+        shotClock = shotClock - timeElapsed!
+    End If
 
-    If X8 < 0 Then X8 = X8 - X8: gameClock! = gameClock! - X8: timeElapsed! = X8: Call PlayingTime
+    'Shot clock expired
+    If shotClock < 0 Then
+        'shotClock = 0?
+        shotClock = shotClock - shotClock
+        'gameClock = no change?
+        gameClock! = gameClock! - shotClock
+        'timeElapsed = 0
+        timeElapsed! = shotClock
+        Call AdjustPlayTime
+    End If
 
 End Sub
 
@@ -344,7 +367,9 @@ Sub HalfCourt ()
     Loop Until I2% >= 0 And I2% <= 1
 
     If I2% = 1 And X3% = 0 Then I2% = 0
+
     Color 15, 0
+
     Call SCOREBOARD
 
 End Sub
@@ -375,16 +400,22 @@ End Sub
 Sub FoulCalled (randomCalcs%)
 
     If randomCalcs% = 1 Then
+
         W5 = 0
         M9 = Int(Rnd(1) * F5%(D, 0)) + 1
 
         For M8 = 0 To 4:
+
             W5 = W5 + A!(D, B1(D, M8), 17)
+
             If M9 <= W5 Then Exit For
+
         Next M8
 
         If M8 < 0 Or M8 > 4 Then M8 = Int(Rnd(1) * 5)
+
         W5 = M8
+
     End If
 
     631 '
@@ -535,7 +566,7 @@ Sub DISABLEPLAYERS ()
         Print "TEAM ROSTER FOR ";
         Color TR%(P9, 0), TR%(P9, 1): Print B$(P9)
         Color 15, 0
-        Print "# NAME          POS   GP"
+        Print "# NAME            POS   GP"
 
         For I = 0 To 13
 
@@ -546,10 +577,10 @@ Sub DISABLEPLAYERS ()
             If I = 13 Then Print "D";
             If I = 14 Then Print "E";
 
+            Print " ";
+
             'Automatically disable "non-existent" players
             If AA$(P9, I) = "XXX" Then B%(P9, I) = -1: Color TR%(P9, 0), TR%(P9, 1)
-
-            Print " ";
 
             'Color players who have been disabled
             If B%(P9, I) = 1 Or B%(P9, I) = -1 Then Color TR%(P9, 0), TR%(P9, 1)
@@ -558,13 +589,14 @@ Sub DISABLEPLAYERS ()
             Print AA$(P9, I);
             Color 15, 0
 
-            'Print player position, ...
-            Print Tab(18); PO$(P9, I); Tab(22); C(P9, I, 0)
+            'Print player position, GP
+            Print Tab(20); PO$(P9, I); Tab(22); C(P9, I, 0)
 
         Next
 
         Do
-            Locate 19, 1: Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
+            Locate 19, 1
+            Print "ENTER PLAYER # TO DISABLE/ENABLE (Z=FINISHED)"
             Print "YOU MUST HAVE AT LEAST 8 ACTIVE PLAYERS"
 
             I$ = GetKeyPress$
@@ -743,7 +775,6 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub MAKEPBP ()
-    1400 'PLAY BY PLAY
 
     If pbpDelay! <> 0 Then
 
@@ -751,7 +782,7 @@ Sub MAKEPBP ()
 
         Select Case PT%
             Case 1
-                1410 'TURNOVER
+                'TURNOVER
                 U$ = AA$(P, B1(P, B))
 
                 If RN > 35 And RN <= 68 And P7(D) > 1 And PASS% = 1 Then
@@ -793,7 +824,7 @@ Sub MAKEPBP ()
                 End If
 
             Case 2
-                1420 'DUNK
+                'DUNK
                 RN = Int(Rnd(1) * 39) + 1
                 Select Case RN
                     Case 1
@@ -877,12 +908,11 @@ Sub MAKEPBP ()
                 End Select
 
             Case 3
-                1430 '
                 U$ = AA$(P, B1(P, B))
 
                 Select Case PZ%
                     Case 1
-                        1431 'BAD
+                        'BAD
                         Select Case RN
                             Case 1 To 40
                                 U$ = U$ + " TAKES A TOUGH SHOT"
@@ -907,7 +937,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 2
-                        1432 'INSIDE W/ASSIST
+                        'INSIDE W/ASSIST
                         Select Case RN
                             Case 1 To 10
                                 U$ = "HE CUTS TO THE BASKET": Call PBP: U$ = "TAKES IT UP"
@@ -969,7 +999,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 3
-                        1433 'PENETRATE
+                        'PENETRATE
                         Select Case B
                             Case 0, 1
                                 Select Case RN
@@ -1102,7 +1132,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 4
-                        1434 'THREE!
+                        'THREE!
                         If FT% = 1 And RN <= 50 Then U$ = U$ + " THROWS UP A PRAYER"
                         If FT% = 1 And RN > 50 Then U$ = U$ + " LAUNCHES A THREE"
 
@@ -1135,7 +1165,7 @@ Sub MAKEPBP ()
                         End If
 
                     Case 5
-                        1435 'SHORT JUMP
+                        'SHORT JUMP
                         DK% = 0
 
                         RN = Int(Rnd(1) * 59) + 1
@@ -1287,6 +1317,7 @@ Sub MAKEPBP ()
                         DK% = 0
 
                         RN = Int(Rnd(1) * 59) + 1
+
                         Select Case RN
                             Case 1
                                 U$ = U$ + " POPS FROM OUTSIDE"
@@ -1466,7 +1497,7 @@ Sub MAKEPBP ()
                         End Select
 
                     Case 9
-                        1439 'BACK AFTER REB
+                        'BACK AFTER REB
                         U$ = "HE "
 
                         RN = Int(Rnd(1) * 11) + 1
@@ -1518,7 +1549,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 4
-                1440 'THREE GOOD
+                'THREE GOOD
                 U$ = "HE "
 
                 Select Case RN
@@ -1554,7 +1585,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 5
-                1445 'THREE BAD
+                'THREE BAD
                 U$ = "HE "
 
                 Select Case RN
@@ -1575,7 +1606,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 6
-                1450 'FAST BREAK
+                'FAST BREAK
                 U$ = AA$(P, B1(P, B))
 
                 RN = Int(Rnd(1) * 38) + 1
@@ -1661,7 +1692,7 @@ Sub MAKEPBP ()
                 Call SHOTSTRING
 
             Case 7
-                1460 'FAST BREAK SCORE
+                'FAST BREAK SCORE
                 FB% = 0
 
                 RN = Int(Rnd(1) * 39) + 1
@@ -1747,7 +1778,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 8
-                1470 'MISS
+                'MISS
                 If PZ% = 8 Then
 
                     PZ% = 0
@@ -1876,7 +1907,7 @@ Sub MAKEPBP ()
                 End If
 
             Case 9
-                1480 'NOPASS
+                'NOPASS
                 U$ = AA$(P, B1(P, B)) + " "
 
                 RN = Int(Rnd(1) * 56) + 1
@@ -1996,7 +2027,7 @@ Sub MAKEPBP ()
                 End Select
 
             Case 10
-                1490 'PASS PB$=PREV HANDLER
+                'PASS PB$=PREV HANDLER
                 V$ = AA$(P, B1(P, B))
 
                 RN = Int(Rnd(1) * 60) + 1
@@ -2950,6 +2981,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub COMCOACH ()
+
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
     For I = 0 To 13
@@ -2961,9 +2993,11 @@ Sub COMCOACH ()
     Next I
 
     Call STAMINASORT
+
     I = 14
 
     For I1 = 0 To 4
+
         8794 '
         I = I - 1
 
@@ -2975,30 +3009,37 @@ Sub COMCOACH ()
 
                 Do
 
-                    8705 I = I - 1
+                    I = I - 1
 
                     If I < 0 Then
+
                         I = 14
 
                         For I1 = 0 To 4
+
+                            '8705
+
                             Do
                                 I = I - 1
-                            Loop Until B%(P9, F1(I)) = 0 And AA$(P9, F1(I)) <> "XXX"
+                            Loop Until Not (B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX")
 
                             G4(I1) = F1(I)
                             G5(I1) = A!(P9, F1(I), 2)
+
                         Next I1
 
                         skipLoop% = 1
-                        Exit Do
 
                     Else
-                        If B%(P9, F1(I)) = 0 And AA$(P9, F1(I)) <> "XXX" And A!(P9, F1(I), 12) < NF% And A!(P9, F1(I), 12) < NF% - 1 Or (H <> 1 And H <> 2 Or gameClock! <= 720) Then
-                            G4(I1) = F1(I): G5(I1) = A!(P9, F1(I), 2)
+
+                        If (B%(P9, F1(I)) = 0) Or (AA$(P9, F1(I)) <> "XXX") Or Not (A!(P9, F1(I), 12) >= NF% Or A!(P9, F1(I), 12) >= NF% - 1) And (H = 1 Or H = 2 And gameClock! > 720) Then
+                            G4(I1) = F1(I)
+                            G5(I1) = A!(P9, F1(I), 2)
                         End If
+
                     End If
 
-                Loop Until B%(P9, F1(I)) = 0 And AA$(P9, F1(I)) <> "XXX" And A!(P9, F1(I), 12) < NF% And A!(P9, F1(I), 12) < NF% - 1 Or (H <> 1 And H <> 2 Or gameClock! <= 720)
+                Loop Until (B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX" Or A!(P9, F1(I), 12) >= NF% Or A!(P9, F1(I), 12) >= NF% - 1 And (H = 1 Or H = 2 And gameClock! > 720)) Or skipLoop% = 1
 
                 If skipLoop% = 1 Then Exit For
 
@@ -3016,7 +3057,8 @@ Sub COMCOACH ()
             If H = 2 And gameClock! < 300 And S3(I) / A!(P9, F1(I), 3) < gameClock! / 2400 Then 8794
             If S3(I) <= 0 And H < 2 Or S3(I) <= 0 And H = 2 And gameClock! > 120 Then 8794
 
-            G4(I1) = F1(I): G5(I1) = A!(P9, F1(I), 2)
+            G4(I1) = F1(I)
+            G5(I1) = A!(P9, F1(I), 2)
 
         End If
 
@@ -3041,7 +3083,7 @@ Sub TOURNEY_Game ()
     Dim fileLength&
 
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
-    Open diskPaths$(0) + FF$ + ".TOU" As #1 Len = 90
+    Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
     fileLength& = LOF(1)
     Close 1
 
@@ -3049,7 +3091,7 @@ Sub TOURNEY_Game ()
 
     For I = 1 To NTMS
 
-        Open diskPaths$(0) + FF$ + ".TOU" As #1 Len = 90
+        Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
 
         For X = 0 To 14
             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -3073,36 +3115,36 @@ Sub TOURNEY_Game ()
 
         If NG1%(15) = NG%(15) And NG%(15) <> 17 Then
 
-            If S!(0, 0) > S!(1, 0) And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile(FF$)
-            If S!(1, 0) > S!(0, 0) And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile(FF$)
-            If S!(0, 0) > S!(1, 0) And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile(FF$)
-            If S!(1, 0) > S!(0, 0) And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile(FF$)
-            If S!(0, 0) < S!(1, 0) And NG1%(0) - 800 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile(FF$)
-            If S!(1, 0) < S!(0, 0) And NG1%(0) - 800 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile(FF$)
-            If S!(0, 0) < S!(1, 0) And NG1%(1) - 800 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile(FF$)
-            If S!(1, 0) < S!(0, 0) And NG1%(1) - 800 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile(FF$)
+            If S!(0, 0) > S!(1, 0) And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
+            If S!(1, 0) > S!(0, 0) And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
+            If S!(0, 0) > S!(1, 0) And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
+            If S!(1, 0) > S!(0, 0) And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
+            If S!(0, 0) < S!(1, 0) And NG1%(0) - 800 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
+            If S!(1, 0) < S!(0, 0) And NG1%(0) - 800 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
+            If S!(0, 0) < S!(1, 0) And NG1%(1) - 800 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
+            If S!(1, 0) < S!(0, 0) And NG1%(1) - 800 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
 
         End If
 
         If NG%(15) <> 17 Then
-            If S!(0, 0) > S!(1, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(0) - 900 = NG%(15) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile(FF$)
-            If S!(1, 0) > S!(0, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(0) - 900 = NG%(15) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile(FF$)
-            If S!(0, 0) > S!(1, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(1) - 900 = NG%(15) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile(FF$)
-            If S!(1, 0) > S!(0, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(1) - 900 = NG%(15) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile(FF$)
+            If S!(0, 0) > S!(1, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(0) - 900 = NG%(15) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
+            If S!(1, 0) > S!(0, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(0) - 900 = NG%(15) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
+            If S!(0, 0) > S!(1, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(1) - 900 = NG%(15) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
+            If S!(1, 0) > S!(0, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(1) - 900 = NG%(15) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
         End If
 
-        If S!(0, 0) > S!(1, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile(FF$)
-        If S!(1, 0) > S!(0, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile(FF$)
-        If S!(0, 0) > S!(1, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile(FF$)
-        If S!(1, 0) > S!(0, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile(FF$)
-        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile(FF$)
-        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile(FF$)
-        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile(FF$)
-        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile(FF$)
-        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile(FF$)
-        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile(FF$)
-        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile(FF$)
-        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile(FF$)
+        If S!(0, 0) > S!(1, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
+        If S!(1, 0) > S!(0, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
+        If S!(0, 0) > S!(1, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
+        If S!(1, 0) > S!(0, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
+        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
+        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
+        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
+        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
+        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
+        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
+        If S!(0, 0) < S!(1, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
+        If S!(1, 0) < S!(0, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
     Next
 
 End Sub
@@ -3111,9 +3153,9 @@ End Sub
 ' UpdateTourneyFile Subroutine
 '------------------------------
 ' ...explanation...
-Sub UpdateTourneyFile (tourneyFile$)
+Sub UpdateTourneyFile ()
 
-    Open diskPaths$(0) + tourneyFile$ + ".TOU" As #1 Len = 90
+    Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
 
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -3123,12 +3165,22 @@ Sub UpdateTourneyFile (tourneyFile$)
     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: LSet Q$(X + 1) = MKI$(NG1%(X)): Next
-    For X = 0 To 3: LSet Q$(20 + X) = YN1$(X): Next
-    For X = 1 To 3: LSet Q$(X + 23) = MKI$(NG1%(X + 14)): Next
+    For X = 0 To 14:
+        LSet Q$(X + 1) = MKI$(NG1%(X))
+    Next
 
-    LSet Q$(16) = MKI$(0): LSet Q$(17) = MKI$(0)
-    LSet Q$(18) = VT1$: LSet Q$(19) = W1$
+    For X = 0 To 3:
+        LSet Q$(20 + X) = YN1$(X)
+    Next
+
+    For X = 1 To 3:
+        LSet Q$(X + 23) = MKI$(NG1%(X + 14))
+    Next
+
+    LSet Q$(16) = MKI$(S!(0, 0))
+    LSet Q$(17) = MKI$(S!(1, 0))
+    LSet Q$(18) = VT1$
+    LSet Q$(19) = W1$
 
     Put #1, I
 
@@ -3209,10 +3261,10 @@ Sub MAINSCREEN ()
 
     Color 14, 0
 
-    Locate 6, 37: Print Using " :##"; X8
+    Locate 6, 37: Print Using " :##"; shotClock
 
     'If no shot clock, or time less than shot clock, or overtime - don't output it
-    If C7 = 0 Or gameClock! < 45 And X8 >= gameClock! And C7 = 1 Or gameClock! < 35 And X8 >= gameClock! And C7 = 2 Or (C7 = 1 Or C7 = 2) And H > 2 And gameClock! = 300 Then Locate 6, 37: Print " :  "
+    If sClockVal = 0 Or gameClock! < 45 And shotClock >= gameClock! And sClockVal = 1 Or gameClock! < 35 And shotClock >= gameClock! And sClockVal = 2 Or (sClockVal = 1 Or sClockVal = 2) And H > 2 And gameClock! = 300 Then Locate 6, 37: Print " :  "
 
     If pbpDelay! <> 0 Then
         Locate 9, 41
@@ -3345,13 +3397,16 @@ Sub SCOREBOARD ()
     Locate 6, 9: Print "TIMEOUTS:"; T1(0);: Locate , 56: Print "TIMEOUTS:"; T1(1)
     Locate 9, 41
     Color TR%(D, 0), TR%(D, 1): Print "DEF-"; DB$(DT%(D))
-    Locate , 41: Color TR%(P, 0), TR%(P, 1): Print "OFF-"; OB$(OF%(P))
+    Locate , 41
+    Color TR%(P, 0), TR%(P, 1): Print "OFF-"; OB$(OF%(P))
+
     Color 15, 0
     Locate 11, 41: Color 14: Print "ENTER";: Color 14: Print "-PASS"
     Locate , 41: Color 14: Print "(1)  ";: Color 15: Print "SHOOT"
     Locate , 41: Color 14: Print "(2)  ";: Color 15: Print B$(P); " CALL TIMEOUT     "
     Locate , 41: Color 14: Print "(T)  ";: Color 15: Print "10 MIN TICKER"
     Locate , 41: Color 14: Print "(D)  ";: Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
+
     Locate 7, 1
     Color 9, 0: Print String$(38, 205); Chr$(203); String$(38, 205)
     Locate 8, 1
@@ -3457,14 +3512,15 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub COLCNG ()
+
     If TR%(1, 0) = 15 And TR%(1, 1) = 4 Then TR%(1, 0) = 4: TR%(1, 1) = 7
     If TR%(1, 0) = 15 And TR%(1, 1) = 1 Then TR%(1, 0) = 1: TR%(1, 1) = 7
     If TR%(1, 0) = 0 And TR%(1, 1) = 4 Then TR%(1, 0) = 12: TR%(1, 1) = 0
     If TR%(1, 0) = 1 And TR%(1, 1) = 7 Then TR%(1, 0) = 15: TR%(1, 1) = 1
     If TR%(1, 0) = 4 And TR%(1, 1) = 7 Then TR%(1, 0) = 15: TR%(1, 1) = 4
+
 End Sub
 
-'---- RESUME HERE ----
 
 '------------------------------
 '    LOADSTATS_Game Subroutine
@@ -3490,18 +3546,23 @@ Sub LOADSTATS_Game ()
         If _FileExists(diskPaths$(1) + R$) Then
 
             Open diskPaths$(1) + R$ For Input As #2
+
             Input #2, YY%
+
             For I1 = 1 To 100: Input #2, O%(I1): Next
             For I1 = 1 To 100: Input #2, HO$(I1): Next
             For I1 = 1 To 100: Input #2, HT%(I1): Next
             For I1 = 1 To 100: Input #2, HO$(I1): Next
+
             For I1 = 1 To 100
                 For I2 = 0 To 1
                     Input #2, APT%(I1, I2)
                 Next
             Next
+
             For I1 = 1 To 100: Input #2, CRD&(I1): Next I1
             For I1 = 1 To 100: Input #2, SITE$(I1): Next I1
+
             Close 2
 
             For I1 = 1 To YY%
@@ -3546,7 +3607,7 @@ Sub OFFREBOUND ()
 
     If skipRandom% = 0 Then B = Int(Rnd(1) * 5)
 
-794 End Sub
+End Sub
 
 '------------------------------
 '    DEFREBOUND Subroutine
@@ -3631,12 +3692,15 @@ Sub SETUPRATINGS ()
             For I1 = 0 To 13:
                 TY% = TY% + A!(I, I1, 3)
                 If B%(I, I1) = -1 Then Color TR%(I, 0), TR%(I, 1)
-                Print Using "## "; I1 + 1;: Print AA$(I, I1);
-                Locate , 24: Print Using "##"; A!(I, I1, 3)
+                Print Using "## "; I1 + 1;
+                Print AA$(I, I1);
+                Locate , 24
+                Print Using "##"; A!(I, I1, 3)
                 Color 15, 0
             Next
 
             Locate , 23: Print Using "###"; TY%
+
             Input "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1
             I1 = I1 - 1
 
@@ -3665,7 +3729,7 @@ Sub SETUPRATINGS ()
 
     End If
 
-    9499 X = 0
+    X = 0
 
 End Sub
 
@@ -3756,6 +3820,7 @@ End Sub
 Sub DEFENSEMENU ()
 
     Do
+
         Cls
 
         wrongChoice% = 0
@@ -3840,6 +3905,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub SETSTAMINA ()
+
     SQ% = 0
 
     For I = 0 To 13
@@ -3871,12 +3937,14 @@ Sub SETSTAMINA ()
 End Sub
 
 '------------------------------
-'   COMPUTERSUB Subroutine
+'   COMPUTERSUBS Subroutine
 '------------------------------
 ' ...explanation...
-Sub COMPUTERSUB ()
-    930 '
-    If H >= 2 And gameClock! <= 60 And X3% = 1 And (S!(P9, 0) - S!(1 - P9, 0) = -3 Or S!(P9, 0) - S!(1 - P9, 0) = -6) Then OF%(P9) = 9
+Sub COMPUTERSUBS ()
+
+    If H >= 2 And gameClock! <= 60 And X3% = 1 And (S!(P9, 0) - S!(1 - P9, 0) = -3 Or S!(P9, 0) - S!(1 - P9, 0) = -6) Then
+        OF%(P9) = 9
+    End If
 
     M1 = 0
     M2 = 0
@@ -3891,6 +3959,8 @@ Sub COMPUTERSUB ()
             M6 = A!(P9, I1, 3) - A!(P9, I1, 7) - A!(P9, I1, 11) - A!(P9, I1, 12)
 
             If H < 2 And M6 <= 0 Or H = 2 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
+
+            'Disabled player or inactive spot
             If A!(P9, I1, 12) >= NF% Or AA$(P9, I1) = "XXX" Or B%(P9, I1) <> 0 Then M2 = M2 + 1
 
             If I1 <= 4 Then
@@ -3912,7 +3982,9 @@ Sub COMPUTERSUB ()
         If M3 >= 1 And 5 - M3 < 14 - M1 Or H = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0 Or M4 >= 1 And M2 < 13 Or CTO% = 1 Then
             CTO% = 0
             XM = 1
+            'Call pbplog(3961)
             Call COMCOACH
+            'Call pbplog(3963)
             skipG9% = 1
         End If
 
@@ -3954,7 +4026,10 @@ Sub LINEUPS ()
     Color TR%(P9, 0), TR%(P9, 1): Print B$(P9);
     Color 15, 0: Print " TEAM ROSTER    COACH: "; gameCoach$(P9);
     Print "  RECORD: ";
-    Print Using "##"; TR%(P9, 7);: Print "-";: Print Using "##"; TR%(P9, 8)
+    Print Using "##"; TR%(P9, 7);
+    Print "-";
+    Print Using "##"; TR%(P9, 8)
+
     Color 14: Print "# NAME         POS FG  FT 3FG %3A ORB DRB RB PA  S  B CX EF  PT  F  FC  PTS/G"
     Locate 3, 1
 
@@ -4005,9 +4080,13 @@ Sub LINEUPS ()
 
     Next R1
 
-    Locate 18, 1: Color 9, 0: Print String$(27, 205); Chr$(203); String$(51, 205)
+    Locate 18, 1: Color 9, 0
+    Print String$(27, 205); Chr$(203); String$(51, 205)
 
-    For R1 = 1 To 7: Locate R1 + 18, 28: Print Chr$(186);: Next
+    For R1 = 1 To 7:
+        Locate R1 + 18, 28
+        Print Chr$(186);
+    Next
 
     Color 14, 0
     Locate 19, 1: Print "STARTING LINEUP"
@@ -4029,10 +4108,12 @@ Sub LINEUPS ()
                 If B%(P9, IP%) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then CV% = CV% + 1
             Next
 
-            Print AA$(P9, Z);: Locate Z + 3 - CV%, 3
+            Print AA$(P9, Z);
+            Locate Z + 3 - CV%, 3
             Color TR%(P9, 0), TR%(P9, 1)
             Print Left$(AA$(P9, Z), 12)
             Color 15, 0
+
         Next
 
     Else
@@ -4051,11 +4132,9 @@ Sub LINEUPS ()
                 Call ALPHANUM(I$, J)
 
                 If J >= 0 And J <= 13 And A!(P9, J, 12) < NF% And AA$(P9, J) <> "XXX" And B%(P9, J) = 0 Then
-
                     For I2 = 0 To 4
                         If B1(P9, I2) = J Then Exit For
                     Next I2
-
                 End If
 
             Loop Until J >= 0 And J <= 13
@@ -4099,7 +4178,9 @@ Sub LINEUPS ()
             Next
 
             If 14 - CV% >= 5 Then
+
                 For I1 = 0 To 4
+
                     If A!(P9, B1(P9, I1), 12) >= NF% Then
                         Locate 20, 29
                         Color 14, 0: Print AA$(P9, B1(P9, I1)); " HAS FOULED OUT"
@@ -4107,10 +4188,12 @@ Sub LINEUPS ()
                         Exit For
 
                     End If
+
                 Next
+
             End If
 
-            If skipMenu% = 0 Then Call OFFENSE
+            If skipMenu% = 0 Then Call PlayStyle
 
         Else
 
@@ -4126,11 +4209,12 @@ Sub LINEUPS ()
                 J = B1(P9, K)
                 Z = J
                 TM%(P9, J) = gameClock!
-
                 CV% = 0
 
                 For IP% = 0 To Z
-                    If B%(P9, IP%) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then CV% = CV% + 1
+                    If B%(P9, IP%) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then
+                        CV% = CV% + 1
+                    End If
                 Next
 
                 Locate J + 3 - CV%, 3
@@ -4158,6 +4242,7 @@ Sub LINEUPS ()
 
                 B1(P9, K) = J
                 Z = J
+
                 'FATIGUE
                 If TM%(P9, J) - gameClock! > 60 And TM%(P9, J) < 120 Then FA%(P9, J) = FA%(P9, J) + 1
                 If TM%(P9, J) - gameClock! >= 120 Then FA%(P9, J) = FA%(P9, J) + 4
@@ -4165,7 +4250,9 @@ Sub LINEUPS ()
 
                 CV% = 0
                 For IP% = 0 To Z
-                    If B%(P9, IP%) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then CV% = CV% + 1
+                    If B%(P9, IP%) <> 0 Or AA$(P9, IP%) = "" Or AA$(P9, IP%) = "XXX" Then
+                        CV% = CV% + 1
+                    End If
                 Next
 
                 Print AA$(P9, J);
@@ -4182,13 +4269,10 @@ Sub LINEUPS ()
 End Sub
 
 '------------------------------
-'    OFFENSE Subroutine
+'    PlayStyle Subroutine
 '------------------------------
 ' ...explanation...
-Sub OFFENSE ()
-    'This label was not being referenced anywhere else
-    'All it was doing for a modern compiler was confusing
-    'the call references with the Subroutine name.
+Sub PlayStyle ()
 
     109 '
     Color TR%(P9, 0), TR%(P9, 1)
@@ -4212,12 +4296,11 @@ Sub OFFENSE ()
     If I1 = 8 And D2(1 - P9) <> 2 Then Beep: Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE": I$ = GetKeyPress$: GoTo 109
     If I1 = 4 And S!(P9, 0) - S!(1 - P9, 0) > -11 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": I$ = GetKeyPress$: GoTo 109
     If I1 = 9 And X3% = 0 Then Beep: Locate 18, 1: Print "NOT USING 3 POINT SHOT": I$ = GetKeyPress$: GoTo 109
-    If I1 = 5 And C7 = 0 Then Beep: Locate 18, 1: Print "NOT USING SHOT CLOCK": I$ = GetKeyPress$: GoTo 109
+    If I1 = 5 And sClockVal = 0 Then Beep: Locate 18, 1: Print "NOT USING SHOT CLOCK": I$ = GetKeyPress$: GoTo 109
     If I1 = 7 And S!(P9, 0) - S!(1 - P9, 0) <= 0 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": I$ = GetKeyPress$: GoTo 109
 
     'How to loop around this with so many conditions?
     'Possibly build a bunch of nested If/Then statements?
-
     OF%(P9) = I1
     CZ%(P9) = 0
 
@@ -4227,10 +4310,10 @@ Sub OFFENSE ()
         If UCase$(I$) = "Y" Then CZ%(P9) = 1
     End If
 
-    'DEFENSE
     Call DEFENSEMENU
 
 End Sub
+
 
 '------------------------------
 '    FOULSAFE Subroutine
@@ -4242,7 +4325,10 @@ Sub FOULSAFE ()
 
     Color 15
 
-    A = 0: S2 = 1: S3 = 1: SW = 0
+    A = 0
+    S2 = 1
+    S3 = 1
+    SW = 0
 
     For ZZ = 0 To 4
         If A!(P9, B1(P9, ZZ), 22) = 50 Then A = A + 1: If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
@@ -4266,14 +4352,18 @@ Sub FOULSAFE ()
             A = P6
 
             If P6 = P5(P6) Then
+
                 A!(P9, B1(P9, P4(A)), 17) = A!(P9, B1(P9, P4(A)), 17) * 3
                 A!(P9, B1(P9, P4(A)), 22) = 0
+
                 Locate P5(A) + 3, 20
                 Print AA$(P9, B1(P9, P4(A))); " WILL NOW PLAY NORMAL DEFENSE!"
                 Call STEALADJ
+
                 D1(P9) = D1(P9) - 1
                 A = A + 1
                 MJ = 25
+
             End If
 
         Loop Until P6 >= 1 And P6 <= (S2 + 1) And P6 <> P5(P6)
@@ -4281,6 +4371,7 @@ Sub FOULSAFE ()
     End If
 
     If skipChangeToSafe% = 0 Then
+
         A = 0
         S2 = 1
 
@@ -4311,14 +4402,19 @@ Sub FOULSAFE ()
             A = P6
 
             If P6 = P5(P6) Then
+
                 A!(P9, B1(P9, P4(A)), 17) = Int((A!(P9, B1(P9, P4(A)), 17) + 1) / 3)
                 A!(P9, B1(P9, P4(A)), 22) = 50
+
                 Locate P5(A) + 3, 20: Print AA$(P9, B1(P9, P4(A))); " WILL NOW PLAY SAFE!"
                 Call STEALADJ
+
                 D1(P9) = D1(P9) + 1
                 A = A + 1
                 S3 = S3 + 1
+
                 GoTo 1220
+
             End If
 
         End If
@@ -4728,11 +4824,6 @@ Sub WHOGETSBALL ()
 
     CNT% = 0
 
-    'We should be able to update this as
-    ' a while loop but have to be careful
-    'about conditions, and when the var
-    'gets incremented
-
     While (CNT% < 4)
 
         1041 '
@@ -4741,14 +4832,14 @@ Sub WHOGETSBALL ()
         If CNT% <> 4 Then
 
             M9 = 0
-            B = Int(Rnd(1) * 5): X = Int(Rnd(1) * 100) + 1
+            B = Int(Rnd(1) * 5)
+            X = Int(Rnd(1) * 100) + 1
 
             If X > 25 Then
 
                 For I = 0 To 4
                     M8 = Int(C(P, B1(P, I), 1) / C(P, B1(P, I), 0) + .5) - A!(P, B1(P, I), 7)
                     If M8 <= 0 Then M8 = 0
-                    'IF M8<=0 AND A!(P,B1(P,I),3)-A!(P,B1(P,I),7)-A!(P,B1(P,I),11)-A!(P,B1(P,I),12)>0 THEN M8=A!(P,B1(P,I),3)-A!(P,B1(P,I),7)-A!(P,B1(P,I),11)-A!(P,B1(P,I),12)
                     If M8 >= M9 Then B = I: M9 = M8
                 Next I
 
@@ -4794,7 +4885,8 @@ Sub BALLDISTRIBUTE ()
         '----------
 
         'Select / Case statement
-        415 If S9 <= 90 And R0! <= 8 Then 424
+        415 '
+        If S9 <= 90 And R0! <= 8 Then 424
         If S9 <= 100 And R0! <= 10 Then 424
         If S9 <= 110 And R0! <= 13 Then 424
         If S9 <= 120 And R0! <= 15 Then 424
@@ -4802,13 +4894,18 @@ Sub BALLDISTRIBUTE ()
         If S9 <= 140 And R0! <= 53 Then 424
         If S9 <= 150 And R0! <= 60 Then 424
         If S9 > 150 And R0! <= 67 Then 424
-        423 B = Int(Rnd(1) * 5): GoTo 427
+
+        423 '
+        B = Int(Rnd(1) * 5): GoTo 427
 
         '----------
 
         Do
             424 '
-            If pbpDelay! <> 0 And PB% = 0 Then U$ = "PASS TO CHOICE (0-4)": Call PBP
+            If pbpDelay! <> 0 And PB% = 0 Then
+                U$ = "PASS TO CHOICE (0-4)"
+                Call PBP
+            End If
 
             If pbpDelay! > 0 And PB% = 1 Then
                 'IF AP=1 AND U5=2 OR pbpDelay!=0 THEN 425
@@ -4833,13 +4930,15 @@ Sub BALLDISTRIBUTE ()
 
     End If
 
-427 End Sub
+    427 '
+
+End Sub
 
 '------------------------------
-'    PlayingTime Subroutine
+'    AdjustPlayTime Subroutine
 '------------------------------
 ' ...explanation...
-Sub PlayingTime ()
+Sub AdjustPlayTime ()
 
     ' *** INCREMENT MINUTES ***
     For I3 = 0 To 1
@@ -4858,7 +4957,7 @@ Sub CheckZeroTime ()
 
     If gameClock! <= 0 Then
         timeElapsed! = gameClock!
-        Call PlayingTime
+        Call AdjustPlayTime
         gameClock! = 0
     End If
 
@@ -4879,10 +4978,14 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub CLEARPBPBOX ()
-    'IF AP=1 AND U5=2 OR pbpDelay!=0 THEN 4096
 
     If pbpDelay! <> 0 Then
-        For I = 8 To 15: Locate I, 1: Call BLANKLINE: Next I
+
+        For I = 8 To 15:
+            Locate I, 1
+            Call BLANKLINE
+        Next I
+
     End If
 
     Locate 10
@@ -4895,11 +4998,12 @@ End Sub
 ' ...explanation...
 Sub DEADBALLOPTIONS ()
 
-    220 PB$ = ""
+    220 '
+    PB$ = ""
     Call CLEARPBP
 
-    If U5 = 2 Then P9 = 0: Call COMPUTERSUB: Call FATIGUE: P9 = 1: Call COMPUTERSUB: Call FATIGUE
-    If U5 = 1 Then P9 = CT: Call COMPUTERSUB: Call FATIGUE
+    If U5 = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
+    If U5 = 1 Then P9 = CT: Call COMPUTERSUBS: Call FATIGUE
 
     FO = 0
     XM = 0
@@ -4923,7 +5027,8 @@ Sub DEADBALLOPTIONS ()
         Print "5-TIME OUT "; B$(P)
         Print "6-TIME OUT "; B$(D)
 
-        221 I$ = GetKeyPress$
+        221 '
+        I$ = GetKeyPress$
         P3 = Val(I$)
 
         If P3 < 1 Or P3 > 6 Or U5 = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And T1(P) <= 0) And P = CT Or U5 = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And T1(D) <= 0) And D = CT Then
@@ -4949,6 +5054,7 @@ Sub DEADBALLOPTIONS ()
         Else
 
             Select Case P3
+
                 Case 1
                     S2 = P
 
@@ -4957,13 +5063,13 @@ Sub DEADBALLOPTIONS ()
 
                 Case 3
                     P9 = P
-                    Call OFFENSE
+                    Call PlayStyle
                     Call SCOREBOARD
                     GoTo 220
 
                 Case 4
                     P9 = D
-                    Call OFFENSE
+                    Call PlayStyle
                     Call SCOREBOARD
                     GoTo 220
 
@@ -4982,6 +5088,7 @@ Sub DEADBALLOPTIONS ()
                     Call RESETFATIGUE
                     Call SCOREBOARD
                     GoTo 220
+
             End Select
 
             C1 = 1
@@ -5027,17 +5134,22 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub RESETFATIGUE ()
+
     For I = 0 To 1
+
         For I1 = 0 To 1
             PR%(I, I1) = 0
         Next
+
     Next
 
     For I = 0 To 1
+
         For I1 = 0 To 13
             FA%(I, I1) = FA%(I, I1) + 1
             If FA%(I, I1) > 0 Then FA%(I, I1) = 0
         Next
+
     Next
 
 End Sub
@@ -5066,13 +5178,14 @@ Sub STOPPAGE ()
     810 '
     Call CLEARPBP
 
+    'Call pbplog(5156)
     If U5 <> 0 Then
-        If U5 = 2 Then P9 = 0: Call COMPUTERSUB: Call FATIGUE: P9 = 1: Call COMPUTERSUB: Call FATIGUE
-        If U5 = 1 Then P9 = CT: Call COMPUTERSUB: Call FATIGUE
+        If U5 = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
+        If U5 = 1 Then P9 = CT: Call COMPUTERSUBS: Call FATIGUE
         XM = 0
     End If
 
-    811 '
+    'Call pbplog(5165)
     If U5 = 2 Then
         S2 = 0
         P9 = P
@@ -5089,7 +5202,8 @@ Sub STOPPAGE ()
         Print "3-CHANGE STRATEGY "; B$(P)
         Print "4-CHANGE STRATEGY "; B$(D)
 
-        813 I$ = GetKeyPress$
+        813 '
+        I$ = GetKeyPress$
         P3 = Val(I$)
 
         If P3 < 1 Or P3 > 4 Then
@@ -5099,8 +5213,8 @@ Sub STOPPAGE ()
             Call CheckZeroTime
         Else
             If P3 = 1 And T1(P) <= 0 Or P3 = 2 And T1(D) <= 0 Or (P3 = 1 Or P3 = 3) And P = CT And U5 = 1 Or (P3 = 2 Or P3 = 4) And D = CT And U5 = 1 Then 813
-            If P3 = 3 Then P9 = P: Call OFFENSE: Call SCOREBOARD: GoTo 810
-            If P3 = 4 Then P9 = D: Call OFFENSE: Call SCOREBOARD: GoTo 810
+            If P3 = 3 Then P9 = P: Call PlayStyle: Call SCOREBOARD: GoTo 810
+            If P3 = 4 Then P9 = D: Call PlayStyle: Call SCOREBOARD: GoTo 810
 
             For I = 0 To 1
                 For I1 = 0 To 1
@@ -5138,13 +5252,14 @@ Sub LASTSHOT ()
 
     timeElapsed! = M5
 
-    Call PlayingTime
+    Call AdjustPlayTime
 
     gameClock! = gameClock! - M5
     IN = 0
 
-    If C7 >= 1 Then X8 = X8 - M5
+    If sClockVal >= 1 Then shotClock = shotClock - M5
 
+    'Call pbplog(5228)
     Call ZeroCheck
 
 End Sub
@@ -5155,17 +5270,18 @@ End Sub
 ' ...explanation...
 Sub ZeroCheck ()
 
+
     If gameClock! <= .001 Then
         timeElapsed! = gameClock!
-        Call PlayingTime
+        Call AdjustPlayTime
         gameClock! = 0
     End If
 
-    If X8 <= 0 Then
-        X8 = X8 - X8
-        gameClock! = gameClock! - X8
-        timeElapsed! = X8
-        Call PlayingTime
+    If shotClock <= 0 Then
+        shotClock = shotClock - shotClock
+        gameClock! = gameClock! - shotClock
+        timeElapsed! = shotClock
+        Call AdjustPlayTime
     End If
 
     Call MAINSCREEN
@@ -5261,29 +5377,39 @@ Sub SAVESTATS ()
 
             If AP%(1) < AP%(0) + AP%(2) Then
                 Kill "GAME82"
+                endAllGames = 1
             Else
+
                 Open "GAME82" For Output As #2
+
                 Print #2, scheduleFile$
+
                 For I = 0 To 2
                     Print #2, AP%(I)
                 Next
+
                 Close 2
+
             End If
 
         Else
 
             If _FileExists("TOURNEY") Then
+
                 Open "TOURNEY" For Input As #2
-                Input #2, FF$
+
+                Input #2, tourneyFile$
+
                 For I = 0 To 2
                     'AP(0) = Start Game
                     'AP(1) = End Game
                     'AP(2) = games played???
                     Input #2, AP%(I)
                 Next
+
                 Close 2
 
-                Open diskPaths$(0) + FF$ + ".TOU" As #1 Len = 90
+                Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
                 For X = 0 To 14
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
                 Next
@@ -5308,17 +5434,20 @@ Sub SAVESTATS ()
                 AP = 1
 
                 Open "TOURNEY" For Output As #2
-                Print #2, FF$
+
+                Print #2, tourneyFile$
+
                 For I = 0 To 2
                     Print #2, AP%(I)
                 Next
+
                 Close 2
 
                 Call TOURNEY_Game
 
                 If AP%(1) < AP%(0) + AP%(2) Then
                     Kill "TOURNEY"
-                    endGame = 1
+                    endAllGames = 1
                 End If
 
             End If
@@ -5615,19 +5744,23 @@ Sub COMPILESTATFILES (teamIdx)
     End If
 
     Open diskPaths$(1) + R$ For Output As #1
+
     Print #1, YY%
 
     For I = 1 To 100: Print #1, O%(I): Next I
     For I = 1 To 100: Print #1, HO$(I): Next I
     For I = 1 To 100: Print #1, HT%(I): Next I
     For I = 1 To 100: Print #1, H$(I): Next I
+
     For I = 1 To 100
         For I1 = 0 To 1
             Print #1, APT%(I, I1)
         Next
     Next
+
     For I = 1 To 100: Print #1, CRD&(I): Next I
     For I = 1 To 100: Print #1, SITE$(I): Next I
+
     Close #1
 
     For I = 1 To 100
@@ -5637,9 +5770,11 @@ Sub COMPILESTATFILES (teamIdx)
         H$(I) = ""
         CRD&(I) = 0
         SITE$(I) = ""
+
         For I1 = 0 To 1
             APT%(I, I1) = 0
         Next
+
     Next I
 
     For J = 0 To 13
@@ -5648,8 +5783,9 @@ Sub COMPILESTATFILES (teamIdx)
         Next K
     Next J
 
-    For L = 0 To 15:
-        Z!(L) = 0: Z1!(L) = 0
+    For L = 0 To 15
+        Z!(L) = 0
+        Z1!(L) = 0
     Next L
 
 End Sub
@@ -5712,8 +5848,6 @@ End Sub
 ' ...explanation...
 Sub FoundSpecial (specialCount, specialStat)
 
-    'Beep
-
     'Get count of SPC files to determine
     'number to assign next one
     Spec$ = diskPaths$(1) + "*.SPC"
@@ -5731,7 +5865,11 @@ End Sub
 Sub QUARTERTOTAL ()
 
     For I = 0 To 1
-        For I2 = 0 To 14: V9(I2) = 0: Next
+
+        For I2 = 0 To 14
+            V9(I2) = 0
+        Next
+
         For I1 = 0 To 13
             V9(0) = V9(0) + A!(I, I1, 8)
             V9(1) = V9(1) + A!(I, I1, 7)
@@ -5750,104 +5888,143 @@ Sub QUARTERTOTAL ()
         Next
 
         If H = 1 Or H = 2 Then
+
             For I2 = 0 To 14
                 QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2)
             Next
 
             For I1 = 0 To 13
+
                 For I2 = 7 To 15
                     QQ(I, H, I1, I2 - 6) = A!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6)
                 Next
+
                 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10)
                 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11)
                 QQ(I, H, I1, 12) = A!(I, I1, 24) - QQ(I, H - 1, I1, 12)
                 QQ(I, H, I1, 13) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13)
                 QQ(I, H, I1, 14) = A!(I, I1, 23) - QQ(I, H - 1, I1, 14)
+
             Next
+
         End If
 
         If H = 3 Then
+
             For I2 = 0 To 14
                 QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2)
             Next
+
             For I1 = 0 To 13
+
                 For I2 = 7 To 15
                     QQ(I, H, I1, I2 - 6) = A!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6)
                 Next
+
                 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10)
                 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11)
                 QQ(I, H, I1, 12) = A!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12)
                 QQ(I, H, I1, 13) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13)
                 QQ(I, H, I1, 14) = A!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14)
+
             Next
+
         End If
 
         If H = 4 Then
+
             For I2 = 0 To 14
                 QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2)
             Next
+
             For I1 = 0 To 13
+
                 For I2 = 7 To 15
                     QQ(I, H, I1, I2 - 6) = A!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6)
                 Next
+
                 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10)
                 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11)
                 QQ(I, H, I1, 12) = A!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12)
                 QQ(I, H, I1, 13) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13)
                 QQ(I, H, I1, 14) = A!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14)
+
             Next
+
         End If
 
         If H = 5 Then
+
             For I2 = 0 To 14
                 QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2)
             Next
+
             For I1 = 0 To 13
+
                 For I2 = 7 To 15
                     QQ(I, H, I1, I2 - 6) = A!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6)
                 Next
+
                 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10)
                 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11)
                 QQ(I, H, I1, 12) = A!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12)
                 QQ(I, H, I1, 13) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13)
                 QQ(I, H, I1, 14) = A!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14)
+
             Next
+
         End If
 
         If H = 6 Then
+
             For I2 = 0 To 14
                 QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2)
             Next
+
             For I1 = 0 To 13
+
                 For I2 = 7 To 15
                     QQ(I, H, I1, I2 - 6) = A!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6)
                 Next
+
                 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10)
                 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11)
                 QQ(I, H, I1, 12) = A!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12)
                 QQ(I, H, I1, 13) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13)
                 QQ(I, H, I1, 14) = A!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14)
+
             Next
+
         End If
 
         If H = 7 Then
+
             For I2 = 0 To 14
                 QR(I, H, I2) = V9(I2) - QR(I, H - 1, I2) - QR(I, H - 2, I2) - QR(I, H - 3, I2) - QR(I, H - 4, I2) - QR(I, H - 5, I2) - QR(I, H - 6, I2)
             Next
+
             For I1 = 0 To 13
+
                 For I2 = 7 To 15
                     QQ(I, H, I1, I2 - 6) = A!(I, I1, I2) - QQ(I, H - 1, I1, I2 - 6) - QQ(I, H - 2, I1, I2 - 6) - QQ(I, H - 3, I1, I2 - 6) - QQ(I, H - 4, I1, I2 - 6) - QQ(I, H - 5, I1, I2 - 6) - QQ(I, H - 6, I1, I2 - 6)
                 Next
+
                 QQ(I, H, I1, 10) = W%(I, I1, 0) - QQ(I, H - 1, I1, 10) - QQ(I, H - 2, I1, 10) - QQ(I, H - 3, I1, 10) - QQ(I, H - 4, I1, 10) - QQ(I, H - 5, I1, 10) - QQ(I, H - 6, I1, 10)
                 QQ(I, H, I1, 11) = W%(I, I1, 1) - QQ(I, H - 1, I1, 11) - QQ(I, H - 2, I1, 11) - QQ(I, H - 3, I1, 11) - QQ(I, H - 4, I1, 11) - QQ(I, H - 5, I1, 11) - QQ(I, H - 6, I1, 11)
                 QQ(I, H, I1, 12) = A!(I, I1, 24) - QQ(I, H - 1, I1, 12) - QQ(I, H - 2, I1, 12) - QQ(I, H - 3, I1, 12) - QQ(I, H - 4, I1, 12) - QQ(I, H - 5, I1, 12) - QQ(I, H - 6, I1, 12)
                 QQ(I, H, I1, 13) = A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) - QQ(I, H - 1, I1, 13) - QQ(I, H - 2, I1, 13) - QQ(I, H - 3, I1, 13) - QQ(I, H - 4, I1, 13) - QQ(I, H - 5, I1, 13) - QQ(I, H - 6, I1, 13)
                 QQ(I, H, I1, 14) = A!(I, I1, 23) - QQ(I, H - 1, I1, 14) - QQ(I, H - 2, I1, 14) - QQ(I, H - 3, I1, 14) - QQ(I, H - 4, I1, 14) - QQ(I, H - 5, I1, 14) - QQ(I, H - 6, I1, 14)
+
             Next
+
         End If
 
     Next
-    For I = 0 To 14: V9(I) = 0: Next
+
+    For I = 0 To 1
+        V9(I) = 0
+    Next
+
 End Sub
 
 '------------------------------
@@ -5859,9 +6036,10 @@ Sub AICOMCOACH ()
     If P9 = 1 Then I6 = 0
 
     If S!(P9, 0) - S!(I6, 0) < 0 Then
+
         I5 = S!(I6, 0) - S!(P9, 0)
 
-        8867 R0! = Int(Rnd(1) * 100) + 1
+        R0! = Int(Rnd(1) * 100) + 1
         If H = 1 And R0! > 37 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
         If H = 1 And R0! > 10 And R0! <= 36 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
         If H = 1 And R0! > 5 And R0! <= 10 Then D2(P9) = 3: P7(P9) = 0: DT%(P9) = 3
@@ -5915,7 +6093,11 @@ Sub AICOMCOACH ()
 
     Else
 
-        R0! = Int(Rnd(1) * 100) + 1: DT%(P9) = 0: D2(P9) = 0: P7(P9) = 0
+        R0! = Int(Rnd(1) * 100) + 1
+        DT%(P9) = 0
+        D2(P9) = 0
+        P7(P9) = 0
+
         Select Case R0!
             Case 1 To 10
                 D2(P9) = 1: DT%(P9) = 1: P7(P9) = 0
@@ -5939,7 +6121,9 @@ Sub AICOMCOACH ()
     End If
 
     R0! = Int(Rnd(1) * 100) + 1
+
     If H = 1 Then
+
         Select Case R0!
             Case 1 To 80
                 OF%(P9) = 0
@@ -5948,33 +6132,40 @@ Sub AICOMCOACH ()
             Case 91 To 100
                 OF%(P9) = 2
         End Select
+
     End If
 
     If H >= 2 And S!(P9, 0) - S!(I6, 0) < 0 Then
+
         If R0! <= 80 Then
             OF%(P9) = 0
         Else
             'R0 > 80
             OF%(P9) = 1
         End If
+
     End If
 
     If H >= 2 And S!(P9, 0) - S!(I6, 0) >= 0 Then
+
         If R0! <= 80 Then
             OF%(P9) = 0
         Else
             'R0! > 80
             OF%(P9) = 2
         End If
+
     End If
 
     If H >= 2 And gameClock! <= 180 And S!(P9, 0) - S!(I6, 0) < 0 Then
+
         If R0! <= 30 Then
             OF%(P9) = 3
         Else
             'R0! <= 30
             OF%(P9) = 4
         End If
+
     End If
 
     If H >= 2 And gameClock! <= 60 And X3% = 1 And (S!(P9, 0) - S!(1 - P9, 0) = -3 Or S!(P9, 0) - S!(1 - P9, 0) = -6) Then OF%(P9) = 9
@@ -6038,7 +6229,9 @@ Sub CheckRecords ()
         TREC!(123, 0) = 999
         TREC!(125, 0) = 999
     Else
+
         Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
+
         For I = 0 To 48
             For I1 = 0 To 2
                 Input #1, REC!(I, I1)
@@ -6047,6 +6240,7 @@ Sub CheckRecords ()
                 Input #1, RC$(I, I1)
             Next
         Next
+
         For I = 0 To 125
             For I1 = 0 To 2
                 Input #1, TREC!(I, I1)
@@ -6055,11 +6249,12 @@ Sub CheckRecords ()
                 Input #1, TRC$(I, I1)
             Next
         Next
+
         Close 1
 
     End If
 
-    505 'CHECK THE INDIVIDUAL RECORDS
+    'CHECK THE INDIVIDUAL RECORDS
 
     For I = 0 To 1
 
@@ -7179,7 +7374,7 @@ Sub CheckRecords ()
 
         End If
 
-        103 ' FREE THROW ATTEMPTS COMBINED HIGH %
+        ' FREE THROW ATTEMPTS COMBINED HIGH %
         If V8(I, 3) + V8(1 - I, 3) <> 0 Then
 
             If (V8(I, 2) + V8(1 - I, 2)) / (V8(I, 3) + V8(1 - I, 3)) > TREC!(62, 0) Then
@@ -7883,6 +8078,7 @@ Sub POSTGAME ()
 
     endGame = 0
     specialStat = 0
+    'Close #7
 
 End Sub
 
@@ -7918,7 +8114,7 @@ Sub BOXOPTIONS (outputChoice)
                 'File = prompt | auto-create
                 If AP <> 1 Then
                     Cls
-                    Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input NM$
+                    Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input boxFile$
                     boxFile$ = boxFile$ + ".SPC"
                 Else
                     ' NM$ = "BOXSCORE." + MID$(STR$(AP%(0) + AP%(2)), 2, LEN(STR$(AP%(0) + AP%(2))))
@@ -8310,6 +8506,7 @@ Sub BOX2FILE (printChoice, NM$)
 
 
     For I = 0 To 1:
+
         Print #2,
         Print #2, B$(I)
         Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB  RB  PT  F   A   B   S  TO"
@@ -8323,11 +8520,8 @@ Sub BOX2FILE (printChoice, NM$)
 
                 'Player Time
                 If timePlayed(I, I1) = 0 Then
-
                     Print #2, ; Tab(15); "DNP";
-
                 Else
-
                     Print #2, Using "##"; Int(timePlayed(I, I1) / 60);: Print #2, ":";
 
                     If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
@@ -8335,7 +8529,6 @@ Sub BOX2FILE (printChoice, NM$)
                     Else
                         Print #2, "0";: Print #2, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     End If
-
                 End If
 
                 Print #2, ; Tab(21);
@@ -8406,7 +8599,22 @@ Sub BOX2FILE (printChoice, NM$)
         Print #2, "TOTAL TURNOVERS -"; T0(I)
         Print #2, "TOTAL REBOUNDS  -"; R3!(I)
 
-        For I2 = 0 To 14: V9(I2) = 0: Next I2
+        Erase V9
+
+    Next I
+
+    Print #2,
+    Print #2, "BENCH WARMERS"
+
+    For I = 0 To 1
+
+        For I1 = 0 To 13
+
+            If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
+                Print #2, AA$(I, I1); " ["; B$(I); "]"
+            End If
+
+        Next I1
 
     Next I
 
@@ -8463,6 +8671,8 @@ Sub BOX2SPC (NM$)
         Next
     Next
 
+    Close #2
+
 End Sub
 
 
@@ -8478,9 +8688,30 @@ Function TickerTime% (timeInterval, X)
 
     If tickerIdx < 0 Then tickerIdx = 0
     If tickerIdx > 14 Then tickerIdx = 14
-    If endGame% = 1 Then tickerIdx = 14
+    If endGame = 1 Then tickerIdx = 14
 
     TickerTime% = tickerIdx
 
 End Function
+
+
+'------------------------------
+'        pbplog Function
+'------------------------------
+'...explanation
+Sub pbplog (lineNumber)
+
+    Print #7, "Called from line "; lineNumber
+
+    For I3 = 0 To 1
+        Print #7, B$(I3)
+        For I4 = 0 To 4
+            Print #7, "["; B1(I3, I4); "] "; AA$(I3, B1(I3, I4)) + " (STATUS = "; B%(I3, B1(I3, I4)); ")"
+            Print
+        Next I4
+    Next I3
+
+    Print #7,
+
+End Sub
 

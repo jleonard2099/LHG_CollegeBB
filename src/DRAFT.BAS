@@ -1,11 +1,13 @@
 Sub DRAFT ()
 
+    _Title "Courtside College Basketball - Team Draft"
+
     Shared DA!(), draftA!(), draftX!(), SP!()
+    
     Shared draftV1%(), draftV2%()
     Shared draftL%(), draftT%()
+    
     Shared draftA$(), draftT$()
-
-    _Title "Courtside College Basketball - Team Draft"
 
     ReDim menuChoices$(4)
 

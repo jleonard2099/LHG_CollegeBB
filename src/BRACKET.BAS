@@ -1,14 +1,12 @@
 Sub BRACKET ()
 
+    _Title "Courtside College Basketball - View Brackets/Seeding"
+
     Shared scheduleNG%(), NN%()
 
     Shared consolationSetting%(), tourneyDefaults%()
     Shared homeScores(), visitorScores()
     Shared homeTeam$(), visitingTeam$()
-
-    _Title "Courtside College Basketball - View Brackets/Seeding"
-
-    DefInt A-Z
 
     ' TOURNAMENT DEFAULTS
     ' 0 - CONSOLATION IN REGIONS
@@ -16,6 +14,7 @@ Sub BRACKET ()
 
     Do
 
+        Color , 0
         Call TITLE_TOURN
 
         ReDim menuChoices$(1 To 3)

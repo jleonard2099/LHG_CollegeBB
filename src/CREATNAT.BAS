@@ -1,12 +1,8 @@
 Sub CREATNAT ()
 
-    Dim creatZ1$(MAX_CONFERENCES)
-    'Din Z2$(MAX_CONFERENCES)
-    'Dim Z1%(MAX_CONFERENCES)
-
     _Title "Courtside College Basketball - Create National Org"
 
-    DefInt A-Z
+    Dim creatZ1$(MAX_CONFERENCES)
 
     ReDim menuChoices$(1 To 3)
 

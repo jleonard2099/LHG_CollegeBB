@@ -4,8 +4,6 @@ Sub HD2HDCON ()
 
     ReDim menuChoices$(1 To 2)
 
-    Cls
-
     Do
         Cls
 
