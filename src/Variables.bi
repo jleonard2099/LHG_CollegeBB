@@ -249,7 +249,7 @@ Dim Shared R3!(1), S!(1, 9), W0!(1, 13), W1!(1, 13)
 Dim Shared avgAttendance&(1), CRD&(100)
 
 Dim Shared AA$(1, 13), B$(0 to 1), D$(15), DB$(14)
-Dim Shared gameMascot$(1), gameStadium$(1), gameCoach$(1)
+Dim Shared gameMascot$(0 to 1), gameStadium$(0 to 1), gameCoach$(0 to 1)
 Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
 Dim Shared PB$(1), PS$(4), R$(14), SITE$(100), SX$(32, 2)
 Dim Shared PO$(1, 13)

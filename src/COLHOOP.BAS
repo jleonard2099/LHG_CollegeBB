@@ -91,10 +91,13 @@ Sub COLHOOP ()
     If _FileExists("GAME82") Then
 
         Open "GAME82" For Input As #2
+
         Input #2, scheduleFile$
+
         For I = 0 To 2:
             Input #2, AP%(I)
         Next
+
         Close 2
 
         Open diskPaths$(0) + scheduleFile$ For Random As #1 Len = 48

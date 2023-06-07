@@ -697,9 +697,7 @@ Sub GETATEAM (I1, YN$)
 
     End If
 
-    9018 '
-
-    Open diskPaths$(0) + "COLBBTMS." + YN$ As #1 Len = 566
+    Open diskPaths$(0) + "COLBBTMS." + teamYear$ As #1 Len = 566
 
     Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
@@ -2984,6 +2982,8 @@ Sub COMCOACH ()
 
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
+    'Call pbplog(3590)
+
     For I = 0 To 13
         F1(I) = I
         S3(I) = A!(P9, I, 3) - A!(P9, I, 7) - A!(P9, I, 11) - A!(P9, I, 12)
@@ -2994,6 +2994,8 @@ Sub COMCOACH ()
 
     Call STAMINASORT
 
+    skipLoop% = 0
+
     I = 14
 
     For I1 = 0 To 4
@@ -3003,53 +3005,58 @@ Sub COMCOACH ()
 
         If I < 0 Then
 
+            8700 '
             I = 14
 
             For I1 = 0 To 4
 
-                Do
+                8705 '
+                I = I - 1
 
-                    I = I - 1
+                If I < 0 Then
 
-                    If I < 0 Then
+                    8690 '
+                    I = 14
 
-                        I = 14
+                    For I1 = 0 To 4
 
-                        For I1 = 0 To 4
+                        Do
+                            8695 '
+                            I = I - 1
+                        Loop Until Not (B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX")
 
-                            '8705
+                        'Call pbplog(3628)
+                        G4(I1) = F1(I)
+                        G5(I1) = A!(P9, F1(I), 2)
+                        'Call pbplog(3632)
 
-                            Do
-                                I = I - 1
-                            Loop Until Not (B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX")
+                    Next I1
 
-                            G4(I1) = F1(I)
-                            G5(I1) = A!(P9, F1(I), 2)
+                    skipLoop% = 1
 
-                        Next I1
+                Else
 
-                        skipLoop% = 1
-
+                    If Not (B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX" Or A!(P9, F1(I), 12) >= NF% Or A!(P9, F1(I), 12) >= NF% - 1 And (H = 1 Or H = 2 And gameClock! > 720)) Then
+                        'Call pbplog(3641)
+                        G4(I1) = F1(I)
+                        G5(I1) = A!(P9, F1(I), 2)
+                        'Call pbplog(3644)
                     Else
-
-                        If (B%(P9, F1(I)) = 0) Or (AA$(P9, F1(I)) <> "XXX") Or Not (A!(P9, F1(I), 12) >= NF% Or A!(P9, F1(I), 12) >= NF% - 1) And (H = 1 Or H = 2 And gameClock! > 720) Then
-                            G4(I1) = F1(I)
-                            G5(I1) = A!(P9, F1(I), 2)
-                        End If
-
+                        GoTo 8705
                     End If
 
-                Loop Until (B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX" Or A!(P9, F1(I), 12) >= NF% Or A!(P9, F1(I), 12) >= NF% - 1 And (H = 1 Or H = 2 And gameClock! > 720)) Or skipLoop% = 1
+                End If
 
                 If skipLoop% = 1 Then Exit For
 
             Next I1
 
-            Exit For
+            If skipLoop% = 1 Then Exit For
 
         Else
 
             If B%(P9, F1(I)) <> 0 Or AA$(P9, F1(I)) = "XXX" Or A!(P9, F1(I), 12) >= NF% Or A!(P9, F1(I), 12) >= NF% - 2 And H = 1 Or A!(P9, F1(I), 12) >= NF% - 1 And H = 2 And gameClock! > 720 Then 8794
+
             If H = 1 And S3(I) / A!(P9, F1(I), 3) < .5 Then 8794
             If H = 1 And gameClock! >= 600 And S3(I) / A!(P9, F1(I), 3) < .75 Then 8794
             If H = 2 And gameClock! >= 600 And S3(I) / A!(P9, F1(I), 3) < .25 Then 8794
@@ -3057,8 +3064,10 @@ Sub COMCOACH ()
             If H = 2 And gameClock! < 300 And S3(I) / A!(P9, F1(I), 3) < gameClock! / 2400 Then 8794
             If S3(I) <= 0 And H < 2 Or S3(I) <= 0 And H = 2 And gameClock! > 120 Then 8794
 
+            'Call pbplog(3668)
             G4(I1) = F1(I)
             G5(I1) = A!(P9, F1(I), 2)
+            'Call pbplog(3671)
 
         End If
 
@@ -3066,9 +3075,11 @@ Sub COMCOACH ()
 
     Call REBOUNDSORT
 
+    'Call pbplog(3683)
     For I = 0 To 4
         B1(P9, I) = G4(I)
     Next I
+    'Call pbplog(3687)
 
     Call AICOMCOACH
 
@@ -3982,9 +3993,9 @@ Sub COMPUTERSUBS ()
         If M3 >= 1 And 5 - M3 < 14 - M1 Or H = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0 Or M4 >= 1 And M2 < 13 Or CTO% = 1 Then
             CTO% = 0
             XM = 1
-            'Call pbplog(3961)
+            ''Call pbplog(4588)
             Call COMCOACH
-            'Call pbplog(3963)
+            ''Call pbplog(4590)
             skipG9% = 1
         End If
 
@@ -4038,8 +4049,11 @@ Sub LINEUPS ()
         If B%(P9, R1) = 0 And AA$(P9, R1) <> "XXX" And AA$(P9, R1) <> "" Then
 
             Color 2
-            If R1 <= 9 Then Print Using "# "; R1;
-            If R1 > 9 Then Print X$(R1 - 10);
+            If R1 <= 9 Then
+                Print Using "# "; R1;
+            Else
+                Print X$(R1 - 10);
+            End If
 
             Color 15
             Print Left$(AA$(P9, R1), 12);
@@ -5018,7 +5032,8 @@ Sub DEADBALLOPTIONS ()
         Call STEALADJ
     Else
 
-        Locate 9, 1: Color 14, 0
+        Locate 11, 1
+        Color 14, 0
         Print "<ENTER>-CONTINUE"
         Print "1-SUB "; B$(P)
         Print "2-SUB "; B$(D)
@@ -5178,14 +5193,12 @@ Sub STOPPAGE ()
     810 '
     Call CLEARPBP
 
-    'Call pbplog(5156)
     If U5 <> 0 Then
         If U5 = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
         If U5 = 1 Then P9 = CT: Call COMPUTERSUBS: Call FATIGUE
         XM = 0
     End If
 
-    'Call pbplog(5165)
     If U5 = 2 Then
         S2 = 0
         P9 = P
@@ -5259,7 +5272,6 @@ Sub LASTSHOT ()
 
     If sClockVal >= 1 Then shotClock = shotClock - M5
 
-    'Call pbplog(5228)
     Call ZeroCheck
 
 End Sub
@@ -5382,7 +5394,7 @@ Sub SAVESTATS ()
 
                 Open "GAME82" For Output As #2
 
-                Print #2, scheduleFile$
+                Print #2, RTrim$(scheduleFile$)
 
                 For I = 0 To 2
                     Print #2, AP%(I)
@@ -5464,13 +5476,20 @@ Sub SAVESTATS ()
         Next
 
         For PX = 0 To 1
+
             For I = 0 To 13
+
                 For J = 1 To 12
                     A!(PX, I, J) = A!(PX, I, J + 6)
                 Next
-                W0!(PX, I) = W%(PX, I, 0): W1!(PX, I) = W%(PX, I, 1)
+
+                W0!(PX, I) = W%(PX, I, 0)
+                W1!(PX, I) = W%(PX, I, 1)
+
             Next
+
             Y$(PX) = B$(PX)
+
         Next
 
         'Start with 1st team
@@ -5828,6 +5847,7 @@ Sub EVENTS (specialCount, specialStat)
                 For I1 = 0 To 13
 
                     'Player conditions for special box score
+                    'FGM * 2 + FTM + 3FM = Points / Game
                     If A!(I, I1, 8) * 2 + A!(I, I1, 10) + W%(I, I1, 0) > E%(6) Or A!(I, I1, 11) > E%(7) Or A!(I, I1, 14) > E%(8) Or A!(I, I1, 15) > E%(9) Or A!(I, I1, 13) > E%(10) Or W%(I, I1, 0) > E%(11) Then
                         checkSpecial% = 1
                     End If
@@ -6041,6 +6061,7 @@ End Sub
 '------------------------------
 ' ...explanation...
 Sub AICOMCOACH ()
+
     If P9 = 0 Then I6 = 1
     If P9 = 1 Then I6 = 0
 
@@ -6109,21 +6130,34 @@ Sub AICOMCOACH ()
 
         Select Case R0!
             Case 1 To 10
-                D2(P9) = 1: DT%(P9) = 1: P7(P9) = 0
+                D2(P9) = 1
+                DT%(P9) = 1
+                P7(P9) = 0
             Case 11 To 36
-                D2(P9) = 2: DT%(P9) = 2: P7(P9) = 0
+                D2(P9) = 2
+                DT%(P9) = 2
+                P7(P9) = 0
             Case 37 To 100
-                DT%(P9) = 0: D2(P9) = 0: P7(P9) = 0
+                DT%(P9) = 0
+                D2(P9) = 0
+                P7(P9) = 0
         End Select
 
         R0! = Int(Rnd(1) * 100) + 1
+
         Select Case R0!
             Case 1 To 5
-                P7(P9) = 1: DT%(P9) = 4: D2(P9) = 0
+                P7(P9) = 1
+                DT%(P9) = 4
+                D2(P9) = 0
             Case 6 To 9
-                P7(P9) = 3: DT%(P9) = 8: D2(P9) = 0
+                P7(P9) = 3
+                DT%(P9) = 8
+                D2(P9) = 0
             Case 10
-                P7(P9) = 3: DT%(P9) = 7: D2(P9) = 2
+                P7(P9) = 3
+                DT%(P9) = 7
+                D2(P9) = 2
                 'Nothing for 11 to 100
         End Select
 
@@ -8071,8 +8105,6 @@ Sub POSTGAME ()
 
     Loop Until UCase$(I$) = "N" Or (AP = 1 And U5 = 2)
 
-    Call SAVESTATS
-
     'If we had special events
     If specialStat = 1 Then
 
@@ -8084,6 +8116,8 @@ Sub POSTGAME ()
         Call BOX2FILE(2, NM$, specialStat)
 
     End If
+
+    Call SAVESTATS
 
     endGame = 0
     specialStat = 0
@@ -8618,21 +8652,25 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
     Next I
 
     Print #2,
+    
+    '-- The code below was used to print
+    '-- disabled players in the boxscore
+    '-- output so that they could be easily identified.
     'Print #2, "BENCH WARMERS"
-    Print #2, "DISABLED BUT PLAYED"
+    '--Print #2, "DISABLED BUT PLAYED"
 
-    For I = 0 To 1
+    'For I = 0 To 1
 
-        For I1 = 0 To 13
+    '    For I1 = 0 To 13
 
-            'If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
-            If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 And timePlayed(I, I1) > 0 Then
-                Print #2, AA$(I, I1); " ["; B$(I); "]"
-            End If
+    '        'If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
+            '--If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 And timePlayed(I, I1) > 0 Then
+    '            Print #2, AA$(I, I1); " ["; B$(I); "]"
+    '        End If
 
-        Next I1
+    '    Next I1
 
-    Next I
+    'Next I
 
     If printChoice = 1 Then Print #2, Chr$(12)
 
