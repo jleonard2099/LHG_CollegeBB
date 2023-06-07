@@ -463,8 +463,10 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
         Next 'done looping through all players
 
-        Color 12: Print: Print "TOTALS";: Locate , 15
-        Print Using "##"; totalGames%;
+        Color 12
+        Print
+        Print "TOTALS";
+        Locate , 15: Print Using "##"; totalGames%;
 
         Locate , 28: Print Using "#### ####"; statsZ!(2); statsZ!(1);
         If statsZ!(1) <> 0 Then statPCT! = statsZ!(2) / statsZ!(1): Locate , 38: Print Using ".###"; statPCT!;
@@ -514,6 +516,10 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                     If CP% < 1 Then CP% = 25
                     Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
 
+                Case Chr$(13)
+                    Call SortStats(CP%)
+                    'GoTo 142
+
                 Case "d", "D"
                     Kill diskPaths$(1) + statFile$
                     Kill diskPaths$(1) + statFile$ + "S"
@@ -521,14 +527,9 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 Case "p", "P"
                     Call PrintTeamStatSummary(teamName$, totalGames%)
 
-                Case Chr$(13)
-                    'SORT BASED ON CATEGORY
-                    Call SortStats(CP%)
-                    'GoTo 142
-
             End Select
 
-        Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q" Or I$ = Chr$(13)
+        Loop Until I$ = Chr$(0) + "Q" Or I$ = Chr$(27) Or I$ = Chr$(13)
 
         If I$ = Chr$(27) Then menuExit = 1
 
@@ -550,6 +551,8 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
     Shared A$(), CP$()
 
     CP% = 1
+
+    'Do
 
     Cls
 
@@ -637,10 +640,6 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 If CP% > 25 Then CP% = 14
                 Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);
 
-            Case "D"
-                Kill diskPaths$(1) + statFile$
-                Kill diskPaths$(1) + statFile$ + "S"
-
             Case Chr$(0) + "K"
                 CP% = CP% - 1
                 If CP% < 14 Then CP% = 25
@@ -650,7 +649,11 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 'SORT BASED ON CATEGORY
                 Call SortStats(CP%)
 
-            Case "P"
+            Case "d","D"
+                Kill diskPaths$(1) + statFile$
+                Kill diskPaths$(1) + statFile$ + "S"
+
+            Case "p","P"
                 Call PrintTeamStatSummary(teamName$, totalGames%)
 
         End Select
@@ -658,6 +661,8 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
     Loop Until I$ = Chr$(27)
 
     If I$ = Chr$(27) Then menuExit = 1
+
+'    Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "I"
 
 End Sub
 
@@ -760,6 +765,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
 
             Case "p", "P":
                 Call PrintTeamStatSummary(teamName$, totalGames%)
+
         End Select
 
     Loop Until I$ = Chr$(27) Or I$ = Chr$(0) + "Q" Or menuExit = 1
