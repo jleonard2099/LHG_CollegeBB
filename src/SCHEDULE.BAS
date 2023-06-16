@@ -37,7 +37,7 @@ Sub SCHEDULE ()
         FileFGColr% = 15: FileBGColr% = 1
         HiLiteFGColr% = 0: HiLiteBGColr% = 7
         Spacing% = 1
-        Row% = 7
+        Row% = 8
         Column% = 16
         Call box0(6, 15, 16, 65, 2, 15, 1)
 
@@ -1108,7 +1108,7 @@ Sub BoxscoreMaintenance ()
     FileFGColr% = 15: FileBGColr% = 1
     HiLiteFGColr% = 0: HiLiteBGColr% = 7
     Spacing% = 1
-    Row% = 7
+    Row% = 8
     Column% = 16
 
     Do

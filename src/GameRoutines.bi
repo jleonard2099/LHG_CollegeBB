@@ -1,4 +1,3 @@
-DefInt A-Z
 
 Declare Sub AICOMCOACH ()
 Declare Sub ALPHANUM (I$, J)

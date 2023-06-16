@@ -445,7 +445,9 @@ Sub ViewCareerRecords ()
                             Color 3: Print "DEFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR(12)
                             Color 3: Print "TOTAL REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR(13)
                             Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR(14)
-                            Color 15: Locate 22: Print "HIT ANY KEY TO CONTINUE"
+
+                            Color 15
+                            Locate 22: Print "HIT ANY KEY TO CONTINUE"
                             I$ = GetKeyPress$
 
                             Cls

@@ -2,16 +2,6 @@ Sub COMPNAT ()
 
     _Title "Courtside College Basketball - Update Stats"
 
-    Dim compAP%(100, 1), compT%(1 To 100)
-
-    Dim CRD(100)
-    Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
-
-    Dim CN$(1 To 40), H1$(40)
-    Dim gameSite$(100)
-
-    Dim PT$(1 To 1200)
-
     Shared PT#()
 
     Shared BRC!(), DL!()
@@ -27,6 +17,16 @@ Sub COMPNAT ()
     Shared Z0$(), Z1$(), Z3$()
 
     Shared mergeO%()
+
+    Dim compAP%(100, 1), compT%(1 To 100)
+
+    Dim CRD(100)
+    Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
+
+    Dim CN$(1 To 40), H1$(40)
+    Dim gameSite$(100)
+
+    Dim PT$(1 To 1200)
 
     Cls
 

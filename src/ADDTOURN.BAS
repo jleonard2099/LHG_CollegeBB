@@ -90,7 +90,6 @@ End Sub
 '------------------------------
 '   SetupTourney Subroutine
 '------------------------------
-'...explanation...
 ' Creates .TNY file
 Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
@@ -144,20 +143,31 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Locate , 1: Color , 0
 
     Do
-        Locate 5, 2: Color 14: Print "(1) ";: Color 15: Print "3-POINT SHOT: "; tourneyTS$(tourneyDefaults%(3))
-        Locate 6, 2: Color 14: Print "(2) ";: Color 15: Print SC$(tourneyDefaults%(7))
-        Locate 7, 2: Color 14: Print "(3) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; tourneyDefaults%(4) / 10
-        Locate 8, 2: Color 14: Print "(4) ";: Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
-        Locate 9, 2: Color 14: Print "(5) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(tourneyDefaults%(6))
-        Locate 10, 2: Color 14: Print "(6) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(tourneyDefaults%(10))
-        Locate 11, 2: Color 14: Print "(7) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(tourneyDefaults%(14))
-        Locate 12, 2: Color 14: Print "(8) ";: Color 15: Print "ACCEPT SETTINGS"
+        Locate 5, 
+        Color 14: Print " (1) ";
+        Color 15: Print "3-POINT SHOT: "; tourneyTS$(tourneyDefaults%(3))
+        Color 14: Print " (2) ";
+        Color 15: Print SC$(tourneyDefaults%(7))
+        Color 14: Print " (3) ";
+        Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; tourneyDefaults%(4) / 10
+        Color 14: Print " (4) ";
+        Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
+        Color 14: Print " (5) ";
+        Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(tourneyDefaults%(6))
+        Color 14: Print " (6) ";
+        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(tourneyDefaults%(10))
+        Color 14: Print " (7) ";
+        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(tourneyDefaults%(14))
+        Color 14: Print " (8) ";
+        Color 15: Print "ACCEPT SETTINGS"
 
         Do
             I$ = GetKeyPress$
+
             If I$ <> Chr$(27) Then
                 I = Val(I$)
             End If
+
         Loop Until I >= 1 Or I <= 8
 
         If I$ = Chr$(27) Then Exit Sub
@@ -188,7 +198,10 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Locate 1, 1: Print Tab(80);
     Color 15
     Locate , 22: Print "TOURNAMENT  - GENERAL INFORMATION"
-    Locate 25, 1: Print Tab(80);: Locate , 1: Color , 0
+
+    Locate 25, 1: Print Tab(80);
+    Locate , 1: Color , 0
+
     Locate 7, 1: QPrint "FILE NAME (48 CHARACTERS) ", 14, 1, -1
     Locate , 27: QPrint PadRight$(sourceFile$, 48), FG, BG, -1
 
@@ -248,6 +261,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
         If UCase$(C$) = "Y" Then consolationSetting%(0) = 1 Else consolationSetting%(0) = 0
+
         consolationSetting%(1) = consolationSetting%(0)
 
         If sourceFile$ = "" Then
@@ -265,9 +279,11 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
             If numberRegions < 1 Or numberRegions > 16 Then GoTo GETDIV4
 
             Open diskPaths$(1) + sourceFile$ + ".TNY" For Output As #1
+
             For I = 0 To 14
                 Print #1, tourneyDefaults%(I)
             Next
+
             Close 1
 
             If ACTION% = 2 Then
@@ -293,7 +309,10 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 End Sub
 
 
-
+'------------------------------
+'    SeedBrackets Subroutine
+'------------------------------
+'...explanation...
 Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
@@ -363,9 +382,9 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
             Locate 1, 1: Print Tab(80);
             Color 15: Locate , 26
 
-            X = Len(regionNames$(NR) + " REGIONAL/CONFERENCE SEEDING")
-            X = (80 - X) / 2
-            Locate , X
+            Xcoord = Len(regionNames$(NR) + " REGIONAL/CONFERENCE SEEDING")
+            Xcoord = (80 - Xcoord) / 2
+            Locate , Xcoord
             Print regionNames$(NR) + " REGIONAL/CONFERENCE SEEDING"
 
             Locate 25, 1: Print Tab(80);
@@ -385,9 +404,12 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
             Next I1
 
             Locate 25, 1
-            Color 0, 6: Print "A-";: Color 15: Print "ADD A TEAM    ";
-            Color 0, 6: Print "R-";: Color 15: Print "REMOVE A TEAM    ";
-            Color 0, 6: Print "S-";: Color 15: Print "SAVE SEEDING ";
+            Color 0, 6: Print "A-";
+            Color 15: Print "ADD A TEAM    ";
+            Color 0, 6: Print "R-";
+            Color 15: Print "REMOVE A TEAM    ";
+            Color 0, 6: Print "S-";
+            Color 15: Print "SAVE SEEDING ";
             Color , 0: Locate 1, 1
 
             Do
@@ -435,7 +457,8 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                     'Add / Remove Teams from Seeding
                     Do
-                        Locate 22, 30: Print "SEED # (1-"; Str$(NN%(NR)); ") ";
+                        Locate 22, 30
+                        Print "SEED # (1-"; Str$(NN%(NR)); ") ";
                         Input B
                     Loop Until B >= 1 And B <= NN%(NR)
 
@@ -463,7 +486,6 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                             If NY$ = "" And YN$ <> "" Then
                                 Call SelectTeam_TOURN(YN$, numberTeams, A$, teamIdx)
-
                             Else
                                 YN$ = RTrim$(NY$)
                                 Erase teamNames$
@@ -471,31 +493,38 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                                 If Not _FileExists(diskPaths$(0) + "BASK." + YN$) Then
                                     Locate 10, 8
-
                                     Call CSMsgBox("NO TEAMS MATCHING ID WERE FOUND... PRESS ANY KEY TO SELECT ANOTHER ID", 26, PASS)
                                     I$ = GetKeyPress$
                                     Call CSMsgBox("", 0, PASS)
-
                                     BO% = 1
                                 Else
 
                                     Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
+
                                     fileLength& = LOF(1)
+
                                     Field #1, 15 As Q$(0)
+
                                     For I1 = 1 to fileLength& / 655
+
                                         Get #1, I1
+
                                         For I2 = 1 To 15
                                             If Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then nullTeam = 1: Exit For
                                         Next I2
+
                                         If nullTeam <> 1 Then
                                             numberTeams = numberTeams + 1
                                             teamNames$(numberTeams) = Q$(0)
                                             teamIndex%(numberTeams) = I1
                                         End If
-                                    1103 Next I1
+
+                                    Next I1
+
                                     Close 1
 
                                     Call SelectTeam_TOURN(YN$, numberTeams, A$, teamIdx)
+
                                 End If
 
                             End If
@@ -564,12 +593,17 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         'EDIT A GIVEN BRACKET
         Color , 0
         Cls
+
         Color , 6
         Locate 1, 1: Print Tab(80);
+
         Locate , 23: Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
+
         Locate 25, 1: Print Tab(80);
-        Locate , 1: Color , 0
+
+        Locate , 1
+        Color , 0
 
         For I = 1 To numberRegions
             If regionNames$(I) = "" Then regionNames$(I) = "TO BE NAMED"
@@ -598,7 +632,6 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
             'Save and Exit
             If Selection% < numberRegions + 1 Then
-
                 numberTeams$ = _Trim$(Str$(NN%(Selection%)))
                 Call SeedBrackets(Selection%, numberTeams$, saveFile$, numberRegions, tourneyName$)
 
@@ -672,14 +705,14 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             tournamentFiles$(0) = Spec$
             Call ReadFile(tournamentFiles$())
 
-            Cls
-
             Color , 1
             Cls
 
             Locate , 28: Color 14
 
-            Print "SELECT TOURNAMENT TO EDIT": Color 15
+            Print "SELECT TOURNAMENT TO EDIT"
+            Color 15
+            
             Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
@@ -720,7 +753,6 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                         'Reset tournament
 
                         'Create TOU file as backup of TCX
-                        'Call FCopy(diskPaths$(1) + loadFile$ + ".TOU", diskPaths$(1) + loadFile$ + ".TCX", BUFFER$, ERRCODE%)
                         Call FCopy(diskPaths$(1) + loadFile$ + ".TCX", diskPaths$(1) + loadFile$ + ".TOU", BUFFER$, ERRCODE%)
                         Locate 10
 
@@ -778,15 +810,9 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
         End If
 
     Loop Until Count% = 0 Or ExitCode% = 27 Or UCase$(I$) = "N"
-    'I don't think we ever get here
-    'Print "THERE ARE "; R; " REGIONS"
-    'For I = 1 To R
-    '    Print "REGION"; I; " HAS "; NN%(I); " TEAMS"
-    '    Print "REGION NAME IS "; regionNames$(I)
-    'Next
-    'End
 
 End Sub
+
 
 '------------------------------
 '  SelectTeam_TOURN Subroutine
@@ -954,7 +980,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 2:
-            200 '5 TEAM REGION
+            '5 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1038,7 +1064,7 @@ Sub PickIt (var%, currRegion, saveFile$)
 
             Else
 
-                205 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 4
                 ROUND = 89
@@ -1057,7 +1083,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 3:
-            300 '6 TEAM REGION
+            '6 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1156,7 +1182,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                305 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 5
                 ROUND = 89
@@ -1175,7 +1201,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 4:
-            400 '7 TEAM REGION
+            '7 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1290,7 +1316,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                405 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 6
                 ROUND = 89
@@ -1309,7 +1335,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 5:
-            500 '8 TEAM REGION
+            '8 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1440,7 +1466,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                505 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 7
                 ROUND = 89
@@ -1459,7 +1485,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 6:
-            600 '9 TEAM REGION
+            '9 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1606,7 +1632,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                605 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 8
                 ROUND = 89
@@ -1625,7 +1651,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 7:
-            700 '10 TEAM REGION
+            '10 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1788,7 +1814,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                705 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 9
                 ROUND = 89
@@ -1807,7 +1833,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 8:
-            800 '11 TEAM REGION
+            '11 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -1986,7 +2012,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                805 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 10
                 ROUND = 89
@@ -2005,7 +2031,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 9:
-            900 '12 TEAM REGION
+            '12 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -2200,7 +2226,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                905 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 11
                 ROUND = 89
@@ -2219,7 +2245,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 10:
-            1000 '13 TEAM REGION
+            '13 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -2430,7 +2456,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                1005 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 12
                 ROUND = 89
@@ -2449,7 +2475,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 11:
-            1100 '14 TEAM REGION
+            '14 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -2676,7 +2702,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                1105 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 13
                 ROUND = 89
@@ -2695,7 +2721,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 12:
-            1200 '15 TEAM REGION
+            '15 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -2938,7 +2964,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                1205 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 14
                 ROUND = 89
@@ -2957,7 +2983,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             End If
 
         Case 13:
-            1300 '16 TEAM REGION
+            '16 TEAM REGION
             TC! = TC! + 1
             REGION = currRegion
             GAME = 1
@@ -3216,7 +3242,7 @@ Sub PickIt (var%, currRegion, saveFile$)
                 Call WRITEGAME(saveFile$)
 
             Else
-                1305 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = currRegion
                 GAME = 15
                 ROUND = 89
@@ -3256,7 +3282,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             Call SaveTourney(saveFile$, numberRegions, tournName$)
 
         Case 2:
-            5100 '2 REGIONS
+            '2 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3277,7 +3303,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             Call SaveTourney(saveFile$, numberRegions, tournName$)
 
         Case 3:
-            5200 '3 REGIONS
+            '3 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3315,7 +3341,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             Call SaveTourney(saveFile$, numberRegions, tournName$)
 
         Case 4:
-            5300 '4 REGIONS
+            '4 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3388,7 +3414,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
             Else
 
-                5305 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 3
                 ROUND = 99
@@ -3411,7 +3437,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
 
         Case 5:
-            5400 '5 REGIONS
+            '5 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3500,7 +3526,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
             Else
-                5405 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 4
                 ROUND = 99
@@ -3521,7 +3547,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 6:
-            5500 '6 REGIONS
+            '6 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3628,7 +3654,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
             Else
 
-                5505 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 5
                 ROUND = 99
@@ -3650,7 +3676,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 7:
-            5600 '7 REGIONS
+            '7 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3774,7 +3800,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                5605 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 6
                 ROUND = 99
@@ -3795,7 +3821,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 8:
-            5700 '8 REGIONS
+            '8 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -3937,7 +3963,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
             Else
 
-                5705 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 7
                 ROUND = 99
@@ -3959,7 +3985,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 9:
-            5800 '9 REGIONS
+            '9 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -4117,7 +4143,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                5805 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 8
                 ROUND = 99
@@ -4138,7 +4164,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 10:
-            5900 '10 REGIONS
+            '10 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -4313,7 +4339,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                5905 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 9
                 ROUND = 99
@@ -4335,7 +4361,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 11:
-            6000 '11 REGIONS
+            '11 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -4526,7 +4552,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
             Else
-                6005 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 10
                 ROUND = 99
@@ -4547,7 +4573,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 12:
-            6100 '12 REGIONS
+            '12 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -4757,7 +4783,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
             Else
 
-                6105 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 11
                 ROUND = 99
@@ -4779,7 +4805,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             End If
 
         Case 13:
-            6200 '13 REGIONS
+            '13 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -5005,7 +5031,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                6205 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 12
                 ROUND = 99
@@ -5027,7 +5053,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
         Case 14:
 
-            6300 '14 REGIONS
+            '14 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -5270,7 +5296,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                6305 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 13
                 ROUND = 99
@@ -5292,7 +5318,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
         Case 15:
 
-            6400 '15 REGIONS
+            '15 REGIONS
             TC! = TC! + 1
             REGION = 17
             GAME = 1
@@ -5552,7 +5578,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                6405 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 14
                 ROUND = 99
@@ -5851,7 +5877,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 Call SaveTourney(saveFile$, numberRegions, tournName$)
 
             Else
-                6505 TC! = TC! + 1
+                TC! = TC! + 1
                 REGION = 17
                 GAME = 15
                 ROUND = 99
@@ -5936,6 +5962,7 @@ Sub WRITEGAME (outputFile$)
 
     'TCX file
     Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #1 Len = 90
+
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
     Next
@@ -5944,8 +5971,14 @@ Sub WRITEGAME (outputFile$)
     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X)): Next
-    For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC!, X): Next
+    For X = 0 To 14: 
+        LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
+    Next
+
+    For X = 0 To 3: 
+        LSet Q$(20 + X) = yearNumber$(TC!, X)
+    Next
+
     LSet Q$(16) = MKI$(visitorScores(TC!))
     LSet Q$(17) = MKI$(homeScores(TC!))
     LSet Q$(18) = visitingTeam$(TC!)
@@ -5954,7 +5987,9 @@ Sub WRITEGAME (outputFile$)
     For X = 24 To 26
         LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
     Next
+
     Put #1, TC!
+
     Close 1
 
 End Sub
@@ -5996,9 +6031,7 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
 
     Close 2
 
-    Call SORTGAMES(saveFile$, numberRegions)
-    'Sort games actually saves the file
-    '-- should update this so file saving is in this routine
+    Call SortAndSaveGames(saveFile$, numberRegions)
 
     Locate 22, 25: Print Space$(34)
 
@@ -6011,13 +6044,13 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
 End Sub
 
 '------------------------------
-'    SORTGAMES Subroutine
+'    SortAndSaveGames Subroutine
 '------------------------------
 ' Reads data from previously created .TMP file
 ' Performs sort on games to schedule.
 ' Creates the final .TOU file.
 
-Sub SORTGAMES (tourneyFile$, numberRegions)
+Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
     Shared TC!
 

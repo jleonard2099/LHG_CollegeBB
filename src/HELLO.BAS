@@ -1,3 +1,4 @@
+$Debug
 
 Const GAME_VERSION$ = "4.32"
 Const MAX_TEAMS = 1000
@@ -23,6 +24,7 @@ DefInt A-Z
 
 ' For Utils
 '$INCLUDE: 'MainRoutines.bi'
+
 '$INCLUDE: 'TITLE.bi'
 
 ' For Game
@@ -239,6 +241,8 @@ Sub Main_Menu (menuSelection%)
     ReDim menuChoices$(1 To 9)
 
     Do
+
+        _Title "Courtside College Basketball - Menu"
 
         Cls
 
@@ -517,14 +521,19 @@ Sub Leaders_Menu ()
 
         Call box0(7, 11, 16, 37, 2, 15, 1)
         Call box0(7, 40, 16, 66, 2, 15, 1)
+
         Color 15, 0
         Locate 8, 14: Print "COLLEGE CONFERENCE"
         Locate 8, 41: Print "NATIONAL ORGANIZATION"
-        Locate 17
-        Locate , 10: Print "COLLEGE CONFERENCE IS USED TO DEFINE THE TEAMS IN A CONFERENCE"
+
+        Locate 18
+        Locate , 10
+        Print "COLLEGE CONFERENCE IS USED TO DEFINE THE TEAMS IN A CONFERENCE"
         Print
-        Locate , 10: Print "NATIONAL ORGANIZATION ALLOWS YOU TO SELECT MULTIPLE CONFERENCES"
-        Locate , 10: Print "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
+        Locate , 10
+        Print "NATIONAL ORGANIZATION ALLOWS YOU TO SELECT MULTIPLE CONFERENCES"
+        Locate , 10
+        Print "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
 
         _MouseShow "DEFAULT"
         MAMenu menuChoices$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
@@ -539,13 +548,13 @@ Sub Leaders_Menu ()
                 Case 2: Call COMPCON
                 Case 3: Call SEECON
                 Case 4: Call HD2HDCON
-                Case 5: Call RECCON
+                Case 5: Call SeasonRecords
                 Case 6: Call NEWLDR
                 Case 7: Call BLANK
                 Case 8: Call CREATNAT
                 Case 9: Call COMPNAT
                 Case 10: Call SEENAT
-                Case 11: Call RECCON
+                Case 11: Call SeasonRecords
                 Case 12: Call BLANKORG
                 Case 13 Or 14: Cls
             End Select
@@ -588,7 +597,7 @@ End Sub
 '$INCLUDE: 'LOOKY.BAS'
 '$INCLUDE: 'MERGE.BAS'
 '$INCLUDE: 'NEWLDR.BAS'
-'$INCLUDE: 'RECCON.BAS'
+'$INCLUDE: 'REC.BAS'
 '$INCLUDE: 'RECORDS.BAS'
 '$INCLUDE: 'SCHEDULE.BAS'
 '$INCLUDE: 'SEECON.BAS'

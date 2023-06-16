@@ -20,8 +20,6 @@ Sub TOURNEY ()
     Count% = FCount%(Spec$)
 
     If Count% = 0 Then
-        'This was added to handle if no TOU files are available
-        'Original game would just try to push ahead anyway
         Locate 10
         Call CSMsgBox("NO TOUNAMENT FILES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 28, PASS)
         I$ = GetKeyPress$
@@ -39,6 +37,7 @@ Sub TOURNEY ()
         'WE have to make all this a sub to keep the logic cleaner
         Color 7, 0
         Cls
+
         scheduleNG%(0, 8) = 0
         scheduleNG%(0, 3) = 1
         scheduleNG%(0, 7) = 0
@@ -55,12 +54,13 @@ Sub TOURNEY ()
         ' *** LOAD IN A SAVED SCHEDULE ***
         Do
 
-            Cls
             Color , 1
             Cls
+
             Locate , 28
             Color 14
-            Print "SELECT TOURNAMENT TO PLAY": Color 15
+            Print "SELECT TOURNAMENT TO PLAY"
+            Color 15
             Selection% = 1
             Start% = 1
             FileFGColr% = 15: FileBGColr% = 1
@@ -109,21 +109,35 @@ Sub TOURNEY ()
             Do
 
                 Cls
-                Locate 23, 1: Color , 1: Print Tab(80);: Locate 23, 1
-                Color 13: Print "SC";: Color 14: Print "-SHOT CLOCK  ";
-                Color 13: Print "HC";: Color 14: Print "-HOME COURT ADVANTAGE  ";
-                Color 13: Print "3";: Color 14: Print "-USE 3-POINT SHOT  ";
+
+                Locate 23, 1
+                Color , 1: Print Tab(80);
+                
+                Locate 23, 1
+                Color 13: Print "SC";
+                Color 14: Print "-SHOT CLOCK  ";
+                Color 13: Print "HC";
+				Color 14: Print "-HOME COURT ADVANTAGE  ";
+                Color 13: Print "3";
+				Color 14: Print "-USE 3-POINT SHOT  ";
                 Locate 24, 1: Color , 1: Print Tab(80);: Locate 24, 1
                 Color 11: Print "PGUP  PGDN  ";
-                Color 13: Print "REG";: Color 14: Print "-REGION  ";
-                Color 13: Print "RND";: Color 14: Print "-ROUND  ";
-                Color 13: Print "GM";: Color 14: Print "-GAME  ";
+                Color 13: Print "REG";
+				Color 14: Print "-REGION  ";
+                Color 13: Print "RND";
+				Color 14: Print "-ROUND  ";
+                Color 13: Print "GM";
+				Color 14: Print "-GAME  ";
                 Locate 25, 1: Color , 1: Print Tab(80);: Locate 25, 1
-                Color 11: Print "P";: Color 14: Print "-PLAY TOURNAMENT   ";
-                Color 11: Print "Q";: Color 14: Print "-QUIT  ";
-                Color 11: Print "E";: Color 14: Print "-EDIT A GAME  ";
+                Color 11: Print "P";
+				Color 14: Print "-PLAY TOURNAMENT   ";
+                Color 11: Print "Q";
+				Color 14: Print "-QUIT  ";
+                Color 11: Print "E";
+				Color 14: Print "-EDIT A GAME  ";
                 Locate 1, 1: Print Tab(80);: Locate 1, 1: Print targetFile$
-                Locate 1, 33: Color 14: Print "AUTO SCHEDULER"
+                Locate 1, 33
+				Color 14: Print "AUTO SCHEDULER"
                 Color , 0
 
                 Locate 2, 1
@@ -375,72 +389,103 @@ Sub EditGame_TOURNEY ()
 
     Do
 
-        149 Cls: Color 2: Print Tab(29); "SELECT GAME OPTIONS": Print
-        151 Locate 2, 2: Color 14: Print "    ";: Color 15: Print "VISITING TEAM: "; V$
-        152 Locate 3, 2: Color 14: Print "    ";: Color 15: Print "HOME TEAM: "; H$
-        153 Locate 4, 2: Color 14: Print "(1) ";: Color 15: Print MO$(scheduleNG%(NG%, 8))
-        154 Locate 5, 2: Color 14: Print "(2) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(NG%, 3))
-        155 Locate 6, 2: Color 14: Print "(3) ";: Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(NG%, 7))
-        156 Locate 7, 2: Color 14: Print "(4) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
-        157 Locate 8, 2: Color 14: Print "(5) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(NG%, 4) / 10
-        158 Locate 9, 2: Color 14: Print "(6) ";: Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)
-        159 Locate 10, 2: Color 14: Print "(7) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(scheduleNG%(NG%, 9))
-        162 Locate 11, 2: Color 14: Print "(8) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
-        164 Locate 12, 2: Color 14: Print "(9) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(scheduleNG%(NG%, 10))
-        165 Locate 13, 2: Color 14: Print "(A) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(scheduleNG%(NG%, 14))
-        163 Locate 14, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT SETTINGS"
+        149 '
+        Cls
+        Color 2: Print Tab(29); "SELECT GAME OPTIONS"
+        Print
+
+        151 '
+        Locate 2, 2
+		Color 14: Print "     ";
+        Color 15: Print "VISITING TEAM: "; V$
+        152 '
+		Color 14: Print "     ";
+        Color 15: Print "HOME TEAM: "; H$
+        153 '
+		Color 14: Print " (1) ";:
+		Color 15: Print MO$(scheduleNG%(NG%, 8))
+        154 '
+		Color 14: Print " (2) ";:
+		Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(NG%, 3))
+        155 '
+		Color 14: Print " (3) ";:
+		Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(NG%, 7))
+        156  '
+		Color 14: Print " (4) ";:
+		Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
+        157  '
+        Color 14: Print " (5) ";:
+		Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(NG%, 4) / 10
+        158  '
+		Color 14: Print " (6) ";:
+		Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)
+        159  '
+		Color 14: Print " (7) ";:
+		Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(scheduleNG%(NG%, 9))
+        162  '
+		Color 14: Print " (8) ";:
+		Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
+        164  '
+		Color 14: Print " (9) ";:
+		Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(scheduleNG%(NG%, 10))
+        165  '
+		Color 14: Print " (A) ";:
+		Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(scheduleNG%(NG%, 14))
+        163  '
+        Color 14: Print " (0) ";:
+		Color 15: Print "ACCEPT SETTINGS"
 
         Do
-            175 I$ = GetKeyPress$
+            I$ = GetKeyPress$
             If UCase$(I$) = "A" Then I$ = "10"
             I8% = Val(I$)
-            'If I8% < 0 Or I8% > 10 Then 175
         Loop Until I8% >= 0 And I8% <= 10
 
         Select Case I8%
+            
             Case 1:
-                180 scheduleNG%(NG%, 8) = scheduleNG%(NG%, 8) + 1
+                scheduleNG%(NG%, 8) = scheduleNG%(NG%, 8) + 1
                 If scheduleNG%(NG%, 8) > 3 Then scheduleNG%(NG%, 8) = 0
                 GoTo 151
 
             Case 2:
-                184 scheduleNG%(NG%, 3) = 1 - scheduleNG%(NG%, 3)
+                scheduleNG%(NG%, 3) = 1 - scheduleNG%(NG%, 3)
                 GoTo 154
 
             Case 3:
-                185 scheduleNG%(NG%, 7) = 1 + scheduleNG%(NG%, 7)
+                scheduleNG%(NG%, 7) = 1 + scheduleNG%(NG%, 7)
                 If scheduleNG%(NG%, 7) > 2 Then scheduleNG%(NG%, 7) = 0
                 GoTo 155
 
             Case 4:
-                186 N = 1 - (scheduleNG%(NG%, 2) - 1)
+                N = 1 - (scheduleNG%(NG%, 2) - 1)
                 scheduleNG%(NG%, 2) = N + 1
                 GoTo 156
 
             Case 5:
-                187 Locate 8, 32: Input displayPause!
+                Locate 8, 32: Input displayPause!
                 scheduleNG%(NG%, 4) = displayPause! * 10
                 GoTo 157
 
             Case 6:
-                188 scheduleNG%(NG%, 5) = 1 + scheduleNG%(NG%, 5)
+                scheduleNG%(NG%, 5) = 1 + scheduleNG%(NG%, 5)
                 If scheduleNG%(NG%, 5) > 6 Then scheduleNG%(NG%, 5) = 5
                 GoTo 158
 
             Case 7:
-                189 scheduleNG%(NG%, 9) = 1 - scheduleNG%(NG%, 9)
+                scheduleNG%(NG%, 9) = 1 - scheduleNG%(NG%, 9)
                 GoTo 159
 
             Case 8:
-                192 scheduleNG%(NG%, 6) = 1 - scheduleNG%(NG%, 6)
+                scheduleNG%(NG%, 6) = 1 - scheduleNG%(NG%, 6)
                 GoTo 162
 
             Case 9:
-                193 scheduleNG%(NG%, 10) = 1 - scheduleNG%(NG%, 10)
+                scheduleNG%(NG%, 10) = 1 - scheduleNG%(NG%, 10)
                 GoTo 149
 
             Case 10:
-                194 scheduleNG%(NG%, 14) = 1 - scheduleNG%(NG%, 14)
+                scheduleNG%(NG%, 14) = 1 - scheduleNG%(NG%, 14)
                 GoTo 149
 
         End Select
@@ -448,4 +493,3 @@ Sub EditGame_TOURNEY ()
     Loop Until I8% = 0
 
 End Sub
-
