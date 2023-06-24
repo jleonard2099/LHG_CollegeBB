@@ -1,34 +1,35 @@
 Sub COMPNAT ()
 
-    _Title "Courtside College Basketball - Update Stats"
+    _Title "Courtside College Basketball - Update National Stats"
+
+    Dim CN$(1 To 40)
 
     Shared PT#()
 
-    Shared BRC!(), DL!()
+    Shared BRC!(), compS!(), DL!()
     Shared LD!(), NDL!(), NLD!(), NOL!(), OL!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared TRC!(), TRC1!()
 
     Shared DT!(), OT!()
 
-    Shared BRC$(), compH$(), DL$(), compO$(), OL$()
+    Shared BRC$(), compH$(), compO$(), DL$()
+    Shared H1$(), OL$()
     Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
     Shared recconTRC$(), recconTRC1$()
     Shared Z0$(), Z1$(), Z3$()
 
     Shared mergeO%()
 
-    Dim compAP%(100, 1), compT%(1 To 100)
+    Shared fullWins, fullLosses
 
-    Dim CRD(100)
-    Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
+    'Initialize values first
+    TRC!(14) = 19999
+    TRC!(18) = 19999
 
-    Dim CN$(1 To 40), H1$(40)
-    Dim gameSite$(100)
-
-    Dim PT$(1 To 1200)
-
-    Cls
+    For I = 1 To 13: TRC1!(I) = 19999: Next
+    For I = 15 To 17: TRC1!(I) = 19999: Next
+    For I = 19 To 20: TRC1!(I) = 19999: Next
 
     For X = 1 To 250
         For Y = 1 To 2
@@ -36,14 +37,14 @@ Sub COMPNAT ()
         Next Y
     Next X
 
-    TRC!(14) = 19999: TRC!(18) = 19999
-    For I = 1 To 13: TRC1!(I) = 19999: Next
-    For I = 15 To 17: TRC1!(I) = 19999: Next
-    For I = 19 To 20: TRC1!(I) = 19999: Next
+    For X = 1 To 40
+        NDL!(X, 19) = 9999
+    Next
 
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
         Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
+
         For I = 1 To 25
             Input #1, BRC!(I)
             Input #1, BRC$(I, 0)
@@ -62,23 +63,30 @@ Sub COMPNAT ()
         Close 1
     End If
 
+    Cls
+
     Do
         'Display list of files...
-		Spec$ = diskPaths$(1) + "*.CON"
+        Spec$ = diskPaths$(1) + "*.CON"
         Count% = FCount%(Spec$)
 
         If Count% = 0 Then
-            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+
+            Locate 10, 8
+            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
+
         Else
 
             ReDim organizationFiles$(0 To Count%)
+
             For X = 1 To Count%
                 organizationFiles$(X) = Space$(12)
             Next
-			
+
             organizationFiles$(0) = Spec$
+
             Call ReadFile(organizationFiles$())
 
             Do
@@ -119,7 +127,8 @@ Sub COMPNAT ()
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                     Color 15, 0
-
+                Else
+                    BO% = 1
                 End If
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
@@ -128,31 +137,26 @@ Sub COMPNAT ()
 
                 targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-                LH$ = WE$
-
-                Cls
-                Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-                Color 15, 0
 
                 Do
+                    Cls
+                    Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+                    Color 15, 0
                     I$ = GetKeyPress$
                     finalUpdate$ = UCase$(I$)
                 Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
                 If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
-                Erase NDL!
-
                 Open diskPaths$(1) + WE$ + ".CON" For Input As #2
+
                 Input #2, X$
+
                 For I = 1 To 40
                     Input #2, CN$(I)
                 Next
-                Close 2
 
-                For X = 1 To 40
-                    NDL!(X, 19) = 9999
-                Next
+                Close 2
 
                 For NC = 1 To 40
 
@@ -177,6 +181,7 @@ Sub COMPNAT ()
                         Next
 
                         Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
+
                         Input #2, LG$
                         Input #2, D1$
                         Input #2, D2$
@@ -185,6 +190,7 @@ Sub COMPNAT ()
                             Input #2, H1$(XW)
                             Z1$(XW) = H1$(XW)
                         Next
+
                         Close 2
 
                         For XW = 1 To 30
@@ -197,141 +203,9 @@ Sub COMPNAT ()
                             'Look for * as terminating char
                             If H1$(XW) <> Chr$(42) Then
 
-                                H1$(XW) = Right$(H1$(XW), 2) + " " + Left$(H1$(XW), Len(H1$(XW)) - 3)
+                                haveStats = FindStatsNat%(H1$(XW), numberGames%, NRT)
 
-                                For XX = 4 To 11: If Mid$(H1$(XW), XX, 1) = " " Or Mid$(H1$(XW), XX, 1) = "." Then Mid$(H1$(XW), XX, 1) = "_"
-                                Next XX
-
-                                For XX = 12 To 14: If Mid$(H1$(XW), XX, 2) = "ST" Then Mid$(H1$(XW), 9, 1) = "_": Mid$(H1$(XW), 10, 2) = "ST"
-                                Next XX
-
-                                QQ = 8
-
-                                For XX = 11 To 4 Step -1
-                                    If Mid$(H1$(XW), XX, 1) = "_" Then
-                                        QQ = XX - 4
-                                    Else
-                                        Exit For
-                                    End If
-                                Next XX
-
-                                G$ = H1$(XW): H1$(XW) = Right$(H1$(XW), Len(H1$(XW)) - 3): YR$ = Left$(G$, 2)
-                                If Len(H1$(XW)) > 8 Then H1$(XW) = Left$(H1$(XW), 8)
-                                H1$(XW) = H1$(XW) + "." + YR$
-
-                                If _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-
-                                    Open diskPaths$(1) + H1$(XW) + "S" For Input As #2
-
-                                    Input #2, numGames%
-                                    For I = 1 To 100: Input #2, mergeO%(I): Next I
-                                    For I = 1 To 100: Input #2, compO$(I): Next I
-
-                                    For I = 1 To 100: Input #2, compT%(I): Next I
-                                    For I = 1 To 100: Input #2, compH$(I): Next I
-                                    For I = 1 To 100
-                                        For I1 = 0 To 1
-                                            Input #2, compAP%(I, I1)
-                                        Next
-                                    Next
-                                    For I = 1 To 100: Input #2, CRD(I): Next I
-                                    For I = 1 To 100: Input #2, gameSite$(I): Next I
-                                    Close 2
-
-                                    fullWins = 0
-                                    fullLosses = 0
-                                    confWins = 0
-                                    confLosses = 0
-
-                                    '804 GoSub 5500
-                                    For I = 1 To numGames%
-
-                                        For P = 4 To 11
-                                            If Mid$(compO$(I), P, 1) = " " Or Mid$(compO$(I), P, 1) = "." Then Mid$(compO$(I), P, 1) = "_"
-                                        Next P
-
-                                        For P = 12 To 14
-                                            If Mid$(compO$(I), P, 2) = "ST" Then Mid$(compO$(I), 9, 1) = "_": Mid$(compO$(I), 10, 2) = "ST"
-                                        Next P
-
-                                        QQ = 8
-                                        For P = 11 To 4 Step -1:
-                                            If Mid$(compO$(I), P, 1) = "_" Then
-                                                QQ = P - 4
-                                            Else
-                                                Exit For
-                                            End If
-                                        Next P
-
-                                        f$ = Mid$(compO$(I), 4, QQ): R$ = f$ + "." + Left$(compO$(I), 2)
-                                        compO$(I) = R$
-
-                                        confGame = 0
-
-                                        For EC = 1 To 30
-
-                                            If compO$(I) = H1$(EC) Then
-                                                confGame = 1
-                                                Exit For
-                                            End If
-
-                                        Next EC
-
-                                        If confGame <> 1 Then
-                                            If mergeO%(I) > compT%(I) Then fullWins = fullWins + 1
-                                            If mergeO%(I) < compT%(I) Then fullLosses = fullLosses + 1
-                                        Else
-                                            If mergeO%(I) > compT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                                            If mergeO%(I) < compT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
-                                        End If
-
-                                        EC = 0
-
-                                    Next I
-
-                                    '-- This is all extra compared to COMPCON
-                                    'STRENGTH OF SCHEDULE
-                                    PW = 0
-                                    SS = 0
-
-                                    For I = 1 To numGames%
-                                        SS = compAP%(I, 1) + SS
-                                    Next
-
-                                    SS = SS / numGames%
-                                    'INDIVIDUAL GAME POWER RATINGS
-                                    GL = 0
-                                    PW = 0
-
-                                    For I = 1 To numGames%
-                                        RAT = mergeO%(I) - compT%(I) + compAP%(I, 1)
-                                        If Left$(compH$(I), 1) = "H" Then RAT = RAT - 4.5
-                                        If Left$(compH$(I), 1) = "A" Then RAT = RAT + 4.5
-                                        PW = PW + RAT
-                                    Next
-
-                                    If numGames% <= 4 Then
-                                        GL = 5 - numGames%
-                                        PW = PW + GL * compAP%(1, 0)
-                                    End If
-
-                                    PW = PW / (numGames% + GL)
-                                    NRT = NRT + 1
-                                    PT$(NRT) = H1$(XW)
-                                    PT#(NRT, 1) = PW
-                                    PT#(NRT, 2) = fullWins
-                                    PT#(NRT, 3) = fullLosses
-                                    PT#(NRT, 4) = SS
-                                    '-- This is all extra compared to COMPCON
-
-                                    Cls
-                                    Locate 4, 5
-                                    Color 14: Print "FINDING ";
-                                    Color 15: Print H1$(XW);: Color 14
-                                    Print " STATS            "
-                                    'End If
-
-                                    'End If
+                                If (haveStats) Then
 
                                     L = Len(H1$(XW))
                                     WT$ = ""
@@ -341,121 +215,59 @@ Sub COMPNAT ()
                                         WT$ = WT$ + Chr$(A)
                                     Next X
 
-                                    timeToGo = 0
+                                    confGame = 0
 
                                     For X = 1 To 30
 
                                         If Z1$(X) = WT$ Then
+
                                             If O1!(X) = fullWins And O2!(X) = fullLosses Then
-                                                timeToGo = 1
-                                                Exit For
+                                                confGame = 1
+                                            Else
+                                                O1!(X) = fullWins
+                                                O2!(X) = fullLosses
+                                                O4!(X) = confWins
+                                                O5!(X) = confLosses
+
+                                                If O1!(X) + O2!(X) = 0 Then
+                                                    O3!(X) = 0
+                                                Else
+                                                    O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                                End If
+                                                If O4!(X) + O5!(X) = 0 Then
+                                                    O6!(X) = 0
+                                                Else
+                                                    O6!(X) = O4!(X) / (O4!(X) + O5!(X))
+                                                End If
+
                                             End If
 
-                                            O1!(X) = fullWins
-                                            O2!(X) = fullLosses
-                                            O4!(X) = confWins
-                                            O5!(X) = confLosses
-
-                                            If O1!(X) + O2!(X) = 0 Then
-                                                O3!(X) = 0
-                                            Else
-                                                O3!(X) = O1!(X) / (O1!(X) + O2!(X))
-                                            End If
-                                            If O4!(X) + O5!(X) = 0 Then
-                                                O6!(X) = 0
-                                            Else
-                                                O6!(X) = O4!(X) / (O4!(X) + O5!(X))
-                                            End If
                                         End If
+
+                                        If (confGame) Then Exit For
 
                                     Next X
 
-                                End If 'Done checkin for stat file
+                                    For I = 0 To 13
+                                        For J = 0 To 26
+                                            compS!(I, J) = 0
+                                        Next
+                                    Next
 
-                                If timeToGo <> 1 Then
-                                    Call LoadStats(H1$(XW), TN$, numGames%)
-                                    Call CheckTeam(TN$)
+                                    If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
+                                        Call ReadStatsNat(H1$(XW), numberGames%, TN$)
+                                        Call StatsByCategoryTeam(TN$)
+                                        Call CheckStatsLeaders(H1$(XW), TN$)
+                                    End If
+
                                 End If
-
-                                948 '
-                                If H1$(XW) <> "*" And _FileExists(diskPaths$(1) + H1$(XW) + "S") Then
-                                    Call CheckStatsLeaders(H1$(XW), TN$)
-                                End If
-
-                                Close 3
 
                             End If 'Done looking for * as char
 
                         Next XW
 
-						'Sort leaders
-                        AA = 1
-                        ZZ = 15
-
-                        For X = AA To ZZ - 1
-                            For Y = X + 1 To ZZ
-
-                                diffX = O1!(X) - O2!(X)
-                                diffY = O1!(Y) - O2!(Y)
-
-                                If diffX <= diffY Then
-                                    If diffX = diffY Then
-                                        If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
-                                            Swap Z1$(X), Z1$(Y)
-                                            Swap O1!(X), O1!(Y)
-                                            Swap O2!(X), O2!(Y)
-                                            Swap O3!(X), O3!(Y)
-                                            Swap O4!(X), O4!(Y)
-                                            Swap O5!(X), O5!(Y)
-                                            Swap O6!(X), O6!(Y)
-                                        End If
-                                    End If
-                                End If
-                            Next Y
-                        Next X
-
-                        AA = 16
-                        ZZ = 30
-
-                        For X = AA To ZZ - 1
-                            For Y = X + 1 To ZZ
-
-                                diffX = O1!(X) - O2!(X)
-                                diffY = O1!(Y) - O2!(Y)
-
-                                If diffX <= diffY Then
-                                    If diffX = diffY Then
-                                        If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
-                                            Swap Z1$(X), Z1$(Y)
-                                            Swap O1!(X), O1!(Y)
-                                            Swap O2!(X), O2!(Y)
-                                            Swap O3!(X), O3!(Y)
-                                            Swap O4!(X), O4!(Y)
-                                            Swap O5!(X), O5!(Y)
-                                            Swap O6!(X), O6!(Y)
-                                        End If
-                                    End If
-                                End If
-                            Next Y
-                        Next X
-
-                        Cls
-                        Print
-
-                        Open diskPaths$(1) + CN$(NC) + ".LDR" For Output As #2
-                        Print "    POSTING NEW "; CN$(NC); " CONFERENCE LEADERS"
-
-                        For X = 1 To 30:
-                            Write #2, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
-                        Next
-
-                        For X = 1 To 250
-                            Write #2, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
-                        Next X
-
-                        For X = 1 To 40: Write #2, OL$(X): For Y = 1 To 20: Write #2, OL!(X, Y): Next: Next
-                        For X = 1 To 40: Write #2, DL$(X): For Y = 1 To 20: Write #2, DL!(X, Y): Next: Next
-                        Close 2
+                        Call SortLeadersNat
+                        Call PostConLeaders_Nat(CN$(NC))
 
                     End If
 
@@ -464,67 +276,7 @@ Sub COMPNAT ()
                 Cls
                 Print
 
-                Open diskPaths$(1) + WE$ + ".NLD" For Output As #2
-                Print "    POSTING NEW "; WE$; " LEADERS"
-
-                For X = 1 To 30
-                    Write #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
-                Next
-
-                For X = 1 To 250
-                    Write #2, NZ0$(X), NZ3$(X), NLD!(X, 1), NLD!(X, 2)
-                Next X
-
-                For X = 1 To 40
-                    Write #2, NOL$(X)
-                    For Y = 1 To 20
-                        Write #2, NOL!(X, Y)
-                    Next
-                Next
-
-                For X = 1 To 40
-                    Write #2, NDL$(X)
-                    For Y = 1 To 20
-                        Write #2, NDL!(X, Y)
-                    Next
-                Next
-
-                Close 2
-
-                For Z = 1 To NRT - 1
-                    For Z1 = Z + 1 To NRT
-                        If PT#(Z, 1) < PT#(Z1, 1) Then
-                            Swap PT$(Z1), PT$(Z)
-                            For MN = 1 To 4
-                                Swap PT#(Z1, MN), PT#(Z, MN)
-                            Next MN
-                        End If
-                    Next Z1
-                Next Z
-
-                Open diskPaths$(1) + WE$ + ".POL" For Output As #2
-                Print "POSTING "; WE$; " POLL"
-                Write #2, NRT
-                For X = 1 To 1200
-                    Write #2, PT$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
-                Next
-                Close 2
-
-                Open diskPaths$(1) + "RECORDS.CBB" For Output As #1
-                For I = 1 To 25
-                    Print #1, BRC!(I)
-                    Print #1, BRC$(I, 0)
-                    Print #1, BRC$(I, 1)
-                Next
-                For I = 1 To 21
-                    Print #1, TRC!(I)
-                    Print #1, recconTRC$(I)
-                Next
-                For I = 1 To 21
-                    Print #1, TRC1!(I)
-                    Print #1, recconTRC1$(I)
-                Next
-                Close 1
+                Call PostOrgLeaders_Nat(WE$, NRT)
 
             End If 'Done checking for ESC
 
@@ -533,30 +285,23 @@ Sub COMPNAT ()
         '...Until we press ESC
     Loop Until ExitCode% = 27 Or Count% = 0 Or I$ = "N"
 
-    99 '
-
-    '2905 Exit Sub
 End Sub
 
 '----------------------------------------
-'       LoadStats Subroutine
+'       ReadStatsNat Subroutine
 '----------------------------------------
 '...explanation...
-Sub LoadStats (statFile$, TN$, numGames%)
+Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
     Shared BRC$()
     Shared compN$(), OL$(), recconTRC$(), recconTRC1$()
 
     Shared BRC!()
     Shared compS!(), DT!(), OL!(), OT!()
-	Shared statsW0!(), statsW1!()
+    Shared statsW0!(), statsW1!()
     Shared TRC!(), TRC1!()
 
-    For I = 0 To 13
-        For J = 0 To 26
-            compS!(I, J) = 0
-        Next
-    Next
+    Shared fullWins, fullLosses
 
     If _FileExists(diskPaths$(1) + statFile$) Then
 
@@ -592,15 +337,15 @@ Sub LoadStats (statFile$, TN$, numGames%)
                 compS!(I, 24) = compS!(I, 5) + compS!(I, 12) - compS!(I, 6) + compS!(I, 8) + compS!(I, 9) + compS!(I, 7) - 2 * compS!(I, 11)
                 compS!(I, 18) = compS!(I, 10) / 60 / compS!(I, 0): ' *** MIN/G ***
 
-                If compS!(I, 1) <> 0 And (compS!(I, 2) / numGames% >= 5) Then
+                If compS!(I, 1) <> 0 And (compS!(I, 2) / numberGames% >= 5) Then
                     compS!(I, 19) = compS!(I, 2) / compS!(I, 1): ' *** FG% ***
                 End If
 
-                If compS!(I, 3) <> 0 And (compS!(I, 4) / numGames%) >= 2.5 Then
+                If compS!(I, 3) <> 0 And (compS!(I, 4) / numberGames%) >= 2.5 Then
                     compS!(I, 20) = compS!(I, 4) / compS!(I, 3): ' *** FT% ***
                 End If
 
-                If statsW1!(I) <> 0 And statsW0!(I) / numGames% >= 1.5 Then
+                If statsW1!(I) <> 0 And statsW0!(I) / numberGames% >= 1.5 Then
                     compS!(I, 21) = statsW0!(I) / statsW1!(I): ' *** 3FG% ***
                 End If
 
@@ -609,15 +354,15 @@ Sub LoadStats (statFile$, TN$, numGames%)
                 If compS!(I, 0) > BRC!(1) Then BRC!(1) = compS!(I, 0): BRC$(1, 0) = compN$(I): BRC$(1, 1) = TN$
                 If compS!(I, 1) > BRC!(2) Then BRC!(2) = compS!(I, 1): BRC$(2, 0) = compN$(I): BRC$(2, 1) = TN$
                 If compS!(I, 2) > BRC!(3) Then BRC!(3) = compS!(I, 2): BRC$(3, 0) = compN$(I): BRC$(3, 1) = TN$
-                If compS!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numGames% >= 5 Then BRC!(4) = compS!(I, 19): BRC$(4, 0) = compN$(I): BRC$(4, 1) = TN$
+                If compS!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames% >= 5 Then BRC!(4) = compS!(I, 19): BRC$(4, 0) = compN$(I): BRC$(4, 1) = TN$
 
                 If statsW1!(I) > BRC!(5) Then BRC!(5) = statsW1!(I): BRC$(5, 0) = compN$(I): BRC$(5, 1) = TN$
                 If statsW0!(I) > BRC!(6) Then BRC!(6) = statsW0!(I): BRC$(6, 0) = compN$(I): BRC$(6, 1) = TN$
 
-                If compS!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numGames% >= 1.5 Then BRC!(7) = compS!(I, 21): BRC$(7, 0) = compN$(I): BRC$(7, 1) = TN$
+                If compS!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames% >= 1.5 Then BRC!(7) = compS!(I, 21): BRC$(7, 0) = compN$(I): BRC$(7, 1) = TN$
                 If compS!(I, 3) > BRC!(8) Then BRC!(8) = compS!(I, 3): BRC$(8, 0) = compN$(I): BRC$(8, 1) = TN$
                 If compS!(I, 4) > BRC!(9) Then BRC!(9) = compS!(I, 4): BRC$(9, 0) = compN$(I): BRC$(9, 1) = TN$
-                If compS!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numGames% >= 2.5 Then BRC!(10) = compS!(I, 20): BRC$(10, 0) = compN$(I): BRC$(10, 1) = TN$
+                If compS!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames% >= 2.5 Then BRC!(10) = compS!(I, 20): BRC$(10, 0) = compN$(I): BRC$(10, 1) = TN$
                 If compS!(I, 10) / 60 > BRC!(11) Then BRC!(11) = compS!(I, 10) / 60: BRC$(11, 0) = compN$(I): BRC$(11, 1) = TN$
                 If compS!(I, 12) > BRC!(12) Then BRC!(12) = compS!(I, 12): BRC$(12, 0) = compN$(I): BRC$(12, 1) = TN$
                 If compS!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = compS!(I, 22): BRC$(13, 0) = compN$(I): BRC$(13, 1) = TN$
@@ -638,12 +383,12 @@ Sub LoadStats (statFile$, TN$, numGames%)
 
         Next
 
-        OT!(16) = numGames%: DT!(16) = numGames%: OT!(17) = OT!(3) / OT!(2): DT!(17) = DT!(3) / DT!(2)
+        OT!(16) = numberGames%: DT!(16) = numberGames%: OT!(17) = OT!(3) / OT!(2): DT!(17) = DT!(3) / DT!(2)
         OT!(18) = OT!(5) / OT!(4): DT!(18) = DT!(5) / DT!(4)
         OT!(20) = OT!(11): DT!(20) = DT!(11)
         If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
         If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
-        OT!(19) = OT!(20) / numGames%: DT!(19) = DT!(20) / numGames%
+        OT!(19) = OT!(20) / numberGames%: DT!(19) = DT!(20) / numberGames%
         If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): recconTRC$(1) = TN$
         If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): recconTRC$(2) = TN$
         If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): recconTRC$(3) = TN$
@@ -656,14 +401,14 @@ Sub LoadStats (statFile$, TN$, numGames%)
         If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): recconTRC$(10) = TN$
         If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): recconTRC$(11) = TN$
         If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): recconTRC$(12) = TN$
-        If OT!(6) / numGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numGames%: recconTRC$(13) = TN$
+        If OT!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numberGames%: recconTRC$(13) = TN$
         If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): recconTRC$(14) = TN$
         If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): recconTRC$(15) = TN$
         If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): recconTRC$(16) = TN$
         If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): recconTRC$(17) = TN$
         If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): recconTRC$(18) = TN$
         If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): recconTRC$(19) = TN$
-        If OT!(11) / numGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numGames%: recconTRC$(20) = TN$
+        If OT!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numberGames%: recconTRC$(20) = TN$
         If fullWins > TRC!(21) Then TRC!(21) = fullWins%: recconTRC$(21) = TN$
         If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): recconTRC1$(1) = TN$
         If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): recconTRC1$(2) = TN$
@@ -677,14 +422,14 @@ Sub LoadStats (statFile$, TN$, numGames%)
         If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): recconTRC1$(10) = TN$
         If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): recconTRC1$(11) = TN$
         If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): recconTRC1$(12) = TN$
-        If DT!(6) / numGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numGames%: recconTRC1$(13) = TN$
+        If DT!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numberGames%: recconTRC1$(13) = TN$
         If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): recconTRC1$(14) = TN$
         If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): recconTRC1$(15) = TN$
         If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): recconTRC1$(16) = TN$
         If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): recconTRC1$(17) = TN$
         If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): recconTRC1$(18) = TN$
         If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): recconTRC1$(19) = TN$
-        If DT!(11) / numGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numGames%: recconTRC1$(20) = TN$
+        If DT!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numberGames%: recconTRC1$(20) = TN$
         If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: recconTRC1$(21) = TN$
 
     End If
@@ -692,9 +437,9 @@ Sub LoadStats (statFile$, TN$, numGames%)
 End Sub
 
 '----------------------------------------
-'           CheckTeam Subroutine
+'           StatsByCategoryTeam Subroutine
 '----------------------------------------
-Sub CheckTeam (TN$)
+Sub StatsByCategoryTeam (TN$)
 
     Shared DL!(), LD!()
     Shared NDL!(), NOL!(), NLD!()
@@ -1222,6 +967,188 @@ Sub CheckTeam (TN$)
 
 End Sub
 
+
+'----------------------------------------
+'         FindStatsNat Function
+'----------------------------------------
+'...explanation...
+Function FindStatsNat% (teamName$, numberGames%, NRT)
+
+    Dim compAP%(100, 1), compT%(1 To 100)
+    Dim CRD(100)
+
+    Dim gameSite$(100)
+
+    Shared mergeO%()
+
+    Shared PT#()
+
+    Shared compO$(), compH$(), H1$(), PT$()
+
+    Shared confWins, confLosses
+    Shared fullWins, fullLosses
+
+    teamName$ = Right$(teamName$, 2) + " " + Left$(teamName$, Len(teamName$) - 3)
+
+    For XX = 4 To 11:
+        If Mid$(teamName$, XX, 1) = " " Or Mid$(teamName$, XX, 1) = "." Then Mid$(teamName$, XX, 1) = "_"
+    Next XX
+
+    For XX = 12 To 14:
+        If Mid$(teamName$, XX, 2) = "ST" Then Mid$(teamName$, 9, 1) = "_": Mid$(teamName$, 10, 2) = "ST"
+    Next XX
+
+    QQ = 8
+
+    For XX = 11 To 4 Step -1
+        If Mid$(teamName$, XX, 1) = "_" Then
+            QQ = XX - 4
+        Else
+            Exit For
+        End If
+    Next XX
+
+    G$ = teamName$
+    teamName$ = Right$(teamName$, Len(teamName$) - 3)
+    YR$ = Left$(G$, 2)
+    If Len(teamName$) > 8 Then teamName$ = Left$(teamName$, 8)
+    teamName$ = teamName$ + "." + YR$
+
+    If _FileExists(diskPaths$(1) + teamName$ + "S") Then
+
+        Open diskPaths$(1) + teamName$ + "S" For Input As #2
+
+        Input #2, numberGames%
+
+        For I = 1 To 100: Input #2, mergeO%(I): Next I
+
+        For I = 1 To 100: Input #2, compO$(I): Next I
+
+        For I = 1 To 100: Input #2, compT%(I): Next I
+
+        For I = 1 To 100: Input #2, compH$(I): Next I
+
+        For I = 1 To 100
+            For I1 = 0 To 1
+                Input #2, compAP%(I, I1)
+            Next
+        Next
+
+        For I = 1 To 100: Input #2, CRD(I): Next I
+        For I = 1 To 100: Input #2, gameSite$(I): Next I
+
+        Close 2
+
+        fullWins = 0
+        fullLosses = 0
+        confWins = 0
+        confLosses = 0
+
+        For I = 1 To numberGames%
+
+            For P = 4 To 11
+                If Mid$(compO$(I), P, 1) = " " Or Mid$(compO$(I), P, 1) = "." Then Mid$(compO$(I), P, 1) = "_"
+            Next P
+
+            For P = 12 To 14
+                If Mid$(compO$(I), P, 2) = "ST" Then Mid$(compO$(I), 9, 1) = "_": Mid$(compO$(I), 10, 2) = "ST"
+            Next P
+
+            QQ = 8
+            For P = 11 To 4 Step -1:
+                If Mid$(compO$(I), P, 1) = "_" Then
+                    QQ = P - 4
+                Else
+                    Exit For
+                End If
+            Next P
+
+            f$ = Mid$(compO$(I), 4, QQ)
+            R$ = f$ + "." + Left$(compO$(I), 2)
+            compO$(I) = R$
+
+            confGame = 0
+
+            For EC = 1 To 30
+
+                If compO$(I) = H1$(EC) Then
+                    confGame = 1
+                    Exit For
+                End If
+
+            Next EC
+
+            If confGame <> 1 Then
+                If mergeO%(I) > compT%(I) Then fullWins = fullWins + 1
+                If mergeO%(I) < compT%(I) Then fullLosses = fullLosses + 1
+            Else
+                If mergeO%(I) > compT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
+                If mergeO%(I) < compT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+            End If
+
+            EC = 0
+
+        Next I
+
+        'STRENGTH OF SCHEDULE
+        PW = 0
+        SS = 0
+
+        For I = 1 To numberGames%
+            SS = compAP%(I, 1) + SS
+        Next
+
+        SS = SS / numberGames%
+
+        'INDIVIDUAL GAME POWER RATINGS
+        GL = 0
+        PW = 0
+
+        For I = 1 To numberGames%
+            RAT = mergeO%(I) - compT%(I) + compAP%(I, 1)
+            If Left$(compH$(I), 1) = "H" Then RAT = RAT - 4.5
+            If Left$(compH$(I), 1) = "A" Then RAT = RAT + 4.5
+            PW = PW + RAT
+        Next
+
+        If numberGames% <= 4 Then
+            GL = 5 - numberGames%
+            PW = PW + GL * compAP%(1, 0)
+        End If
+
+        PW = PW / (numberGames% + GL)
+        NRT = NRT + 1
+        PT$(NRT) = teamName$
+        PT#(NRT, 1) = PW
+        PT#(NRT, 2) = fullWins
+        PT#(NRT, 3) = fullLosses
+        PT#(NRT, 4) = SS
+
+        Cls
+
+        Locate 4, 5
+
+        Color 15
+        Print "FINDING ";
+        Color 14
+        Print statFile$;
+        Color 15
+        Print " STATS            "
+
+        FindStatsNat% = 1
+
+    Else
+
+        Print "NO STATS FOUND FOR "; statFile$
+        FindStatsNat% = 0
+
+    End If
+
+
+End Function
+
+
+
 '----------------------------------------
 '       CheckStatsLeaders Subroutine
 '----------------------------------------
@@ -1236,11 +1163,15 @@ Sub CheckStatsLeaders (statFile$, TN$)
     Shared compN$()
     Shared NDL$(), NOL$(), NZ0$(), NZ3$()
 
-    Cls: Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
+    Cls
+    Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
+
     For X = 0 To 14
 
-        Color 14: Print "CHECKING STATS OF ";
-        Color 15: Print compN$(X)
+        Color 14
+        Print "CHECKING STATS OF ";
+        Color 15
+        Print compN$(X)
 
         'Division 1, 2 Record
         If compS!(X, 22) > NLD!(20, 1) Then
@@ -1709,3 +1640,188 @@ Sub CheckStatsLeaders (statFile$, TN$)
     End If
 
 End Sub
+
+
+'----------------------------------------
+'       SortLeadersConf Subroutine
+'----------------------------------------
+'Sort leaders in conference
+Sub SortLeadersNat
+
+    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
+    Shared Z1$()
+
+    For Z = 0 To 1
+
+        AA = (Z * 15) + 1
+        ZZ = (Z * 15) + 10
+
+        For X = AA To ZZ - 1
+
+            For Y = X + 1 To ZZ
+
+                diffX = O1!(X) - O2!(X)
+                diffY = O1!(Y) - O2!(Y)
+
+                If diffX <= diffY Then
+                    If diffX <> diffY Then
+                        If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
+                            Swap Z1$(X), Z1$(Y)
+                            Swap O1!(X), O1!(Y)
+                            Swap O2!(X), O2!(Y)
+                            Swap O3!(X), O3!(Y)
+                            Swap O4!(X), O4!(Y)
+                            Swap O5!(X), O5!(Y)
+                            Swap O6!(X), O6!(Y)
+                        End If
+                    End If
+                End If
+
+            Next Y
+
+        Next X
+
+    Next Z
+
+End Sub
+
+
+
+'------------------------------
+'   PostConLeaders_Nat Subroutine
+'------------------------------
+' ...explanation...
+Sub PostConLeaders_Nat (conferenceName$)
+
+    Shared DL!(), LD!(), OL!()
+    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
+
+    Shared DL$(), OL$()
+    Shared Z0$(), Z1$(), Z3$()
+
+    Cls
+    Print
+
+    Open diskPaths$(1) + conferenceName$ + ".LDR" For Output As #2
+
+    Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
+
+    For X = 1 To 30:
+        Write #2, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+    Next
+
+    For X = 1 To 250
+        Write #2, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
+    Next X
+
+    For X = 1 To 40:
+        Write #2, OL$(X)
+        For Y = 1 To 20:
+            Write #2, OL!(X, Y)
+        Next
+    Next
+
+    For X = 1 To 40:
+        Write #2, DL$(X)
+        For Y = 1 To 20:
+            Write #2, DL!(X, Y)
+        Next
+    Next
+
+    Close 2
+
+End Sub
+
+
+
+'------------------------------
+'   PostConLeaders_Nat Subroutine
+'------------------------------
+' ...explanation...
+Sub PostOrgLeaders_Nat (WE$, NRT)
+
+    Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
+
+    Shared PT#()
+
+    Shared BRC!()
+    Shared NDL!(), NLD!(), NOL!()
+    Shared TRC!(), TRC1!()
+
+    Shared BRC$()
+    Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
+    Shared PT$(), recconTRC$(), recconTRC1$()
+
+    Open diskPaths$(1) + WE$ + ".NLD" For Output As #2
+
+    Print "    POSTING NEW "; WE$; " LEADERS"
+
+    For X = 1 To 30
+        Write #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
+    Next
+
+    For X = 1 To 250
+        Write #2, NZ0$(X), NZ3$(X), NLD!(X, 1), NLD!(X, 2)
+    Next X
+
+    For X = 1 To 40
+        Write #2, NOL$(X)
+        For Y = 1 To 20
+            Write #2, NOL!(X, Y)
+        Next
+    Next
+
+    For X = 1 To 40
+        Write #2, NDL$(X)
+        For Y = 1 To 20
+            Write #2, NDL!(X, Y)
+        Next
+    Next
+
+    Close 2
+
+    For Z = 1 To NRT - 1
+        For Z1 = Z + 1 To NRT
+            If PT#(Z, 1) < PT#(Z1, 1) Then
+                Swap PT$(Z1), PT$(Z)
+                For MN = 1 To 4
+                    Swap PT#(Z1, MN), PT#(Z, MN)
+                Next MN
+            End If
+        Next Z1
+    Next Z
+
+    Open diskPaths$(1) + WE$ + ".POL" For Output As #2
+
+    Print "POSTING "; WE$; " POLL"
+
+    Write #2, NRT
+
+    For X = 1 To 1200
+        Write #2, PT$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
+    Next
+
+    Close 2
+
+    Open diskPaths$(1) + "RECORDS.CBB" For Output As #1
+
+    For I = 1 To 25
+        Print #1, BRC!(I)
+        Print #1, BRC$(I, 0)
+        Print #1, BRC$(I, 1)
+    Next
+
+    For I = 1 To 21
+        Print #1, TRC!(I)
+        Print #1, recconTRC$(I)
+    Next
+
+    For I = 1 To 21
+        Print #1, TRC1!(I)
+        Print #1, recconTRC1$(I)
+    Next
+
+    Close 1
+
+End Sub
+

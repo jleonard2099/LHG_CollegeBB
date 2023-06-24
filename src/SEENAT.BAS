@@ -1,13 +1,12 @@
 Sub SEENAT ()
 
-    _Title "Courtside College Basketball - National Stats"
+    _Title "Courtside College Basketball - View National Stats"
 
-    'Dim P$(260), S$(60), BA$(120), ER$(20), TT(120, 4)
     Dim organizationLeaderFiles$(0 To MAX_FILES)
 
     Do
         'Display list of files...
-		Spec$ = diskPaths$(1) + "*.NLD"
+        Spec$ = diskPaths$(1) + "*.NLD"
         Count% = FCount%(Spec$)
 
         If Count% = 0 Then
@@ -22,8 +21,6 @@ Sub SEENAT ()
 
             organizationLeaderFiles$(0) = Spec$
             Call ReadFile(organizationLeaderFiles$())
-
-            H$ = " 1/2"
 
             Do
                 Color , 1
@@ -68,15 +65,14 @@ Sub SEENAT ()
 
             Loop Until UCase$(I$) = "N" Or ExitCode% = 27
 
-            If ExitCode% <> 27 Then
+            If UCase$(I$) = "N" Then
 
                 targetFile$ = RTrim$(targetFile$)
                 WE$ = Left$(targetFile$, Len(targetFile$) - 4)
                 targetFile$ = Left$(WE$, 8)
 
-                Call LoadLeague_SEENAT(targetFile$)
-                '-- if we're going to loop,
-                '-- we need the exit code from the team load !!!!!
+                Call LoadLeaderFiles_Nat(NRT, targetFile$)
+                Call StatOptions_Nat (NRT, targetFile$)
 
             End If 'Done checking for ESC
 
@@ -87,11 +83,12 @@ Sub SEENAT ()
 
 End Sub
 
+
 '----------------------------------------
-'       LoadLeague_SEENAT Subroutine
+'     LoadLeaderFiles_Nat Subroutine
 '----------------------------------------
 '...explanation...
-Sub LoadLeague_SEENAT (leagueFile$)
+Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
     Shared DL$(), OL$(), PR$()
     Shared DL!(), OL!()
@@ -105,113 +102,146 @@ Sub LoadLeague_SEENAT (leagueFile$)
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
     Open diskPaths$(1) + leagueFile$ + ".NLD" For Input As #2
+
     For X = 1 To 30: Input #2, T$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X): Next
+
     For X = 1 To 250: Input #2, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1$(X): Next
+
     For X = 1 To 40: Input #2, OL$(X): For M = 1 To 20: Input #2, OL!(X, M): Next: Next
+
     For X = 1 To 40: Input #2, DL$(X): For M = 1 To 20: Input #2, DL!(X, M): Next: Next
+
     Close #2
 
     Open diskPaths$(1) + leagueFile$ + ".POL" For Input As #2
+
     Input #2, NRT
+
     For X = 1 To NRT
         Input #2, PR$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
     Next
+
     Close 2
+
+End Sub
+
+
+'----------------------------------------
+'         StatOptions_Nat Subroutine
+'----------------------------------------
+'...explanation...
+Sub StatOptions_Nat (NRT, leagueFile$)
 
     Do
 
         Cls
-
         Call TITLE_STATS
 
         J = 5
 
-        Locate 8, 8
+        Locate 8, 8: Color 15, 1
 
-        Color 15, 1
-
+        'Print box top
         Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
+        'Print box sides
         For II = 1 To J
             Locate 8 + II, 8
             Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
         Next
 
-        Locate 9 + J, 8: Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        'Print box bottom
+        Locate 9 + J, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-        Locate 10, 15
-        Color 7, 1
+        Locate 7, 32
 
-        Locate , 30: Print "STATS TO ";: Color 15: Print "S";: Color 7: Print "CREEN"
-        Locate , 30: Print "STATS TO ";: Color 15: Print "P";: Color 7: Print "RINTER"
-        Locate , 30: Print "STATS TO ";: Color 15: Print "F";: Color 7: Print "ILE"
-        I$ = GetKeyPress$
+        Do
 
-        Color 14, 0
+            Locate 10, 15
+            Color 7, 1
 
-        Select Case UCase$(I$)
-            Case "P":
-                Call PrintReport_SEENAT(SF$, NRT, leagueFile$)
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "S";: Color 7: Print "CREEN"
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "P";: Color 7: Print "RINTER"
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "F";: Color 7: Print "ILE"
+            I$ = GetKeyPress$
 
-            Case "S":
-                Call PrintScreen_SEENAT(NRT, leagueFile$)
+            Color 14, 0
 
-            Case "F":
-                X1 = 1
-                Color 15, 0
-                Cls
+        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
 
-                JJ = 7
+        If I$ <> Chr$(27) Then
 
-                Locate 6, 8
+            Select Case UCase$(I$)
+
+                Case "F":
+                    Call ReportFilePrompt_Nat(SF$)
+                    Call SavePrintNatLeaders(reportFile$, leagueFile$, NRT, 1)
+
+                Case "P":
+                    Call SavePrintNatLeaders(reportFile$, leagueFile$, NRT, 0)
+
+                Case "S":
+                    Call LeaderStatsNat_Screen(leagueFile$, NRT)
+
+            End Select
+
+            Color 15, 0
+            Cls
+
+            JJ = 4
+
+            Locate 6, 8
+            Color 15, 1
+
+            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
+            For II = 1 To JJ:
+                Locate 6 + II, 8
+                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+            Next
+
+            Locate 7 + JJ, 8
+
+            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+
+            Do
                 Color 15, 1
-
-                Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-                For II = 1 To JJ:
-                    Locate 6 + II, 8
-                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                Next
-
-                Locate 7 + JJ, 8
-
-                Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-                Do
-                    Locate 7, 32
-
-                    Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-                    Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-                    Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
-                    Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-                    Locate 7, 37: Input SF$
-
-                    If SF$ <> "" Then
-                        Do
-                            Locate 13, 12: Print "ANY CHANGE (YN) "
-                            F$ = GetKeyPress$
-                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-                    End If
-
-                Loop Until UCase$(F$) = "N" Or SF$ <> ""
-
+                Locate 8
+                U$ = "VIEW LEAGUE STATS AGAIN (YN)"
+                Locate , (80 - Len(U$)) / 2
+                Print U$
                 Color 15, 0
+                A$ = GetKeyPress$
+            Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
-                Call PrintReport_SEENAT(SF$, NRT, leagueFile$)
+        End If
 
-        End Select
+    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
+
+End Sub
+
+
+'----------------------------------------
+'     ReportFilePrompt_Nat Subroutine
+'----------------------------------------
+'...explanation...
+Sub ReportFilePrompt_Nat (reportFile$)
+
+    Do
 
         Color 15, 0
-
         Cls
 
-        JJ = 4
+        JJ = 7
 
         Locate 6, 8
-
         Color 15, 1
 
-        Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
         For II = 1 To JJ:
             Locate 6 + II, 8
@@ -220,27 +250,35 @@ Sub LoadLeague_SEENAT (leagueFile$)
 
         Locate 7 + JJ, 8
 
-        Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-        Do
-            Color 15, 1
-            Locate 8
-            U$ = "VIEW LEAGUE STATS AGAIN (YN)"
-            Locate , (80 - Len(U$)) / 2
-            Print U$
-            Color 15, 0
-            A$ = GetKeyPress$
-        Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
+        Locate 7, 32
 
-    Loop Until UCase$(A$) = "N"
+        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
+        Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
+        Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
+        Locate 7, 37: Input reportFile$
+
+        If reportFile$ <> "" Then
+            Do
+                Locate 13, 12: Print "ANY CHANGE (YN) "
+                F$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+        End If
+
+    Loop Until UCase$(F$) = "N" Or reportFile$ <> ""
+
+    Color 15, 0
 
 End Sub
 
+
 '----------------------------------------
-'     PrintScreen_SEENAT Subroutine
+'     LeaderStatsNat_Screen Subroutine
 '----------------------------------------
 '...explanation...
-Sub PrintScreen_SEENAT (NRT, FF$)
+Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     Shared DL$(), OL$(), PR$()
     Shared DL!(), OL!(), seenatZ!()
@@ -249,11 +287,11 @@ Sub PrintScreen_SEENAT (NRT, FF$)
     Shared PT#()
 
     Color 15, 0
-
     Cls
 
     Color 12
-    Print FF$ + " OVERALL RANKINGS"
+    Print orgName$ + " OVERALL RANKINGS"
+
     Locate , 1
     Color 14
     Print "                    RATING     W    L    STRENGTH OF SCHEDULE"
@@ -265,19 +303,32 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         Print PR$(P); Tab(22); Using "###.#    ##   ##          ###.#"; PT#(P, 1); PT#(P, 2); PT#(P, 3); PT#(P, 4)
 
         If P / 20 = Int(P / 20) Then
-            Locate 24: Print "HIT ANY KEY TO CONTINUE!!";
+
+            Color 12
+            'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+            Color 15
             QK$ = GetKeyPress$
+
             Cls
-            Color 12: Print FF$ + " OVERALL RANKINGS"
+
+            Color 12
+            Print orgName$ + " OVERALL RANKINGS"
+
             Locate , 1
             Color 14: Print "                    RATING     W    L    STRENGTH OF SCHEDULE"
             Color 15
+
         End If
 
     Next
 
-    Locate 24: Print "HIT ANY KEY TO CONTINUE!!";
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
     Color 14
@@ -311,13 +362,18 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
-    Color 14: Print "SCORING"
-    Color 14: Print "                                PTS/G"
+    Color 14
+    Print "SCORING"
+    Print "                                PTS/G"
     Color 15
 
     For P = 1 To 20
@@ -329,8 +385,10 @@ Sub PrintScreen_SEENAT (NRT, FF$)
     Next
 
     Color 14
-    Locate 1, 41: Print "TOTAL POINTS"
-    Locate , 41: Print "                                  PTS"
+    Locate 1, 41
+    Print "TOTAL POINTS"
+    Locate , 41
+    Print "                                  PTS"
     Color 15
 
     For P = 21 To 40
@@ -341,12 +399,17 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
-    Color 14: Print "STEALS PER GAME"
+
+    Color 14
+    Print "STEALS PER GAME"
     Color 15
 
     For P = 81 To 90
@@ -357,8 +420,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 1, 41
     Color 14
-    Locate 1, 41: Print "STEALS"
+    Print "STEALS"
     Color 15
 
     For P = 91 To 100
@@ -369,8 +433,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13
     Color 14
-    Locate 13: Print "ASSISTS PER GAME"
+    Print "ASSISTS PER GAME"
     Color 15
 
     For P = 101 To 110
@@ -381,8 +446,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13, 41
     Color 14
-    Locate 13, 41: Print "ASSISTS"
+    Print "ASSISTS"
     Color 15
 
     For P = 111 To 120
@@ -393,12 +459,17 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
-    Color 14: Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
+    Color 14
+    Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
     Color 15
 
     For P = 121 To 130
@@ -411,8 +482,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
 
     Next P
 
+    Locate 1, 41
     Color 14
-    Locate 1, 41: Print "MINUTES PER GAME"
+    Print "MINUTES PER GAME"
     Color 15
 
     For P = 141 To 150
@@ -423,8 +495,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next P
 
+    Locate 13
     Color 14
-    Locate 13: Print "THREE POINT FIELD GOALS MADE"
+    Print "THREE POINT FIELD GOALS MADE"
     Color 15
 
     For P = 131 To 140
@@ -435,8 +508,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13, 41
     Color 14
-    Locate 13, 41: Print "TOTAL MINUTES"
+    Print "TOTAL MINUTES"
     Color 15
 
     For P = 151 To 160
@@ -447,12 +521,17 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
-    Color 14: Print "REBOUNDS PER GAME   "
+    Color 14
+    Print "REBOUNDS PER GAME   "
     Color 15
 
     For P = 161 To 170
@@ -463,8 +542,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 1, 41
     Color 14
-    Locate 1, 41: Print "REBOUNDS"
+    Print "REBOUNDS"
     Color 15
 
     For P = 171 To 180
@@ -475,8 +555,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13
     Color 14
-    Locate 13: Print "BLOCKS PER GAME"
+    Print "BLOCKS PER GAME"
     Color 15
 
     For P = 181 To 190
@@ -487,8 +568,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13, 41
     Color 14
-    Locate 13, 41: Print "BLOCKS"
+    Print "BLOCKS"
     Color 15
 
     For P = 191 To 200
@@ -499,12 +581,17 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
-    Color 14: Print "FIELD GOALS MADE "
+    Color 14
+    Print "FIELD GOALS MADE "
     Color 15
 
     For P = 201 To 210
@@ -526,8 +613,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13
     Color 14
-    Locate 13: Print "FOULS PER GAME"
+    Print "FOULS PER GAME"
     Color 15
 
     For P = 221 To 230
@@ -537,8 +625,9 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
+    Locate 13, 41
     Color 14
-    Locate 13, 41: Print "FOULS"
+    Print "FOULS"
     Color 15
 
     For P = 231 To 240
@@ -550,12 +639,17 @@ Sub PrintScreen_SEENAT (NRT, FF$)
 
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
-    Color 14: Print "MOST VALUABLE PLAYER POINTS"
+    Color 14
+    Print "MOST VALUABLE PLAYER POINTS"
     Color 15
 
     For P = 241 To 250
@@ -566,11 +660,15 @@ Sub PrintScreen_SEENAT (NRT, FF$)
         End If
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
     Cls
+
     Color 12
     Print "                         OFFENSIVE TOTALS"
     Color 14
@@ -589,9 +687,13 @@ Sub PrintScreen_SEENAT (NRT, FF$)
 
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
+
     Cls
 
     Color 12
@@ -612,15 +714,17 @@ Sub PrintScreen_SEENAT (NRT, FF$)
 
     Next
 
-    HZ = 1: VT = 24
-    Locate VT, HZ: Print Space$(26);
+    '-----
+    Color 12
+    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Color 15
     QK$ = GetKeyPress$
+    '-----
 
-    '2900 Exit Sub
 End Sub
 
 '----------------------------------------
-'     PrintReport_SEENAT Subroutine
+'     SavePrintNatLeaders Subroutine
 '----------------------------------------
 'This routine opens/creates the target
 '   report file and writes data to it.
@@ -634,24 +738,23 @@ End Sub
 'We should do this with other routines
 '   and simply use a temp file
 
-Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
+Sub SavePrintNatLeaders (reportFile$, orgName$, NRT, destination)
 
     Shared DL$(), OL$(), PR$()
     Shared DL!(), OL!(), seenatZ!()
     Shared seenatZ1$(), seenatZ2$(), seenatZ3$()
     Shared PT#()
 
-    If X1 <> 1 Then
+    If destination <> 1 Then
         Open "REPORT" For Output As #2
     Else
-        Open targetFile$ + ".RPT" For Output As #2
+        Open reportFile$ + ".RPT" For Output As #2
     End If
 
     Color 0, 15
-
     Cls
 
-    Print #2, FF$ + " OVERALL RANKINGS"
+    Print #2, orgName$ + " OVERALL RANKINGS"
     Print #2, "                    RATING     W    L    STRENGTH OF SCHEDULE"
 
     For P = 1 To NRT
@@ -665,6 +768,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
 
     For P = 41 To 60
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -673,6 +777,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
             Print #2, Using "##.#  ####"; seenatZ!(P) * 100; seenatZ1$(P);
             Print #2, Tab(41);
         End If
+
         If seenatZ2$(P + 20) = "" Then
             Print #2,
         Else
@@ -687,6 +792,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "SCORING"; Tab(41); "TOTAL POINTS"
 
     For P = 1 To 20
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -695,6 +801,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
             Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
+
         If seenatZ2$(P + 20) = "" Then
             Print #2,
         Else
@@ -702,12 +809,14 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
             Print #2, Tab(74);
             Print #2, Using "####"; seenatZ!(P + 20)
         End If
+
     Next
 
     Print #2, Chr$(12)
     Print #2, "STEALS PER GAME"; Tab(41); "STEALS"
 
     For P = 81 To 90
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -730,6 +839,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "ASSISTS PER GAME"; Tab(41); "ASSISTS"
 
     For P = 101 To 110
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -738,6 +848,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
             Print #2, Using "##.#"; seenatZ!(P);
             Print #2, Tab(41);
         End If
+
         If seenatZ2$(P + 10) = "" Then
             Print #2,
         Else
@@ -752,6 +863,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "THREE FIELD GOAL % (MIN 1.5 3FGM/G)"; Tab(41); "MINUTES PER GAME"
 
     For P = 121 To 130
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -775,6 +887,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "THREE POINT FIELD GOALS MADE"; Tab(41); "MINUTES"
 
     For P = 131 To 140
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -799,6 +912,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
 
     For P = 161 To 170
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -822,6 +936,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "BLOCKS PER GAME"; Tab(41); "BLOCKS"
 
     For P = 181 To 190
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -845,6 +960,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "FIELD GOALS MADE"; Tab(41); "FREE THROWS MADE"
 
     For P = 201 To 210
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -868,6 +984,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "FOULS PER GAME"; Tab(41); "FOULS"
 
     For P = 221 To 230
+
         If seenatZ2$(P) = "" Then
             Print #2, Tab(41);
         Else
@@ -891,11 +1008,13 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "MOST VALUABLE PLAYER"
 
     For P = 241 To 250
+
         If seenatZ2$(P) <> "" Then
             Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
             Print #2, Tab(34);
             Print #2, Using "####"; seenatZ!(P)
         End If
+
     Next
 
     Print #2,
@@ -904,6 +1023,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
     For X = 1 To 20
+
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print #2, Left$(OL$(X), 11); Tab(13);: Print #2, Using "##"; OL!(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; OL!(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; OL!(X, 3);: Print #2, Tab(26);
             Print #2, Using ".###"; OL!(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
@@ -911,6 +1031,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
             Print #2, Using "###"; OL!(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; OL!(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; OL!(X, 20);
             Print #2, Tab(75);: Print #2, Using "###.#"; OL!(X, 19)
         End If
+
     Next
 
     Print #2,
@@ -918,6 +1039,7 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
     Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
     For X = 1 To 20
+
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
             Print #2, Left$(DL$(X), 11); Tab(13);: Print #2, Using "##"; DL!(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; DL!(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; DL!(X, 3);: Print #2, Tab(26);
             Print #2, Using ".###"; DL!(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
@@ -925,11 +1047,12 @@ Sub PrintReport_SEENAT (targetFile$, NRT, FF$)
             Print #2, Using "###"; DL!(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; DL!(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; DL!(X, 20);
             Print #2, Tab(75);: Print #2, Using "###.#"; DL!(X, 19)
         End If
+
     Next
 
     Close 2
 
-    If X1 <> 1 Then
+    If destination <> 1 Then
 
         Open "REPORT" For Input As #2
 

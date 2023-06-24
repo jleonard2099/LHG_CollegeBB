@@ -2035,8 +2035,9 @@ Sub COLHOOP ()
 
             End If
 
-            540 S = Int(Rnd(1) * 100) + 1
-            R0! = F! * ((DfileLength& / 100) + (.03 * X3%))
+            540 '
+            S = Int(Rnd(1) * 100) + 1
+            R0! = F! * ((DY / 100) + (.03 * X3%))
 
             If H > 1 And gameClock! < 30 And GG = 2 Or H > 1 And gameClock! < 30 And GG = 0 Or H > 1 And gameClock! < 30 And GG = -2 Then 542
 

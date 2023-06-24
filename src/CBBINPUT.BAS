@@ -1,6 +1,6 @@
 Sub CBBINPUT ()
 
-    _Title "Courtside College Basketball - Ratings Input"
+    _Title "Courtside College Basketball - Team Input"
 
     Dim E0(16), inputA(14, 19), inputDF(13)
     Dim inputQQ(3), inputRS(13, 13), XX(13), X(14, 6)

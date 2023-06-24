@@ -74,7 +74,6 @@ Sub ViewTourneyInfo (ACTION%)
             Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, Pass)
-            'Should go back to selection instead
         Else
 
             ReDim tournamentFiles$(0 To Count%)

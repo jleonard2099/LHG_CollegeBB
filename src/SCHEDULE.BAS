@@ -39,7 +39,7 @@ Sub SCHEDULE ()
         Spacing% = 1
         Row% = 8
         Column% = 16
-        Call box0(6, 15, 16, 65, 2, 15, 1)
+        Call box0(7, 15, 17, 65, 2, 15, 1)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -1129,7 +1129,7 @@ Sub BoxscoreMaintenance ()
 
                 Case 2:
                     Spec$ = diskPaths$(1) + "*.SPC"
-					Count% = FCount%(Spec$)
+                    Count% = FCount%(Spec$)
 
                     If Count% = 0 Then
                         Locate 10, 8
@@ -1433,8 +1433,8 @@ Sub LoadSchedule (targetFile$)
 
     Do
         'Display list of files...
-		Spec$ = diskPaths$(0) + "*.SCD"
-		Count% = FCount%(Spec$)
+        Spec$ = diskPaths$(0) + "*.SCD"
+        Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -1466,7 +1466,7 @@ End Sub
 Sub SelectTeam_Schedule (numberTeams, yearNumber$)
 
     numberTeams = 0
-	teamYear$ = RTrim$(yearNumber$)
+    teamYear$ = RTrim$(yearNumber$)
 
     If Not _FileExists(diskPaths$(0) + "BASK." + teamYear$) Then
         Cls
@@ -1539,9 +1539,9 @@ Sub CheckTeam_Schedule (teamIdx, yearNumber$)
 
     Shared scheduleT%()
 
-	teamYear$ = RTrim$(yearNumber$)
+    teamYear$ = RTrim$(yearNumber$)
     
-	Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+    Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19)
 
@@ -1563,7 +1563,7 @@ End Sub
 Sub DeleteSchedules (fileChoice%, fileSpec$)
 
     Spec$ = diskPaths$(0) + fileSpec$
-	FileCount% = FCount%(Spec$)
+    FileCount% = FCount%(Spec$)
 
     If FileCount% = 0 Then
 
@@ -1760,7 +1760,7 @@ Sub CreateConferenceSchedule ()
     If D3% <> 0 Then
 
         Spec$ = diskPaths$(1) + "*.LIB"
-		Count% = FCount%(Spec$)
+        Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8

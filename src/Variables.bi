@@ -91,25 +91,29 @@ Dim cngratA$(0 To 13), P$(0 To 13)
 '----------------------------------------
 ' Used across COMPARE routines
 '----------------------------------------
+Dim HP%(100), compareL%(6), OP%(100), compareT%(34)
+
 Dim compareA!(15, 14)
 Dim A1!(13, 6), X1!(13, 6)
-Dim HP%(100), compareL%(6), OP%(100), compareT%(34)
-Dim compareB$(14), HP$(100), OP$(100)
+
+Dim compareB$(14), H1$(40), HP$(100), OP$(100)
 
 '----------------------------------------
 ' Used across COMPNAT routines
 '----------------------------------------
-Dim compH$(100), compN$(0 To 14)
+Dim confWins, confLosses
+Dim fullWins, fullLosses
+
+Dim DT!(21), OT!(21)
 Dim LD!(1 To 250, 0 To 2)
 Dim NDL!(1 To 40, 1 To 20), NLD!(1 To 250, 1 To 2), NOL!(1 To 40, 1 To 20)
 Dim compS!(0 To 14, 0 To 26)
 
-Dim DT!(21), OT!(21)
 
-Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
-
+Dim compH$(100), compN$(0 To 14)
 Dim CP$(25), compO$(100)
-Dim Z0$(1 To 250), Z3$(1 To 250)
+Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
+Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
 '----------------------------------------
 ' Used across DRAFT routines
@@ -172,8 +176,8 @@ Dim recordsA$(5), RC$(50, 4), TRC$(125, 3)
 '----------------------------------------
 ' Used across RECCON routines
 '----------------------------------------
-Dim BRC!(32), TRC!(21), TRC1!(21)
-Dim BRC$(32, 1), recconTRC$(21), recconTRC1$(21)
+Dim BRC!(32), TRC!(1 To 21), TRC1!(1 To 21)
+Dim BRC$(32, 1), recconTRC$(1 To 21), recconTRC1$(1 To 21)
 
 Dim TT$(20), recconTB$(25)
 
@@ -248,8 +252,8 @@ Dim Shared R3!(1), S!(1, 9), W0!(1, 13), W1!(1, 13)
 '  is the most supported?
 Dim Shared avgAttendance&(1), CRD&(100)
 
-Dim Shared AA$(1, 13), B$(0 to 1), D$(15), DB$(14)
-Dim Shared gameMascot$(0 to 1), gameStadium$(0 to 1), gameCoach$(0 to 1)
+Dim Shared AA$(1, 13), B$(0 To 1), D$(15), DB$(14)
+Dim Shared gameMascot$(0 To 1), gameStadium$(0 To 1), gameCoach$(0 To 1)
 Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
 Dim Shared PB$(1), PS$(4), R$(14), SITE$(100), SX$(32, 2)
 Dim Shared PO$(1, 13)
