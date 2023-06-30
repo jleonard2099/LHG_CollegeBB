@@ -706,7 +706,7 @@ Sub COLHOOP ()
 
     End If
 
-    If UCase$(I$) = "Y" Or (AP = 1 and endAllGames <> 1) Then
+    If UCase$(I$) = "Y" Or (AP = 1 And endAllGames <> 1) Then
         Cls
         Print "PLEASE WAIT ..."
         Call COLHOOP

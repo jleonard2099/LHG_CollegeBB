@@ -8652,7 +8652,7 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
     Next I
 
     Print #2,
-    
+
     '-- The code below was used to print
     '-- disabled players in the boxscore
     '-- output so that they could be easily identified.
@@ -8664,7 +8664,7 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
     '    For I1 = 0 To 13
 
     '        'If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
-            '--If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 And timePlayed(I, I1) > 0 Then
+    '--If AA$(I, I1) <> "XXX" And B%(I, I1) = -1 And timePlayed(I, I1) > 0 Then
     '            Print #2, AA$(I, I1); " ["; B$(I); "]"
     '        End If
 
