@@ -132,7 +132,6 @@ Dim draftV1%(1), draftV2%(1)
 ' Used across NEWLDR routines
 '----------------------------------------
 Dim JB, tStats, ttStats
-Dim TMR%
 
 Dim AL$(600), TP$(31), TP1$(39)
 Dim expanTT$(40, 15), TT1$(40, 15)
@@ -141,9 +140,10 @@ Dim TMA$(600)
 Dim TMM$(600), TPP$(600)
 
 'These should all be single
-Dim statsAL!(1 To 600, 0 To 14), GM1!(1 To 40), GMA!(600)
+Dim GM!(1 To 40), GM1!(1 To 40), GMA!(600)
+Dim statsAL!(1 To 600, 0 To 14)
 Dim TT!(40, 15), TT1!(40, 15)
-ReDim TYP!(600)
+Dim TYP!(600)
 Dim W0L!(600), W1L!(600)
 
 '----------------------------------------

@@ -309,7 +309,6 @@ Sub EditBracket (numberRegions, ACTION%)
 
         ReDim menuChoices$(1 To numberRegions + 2)
 
-        'Erase menuChoices$
         For I = 1 To numberRegions
             If regionNames$(I) = "" Then regionNames$(I) = "TO BE NAMED"
             menuChoices$(I) = regionNames$(I)
