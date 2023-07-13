@@ -116,6 +116,11 @@ Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
 '----------------------------------------
+' Used across CREAT routines
+'----------------------------------------
+Dim creatZ1$(MAX_CONFERENCES)
+
+'----------------------------------------
 ' Used across DRAFT routines
 '----------------------------------------
 Dim draftA$(0 To 1, 0 To 13), draftP$(1, 13), draftT$(1), draftYN$(1)
@@ -153,6 +158,7 @@ Dim AL!(50), AW!(50), HL!(50), HW!(50)
 Dim R1!(50), R2!(50), hd2hdR3!(50), R4!(50)
 Dim TAW!(40), THW!(40), THL!(40), TAL!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
+
 
 '----------------------------------------
 ' Used across LOOKY/MERGE routines
@@ -203,6 +209,15 @@ Dim seenatZ!(260), seenatZ1!(260)
 Dim seenatZ1$(260), seenatZ2$(260), seenatZ3$(260)
 Dim PT#(1200, 5)
 Dim T$(30)
+
+'----------------------------------------
+' Used across TINPUT routines
+'----------------------------------------
+Dim inputL(9)
+Dim inputRS(13, 13), inputX(14, 6)
+Dim inputA(14, 19), inputDF(13)
+Dim inputN$(14), inputP$(14)
+
 
 '----------------------------------------
 ' Used across Game Routines

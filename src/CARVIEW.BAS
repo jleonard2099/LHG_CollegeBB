@@ -79,8 +79,8 @@ Sub CARVIEW ()
                 Color 15, 0
                 Cls
 
-				TMR% = 930
-				
+                TMR% = 930
+                
                 Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
                 Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
@@ -331,7 +331,7 @@ Sub CareerToScreen (carviewA$(), Z$)
                 Call ViewPlayer(carviewA$(), Z$)
 
             Case "R":
-                Call ViewRoster(carviewA$(), Z$)
+                Call ViewRosterSequence(carviewA$(), Z$)
 
         End Select
 
@@ -582,10 +582,10 @@ End Sub
 
 
 '----------------------------------------
-'       ViewRoster Subroutine
+'       ViewRosterSequence Subroutine
 '----------------------------------------
 '...explanation...
-Sub ViewRoster (carviewA$(), Z$)
+Sub ViewRosterSequence (carviewA$(), Z$)
 
     Shared ARS!(), W0S!(), W1S!()
 

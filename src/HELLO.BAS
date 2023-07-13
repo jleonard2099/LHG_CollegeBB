@@ -414,10 +414,10 @@ Sub TeamMgt_Menu ()
         Color , 0
         If ExitCode% <> 27 Then
             Select Case Selection%
-                Case 1: Call CBBINPUT
-                Case 2: Call CNGRAT(1)
-                Case 3: Call CNGRAT(2)
-                Case 4: Call CNGRAT(3)
+                Case 1: Call TINPUT
+                Case 2: Call CNGTM(1)
+                Case 3: Call CNGTM(2)
+                Case 4: Call CNGTM(3)
                 Case 5: Call DRAFT
                 Case 6: Cls
             End Select
@@ -582,8 +582,7 @@ End Sub
 '$INCLUDE: 'BRACKET.BAS'
 '$INCLUDE: 'CAREER.BAS'
 '$INCLUDE: 'CARVIEW.BAS'
-'$INCLUDE: 'CBBINPUT.BAS'
-'$INCLUDE: 'CNGRAT.BAS'
+'$INCLUDE: 'CNGTM.BAS'
 '$INCLUDE: 'COMPARE.BAS'
 '$INCLUDE: 'COMPCON.BAS'
 '$INCLUDE: 'COMPNAT.BAS'
@@ -600,6 +599,7 @@ End Sub
 '$INCLUDE: 'SEECON.BAS'
 '$INCLUDE: 'SEENAT.BAS'
 '$INCLUDE: 'SINPUT.BAS'
+'$INCLUDE: 'TINPUT.BAS'
 '$INCLUDE: 'TOURNEY.BAS'
 
 ' For Game

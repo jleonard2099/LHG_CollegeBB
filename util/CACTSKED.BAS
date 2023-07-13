@@ -36,6 +36,7 @@ OPEN "12TM.TXT" FOR INPUT AS #1
 	NG%(17) = MO%
 	NG%(18) = YR%
 	NG%(16) = DY%
+
 OPEN "12TM.SCD" FOR RANDOM AS #2 LEN = 48
 	FOR X = 0 TO 18
 	FIELD #2, X * 2 AS X$, 2 AS Q$(X + 1), 48 - 2 - 2 * X AS X$
