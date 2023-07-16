@@ -599,7 +599,7 @@ Sub ViewPrintCareerRecords ()
                                 Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR(14)
 
                                 Color 15
-                                Locate 22: Print "HIT ANY KEY TO CONTINUE"
+                                Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
                                 I$ = GetKeyPress$
 
                                 Cls
@@ -1098,7 +1098,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamIdx)
 
-    Shared statsL%(), careerT%()
+    Shared leagueRatings%(), careerT%()
 
     Selection% = 1
     Count% = numberTeams
@@ -1140,7 +1140,7 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamIdx)
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
 
-        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: careerT%(I) = CVI(Q$(I + 10)): Next
 
         Close 1

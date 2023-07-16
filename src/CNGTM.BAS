@@ -74,9 +74,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
     Shared V1%, V2%
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
 
-    Shared statsL%(), T%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), compT1%()
     Shared cngratA$(), P$()
     Shared statsA!(), DF!(), RS!(), X!()
 
@@ -85,30 +85,30 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print Tab(29); "CHANGE TEAM INFORMATION"
     Color 15
 
-    Print " 1. TEAM NUMBER "; teamIdx; Tab(40); "20. NICKNAME "; mascot$
-    Print " 2. DISK ID "; yearNumber$; Tab(40); "21. COACH "; coach$
-    Print " 3. TEAM NAME "; teamName$
-    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "22. AVG ATTENDANCE "; teamAttendance%
-    Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(40); "23. WINS "; T%(7)
-    Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(40); "24. LOSSES "; T%(8)
-    Print " 7. DEF 3FG% ADJ "; V1%; Tab(40); "25. POWER RATING "; T%(9)
-    Print " 8. OFF STEAL RATING "; statsL%(0)
-    Print " 9. OFF TURNOVER RATING "; statsL%(1)
-    Print "10. DEF TURNOVER ADJ "; statsL%(2)
-    Print "11. DEF FOUL ADJ "; statsL%(3)
-    Print "12. ENTER 99 IF USING 6-9 "; statsL%(4)
-    Print "13. TEXT COLOR (0-15) "; T%(0)
-    Print "14. BACKGROUND (0-7) "; T%(1)
-    Print "15. TEAM FGA/G "; T%(3)
-    Print "16. LEAGUE FGA/G "; T%(4)
-    Print "17. TEAM GAMES PLAYED "; T%(5)
-    Print "18. HOMECOURT FACTOR "; T%(6)
-    Print "19. ARENA NAME "; stadium$
+    Print " 1. TEAM NUMBER "; teamIdx; Tab(37); "20. NICKNAME "; mascot$
+    Print " 2. DISK ID "; yearNumber$; Tab(37); "21. COACH "; coach$
+    Print " 3. TEAM NAME "; teamName$; Tab(37); "22. AVG ATTENDANCE "; teamAttendance%
+    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(37); "23. WINS "; teamRatings%(7)
+    Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(37); "24. LOSSES "; teamRatings%(8)
+    Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(37);"25. POWER RATING "; teamRatings%(9)
+    Print " 7. DEF 3FG% ADJ "; V1%
+    Print " 8. OFF STEAL RATING "; leagueRatings%(0)
+    Print " 9. OFF TURNOVER RATING "; leagueRatings%(1)
+    Print "10. DEF TURNOVER ADJ "; leagueRatings%(2)
+    Print "11. DEF FOUL ADJ "; leagueRatings%(3)
+    Print "12. ENTER 99 IF USING 6-9 "; leagueRatings%(4)
+    Print "13. TEXT COLOR (0-15) "; teamRatings%(0)
+    Print "14. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+    Print "15. TEAM FGA/G "; teamRatings%(3)
+    Print "16. LEAGUE FGA/G "; teamRatings%(4)
+    Print "17. TEAM GAMES PLAYED "; teamRatings%(5)
+    Print "18. HOMECOURT FACTOR "; teamRatings%(6)
+    Print "19. ARENA NAME "; arenaName$
 
-    If T%(0) >= 0 And T%(1) >= 0 Then
+    If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
         Locate 21, 1
         Print "TEAM APPEARANCE: ";
-        Color T%(0), T%(1)
+        Color teamRatings%(0), teamRatings%(1)
         Print RTrim$(teamName$ + " " + mascot$)
         Color 15, 0
     End If
@@ -144,71 +144,71 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Locate 8: Input " 7. DEF 3FG% ADJ "; V1%
 
             Case 8
-                Locate 9: Input " 8. OFF STEAL RATING "; statsL%(0)
+                Locate 9: Input " 8. OFF STEAL RATING "; leagueRatings%(0)
 
             Case 9
-                Locate 10: Input " 9. OFF TURNOVER RATING "; statsL%(1)
+                Locate 10: Input " 9. OFF TURNOVER RATING "; leagueRatings%(1)
 
             Case 10
-                Locate 11: Input "10. DEF TURNOVER ADJ "; statsL%(2)
+                Locate 11: Input "10. DEF TURNOVER ADJ "; leagueRatings%(2)
 
             Case 11
-                Locate 12: Input "11. DEF FOUL ADJ "; statsL%(3)
+                Locate 12: Input "11. DEF FOUL ADJ "; leagueRatings%(3)
 
             Case 12
-                Locate 13: Input "12. ENTER 99 IF USING 6-9 "; statsL%(4)
+                Locate 13: Input "12. ENTER 99 IF USING 6-9 "; leagueRatings%(4)
 
             Case 13
-                Locate 14: Input "13. TEXT COLOR (0-15) "; T%(0)
-                If T%(0) >= 0 And T%(1) >= 0 Then
-                    Locate 21, 1: Color T%(0), T%(1)
+                Locate 14: Input "13. TEXT COLOR (0-15) "; teamRatings%(0)
+                If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
+                    Locate 21, 1: Color teamRatings%(0), teamRatings%(1)
                     Print teamName$ + " " + mascot$
                     Color 15, 0
                 End If
 
             Case 14
-                Locate 15: Input "14. BACKGROUND (0-7) "; T%(1)
-                If T%(0) >= 0 And T%(1) >= 0 Then
+                Locate 15: Input "14. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+                If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
                     Locate 21, 1
                     Locate 21, 1
                     Print "TEAM APPEARANCE: ";
-                    Color T%(0), T%(1)
+                    Color teamRatings%(0), teamRatings%(1)
                     Print teamName$ + " " + mascot$
                     Color 15, 0
                 End If
 
             Case 15
-                Locate 16: Input "15. TEAM FGA/G "; T%(3)
+                Locate 16: Input "15. TEAM FGA/G "; teamRatings%(3)
 
             Case 16
-                Locate 17: Input "16. LEAGUE FGA/G "; T%(4)
+                Locate 17: Input "16. LEAGUE FGA/G "; teamRatings%(4)
 
             Case 17
-                Locate 18: Input "17. TEAM GAMES PLAYED "; T%(5)
+                Locate 18: Input "17. TEAM GAMES PLAYED "; teamRatings%(5)
 
             Case 18
-                Locate 19: Input "18. HOMECOURT FACTOR "; T%(6)
+                Locate 19: Input "18. HOMECOURT FACTOR "; teamRatings%(6)
 
             Case 19
-                Locate 20: Input "19. ARENA NAME "; stadium$
+                Locate 20: Input "19. ARENA NAME "; arenaName$
 
             Case 20
-                Locate 2, 40: Input "20. NICKNAME "; mascot$
+                Locate 2, 37: Input "20. NICKNAME "; mascot$
 
             Case 21
-                Locate 3, 40: Input "21. COACH "; coach$
+                Locate 3, 37: Input "21. COACH "; coach$
 
             Case 22
-                Locate 5, 40: Input "22. AVG ATTENDANCE "; teamAttendance%
+                Locate 4, 37: Input "22. AVG ATTENDANCE "; teamAttendance%
 
             Case 23
-                Locate 6, 40: Input "23. WINS "; T%(7)
+                Locate 5, 37: Input "23. WINS "; teamRatings%(7)
 
             Case 24
-                Locate 7, 40: Input "24. LOSSES "; T%(8)
+                Locate 6, 37: Input "24. LOSSES "; teamRatings%(8)
 
             Case 25
-                Locate 8, 40: Input "25. POWER RATING "; T%(9)
+                Locate 7, 37: Input "25. POWER RATING "; teamRatings%(9)
 
         End Select
 
@@ -218,8 +218,8 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     '---------------
     'Change Players
     '---------------
-    If T%(6) < 0 Then T%(6) = 0
-    If T%(6) > 6 Then T%(6) = 6
+    If teamRatings%(6) < 0 Then teamRatings%(6) = 0
+    If teamRatings%(6) > 6 Then teamRatings%(6) = 6
 
     Do
 
@@ -231,7 +231,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         For I = 0 To 6
             Locate I + 3, 5
             Print Using "##"; I + 1;
-            Print " "; cngratA$(I); Tab(40);
+            Print " "; cngratA$(I); Tab(37);
             Print Using "##"; I + 8;
             Print " "; cngratA$(I + 7)
         Next
@@ -253,20 +253,20 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Print Tab(31); "CHANGE PLAYER STATS"
             Color 15
 
-            Print " 1. NAME "; cngratA$(I); Tab(40); "17. GAMES "; RS!(I, 0)
-            Print " 2. POSITION "; P$(I); Tab(40); "18. MINUTES "; RS!(I, 1)
-            Print " 3. GAMES PLAYED "; X!(I, 0); Tab(40); "19. FGM "; RS!(I, 3)
-            Print " 4. ADJ FG% "; statsA!(I, 0); Tab(40); "20. FGA "; RS!(I, 2)
-            Print " 5. FT% "; statsA!(I, 1); Tab(40); "21. FTM "; RS!(I, 5)
-            Print " 6. OFF RB/40 MIN X 10 "; X!(I, 4); Tab(40); "22. FTA "; RS!(I, 4)
-            Print " 7. DEF RB/40 MIN X 10 "; statsA!(I, 2); Tab(40); "23. OFF REB "; RS!(I, 6)
-            Print " 8. ASSIST RATING "; statsA!(I, 4); Tab(40); "24. TOTAL REB "; RS!(I, 7)
-            Print " 9. STEAL RATING "; statsA!(I, 5); Tab(40); "25. PER FOULS "; RS!(I, 8)
-            Print "10. BLOCK RATING "; statsA!(I, 6); Tab(40); "26. ASSISTS "; RS!(I, 9)
-            Print "11. FGA "; X!(I, 1); Tab(40); "27. BLOCKS "; RS!(I, 10)
-            Print "12. FOUL COMMIT RATING "; X!(I, 5); Tab(40); "28. STEALS "; RS!(I, 11)
-            Print "13. FOUL DRAWING RATING "; X!(I, 6); Tab(40); "29. 3 FGM "; RS!(I, 13)
-            Print "14. 3FG% "; X!(I, 2); Tab(40); "30. 3 FGA "; RS!(I, 12)
+            Print " 1. NAME "; cngratA$(I); Tab(37); "17. GAMES "; RS!(I, 0)
+            Print " 2. POSITION "; P$(I); Tab(37); "18. MINUTES "; RS!(I, 1)
+            Print " 3. GAMES PLAYED "; X!(I, 0); Tab(37); "19. FGM "; RS!(I, 3)
+            Print " 4. ADJ FG% "; statsA!(I, 0); Tab(37); "20. FGA "; RS!(I, 2)
+            Print " 5. FT% "; statsA!(I, 1); Tab(37); "21. FTM "; RS!(I, 5)
+            Print " 6. OFF RB/40 MIN X 10 "; X!(I, 4); Tab(37); "22. FTA "; RS!(I, 4)
+            Print " 7. DEF RB/40 MIN X 10 "; statsA!(I, 2); Tab(37); "23. OFF REB "; RS!(I, 6)
+            Print " 8. ASSIST RATING "; statsA!(I, 4); Tab(37); "24. TOTAL REB "; RS!(I, 7)
+            Print " 9. STEAL RATING "; statsA!(I, 5); Tab(37); "25. PER FOULS "; RS!(I, 8)
+            Print "10. BLOCK RATING "; statsA!(I, 6); Tab(37); "26. ASSISTS "; RS!(I, 9)
+            Print "11. FGA "; X!(I, 1); Tab(37); "27. BLOCKS "; RS!(I, 10)
+            Print "12. FOUL COMMIT RATING "; X!(I, 5); Tab(37); "28. STEALS "; RS!(I, 11)
+            Print "13. FOUL DRAWING RATING "; X!(I, 6); Tab(37); "29. 3 FGM "; RS!(I, 13)
+            Print "14. 3FG% "; X!(I, 2); Tab(37); "30. 3 FGA "; RS!(I, 12)
             Print "15. 3FGA/TOT FGA "; X!(I, 3)
             Print "16. DEFENSIVE RATING (1-9) "; DF!(I)
 
@@ -328,46 +328,46 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                         Locate 17: Input "16. DEFENSIVE RATING (1-9) "; DF!(I)
 
                     Case 17
-                        Locate 2, 40: Input "17. GAMES "; RS!(I, 0)
+                        Locate 2, 37: Input "17. GAMES "; RS!(I, 0)
 
                     Case 18
-                        Locate 3, 40: Input "18. MINUTES "; RS!(I, 1)
+                        Locate 3, 37: Input "18. MINUTES "; RS!(I, 1)
 
                     Case 19
-                        Locate 4, 40: Input "19. FGM "; RS!(I, 3)
+                        Locate 4, 37: Input "19. FGM "; RS!(I, 3)
 
                     Case 20
-                        Locate 5, 40: Input "20. FGA "; RS!(I, 2)
+                        Locate 5, 37: Input "20. FGA "; RS!(I, 2)
 
                     Case 21
-                        Locate 6, 40: Input "21. FTM "; RS!(I, 5)
+                        Locate 6, 37: Input "21. FTM "; RS!(I, 5)
 
                     Case 22
-                        Locate 7, 40: Input "22. FTA "; RS!(I, 4)
+                        Locate 7, 37: Input "22. FTA "; RS!(I, 4)
 
                     Case 23
-                        Locate 8, 40: Input "23. OFF REB "; RS!(I, 6)
+                        Locate 8, 37: Input "23. OFF REB "; RS!(I, 6)
 
                     Case 24
-                        Locate 9, 40: Input "24. TOTAL REB "; RS!(I, 7)
+                        Locate 9, 37: Input "24. TOTAL REB "; RS!(I, 7)
 
                     Case 25
-                        Locate 10, 40: Input "25. PER FOULS "; RS!(I, 8)
+                        Locate 10, 37: Input "25. PER FOULS "; RS!(I, 8)
 
                     Case 26
-                        Locate 11, 40: Input "26. ASSISTS "; RS!(I, 9)
+                        Locate 11, 37: Input "26. ASSISTS "; RS!(I, 9)
 
                     Case 27
-                        Locate 12, 40: Input "27. BLOCKS "; RS!(I, 10)
+                        Locate 12, 37: Input "27. BLOCKS "; RS!(I, 10)
 
                     Case 28
-                        Locate 13, 40: Input "28. STEALS "; RS!(I, 11)
+                        Locate 13, 37: Input "28. STEALS "; RS!(I, 11)
 
                     Case 29
-                        Locate 14, 40: Input "29. 3 FGM "; RS!(I, 13)
+                        Locate 14, 37: Input "29. 3 FGM "; RS!(I, 13)
 
                     Case 30
-                        Locate 15, 40: Input "30. 3 FGA "; RS!(I, 12)
+                        Locate 15, 37: Input "30. 3 FGA "; RS!(I, 12)
 
                 End Select
 
@@ -384,7 +384,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         Cls
 
-        Color T%(0), T%(1)
+        Color teamRatings%(0), teamRatings%(1)
         Print teamName$
 
         Color 14, 0
@@ -528,9 +528,9 @@ Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
 
     Shared V1%, V2%
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
 
-    Shared statsL%(), T%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), compT1%()
     Shared cngratA$(), P$()
     Shared statsA!(), DF!(), RS!(), X!()
 
@@ -554,11 +554,11 @@ Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
     LSet Q$(3) = MKI$(V1%)
     LSet Q$(4) = MKI$(V2%)
 
-    For I = 0 To 4: LSet Q$(I + 5) = MKI$(statsL%(I)): Next
+    For I = 0 To 4: LSet Q$(I + 5) = MKI$(leagueRatings%(I)): Next
 
-    T%(2) = 999
+    teamRatings%(2) = 999
 
-    For I = 0 To 9: LSet Q$(I + 10) = MKI$(T%(I)): Next
+    For I = 0 To 9: LSet Q$(I + 10) = MKI$(teamRatings%(I)): Next
 
     'Players
     For I = 0 To 13
@@ -583,7 +583,7 @@ Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
     Next
 
     LSet Q$(0) = RTrim$(coach$)
-    LSet Q$(1) = RTrim$(stadium$)
+    LSet Q$(1) = RTrim$(arenaName$)
     LSet Q$(2) = RTrim$(mascot$)
     LSet Q$(3) = MKL$(teamAttendance%)
 
@@ -618,9 +618,9 @@ Sub PrintRoster (A$, T1)
     Shared V1%, V2%
     Shared defFGPctAdj%, staminaRating%
 
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
 
-    Shared statsL%(), T%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), compT1%()
 
     Shared statsA!(), DF!(), X!()
 
@@ -630,13 +630,13 @@ Sub PrintRoster (A$, T1)
 
     LPrint "TEAM ROSTER FOR "; A$
     LPrint
-    LPrint "AVG SHOTS PER GAME = "; T%(3); "      DEF FG ADJ = "; defFGPctAdj%
+    LPrint "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj%
     LPrint "OPP PCT OF 3FG ATT ADJ = "; V2%; "  OPP 3FG PCT ADJ = "; V1%
     LPrint
-    LPrint "DEF STEAL ADJ "; statsL%(0)
-    LPrint "OFF TURNOVER ADJ "; statsL%(1)
-    LPrint "DEF TURNOVER ADJ "; statsL%(2)
-    LPrint "OFF FOUL ADJ "; statsL%(3)
+    LPrint "DEF STEAL ADJ "; leagueRatings%(0)
+    LPrint "OFF TURNOVER ADJ "; leagueRatings%(1)
+    LPrint "DEF TURNOVER ADJ "; leagueRatings%(2)
+    LPrint "OFF FOUL ADJ "; leagueRatings%(3)
     LPrint
     LPrint "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
     LPrint
@@ -671,9 +671,9 @@ Sub ViewRoster (A$, T1)
     Shared V1%, V2%
     Shared defFGPctAdj%, staminaRating%
 
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
 
-    Shared statsL%(), T%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), compT1%()
 
     Shared statsA!(), DF!(), X!()
 
@@ -682,12 +682,12 @@ Sub ViewRoster (A$, T1)
     Cls
 
     Print "TEAM ROSTER FOR ";
-    Color T%(0), T%(1): Print A$
+    Color teamRatings%(0), teamRatings%(1): Print A$
 
     Color 14, 0
     Print "    AVG SHOTS PER GAME = ";
     Color 15, 0
-    Print T%(3);
+    Print teamRatings%(3);
 
     Color 14, 0
     Print " DEF FG ADJ = ";
@@ -700,16 +700,16 @@ Sub ViewRoster (A$, T1)
     Color 15, 0: Print V1%;
 
     Color 14, 0: Print "   DEF STEAL ADJ ";
-    Color 15, 0: Print statsL%(0)
+    Color 15, 0: Print leagueRatings%(0)
 
     Color 14, 0: Print "OFF TURNOVER ADJ ";
-    Color 15, 0: Print statsL%(1);
+    Color 15, 0: Print leagueRatings%(1);
 
     Color 14, 0: Print "    DEF TURNOVER ADJ ";
-    Color 15, 0: Print statsL%(2);
+    Color 15, 0: Print leagueRatings%(2);
 
     Color 14, 0: Print "    OFF FOUL ADJ ";
-    Color 15, 0: Print statsL%(3)
+    Color 15, 0: Print leagueRatings%(3)
     Print
 
     Color 2, 0: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
@@ -739,7 +739,7 @@ End Sub
 '... explain here ...
 Sub GetTeam_CNGTM (teamName$, yearNumber$, teamIdx)
 
-    Shared T%()
+    Shared teamRatings%()
 
     Do
 
@@ -773,7 +773,7 @@ Sub GetTeam_CNGTM (teamName$, yearNumber$, teamIdx)
         If BO% <> 1 Then
 
             Locate 2, 33
-            Color T%(0), T%(1): Print teamName$
+            Color teamRatings%(0), teamRatings%(1): Print teamName$
 
             Color 15, 4
 
@@ -804,9 +804,9 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
 
     Shared V1%, V2%
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
 
-    Shared statsL%(), T%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), compT1%()
     Shared cngratA$(), P$()
     Shared statsA!(), DF!(), RS!(), X!()
 
@@ -853,9 +853,12 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
 
-        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
+
+        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
+
         For I = 0 To 13
+
             cngratA$(I) = RTrim$(Q$(I * 15 + 20))
 
             For I1 = 0 To 6
@@ -878,7 +881,7 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
         Get #1, teamIdx
 
         coach$ = Q$(0)
-        stadium$ = Q$(1)
+        arenaName$ = Q$(1)
         mascot$ = Q$(2)
         teamAttendance% = CVL(Q$(3))
 
@@ -900,7 +903,7 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
 
         If CK <> 999 Then
             coach$ = ""
-            stadium$ = ""
+            arenaName$ = ""
             mascot$ = ""
             teamAttendance% = 0
 

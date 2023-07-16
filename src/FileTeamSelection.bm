@@ -1,11 +1,11 @@
-`'------------------------------
+'------------------------------
 '   ChooseTeam Subroutine
 '------------------------------
 '...explanation...
 Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
-    Shared T%()
-
+    Shared teamRatings%()
+    
     Shared teamNames$()
 
     Do
@@ -73,7 +73,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
                     Else
 
-                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
 
                         fileLength& = LOF(1)
 
@@ -100,13 +100,17 @@ Sub ChooseTeam (yearNumber$, numberTeams, teamIdx, teamName$)
 
                             Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$)
 
-                            Locate 2, 33
-                            Color T%(0), T%(1): Print teamName$
+                            Do
 
-                            Color 15, 4
-                            Locate , 33: Print "ANY CHANGE? (YN)";
+                                Locate 2, 33
+                                Color teamRatings%(0), teamRatings%(1): Print teamName$
 
-                            I$ = GetKeyPress$
+                                Color 15, 4
+                                Locate 3, 33: Print "ANY CHANGE? (YN)";
+
+                                I$ = GetKeyPress$
+
+                            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
                         End If
 
@@ -164,6 +168,7 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$)
             Print "LOADING.."
 
             Call ReadTeam(yearNumber$, teamName$, selectedIdx)
+            'Call ReadExtraData(yearNumber$, teamName$, selectedIdx)
 
         End If
 
@@ -178,40 +183,104 @@ End Sub
 '...explanation...
 Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
 
-    Shared L%(), T%()
-    'Shared varB%()
+    Shared defFGPctAdj%, staminaRating%
+    Shared V1%, V2%
 
+    Shared leagueRatings%(), teamRatings%()
+    
+    Shared statsA!(), X!()
+    
+    Shared cngratA$()
+        
     Open diskPaths$(0) +  TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
-    '--- This will vary from game / module
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
     For I = 0 To 13
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
 
-    '--- Done defining structure
-
     Get #1, teamIdx
 
-    targetTeam$ = _Trim$(Q$(0))
-
-    '--- This will vary from game / module
-    SP = CVI(Q$(1))
-    DA = CVI(Q$(2))
+    targetTeam$ = RTrim$(Q$(0))
+    staminaRating% = CVI(Q$(1))
+    defFGPctAdj% = CVI(Q$(2))
     V1% = CVI(Q$(3))
     V2% = CVI(Q$(4))
 
+    'both of these are types of ratings
     For I = 0 To 4:
-        L%(I) = CVI(Q$(I + 5))
+        leagueRatings%(I) = CVI(Q$(I + 5))
     Next
 
     For I = 0 To 9:
-        T%(I) = CVI(Q$(I + 10))
+        teamRatings%(I) = CVI(Q$(I + 10))
     Next
-    '--- Done reading data
 
+    For I = 0 To 13
+
+        'Player name
+        cngratA$(I) = RTrim$(Q$(I * 15 + 20))
+
+        'Player ratings
+        For I1 = 0 To 6
+            statsA!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
+            X!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
+        Next
+    Next
+    
     'Close team file
     Close 1
+
+End Sub
+
+
+'------------------------------
+'   ReadExtraData Subroutine
+'------------------------------
+'...explanation...
+Sub ReadExtraData (teamYear$, targetTeam$, teamIdx)
+
+    Shared CK, teamAttendance%
+
+    Shared coach$, arenaName$, mascot$
+
+    Shared compT1%()
+    Shared P$()
+    Shared DF!(), RS!()
+
+    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = 566
+
+    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
+    For I = 0 To 13
+        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+    Next
+
+    Get #1, teamIdx
+
+    coach$ = Q$(0)
+    arenaName$ = Q$(1)
+    mascot$ = Q$(2)
+    teamAttendance% = CVL(Q$(3))
+
+    For I = 0 To 13
+
+        DF!(I) = CVI(Q$(I * 16 + 4))
+        P$(I) = Q$(I * 16 + 5)
+
+        For I1 = 0 To 13
+            RS!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
+        Next
+
+    Next
+
+    For I = 0 To 20
+        compT1%(I) = CVI(Q$(228 + I))
+    Next
+
+    CK = CVI(Q$(249))
 
 End Sub
 
@@ -229,9 +298,9 @@ Function nameStatFile$ (teamName$)
         If Mid$(teamName$, XX, 2) = "ST" Then Mid$(teamName$, 9, 1) = "_": Mid$(teamName$, 10, 2) = "ST"
     Next XX
 
+    'Length of 'converted' name for file
+    '-- update this if we want to support long files
     QQ = 8
-    'QQ - Length of teamName$ ???
-    '-- if we want to support long files
 
     For XX = 11 To 4 Step -1
         If Mid$(teamName$, XX, 1) = "_" Then
@@ -276,7 +345,7 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
             Call ReadFile(foundFiles$())
 
             Do
-                1310 Cls
+
                 Color , 1
                 Cls
                 Locate , 28

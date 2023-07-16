@@ -3,7 +3,7 @@ Sub HD2HDCON ()
     _Title "Courtside College Basketball - Head-to-Head Stats"
 
     Shared mergeO%()
-    Shared statsL%(), T%()
+    Shared leagueRatings%(), teamRatings%()
 
     Shared AL!(), AW!(), HL!(), HW!()
     Shared R1!(), R2!(), hd2hdR3!(), R4!()
@@ -190,7 +190,7 @@ Sub Hd2HdColl_Printer (teamName$)
 
     Shared D1$, D2$
 
-    Shared T%()
+    Shared teamRatings%()
 
     Shared Z1$()
 
@@ -432,7 +432,7 @@ Sub Hd2HdColl_Screen (teamName$)
 
     Shared D1$, D2$
 
-    Shared T%()
+    Shared teamRatings%()
 
     Shared Z1$()
 
@@ -453,7 +453,7 @@ Sub Hd2HdColl_Screen (teamName$)
         Cls
 
         Locate 2, 35
-        Color T%(0), T%(1): Print teamName$
+        Color teamRatings%(0), teamRatings%(1): Print teamName$
         Color 3, 0
 
         'Table header
@@ -593,7 +593,7 @@ Sub Hd2HdColl_Screen (teamName$)
     Cls
 
     Locate 2, 35
-    Color T%(0), T%(1): Print teamName$
+    Color teamRatings%(0), teamRatings%(1): Print teamName$
     Color 3, 0
 
     Locate 4
@@ -821,7 +821,7 @@ End Sub
 '... explain here ...
 Sub GetTeam_HD2HD (TM$)
 
-    Shared T%()
+    Shared teamRatings%()
 
     Do
 
@@ -887,7 +887,7 @@ Sub GetTeam_HD2HD (TM$)
             Else
 
                 Locate 2, 33
-                Color T%(0), T%(1): Print TM$
+                Color teamRatings%(0), teamRatings%(1): Print TM$
 
                 Do
                     Color 15, 4
@@ -910,7 +910,7 @@ End Sub
 ' ...explanation...
 Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
 
-    Shared statsL%(), T%()
+    Shared leagueRatings%(), teamRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -954,8 +954,8 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
 
-        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
         Close 1
 

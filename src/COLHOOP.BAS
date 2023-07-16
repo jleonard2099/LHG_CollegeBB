@@ -8,7 +8,7 @@ Sub COLHOOP ()
 
     Shared tickerStart
 
-    Shared coachOpt$(), foulShotOpt$(), location$()
+    Shared coachMode$(), foulShotOpt$(), location$()
     Shared MO$(), sclockOpt$(), yesNo$()
 
     Color 7, 0
@@ -51,7 +51,7 @@ Sub COLHOOP ()
     Input #1, N
     Input #1, NF%
     Input #1, pbpDelay!
-    Input #1, CM%
+    Input #1, coachOpt
     Input #1, TB%
     Input #1, TF%
     Input #1, N7%
@@ -229,7 +229,7 @@ Sub COLHOOP ()
             Locate 12, 2: Color 14
             Print "(A) ";: Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(TB%)
             Locate 13, 2: Color 14
-            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(CM%);
+            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(coachOpt);
             Locate 1, 1
             Locate 14, 2: Color 14
             Print "(C) ";: Color 15: Print "3 FT WHEN FOULED ON 3-PT ATT: "; yesNo$(TF%)
@@ -324,7 +324,7 @@ Sub COLHOOP ()
                         Print #1, N
                         Print #1, NF%
                         Print #1, pbpDelay!
-                        Print #1, CM%
+                        Print #1, coachOpt
                         Print #1, TB%
                         Print #1, TF%
                         Print #1, N7%
@@ -335,7 +335,7 @@ Sub COLHOOP ()
                         TB% = 1 - TB%
 
                     Case 12:
-                        CM% = 1 - CM%
+                        coachOpt = 1 - coachOpt
 
                     Case 13:
                         TF% = 1 - TF%
@@ -1782,11 +1782,11 @@ Sub COLHOOP ()
     Print
     If PB% = 1 And pbpDelay! <> 0 Then Call DELAY
 
-    If U5 <> 0 Or CM% = 1 Then
+    If U5 <> 0 Or coachOpt = 1 Then
         '949
         If Not (H >= 2 And gameClock! <= 240 And S!(P, 0) - S!(D, 0) > 0 And U5 = 1 And P = CT) Then
             If U5 = 2 Or U5 = 1 And D = CT Then
-                If (U5 = 1 Or U5 = 0) And CM% <> 1 Then
+                If (U5 = 1 Or U5 = 0) And coachOpt <> 1 Then
                     GoTo 530
                 End If
             End If
@@ -1810,7 +1810,7 @@ Sub COLHOOP ()
 
                     If P6 <> 1 Then
 
-                        If (U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And P = CT Or U5 = 2) Then
+                        If (U5 = 0 And coachOpt = 1 Or U5 = 1 And D = CT And coachOpt = 1 Or U5 = 1 And P = CT Or U5 = 2) Then
 
                             If gameClock! <= 660 And gameClock! >= 540 And H = 1 And T1(P) >= 5 Then
                                 P6 = 2: CTO% = 1

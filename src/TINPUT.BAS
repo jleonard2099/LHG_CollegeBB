@@ -2,20 +2,23 @@ Sub TINPUT ()
 
     _Title "Courtside College Basketball - Team Input"
 
-    Dim E0(16)
-
-    Dim inputQQ(3), inputX$(3)
+    Shared BE, BF, BG, BI, BJ, BK, BH
+    Shared L3, L5, T1, T2, T6, T7, T8, T3, T4, T0, T9
+    Shared W0, W1, XX
 
     Shared V1%, V2%
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
+
+    Dim E0(16)
+    Dim inputQQ(3), inputX$(3)
+
+    Shared teamRatings%()
 
     Shared inputA(), inputDF(), inputL()
     Shared inputRS(), inputX()
 
     Shared inputN$(), inputP$()
-
-    Shared T%()
 
     inputX$(0) = "COLLEGE BASKETBALL"
     inputX$(1) = "H S BASKETBALL"
@@ -72,7 +75,7 @@ Sub TINPUT ()
         Locate 7: Input "5. SEASON TURNOVERS/GAME "; BB
         Locate 8: Input "6. SEASON 3 FGA/FGA % "; Q7
         Locate 9: Input "7. SEASON 3 FG % "; Q8
-        T%(2) = 999
+        teamRatings%(2) = 999
 
         Do
 
@@ -171,64 +174,65 @@ Sub TINPUT ()
 
         If teamNumber <> 0 Then
 
-            Locate 3: Input "15. DISK ID "; yearNumber$
-            Locate 4: Input " 1. TEAM NAME "; A$
-            Locate 5: Input "19. TEAM NICKNAME "; mascot$
-            Locate 6: Input " 2. STRENGTH OF SCHEDULE ADJ "; BC
-            Locate 7: Input "16. HOMECOURT FACTOR (0-6)"; T%(6)
-            Locate 8: Input "17. TEXT COLOR (0-15) "; T%(0)
-            Locate 9: Input "18. BACKGROUND (0-7) "; T%(1)
-            Locate 10, 1
-            Print "TEAM APPEARANCE: ";
-            Color T%(0), T%(1)
+            Locate 3: Input " 1. DISK ID "; yearNumber$
+            Locate 4: Input " 2. TEAM NAME "; A$
+            Locate 5: Input " 3. TEAM NICKNAME "; mascot$
+            Locate 6: Input " 4. STRENGTH OF SCHEDULE ADJ "; BC
+            Locate 7: Input " 5. HOMECOURT FACTOR (0-6)"; teamRatings%(6)
+            Locate 8: Input " 6. TEXT COLOR (0-15) "; teamRatings%(0)
+            Locate 9: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+            'Locate 8, 37
+            'Print "TEAM APPEARANCE: ";
+            Locate 9, 37
+            Color teamRatings%(0), teamRatings%(1)
             Print A$ + " " + mascot$
             Color 15, 0
 
-            Locate 2, 37: Input " 3. GAMES PLAYED "; L5
-            Locate 3, 37: Input "20. WINS "; T%(7)
-            Locate 4, 37: Input "21. LOSSES "; T%(8)
-            Locate 5, 37: Input "22. POWER RATING "; T%(9)
-            Locate 6, 37: Input "23. COACH "; coach$
-            Locate 7, 37: Input "24. ARENA "; stadium$
-            Locate 8, 37: Input "25. AVG ATT "; teamAttendance%
+            Locate 2, 37: Input "20. GAMES PLAYED "; L5
+            Locate 3, 37: Input "21. WINS "; teamRatings%(7)
+            Locate 4, 37: Input "22. LOSSES "; teamRatings%(8)
+            Locate 5, 37: Input "23. POWER RATING "; teamRatings%(9)
+            Locate 6, 37: Input "24. COACH "; coach$
+            Locate 7, 37: Input "25. ARENA "; arenaName$
+            Locate 8, 37: Input "26. AVG ATT "; teamAttendance%
 
-            Locate 11, 10: Print A$;
-            Locate 11, 30: Print "OPPONENTS"
-            Locate 12, 1: Print "4. FGA ";
-            Locate 12, 15: Input T1
-            Locate 12, 30: Input T2
-            Locate 13, 1: Print "5. FG % ";
-            Locate 13, 15: Input T6
-            Locate 13, 30: Input BE
-            Locate 14, 1: Print "6. FTA";
-            Locate 14, 15: Input T7
-            Locate 14, 30: Input BF
-            Locate 15, 1: Print "7. FT %";
-            Locate 15, 15: Input T8
-            Locate 15, 30: Input BG
-            Locate 16, 1: Print "8. RB";
-            Locate 16, 15: Input T3
-            Locate 16, 30: Input T4
-            Locate 17, 1: Print "9. AST";
-            Locate 17, 15: Input T0
-            Locate 17, 30: Input XX
-            Locate 18, 1: Print "10. FOULS";
-            Locate 18, 15: Input L3
-            Locate 18, 30: Input BI
-            Locate 19, 1: Print "11. TO";
-            Locate 19, 15: Input BJ
-            Locate 19, 30: Input BK
-            Locate 20, 1: Print "12. STLS";
-            Locate 20, 15: Input T9
-            Locate 20, 30: Input BH
-            Locate 21, 1: Print "13. 3 FGA ";
+            Locate 10, 10: Print A$;
+            Locate 10, 30: Print "OPPONENTS"
+            Locate 11, 1: Print "8. FGA ";
+            Locate 11, 15: Input T1
+            Locate 11, 30: Input T2
+            Locate 12, 1: Print "9. FG % ";
+            Locate 12, 15: Input T6
+            Locate 12, 30: Input BE
+            Locate 13, 1: Print "10. FTA";
+            Locate 13, 15: Input T7
+            Locate 13, 30: Input BF
+            Locate 14, 1: Print "11. FT %";
+            Locate 14, 15: Input T8
+            Locate 14, 30: Input BG
+            Locate 15, 1: Print "12. RB";
+            Locate 15, 15: Input T3
+            Locate 15, 30: Input T4
+            Locate 16, 1: Print "13. AST";
+            Locate 16, 15: Input T0
+            Locate 16, 30: Input XX
+            Locate 17, 1: Print "14. FOULS";
+            Locate 17, 15: Input L3
+            Locate 17, 30: Input BI
+            Locate 18, 1: Print "15. TO";
+            Locate 18, 15: Input BJ
+            Locate 18, 30: Input BK
+            Locate 19, 1: Print "16. STLS";
+            Locate 19, 15: Input T9
+            Locate 19, 30: Input BH
+            Locate 20, 1: Print "17. 3 FGA ";
+            Locate 20, 15: Print "---";
+            Locate 20, 30: Input W0
+            Locate 21, 1: Print "18. 3 FGA % ";
             Locate 21, 15: Print "---";
-            Locate 21, 30: Input W0
-            Locate 22, 1: Print "14. 3 FGA % ";
-            Locate 22, 15: Print "---";
-            Locate 22, 30: Input W1
+            Locate 21, 30: Input W1
 
-            Locate 23: Input "26. OPP 2FG% "; OE
+            Locate 22: Input "19. OPP 2FG% "; OE
 
             If BI = 0 Then BI = 20 * L5
             If L3 = 0 Then L3 = 20 * L5
@@ -236,126 +240,126 @@ Sub TINPUT ()
             Do
 
                 Do
-                    Locate 24
+                    Locate 23
                     Input "# TO CHANGE (0 TO CONTINUE ) "; B9
                 Loop Until B9 >= 0 And B9 <= 26
 
                 Select Case B9
 
                     Case 1
-                        Locate 4: Input " 1. TEAM NAME "; A$
+                        Locate 3, 1: Input " 1. DISK ID "; yearNumber$
 
                     Case 2
-                        Locate 6: Input " 2. STRENGTH OF SCHEDULE ADJ "; BC
+                        Locate 4: Input " 2. TEAM NAME "; A$
 
                     Case 3
-                        Locate 2, 37: Input " 3. GAMES PLAYED "; L5
+                        Locate 5: Input " 3. TEAM NICKNAME "; mascot$
 
                     Case 4
-                        Locate 12, 1: Print "4. FGA ";
-                        Locate 12, 15: Input T1
-                        Locate 12, 30: Input T2
+                        Locate 6: Input " 4. STRENGTH OF SCHEDULE ADJ "; BC
 
                     Case 5
-                        Locate 13, 1: Print "5. FG % ";
-                        Locate 13, 15: Input T6
-                        Locate 13, 30: Input BE
+                        Locate 7: Input " 5. HOMECOURT FACTOR (0-6)"; teamRatings%(6)
 
                     Case 6
-                        Locate 14, 1: Print "6. FTA";
-                        Locate 14, 15: Input T7
-                        Locate 14, 30: Input BF
+                        Locate 8: Input " 6. TEXT COLOR (0-15) "; teamRatings%(0)
+                        If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
+                            'Locate 8, 37
+                            'Print "TEAM APPEARANCE: ";
+                            Locate 9, 37
+                            Color teamRatings%(0), teamRatings%(1)
+                            Print A$ + " " + mascot$
+                            Color 15, 0
+                        End If
 
                     Case 7
-                        Locate 15, 1: Print "7. FT %";
-                        Locate 15, 15: Input T8
-                        Locate 15, 30: Input BG
+                        Locate 9: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+                        If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
+                            'Locate 8, 37
+                            'Print "TEAM APPEARANCE: ";
+                            Locate 9, 37
+                            Color teamRatings%(0), teamRatings%(1)
+                            Print A$ + " " + mascot$
+                            Color 15, 0
+                        End If
 
                     Case 8
-                        Locate 16, 1: Print "8. RB";
-                        Locate 16, 15: Input T3
-                        Locate 16, 30: Input T4
+                        Locate 11, 1: Print "8. FGA ";
+                        Locate 11, 15: Input T1
+                        Locate 11, 30: Input T2
 
                     Case 9
-                        Locate 17, 1: Print "9. AST";
-                        Locate 17, 15: Input T0
-                        Locate 17, 30: Input XX
+                        Locate 12, 1: Print "9. FG % ";
+                        Locate 12, 15: Input T6
+                        Locate 12, 30: Input BE
 
                     Case 10
-                        Locate 18, 1: Print "10. FOULS";
-                        Locate 18, 15: Input L3
-                        Locate 18, 30: Input BI
+                        Locate 13, 1: Print "10. FTA";
+                        Locate 13, 15: Input T7
+                        Locate 13, 30: Input BF
 
                     Case 11
-                        Locate 19, 1: Print "11. TO";
-                        Locate 19, 15: Input BJ
-                        Locate 19, 30: Input BK
+                        Locate 14, 1: Print "11. FT %";
+                        Locate 14, 15: Input T8
+                        Locate 14, 30: Input BG
 
                     Case 12
-                        Locate 20, 1: Print "12. STLS";
-                        Locate 20, 15: Input T9
-                        Locate 20, 30: Input BH
+                        Locate 15, 1: Print "12. RB";
+                        Locate 15, 15: Input T3
+                        Locate 15, 30: Input T4
 
                     Case 13
-                        Locate 21, 1: Print "13. 3 FGA ";
-                        Locate 21, 15: Print "---";
-                        Locate 21, 30: Input W0
+                        Locate 16, 1: Print "13. AST";
+                        Locate 16, 15: Input T0
+                        Locate 16, 30: Input XX
 
                     Case 14
-                        Locate 22, 1: Print "14. 3 FGA % ";
-                        Locate 22, 15: Print "---";
-                        Locate 22, 30: Input W1
+                        Locate 17, 1: Print "14. FOULS";
+                        Locate 17, 15: Input L3
+                        Locate 17, 30: Input BI
 
                     Case 15
-                        Locate 3, 1: Input "15. DISK ID "; yearNumber$
+                        Locate 18, 1: Print "15. TO";
+                        Locate 18, 15: Input BJ
+                        Locate 18, 30: Input BK
 
                     Case 16
-                        Locate 7: Input "16. HOMECOURT FACTOR (0-6)"; T%(6)
+                        Locate 19, 1: Print "16. STLS";
+                        Locate 19, 15: Input T9
+                        Locate 19, 30: Input BH
 
                     Case 17
-                        Locate 8: Input "17. TEXT COLOR (0-15) "; T%(0)
-                        If T%(0) >= 0 And T%(1) >= 0 Then
-                            Locate 10, 1
-                            Print "TEAM APPEARANCE: ";
-                            Color T%(0), T%(1)
-                            Print A$ + " " + mascot$
-                            Color 15, 0
-                        End If
+                        Locate 20, 1: Print "17. 3 FGA ";
+                        Locate 20, 15: Print "---";
+                        Locate 20, 30: Input W0
 
                     Case 18
-                        Locate 9: Input "18. BACKGROUND (0-7) "; T%(1)
-                        If T%(0) >= 0 And T%(1) >= 0 Then
-                            Locate 10, 1
-                            Print "TEAM APPEARANCE: ";
-                            Color T%(0), T%(1)
-                            Print A$ + " " + mascot$
-                            Color 15, 0
-                        End If
+                        Locate 21, 1: Print "18. 3 FGA % ";
+                        Locate 21, 15: Print "---";
 
                     Case 19
-                        'Locate 2, 37:
-                        Locate 5: Input "19. TEAM NICKNAME "; mascot$
+                        Locate 22, 1: Input "OPP 2FG% "; OE
 
                     Case 20
-                        Locate 3, 37: Input "20. WINS "; T%(7)
+                        Locate 2, 37: Input " 3. GAMES PLAYED "; L5
 
                     Case 21
-                        Locate 4, 37: Input "21. LOSSES "; T%(8)
+                        Locate 3, 37: Input "20. WINS "; teamRatings%(7)
 
                     Case 22
-                        Locate 5, 37: Input "22. POWER RATING "; T%(9)
+                        Locate 4, 37: Input "21. LOSSES "; teamRatings%(8)
 
                     Case 23
-                        Locate 6, 37: Input "23. COACH "; coach$
+                        Locate 5, 37: Input "22. POWER RATING "; teamRatings%(9)
 
                     Case 24
-                        Locate 7, 37: Input "24. ARENA "; stadium$
+                        Locate 6, 37: Input "23. COACH "; coach$
 
                     Case 25
-                        Locate 8, 37: Input "25. AVG ATT "; teamAttendance%
+                        Locate 7, 37: Input "24. ARENA "; arenaName$
 
                     Case 26
-                        Locate 22, 37: Input "OPP 2FG% "; OE
+                        Locate 8, 37: Input "25. AVG ATT "; teamAttendance%
 
                 End Select
 
@@ -370,9 +374,9 @@ Sub TINPUT ()
             ' Players
             '---------------
             ' *** TM FGA/G
-            T%(3) = Int(((T1 + T2) / (L5 * 2)) + .5)
-            T%(4) = L1
-            T%(5) = L5
+            teamRatings%(3) = Int(((T1 + T2) / (L5 * 2)) + .5)
+            teamRatings%(4) = L1
+            teamRatings%(5) = L5
 
             If H = 1 Then
                 F3 = 32
@@ -428,7 +432,8 @@ Sub TINPUT ()
                                     Locate 4: Input "2. POSITION "; inputP$(I)
 
                                 Case 3
-                                    Locate 5: Input " 3. GAMES "; inputA(I, 7): inputX(I, 0) = inputA(I, 7)
+                                    Locate 5: Input " 3. GAMES "; inputA(I, 7)
+                                    inputX(I, 0) = inputA(I, 7)
 
                                 Case 4
                                     Locate 6: Input " 4. MP "; inputA(I, 8)
@@ -437,7 +442,8 @@ Sub TINPUT ()
                                     Locate 7: Input " 5. FGM "; inputRS(I, 3)
 
                                 Case 6
-                                    Locate 8: Input " 6. FGA "; inputA(I, 9): inputX(I, 1) = inputA(I, 9)
+                                    Locate 8: Input " 6. FGA "; inputA(I, 9)
+                                    inputX(I, 1) = inputA(I, 9)
 
                                 Case 7
                                     Locate 9: Input " 7. FTM "; inputRS(I, 5)
@@ -524,15 +530,24 @@ Sub TINPUT ()
 
             Next I
 
-            '-- This is looking at the first 2 digits in the team NAME
             X1 = Val(Mid$(A$, 1, 2))
+            'Adjusts team and player FTA
+            'based on FT rules changes
+            '-- original code was between 1 and 72
+            '-- but this would impact years
+            '-- between 2000 and 2052
+            If (X1 >= 39 And X1 <= 72) Then
 
-            If Not (X1 < 1 Or X1 > 72) Then
-                'X1 >= 1 And X1 <= 72
-                'For teams 1900 through 1972???
-                '-- Would also apply to 2001+
-                X2 = .83
-                If X1 > 52 And X1 < 58 Then X2 = .7
+                If X1 >= 53 And X1 <= 57 Then 
+                    '1953 - 1957
+                    '70% of entered value
+                    X2 = .7
+                Else
+                    '1939 - 1952, 1958 - 1972
+                    '83% of entered value
+                    X2 = .83
+                End If
+
                 T7 = Int((T7 * X2) + .5)
                 BF = Int((BF * X2) + .5)
 
@@ -680,8 +695,6 @@ Sub TINPUT ()
 
             Next I
 
-            R! = 1200 - (((T1 + T2) / (L5 * 2)) * 4)
-            R! = R! / 6
             inputY! = BH / L5
             X! = (inputY! - 7) / .4
             X! = Int(X! + .5)
@@ -689,6 +702,8 @@ Sub TINPUT ()
             If X! < 0 Then inputL(0) = 100 + X!
             If X! > 0 Then inputL(0) = X!
 
+            R! = 1200 - (((T1 + T2) / (L5 * 2)) * 4)
+            R! = R! / 6
             inputY! = (BJ - BH) / L5
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
@@ -969,7 +984,7 @@ Sub TINPUT ()
                 inputA(I, 6) = inputA(I, 6) + E0(I)
             Next I
 
-            Call SaveTeam(1, yearNumber$, teamNumber)
+            Call SaveTeam(1, A$, yearNumber$, teamNumber)
 
         End If 'Done checking for EXIT
 
@@ -982,16 +997,20 @@ End Sub
 '          SaveTeam Subroutine
 '----------------------------------------
 '...explanation...
-Sub SaveTeam (newID%, yearNumber$, teamIdx)
+Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Shared V1%, V2%
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
 
-    Shared inputL(), T%()
+    Shared BE, BF, BG, BI, BJ, BK, BH
+    Shared L3, L5, T1, T2, T6, T7, T8, T3, T4, T0, T9
+    Shared W0, W1, XX
 
-    Shared inputA(), inputDF(), inputRS()
-    Shared inputX()
+    Shared teamRatings%()
+
+    Shared inputA(), inputDF(), inputL()
+    Shared inputRS(), inputX()
 
     Shared inputN$(), inputP$()
 
@@ -1019,10 +1038,10 @@ Sub SaveTeam (newID%, yearNumber$, teamIdx)
         LSet Q$(I + 5) = MKI$(inputL(I))
     Next
 
-    T%(2) = 999
+    teamRatings%(2) = 999
 
     For I = 0 To 9:
-        LSet Q$(I + 10) = MKI$(T%(I))
+        LSet Q$(I + 10) = MKI$(teamRatings%(I))
     Next
 
     For I = 0 To 13
@@ -1033,7 +1052,7 @@ Sub SaveTeam (newID%, yearNumber$, teamIdx)
         Next
     Next
 
-    Put #1, teamNumber
+    Put #1, teamIdx
 
     Close 1
 
@@ -1047,7 +1066,7 @@ Sub SaveTeam (newID%, yearNumber$, teamIdx)
     Next
 
     LSet Q$(0) = coach$
-    LSet Q$(1) = stadium$
+    LSet Q$(1) = arenaName$
     LSet Q$(2) = mascot$
     LSet Q$(3) = MKL$(teamAttendance%)
 
@@ -1108,11 +1127,10 @@ Sub SaveTeam (newID%, yearNumber$, teamIdx)
     Next I
 
     mascot$ = ""
-    stadium$ = ""
+    arenaName$ = ""
     coach$ = ""
     teamAttendance% = 0
 
     Erase N$
 
 End Sub
-

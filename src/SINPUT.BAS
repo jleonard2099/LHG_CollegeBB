@@ -390,7 +390,7 @@ End Sub
 '...explanation...
 Sub GetTeam_SINPUT (B$, YN$, D)
 
-    Shared statsL%(), T%()
+    Shared leagueRatings%(), teamRatings%()
 
     Do
         Color 15, 0
@@ -453,7 +453,7 @@ Sub GetTeam_SINPUT (B$, YN$, D)
                 BO% = 0
             Else
                 Locate 2, 33
-                Color T%(0), T%(1): Print B$
+                Color teamRatings%(0), teamRatings%(1): Print B$
 
                 Do
                     Color 15, 4
@@ -477,7 +477,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_SINPUT (T$, YN$, numberTeams, T1)
 
-    Shared statsL%(), T%()
+    Shared leagueRatings%(), teamRatings%()
 
     NS% = 0
 
@@ -521,9 +521,9 @@ Sub SelectTeam_SINPUT (T$, YN$, numberTeams, T1)
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
 
-        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
 
-        For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
         Close 1
     Else

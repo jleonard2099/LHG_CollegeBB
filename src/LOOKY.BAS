@@ -2,7 +2,7 @@ Sub LOOKY ()
 
     _Title "Courtside College Basketball - Stats Viewer"
 
-    Shared T%()
+    Shared teamRatings%()
 
     menuExit = 0
 
@@ -92,7 +92,7 @@ Sub LOOKY ()
                 B$ = A$
 
                 Locate 2, 33
-                Color T%(0), T%(1): Print B$
+                Color teamRatings%(0), teamRatings%(1): Print B$
 
                 Color 15, 4
 
@@ -215,11 +215,26 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     Next
 
     Open diskPaths$(1) + statFile$ For Input As #1
+
     Input #1, teamName$
-    For I = 0 To 13: Input #1, A$(I)
-    For J = 0 To 13: Input #1, lookyA!(I, J): Next: Input #1, statsW0!(I): Input #1, statsW1!(I): Next
+
+    For I = 0 To 13: 
+    
+        Input #1, A$(I)
+
+        For J = 0 To 13: 
+            Input #1, lookyA!(I, J)
+        Next
+        
+        Input #1, statsW0!(I)
+        Input #1, statsW1!(I)
+
+    Next
+
     For K = 0 To 15: Input #1, statsZ!(K): Next
+
     For M = 0 To 15: Input #1, statsZ1!(M): Next
+
     Close #1
 
     For I = 0 To 13
@@ -1082,7 +1097,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
 
-    Shared statsL%(), T%()
+    Shared leagueRatings%(), teamRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -1124,8 +1139,9 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
         V1% = CVI(Q$(3))
         V2% = CVI(Q$(4))
 
-        For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: T%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
+
+        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
         Close 1
 

@@ -530,7 +530,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_MERGE (yearNumber$, numberTeams)
 
-    Shared mergeT%(), statsL%()
+    Shared mergeT%(), leagueRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -583,7 +583,7 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
             V1% = CVI(Q$(3))
             V2% = CVI(Q$(4))
 
-            For I = 0 To 4: statsL%(I) = CVI(Q$(I + 5)): Next
+            For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
             For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
 
             Close 1

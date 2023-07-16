@@ -103,7 +103,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Dim U6!
 
     Shared slotName$(), regionNames$()
-    Shared consolationSetting%(), T%()
+    Shared consolationSetting%(), teamRatings%()
     Shared tourneyN%(), scheduleNG%(), NN%()
 
     tourneyDefaults%(3) = 1
@@ -246,8 +246,8 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     numberRegions$ = _Trim$(numberRegions$)
 
     Done:
+    Color 14, 1
     Locate 23, 1
-    Color 15, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
     Call YesNoB(X$, XCode, FG, BG)
@@ -316,7 +316,7 @@ End Sub
 Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
-    Shared consolationSetting%(), T%()
+    Shared consolationSetting%(), teamRatings%()
     Shared tourneyN%(), scheduleNG%(), NN%()
 
     Cls
@@ -356,7 +356,8 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
     NT$ = _Trim$(NT$)
 
     Done1:
-    Locate 23, 1: Color 15, 1
+    Color 14, 1
+    Locate 23, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
 
@@ -533,7 +534,7 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                                 BO% = 0
                             Else
                                 Locate 2, 33
-                                Color T%(0), T%(1): Print A$
+                                Color teamRatings%(0), teamRatings%(1): Print A$
 
                                 Do
                                     Color 15, 4
@@ -549,8 +550,8 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                         slotName$(NR, B, 1) = YN$
                         tourneyN%(NR, B, 0) = teamIdx
                         tourneyN%(NR, B, 1) = 3
-                        tourneyN%(NR, B, 2) = T%(0)
-                        tourneyN%(NR, B, 3) = T%(1)
+                        tourneyN%(NR, B, 2) = teamRatings%(0)
+                        tourneyN%(NR, B, 3) = teamRatings%(1)
                         tourneyN%(NR, B, 1) = 1
 
                     Else
@@ -687,7 +688,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
     Do
         ' *** LOAD IN A SAVED TOURNAMENT ***
         Spec$ = diskPaths$(1) + "*.TOU"
-		Count% = FCount%(Spec$)
+        Count% = FCount%(Spec$)
 
         If Count% = 0 Then
             Locate 10, 8
@@ -820,7 +821,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
 
-    Shared statsL%(), T%()
+    Shared leagueRatings%(), teamRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -845,7 +846,7 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
         'Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  LEFT/RIGHT ARROW  UP/DOWN ARROW  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
 
         selectedIndex = teamIndex%(Selection%)
-		teamYear$ = RTRim$(yearNumber$)
+        teamYear$ = RTRim$(yearNumber$)
 
         Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
@@ -860,11 +861,11 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
         V2% = CVI(Q$(4))
 
         For I = 0 To 4
-            statsL%(I) = CVI(Q$(I + 5))
+            leagueRatings%(I) = CVI(Q$(I + 5))
         Next
 
         For I = 0 To 9
-            T%(I) = CVI(Q$(I + 10))
+            teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
         Close 1

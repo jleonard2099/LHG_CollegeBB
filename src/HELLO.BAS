@@ -9,14 +9,12 @@ Const MAX_CONFERENCES = 40
 Const TEAMS_PER_DIV = 15
 Const DIVS_PER_CONFERENCE = 2
 Const TEAMS_PER_CONFERENCE = 30
-Const TEAM_SIZE_BYTES = 655
-Const DATA_SIZE_BYTES = 566
 
 'Const NUM_STATRECORDS = 162
 
 DefInt A-Z
 
-'INCLUDE: 'FileTeamSelection.bi'
+'$INCLUDE: 'FileTeamSelection.bi'
 '$INCLUDE: 'KeyInput.bi'
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
@@ -177,8 +175,8 @@ location$(0) = "@ TEAM 1            "
 location$(1) = "HOME COURT ADVANTAGE"
 location$(2) = "NEUTRAL SITE        "
 
-coachOpt$(0) = "COACH AND SELECT SHOTS           "
-coachOpt$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+coachMode$(0) = "COACH AND SELECT SHOTS           "
+coachMode$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
 '----------------------------------------
 '               MAIN CODE
@@ -356,8 +354,8 @@ Sub ConfigureDrives ()
     diskPaths$(1) = _Trim$(diskPaths$(1))
 
     Done:
-    Locate 23, 1
     Color 14, 1
+    Locate 23, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
     Call YesNoB(X$, XCode, FG, BG)
@@ -568,7 +566,7 @@ Sub Leaders_Menu ()
 End Sub
 
 
-'INCLUDE: 'FileTeamSelection.bm'
+'$INCLUDE: 'FileTeamSelection.bm'
 '$INCLUDE: 'KeyInput.bm'
 '$INCLUDE: 'QPProEqu.bm'
 '$INCLUDE: 'PadRight.bm'

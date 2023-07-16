@@ -10,7 +10,7 @@ Sub TOURNEY ()
 
     Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS), YR%(MAX_TEAMS)
 
-    Shared coachOpt$(), foulShotOpt$(), location$()
+    Shared coachMode$(), foulShotOpt$(), location$()
     Shared MO$(), sclockOpt$(), yesNo$()
 
     yearNumber$(0, 3) = "10-01-91"
@@ -369,7 +369,7 @@ Sub EditGame_TOURNEY ()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
     Shared scheduleNG%(), scheduleAP%()
 
-    Shared coachOpt$(), foulShotOpt$(), location$()
+    Shared coachMode$(), foulShotOpt$(), location$()
     Shared MO$(), sclockOpt$(), yesNo$()
 
     Dim displayPause!
@@ -421,7 +421,7 @@ Sub EditGame_TOURNEY ()
 		Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)
         159  '
 		Color 14: Print " (7) ";:
-		Color 15: Print "HUMAN COACHES WILL: "; coachOpt$(scheduleNG%(NG%, 9))
+		Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(NG%, 9))
         162  '
 		Color 14: Print " (8) ";:
 		Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))

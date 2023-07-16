@@ -123,7 +123,7 @@ Sub InitVar ()
     Erase VG%, VH%, W%
 
     Erase AA$, B$
-    Erase gameMascot$, gameStadium$, gameCoach$
+    Erase gameMascot$, gamearenaName$, gameCoach$
     Erase H$, HO$, N$
     Erase PO$, PS$, Q$, SITE$, SX$
     Erase teamNames$, Y$, YN$, YN1$
@@ -152,7 +152,7 @@ Sub AUTOSETUP ()
     TB% = NG%(6)
     sClockVal = NG%(7)
     U5 = NG%(8)
-    CM% = NG%(9)
+    coachOpt = NG%(9)
     TF% = NG%(10)
     tickerStart = NG%(12)
     N7% = NG%(14)
@@ -709,7 +709,7 @@ Sub GETATEAM (I1, YN$)
     Get #1, I1
 
     gameCoach$(P9) = Q$(0)
-    gameStadium$(P9) = Q$(1)
+    gamearenaName$(P9) = Q$(1)
     gameMascot$(P9) = Q$(2)
     avgAttendance&(P9) = CVL(Q$(3))
 
@@ -733,7 +733,7 @@ Sub GETATEAM (I1, YN$)
 
     If CK <> 999 Then
         gameCoach$(P9) = ""
-        gameStadium$(P9) = ""
+        gamearenaName$(P9) = ""
         gameMascot$(P9) = ""
         avgAttendance&(P9) = 0
 
@@ -2259,6 +2259,9 @@ Sub TEAMSETUP ()
     'TEAM SETUP INITIALIZES THE TEAM DATA FILES, LEAGUE ADJUSTMENTS
     'AND SETS UP THE PLAYER DATA
 
+    F5%(P9, 4) = L%(P9, 0)
+    If F5%(P9, 4) > 20 Then F5%(P9, 4) = F5%(P9, 4) - 100
+
     F5%(P9, 5) = L%(P9, 1)
     If F5%(P9, 5) = 0 Then F5%(P9, 5) = 4
 
@@ -2267,9 +2270,6 @@ Sub TEAMSETUP ()
 
     F5%(P9, 7) = L%(P9, 3)
     If F5%(P9, 7) > 20 Then F5%(P9, 7) = F5%(P9, 7) - 100
-
-    F5%(P9, 4) = L%(P9, 0)
-    If F5%(P9, 4) > 20 Then F5%(P9, 4) = F5%(P9, 4) - 100
 
     F5%(P9, 8) = L%(P9, 4)
     If F5%(P9, 8) <> 99 Then F5%(P9, 4) = 0: F5%(P9, 5) = 4: F5%(P9, 6) = 0: F5%(P9, 7) = 0
@@ -4881,7 +4881,7 @@ Sub BALLDISTRIBUTE ()
 
     R0! = Int(Rnd(1) * 100) + 1
 
-    If U5 = 0 And CM% = 1 Or U5 = 1 And D = CT And CM% = 1 Or U5 = 1 And P = CT Or U5 = 2 Then
+    If U5 = 0 And coachOpt = 1 Or U5 = 1 And D = CT And coachOpt = 1 Or U5 = 1 And P = CT Or U5 = 2 Then
         Call WHOGETSBALL
     Else
         'Select / Case statement
@@ -5763,12 +5763,12 @@ Sub COMPILESTATFILES (teamIdx)
     APT%(YY%, 0) = TR%(teamIdx, 9)
     APT%(YY%, 1) = TR%(1 - teamIdx, 9)
 
-    If gameStadium$(1) = "" Then gameStadium$(1) = "MEMORIAL COLISEUM"
+    If gamearenaName$(1) = "" Then gamearenaName$(1) = "MEMORIAL COLISEUM"
 
     If N = 2 Then
         SITE$(YY%) = "NEUTRAL SITE"
     Else
-        SITE$(YY%) = gameStadium$(1)
+        SITE$(YY%) = gamearenaName$(1)
     End If
 
     Open diskPaths$(1) + R$ For Output As #1
@@ -8189,7 +8189,7 @@ Sub BOX2SCREEN ()
     Else
         Print "SITE: ";
         Color 15
-        Print gameStadium$(N)
+        Print gamearenaName$(N)
     End If
 
     Color 14
@@ -8476,7 +8476,7 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
     If N = 2 Then
         Print #2, "SITE: NEUTRAL"
     Else
-        Print #2, "SITE: "; gameStadium$(N)
+        Print #2, "SITE: "; gamearenaName$(N)
     End If
 
     Print #2, Using "ATTENDANCE: ###,###"; actualAttendance&

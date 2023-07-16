@@ -1,40 +1,64 @@
 '----------------------------------------
 ' Used across more than one source file
 '----------------------------------------
-Dim CK, defFGPctAdj%, finalUpdate%
-Dim replayLosses%, staminaRating%, replayWins%
-Dim teamAttendance%, V1%, V2%
-
-Dim TC!
-
-Dim coach$, mascot$, stadium$
 Dim opSysType$
 
-Dim A$(0 To 15)
+Dim Shared diskPaths$(3), Q$(0 To 500)
 
-Dim compT1%(20), statsL%(0 To 4)
-Dim T%(0 To 9)
+' *** Reading Team Data ***
+' -------------------------
 
-Dim statsA!(0 To 14, 0 To 13), DF!(13), RS!(13, 13), X!(13, 13)
-Dim statsW0!(15), statsW1!(15)
-Dim statsZ!(15), statsZ1!(15)
-
-Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
-Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
-
+'-- transition away from this
 Dim Shared fileLength&
 
-Dim Shared diskPaths$(3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
-' Game Options
+Dim CK, defFGPctAdj%
+Dim staminaRating%, teamAttendance%
+Dim V1%, V2%
+
+Dim coach$, mascot$, arenaName$
+
+Dim compT1%(20)
+Dim leagueRatings%(0 To 4), teamRatings%(0 To 9)
+
+Dim DF!(13), RS!(13, 13)
+
+'-- both should be 0 to 13, 0 to 6
+'-- what happened to trigger this??
+Dim statsA!(0 To 14, 0 To 13), X!(13, 13)
+
+Dim A$(0 To 15)
+Dim cngratA$(0 To 13), P$(0 To 13)
+
+' *** Reading Stat Data ***
+' -------------------------
+Dim statsW0!(15), statsW1!(15)
+Dim statsZ!(15), statsZ1!(15)
+
+' *** Schedule Data ***
+' -------------------------
+Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
+Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
+
+' *** Game Options ***
+' -------------------------
 Dim Shared DT$, TM$
 
-Dim coachOpt$(0 To 1), foulShotOpt$(0 To 2)
+Dim coachMode$(0 To 1), foulShotOpt$(0 To 2)
 Dim location$(0 To 2), MO$(0 To 3), modeAbbrev$(0 To 3)
 Dim sclockOpt$(0 To 2), threeFtOpt$(0 To 1), threePtOpt$(0 To 1)
 Dim yesNo$(0 To 1)
+
+
+' *** Miscellaneous Use ***
+' -------------------------
+Dim finalUpdate%
+Dim replayLosses%, replayWins%
+
+Dim TC!
+
 
 '----------------------------------------
 ' Used across ALIGN, MERGE routines
@@ -82,11 +106,6 @@ Dim ARS!(15, 62, 15)
 Dim W0S!(15, 62), W1S!(15, 62)
 Dim careerT%(0 To 34)
 
-'----------------------------------------
-' Used across CNGRAT routines
-'----------------------------------------
-'14 positions, 0 to 13 array index
-Dim cngratA$(0 To 13), P$(0 To 13)
 
 '----------------------------------------
 ' Used across COMPARE routines
@@ -192,11 +211,14 @@ Dim TT$(20), recconTB$(25)
 '----------------------------------------
 Dim BS%, NS%
 Dim N$
+
 Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
 
 Dim scheduleAP%(1), scheduleT%(9), scheduleZ1%(1 To 30)
+
 Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
 Dim scheduleYN$(MAX_GAMES, 1)
+
 Dim Z1$(1 To 30), Z2$(1 To 30)
 
 '----------------------------------------
@@ -229,7 +251,7 @@ Dim Shared H, halfTime, I, J, IN, M5, MJ, N, nbrLines, NTMS
 Dim Shared P, P9, Q, S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, U5, XM, XS
 
-Dim Shared BO%, BU%, CM%, DK%, F3S%, FB%, FT%, J8%, LC%, N7%, NF%
+Dim Shared BO%, BU%, coachOpt, DK%, F3S%, FB%, FT%, J8%, LC%, N7%, NF%
 Dim Shared PA%, PASS%, PB%, PT%, PZ%, ST%, TB%, TF%, X3%, X0%, X1%, XX%
 
 Dim Shared F!, R0!
@@ -268,7 +290,7 @@ Dim Shared R3!(1), S!(1, 9), W0!(1, 13), W1!(1, 13)
 Dim Shared avgAttendance&(1), CRD&(100)
 
 Dim Shared AA$(1, 13), B$(0 To 1), D$(15), DB$(14)
-Dim Shared gameMascot$(0 To 1), gameStadium$(0 To 1), gameCoach$(0 To 1)
+Dim Shared gameMascot$(0 To 1), gamearenaName$(0 To 1), gameCoach$(0 To 1)
 Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
 Dim Shared PB$(1), PS$(4), R$(14), SITE$(100), SX$(32, 2)
 Dim Shared PO$(1, 13)

@@ -370,7 +370,7 @@ End Sub
 '...explanation...
 Sub GetTeam_CREATCON (A$, YN$, T1)
 
-    Shared T%()
+    Shared teamRatings%()
 
     Do
         Color 15, 0
@@ -435,7 +435,7 @@ Sub GetTeam_CREATCON (A$, YN$, T1)
             BO% = 0
         Else
             Locate 2, 33
-            Color T%(0), T%(1): Print A$
+            Color teamRatings%(0), teamRatings%(1): Print A$
 
             Do
                 Color 15, 4
@@ -455,7 +455,7 @@ End Sub
 '----------------------------------------
 Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamIdx, teamName$)
 
-    Shared T%()
+    Shared teamRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -495,7 +495,7 @@ Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamIdx, teamName$)
         teamName$ = RTrim$(Q$(0))
 
         For I = 0 To 9
-            T%(I) = CVI(Q$(I + 10))
+            teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
         Close 1

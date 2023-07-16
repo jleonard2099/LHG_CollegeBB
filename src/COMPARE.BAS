@@ -794,7 +794,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
 
-    Shared mascot$, coach$, stadium$
+    Shared mascot$, coach$, arenaName$
     Shared CK, defFGPctAdj%, replayLosses%, replayWins%
     Shared staminaRating%, teamAttendance%
     Shared V1%, V2%
@@ -874,7 +874,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
         Get #1, t1
 
         coach$ = RTrim$(Q$(0))
-        stadium$ = RTrim$(Q$(1))
+        arenaName$ = RTrim$(Q$(1))
         mascot$ = RTrim$(Q$(2))
         teamAttendance% = CVL(Q$(3))
 
@@ -898,7 +898,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
         If CK <> 999 Then
 
             coach$ = ""
-            stadium$ = ""
+            arenaName$ = ""
             mascot$ = ""
             teamAttendance% = 0
 

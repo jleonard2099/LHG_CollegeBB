@@ -972,7 +972,7 @@ End Sub
 '         FindStatsNat Function
 '----------------------------------------
 '...explanation...
-Function FindStatsNat% (teamName$, numberGames%, NRT)
+Function FindStatsNat% (statFile$, numberGames%, NRT)
 
     Dim compAP%(100, 1), compT%(1 To 100)
     Dim CRD(100)
@@ -988,35 +988,9 @@ Function FindStatsNat% (teamName$, numberGames%, NRT)
     Shared confWins, confLosses
     Shared fullWins, fullLosses
 
-    teamName$ = Right$(teamName$, 2) + " " + Left$(teamName$, Len(teamName$) - 3)
+    If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-    For XX = 4 To 11:
-        If Mid$(teamName$, XX, 1) = " " Or Mid$(teamName$, XX, 1) = "." Then Mid$(teamName$, XX, 1) = "_"
-    Next XX
-
-    For XX = 12 To 14:
-        If Mid$(teamName$, XX, 2) = "ST" Then Mid$(teamName$, 9, 1) = "_": Mid$(teamName$, 10, 2) = "ST"
-    Next XX
-
-    QQ = 8
-
-    For XX = 11 To 4 Step -1
-        If Mid$(teamName$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
-
-    G$ = teamName$
-    teamName$ = Right$(teamName$, Len(teamName$) - 3)
-    YR$ = Left$(G$, 2)
-    If Len(teamName$) > 8 Then teamName$ = Left$(teamName$, 8)
-    teamName$ = teamName$ + "." + YR$
-
-    If _FileExists(diskPaths$(1) + teamName$ + "S") Then
-
-        Open diskPaths$(1) + teamName$ + "S" For Input As #2
+        Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
         Input #2, numberGames%
 
@@ -1118,7 +1092,7 @@ Function FindStatsNat% (teamName$, numberGames%, NRT)
 
         PW = PW / (numberGames% + GL)
         NRT = NRT + 1
-        PT$(NRT) = teamName$
+        PT$(NRT) = statFile$
         PT#(NRT, 1) = PW
         PT#(NRT, 2) = fullWins
         PT#(NRT, 3) = fullLosses
