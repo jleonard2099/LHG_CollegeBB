@@ -4,145 +4,30 @@ Sub LOOKY ()
 
     Shared teamRatings%()
 
+    '-- we probably don't need this anymore
+    '-- unless we're going to loop around this
+    
     menuExit = 0
 
-    Do
+    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
+
+    If chosenIdx <> 0 Then
 
         Color 15, 0
-        Cls
 
-        JJ = 6
+        statFile$ = nameStatFile$(teamName$)
 
-        Locate 6, 8: Color 15, 4
+        If Not _FileExists(diskPaths$(1) + statFile$) Then
+            Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, PASS)
+        Else
+            Call LoadTeamStats(statFile$, teamName$, totalGames%)
+            Call ViewStatSummary(statFile$, teamName$, totalGames%, menuExit)
 
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+        End If
 
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER DISK ID: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "ESC TO RETURN TO MAIN MENU"
-
-        I$ = GetKeyPress$
-
-        If I$ <> Chr$(27) Then
-
-            If I$ = Chr$(13) Then
-                Call SelectTeam_LOOKY(numberTeams, YN$)
-            Else
-                Locate 7, 27: Print I$
-                Locate 7, 28: Line Input NY$
-                NY$ = I$ + NY$
-                Color 15, 0
-
-                If NY$ = "" And YN$ <> "" Then
-                    Call SelectTeam_LOOKY(numberTeams, YN$)
-                Else
-                    YN$ = RTrim$(NY$)
-                    Erase teamNames$
-                    numberTeams = 0
-
-                    If Not _FileExists(diskPaths$(0) + "BASK." + YN$) Then
-                        BO% = 1
-                        Locate 10, 8
-                        Call CSMsgBox("NO TEAM FILES WERE FOUND MATCHING THIS ID.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
-                    Else
-
-                        Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-
-                        fileLength& = LOF(1)
-
-                        Field #1, 15 As Q$(0), 640 As X$
-
-                        For I1 = 1 To fileLength& / 655
-                            Get #1, I1
-                            teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
-                        Next
-                        Close 1
-
-                        numberTeams = fileLength& / 655
-
-                        Call SelectTeam_LOOKY(numberTeams, YN$)
-
-                    End If
-
-                End If
-
-            End If
-
-            If BO% = 1 Then
-                BO% = 0
-            Else
-                A$ = RTrim$(Q$(0))
-                B$ = A$
-
-                Locate 2, 33
-                Color teamRatings%(0), teamRatings%(1): Print B$
-
-                Color 15, 4
-
-                Do
-                    Locate 3, 33
-                    Print "ANY CHANGE (YN)";
-                    J$ = GetKeyPress$
-                Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
-
-                If UCase$(J$) = "N" Then
-
-                    Color 15, 0
-
-                    For XX = 4 To 11: If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                    Next XX
-
-                    For XX = 12 To 14: If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                    Next XX
-
-                    QQ = 8
-                    For XX = 11 To 4 Step -1
-                        If Mid$(B$, XX, 1) = "_" Then
-                            QQ = XX - 4
-                        Else
-                            Exit For
-                        End If
-                    Next XX
-
-                    Z$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
-
-                    If Not _FileExists(diskPaths$(1) + Z$) Then
-                        Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
-                    Else
-                        Call LoadTeamStats(Z$, A$, totalGames%)
-                        Call ViewStatSummary(Z$, A$, totalGames%, menuExit)
-
-                        'We want to choose another team
-                        If menuExit = 1 Then I$ = "Y"
-
-                    End If
-
-                End If 'Done checking if "N"
-
-            End If 'Done checking BO%
-
-        End If 'Done checking for ESC
-
-    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+    End If
 
 End Sub
 
@@ -169,7 +54,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared A$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), compO$()
 
     ' *** READ IN TEAM STATS ***
 
@@ -220,7 +105,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     For I = 0 To 13: 
     
-        Input #1, A$(I)
+        Input #1, statPlyrNames$(I)
 
         For J = 0 To 13: 
             Input #1, lookyA!(I, J)
@@ -266,7 +151,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared mergeT%(), mergeO%()
 
-    Shared A$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), compO$()
 
     Color , 0
     Cls
@@ -370,13 +255,13 @@ End Sub
 '       PlayerStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
+Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared lookyA!()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared A$(), CP$()
+    Shared statPlyrNames$(), CP$()
 
     CP% = 1
 
@@ -412,13 +297,13 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
         For I = 0 To 13
 
-            If A$(I) <> "XXX" Then
+            If statPlyrNames$(I) <> "XXX" Then
 
                 Color 7
 
                 If I / 2 = Int(I / 2) Then Color 15
 
-                Print Left$(A$(I), 13); Tab(15);
+                Print Left$(statPlyrNames$(I), 13); Tab(15);
                 Print Using "## "; lookyA!(I, 0);
 
                 If lookyA!(I, 10) > 0 Then Locate , 18: Print Using "####"; Int((lookyA!(I, 10) + 30) / 60);: Locate , 24: Print Using "##"; Int(((lookyA!(I, 10) / 60) / lookyA!(I, 0)) + .5);
@@ -512,7 +397,7 @@ Sub PlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 'Pg Down
                 Case Chr$(0) + "Q"
                     CP% = 14
-                    Call TeamStats(statFile$, teamName$, CP%, totalGames%, menuExit)
+                    Call ViewTeamStats(statFile$, teamName$, CP%, totalGames%, menuExit)
 
                     'Pg Up
                 Case Chr$(0) + "I"
@@ -556,14 +441,14 @@ End Sub
 '       TeamStats Subroutine
 '----------------------------------------
 '...explanation...
-Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
+Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared lookyA!()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared A$(), CP$()
+    Shared statPlyrNames$(), CP$()
 
     CP% = 1
 
@@ -602,12 +487,12 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     For I = 0 To 13
 
-        If A$(I) <> "XXX" Then
+        If statPlyrNames$(I) <> "XXX" Then
 
             Color 7
             If I / 2 = Int(I / 2) Then Color 15
 
-            Print Left$(A$(I), 13);: Locate , 15
+            Print Left$(statPlyrNames$(I), 13);: Locate , 15
             Print Using "####"; lookyA!(I, 2) * 2 + lookyA!(I, 4) + statsW0!(I);
 
             If lookyA!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (lookyA!(I, 2) * 2 + lookyA!(I, 4) + statsW0!(I)) / lookyA!(I, 0);
@@ -648,7 +533,7 @@ Sub TeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
             Case Chr$(0) + "I"
                 Cls
                 CP% = 1
-                Call PlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
+                Call ViewPlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
 
             Case Chr$(0) + "M"
                 CP% = CP% + 1
@@ -766,7 +651,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
             Case Chr$(0) + "Q"
                 Color , 0
                 Cls
-                Call PlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
+                Call ViewPlayerStats(statFile$, teamName$, CP%, totalGames%, menuExit)
 
                 'Page Up
             Case Chr$(0) + "I"
@@ -799,7 +684,7 @@ Sub PrintTeamStatSummary (teamName$, totalGames%)
     Shared lookyA!(), statsW0!(), statsW1!(), statsZ!(), statsZ1!()
 
     Shared mergeT%(), mergeO%()
-    Shared A$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), compO$()
 
     LPrint "SCHEDULE RESULTS FOR "; teamName$
     LPrint
@@ -842,7 +727,7 @@ Sub PrintTeamStatSummary (teamName$, totalGames%)
     LPrint " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
     For I = 0 To 13
-        LPrint Left$(A$(I), 13); Tab(15);
+        LPrint Left$(statPlyrNames$(I), 13); Tab(15);
         LPrint Using "## "; lookyA!(I, 0);
 
         If lookyA!(I, 10) > 0 Then LPrint Tab(18); Using "####"; Int((lookyA!(I, 10) + 30) / 60);: LPrint Tab(24); Using "##"; Int(((lookyA!(I, 10) / 60) / lookyA!(I, 0)) + .5);
@@ -930,7 +815,7 @@ Sub PrintTeamStatSummary (teamName$, totalGames%)
     LPrint " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
     For I = 0 To 13
-        LPrint Left$(A$(I), 13);: LPrint Tab(15);
+        LPrint Left$(statPlyrNames$(I), 13);: LPrint Tab(15);
         LPrint Using "####"; lookyA!(I, 2) * 2 + lookyA!(I, 4) + statsW0!(I);
         If lookyA!(I, 0) > 0 Then LPrint Tab(21); Using "##.#"; (lookyA!(I, 2) * 2 + lookyA!(I, 4) + statsW0!(I)) / lookyA!(I, 0);
         LPrint Tab(26); Using "## #### #### ####"; lookyA!(I, 13); lookyA!(I, 12); lookyA!(I, 5) - lookyA!(I, 12); lookyA!(I, 5);
@@ -1042,7 +927,7 @@ Sub SortStats (CP%)
     Shared statsW0!(), statsW0!()
     Shared statsW1!(), statsW1!()
 
-    Shared A$(), A$()
+    Shared statPlyrNames$(), statPlyrNames$()
 
     If CP% = 1 Then SG% = 0
     If CP% = 2 Then SG% = 10
@@ -1079,7 +964,7 @@ Sub SortStats (CP%)
 
                 Swap statsW0!(Z), statsW0!(Z1)
                 Swap statsW1!(Z), statsW1!(Z1)
-                Swap A$(Z), A$(Z1)
+                Swap statPlyrNames$(Z), statPlyrNames$(Z1)
 
             End If
 
@@ -1136,12 +1021,16 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
 
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
-        V1% = CVI(Q$(3))
-        V2% = CVI(Q$(4))
+        def3FG_Adj = CVI(Q$(3))
+        def3FGA_Adj = CVI(Q$(4))
 
-        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 4: 
+            leagueRatings%(I) = CVI(Q$(I + 5))
+        Next
 
-        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 9: 
+            teamRatings%(I) = CVI(Q$(I + 10))
+        Next
 
         Close 1
 
@@ -1152,4 +1041,3 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
     End If
 
 End Sub
-

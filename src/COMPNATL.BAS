@@ -1,4 +1,4 @@
-Sub COMPNAT ()
+Sub CompileNatlOrg ()
 
     _Title "Courtside College Basketball - Update National Stats"
 

@@ -1,4 +1,4 @@
-Sub COMPCON ()
+Sub CompileCollege ()
 
     _Title "Courtside College Basketball - Update Conference Stats"
 

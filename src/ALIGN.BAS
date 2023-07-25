@@ -2,7 +2,7 @@ Sub ALIGN ()
 
     _Title "Courtside College Basketball - Align Stats"
 
-    Shared A$()
+    Shared statPlyrNames$()
     Shared alignAR$()
 
     Shared AR!(), compareA!()
@@ -13,7 +13,7 @@ Sub ALIGN ()
 
     Do
 
-        Call GetMergePaths (pathCurrentStats$, pathRoadStats$, I$)
+        Call GetMergePaths(pathCurrentStats$, pathRoadStats$, I$)
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
@@ -21,28 +21,9 @@ Sub ALIGN ()
             Locate 16, 5: Print Space$(55)
             Color 11
 
-            Call GetDiskID_ALIGN(A$)
-
-            B$ = A$
-
-            For XX = 4 To 11
-                If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-            Next XX
-
-            For XX = 12 To 14
-                If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-            Next XX
-
-            QQ = 8
-            For XX = 11 To 4 Step -1
-                If Mid$(B$, XX, 1) = "_" Then
-                    QQ = XX - 4
-                Else
-                    Exit For
-                End If
-            Next XX
-
-            statFile$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+            'Call GetDiskID_ALIGN(A$)
+            Call ChooseTeam(yearNumber$, numberTeams, chosenIdx, A$)
+            statFile$ = nameStatFile$(A$)
 
             Color 12, 0
             Cls
@@ -51,6 +32,7 @@ Sub ALIGN ()
             If _FileExists(pathRoadStats$ + statFile$) Then
 
                 Open pathRoadStats$ + statFile$ For Input As #1
+
                 Input #1, BR$
 
                 For I = 0 To 13:
@@ -68,16 +50,25 @@ Sub ALIGN ()
                 If _FileExists(pathCurrentStats$ + statFile$) Then
 
                     Open pathCurrentStats$ + statFile$ For Input As #1
+
                     Input #1, B$
 
                     For I = 0 To 13:
-                        Input #1, A$(I)
-                        For J = 0 To 13: Input #1, compareA(I, J): Next
+
+                        Input #1, statPlyrNames$(I)
+
+                        For J = 0 To 13:
+                            Input #1, compareA(I, J)
+                        Next
+
                         Input #1, statsW0!(I)
+
                         Input #1, statsW1!(I)
+
                     Next
 
                     For L = 0 To 15: Input #1, Z!(L): Next
+
                     For L = 0 To 15: Input #1, Z1!(L): Next
 
                     Close #1
@@ -86,8 +77,11 @@ Sub ALIGN ()
                     DUMMY$ = "OK"
 
                 Else
+
                     Cls
-                    Locate 2, 10: Color 7
+
+                    Locate 2, 10
+                    Color 7
                     Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
                     Print
                     Locate , 10
@@ -96,8 +90,11 @@ Sub ALIGN ()
                 End If 'Done checking if current file exists
 
             Else
+
                 Cls
-                Locate 2, 10: Color 7
+
+                Locate 2, 10
+                Color 7
                 Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
                 Print
                 Locate , 10
@@ -118,7 +115,7 @@ End Sub
 '...explanation...
 Sub AlignStats (pathRoadStats$, statFile$)
 
-    Shared A$()
+    Shared statPlyrNames$()
 
     Shared alignAR$()
     Shared AR!()
@@ -137,11 +134,16 @@ Sub AlignStats (pathRoadStats$, statFile$)
     Color 7: Print "             ROAD"
 
     For I = 0 To 13:
+
         Locate I + 4, 22
-        Color 12: Print Using "##"; I;: Print " ";
-        Color 15: Print A$(I);
-        Color 12: Print Tab(44); Using "##"; I;: Print " ";
+
+        Color 12: Print Using "##"; I;
+        Print " ";
+        Color 15: Print statPlyrNames$(I);
+        Color 12: Print Tab(44); Using "##"; I;
+        Print " ";
         Color 7: Print alignAR$(I)
+
     Next
 
     Color 11
@@ -152,15 +154,21 @@ Sub AlignStats (pathRoadStats$, statFile$)
     N = 0
 
     Do
+
         For J = 0 To 13
-            If A$(N) = alignAR$(J) Then
+
+            If statPlyrNames$(N) = alignAR$(J) Then
+
                 AN$(N) = alignAR$(J)
+
                 For K = 0 To 13
                     AN!(N, K) = AR!(J, K)
                     W0N!(N) = W0R!(J)
                     WN1!(N) = WR1!(J)
                 Next K
+
             End If
+
         Next J
 
         N = N + 1
@@ -172,7 +180,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
             SEQ = 0
 
             For K = 0 To 13
-                If AN$(K) <> A$(K) Then
+                If AN$(K) <> statPlyrNames$(K) Then
                     SEQ = SEQ + 1
                 End If
             Next
@@ -202,7 +210,7 @@ End Sub
 '...explanation...
 Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
-    Shared A$()
+    Shared statPlyrNames$()
 
     Shared ZR!(), ZR1!()
 
@@ -219,8 +227,9 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Color 7: Print "             ROAD"
 
     For I = 0 To 13:
-        Locate I + 4, 22: Color 12: Print Using "##"; I;: Print " ";
-        Color 15: Print A$(I);
+        Locate I + 4, 22
+        Color 12: Print Using "##"; I;: Print " ";
+        Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;: Print " ";
         Color 7: Print AN$(I)
     Next
@@ -231,11 +240,27 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Locate 22: Print "ALIGNING FILES . . .             "
 
     Open pathRoadStats$ + statFile$ For Output As #1
+
     Write #1, BR$
-    For I = 0 To 13: Write #1, AN$(I)
-    For J = 0 To 13: Write #1, AN!(I, J): Next: Write #1, W0N!(I): Write #1, WN1!(I): Next
+
+    For I = 0 To 13:
+
+        Write #1, AN$(I)
+
+        For J = 0 To 13:
+            Write #1, AN!(I, J)
+        Next
+
+        Write #1, W0N!(I)
+
+        Write #1, WN1!(I)
+
+    Next
+
     For L = 0 To 15: Write #1, ZR!(L): Next
+
     For L = 0 To 15: Write #1, ZR1!(L): Next
+
     Close #1
 
     Cls
@@ -256,7 +281,7 @@ End Sub
 '...explanation...
 Sub GetDiskID_ALIGN (A$)
 
-    Shared mergeT%()
+    Shared teamRatings%()
 
     Do
 
@@ -311,7 +336,7 @@ Sub GetDiskID_ALIGN (A$)
 
                     Field #1, 15 As Q$(0), 640 As X$
 
-                    For I1 = 1 to fileLength& / 655
+                    For I1 = 1 To fileLength& / 655
                         Get #1, I1
                         teamNames$(I1) = Q$(0)
                         teamIndex%(I1) = I1
@@ -333,7 +358,7 @@ Sub GetDiskID_ALIGN (A$)
                 BO% = 0
             Else
                 Locate 2, 33
-                Color mergeT%(0), mergeT%(1): Print A$
+                Color teamRatings%(0), teamRatings%(1): Print A$
 
                 Do
                     Color 15, 4
@@ -358,7 +383,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
 
-    Shared mergeT%(), leagueRatings%()
+    Shared teamRatings%(), leagueRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -384,10 +409,10 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-		teamYear$ = RTrim$(yearNumber$)
+        teamYear$ = RTrim$(yearNumber$)
 
         Locate 2, 33: Color 31
-		Print "LOADING..."
+        Print "LOADING..."
 
         If Not _FileExists(diskPaths$(0) + "BASK." + teamYear$) Then
             BO% = 1
@@ -409,11 +434,11 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
 
             staminaRating% = CVI(Q$(1))
             defFGPctAdj% = CVI(Q$(2))
-            V1% = CVI(Q$(3))
-            V2% = CVI(Q$(4))
+            def3FG_Adj = CVI(Q$(3))
+            def3FGA_Adj = CVI(Q$(4))
 
             For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
-            For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
+            For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
             Close 1
 
@@ -424,3 +449,4 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
     End If
 
 End Sub
+

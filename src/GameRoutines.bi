@@ -67,7 +67,6 @@ Declare Sub SETUPRATINGS ()
 Declare Sub SHOTPERCENT ()
 Declare Sub SHOTSTRING ()
 Declare Sub STAMINASORT ()
-Declare Sub STATCONVERT (Q, QQ)
 Declare Sub STATS2SCREEN
 Declare Sub STEALADJ ()
 Declare Sub STOPPAGE ()

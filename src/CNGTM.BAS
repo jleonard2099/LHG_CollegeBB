@@ -37,22 +37,27 @@ Sub CNGTM (userChoice)
 
         If ExitCode% <> 27 Then
 
-            Call GetTeam_CNGTM(A$, year$, T1)
+            'Call GetTeam_CNGTM(A$, year$, T1)
+            Call ChooseTeam (year$, numberTeams, T1, A$)
 
-            Select Case Selection%
+            If T1 <> 0 Then
 
-                Case 1:
-                    Call EditTeam(A$, year$, T1)
+                Select Case Selection%
 
-                Case 2:
-                    Call PrintRoster(A$, T1)
+                    Case 1:
+                        Call EditTeam(A$, T1, year$)
 
-                Case 3:
-                    Call ViewRoster(A$, T1)
+                    Case 2:
+                        Call PrintRoster(A$, T1)
 
-            End Select
+                    Case 3:
+                        Call ViewRoster(A$, T1)
 
-            userChoice = 0
+                End Select
+
+                userChoice = 0
+                
+            End If
 
         End If
 
@@ -70,17 +75,19 @@ End Sub
 'a user is prompted to press keys to CONTINUE
 'This improvement over the original makes it
 'faster and easier to proceed through screens
-Sub EditTeam (teamName$, yearNumber$, teamIdx)
+Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), compT1%()
-    Shared cngratA$(), P$()
-    Shared statsA!(), DF!(), RS!(), X!()
+    Shared leagueRatings%(), teamRatings%(), teamStats()
+    Shared playerNames$(), position$()
+    Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
+    Color 15, 0
     Cls
+
     Color 14
     Print Tab(29); "CHANGE TEAM INFORMATION"
     Color 15
@@ -90,8 +97,8 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print " 3. TEAM NAME "; teamName$; Tab(37); "22. AVG ATTENDANCE "; teamAttendance%
     Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(37); "23. WINS "; teamRatings%(7)
     Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(37); "24. LOSSES "; teamRatings%(8)
-    Print " 6. DEF 3FGA/FGA ADJ "; V2%; Tab(37);"25. POWER RATING "; teamRatings%(9)
-    Print " 7. DEF 3FG% ADJ "; V1%
+    Print " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj; Tab(37);"25. POWER RATING "; teamRatings%(9)
+    Print " 7. DEF 3FG% ADJ "; def3FG_Adj
     Print " 8. OFF STEAL RATING "; leagueRatings%(0)
     Print " 9. OFF TURNOVER RATING "; leagueRatings%(1)
     Print "10. DEF TURNOVER ADJ "; leagueRatings%(2)
@@ -123,6 +130,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         Select Case B9
 
             Case 1
+                Locate 2, 17: Print Space$(5)
                 Locate 2: Input " 1. TEAM NUMBER "; teamIdx
 
             Case 2
@@ -132,34 +140,45 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Locate 4: Input " 3. TEAM NAME "; teamName$
 
             Case 4
+                Locate 2, 25: Print Space$(5)
                 Locate 5: Input " 4. TEAM STAMINA RATING "; staminaRating%
 
             Case 5
+                Locate 2, 17: Print Space$(5)
                 Locate 6: Input " 5. DEF FG% ADJ "; defFGPctAdj%
 
             Case 6
-                Locate 7: Input " 6. DEF 3FGA/FGA ADJ "; V2%
+                Locate 2, 22: Print Space$(5)
+                Locate 7: Input " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj
 
             Case 7
-                Locate 8: Input " 7. DEF 3FG% ADJ "; V1%
+                Locate 2, 18: Print Space$(5)
+                Locate 8: Input " 7. DEF 3FG% ADJ "; def3FG_Adj
 
             Case 8
+                Locate 2, 22: Print Space$(5)
                 Locate 9: Input " 8. OFF STEAL RATING "; leagueRatings%(0)
 
             Case 9
+                Locate 2, 25: Print Space$(5)
                 Locate 10: Input " 9. OFF TURNOVER RATING "; leagueRatings%(1)
 
             Case 10
+                Locate 2, 22: Print Space$(5)
                 Locate 11: Input "10. DEF TURNOVER ADJ "; leagueRatings%(2)
 
             Case 11
+                Locate 2, 18: Print Space$(5)
                 Locate 12: Input "11. DEF FOUL ADJ "; leagueRatings%(3)
 
             Case 12
+                Locate 2, 27: Print Space$(5)
                 Locate 13: Input "12. ENTER 99 IF USING 6-9 "; leagueRatings%(4)
 
             Case 13
+                Locate 2, 23: Print Space$(5)
                 Locate 14: Input "13. TEXT COLOR (0-15) "; teamRatings%(0)
+
                 If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
                     Locate 21, 1: Color teamRatings%(0), teamRatings%(1)
                     Print teamName$ + " " + mascot$
@@ -167,7 +186,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 End If
 
             Case 14
+                Locate 2, 28: Print Space$(5)
                 Locate 15: Input "14. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+
                 If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
                     Locate 21, 1
                     Locate 21, 1
@@ -178,15 +199,19 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 End If
 
             Case 15
+                Locate 2, 16: Print Space$(5)
                 Locate 16: Input "15. TEAM FGA/G "; teamRatings%(3)
 
             Case 16
+                Locate 2, 18: Print Space$(5)
                 Locate 17: Input "16. LEAGUE FGA/G "; teamRatings%(4)
 
             Case 17
+                Locate 2, 23: Print Space$(5)
                 Locate 18: Input "17. TEAM GAMES PLAYED "; teamRatings%(5)
 
             Case 18
+                Locate 2, 22: Print Space$(5)
                 Locate 19: Input "18. HOMECOURT FACTOR "; teamRatings%(6)
 
             Case 19
@@ -199,15 +224,19 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Locate 3, 37: Input "21. COACH "; coach$
 
             Case 22
+                Locate 2, 20: Print Space$(5)
                 Locate 4, 37: Input "22. AVG ATTENDANCE "; teamAttendance%
 
             Case 23
+                Locate 2, 10: Print Space$(5)
                 Locate 5, 37: Input "23. WINS "; teamRatings%(7)
 
             Case 24
+                Locate 2, 12: Print Space$(5)
                 Locate 6, 37: Input "24. LOSSES "; teamRatings%(8)
 
             Case 25
+                Locate 2, 18: Print Space$(5)
                 Locate 7, 37: Input "25. POWER RATING "; teamRatings%(9)
 
         End Select
@@ -231,9 +260,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         For I = 0 To 6
             Locate I + 3, 5
             Print Using "##"; I + 1;
-            Print " "; cngratA$(I); Tab(37);
+            Print " "; playerNames$(I); Tab(37);
             Print Using "##"; I + 8;
-            Print " "; cngratA$(I + 7)
+            Print " "; playerNames$(I + 7)
         Next
 
         Print
@@ -253,22 +282,22 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Print Tab(31); "CHANGE PLAYER STATS"
             Color 15
 
-            Print " 1. NAME "; cngratA$(I); Tab(37); "17. GAMES "; RS!(I, 0)
-            Print " 2. POSITION "; P$(I); Tab(37); "18. MINUTES "; RS!(I, 1)
-            Print " 3. GAMES PLAYED "; X!(I, 0); Tab(37); "19. FGM "; RS!(I, 3)
-            Print " 4. ADJ FG% "; statsA!(I, 0); Tab(37); "20. FGA "; RS!(I, 2)
-            Print " 5. FT% "; statsA!(I, 1); Tab(37); "21. FTM "; RS!(I, 5)
-            Print " 6. OFF RB/40 MIN X 10 "; X!(I, 4); Tab(37); "22. FTA "; RS!(I, 4)
-            Print " 7. DEF RB/40 MIN X 10 "; statsA!(I, 2); Tab(37); "23. OFF REB "; RS!(I, 6)
-            Print " 8. ASSIST RATING "; statsA!(I, 4); Tab(37); "24. TOTAL REB "; RS!(I, 7)
-            Print " 9. STEAL RATING "; statsA!(I, 5); Tab(37); "25. PER FOULS "; RS!(I, 8)
-            Print "10. BLOCK RATING "; statsA!(I, 6); Tab(37); "26. ASSISTS "; RS!(I, 9)
-            Print "11. FGA "; X!(I, 1); Tab(37); "27. BLOCKS "; RS!(I, 10)
-            Print "12. FOUL COMMIT RATING "; X!(I, 5); Tab(37); "28. STEALS "; RS!(I, 11)
-            Print "13. FOUL DRAWING RATING "; X!(I, 6); Tab(37); "29. 3 FGM "; RS!(I, 13)
-            Print "14. 3FG% "; X!(I, 2); Tab(37); "30. 3 FGA "; RS!(I, 12)
-            Print "15. 3FGA/TOT FGA "; X!(I, 3)
-            Print "16. DEFENSIVE RATING (1-9) "; DF!(I)
+            Print " 1. NAME "; playerNames$(I); Tab(37); "17. GAMES "; playerStats!(I, 0)
+            Print " 2. POSITION "; position$(I); Tab(37); "18. MINUTES "; playerStats!(I, 1)
+            Print " 3. GAMES PLAYED "; playerRatings!(I, 0); Tab(37); "19. FGM "; playerStats!(I, 3)
+            Print " 4. ADJ FG% "; playerOff!(I, 0); Tab(37); "20. FGA "; playerStats!(I, 2)
+            Print " 5. FT% "; playerOff!(I, 1); Tab(37); "21. FTM "; playerStats!(I, 5)
+            Print " 6. OFF RB/40 MIN X 10 "; playerRatings!(I, 4); Tab(37); "22. FTA "; playerStats!(I, 4)
+            Print " 7. DEF RB/40 MIN X 10 "; playerOff!(I, 2); Tab(37); "23. OFF REB "; playerStats!(I, 6)
+            Print " 8. ASSIST RATING "; playerOff!(I, 4); Tab(37); "24. TOTAL REB "; playerStats!(I, 7)
+            Print " 9. STEAL RATING "; playerOff!(I, 5); Tab(37); "25. PER FOULS "; playerStats!(I, 8)
+            Print "10. BLOCK RATING "; playerOff!(I, 6); Tab(37); "26. ASSISTS "; playerStats!(I, 9)
+            Print "11. FGA "; playerRatings!(I, 1); Tab(37); "27. BLOCKS "; playerStats!(I, 10)
+            Print "12. FOUL COMMIT RATING "; playerRatings!(I, 5); Tab(37); "28. STEALS "; playerStats!(I, 11)
+            Print "13. FOUL DRAWING RATING "; playerRatings!(I, 6); Tab(37); "29. 3 FGM "; playerStats!(I, 13)
+            Print "14. 3FG% "; playerRatings!(I, 2); Tab(37); "30. 3 FGA "; playerStats!(I, 12)
+            Print "15. 3FGA/TOT FGA "; playerRatings!(I, 3)
+            Print "16. DEFENSIVE RATING (1-9) "; playerDef!(I)
 
             Do
 
@@ -280,94 +309,122 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Select Case B9
 
                     Case 1
-                        Locate 2: Input " 1. NAME "; cngratA$(I)
+                        Locate 2: Input " 1. NAME "; playerNames$(I)
 
                     Case 2
-                        Locate 3: Input " 2. POSITION "; P$(I)
+                        Locate 3: Input " 2. POSITION "; position$(I)
 
                     Case 3
-                        Locate 4: Input " 3. GAMES PLAYED "; X!(I, 0)
+                        Locate 4, 18: Print Space$(5)
+                        Locate 4: Input " 3. GAMES PLAYED "; playerRatings!(I, 0)
 
                     Case 4
-                        Locate 5: Input " 4. ADJ FG% "; statsA!(I, 0)
+                        Locate 5, 13: Print Space$(5)
+                        Locate 5: Input " 4. ADJ FG% "; playerOff!(I, 0)
 
                     Case 5
-                        Locate 6: Input " 5. FT% "; statsA!(I, 1)
+                        Locate 6, 9: Print Space$(5)
+                        Locate 6: Input " 5. FT% "; playerOff!(I, 1)
 
                     Case 6
-                        Locate 7: Input " 6. OFF RB/40 MIN X 10 "; X!(I, 4)
+                        Locate 7, 24: Print Space$(5)
+                        Locate 7: Input " 6. OFF RB/40 MIN X 10 "; playerRatings!(I, 4)
 
                     Case 7
-                        Locate 8: Input " 7. DEF RB/40 MIN X 10 "; statsA!(I, 2)
+                        Locate 8, 24: Print Space$(5)
+                        Locate 8: Input " 7. DEF RB/40 MIN X 10 "; playerOff!(I, 2)
 
                     Case 8
-                        Locate 9: Input " 8. ASSIST RATING "; statsA!(I, 4)
+                        Locate 9, 19: Print Space$(5)
+                        Locate 9: Input " 8. ASSIST RATING "; playerOff!(I, 4)
 
                     Case 9
-                        Locate 10: Input " 9. STEAL RATING "; statsA!(I, 5)
+                        Locate 10, 18: Print Space$(5)
+                        Locate 10: Input " 9. STEAL RATING "; playerOff!(I, 5)
 
                     Case 10
-                        Locate 11: Input "10. BLOCK RATING "; statsA!(I, 6)
+                        Locate 11, 18: Print Space$(5)
+                        Locate 11: Input "10. BLOCK RATING "; playerOff!(I, 6)
 
                     Case 11
-                        Locate 12: Input "11. FGA "; X!(I, 1)
+                        Locate 12, 9: Print Space$(5)
+                        Locate 12: Input "11. FGA "; playerRatings!(I, 1)
 
                     Case 12
-                        Locate 13: Input "12. FOUL COMMIT RATING "; X!(I, 5)
+                        Locate 13, 25: Print Space$(5)
+                        Locate 13: Input "12. FOUL COMMIT RATING "; playerRatings!(I, 5)
 
                     Case 13
-                        Locate 14: Input "13. FOUL DRAWING RATING "; X!(I, 6)
+                        Locate 14, 25: Print Space$(5)
+                        Locate 14: Input "13. FOUL DRAWING RATING "; playerRatings!(I, 6)
 
                     Case 14
-                        Locate 15: Input "14. 3FG% "; X!(I, 2)
+                        Locate 15, 10: Print Space$(5)
+                        Locate 15: Input "14. 3FG% "; playerRatings!(I, 2)
 
                     Case 15
-                        Locate 16: Input "15. 3FGA/TOT FGA "; X!(I, 3)
+                        Locate 16, 18: Print Space$(5)
+                        Locate 16: Input "15. 3FGA/TOT FGA "; playerRatings!(I, 3)
 
                     Case 16
-                        Locate 17: Input "16. DEFENSIVE RATING (1-9) "; DF!(I)
+                        Locate 17, 28: Print Space$(5)
+                        Locate 17: Input "16. DEFENSIVE RATING (1-9) "; playerDef!(I)
 
                     Case 17
-                        Locate 2, 37: Input "17. GAMES "; RS!(I, 0)
+                        Locate 2, 48: Print Space$(5)
+                        Locate 2, 37: Input "17. GAMES "; playerStats!(I, 0)
 
                     Case 18
-                        Locate 3, 37: Input "18. MINUTES "; RS!(I, 1)
+                        Locate 3, 50: Print Space$(5)
+                        Locate 3, 37: Input "18. MINUTES "; playerStats!(I, 1)
 
                     Case 19
-                        Locate 4, 37: Input "19. FGM "; RS!(I, 3)
+                        Locate 4, 46: Print Space$(5)
+                        Locate 4, 37: Input "19. FGM "; playerStats!(I, 3)
 
                     Case 20
-                        Locate 5, 37: Input "20. FGA "; RS!(I, 2)
+                        Locate 5, 46: Print Space$(5)
+                        Locate 5, 37: Input "20. FGA "; playerStats!(I, 2)
 
                     Case 21
-                        Locate 6, 37: Input "21. FTM "; RS!(I, 5)
+                        Locate 6, 46: Print Space$(5)
+                        Locate 6, 37: Input "21. FTM "; playerStats!(I, 5)
 
                     Case 22
-                        Locate 7, 37: Input "22. FTA "; RS!(I, 4)
+                        Locate 7, 46: Print Space$(5)
+                        Locate 7, 37: Input "22. FTA "; playerStats!(I, 4)
 
                     Case 23
-                        Locate 8, 37: Input "23. OFF REB "; RS!(I, 6)
+                        Locate 8, 50: Print Space$(5)
+                        Locate 8, 37: Input "23. OFF REB "; playerStats!(I, 6)
 
                     Case 24
-                        Locate 9, 37: Input "24. TOTAL REB "; RS!(I, 7)
+                        Locate 9, 52: Print Space$(5)
+                        Locate 9, 37: Input "24. TOTAL REB "; playerStats!(I, 7)
 
                     Case 25
-                        Locate 10, 37: Input "25. PER FOULS "; RS!(I, 8)
+                        Locate 10, 52: Print Space$(5)
+                        Locate 10, 37: Input "25. PER FOULS "; playerStats!(I, 8)
 
                     Case 26
-                        Locate 11, 37: Input "26. ASSISTS "; RS!(I, 9)
+                        Locate 11, 50: Print Space$(5)
+                        Locate 11, 37: Input "26. ASSISTS "; playerStats!(I, 9)
 
                     Case 27
-                        Locate 12, 37: Input "27. BLOCKS "; RS!(I, 10)
+                        Locate 12, 49: Print Space$(5)
+                        Locate 12, 37: Input "27. BLOCKS "; playerStats!(I, 10)
 
                     Case 28
-                        Locate 13, 37: Input "28. STEALS "; RS!(I, 11)
+                        Locate 13, 49: Print Space$(5)
+                        Locate 13, 37: Input "28. STEALS "; playerStats!(I, 11)
 
                     Case 29
-                        Locate 14, 37: Input "29. 3 FGM "; RS!(I, 13)
+                        Locate 14, 48: Print Space$(5)
+                        Locate 14, 37: Input "29. 3 FGM "; playerStats!(I, 13)
 
                     Case 30
-                        Locate 15, 37: Input "30. 3 FGA "; RS!(I, 12)
+                        Locate 15, 48: Print Space$(5)
+                        Locate 15, 37: Input "30. 3 FGA "; playerStats!(I, 12)
 
                 End Select
 
@@ -397,11 +454,11 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         For I = 0 To 13
             Print Using "## "; I + 1;
-            Print cngratA$(I);
+            Print playerNames$(I);
             Locate , 17
-            Print statsA!(I, 3)
+            Print playerOff!(I, 3)
             Locate , 1
-            T3 = T3 + statsA!(I, 3)
+            T3 = T3 + playerOff!(I, 3)
         Next I
 
         Print
@@ -420,10 +477,10 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             X9 = X9 - 1
 
             Locate 22, 18
-            Print cngratA$(X9)
+            Print playerNames$(X9)
             Locate , 1
             Locate 23, 1
-            Input "ENTER CP: "; statsA!(X9, 3)
+            Input "ENTER CP: "; playerOff!(X9, 3)
 
         Else
 
@@ -526,13 +583,13 @@ End Sub
 '... explain here ...
 Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), compT1%()
-    Shared cngratA$(), P$()
-    Shared statsA!(), DF!(), RS!(), X!()
+    Shared leagueRatings%(), teamRatings%(), teamStats()
+    Shared playerNames$(), position$()
+    Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
     teamYear$ = RTrim$(yearNumber$)
 
@@ -551,8 +608,8 @@ Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
     LSet Q$(0) = RTrim$(teamName$)
     LSet Q$(1) = MKI$(staminaRating%)
     LSet Q$(2) = MKI$(defFGPctAdj%)
-    LSet Q$(3) = MKI$(V1%)
-    LSet Q$(4) = MKI$(V2%)
+    LSet Q$(3) = MKI$(def3FG_Adj)
+    LSet Q$(4) = MKI$(def3FGA_Adj)
 
     For I = 0 To 4: LSet Q$(I + 5) = MKI$(leagueRatings%(I)): Next
 
@@ -562,10 +619,10 @@ Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
 
     'Players
     For I = 0 To 13
-        LSet Q$(I * 15 + 20) = cngratA$(I)
+        LSet Q$(I * 15 + 20) = playerNames$(I)
         For I1 = 0 To 6
-            LSet Q$(I * 15 + I1 + 21) = MKI$(statsA!(I, I1))
-            LSet Q$(I * 15 + I1 + 28) = MKI$(X!(I, I1))
+            LSet Q$(I * 15 + I1 + 21) = MKI$(playerOff!(I, I1))
+            LSet Q$(I * 15 + I1 + 28) = MKI$(playerRatings!(I, I1))
         Next
     Next
 
@@ -588,15 +645,15 @@ Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
     LSet Q$(3) = MKL$(teamAttendance%)
 
     For I = 0 To 13
-        LSet Q$(I * 16 + 4) = MKI$(DF!(I))
-        LSet Q$(I * 16 + 5) = P$(I)
+        LSet Q$(I * 16 + 4) = MKI$(playerDef!(I))
+        LSet Q$(I * 16 + 5) = position$(I)
         For I1 = 0 To 13
-            LSet Q$(I * 16 + I1 + 6) = MKI$(RS!(I, I1))
+            LSet Q$(I * 16 + I1 + 6) = MKI$(playerStats!(I, I1))
         Next
     Next
 
     For I = 0 To 20
-        LSet Q$(228 + I) = MKI$(compT1%(I))
+        LSet Q$(228 + I) = MKI$(teamStats(I))
     Next
 
     LSet Q$(249) = MKI$(999)
@@ -615,23 +672,23 @@ End Sub
 '...explanation...
 Sub PrintRoster (A$, T1)
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj%, staminaRating%
 
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), teamStats()
 
-    Shared statsA!(), DF!(), X!()
+    Shared playerOff!(), playerDef!(), playerRatings!()
 
-    Shared cngratA$(), P$()
+    Shared playerNames$(), position$()
 
     Cls
 
     LPrint "TEAM ROSTER FOR "; A$
     LPrint
     LPrint "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj%
-    LPrint "OPP PCT OF 3FG ATT ADJ = "; V2%; "  OPP 3FG PCT ADJ = "; V1%
+    LPrint "OPP PCT OF 3FG ATT ADJ = "; def3FGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
     LPrint
     LPrint "DEF STEAL ADJ "; leagueRatings%(0)
     LPrint "OFF TURNOVER ADJ "; leagueRatings%(1)
@@ -642,10 +699,10 @@ Sub PrintRoster (A$, T1)
     LPrint
 
     For I = 0 To 13
-        If cngratA$(I) <> "XXX" Then
-            LPrint cngratA$(I); Tab(15);
-            LPrint Using "### ### ### ### ### "; statsA!(I, 0); statsA!(I, 1); X!(I, 4); statsA!(I, 2); statsA!(I, 3);
-            LPrint Using "## ## ## ## ## ### ###"; statsA!(I, 4); statsA!(I, 5); statsA!(I, 6); X!(I, 5); X!(I, 6); X!(I, 3); X!(I, 2)
+        If playerNames$(I) <> "XXX" Then
+            LPrint playerNames$(I); Tab(15);
+            LPrint Using "### ### ### ### ### "; playerOff!(I, 0); playerOff!(I, 1); playerRatings!(I, 4); playerOff!(I, 2); playerOff!(I, 3);
+            LPrint Using "## ## ## ## ## ### ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
         End If
     Next I
 
@@ -668,17 +725,18 @@ End Sub
 '...explanation...
 Sub ViewRoster (A$, T1)
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj%, staminaRating%
 
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), compT1%()
+    Shared leagueRatings%(), teamRatings%(), teamStats()
 
-    Shared statsA!(), DF!(), X!()
+    Shared playerOff!(), playerDef!(), playerRatings!()
 
-    Shared cngratA$(), P$()
+    Shared playerNames$(), position$()
 
+    Color 15, 0
     Cls
 
     Print "TEAM ROSTER FOR ";
@@ -694,10 +752,10 @@ Sub ViewRoster (A$, T1)
     Color 15, 0: Print defFGPctAdj%
 
     Color 14, 0: Print "OPP PCT OF 3FG ATT ADJ = ";
-    Color 15, 0: Print V2%;
+    Color 15, 0: Print def3FGA_Adj;
 
     Color 14, 0: Print "  OPP 3FG PCT ADJ = ";
-    Color 15, 0: Print V1%;
+    Color 15, 0: Print def3FG_Adj;
 
     Color 14, 0: Print "   DEF STEAL ADJ ";
     Color 15, 0: Print leagueRatings%(0)
@@ -716,10 +774,10 @@ Sub ViewRoster (A$, T1)
     Color 15, 0
 
     For I = 0 To 13
-        If cngratA$(I) <> "XXX" Then
-            Print cngratA$(I); Tab(16);
-            Print Using "### ### ### ### ### "; statsA!(I, 0); statsA!(I, 1); X!(I, 4); statsA!(I, 2); statsA!(I, 3);
-            Print Using "## ## ## ### ##  ###  ###"; statsA!(I, 4); statsA!(I, 5); statsA!(I, 6); X!(I, 5); X!(I, 6); X!(I, 3); X!(I, 2)
+        If playerNames$(I) <> "XXX" Then
+            Print playerNames$(I); Tab(16);
+            Print Using "### ### ### ### ### "; playerOff!(I, 0); playerOff!(I, 1); playerRatings!(I, 4); playerOff!(I, 2); playerOff!(I, 3);
+            Print Using "## ## ## ### ##  ###  ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
         End If
     Next I
 
@@ -802,13 +860,13 @@ End Sub
 '...explanation...
 Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), compT1%()
-    Shared cngratA$(), P$()
-    Shared statsA!(), DF!(), RS!(), X!()
+    Shared leagueRatings%(), teamRatings%(), teamStats()
+    Shared playerNames$(), position$()
+    Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
     NS% = 0
 
@@ -850,20 +908,24 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
         selectedTeamName$ = RTrim$(Q$(0))
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
-        V1% = CVI(Q$(3))
-        V2% = CVI(Q$(4))
+        def3FG_Adj = CVI(Q$(3))
+        def3FGA_Adj = CVI(Q$(4))
 
-        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
+        For I = 0 To 4: 
+            leagueRatings%(I) = CVI(Q$(I + 5))
+        Next
 
-        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 9: 
+            teamRatings%(I) = CVI(Q$(I + 10))
+        Next
 
         For I = 0 To 13
 
-            cngratA$(I) = RTrim$(Q$(I * 15 + 20))
+            playerNames$(I) = RTrim$(Q$(I * 15 + 20))
 
             For I1 = 0 To 6
-                statsA!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
-                X!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
+                playerOff!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
+                playerRatings!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
             Next
         Next
 
@@ -886,15 +948,19 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
         teamAttendance% = CVL(Q$(3))
 
         For I = 0 To 13
-            DF!(I) = CVI(Q$(I * 16 + 4))
-            P$(I) = Q$(I * 16 + 5)
+
+            playerDef!(I) = CVI(Q$(I * 16 + 4))
+            position$(I) = Q$(I * 16 + 5)
+
             For I1 = 0 To 13
-                RS!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
+                playerStats!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
             Next
+
         Next
 
+        'Just a temporary placeholder???
         For I = 0 To 20
-            compT1%(I) = CVI(Q$(228 + I))
+            teamStats(I) = CVI(Q$(228 + I))
         Next
 
         CK = CVI(Q$(249))
@@ -908,15 +974,15 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
             teamAttendance% = 0
 
             For I = 0 To 13
-                DF!(I) = 5
-                P$(I) = ""
+                playerDef!(I) = 5
+                position$(I) = ""
                 For I1 = 0 To 13
-                    RS!(I, I1) = 0
+                    playerStats!(I, I1) = 0
                 Next
             Next
 
             For I = 0 To 20
-                compT1%(I) = 0
+                teamStats(I) = 0
             Next
 
         End If 'done checking for '999

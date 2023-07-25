@@ -200,8 +200,8 @@ Sub COLHOOP ()
         Do
             Color 15, 0
             Cls
-            Color 2
 
+            Color 2
             Print ; Tab(29); "SELECT OPENING OPTIONS"
             Print
             Locate 2, 2: Color 14
@@ -246,16 +246,17 @@ Sub COLHOOP ()
             Locate , 2: Print "       3 FT WHEN FOULED ON A 3 PT ATT ADOPTED IN 1990-91"
             Locate , 2: Print "       35 SEC SHOT CLOCK WAS ADOPTED IN 1993-94"
 
-            'Start opening options with Locate 3, 2:
+            'Start opening options with:
+            'Locate 3, 2:
             'Options wil go up to Locate 17, 2 before the below:
 
             'Locate 19, 2: Print "NOTE::"
-            'Locate , 2: Print "       1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
-            'Locate , 2: Print "       45 SEC SHOT CLOCK ADOPTED 1984-85, BUT NOT FOR POST-SEASON"
-            'Locate , 2: Print "       3 PT SHOT ADOPTED IN 1986-87"
-            'Locate , 2: Print "       2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED 1990-91"
-            'Locate , 2: Print "       3 FT WHEN FOULED ON A 3 PT ATT ADOPTED 1990-91"
-            'Locate , 2: Print "       35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16"
+            'Print "        1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
+            'Print "        45 SEC SHOT CLOCK ADOPTED 1984-85, BUT NOT FOR POST-SEASON"
+            'Print "        3 PT SHOT ADOPTED IN 1986-87"
+            'Print "        2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED 1990-91"
+            'Print "        3 FT WHEN FOULED ON A 3 PT ATT ADOPTED 1990-91"
+            'Print "        35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16";
 
             Do
                 Color 7
@@ -284,11 +285,21 @@ Sub COLHOOP ()
 
                     Case 2:
                         P9 = 0
-                        Call SELECTID
+                        Call ChooseGameTeam (YN$, numberTeams, tmIdx, B$(P9), P9)
+                        If tmIdx <> 0 Then
+                            Color 15, 0
+                            Call TEAMSETUP
+                            Call DISABLEPLAYERS
+                        End If
 
                     Case 3:
                         P9 = 1
-                        Call SELECTID
+                        Call ChooseGameTeam (YN$, numberTeams, tmIdx, B$(P9), P9)
+                        If tmIdx <> 0 Then
+                            Color 15, 0
+                            Call TEAMSETUP
+                            Call DISABLEPLAYERS
+                        End If
 
                     Case 4:
                         X3% = 1 - X3%
@@ -406,10 +417,10 @@ Sub COLHOOP ()
 
     'Determine attendance
     ' N = 2 is a non-neutral site
-    If N = 2 Or avgAttendance&(1) = 0 Then
+    If N = 2 Or avgatt_DRAFT&(1) = 0 Then
         actualAttendance& = Int(Rnd(1) * 2000) + 9000
     Else
-        actualAttendance& = Int(Rnd(1) * 2000) + avgAttendance&(1) - 1000
+        actualAttendance& = Int(Rnd(1) * 2000) + avgatt_DRAFT&(1) - 1000
     End If
 
     '----------------------------------------
@@ -417,16 +428,17 @@ Sub COLHOOP ()
     '----------------------------------------
 
     ' Determine computer team
-    If U5 = 1 Then
-        CT = 0
-    Else
-        If U5 = 2 Then
+    Select Case U5
+
+        Case 1: 
+            CT = 0
+        Case 2: 
             U5 = 1
             CT = 1
-        Else
-            If U5 = 3 Then U5 = 2
-        End If
-    End If
+        Case 3: 
+            U5 = 2
+    
+    End Select
 
     Call LOADSTATS_Game
 

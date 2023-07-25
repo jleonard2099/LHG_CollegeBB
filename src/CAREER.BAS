@@ -115,34 +115,19 @@ Sub CreateCareerFile ()
 
             Color 11
             Locate 15, 5
-            Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; Z$
+            Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; careerFile$
 
-            Call GetTeam_CAREER(ti, A$)
-            B$ = A$
+            'Call GetTeam_CAREER(ti, A$)
+            Call ChooseTeam (yearNumber$, numberTeams, ti, teamName$)
 
             'ti = team index of chosen team
             '0 means no team was chosen
             If ti <> 0 Then
 
-                For XX = 4 To 11
-                    If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                Next XX
-
-                For XX = 12 To 14
-                    If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                Next XX
-
-                QQ = 8
-
-                For XX = 11 To 4 Step -1
-                    If Not (Mid$(B$, XX, 1) = "_") Then
-                        Exit For
-                    End If
-                Next XX
-
-                Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+                statFile$ = nameStatFile$(teamName$)
 
                 Do
+                    Color 15, 0
                     Cls
                     Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
                     Locate 9, 25: Print "ANY CHANGE (YN)"
@@ -159,7 +144,7 @@ Sub CreateCareerFile ()
 
                     If UCase$(K$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
 
-                    If Not _FileExists(diskPaths$(1) + Z1$) Then
+                    If Not _FileExists(diskPaths$(1) + statFile$) Then
                         Locate 10, 18
                         Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
                         I$ = GetKeyPress$
@@ -170,7 +155,7 @@ Sub CreateCareerFile ()
                         Color 15
                         Print "MERGING CAREER STATS AND UPDATING CAREER LEADER FILE . . . . PLEASE WAIT"
 
-                        Open diskPaths$(1) + Z1$ For Input As #1
+                        Open diskPaths$(1) + statFile$ For Input As #1
 
                         Input #1, B$
 
@@ -219,9 +204,9 @@ Sub CreateCareerFile ()
 
                         For I = 0 To 61: AR$(I) = careerA$(I): Next
 
-                        If finalUpdate% = 1 Then Call UpdateCareerLeaders(Z$)
+                        If finalUpdate% = 1 Then Call UpdateCareerLeaders(careerFile$)
 
-                        Open diskPaths$(1) + Z$ + ".CAR" For Output As #2
+                        Open diskPaths$(1) + careerFile$ + ".CAR" For Output As #2
 
                         Write #2, NB%, B$
 
@@ -520,9 +505,9 @@ Sub ViewPrintCareerRecords ()
                 Cls
 
                 targetFile$ = RTrim$(targetFile$)
-                ZZ$ = Left$(targetFile$, Len(targetFile$) - 4)
+                leaderFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 
-                Open diskPaths$(1) + ZZ$ + ".CLD" For Input As #1
+                Open diskPaths$(1) + leaderFile$ + ".CLD" For Input As #1
 
                 For I = 0 To 20:
                     Input #1, BLYR(I), BL$(I), BL(I)
@@ -741,29 +726,9 @@ Sub MergeCareerFiles ()
                 careerFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 
                 Call GetTeam_CAREER(ti, A$)
-                B$ = A$
+                statFile$ = nameStatFile$(A$)
 
-                For XX = 4 To 11:
-                    If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-                Next XX
-
-                For XX = 12 To 14:
-                    If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-                Next XX
-
-                QQ = 8
-
-                For XX = 11 To 4 Step -1
-                    If Not (Mid$(B$, XX, 1) = "_") Then
-                        Exit For
-                    Else
-                        QQ = XX - 4
-                    End If
-                Next XX
-
-                Z1$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
-
-                Call AddYear(careerFile$, Z1$)
+                Call AddYear(careerFile$, statFile$)
 
             End If 'Done checking for ESC
 
@@ -994,7 +959,7 @@ End Sub
 ' ...explanation...
 Sub GetTeam_CAREER (teamIdx, A$)
 
-    Shared careerT%()
+    Shared teamRatings%()
 
     Do
 
@@ -1073,7 +1038,7 @@ Sub GetTeam_CAREER (teamIdx, A$)
                 BO% = 0
             Else
                 Locate 2, 33
-                Color careerT%(0), careerT%(1): Print A$
+                Color teamRatings%(0), teamRatings%(1): Print A$
 
                 Do
                     Color 15, 4
@@ -1098,7 +1063,7 @@ End Sub
 '...explanation...
 Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamIdx)
 
-    Shared leagueRatings%(), careerT%()
+    Shared leagueRatings%(), teamRatings%()
 
     Selection% = 1
     Count% = numberTeams
@@ -1137,11 +1102,16 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamIdx)
 
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
-        V1% = CVI(Q$(3))
-        V2% = CVI(Q$(4))
+        def3FG_Adj = CVI(Q$(3))
+        def3FGA_Adj = CVI(Q$(4))
 
-        For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: careerT%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 4: 
+            leagueRatings%(I) = CVI(Q$(I + 5))
+        Next
+        
+        For I = 0 To 9: 
+            teamRatings%(I) = CVI(Q$(I + 10))
+        Next
 
         Close 1
     Else

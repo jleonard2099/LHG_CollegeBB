@@ -6,7 +6,7 @@ Sub TINPUT ()
     Shared L3, L5, T1, T2, T6, T7, T8, T3, T4, T0, T9
     Shared W0, W1, XX
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
@@ -15,10 +15,10 @@ Sub TINPUT ()
 
     Shared teamRatings%()
 
-    Shared inputA(), inputDF(), inputL()
-    Shared inputRS(), inputX()
+    Shared playerOff!(), playerDef!(), leagueRatings%()
+    Shared playerStats!(), playerRatings!()
 
-    Shared inputN$(), inputP$()
+    Shared playerNames$(), position$()
 
     inputX$(0) = "COLLEGE BASKETBALL"
     inputX$(1) = "H S BASKETBALL"
@@ -125,38 +125,90 @@ Sub TINPUT ()
             Print
             Print "IF YOU ARE INPUTTING A TEAM WITH ANY "
             Print "OF THE FOLLOWING STATS MISSING,"
-            Print "SIMPLY CHECK 'N' AND THE PROGRAM WILL"
+            Print "SIMPLY TYPE 'N' AND THE PROGRAM WILL"
             Print "ALLOW YOU TO INPUT RATINGS DIRECTLY"
             Print
-            Print "DO YOU HAVE THE FOLLOWING:"
-            Print
-
-            Do
-                Input "ASSISTS (YN) "; I$
-                If I$ = "N" Then inputQQ(0) = 1 Else inputQQ(0) = 0
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-            Do
-                Input "PERSONAL FOULS (YN) "; I$
-                If I$ = "N" Then inputQQ(1) = 1 Else inputQQ(1) = 0
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-            Do
-                Input "STEALS & TURNOVERS (YN) "; I$
-                If I$ = "N" Then inputQQ(2) = 1 Else inputQQ(2) = 0
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-            Do
-                Input "BLOCKS (YN) "; I$
-                If I$ = "N" Then inputQQ(3) = 1 Else inputQQ(3) = 0
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+            Color 12: Print "DO YOU HAVE THE FOLLOWING INFORMATION :"
 
             Print
+            Color 14: Print "(1) ";
+            Color 15: Print "TEAM/INDIVID ASSISTS (Y/N): ";
 
             Do
-                Input "ANY CHANGE (YN) "; I$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
 
+            If I$ <> Chr$(27) Then
+
+                Print UCase$(I$)
+
+                If UCase$(I$) = "Y" Then inputQQ(0) = 0
+                If UCase$(I$) = "N" Then inputQQ(0) = 1
+
+                Print
+                Color 14: Print "(2) ";
+                Color 15: Print "PERSONAL FOULS (Y/N): ";
+
+                Do
+                    I$ = GetKeyPress$
+                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
+
+                If I$ <> Chr$(27) Then
+
+                    Print UCase$(I$)
+
+                    If UCase$(I$) = "Y" Then inputQQ(1) = 0
+                    If UCase$(I$) = "N" Then inputQQ(1) = 1
+
+                    Print
+                    Color 14: Print "(3) ";
+                    Color 15: Print "STEALS & TURNOVERS (Y/N): ";
+
+                    Do
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
+
+                    If I$ <> Chr$(27) Then
+
+                        Print UCase$(I$)
+
+                        If UCase$(I$) = "Y" Then inputQQ(2) = 0
+                        If UCase$(I$) = "N" Then inputQQ(2) = 1
+
+                        Print
+                        Color 14: Print "(4) ";
+                        Color 15: Print "TEAM / INDIVIDUAL BLOCKS (Y/N): ";
+
+                        Do
+                            I$ = GetKeyPress$
+                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = Chr$(27)
+
+                        If I$ <> Chr$(27) Then
+
+                            Print UCase$(I$)
+
+                            If UCase$(I$) = "Y" Then inputQQ(3) = 0
+                            If UCase$(I$) = "N" Then inputQQ(3) = 1
+
+                            Print
+
+                            Do
+
+                                Print "ANY CHANGE (Y/N)";
+                                I$ = GetKeyPress$
+
+                            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+
+                        End If
+
+                    End If
+
+                End If
+
+            End If
+
+            If I$ = Chr$(27) Then Exit Sub
+            
         Loop Until UCase$(I$) = "N"
 
         '---------------
@@ -234,6 +286,8 @@ Sub TINPUT ()
 
             Locate 22: Input "19. OPP 2FG% "; OE
 
+            'FOULS
+            'Average 20 / game if none entered
             If BI = 0 Then BI = 20 * L5
             If L3 = 0 Then L3 = 20 * L5
 
@@ -393,26 +447,28 @@ Sub TINPUT ()
                 Color 15
 
                 Locate 3
-                Input " 1. NAME (XXX TO QUIT) "; inputN$(I)
+                Input " 1. NAME (XXX TO QUIT) "; playerNames$(I)
 
-                If inputN$(I) <> "XXX" Then
+                If playerNames$(I) <> "XXX" Then
 
-                    Locate 4: Input " 2. POSITION "; inputP$(I)
-                    Locate 5: Input " 3. GAMES "; inputA(I, 7): inputX(I, 0) = inputA(I, 7)
-                    Locate 6: Input " 4. MP "; inputA(I, 8)
-                    Locate 7: Input " 5. FGM "; inputRS(I, 3)
-                    Locate 8: Input " 6. FGA "; inputA(I, 9): inputX(I, 1) = inputA(I, 9)
-                    Locate 9: Input " 7. FTM "; inputRS(I, 5)
-                    Locate 10: Input " 8. FTA "; inputA(I, 16)
-                    Locate 11: Input " 9. ORB "; inputA(I, 19)
-                    Locate 12: Input "10. TOT RB "; inputA(I, 10)
-                    Locate 13: Input "11. PF "; inputA(I, 12)
-                    Locate 14: Input "12. AST "; inputA(I, 11)
-                    Locate 15: Input "13. BLK "; inputA(I, 14)
-                    Locate 16: Input "14. STL "; inputA(I, 13)
-                    Locate 17: Input "15. 3 FGM "; inputRS(I, 13)
-                    Locate 18: Input "16. 3 FGA "; inputA(I, 17)
-                    Locate 19: Input "17. DEFENSE (1-9) "; inputDF(I)
+                    Locate 4: Input " 2. POSITION "; position$(I)
+                    Locate 5: Input " 3. GAMES "; playerOff!(I, 7)
+                    playerRatings!(I, 0) = playerOff!(I, 7)
+                    Locate 6: Input " 4. MP "; playerOff!(I, 8)
+                    Locate 7: Input " 5. FGM "; playerStats!(I, 3)
+                    Locate 8: Input " 6. FGA "; playerOff!(I, 9)
+                    playerRatings!(I, 1) = playerOff!(I, 9)
+                    Locate 9: Input " 7. FTM "; playerStats!(I, 5)
+                    Locate 10: Input " 8. FTA "; playerOff!(I, 16)
+                    Locate 11: Input " 9. ORB "; playerOff!(I, 19)
+                    Locate 12: Input "10. TOT RB "; playerOff!(I, 10)
+                    Locate 13: Input "11. PF "; playerOff!(I, 12)
+                    Locate 14: Input "12. AST "; playerOff!(I, 11)
+                    Locate 15: Input "13. BLK "; playerOff!(I, 14)
+                    Locate 16: Input "14. STL "; playerOff!(I, 13)
+                    Locate 17: Input "15. 3 FGM "; playerStats!(I, 13)
+                    Locate 18: Input "16. 3 FGA "; playerOff!(I, 17)
+                    Locate 19: Input "17. DEFENSE (1-9) "; playerDef!(I)
 
                     Do
 
@@ -426,92 +482,92 @@ Sub TINPUT ()
                             Select Case B9
 
                                 Case 1
-                                    Locate 3: Input " 1. NAME (XXX TO QUIT) "; inputN$(I)
+                                    Locate 3: Input " 1. NAME (XXX TO QUIT) "; playerNames$(I)
 
                                 Case 2
-                                    Locate 4: Input "2. POSITION "; inputP$(I)
+                                    Locate 4: Input "2. POSITION "; position$(I)
 
                                 Case 3
-                                    Locate 5: Input " 3. GAMES "; inputA(I, 7)
-                                    inputX(I, 0) = inputA(I, 7)
+                                    Locate 5: Input " 3. GAMES "; playerOff!(I, 7)
+                                    playerRatings!(I, 0) = playerOff!(I, 7)
 
                                 Case 4
-                                    Locate 6: Input " 4. MP "; inputA(I, 8)
+                                    Locate 6: Input " 4. MP "; playerOff!(I, 8)
 
                                 Case 5
-                                    Locate 7: Input " 5. FGM "; inputRS(I, 3)
+                                    Locate 7: Input " 5. FGM "; playerStats!(I, 3)
 
                                 Case 6
-                                    Locate 8: Input " 6. FGA "; inputA(I, 9)
-                                    inputX(I, 1) = inputA(I, 9)
+                                    Locate 8: Input " 6. FGA "; playerOff!(I, 9)
+                                    playerRatings!(I, 1) = playerOff!(I, 9)
 
                                 Case 7
-                                    Locate 9: Input " 7. FTM "; inputRS(I, 5)
+                                    Locate 9: Input " 7. FTM "; playerStats!(I, 5)
 
                                 Case 8
-                                    Locate 10: Input " 8. FTA "; inputA(I, 16)
+                                    Locate 10: Input " 8. FTA "; playerOff!(I, 16)
 
                                 Case 9
-                                    Locate 11: Input " 9. ORB "; inputA(I, 19)
+                                    Locate 11: Input " 9. ORB "; playerOff!(I, 19)
 
                                 Case 10
-                                    Locate 12: Input " 10. TOT RB "; inputA(I, 10)
+                                    Locate 12: Input " 10. TOT RB "; playerOff!(I, 10)
 
                                 Case 11
-                                    Locate 13: Input "11. PF "; inputA(I, 12)
+                                    Locate 13: Input "11. PF "; playerOff!(I, 12)
 
                                 Case 12
-                                    Locate 14: Input "12. AST "; inputA(I, 11)
+                                    Locate 14: Input "12. AST "; playerOff!(I, 11)
 
                                 Case 13
-                                    Locate 15: Input "13. BLK "; inputA(I, 14)
+                                    Locate 15: Input "13. BLK "; playerOff!(I, 14)
 
                                 Case 14
-                                    Locate 16: Input "14. STL "; inputA(I, 13)
+                                    Locate 16: Input "14. STL "; playerOff!(I, 13)
 
                                 Case 15
-                                    Locate 17: Input "15. 3 FGM "; inputRS(I, 13)
+                                    Locate 17: Input "15. 3 FGM "; playerStats!(I, 13)
 
                                 Case 16
-                                    Locate 18: Input "16. 3 FGA "; inputA(I, 17)
+                                    Locate 18: Input "16. 3 FGA "; playerOff!(I, 17)
 
                                 Case 17
-                                    Locate 19: Input "17. DEFENSE (1-9) "; inputDF(I)
+                                    Locate 19: Input "17. DEFENSE (1-9) "; playerDef!(I)
 
                             End Select
 
-                            inputRS(I, 0) = inputA(I, 7)
-                            inputRS(I, 1) = inputA(I, 8)
-                            inputRS(I, 2) = inputA(I, 9)
+                            playerStats!(I, 0) = playerOff!(I, 7)
+                            playerStats!(I, 1) = playerOff!(I, 8)
+                            playerStats!(I, 2) = playerOff!(I, 9)
 
-                            If inputRS(I, 2) = 0 Then
-                                inputA(I, 0) = 0
+                            If playerStats!(I, 2) = 0 Then
+                                playerOff!(I, 0) = 0
                             Else
-                                inputA(I, 0) = Int(inputRS(I, 3) / inputRS(I, 2) * 100 + .5)
+                                playerOff!(I, 0) = Int(playerStats!(I, 3) / playerStats!(I, 2) * 100 + .5)
                             End If
 
-                            inputRS(I, 4) = inputA(I, 16)
+                            playerStats!(I, 4) = playerOff!(I, 16)
 
-                            If inputRS(I, 4) = 0 Then
-                                inputA(I, 1) = 0
+                            If playerStats!(I, 4) = 0 Then
+                                playerOff!(I, 1) = 0
                             Else
-                                inputA(I, 1) = Int(inputRS(I, 5) / inputRS(I, 4) * 100 + .5)
+                                playerOff!(I, 1) = Int(playerStats!(I, 5) / playerStats!(I, 4) * 100 + .5)
                             End If
 
-                            inputRS(I, 6) = inputA(I, 19)
-                            inputRS(I, 7) = inputA(I, 10)
-                            inputRS(I, 8) = inputA(I, 12)
-                            inputRS(I, 9) = inputA(I, 11)
-                            inputRS(I, 10) = inputA(I, 14)
-                            inputRS(I, 11) = inputA(I, 13)
-                            inputRS(I, 12) = inputA(I, 17)
+                            playerStats!(I, 6) = playerOff!(I, 19)
+                            playerStats!(I, 7) = playerOff!(I, 10)
+                            playerStats!(I, 8) = playerOff!(I, 12)
+                            playerStats!(I, 9) = playerOff!(I, 11)
+                            playerStats!(I, 10) = playerOff!(I, 14)
+                            playerStats!(I, 11) = playerOff!(I, 13)
+                            playerStats!(I, 12) = playerOff!(I, 17)
 
-                            If inputRS(I, 12) = 0 Then
-                                inputA(I, 18) = 0
-                                inputX(I, 2) = 0
+                            If playerStats!(I, 12) = 0 Then
+                                playerOff!(I, 18) = 0
+                                playerRatings!(I, 2) = 0
                             Else
-                                inputA(I, 18) = Int(inputRS(I, 13) / inputRS(I, 12) * 100 + .5)
-                                inputX(I, 2) = inputA(I, 18)
+                                playerOff!(I, 18) = Int(playerStats!(I, 13) / playerStats!(I, 12) * 100 + .5)
+                                playerRatings!(I, 2) = playerOff!(I, 18)
                             End If
 
                         End If
@@ -521,7 +577,7 @@ Sub TINPUT ()
                 Else
 
                     For I1 = I To 13:
-                        inputN$(I1) = "XXX"
+                        playerNames$(I1) = "XXX"
                     Next
 
                     Exit For
@@ -552,7 +608,7 @@ Sub TINPUT ()
                 BF = Int((BF * X2) + .5)
 
                 For I = 0 To 13:
-                    inputA(I, 16) = Int((inputA(I, 16) * X2) + .5)
+                    playerOff!(I, 16) = Int((playerOff!(I, 16) * X2) + .5)
                 Next I
 
             End If
@@ -568,34 +624,37 @@ Sub TINPUT ()
 
             For I = 0 To 13
 
-                If inputN$(I) <> "XXX" Then
-                    X9 = X9 + inputA(I, 10) + inputA(I, 9)
+                If playerNames$(I) <> "XXX" Then
+                    X9 = X9 + playerOff!(I, 10) + playerOff!(I, 9)
                 End If
 
             Next I
 
             For I = 0 To 13
 
-                If inputN$(I) <> "XXX" Then
+                If playerNames$(I) <> "XXX" Then
 
-                    If inputA(I, 8) <> 0 And H = 0 Then M = 40 / (inputA(I, 8) / inputA(I, 7))
-                    If inputA(I, 8) <> 0 And H = 1 Then M = 32 / (inputA(I, 8) / inputA(I, 7))
-                    If inputA(I, 8) = 0 Then M = (X9 / 5) / (inputA(I, 9) + inputA(I, 10)): MI = (inputA(I, 9) + inputA(I, 10)) / (X9 / 5)
-                    If inputA(I, 8) = 0 And M < 1.1 Then M = 1.1
-                    inputA(I, 2) = Int((((inputA(I, 10) / inputA(I, 7)) * M) * M7) + .5)
-                    X = Int(((((inputA(I, 10) / inputA(I, 7)) * M) * M7) * 10) + .5)
+                    If playerOff!(I, 8) <> 0 And H = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
+                    If playerOff!(I, 8) <> 0 And H = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
+                    If playerOff!(I, 8) = 0 Then M = (X9 / 5) / (playerOff!(I, 9) + playerOff!(I, 10)): MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9 / 5)
+                    If playerOff!(I, 8) = 0 And M < 1.1 Then M = 1.1
+                    playerOff!(I, 2) = Int((((playerOff!(I, 10) / playerOff!(I, 7)) * M) * M7) + .5)
+                    X = Int(((((playerOff!(I, 10) / playerOff!(I, 7)) * M) * M7) * 10) + .5)
 
-                    If inputA(I, 19) = 0 Then
-                        inputX(I, 4) = Int((X * .35) + .5)
+                    If playerOff!(I, 19) = 0 Then
+                        playerRatings!(I, 4) = Int((X * .35) + .5)
                     Else
-                        inputX(I, 4) = Int((X * (inputA(I, 19) / inputA(I, 10))) + .5)
+                        playerRatings!(I, 4) = Int((X * (playerOff!(I, 19) / playerOff!(I, 10))) + .5)
                     End If
 
-                    inputA(I, 2) = X - inputX(I, 4)
+                    playerOff!(I, 2) = X - playerRatings!(I, 4)
 
-                    If inputQQ(0) = 0 Then inputA(I, 4) = Int(((inputA(I, 11) / inputA(I, 7)) * M) * (L6 / (T0 / L5)) + .5)
-                    If inputQQ(2) = 0 Then inputA(I, 5) = Int(((inputA(I, 13) / inputA(I, 7)) * M) + .5)
-                    If inputQQ(3) = 0 Then inputA(I, 6) = ((inputA(I, 14) / inputA(I, 7)) * M): inputA(I, 6) = Int(inputA(I, 6) + .5)
+                    'Assists / Game
+                    If inputQQ(0) = 0 Then playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * M) * (L6 / (T0 / L5)) + .5)
+                    'Steals / Game
+                    If inputQQ(2) = 0 Then playerOff!(I, 5) = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * M) + .5)
+                    'Blocks / Game
+                    If inputQQ(3) = 0 Then playerOff!(I, 6) = Int (((playerOff!(I, 14) / playerOff!(I, 7)) * M) + .5)
 
                 End If
 
@@ -621,46 +680,46 @@ Sub TINPUT ()
 
             For I = 0 To 13
 
-                If inputN$(I) <> "XXX" Then
-                    inputA(I, 3) = (inputA(I, 9) + inputA(I, 10)) / X9
-                    inputA(I, 3) = Int((100 * inputA(I, 3)) + .5)
+                If playerNames$(I) <> "XXX" Then
+                    playerOff!(I, 3) = (playerOff!(I, 9) + playerOff!(I, 10)) / X9
+                    playerOff!(I, 3) = Int((100 * playerOff!(I, 3)) + .5)
                 End If
 
             Next I
 
             V% = Int(((W0 / T2) + .005) * 100)
-            V2% = V% - Q7
+            def3FGA_Adj = V% - Q7
 
             'DEF 3FGA/3FGA ADJ
             '-- Here is where 100 is being added to the value
             '-- This is why our team files and viewer later
             '-- will show values as 95-99
-            If V2% < 0 Then V2% = 100 + V2%
+            If def3FGA_Adj < 0 Then def3FGA_Adj = 100 + def3FGA_Adj
 
-            V1% = W1 - Q8
+            def3FG_Adj = W1 - Q8
 
             'DEF 3FG %
             '-- Here is where 100 is being added to the value
             '-- This is why our team files and viewer later
             '-- will show values as 95-99
-            If V1% < 0 Then V1% = 100 + V1%
+            If def3FG_Adj < 0 Then def3FG_Adj = 100 + def3FG_Adj
 
             For I = 0 To 13
 
-                If inputN$(I) <> "XXX" Then
+                If playerNames$(I) <> "XXX" Then
 
-                    If inputA(I, 9) <> 0 Then inputX(I, 3) = Int(inputA(I, 17) / inputA(I, 9) * 100 + .5)
-                    If inputA(I, 8) <> 0 And H = 0 Then M = 40 / (inputA(I, 8) / inputA(I, 7))
-                    If inputA(I, 8) <> 0 And H = 1 Then M = 32 / (inputA(I, 8) / inputA(I, 7))
-                    If inputA(I, 8) = 0 Then M = (X9 / 5) / (inputA(I, 9) + inputA(I, 10))
-                    If inputA(I, 8) = 0 And M < 1 Then M = 1
+                    If playerOff!(I, 9) <> 0 Then playerRatings!(I, 3) = Int(playerOff!(I, 17) / playerOff!(I, 9) * 100 + .5)
+                    If playerOff!(I, 8) <> 0 And H = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
+                    If playerOff!(I, 8) <> 0 And H = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
+                    If playerOff!(I, 8) = 0 Then M = (X9 / 5) / (playerOff!(I, 9) + playerOff!(I, 10))
+                    If playerOff!(I, 8) = 0 And M < 1 Then M = 1
 
-                    B3 = (inputA(I, 12) / inputA(I, 7)) * M: B3 = Int((B3 * 10) + .5)
-                    inputX(I, 5) = B3
-                    B3 = inputA(I, 9) * (inputA(I, 0) / 100): B4 = inputA(I, 17) * (inputA(I, 18) / 100)
+                    B3 = (playerOff!(I, 12) / playerOff!(I, 7)) * M: B3 = Int((B3 * 10) + .5)
+                    playerRatings!(I, 5) = B3
+                    B3 = playerOff!(I, 9) * (playerOff!(I, 0) / 100): B4 = playerOff!(I, 17) * (playerOff!(I, 18) / 100)
 
-                    If inputA(I, 9) - inputA(I, 17) <> 0 Then inputA(I, 0) = ((B3 - B4) / (inputA(I, 9) - inputA(I, 17))) + .005
-                    inputA(I, 0) = Int((inputA(I, 0) * 100) + .5)
+                    If playerOff!(I, 9) - playerOff!(I, 17) <> 0 Then playerOff!(I, 0) = ((B3 - B4) / (playerOff!(I, 9) - playerOff!(I, 17))) + .005
+                    playerOff!(I, 0) = Int((playerOff!(I, 0) * 100) + .5)
 
                 End If
 
@@ -668,28 +727,28 @@ Sub TINPUT ()
 
             For I = 0 To 13
 
-                If inputN$(I) <> "XXX" Then
-                    inputA(I, 0) = inputA(I, 0) - BC + U7
+                If playerNames$(I) <> "XXX" Then
+                    playerOff!(I, 0) = playerOff!(I, 0) - BC + U7
                 End If
 
             Next I
 
-            inputL(4) = 99
+            leagueRatings%(4) = 99
 
             For I = 0 To 13
 
-                If inputN$(I) <> "XXX" Then
+                If playerNames$(I) <> "XXX" Then
 
-                    X! = ((inputA(I, 9) * inputA(I, 0)) / 100)
-                    MI = (inputA(I, 8) / inputA(I, 7)) / 40
-                    If inputA(I, 8) = 0 Then MI = (inputA(I, 9) + inputA(I, 10)) / (X9 / 5)
+                    X! = ((playerOff!(I, 9) * playerOff!(I, 0)) / 100)
+                    MI = (playerOff!(I, 8) / playerOff!(I, 7)) / 40
+                    If playerOff!(I, 8) = 0 Then MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9 / 5)
                     X! = X! * .1
-                    If MI > 1 And inputA(I, 8) = 0 Then MI = 1
-                    X! = X! + ((inputA(I, 7) * 1.64) * MI)
-                    X! = ((inputA(I, 16) - X!) / 2)
-                    X! = Int(((X! / (inputA(I, 9) + X!)) * 100) + .5)
+                    If MI > 1 And playerOff!(I, 8) = 0 Then MI = 1
+                    X! = X! + ((playerOff!(I, 7) * 1.64) * MI)
+                    X! = ((playerOff!(I, 16) - X!) / 2)
+                    X! = Int(((X! / (playerOff!(I, 9) + X!)) * 100) + .5)
                     If X! < 0 Then X! = 0
-                    inputX(I, 6) = X!
+                    playerRatings!(I, 6) = X!
 
                 End If
 
@@ -699,23 +758,23 @@ Sub TINPUT ()
             X! = (inputY! - 7) / .4
             X! = Int(X! + .5)
 
-            If X! < 0 Then inputL(0) = 100 + X!
-            If X! > 0 Then inputL(0) = X!
+            If X! < 0 Then leagueRatings%(0) = 100 + X!
+            If X! > 0 Then leagueRatings%(0) = X!
 
             R! = 1200 - (((T1 + T2) / (L5 * 2)) * 4)
             R! = R! / 6
             inputY! = (BJ - BH) / L5
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
-            inputL(1) = X!
+            leagueRatings%(1) = X!
 
             inputY! = (BK - T9) / L5
             X! = (inputY! / R!) - .01
             X! = Int((X! * 100) + .5)
             X! = X! - 4
 
-            If X! < 0 Then inputL(2) = 100 + X!
-            If X! > 0 Then inputL(2) = X!
+            If X! < 0 Then leagueRatings%(2) = 100 + X!
+            If X! > 0 Then leagueRatings%(2) = X!
 
             R1! = Int(((T2 * BE) / 100) + .5)
             X! = (R1! * .1) + (L5 * 8.2)
@@ -723,8 +782,8 @@ Sub TINPUT ()
             X! = (X! / (T2 + X!)) - .09
             X! = Int((X! * 100) + .5)
 
-            If X! > 0 Then inputL(3) = X!
-            If X! < 0 Then inputL(3) = X! + 100
+            If X! > 0 Then leagueRatings%(3) = X!
+            If X! < 0 Then leagueRatings%(3) = X! + 100
 
             '---------------
             ' Assists
@@ -742,7 +801,7 @@ Sub TINPUT ()
 
                 For I = 0 To 13
                     Locate I + 6, 1
-                    Print I; " "; inputN$(I);
+                    Print I; " "; playerNames$(I);
                     Locate I + 6, 20
                     Input E0(I)
                 Next I
@@ -750,7 +809,7 @@ Sub TINPUT ()
                 AA = 0
 
                 For I1 = 0 To 13
-                    AA = AA + E0(I1) * Int(inputA(I1, 3))
+                    AA = AA + E0(I1) * Int(playerOff!(I1, 3))
                 Next I1
 
                 Locate 20, 1
@@ -773,7 +832,7 @@ Sub TINPUT ()
                 Loop Until UCase$(I$) = "N"
 
                 For I = 0 To 13
-                    inputA(I, 4) = inputA(I, 4) + E0(I)
+                    playerOff!(I, 4) = playerOff!(I, 4) + E0(I)
                 Next I
 
             End If
@@ -794,7 +853,7 @@ Sub TINPUT ()
 
                 For I = 0 To 13
                     Locate I + 6, 1
-                    Print I; " "; inputN$(I);
+                    Print I; " "; playerNames$(I);
                     Locate I + 6, 20
                     Input E0(I)
                 Next I
@@ -803,7 +862,7 @@ Sub TINPUT ()
                 TP = 0
 
                 For I1 = 0 To 13
-                    If inputN$(I1) <> "XXX" Then
+                    If playerNames$(I1) <> "XXX" Then
                         TP = TP + 1
                         PF = PF + E0(I1)
                     End If
@@ -829,7 +888,7 @@ Sub TINPUT ()
                 Loop Until UCase$(I$) = "N"
 
                 For I = 0 To 13
-                    inputX(I, 5) = E0(I)
+                    playerRatings!(I, 5) = E0(I)
                 Next I
 
             End If
@@ -851,7 +910,7 @@ Sub TINPUT ()
                 HX = Int(((HX / L5) * 10) + .5)
 
                 Cls
-                inputL(4) = 99
+                leagueRatings%(4) = 99
 
                 Color 14
                 Print "INPUT STEALS & TURNOVERS RATINGS."
@@ -864,7 +923,7 @@ Sub TINPUT ()
 
                 For I = 0 To 13
                     Locate I + 7, 1
-                    Print I; " "; inputN$(I);
+                    Print I; " "; playerNames$(I);
                     Locate I + 7, 20
                     Input E0(I)
                 Next I
@@ -876,7 +935,7 @@ Sub TINPUT ()
                 ST = 0
 
                 For I = 0 To 13:
-                    ST = ST + E0(I) * Int(inputA(I, 3))
+                    ST = ST + E0(I) * Int(playerOff!(I, 3))
                 Next I
 
                 ST = ST / 20
@@ -929,14 +988,14 @@ Sub TINPUT ()
                 Loop Until UCase$(I$) = "N"
 
                 For I = 0 To 13
-                    inputA(I, 5) = inputA(I, 5) + E0(I)
+                    playerOff!(I, 5) = playerOff!(I, 5) + E0(I)
                 Next I
 
                 If E0(14) < 0 Then E0(14) = 100 + E0(14)
                 If E0(16) < 0 Then E0(16) = 100 + E0(16)
 
                 For I = 0 To 2
-                    inputL(I) = E0(I + 14)
+                    leagueRatings%(I) = E0(I + 14)
                 Next
 
                 I$ = GetKeyPress$
@@ -958,7 +1017,7 @@ Sub TINPUT ()
 
                 For I = 0 To 13
                     Locate I + 6, 1
-                    Print I; " "; inputN$(I);
+                    Print I; " "; playerNames$(I);
                     Locate I + 6, 20
                     Input E0(I)
                 Next I
@@ -981,7 +1040,7 @@ Sub TINPUT ()
             End If
 
             For I = 0 To 13:
-                inputA(I, 6) = inputA(I, 6) + E0(I)
+                playerOff!(I, 6) = playerOff!(I, 6) + E0(I)
             Next I
 
             Call SaveTeam(1, A$, yearNumber$, teamNumber)
@@ -999,7 +1058,7 @@ End Sub
 '...explanation...
 Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
@@ -1009,10 +1068,10 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Shared teamRatings%()
 
-    Shared inputA(), inputDF(), inputL()
-    Shared inputRS(), inputX()
+    Shared playerOff!(), playerDef!(), leagueRatings%()
+    Shared playerStats!(), playerRatings!()
 
-    Shared inputN$(), inputP$()
+    Shared playerNames$(), position$()
 
     teamYear$ = RTrim$(yearNumber$)
 
@@ -1031,11 +1090,11 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     LSet Q$(0) = RTrim$(teamName$)
     LSet Q$(1) = MKI$(staminaRating%)
     LSet Q$(2) = MKI$(defFGPctAdj%)
-    LSet Q$(3) = MKI$(V1%)
-    LSet Q$(4) = MKI$(V2%)
+    LSet Q$(3) = MKI$(def3FG_Adj)
+    LSet Q$(4) = MKI$(def3FGA_Adj)
 
     For I = 0 To 4:
-        LSet Q$(I + 5) = MKI$(inputL(I))
+        LSet Q$(I + 5) = MKI$(leagueRatings%(I))
     Next
 
     teamRatings%(2) = 999
@@ -1045,11 +1104,14 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     Next
 
     For I = 0 To 13
-        LSet Q$(I * 15 + 20) = inputN$(I)
+
+        LSet Q$(I * 15 + 20) = playerNames$(I)
+
         For I1 = 0 To 6
-            LSet Q$(I * 15 + I1 + 21) = MKI$(inputA(I, I1))
-            LSet Q$(I * 15 + I1 + 28) = MKI$(inputX(I, I1))
+            LSet Q$(I * 15 + I1 + 21) = MKI$(playerOff!(I, I1))
+            LSet Q$(I * 15 + I1 + 28) = MKI$(playerRatings!(I, I1))
         Next
+
     Next
 
     Put #1, teamIdx
@@ -1071,11 +1133,14 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     LSet Q$(3) = MKL$(teamAttendance%)
 
     For I = 0 To 13
-        LSet Q$(I * 16 + 4) = MKI$(inputDF(I))
-        LSet Q$(I * 16 + 5) = inputP$(I)
+
+        LSet Q$(I * 16 + 4) = MKI$(playerDef!(I))
+        LSet Q$(I * 16 + 5) = position$(I)
+
         For I1 = 0 To 13
-            LSet Q$(I * 16 + I1 + 6) = MKI$(inputRS(I, I1))
+            LSet Q$(I * 16 + I1 + 6) = MKI$(playerStats!(I, I1))
         Next
+
     Next
 
     LSet Q$(228) = MKI$(L5)
@@ -1099,6 +1164,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     LSet Q$(246) = MKI$(BH)
     LSet Q$(247) = MKI$(W0)
     LSet Q$(248) = MKI$(W1)
+
     LSet Q$(249) = MKI$(999)
 
     Put #1, teamIdx
@@ -1110,19 +1176,19 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     For I = 0 To 13
 
         For I1 = 0 To 19
-            inputA(I, I1) = 0
+            playerOff!(I, I1) = 0
         Next I1
 
         For I1 = 0 To 6
-            inputX(I, 0) = 0
+            playerRatings!(I, 0) = 0
         Next I1
 
         For I1 = 0 To 13
-            inputRS(I, I1) = 0
+            playerStats!(I, I1) = 0
         Next I1
 
-        inputDF(I) = 0
-        inputP$(I) = ""
+        playerDef!(I) = 0
+        position$(I) = ""
 
     Next I
 

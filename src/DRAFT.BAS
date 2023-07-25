@@ -2,12 +2,14 @@ Sub DRAFT ()
 
     _Title "Courtside College Basketball - Team Draft"
 
-    Shared draftV1%(), draftV2%()
-    Shared draftL%(), draftT%()
+    Shared d3FG_Adj(), d3FGA_Adj()
+    Shared dFGPctAdj_DRAFT!()
+    
+    Shared lgRat_DRAFT()
+    Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
+    Shared stamina_DRAFT!(), teamRat_DRAFT()
 
-    Shared DA!(), draftA!(), draftX!(), SP!()
-
-    Shared draftA$(), draftT$(), draftYN$()
+    Shared teamYears$(), plyrNames_DRAFT$(), tmName_DRAFT$()
 
     ReDim menuChoices$(1 To 3)
 
@@ -39,31 +41,41 @@ Sub DRAFT ()
             Select Case Selection%
 
                 Case 1:
+
                     For I = 0 To 1
-                        draftT$(I) = "XXX"
-                        SP!(I) = 0
-                        DA!(I) = 0
-                        draftV1%(I) = 0
-                        draftV2%(I) = 0
-                        For I1 = 0 To 4: draftL%(I, I1) = 0: Next
-                        For I1 = 0 To 9: draftT%(I, I1) = 0: Next
+
+                        tmName_DRAFT$(I) = "XXX"
+                        stamina_DRAFT!(I) = 0
+                        dFGPctAdj_DRAFT!(I) = 0
+                        d3FG_Adj(I) = 0
+                        d3FGA_Adj(I) = 0
+
+                        For I1 = 0 To 4:
+                            lgRat_DRAFT(I, I1) = 0
+                        Next
+
+                        For I1 = 0 To 9:
+                            teamRat_DRAFT(I, I1) = 0
+                        Next
+
                         For I1 = 0 To 13
-                            draftA$(I, I1) = "XXX"
+                            plyrNames_DRAFT$(I, I1) = "XXX"
                             For I2 = 0 To 6
-                                draftA!(I, I1, I2) = 0
-                                draftX!(I, I1, I2) = 0
+                                plyrOff_DRAFT!(I, I1, I2) = 0
+                                plyrRat_DRAFT!(I, I1, I2) = 0
                             Next
                         Next
+
                     Next
 
-                    Call DraftNewTeam(draftYN$(0), draftT$(0), teamIdx)
+                    draftIdx = 0
+                    Call DraftNewTeam(teamYears$(draftIdx), tmName_DRAFT$(draftIdx), teamIdx)
                     Call DraftChoices(1, doneDraft, teamIdx)
-                    Erase draftA$
 
                 Case 2:
-                    Call DraftExistingTeam(draftYN$(0), draftT$(0), teamIdx)
+                    draftIdx = 0
+                    Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmName_DRAFT$(draftIdx), draftIdx)
                     Call DraftChoices(0, doneDraft, teamIdx)
-                    Erase draftA$
 
             End Select
 
@@ -82,142 +94,99 @@ End Sub
 '...explanation...
 Sub DraftNewTeam (draftYear$, teamName$, teamIdx)
 
-    Shared draftT%()
-    Shared draftT$()
+    Shared teamRat_DRAFT()
 
-    Color , 0
+    Color 15, 0
     Cls
 
-    Color 14: Print "TEAM INFORMATION"
-    X% = 2
+    Color 14
+    Print "TEAM INFORMATION"
     Color 15
 
+    Locate 3: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx
+    Locate 4: Input " 2. DISK ID "; draftYear$
+    Locate 5: Input " 3. TEAM NAME "; teamName$
+    Locate 6: Input " 4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+    Locate 7: Input " 5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
+    Locate 8: Input " 6. BACKGROUND (0-7) "; teamRat_DRAFT(0, 1)
+    Locate 10, 1
+    Print "TEAM APPEARANCE";
+    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+    Print teamName$
+    Color 15, 0
+
     Do
 
-        147 Locate 2: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx: If C1 = 1 Then 190
-        162 Locate 3: Input " 2. DISK ID "; draftYear$: If C1 = 1 Then 190
-        163 Locate 4: Input " 3. TEAM NAME "; teamName$: If C1 = 1 Then 190
-        157 Locate 5: Input " 4. TEXT COLOR (0-15) "; draftT%(0, 0): If C1 = 1 Then 190
-        158 Locate 6: Input " 5. BACKGROUND (0-7) "; draftT%(0, 1): If C1 = 1 Then 190
-        164 Locate 7: Input " 6. HOMECOURT FACTOR (0-6) "; draftT%(0, 6): If C1 = 1 Then 190
-        190 Locate 9, 1: Color draftT%(0, 0), draftT%(0, 1)
+        Do
+            Locate 20
+            Input "# TO CHANGE (0 TO CONTINUE) "; B9
+        Loop Until B9 >= 0 And B9 <= 6
 
-        Print "TEAM APPEARANCE": Color 15, 0
-        C1 = 1
-        Locate 11, 1: Print "SELECT # TO CHANGE 1-6 (0 TO CONTINUE) ";
-        Input B9
+        If B9 <> 0 Then
 
-        If (B9 >= 1 And B9 <= 6) Then
             Select Case B9
-                Case 1:
-                    GoTo 147
-                Case 2:
-                    GoTo 162
-                Case 3:
-                    GoTo 163
-                Case 4:
-                    GoTo 157
-                Case 5:
-                    GoTo 158
-                Case 6:
-                    GoTo 164
+
+                Case 1
+                    Locate 3: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx
+
+                Case 2
+                    Locate 4: Input " 2. DISK ID "; draftYear$
+
+                Case 3
+                    Locate 5: Input " 3. TEAM NAME "; teamName$
+
+                Case 4
+                    Locate 6: Input " 4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+
+                Case 5
+                    Locate 7: Input " 5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
+                    Print "TEAM APPEARANCE";
+                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+                    Print teamName$
+                    Color 15, 0
+
+                Case 6
+                    Locate 8: Input " 6. BACKGROUND (0-7) "; teamRat_DRAFT(0, 1)
+                    Print "TEAM APPEARANCE";
+                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+                    Print teamName$
+                    Color 15, 0
+
             End Select
+
         End If
 
-    Loop Until B9 = 0 'ENTER also counts as 0
+    Loop Until B9 = 0
 
-    '0 = Continue
-    If draftT%(0, 6) < 0 Then draftT%(0, 6) = 0
-    If draftT%(0, 6) > 6 Then draftT%(0, 6) = 6
-    C1 = 0
+    If teamRat_DRAFT(0, 6) < 0 Then teamRat_DRAFT(0, 6) = 0
+    If teamRat_DRAFT(0, 6) > 6 Then teamRat_DRAFT(0, 6) = 6
 
 End Sub
 
-'----------------------------------------
-'     DraftExistingTeam Subroutine
-'----------------------------------------
-'...explanation...
-Sub DraftExistingTeam (draftYear$, teamName$, teamIdx)
-
-    Shared draftT$()
-    Shared draftT%()
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        JJ = 7
-
-        Locate 6, 8: Color 15, 4
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-        Locate , 12: Print "ENTER DISK ID: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Locate 7, 27: Input NY$
-
-        If NY$ = "" And draftYear$ <> "" Then
-            Call SelectTeam_DRAFT(NY$, NTMS, teamIdx)
-        Else
-            draftYear$ = RTrim$(NY$)
-            Erase teamNames$
-        
-            Call GetTeam_DRAFT(teamIdx)
-
-        End If
-
-        If BO% = 1 Then
-            BO% = 0
-        Else
-
-            Locate 2, 33
-            Color draftT%(0, 0), draftT%(0, 1): Print teamName$
-
-            Do
-                Color 15, 4
-                Locate 3, 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-        End If
-
-    Loop Until UCase$(I$) = "N"
-
-End Sub
 
 '----------------------------------------
 '     DraftChoices Subroutine
 '----------------------------------------
 '...explanation...
+'draftNew
+'0 = Existing Team
+'1 = New Team
 Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
-    Shared draftT%(), draftTR%()
+    Shared teamRat_DRAFT(), miscRat_DRAFT()
 
-    Shared draftA!(), draftDF!()
-    Shared draftRS!(), draftX!()
+    Shared plyrDef_DRAFT!(), plyrStat_DRAFT!()
+    Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
 
-    Shared draftA$(), draftP$(), draftT$()
-    Shared draftYN$()
+    Shared posn_DRAFT$(), teamYears$()
+    Shared plyrNames_DRAFT$(), tmName_DRAFT$()
 
     Do
 
         Color 15, 0
         Cls
-        Color draftT%(0, 0), draftT%(0, 1): Print draftT$(0);
+
+        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1): Print tmName_DRAFT$(0);
 
         Color 14, 0
         Print "     (DRAFTING)"
@@ -226,7 +195,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
         For I = 0 To 13
             Color 2: Print Using "## "; I;
-            Color 15: Print draftA$(0, I)
+            Color 15: Print plyrNames_DRAFT$(0, I)
         Next
 
         Do
@@ -250,78 +219,12 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                     Input B
                 Loop Until B >= 0 And B <= 14
 
-                Do
-                    Color 15, 0
-                    Cls
-
-                    JJ = 7
-
-                    Locate 6, 8: Color 15, 4
-
-                    'Print box top
-                    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-                    'Print box sides
-                    For II = 1 To JJ
-                        Locate 6 + II, 8
-                        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                    Next
-
-                    'Print box bottom
-                    Locate 7 + JJ, 8
-                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-                    Locate 7, 32
-                    Locate , 12: Print "ENTER DISK ID: ": Print
-                    Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-                    Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-                    Locate 7, 27: Input NY$
-
-                    If NY$ = "" And draftYN$(1) <> "" Then
-                        Call SelectTeam_DRAFT(draftYN$(1), NTMS, draftIdx)
-                    Else
-                        draftYN$(1) = RTrim$(NY$)
-                        Erase teamNames$
-
-                        Open diskPaths$(0) + "BASK." + draftYN$(1) For Random As #1 Len = 655
-
-                        fileLength& = LOF(1)
-
-                        Field #1, 15 As Q$(0), 640 As X$
-
-                        For I1 = 1 To fileLength& / 655
-                            Get #1, I1
-                            teamNames$(I1) = Q$(0)
-                            teamIndex%(I1) = I1
-                        Next
-
-                        Close 1
-
-                        NTMS = fileLength& / 655
-
-                        Call SelectTeam_DRAFT(draftYN$(1), NTMS, draftIdx)
-
-                    End If
-
-                    If BO% = 1 Then
-                        BO% = 0
-                    Else
-                        Locate 2, 33
-                        Color draftT%(1, 0), draftT%(1, 1): Print draftT$(1)
-
-                        Do
-                            Color 15, 4
-                            Locate 3, 33: Print "ANY CHANGE (YN)";
-                            I$ = GetKeyPress$
-                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-                    End If
-
-
-                Loop Until UCase$(I$) = "N"
+                draftIdx = 1
+                Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, destIdx, tmName_DRAFT$(draftIdx), draftIdx)
 
                 Color , 0
                 Cls
-                Color draftT%(1, 0), draftT%(1, 1): Print draftT$(1)
+                Color teamRat_DRAFT(draftIdx, 0), teamRat_DRAFT(draftIdx, 1): Print tmName_DRAFT$(draftIdx)
                 Color 14, 0
 
                 Print
@@ -329,7 +232,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                 For I = 0 To 13
                     Color 2: Print Using "## "; I;
-                    Color 15: Print draftA$(1, I)
+                    Color 15: Print plyrNames_DRAFT$(draftIdx, I)
                 Next
 
                 Do
@@ -338,22 +241,21 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                     Input B1
                 Loop Until B1 >= 0 And B1 <= 13
 
-                test$ = draftA$(1, B1)
-                draftA$(0, B) = draftA$(1, B1)
-                draftDF!(0, B) = draftDF!(1, B1)
-                draftP$(0, B) = draftP$(1, B1)
+                plyrNames_DRAFT$(0, B) = plyrNames_DRAFT$(1, B1)
+                plyrDef_DRAFT!(0, B) = plyrDef_DRAFT!(1, B1)
+                posn_DRAFT$(0, B) = posn_DRAFT$(1, B1)
 
                 For I = 0 To 13
-                    draftRS!(0, B, I) = draftRS!(1, B1, I)
+                    plyrStat_DRAFT!(0, B, I) = plyrStat_DRAFT!(1, B1, I)
                 Next
 
                 For I = 1 To 12
-                    draftTR%(0, B, I) = draftTR%(1, B1, I)
+                    miscRat_DRAFT(0, B, I) = miscRat_DRAFT(1, B1, I)
                 Next
 
                 For I = 0 To 6
-                    draftA!(0, B, I) = draftA!(1, B1, I)
-                    draftX!(0, B, I) = draftX!(1, B1, I)
+                    plyrOff_DRAFT!(0, B, I) = plyrOff_DRAFT!(1, B1, I)
+                    plyrRat_DRAFT!(0, B, I) = plyrRat_DRAFT!(1, B1, I)
                 Next
 
             Case 2
@@ -361,7 +263,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                 Do
 
                     Cls
-                    Color draftT%(0, 0), draftT%(0, 1): Print A$
+                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1): Print tmName_DRAFT$(0)
                     Color 14, 0
                     Print "PLAYER          CONTRIBUTION"
                     Print "                PERCENT"
@@ -369,10 +271,11 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                     T3 = 0
 
-                    For I = 0 To 13
-                        Print Using "## "; I;: Print draftA$(0, I);
-                        Locate , 17: Print draftA!(0, I, 3): Locate , 1
-                        T3 = T3 + draftA!(0, I, 3)
+                    For I = 1 To 14
+                        Print Using "## "; I;: Print plyrNames_DRAFT$(0, I - 1);
+                        Locate , 17: Print plyrOff_DRAFT!(0, I - 1, 3)
+                        Locate , 1
+                        T3 = T3 + plyrOff_DRAFT!(0, I - 1, 3)
                     Next I
 
                     Print
@@ -381,10 +284,11 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                     Color 15, 0: Print T3
 
                     Do
-                        Locate 21: Print "SELECT PLAYER TO CHANGE 0-13 (22-NO MORE CHANGE) ";
+
+                        Locate 21: Print "SELECT PLAYER TO CHANGE 1-14 (0 - NO MORE CHANGE) ";
                         Input X9
 
-                        If X9 = 22 Then
+                        If X9 = 0 Then
 
                             If T3 <= 98 Or T3 >= 101 Then
 
@@ -420,17 +324,17 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                         Else
 
-                            Locate 22, 18: Print draftA$(0, X9)
+                            Locate 22, 18: Print plyrNames_DRAFT$(0, X9 - 1)
                             Locate 23, 1
-                            Input "ENTER CP: "; draftA!(0, X9, 3)
+                            Input "ENTER CP: "; plyrOff_DRAFT!(0, X9 - 1, 3)
 
                         End If 'End checking X9
 
-                    Loop Until (X9 >= 0 And X9 <= 13) Or X9 = 22
+                    Loop Until X9 >= 0 And X9 <= 14
 
-                Loop Until X9 = 22 And (T3 > 98 And T3 < 101)
+                Loop Until X9 = 0 And (T3 > 98 And T3 < 101)
 
-                Call SaveTeamDraft(draftNew, draftYN$(0), draftT$(0), teamPosn)
+                Call SaveTeamDraft(draftNew, teamYears$(0), tmName_DRAFT$(0), teamPosn)
 
         End Select
 
@@ -474,14 +378,14 @@ End Sub
 '...explanation...
 Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
-    Shared draftA$(), draftP$(), draftT$()
-    Shared teamMascots$(), teamCoaches$(), teamStadiums$()
+    Shared plyrNames_DRAFT$(), posn_DRAFT$(), tmName_DRAFT$()
+    Shared mascots_DRAFT$(), coaches_DRAFT$(), stadiums_DRAFT$()
 
-    Shared draftA!(), attendance&(), DA!(), draftDF!()
-    Shared draftRS!(), draftX!(), SP!()
+    Shared plyrOff_DRAFT!(), att_DRAFT&(), dFGPctAdj_DRAFT!(), plyrDef_DRAFT!()
+    Shared plyrStat_DRAFT!(), plyrRat_DRAFT!(), stamina_DRAFT!()
 
-    Shared draftL%(), draftT%(), draftT1%()
-    Shared draftTR%(), draftV1%(), draftV2%()
+    Shared lgRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT()
+    Shared miscRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
 
     Cls
 
@@ -489,48 +393,48 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
     For I = 0 To 13
 
-        If draftA$(0, I) <> "XXX" Then
+        If plyrNames_DRAFT$(0, I) <> "XXX" Then
 
             NP% = NP% + 1
-            SP!(0) = SP!(0) + draftTR%(0, I, 1)
-            DA!(0) = DA!(0) + draftTR%(0, I, 2)
-            draftV2%(0) = draftV2%(0) + draftTR%(0, I, 3)
-            draftV1%(0) = draftV1%(0) + draftTR%(0, I, 4)
-            draftL%(0, 0) = draftL%(0, 0) + draftTR%(0, I, 5)
-            draftL%(0, 2) = draftL%(0, 2) + draftTR%(0, I, 6)
-            draftL%(0, 3) = draftL%(0, 3) + draftTR%(0, I, 7)
-            draftT%(0, 3) = draftT%(0, 3) + draftTR%(0, I, 9)
-            draftT%(0, 4) = draftT%(0, 4) + draftTR%(0, I, 10)
-            draftT%(0, 5) = draftT%(0, 5) + draftTR%(0, I, 11)
-            draftT%(0, 6) = draftT%(0, 6) + draftTR%(0, I, 12)
+            stamina_DRAFT!(0) = stamina_DRAFT!(0) + miscRat_DRAFT(0, I, 1)
+            dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + miscRat_DRAFT(0, I, 2)
+            d3FGA_Adj(0) = d3FGA_Adj(0) + miscRat_DRAFT(0, I, 3)
+            d3FG_Adj(0) = d3FG_Adj(0) + miscRat_DRAFT(0, I, 4)
+            lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) + miscRat_DRAFT(0, I, 5)
+            lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) + miscRat_DRAFT(0, I, 6)
+            lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) + miscRat_DRAFT(0, I, 7)
+            teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) + miscRat_DRAFT(0, I, 9)
+            teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) + miscRat_DRAFT(0, I, 10)
+            teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) + miscRat_DRAFT(0, I, 11)
+            teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) + miscRat_DRAFT(0, I, 12)
 
         End If
 
     Next
 
-    SP!(0) = SP!(0) / (NP% - 1)
-    DA!(0) = DA!(0) / (NP% - 1)
+    stamina_DRAFT!(0) = stamina_DRAFT!(0) / (NP% - 1)
+    dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) / (NP% - 1)
 
-    draftV2%(0) = draftV2%(0) / (NP% - 1)
-    If draftV2%(0) > 20 Then draftV2%(0) = 100 - draftV2%(0)
+    d3FGA_Adj(0) = d3FGA_Adj(0) / (NP% - 1)
+    If d3FGA_Adj(0) > 20 Then d3FGA_Adj(0) = 100 - d3FGA_Adj(0)
 
-    draftV1%(0) = draftV1%(0) / (NP% - 1)
-    If draftV1%(0) > 20 Then draftV1%(0) = 100 - draftV1%(0)
+    d3FG_Adj(0) = d3FG_Adj(0) / (NP% - 1)
+    If d3FG_Adj(0) > 20 Then d3FG_Adj(0) = 100 - d3FG_Adj(0)
 
-    draftL%(0, 0) = draftL%(0, 0) / (NP% - 1)
-    If draftL%(0, 0) > 20 Then draftL%(0, 0) = 100 - draftL%(0, 0)
+    lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) / (NP% - 1)
+    If lgRat_DRAFT(0, 0) > 20 Then lgRat_DRAFT(0, 0) = 100 - lgRat_DRAFT(0, 0)
 
-    draftL%(0, 2) = draftL%(0, 2) / (NP% - 1)
-    If draftL%(0, 2) > 20 Then draftL%(0, 2) = 100 - draftL%(0, 2)
+    lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) / (NP% - 1)
+    If lgRat_DRAFT(0, 2) > 20 Then lgRat_DRAFT(0, 2) = 100 - lgRat_DRAFT(0, 2)
 
-    draftL%(0, 3) = draftL%(0, 3) / (NP% - 1)
-    If draftL%(0, 3) > 20 Then draftL%(0, 3) = 100 - draftL%(0, 3)
+    lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) / (NP% - 1)
+    If lgRat_DRAFT(0, 3) > 20 Then lgRat_DRAFT(0, 3) = 100 - lgRat_DRAFT(0, 3)
 
-    draftL%(0, 4) = 99
-    draftT%(0, 3) = draftT%(0, 3) / (NP% - 1)
-    draftT%(0, 4) = draftT%(0, 4) / (NP% - 1)
-    draftT%(0, 5) = draftT%(0, 5) / (NP% - 1)
-    draftT%(0, 6) = draftT%(0, 6) / (NP% - 1)
+    lgRat_DRAFT(0, 4) = 99
+    teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) / (NP% - 1)
+    teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) / (NP% - 1)
+    teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) / (NP% - 1)
+    teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) / (NP% - 1)
 
     Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
 
@@ -544,23 +448,30 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     Next
 
     LSet Q$(0) = teamName$
-    LSet Q$(1) = MKI$(SP!(0))
-    LSet Q$(2) = MKI$(DA!(0))
-    LSet Q$(3) = MKI$(draftV1%(0))
-    LSet Q$(4) = MKI$(draftV2%(0))
+    LSet Q$(1) = MKI$(stamina_DRAFT!(0))
+    LSet Q$(2) = MKI$(dFGPctAdj_DRAFT!(0))
+    LSet Q$(3) = MKI$(d3FG_Adj(0))
+    LSet Q$(4) = MKI$(d3FGA_Adj(0))
 
-    For I = 0 To 4: LSet Q$(I + 5) = MKI$(draftL%(0, I)): Next
+    For I = 0 To 4: 
+        LSet Q$(I + 5) = MKI$(lgRat_DRAFT(0, I))
+    Next
 
-    draftT%(0, 2) = 999
+    teamRat_DRAFT(0, 2) = 999
 
-    For I = 0 To 9: LSet Q$(I + 10) = MKI$(draftT%(0, I)): Next
+    For I = 0 To 9: 
+        LSet Q$(I + 10) = MKI$(teamRat_DRAFT(0, I))
+    Next
 
     For I = 0 To 13
-        LSet Q$(I * 15 + 20) = draftA$(0, I)
+
+        LSet Q$(I * 15 + 20) = plyrNames_DRAFT$(0, I)
+
         For I1 = 0 To 6
-            LSet Q$(I * 15 + I1 + 21) = MKI$(draftA!(0, I, I1))
-            LSet Q$(I * 15 + I1 + 28) = MKI$(draftX!(0, I, I1))
+            LSet Q$(I * 15 + I1 + 21) = MKI$(plyrOff_DRAFT!(0, I, I1))
+            LSet Q$(I * 15 + I1 + 28) = MKI$(plyrRat_DRAFT!(0, I, I1))
         Next
+
     Next
 
     Put #1, teamPosn
@@ -576,21 +487,24 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
         Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
-    LSet Q$(0) = teamCoaches$(0)
-    LSet Q$(1) = teamStadiums$(0)
-    LSet Q$(2) = teamMascots$(0)
-    LSet Q$(3) = MKL$(attendance&(0))
+    LSet Q$(0) = coaches_DRAFT$(0)
+    LSet Q$(1) = stadiums_DRAFT$(0)
+    LSet Q$(2) = mascots_DRAFT$(0)
+    LSet Q$(3) = MKL$(att_DRAFT&(0))
 
     For I = 0 To 13
-        LSet Q$(I * 16 + 4) = MKI$(draftDF!(0, I))
-        LSet Q$(I * 16 + 5) = draftP$(0, I)
+
+        LSet Q$(I * 16 + 4) = MKI$(plyrDef_DRAFT!(0, I))
+        LSet Q$(I * 16 + 5) = posn_DRAFT$(0, I)
+
         For I1 = 0 To 13
-            LSet Q$(I * 16 + I1 + 6) = MKI$(draftRS!(0, I, I1))
+            LSet Q$(I * 16 + I1 + 6) = MKI$(plyrStat_DRAFT!(0, I, I1))
         Next
+
     Next
 
     For I = 0 To 20
-        LSet Q$(228 + I) = MKI$(draftT1%(0, I))
+        LSet Q$(228 + I) = MKI$(teamStats_DRAFT(0, I))
     Next
 
     LSet Q$(249) = MKI$(999)
@@ -603,207 +517,203 @@ End Sub
 
 
 '----------------------------------------
-'       SelectTeam_DRAFT Subroutine
+'     ChooseDraftTeam Subroutine
 '----------------------------------------
 '...explanation...
-Sub SelectTeam_DRAFT (teamYear$, numberTeams, teamIdx)
+Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
-    Shared teamMascots$(), teamCoaches$(), teamStadiums$()
+    Shared teamRat_DRAFT()
 
-    Shared draftA$(), draftP$(), draftT$(), draftYN$()
+    Shared previousYear$
 
-    Shared CK!(), draftA!(), draftDF!(), draftX!()
-    Shared attendance&(), DA!(), draftDF!(), draftRS!(), SP!()
+    Do
 
-    Shared draftL%(), draftT%(), draftT1%()
-    Shared draftTR%(), draftV1%(), draftV2%()
+        Color 15, 0
+        Cls
 
-    Selection% = 1
-    Count% = numberTeams
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+        JJ = 7
 
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
+        Locate 6, 8
+        Color 15, 4
 
-    If ExitCode% <> 27 Then
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
 
-        teamIdx = teamIndex%(Selection%)
-
-        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
-
-        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-
-        For I = 0 To 13
-            Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
         Next
 
-        Get #1, teamIdx
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-        draftT$(1) = RTrim$(Q$(0))
+        Locate 7, 32
 
-        SP!(1) = CVI(Q$(1))
-        DA!(1) = CVI(Q$(2))
-        draftV1%(1) = CVI(Q$(3))
-        draftV2%(1) = CVI(Q$(4))
+        Locate , 12: Print "ENTER DISK ID: "
+        Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Print
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
 
-        For I = 0 To 4: draftL%(1, I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: draftT%(1, I) = CVI(Q$(I + 10)): Next
-        For I = 0 To 13
-            draftA$(1, I) = RTrim$(Q$(I * 15 + 20))
+        I$ = GetKeyPress$
 
-            For I1 = 0 To 6
-                draftA!(1, I, I1) = CVI(Q$(I * 15 + I1 + 21))
-                draftX!(1, I, I1) = CVI(Q$(I * 15 + I1 + 28))
-            Next
-        Next
-        Close 1
+        If I$ <> Chr$(27) Then
 
-        If draftV2%(1) > 20 Then draftV2%(1) = 100 - draftV2%(1)
-        If draftV1%(1) > 20 Then draftV1%(1) = 100 - draftV1%(1)
-        If draftL%(1, 0) > 20 Then draftL%(1, 0) = 100 - draftL%(1, 0)
-        If draftL%(1, 2) > 20 Then draftL%(1, 2) = 100 - draftL%(1, 2)
-        If draftL%(1, 3) > 20 Then draftL%(1, 3) = 100 - draftL%(1, 3)
+            If I$ <> Chr$(13) Then
 
-        Open diskPaths$(0) + "COLBBTMS." + teamYear$ For Random As #1 Len = 566
+                Locate 7, 27: Print I$
+                Locate 7, 28: Line Input NY$
+                NY$ = I$ + NY$
+                Color 15, 0
 
-        Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+                If Not (NY$ = "" And yearNumber$ <> "") Then
 
-        For I = 0 To 13
-            Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-            Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
-        Next
+                    yearNumber$ = RTrim$(NY$)
+                    Erase teamNames$
+                    numberTeams = 0
 
-        Get #1, teamIdx
+                    Cls
 
-        teamCoaches$(1) = RTrim$(Q$(0))
-        teamStadiums$(1) = RTrim$(Q$(1))
-        teamMascots$(1) = RTrim$(Q$(2))
-        attendance&(1) = CVL(Q$(3))
+                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-        For I = 0 To 13
-            draftDF!(1, I) = CVI(Q$(I * 16 + 4))
-            draftP$(1, I) = Q$(I * 16 + 5)
-            For I1 = 0 To 13
-                draftRS!(1, I, I1) = CVI(Q$(I * 16 + I1 + 6))
-            Next
-        Next
+                        Locate 10, 8
 
-        For I = 0 To 20
-            draftT1%(1, I) = CVI(Q$(228 + I))
-        Next
+                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, PASS)
 
-        CK!(1) = CVI(Q$(249))
+                    Else
 
-        Close 1
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
 
-        For I = 0 To 13
-            draftTR%(1, I, 1) = SP!(1)
-            draftTR%(1, I, 2) = DA!(1)
-            draftTR%(1, I, 3) = draftV2%(1)
-            draftTR%(1, I, 4) = draftV1%(1)
-            draftTR%(1, I, 5) = draftL%(1, 0)
-            draftTR%(1, I, 6) = draftL%(1, 2)
-            draftTR%(1, I, 7) = draftL%(1, 3)
-            draftTR%(1, I, 8) = 99
-            draftTR%(1, I, 9) = draftT%(1, 3)
-            draftTR%(1, I, 10) = draftT%(1, 4)
-            draftTR%(1, I, 11) = draftT%(1, 5)
-            draftTR%(1, I, 12) = draftT%(1, 6)
-        Next
+                        fileLength& = LOF(1)
 
-        If CK!(1) <> 999 Then
+                        Field #1, 15 As Q$(0)
 
-            teamCoaches$(1) = ""
-            teamStadiums$(1) = ""
-            teamMascots$(1) = ""
-            attendance&(1) = 0
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
 
-            For I = 0 To 13:
-                draftDF!(1, I) = 5
-                draftP$(1, I) = ""
-                For I1 = 0 To 13
-                    draftRS!(1, I, I1) = 0
-                Next
-            Next
+                        For teamIdx = 1 To numberTeams
+                            Get #1, teamIdx
+                            'numberTeams = numberTeams + 1
+                            teamNames$(teamIdx) = Q$(0)
+                            teamIndex%(teamIdx) = teamIdx
+                        Next teamIdx
 
-            For I = 0 To 20: draftT1%(1, I) = 0: Next
+                        Close 1
 
-        End If 'Done comparing to 999
-    Else
-        BO% = 1
+                    End If 'Done checking if file exists
+
+                End If 'Done checking for blank year number
+
+                previousYear$ = yearNumber$
+
+            Else
+
+                yearNumber$ = previousYear$
+
+            End If 'Done checking for ENTER key
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Do
+
+                Call SelectDraftTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, draftIdx)
+
+                If ExitCode% <> 27 Then
+
+                    Do
+                        Locate 2, 33
+                        Color teamRat_DRAFT(draftIdx, 0), teamRat_DRAFT(draftIdx, 1): Print teamName$
+
+                        Color 15, 4
+                        Locate 3, 33: Print "ANY CHANGE? (YN)";
+
+                        J$ = GetKeyPress$
+
+                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+
+                End If
+
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+
+        End If 'Done checking for ESC
+
+    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
+
+    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+
+End Sub
+
+
+'----------------------------------------
+'       SelectDraftTeam Subroutine
+'----------------------------------------
+Sub SelectDraftTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, draftIdx)
+
+    If numberTeams > 0 Then
+
+        Selection% = 1
+        Count% = numberTeams
+        Start% = 1
+        FileFGColr% = 15: FileBGColr% = 4
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Rows% = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
+
+        Color , 4
+        Cls
+        Color 14
+        teamNumber = draftIdx + 1
+        Print Using "TEAM # SELECTION"; teamNumber
+        Locate 25, 1
+        Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+        _MouseShow "DEFAULT"
+        MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
+
+        If ExitCode% <> 27 Then
+
+            selectedIdx = teamIndex%(Selection%)
+
+            Locate 2, 33: Color 3
+            Print "LOADING.."
+
+            Call ReadDraftTeam(yearNumber$, teamName$, selectedIdx, draftIdx)
+
+        Else
+            BO% = 1
+        End If
+
     End If
 
 End Sub
 
+
 '----------------------------------------
-'       GetTeam_DRAFT Subroutine
+'       ReadDraftTeam SubRoutine
 '----------------------------------------
-Sub GetTeam_DRAFT (teamPosn)
+'Reads team data into arrays for the
+'selected team
+Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
 
-    Shared attendance&(), CK!(), DA!(), draftA!(), draftDF!()
-    Shared draftRS!(), draftX!(), SP!()
+    Shared att_DRAFT&(), CK!()
+    Shared dFGPctAdj_DRAFT!(), d3FG_Adj(), d3FGA_Adj()
+    Shared lgRat_DRAFT(), miscRat_DRAFT()
+    Shared plyrOff_DRAFT!(), plyrDef_DRAFT!()
+    Shared plyrRat_DRAFT!(), plyrStat_DRAFT!(), stamina_DRAFT!()
 
-    Shared draftTR%(), draftV1%(), draftV2%()
-    Shared draftL%(), draftT%(), draftT1%()
+    Shared teamRat_DRAFT(), teamStats_DRAFT()
 
-    Shared draftA$(), draftT$(), draftP$(), draftYN$()
-    Shared teamMascots$(), teamCoaches$(), teamStadiums$()
+    Shared plyrNames_DRAFT$(), tmName_DRAFT$(), posn_DRAFT$(), teamYears$()
+    Shared mascots_DRAFT$(), coaches_DRAFT$(), stadiums_DRAFT$()
 
-    Cls
-
-    Open diskPaths$(0) + "BASK." + draftYN$(0) For Random As #1 Len = 655
-
-    fileLength& = LOF(1)
-
-    Field #1, 15 As Q$(0), 640 As X$
-
-    For I1 = 1 To fileLength& / 655
-        Get #1, I1
-        teamNames$(I1) = Q$(0): teamIndex%(I1) = I1
-    Next
-
-    Close 1
-
-    numberTeams = fileLength& / 655
-
-    Selection% = 1
-    Count% = numberTeams
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
-
-    If ExitCode% = 27 Then BO% = 1: Exit Sub
-
-    teamPosn = teamIndex%(Selection%)
-
-    Open diskPaths$(0) + "BASK." + draftYN$(0) For Random As #1 Len = 655
+    Open diskPaths$(0) + "BASK." + teamYears$(draftIdx) For Random As #1 Len = 655
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
@@ -811,35 +721,40 @@ Sub GetTeam_DRAFT (teamPosn)
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
     Next
 
-    Get #1, teamPosn
+    Get #1, teamIdx
 
-    draftT$(0) = RTrim$(Q$(0))
+    tmName_DRAFT$(draftIdx) = RTrim$(Q$(0))
+    stamina_DRAFT!(draftIdx) = CVI(Q$(1))
+    dFGPctAdj_DRAFT!(draftIdx) = CVI(Q$(2))
+    d3FG_Adj(draftIdx) = CVI(Q$(3))
+    d3FGA_Adj(draftIdx) = CVI(Q$(4))
 
-    SP!(0) = CVI(Q$(1))
-    DA!(0) = CVI(Q$(2))
-    draftV1%(0) = CVI(Q$(3))
-    draftV2%(0) = CVI(Q$(4))
+    For I = 0 To 4:
+        lgRat_DRAFT(draftIdx, I) = CVI(Q$(I + 5))
+    Next
 
-    For I = 0 To 4: draftL%(0, I) = CVI(Q$(I + 5)): Next
-    For I = 0 To 9: draftT%(0, I) = CVI(Q$(I + 10)): Next
+    For I = 0 To 9:
+        teamRat_DRAFT(draftIdx, I) = CVI(Q$(I + 10))
+    Next
 
     For I = 0 To 13
-        draftA$(0, I) = RTrim$(Q$(I * 15 + 20))
+        plyrNames_DRAFT$(draftIdx, I) = RTrim$(Q$(I * 15 + 20))
 
         For I1 = 0 To 6
-            draftA!(0, I, I1) = CVI(Q$(I * 15 + I1 + 21))
-            draftX!(0, I, I1) = CVI(Q$(I * 15 + I1 + 28))
+            plyrOff_DRAFT!(draftIdx, I, I1) = CVI(Q$(I * 15 + I1 + 21))
+            plyrRat_DRAFT!(draftIdx, I, I1) = CVI(Q$(I * 15 + I1 + 28))
         Next
     Next
+
     Close 1
 
-    If draftV1%(0) > 20 Then draftV1%(0) = 100 - draftV1%(0)
-    If draftV2%(0) > 20 Then draftV2%(0) = 100 - draftV2%(0)
-    If draftL%(0, 0) > 20 Then draftL%(0, 0) = 100 - draftL%(0, 0)
-    If draftL%(0, 2) > 20 Then draftL%(0, 2) = 100 - draftL%(0, 2)
-    If draftL%(0, 3) > 20 Then draftL%(0, 3) = 100 - draftL%(0, 3)
+    If d3FG_Adj(draftIdx) > 20 Then d3FG_Adj(draftIdx) = 100 - d3FG_Adj(draftIdx)
+    If d3FGA_Adj(draftIdx) > 20 Then d3FGA_Adj(draftIdx) = 100 - d3FGA_Adj(draftIdx)
+    If lgRat_DRAFT(draftIdx, 0) > 20 Then lgRat_DRAFT(draftIdx, 0) = 100 - lgRat_DRAFT(draftIdx, 0)
+    If lgRat_DRAFT(draftIdx, 2) > 20 Then lgRat_DRAFT(draftIdx, 2) = 100 - lgRat_DRAFT(draftIdx, 2)
+    If lgRat_DRAFT(draftIdx, 3) > 20 Then lgRat_DRAFT(draftIdx, 3) = 100 - lgRat_DRAFT(draftIdx, 3)
 
-    Open diskPaths$(0) + "COLBBTMS." + draftYN$(0) For Random As #1 Len = 566
+    Open diskPaths$(0) + "COLBBTMS." + teamYears$(draftIdx) For Random As #1 Len = 566
 
     Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
@@ -848,62 +763,70 @@ Sub GetTeam_DRAFT (teamPosn)
         Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
-    Get #1, teamPosn
+    Get #1, teamIdx
 
-    teamCoaches$(0) = Q$(0)
-    teamStadiums$(0) = Q$(1)
-    teamMascots$(0) = Q$(2)
-    attendance&(0) = CVL(Q$(3))
+    coaches_DRAFT$(draftIdx) = Q$(0)
+    stadiums_DRAFT$(draftIdx) = Q$(1)
+    mascots_DRAFT$(draftIdx) = Q$(2)
+    att_DRAFT&(draftIdx) = CVL(Q$(3))
 
     For I = 0 To 13
-        draftDF!(0, I) = CVI(Q$(I * 16 + 4))
-        draftP$(0, I) = Q$(I * 16 + 5)
+
+        plyrDef_DRAFT!(draftIdx, I) = CVI(Q$(I * 16 + 4))
+        posn_DRAFT$(draftIdx, I) = Q$(I * 16 + 5)
+
         For I1 = 0 To 13
-            draftRS!(0, I, I1) = CVI(Q$(I * 16 + I1 + 6))
+            plyrStat_DRAFT!(draftIdx, I, I1) = CVI(Q$(I * 16 + I1 + 6))
         Next
+
     Next
 
     For I = 0 To 20
-        draftT1%(0, I) = CVI(Q$(228 + I))
+        teamStats_DRAFT(draftIdx, I) = CVI(Q$(228 + I))
     Next
 
-    CK!(0) = CVI(Q$(249))
+    CK!(draftIdx) = CVI(Q$(249))
 
     Close 1
 
     For I = 0 To 13
-        draftTR%(0, I, 1) = SP!(0)
-        draftTR%(0, I, 2) = DA!(0)
-        draftTR%(0, I, 3) = draftV2%(0)
-        draftTR%(0, I, 4) = draftV1%(0)
-        draftTR%(0, I, 5) = draftL%(0, 0)
-        draftTR%(0, I, 6) = draftL%(0, 2)
-        draftTR%(0, I, 7) = draftL%(0, 3)
-        draftTR%(0, I, 8) = 99
-        draftTR%(0, I, 9) = draftT%(0, 3)
-        draftTR%(0, I, 10) = draftT%(0, 4)
-        draftTR%(0, I, 11) = draftT%(0, 5)
-        draftTR%(0, I, 12) = draftT%(0, 6)
+        miscRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
+        miscRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
+        miscRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
+        miscRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
+        miscRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
+        miscRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
+        miscRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
+        miscRat_DRAFT(draftIdx, I, 8) = 99
+        miscRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
+        miscRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
+        miscRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
+        miscRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
     Next
 
-    If CK!(0) <> 999 Then
-        teamCoaches$(0) = ""
-        teamStadiums$(0) = ""
-        teamMascots$(0) = ""
-        attendance&(0) = 0
+    If CK!(draftIdx) <> 999 Then
+
+        coaches_DRAFT$(draftIdx) = ""
+        stadiums_DRAFT$(draftIdx) = ""
+        mascots_DRAFT$(draftIdx) = ""
+        att_DRAFT&(draftIdx) = 0
 
         For I = 0 To 13:
-            draftDF!(0, I) = 5
-            draftP$(0, I) = ""
+
+            plyrDef_DRAFT!(draftIdx, I) = 5
+            posn_DRAFT$(draftIdx, I) = ""
+
             For I1 = 0 To 13
-                draftRS!(0, I, I1) = 0
+                plyrStat_DRAFT!(draftIdx, I, I1) = 0
             Next
+
         Next
 
-        For I = 0 To 20: draftT1%(0, I) = 0: Next
+        For I = 0 To 20:
+            teamStats_DRAFT(draftIdx, I) = 0
+        Next
 
     End If
-
 
 End Sub
 

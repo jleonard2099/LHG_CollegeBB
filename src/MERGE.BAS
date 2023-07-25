@@ -53,7 +53,7 @@ Sub MergeStats ()
 
     Shared Ycurr%, Yroad%
 
-    Shared A$()
+    Shared statPlyrNames$()
     Shared mergeH$(), HRP$()
     Shared mergeO$(), ORP$(), gameSite$(), SITERP$()
 
@@ -75,28 +75,9 @@ Sub MergeStats ()
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
-            Call GetDiskID_MERGE(A$)
-
-            B$ = A$
-
-            For XX = 4 To 11
-                If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-            Next XX
-
-            For XX = 12 To 14
-                If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-            Next XX
-
-            QQ = 8
-            For XX = 11 To 4 Step -1
-                If Mid$(B$, XX, 1) = "_" Then
-                    QQ = XX - 4
-                Else
-                    Exit For
-                End If
-            Next XX
-
-            statFile$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+            'Call GetDiskID_MERGE(A$)
+            Call ChooseTeam(yearNumber$, numberTeams, chosenIdx, A$)
+            statFile$ = nameStatFile$(A$)
 
             Color , 0
             Cls
@@ -124,15 +105,21 @@ Sub MergeStats ()
                     Close #1
 
                     Open pathRoadStats$ + statFile$ + "S" For Input As #1
+
                     Input #1, Yroad%
+
                     For I = 1 To 100: Input #1, ORD%(I): Next I
                     For I = 1 To 100: Input #1, ORP$(I): Next I
                     For I = 1 To 100: Input #1, TRD%(I): Next I
                     For I = 1 To 100: Input #1, HRP$(I): Next I
+
                     For I = 1 To 100
-                    For I1 = 0 To 1: Input #1, APRD%(I, I1): Next: Next
+                        For I1 = 0 To 1: Input #1, APRD%(I, I1): Next
+                    Next
+
                     For I = 1 To 100: Input #1, CRDRD(I): Next I
                     For I = 1 To 100: Input #1, SITERP$(I): Next I
+
                     Close #1
 
                     Locate 21, 5: Color 3
@@ -145,30 +132,63 @@ Sub MergeStats ()
                     If _FileExists(pathCurrentStats$ + statFile$) Then
 
                         Open pathCurrentStats$ + statFile$ For Input As #1
+
                         Input #1, B$
 
-                        For I = 0 To 13: Input #1, A$(I)
-                        For J = 0 To 13: Input #1, mergeA(I, J): Next: Input #1, statsW0!(I): Input #1, statsW1!(I): Next
-                        For L = 0 To 15: Input #1, statsZ!(L): Next
-                        For L = 0 To 15: Input #1, statsZ1!(L): Next
+                        For I = 0 To 13: 
+
+                            Input #1, statPlyrNames$(I)
+
+                            For J = 0 To 13: 
+                                Input #1, mergeA(I, J)
+                            Next
+
+                            Input #1, statsW0!(I)
+                            Input #1, statsW1!(I)
+
+                        Next
+
+                        For L = 0 To 15: 
+                            Input #1, statsZ!(L)
+                        Next
+
+                        For L = 0 To 15: 
+                            Input #1, statsZ1!(L)
+                        Next
+
                         Close #1
 
                         Open pathRoadStats$ + statFile$ + "S" For Input As #1
+
                         Input #1, Ycurr%
+
                         For I = 1 To 100: Input #1, mergeO%(I): Next I
                         For I = 1 To 100: Input #1, mergeO$(I): Next I
                         For I = 1 To 100: Input #1, mergeT%(I): Next I
                         For I = 1 To 100: Input #1, mergeH$(I): Next I
+
                         For I = 1 To 100
-                        For I1 = 0 To 1: Input #1, mergeAP%(I, I1): Next: Next
-                        For I = 1 To 100: Input #1, CRD(I): Next I
-                        For I = 1 To 100: Input #1, gameSite$(I): Next I
+
+                            For I1 = 0 To 1: 
+                                Input #1, mergeAP%(I, I1)
+                            Next
+
+                        Next
+
+                        For I = 1 To 100: 
+                            Input #1, CRD(I)
+                        Next I
+
+                        For I = 1 To 100: 
+                            Input #1, gameSite$(I)
+                        Next I
+
                         Close #1
 
                         SEQ = 0
 
                         For K = 0 To 13
-                            If UCase$(ARP$(K)) <> UCase$(A$(K)) Then
+                            If UCase$(ARP$(K)) <> UCase$(statPlyrNames$(K)) Then
                                 SEQ = SEQ + 1
                             End If
                         Next
@@ -260,7 +280,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Shared Ycurr%, Yroad%
 
-    Shared A$()
+    Shared statPlyrNames$()
     Shared mergeH$(), HRP$()
     Shared mergeO$(), ORP$(), gameSite$(), SITERP$()
 
@@ -314,7 +334,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Write #1, B$
 
     For I = 0 To 13: 
-        Write #1, A$(I)
+        Write #1, statPlyrNames$(I)
         For J = 0 To 13: Write #1, mergeA(I, J): Next
         Write #1, statsW0!(I)
         Write #1, statsW1!(I)
@@ -556,7 +576,7 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
     If ExitCode% <> 27 Then
 
         T1 = teamIndex%(Selection%)
-		teamYear$ = RTrim$(yearNumber$)
+        teamYear$ = RTrim$(yearNumber$)
 
         Locate 2, 33: Color 31: Print "LOADING..."
 
@@ -580,8 +600,8 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
 
             staminaRating% = CVI(Q$(1))
             defFGPctAdj% = CVI(Q$(2))
-            V1% = CVI(Q$(3))
-            V2% = CVI(Q$(4))
+            def3FG_Adj = CVI(Q$(3))
+            def3FGA_Adj = CVI(Q$(4))
 
             For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
             For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next

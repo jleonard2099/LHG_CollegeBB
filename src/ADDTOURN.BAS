@@ -209,7 +209,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Locate , 20: QPrint PadRight$(tourneyName$, 55), FG, BG, -1
 
     Locate 11, 1: QPrint "CONSOLATION GAMES IN REGIONALS/FINALS ", 14, 1, -1
-    Locate , 39: QPrint PadRight$(C$, 1), FG, BG, -1
+    Locate , 40: QPrint PadRight$(C$, 1), FG, BG, -1
 
     Locate 13, 1: QPrint "NUMBER OF BRACKETS/REGIONS (1-16) ", 14, 1, -1
     Locate , 35: QPrint PadRight$(numberRegions$, 2), FG, BG, -1
@@ -422,7 +422,7 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                 If I$ <> Chr$(27) Then
 
                     'Save Seeding
-                    If I$ = "3" Then
+                    If Val(I$) = 3 Then
 
                         For I = 1 To NN%(NR)
 
@@ -454,7 +454,7 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
             If I$ <> Chr$(27) Then
 
-                If I$ <> "3" Then
+                If Val(I$) <> 3 Then
 
                     'Add / Remove Teams from Seeding
                     Do
@@ -463,96 +463,21 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                         Input B
                     Loop Until B >= 1 And B <= NN%(NR)
 
-                    If I$ = "1" Then
+                    If Val(I$) = 1 Then
 
-                        Do
-                            'Fill a slot
-                            Color 15, 0
-                            Cls
+                        Call ChooseTeam (YN$, numberTeams, teamIdx, A$)
+                        
+                        If teamIdx <> 0 Then
 
-                            JJ = 7
-                            Locate 6, 8: Color 15, 4
-                            Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-                            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-                            Locate 7 + JJ, 8
-                            Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-                            Locate 7, 32
-                            Locate , 12: Print "ENTER DISK ID: ": Print
-                            Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-                            Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-                            Locate , 12: Print
-                            Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-                            Locate 7, 27: Input NY$
-
-                            If NY$ = "" And YN$ <> "" Then
-                                Call SelectTeam_TOURN(YN$, numberTeams, A$, teamIdx)
-                            Else
-                                YN$ = RTrim$(NY$)
-                                Erase teamNames$
-                                numberTeams = 0
-
-                                If Not _FileExists(diskPaths$(0) + "BASK." + YN$) Then
-                                    Locate 10, 8
-                                    Call CSMsgBox("NO TEAMS MATCHING ID WERE FOUND... PRESS ANY KEY TO SELECT ANOTHER ID", 26, PASS)
-                                    I$ = GetKeyPress$
-                                    Call CSMsgBox("", 0, PASS)
-                                    BO% = 1
-                                Else
-
-                                    Open diskPaths$(0) + "BASK." + YN$ For Random As #1 Len = 655
-
-                                    fileLength& = LOF(1)
-
-                                    Field #1, 15 As Q$(0)
-
-                                    For I1 = 1 to fileLength& / 655
-
-                                        Get #1, I1
-
-                                        For I2 = 1 To 15
-                                            If Asc(Mid$(Q$(0), I2, 1)) < 32 Or Asc(Mid$(Q$(0), I2, 1)) > 123 Or UCase$(Left$(Q$(0), 3)) = "NOT" Or UCase$(Left$(Q$(0), 3)) = "UN" Then nullTeam = 1: Exit For
-                                        Next I2
-
-                                        If nullTeam <> 1 Then
-                                            numberTeams = numberTeams + 1
-                                            teamNames$(numberTeams) = Q$(0)
-                                            teamIndex%(numberTeams) = I1
-                                        End If
-
-                                    Next I1
-
-                                    Close 1
-
-                                    Call SelectTeam_TOURN(YN$, numberTeams, A$, teamIdx)
-
-                                End If
-
-                            End If
-
-                            If BO% = 1 Then
-                                BO% = 0
-                            Else
-                                Locate 2, 33
-                                Color teamRatings%(0), teamRatings%(1): Print A$
-
-                                Do
-                                    Color 15, 4
-                                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                                    I$ = GetKeyPress$
-                                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                            End If
-
-                        Loop Until UCase$(I$) = "N"
-
-                        slotName$(NR, B, 0) = A$
-                        slotName$(NR, B, 1) = YN$
-                        tourneyN%(NR, B, 0) = teamIdx
-                        tourneyN%(NR, B, 1) = 3
-                        tourneyN%(NR, B, 2) = teamRatings%(0)
-                        tourneyN%(NR, B, 3) = teamRatings%(1)
-                        tourneyN%(NR, B, 1) = 1
+                            slotName$(NR, B, 0) = A$
+                            slotName$(NR, B, 1) = YN$
+                            tourneyN%(NR, B, 0) = teamIdx
+                            tourneyN%(NR, B, 1) = 3
+                            tourneyN%(NR, B, 2) = teamRatings%(0)
+                            tourneyN%(NR, B, 3) = teamRatings%(1)
+                            tourneyN%(NR, B, 1) = 1
+                                                        
+                        End If
 
                     Else
                         'Clear a slot
@@ -564,7 +489,7 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
             End If 'Done checking for ESC
 
-        Loop Until I$ = "3"
+        Loop Until Val(I$) = 3
 
     End If 'Done checking for ESC
 
@@ -857,8 +782,8 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
         teamName$ = RTrim$(Q$(0))
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
-        V1% = CVI(Q$(3))
-        V2% = CVI(Q$(4))
+        def3FG_Adj = CVI(Q$(3))
+        def3FGA_Adj = CVI(Q$(4))
 
         For I = 0 To 4
             leagueRatings%(I) = CVI(Q$(I + 5))

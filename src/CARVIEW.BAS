@@ -74,7 +74,7 @@ Sub CARVIEW ()
             If ExitCode% <> 27 Then
 
                 targetFile$ = RTrim$(targetFile$)
-                Z$ = Left$(targetFile$, Len(targetFile$) - 4)
+                careerFile$ = Left$(targetFile$, Len(targetFile$) - 4)
 
                 Color 15, 0
                 Cls
@@ -83,7 +83,7 @@ Sub CARVIEW ()
                 
                 Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
-                Open diskPaths$(1) + Z$ + ".CAR" For Input As #2
+                Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #2
 
                 Input #2, NB%, B$
 
@@ -124,10 +124,10 @@ Sub CARVIEW ()
                 Select Case UCase$(A$)
 
                     Case "P":
-                        Call CareerToPrinter(carviewA$(), Z$)
+                        Call CareerToPrinter(carviewA$(), careerFile$)
 
                     Case "V"
-                        Call CareerToScreen(carviewA$(), Z$)
+                        Call CareerToScreen(carviewA$(), careerFile$)
 
                 End Select
 
@@ -144,13 +144,13 @@ End Sub
 '       CareerToPrinter subroutine
 '----------------------------------------
 '...explanation...
-Sub CareerToPrinter (carviewA$(), Z$)
+Sub CareerToPrinter (carviewA$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
     PTN = 0
 
-    LPrint Tab(59); Z$
+    LPrint Tab(59); careerFile$
     LPrint
     LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
 
@@ -179,7 +179,7 @@ Sub CareerToPrinter (carviewA$(), Z$)
 
             If 55 - PTN < VV Then
                 LPrint Chr$(12)
-                LPrint Tab(59); Z$: LPrint
+                LPrint Tab(59); careerFile$: LPrint
                 LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
                 PTN = 0
             End If
@@ -311,7 +311,7 @@ End Sub
 '       CareerToScreen subroutine
 '----------------------------------------
 '...explanation...
-Sub CareerToScreen (carviewA$(), Z$)
+Sub CareerToScreen (carviewA$(), careerFile$)
 
     Do
 
@@ -328,10 +328,10 @@ Sub CareerToScreen (carviewA$(), Z$)
         Select Case UCase$(I$)
 
             Case "P":
-                Call ViewPlayer(carviewA$(), Z$)
+                Call ViewPlayer(carviewA$(), careerFile$)
 
             Case "R":
-                Call ViewRosterSequence(carviewA$(), Z$)
+                Call ViewRosterSequence(carviewA$(), careerFile$)
 
         End Select
 
@@ -344,13 +344,13 @@ End Sub
 '       ViewPlayer Subroutine
 '----------------------------------------
 '...explanation...
-Sub ViewPlayer (carviewA$(), Z$)
+Sub ViewPlayer (carviewA$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
     Cls
 
-    Color 12: Print Z$
+    Color 12: Print careerFile$
 
     For I = 0 To 15:
         Locate I + 2: Color 3
@@ -405,7 +405,7 @@ Sub ViewPlayer (carviewA$(), Z$)
     TT17 = 0
 
     Color 11
-    Locate 1: Print Z$
+    Locate 1: Print careerFile$
     Color 12
     Locate 2: Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
     Color 15
@@ -502,7 +502,7 @@ Sub ViewPlayer (carviewA$(), Z$)
 
     Cls
     Color 11
-    Locate 1: Print Z$
+    Locate 1: Print careerFile$
     Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
     Color 15
     Locate 3: Print Left$(carviewA$(B9), 13);
@@ -585,7 +585,7 @@ End Sub
 '       ViewRosterSequence Subroutine
 '----------------------------------------
 '...explanation...
-Sub ViewRosterSequence (carviewA$(), Z$)
+Sub ViewRosterSequence (carviewA$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -616,7 +616,7 @@ Sub ViewRosterSequence (carviewA$(), Z$)
                 Cls
 
                 Color 11
-                Locate 1: Print Z$
+                Locate 1: Print careerFile$
                 Color 12
                 Locate 2: Print "PLAYER         YEAR  G FGM  FGA   PCT FTM FTA   PCT 3FGM 3FGA PCT  PTS  AVG"
                 Color 15
@@ -701,7 +701,7 @@ Sub ViewRosterSequence (carviewA$(), Z$)
 
                 Cls
                 Color 11
-                Locate 1: Print Z$
+                Locate 1: Print careerFile$
                 Color 12
                 Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
                 Color 15

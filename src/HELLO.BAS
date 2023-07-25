@@ -540,14 +540,14 @@ Sub Leaders_Menu ()
 
             Select Case Selection%
                 Case 1: Call CREATCON
-                Case 2: Call COMPCON
+                Case 2: Call CompileCollege
                 Case 3: Call SEECON
                 Case 4: Call HD2HDCON
                 Case 5: Call SeasonRecords
                 Case 6: Call NEWLDR
                 Case 7: Call BLANK
                 Case 8: Call CREATNAT
-                Case 9: Call COMPNAT
+                Case 9: Call CompileNatlOrg
                 Case 10: Call SEENAT
                 Case 11: Call SeasonRecords
                 Case 12: Call BLANKORG
@@ -582,8 +582,8 @@ End Sub
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'CNGTM.BAS'
 '$INCLUDE: 'COMPARE.BAS'
-'$INCLUDE: 'COMPCON.BAS'
-'$INCLUDE: 'COMPNAT.BAS'
+'$INCLUDE: 'COMPCOLL.BAS'
+'$INCLUDE: 'COMPNATL.BAS'
 '$INCLUDE: 'CREATCON.BAS'
 '$INCLUDE: 'CREATNAT.BAS'
 '$INCLUDE: 'DRAFT.BAS'

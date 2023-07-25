@@ -1185,10 +1185,10 @@ End Sub
 ' This creates an .LDS file for your league
 Sub UpdateExpandedLeaders (JB, statFile$, Z1$(), tStats, ttStats)
 
-    Shared A$(), AL$(), expanTT$()
+    Shared statPlyrNames$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
-    Shared statsA!(), statsAL!()
+    Shared playerOff!(), statsAL!()
     Shared GM!(), GMA!(), GM1!()
     Shared TT!(), TT1!()
     Shared statsW0!(), statsW1!(), W0L!(), W1L!()
@@ -1212,12 +1212,16 @@ Sub UpdateExpandedLeaders (JB, statFile$, Z1$(), tStats, ttStats)
                 Input #1, B$
 
                 For I = 0 To 13
-                    Input #1, A$(I)
+
+                    Input #1, statPlyrNames$(I)
+
                     For J = 0 To 13:
-                        Input #1, statsA!(I, J)
+                        Input #1, playerOff!(I, J)
                     Next
+
                     Input #1, statsW0!(I)
                     Input #1, statsW1!(I)
+
                 Next
 
                 For L = 0 To 15:
@@ -1254,10 +1258,10 @@ Sub UpdateExpandedLeaders (JB, statFile$, Z1$(), tStats, ttStats)
 
                 For I = 0 To 14
 
-                    If A$(I) <> "XXX" Then
+                    If statPlyrNames$(I) <> "XXX" Then
 
                         JB = JB + 1
-                        AL$(JB) = A$(I)
+                        AL$(JB) = statPlyrNames$(I)
                         TBN = TBN + 1
                         TMA$(TBN) = B$
                         GMA!(JB) = year
@@ -1265,7 +1269,7 @@ Sub UpdateExpandedLeaders (JB, statFile$, Z1$(), tStats, ttStats)
 
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            statsAL!(JB, K1) = statsA!(I, I1)
+                            statsAL!(JB, K1) = playerOff!(I, I1)
                         Next I1
 
                     End If
@@ -1330,7 +1334,7 @@ End Sub
 ' standings modules (.LDS)
 Sub SAVELEADER (statFile$, JB, tStats, ttStats)
 
-    Shared A$(), AL$(), expanTT$()
+    Shared statPlyrNames$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
     Shared statsAL!()

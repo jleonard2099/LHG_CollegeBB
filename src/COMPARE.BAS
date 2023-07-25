@@ -2,229 +2,132 @@ Sub COMPARE ()
 
     _Title "Courtside College Basketball - Stats Comparison"
 
-    Shared compareT%(), HP%(), OP%()
+    Shared teamRatings%(), HP%(), OP%()
 
     Shared compareA!(), statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared A$(), HP$(), OP$()
-    Shared P$(), T$()
+    Shared statPlyrNames$(), HP$(), OP$()
+    Shared position$(), T$()
 
     Dim posn$(0 To 13)
+    
+    'Call SelectTeam_COMPARE(yearNumber$, numberTeams, T$)
+    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
-    Do
+    If chosenIdx <> 0 Then
 
-        Color 15, 0
-        Cls
+        statFile$ = nameStatFile$(teamName$)
 
-        JJ = 7
-
-        Color 15, 4
-        Locate 6, 8
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-        Locate , 12: Print "ENTER DISK ID: ": Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-        Locate 7, 27: Input NY$
-        If NY$ = "" And yearNumber$ <> "" Then
-            Call SelectTeam_COMPARE(yearNumber$, numberTeams, T$)
+        If Not _FileExists(diskPaths$(1) + statFile$) Then
+            Locate 10, 8
+            Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, PASS)
         Else
-            yearNumber$ = RTrim$(NY$)
-            Erase teamNames$
-            numberTeams = 0
 
-            If Not _FileExists(diskPaths$(0) + "BASK." + yearNumber$) Then
-                Locate 10, 8
-                Call CSMsgBox("NO TEAM FILES WERE FOUND MATCHING THIS ID.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-                I$ = GetKeyPress$
-                Call CSMsgBox("", 0, PASS)
-            Else
+            Open diskPaths$(1) + statFile$ For Input As #1
 
-                Open diskPaths$(0) + "BASK." + yearNumber$ For Random As #1 Len = 655
+            Input #1, T$
 
-                fileLength& = LOF(1)
+            For I = 0 To 13:
 
-                Field #1, 15 As Q$(0), 640 As X$
+                Input #1, statPlyrNames$(I)
 
-                For I1 = 1 To fileLength& / 655
-                    Get #1, I1
-                    teamNames$(I1) = Q$(0)
-                    teamIndex%(I1) = I1
+                For J = 0 To 13
+                    Input #1, compareA!(I, J)
                 Next
 
-                Close 1
+                Input #1, statsW0!(I)
 
-                numberTeams = fileLength& / 655
+                Input #1, statsW1!(I)
 
-                Call SelectTeam_COMPARE(yearNumber$, numberTeams, T$)
+            Next
 
-            End If 'Done checking for teams file
+            For L = 0 To 15: Input #1, statsZ!(L): Next
 
-        End If 'Done checking INPUT
+            For L = 0 To 15: Input #1, statsZ1!(L): Next
 
-        If BO% = 1 Then
-            BO% = 0
-        Else
-            Locate 2, 33
-            Color compareT%(0), compareT%(1): Print T$
+            Close #1
+
+            For I = 0 To 13
+                If position$(I) = "F " Then posn$(I) = "FORWARD"
+                If position$(I) = "C " Then posn$(I) = "CENTER"
+                If position$(I) = "G " Then posn$(I) = "GUARD"
+                If position$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
+                If position$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
+                If position$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
+                If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
+            Next
+
+            Open diskPaths$(1) + statFile$ + "S" For Input As #1
+
+            Input #1, Y
+
+            For J = 1 To 100: Input #1, OP%(J): Next
+            For J = 1 To 100: Input #1, OP$(J): Next
+            For J = 1 To 100: Input #1, HP%(J): Next
+            For J = 1 To 100: Input #1, HP$(J): Next
+
+            Close #1
+
+            replayLosses% = 0
+            replayWins% = 0
+
+            For I = 1 To Y
+                If OP%(I) < HP%(I) Then replayLosses% = replayLosses% + 1
+                If OP%(I) > HP%(I) Then replayWins% = replayWins% + 1
+            Next
+
+            Color 15, 0
+            Cls
+
+            JJ = 4
+
+            Locate 8, 8: Color 14, 1
+
+            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+
+            For II = 1 To JJ:
+                Locate 8 + II, 8
+                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+            Next
+
+            Locate 9 + JJ, 8
+
+            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
             Do
-                Color 15, 4
-                Locate 3, 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Locate 10
+                Color 7, 1
 
-        End If
+                Locate , 30: Print "STATS TO ";
+                Color 15: Print "S";: Color 7: Print "CREEN"
+                Locate , 30: Print "STATS TO ";
+                Color 15: Print "P";: Color 7: Print "RINTER"
+                J$ = GetKeyPress$
 
-        If UCase$(I$) = "N" Then
+            Loop Until UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
 
-            'Determine stat file for team
-            For XX = 4 To 11
-                If Mid$(T$, XX, 1) = " " Or Mid$(T$, XX, 1) = "." Then Mid$(T$, XX, 1) = "_"
-            Next XX
+            backToMenu = 0
 
-            For XX = 12 To 14
-                If Mid$(T$, XX, 2) = "ST" Then Mid$(T$, 9, 1) = "_": Mid$(T$, 10, 2) = "ST"
-            Next XX
+            If J$ <> Chr$(27) Then
 
-            QQ = 8
+                Select Case UCase$(J$)
 
-            For XX = 11 To 4 Step -1
-                If Mid$(T$, XX, 1) = "_" Then
-                    QQ = XX - 4
-                Else
-                    Exit For
-                End If
-            Next XX
+                    Case "P":
+                        Call Comparisons_Printer(teamName$)
 
-            Z$ = Mid$(T$, 4, QQ) + "." + Left$(T$, 2)
+                    Case "S":
+                        Call Comparisons_Screen(teamName$, backToMenu, posn$())
 
-            If Not _FileExists(diskPaths$(1) + Z$) Then
-                Locate 10, 8
-                Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-                I$ = GetKeyPress$
-                Call CSMsgBox("", 0, PASS)
-            Else
+                End Select
 
-                Open diskPaths$(1) + Z$ For Input As #1
+            End If
 
-                Input #1, T$
+        End If 'Done checking file count
 
-                For I = 0 To 13:
-
-                    Input #1, A$(I)
-
-                    For J = 0 To 13
-                        Input #1, compareA!(I, J)
-                    Next
-
-                    Input #1, statsW0!(I)
-
-                    Input #1, statsW1!(I)
-
-                Next
-
-                For L = 0 To 15: Input #1, statsZ!(L): Next
-
-                For L = 0 To 15: Input #1, statsZ1!(L): Next
-
-                Close #1
-
-                For I = 0 To 13
-                    If P$(I) = "F " Then posn$(I) = "FORWARD"
-                    If P$(I) = "C " Then posn$(I) = "CENTER"
-                    If P$(I) = "G " Then posn$(I) = "GUARD"
-                    If P$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
-                    If P$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
-                    If P$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
-                    If P$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
-                Next
-
-                Open diskPaths$(1) + Z$ + "S" For Input As #1
-
-                Input #1, Y
-
-                For J = 1 To 100: Input #1, OP%(J): Next
-                For J = 1 To 100: Input #1, OP$(J): Next
-                For J = 1 To 100: Input #1, HP%(J): Next
-                For J = 1 To 100: Input #1, HP$(J): Next
-
-                Close #1
-
-                replayLosses% = 0
-                replayWins% = 0
-
-                For I = 1 To Y
-                    If OP%(I) < HP%(I) Then replayLosses% = replayLosses% + 1
-                    If OP%(I) > HP%(I) Then replayWins% = replayWins% + 1
-                Next
-
-                Color 15, 0
-                Cls
-
-                JJ = 4
-
-                Locate 8, 8: Color 14, 1
-
-                Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-                For II = 1 To JJ:
-                    Locate 8 + II, 8
-                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                Next
-
-                Locate 9 + JJ, 8
-
-                Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
-
-                Do
-                    Locate 10
-                    Color 7, 1
-
-                    Locate , 30: Print "STATS TO ";
-                    Color 15: Print "S";: Color 7: Print "CREEN"
-                    Locate , 30: Print "STATS TO ";
-                    Color 15: Print "P";: Color 7: Print "RINTER"
-                    J$ = GetKeyPress$
-
-                Loop Until UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
-
-                backToMenu = 0
-
-                If J$ <> Chr$(27) Then
-
-                    Select Case UCase$(J$)
-
-                        Case "P":
-                            Call Comparisons_Printer(T$)
-
-                        Case "S":
-                            Call Comparisons_Screen(T$, backToMenu, posn$())
-
-                    End Select
-
-                End If
-
-            End If 'Done checking file count
-
-        End If 'Done checking for ESC
-
-    Loop Until (UCase$(I$) = "N" And backToMenu = 0) Or I$ = Chr$(27)
+    End If 'Done checking for ESC
 
 End Sub
 
@@ -235,13 +138,13 @@ End Sub
 '...explanation...
 Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
-    Shared compareT%(), compT1%()
+    Shared teamRatings%(), teamStats()
 
-    Shared compareA!(), RS!(), X1!()
+    Shared compareA!(), playerStats!(), X1!()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared A$(), T$()
+    Shared statPlyrNames$(), T$()
 
     Shared replayLosses%, replayWins%
 
@@ -274,7 +177,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
             Locate I + 5, 15
             Print Using "##"; I + 1;
             Print ". ";
-            Color 7: Print A$(I)
+            Color 7: Print statPlyrNames$(I)
         Next
 
         Color 12
@@ -322,7 +225,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
                     Do
 
-                        If A$(playerIdx) <> "XXX" And A$(playerIdx) <> "END" And A$(playerIdx) <> "" Then
+                        If statPlyrNames$(playerIdx) <> "XXX" And statPlyrNames$(playerIdx) <> "END" And statPlyrNames$(playerIdx) <> "" Then
 
                             Call PlayerComparisons_Screen(playerIdx, posn$(playerIdx), menuExit)
 
@@ -365,7 +268,7 @@ End Sub
 '...explanation...
 Sub TeamComparisons_Screen (T$)
 
-    Shared compareT%(), compT1%()
+    Shared teamRatings%(), teamStats()
     Shared statsZ!(), statsZ1!()
 
     Shared replayLosses%, replayWins%
@@ -434,64 +337,64 @@ Sub TeamComparisons_Screen (T$)
     Locate 8, 32: Print String$(18, 177)
 
     Color 3, 0
-    Locate 6, 41: Print Using "####"; compareT%(7);
-    Locate 6, 45: Print Using "####"; compareT%(8);: Print " ";
+    Locate 6, 41: Print Using "####"; teamRatings%(7);
+    Locate 6, 45: Print Using "####"; teamRatings%(8);: Print " ";
 
     Color 14, 0
     Locate 7, 41: Print Using "####"; replayWins%;
     Locate 7, 45: Print Using "####"; replayLosses%;: Print " ";
 
     Color 3, 0
-    Locate 4, 10: Print Using "######"; compT1%(1) / 100 * compT1%(3);
-    Locate 5, 10: Print Using "######"; compT1%(1);
+    Locate 4, 10: Print Using "######"; teamStats(1) / 100 * teamStats(3);
+    Locate 5, 10: Print Using "######"; teamStats(1);
 
-    If compT1%(1) = 0 Then Locate 6, 10: Print "  .000";
-    If compT1%(1) > 0 Then statPCT! = compT1%(3) / 100: Locate 6, 10: Print "  ";: Print Using ".###"; statPCT!;
+    If teamStats(1) = 0 Then Locate 6, 10: Print "  .000";
+    If teamStats(1) > 0 Then statPCT! = teamStats(3) / 100: Locate 6, 10: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 7, 10: Print Using "######"; compT1%(5) / 100 * compT1%(7);
-    Locate 8, 10: Print Using "######"; compT1%(5);
+    Locate 7, 10: Print Using "######"; teamStats(5) / 100 * teamStats(7);
+    Locate 8, 10: Print Using "######"; teamStats(5);
 
-    If compT1%(5) = 0 Then Locate 9, 10: Print "  .000";
-    If compT1%(5) > 0 Then statPCT! = compT1%(7) / 100: Locate 9, 10: Print "  ";: Print Using ".###"; statPCT!;
+    If teamStats(5) = 0 Then Locate 9, 10: Print "  .000";
+    If teamStats(5) > 0 Then statPCT! = teamStats(7) / 100: Locate 9, 10: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 10: Print Using "######"; .35 * compT1%(9);
-    Locate 11, 10: Print Using "######"; .65 * compT1%(9);
-    Locate 12, 10: Print Using "######"; compT1%(9);
-    Locate 13, 10: Print Using "######"; compT1%(11);
-    Locate 14, 10: Print Using "######"; compT1%(13);
-    Locate 15, 10: Print Using "######"; compT1%(17);
-    Locate 16, 10: Print Using "######"; compT1%(15);
+    Locate 10, 10: Print Using "######"; .35 * teamStats(9);
+    Locate 11, 10: Print Using "######"; .65 * teamStats(9);
+    Locate 12, 10: Print Using "######"; teamStats(9);
+    Locate 13, 10: Print Using "######"; teamStats(11);
+    Locate 14, 10: Print Using "######"; teamStats(13);
+    Locate 15, 10: Print Using "######"; teamStats(17);
+    Locate 16, 10: Print Using "######"; teamStats(15);
     Locate 17, 10: Print "   ---"
     Locate 18, 10: Print "   ---"
     Locate 19, 10: Print "   ---"
     Locate 20, 10: Print "   ---"
 
     Color 3, 0
-    Locate 4, 62: Print Using "######"; compT1%(2) / 100 * compT1%(4);
-    Locate 5, 62: Print Using "######"; compT1%(2);
+    Locate 4, 62: Print Using "######"; teamStats(2) / 100 * teamStats(4);
+    Locate 5, 62: Print Using "######"; teamStats(2);
 
-    If compareT%(2) = 0 Then Locate 6, 62: Print "  .000";
-    If compareT%(2) > 0 Then statPCT! = compT1%(4) / 100: Locate 6, 62: Print "  ";: Print Using ".###"; statPCT!;
+    If teamRatings%(2) = 0 Then Locate 6, 62: Print "  .000";
+    If teamRatings%(2) > 0 Then statPCT! = teamStats(4) / 100: Locate 6, 62: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 7, 62: Print Using "######"; compT1%(6) / 100 * compT1%(8);
-    Locate 8, 62: Print Using "######"; compT1%(6);
+    Locate 7, 62: Print Using "######"; teamStats(6) / 100 * teamStats(8);
+    Locate 8, 62: Print Using "######"; teamStats(6);
 
-    If compareT%(6) = 0 Then Locate 9, 62: Print "  .000";
-    If compareT%(6) > 0 Then statPCT! = compT1%(8) / 100: Locate 9, 62: Print "  ";: Print Using ".###"; statPCT!;
+    If teamRatings%(6) = 0 Then Locate 9, 62: Print "  .000";
+    If teamRatings%(6) > 0 Then statPCT! = teamStats(8) / 100: Locate 9, 62: Print "  ";: Print Using ".###"; statPCT!;
 
-    Locate 10, 62: Print Using "######"; .35 * compT1%(10);
-    Locate 11, 62: Print Using "######"; .65 * compT1%(10);
-    Locate 12, 62: Print Using "######"; compT1%(10);
-    Locate 13, 62: Print Using "######"; compT1%(12);
-    Locate 14, 62: Print Using "######"; compT1%(14);
-    Locate 15, 62: Print Using "######"; compT1%(18);
-    Locate 16, 62: Print Using "######"; compT1%(16);
+    Locate 10, 62: Print Using "######"; .35 * teamStats(10);
+    Locate 11, 62: Print Using "######"; .65 * teamStats(10);
+    Locate 12, 62: Print Using "######"; teamStats(10);
+    Locate 13, 62: Print Using "######"; teamStats(12);
+    Locate 14, 62: Print Using "######"; teamStats(14);
+    Locate 15, 62: Print Using "######"; teamStats(18);
+    Locate 16, 62: Print Using "######"; teamStats(16);
     Locate 17, 62: Print "   ---"
-    Locate 18, 62: Print Using "######"; compT1%(19) * compT1%(20) / 100;
-    Locate 19, 62: Print Using "######"; compT1%(19);
+    Locate 18, 62: Print Using "######"; teamStats(19) * teamStats(20) / 100;
+    Locate 19, 62: Print Using "######"; teamStats(19);
 
-    If compareT%(19) = 0 Then Locate 20, 62: Print "  .000";
-    If compareT%(19) > 0 Then statPCT! = compT1%(20) / 100: Locate 20, 62: Print "  ";: Print Using ".###"; statPCT!;
+    If teamRatings%(9) = 0 Then Locate 20, 62: Print "  .000";
+    If teamRatings%(9) > 0 Then statPCT! = teamStats(20) / 100: Locate 20, 62: Print "  ";: Print Using ".###"; statPCT!;
 
     Locate 4, 16: Print Using "#########"; statsZ!(2);
     Locate 5, 16: Print Using "#########"; statsZ!(1);
@@ -553,10 +456,10 @@ End Sub
 '...explanation...
 Sub PlayerComparisons_Screen (idx, position$, menuExit)
 
-    Shared compareA!(), RS!()
+    Shared compareA!(), playerStats!()
     Shared statsW0!(), statsW1!(), X1!()
 
-    Shared A$(), T$()
+    Shared statPlyrNames$(), T$()
 
     Color 11
     Locate 2, 2: Print T$(0)
@@ -566,7 +469,7 @@ Sub PlayerComparisons_Screen (idx, position$, menuExit)
     Color 14
 
     'Player Name
-    Locate 2, 14: Print A$(idx);
+    Locate 2, 14: Print statPlyrNames$(idx);
 
     'Player Position
     Print " - ";: Color 11: Print position$
@@ -627,73 +530,73 @@ Sub PlayerComparisons_Screen (idx, position$, menuExit)
     Locate , 69: Print " MIN/G"
 
     Color 1, 11: Locate 5, 14: Print Using "###"; X1!(idx, 0);
-    Locate , 17: Print Using "#####"; RS!(idx, 1);
-    Locate , 22: Print Using "#####"; RS!(idx, 3);
-    Locate , 27: Print Using "#####"; RS!(idx, 2);
+    Locate , 17: Print Using "#####"; playerStats!(idx, 1);
+    Locate , 22: Print Using "#####"; playerStats!(idx, 3);
+    Locate , 27: Print Using "#####"; playerStats!(idx, 2);
 
-    If RS!(idx, 2) = 0 Then Locate , 32: Print "   --.- %";
-    If RS!(idx, 2) > 0 Then Locate , 32: Print Using "#####.#"; (RS!(idx, 3) / RS!(idx, 2)) * 100;: Print " %";
+    If playerStats!(idx, 2) = 0 Then Locate , 32: Print "   --.- %";
+    If playerStats!(idx, 2) > 0 Then Locate , 32: Print Using "#####.#";  (playerStats!(idx, 3) / playerStats!(idx, 2)) * 100;: Print " %";
 
-    Locate , 40: Print Using "#####"; RS!(idx, 5);
-    Locate , 45: Print Using "#####"; RS!(idx, 4);
+    Locate , 40: Print Using "#####"; playerStats!(idx, 5);
+    Locate , 45: Print Using "#####"; playerStats!(idx, 4);
 
-    If RS!(idx, 4) = 0 Then Locate , 50: Print "   --.-";: Print " %";
-    If RS!(idx, 4) > 0 Then Locate , 50: Print Using "#####.#"; (RS!(idx, 5) / RS!(idx, 4)) * 100;: Print " %";
+    If playerStats!(idx, 4) = 0 Then Locate , 50: Print "   --.-";: Print " %";
+    If playerStats!(idx, 4) > 0 Then Locate , 50: Print Using "#####.#";  (playerStats!(idx, 5) / playerStats!(idx, 4)) * 100;: Print " %";
 
-    Locate , 58: Print Using "#######"; RS!(idx, 6);
+    Locate , 58: Print Using "#######"; playerStats!(idx, 6);
 
-    If RS!(idx, 0) = 0 Or RS!(idx, 6) = 0 Then Locate , 65: Print "      0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 6) = 0 Then Locate , 65: Print "      0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 6) > 0 Then Locate , 65: Print Using "#######.#"; RS!(idx, 6) / RS!(idx, 0);
-
-    Color 7, 0: Print String$(2, 177)
-    Color 1, 11
-    Locate 10, 14: Print Using "######"; RS!(idx, 7) - RS!(idx, 6);
-
-    If RS!(idx, 0) = 0 Or RS!(idx, 7) - RS!(idx, 6) = 0 Then Locate , 20: Print "      0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 7) - RS!(idx, 6) = 0 Then Locate , 20: Print "      0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 7) - RS!(idx, 6) > 0 Then Locate , 20: Print Using "#######.#"; (RS!(idx, 7) - RS!(idx, 6)) / RS!(idx, 0);
-
-    Locate , 29: Print Using "######"; RS!(idx, 9);
-
-    If RS!(idx, 0) = 0 Or RS!(idx, 9) = 0 Then Locate , 35: Print "     0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 9) = 0 Then Locate , 35: Print "     0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 9) > 0 Then Locate , 35: Print Using "######.#"; RS!(idx, 9) / RS!(idx, 0);
-
-    Locate , 43: Print Using "#######"; RS!(idx, 8);
-
-    If RS!(idx, 0) = 0 Or RS!(idx, 8) = 0 Then Locate , 50: Print "  0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 8) = 0 Then Locate , 50: Print "  0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 8) > 0 Then Locate , 50: Print Using "###.#"; RS!(idx, 8) / RS!(idx, 0);
-
-    Locate , 55: Print Using "######"; RS!(idx, 7);
-    Locate , 61: Print Using "#####"; RS!(idx, 11);
-
-    If RS!(idx, 0) = 0 Or RS!(idx, 11) = 0 Then Locate , 66: Print "    0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 11) = 0 Then Locate , 66: Print "    0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 11) > 0 Then Locate , 66: Print Using "#####.#"; RS!(idx, 11) / RS!(idx, 0);
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 6) = 0 Then Locate , 65: Print "      0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 6) = 0 Then Locate , 65: Print "      0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 6) > 0 Then Locate , 65: Print Using "#######.#"; playerStats!(idx, 6) / playerStats!(idx, 0);
 
     Color 7, 0: Print String$(2, 177)
     Color 1, 11
-    Locate 15, 14: Print Using "####"; RS!(idx, 10);
+    Locate 10, 14: Print Using "######"; playerStats!(idx, 7) - playerStats!(idx, 6);
 
-    If RS!(idx, 0) = 0 Or RS!(idx, 10) = 0 Then Locate , 18: Print "    0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 10) = 0 Then Locate , 18: Print "    0.0";
-    If RS!(idx, 0) > 0 And RS!(idx, 12) > 0 Then Locate , 18: Print Using "#####.#"; RS!(idx, 10) / RS!(idx, 0);
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 7) - playerStats!(idx, 6) = 0 Then Locate , 20: Print "      0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 7) - playerStats!(idx, 6) = 0 Then Locate , 20: Print "      0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 7) - playerStats!(idx, 6) > 0 Then Locate , 20: Print Using "#######.#";  (playerStats!(idx, 7) - playerStats!(idx, 6)) / playerStats!(idx, 0);
 
-    Locate , 25: Print Using "#######"; RS!(idx, 13);
-    Locate , 32: Print Using "#######"; RS!(idx, 12);
+    Locate , 29: Print Using "######"; playerStats!(idx, 9);
 
-    If RS!(idx, 13) = 0 Then Locate , 39: Print "     --.-";: Print " %";
-    If RS!(idx, 12) > 0 Then Locate , 39: Print Using "#######.#"; (RS!(idx, 13) / RS!(idx, 12)) * 100;: Print " %";
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 9) = 0 Then Locate , 35: Print "     0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 9) = 0 Then Locate , 35: Print "     0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 9) > 0 Then Locate , 35: Print Using "######.#"; playerStats!(idx, 9) / playerStats!(idx, 0);
 
-    Locate , 49: If RS!(idx, 0) <> 0 Then Print Using "   ##.#"; RS!(idx, 7) / RS!(idx, 0);
-    Locate , 56: Print Using "######"; (RS!(idx, 3) * 2) + RS!(idx, 5) + RS!(idx, 13);
+    Locate , 43: Print Using "#######"; playerStats!(idx, 8);
 
-    If RS!(idx, 0) = 0 Then Locate , 62: Print "  --.-";
-    If RS!(idx, 0) > 0 Then Locate , 62: Print Using "####.#"; ((RS!(idx, 3) * 2) + RS!(idx, 5) + RS!(idx, 13)) / RS!(idx, 0);
-    If RS!(idx, 0) = 0 Then Locate , 68: Print "   --.-";
-    If RS!(idx, 0) > 0 Then Locate , 68: Print Using "#####.#"; RS!(idx, 1) / RS!(idx, 0);
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 8) = 0 Then Locate , 50: Print "  0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 8) = 0 Then Locate , 50: Print "  0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 8) > 0 Then Locate , 50: Print Using "###.#"; playerStats!(idx, 8) / playerStats!(idx, 0);
+
+    Locate , 55: Print Using "######"; playerStats!(idx, 7);
+    Locate , 61: Print Using "#####"; playerStats!(idx, 11);
+
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 11) = 0 Then Locate , 66: Print "    0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 11) = 0 Then Locate , 66: Print "    0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 11) > 0 Then Locate , 66: Print Using "#####.#"; playerStats!(idx, 11) / playerStats!(idx, 0);
+
+    Color 7, 0: Print String$(2, 177)
+    Color 1, 11
+    Locate 15, 14: Print Using "####"; playerStats!(idx, 10);
+
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 10) = 0 Then Locate , 18: Print "    0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 10) = 0 Then Locate , 18: Print "    0.0";
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 12) > 0 Then Locate , 18: Print Using "#####.#"; playerStats!(idx, 10) / playerStats!(idx, 0);
+
+    Locate , 25: Print Using "#######"; playerStats!(idx, 13);
+    Locate , 32: Print Using "#######"; playerStats!(idx, 12);
+
+    If playerStats!(idx, 13) = 0 Then Locate , 39: Print "     --.-";: Print " %";
+    If playerStats!(idx, 12) > 0 Then Locate , 39: Print Using "#######.#";  (playerStats!(idx, 13) / playerStats!(idx, 12)) * 100;: Print " %";
+
+    Locate , 49: If playerStats!(idx, 0) <> 0 Then Print Using "   ##.#"; playerStats!(idx, 7) / playerStats!(idx, 0);
+    Locate , 56: Print Using "######"; (playerStats!(idx, 3) * 2) + playerStats!(idx, 5) + playerStats!(idx, 13);
+
+    If playerStats!(idx, 0) = 0 Then Locate , 62: Print "  --.-";
+    If playerStats!(idx, 0) > 0 Then Locate , 62: Print Using "####.#"; (playerStats!(idx, 3) * 2) + (playerStats!(idx, 5) + playerStats!(idx, 13)) / playerStats!(idx, 0);
+    If playerStats!(idx, 0) = 0 Then Locate , 68: Print "   --.-";
+    If playerStats!(idx, 0) > 0 Then Locate , 68: Print Using "#####.#"; playerStats!(idx, 1) / playerStats!(idx, 0);
 
     Color 7, 0: Print String$(2, 177)
     Color 14, 11
@@ -761,7 +664,7 @@ Sub PlayerComparisons_Screen (idx, position$, menuExit)
     Locate , 32: Print Using "#######"; statsW1!(I);
 
     If statsW0!(I) = 0 Then Locate , 39: Print "      0.0";: Print "%";
-    If statsW0!(I) > 0 Then Locate , 39: Print Using "#######.#"; statsW0!(I) / statsW1!(I) * 100;: Print "%";
+    If statsW0!(I) > 0 Then Locate , 39: Print Using "#######.#"; (statsW0!(I) / statsW1!(I)) * 100;: Print "%";
 
     statVal = compareA!(idx, 5) / compareA!(idx, 0)
     Locate , 49: Print Using "#####.#"; statVal;
@@ -797,15 +700,15 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
     Shared mascot$, coach$, arenaName$
     Shared CK, defFGPctAdj%, replayLosses%, replayWins%
     Shared staminaRating%, teamAttendance%
-    Shared V1%, V2%
+    Shared def3FG_Adj, def3FGA_Adj
 
-    Shared HP%(), OP%(), compareL%(), compareT%(), compT1%()
+    Shared HP%(), OP%(), compareL%(), teamRatings%(), teamStats()
 
-    Shared A1!(), compareA!(), DF!(), RS!(), X1!()
+    Shared A1!(), compareA!(), playerDef!(), playerStats!(), X1!()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared A$(), HP$(), OP$(), P$()
+    Shared statPlyrNames$(), HP$(), OP$(), position$()
 
     Selection% = 1
     Count% = numberTeams
@@ -846,14 +749,14 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
 
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
-        V1% = CVI(Q$(3))
-        V2% = CVI(Q$(4))
+        def3FG_Adj = CVI(Q$(3))
+        def3FGA_Adj = CVI(Q$(4))
 
         For I = 0 To 4: compareL%(I) = CVI(Q$(I + 5)): Next
-        For I = 0 To 9: compareT%(I) = CVI(Q$(I + 10)): Next
+        For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
         For I = 0 To 13
-            A$(I) = RTrim$(Q$(I * 15 + 20))
+            statPlyrNames$(I) = RTrim$(Q$(I * 15 + 20))
             For I1 = 0 To 6
                 A1!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
                 X1!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
@@ -879,15 +782,15 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
         teamAttendance% = CVL(Q$(3))
 
         For I = 0 To 13
-            DF!(I) = CVI(Q$(I * 16 + 4))
-            P$(I) = Q$(I * 16 + 5)
+            playerDef!(I) = CVI(Q$(I * 16 + 4))
+            position$(I) = Q$(I * 16 + 5)
             For I1 = 0 To 13
-                RS!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
+                playerStats!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
             Next
         Next
 
         For I = 0 To 20
-            compT1%(I) = CVI(Q$(228 + I))
+            teamStats(I) = CVI(Q$(228 + I))
         Next
 
         CK = CVI(Q$(249))
@@ -904,17 +807,17 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
 
             For I = 0 To 13
 
-                DF!(I) = 5
-                P$(I) = ""
+                playerDef!(I) = 5
+                position$(I) = ""
 
                 For I1 = 0 To 13
-                    RS!(I, I1) = 0
+                    playerStats!(I, I1) = 0
                 Next
 
             Next
 
             For I = 0 To 20:
-                compT1%(I) = 0
+                teamStats(I) = 0
             Next
 
         End If

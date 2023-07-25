@@ -277,7 +277,8 @@ Sub ReviewEditConference (conference$, D1$, D2$)
 
             If choice = 1 Then
                 'Add team
-                Call GetTeam_CREATCON(Z1$(teamIndex), Z2$(teamIndex), scheduleZ1%(teamIndex))
+                'Call GetTeam_CREATCON(Z1$(teamIndex), Z2$(teamIndex), scheduleZ1%(teamIndex))
+                Call ChooseTeam (Z2$(teamIndex), numberTeams, scheduleZ1%(teamIndex), Z1$(teamIndex))
             Else
                 'Remove team
                 Z1$(teamIndex) = "XXX"
@@ -323,28 +324,9 @@ Sub SaveConferences (LG$, D1$, D2$)
         If Z1$(X) = "XXX" Then
             Z1$(X) = Chr$(42)
         Else
-
-            For XX = 4 To 11
-                If Mid$(Z1$(X), XX, 1) = " " Or Mid$(Z1$(X), XX, 1) = "/" Or Mid$(Z1$(X), XX, 1) = "." Then Mid$(Z1$(X), XX, 1) = "_"
-            Next XX
-
-            For XX = 12 To 14
-                If Mid$(Z1$(X), XX, 2) = "ST" Then Mid$(Z1$(X), 9, 1) = "_": Mid$(Z1$(X), 10, 2) = "ST"
-            Next XX
-
-            QQ = 8
-
-            For XX = 11 To 4 Step -1
-                If Mid$(Z1$(X), XX, 1) <> "_" Then
-                    Exit For
-                Else
-                    QQ = XX - 4
-                End If
-            Next XX
-
-            YR$ = Left$(Z1$(X), 2)
-            Z1$(X) = Mid$(Z1$(X), 4, QQ) + "." + YR$
-
+            teamName$ = Z1$(X)
+            statFile$ = nameStatFile$(teamName$)
+            Z1$(X) = statFile$
         End If
 
     Next X

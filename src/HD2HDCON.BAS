@@ -21,29 +21,9 @@ Sub HD2HDCON ()
 
     Shared D1$, D2$
 
-    Call GetTeam_HD2HD (TM$)
-
-    B$ = TM$
-
-    For XX = 4 To 11:
-        If Mid$(B$, XX, 1) = " " Or Mid$(B$, XX, 1) = "." Then Mid$(B$, XX, 1) = "_"
-    Next XX
-
-    For XX = 12 To 14:
-        If Mid$(B$, XX, 2) = "ST" Then Mid$(B$, 9, 1) = "_": Mid$(B$, 10, 2) = "ST"
-    Next XX
-
-    QQ = 8
-
-    For XX = 11 To 4 Step -1
-        If Mid$(B$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
-
-    statFile$ = Mid$(B$, 4, QQ) + "." + Left$(B$, 2)
+    'Call GetTeam_HD2HD (team$)
+    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, team$)
+	statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
         Cls
@@ -170,9 +150,9 @@ Sub HD2HDCON ()
             Next K
 
             If VPP <> 1 Then
-                Call Hd2HdColl_Printer(TM$)
+                Call Hd2HdColl_Printer(team$)
             Else
-                Call Hd2HdColl_Screen(TM$)
+                Call Hd2HdColl_Screen(team$)
             End If
         
         End If
@@ -608,7 +588,8 @@ Sub Hd2HdColl_Screen (teamName$)
         If DV$(W) <> "XXX" And DV$(W) <> "" Then
 
             Color 15
-            Locate , 1: Print Left$(DV$(W), 10);
+            'We have to limit this to 8 because we start stats on column 7
+            Locate , 1: Print Left$(DV$(W), 8);
 
             Color 7
             Locate , 9: Print Using "##"; THW!(W);
@@ -951,8 +932,8 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
 
         staminaRating% = CVI(Q$(1))
         defFGPctAdj% = CVI(Q$(2))
-        V1% = CVI(Q$(3))
-        V2% = CVI(Q$(4))
+        def3FG_Adj = CVI(Q$(3))
+        def3FGA_Adj = CVI(Q$(4))
 
         For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next

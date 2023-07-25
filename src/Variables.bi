@@ -1,5 +1,5 @@
 '----------------------------------------
-' Used across more than one source file
+' Used in more than one source file
 '----------------------------------------
 Dim opSysType$
 
@@ -7,7 +7,6 @@ Dim Shared diskPaths$(3), Q$(0 To 500)
 
 ' *** Reading Team Data ***
 ' -------------------------
-
 '-- transition away from this
 Dim Shared fileLength&
 
@@ -15,22 +14,22 @@ Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
 Dim CK, defFGPctAdj%
+Dim def3FG_Adj, def3FGA_Adj
 Dim staminaRating%, teamAttendance%
-Dim V1%, V2%
 
 Dim coach$, mascot$, arenaName$
 
-Dim compT1%(20)
-Dim leagueRatings%(0 To 4), teamRatings%(0 To 9)
+Dim d3FG_Adj(1), d3FGA_Adj(1)
 
-Dim DF!(13), RS!(13, 13)
+Dim leagueRatings%(0 To 4)
+Dim teamRatings%(0 To 9), teamStats(20)
 
-'-- both should be 0 to 13, 0 to 6
-'-- what happened to trigger this??
-Dim statsA!(0 To 14, 0 To 13), X!(13, 13)
+Dim playerOff!(0 To 13, 0 To 6), playerRatings!(0 To 13, 0 To 6)
+Dim playerDef!(13), playerStats!(13, 13)
 
-Dim A$(0 To 15)
-Dim cngratA$(0 To 13), P$(0 To 13)
+Dim playerNames$(0 To 13), position$(0 To 13)
+Dim statPlyrNames$(0 To 15)
+
 
 ' *** Reading Stat Data ***
 ' -------------------------
@@ -51,7 +50,6 @@ Dim location$(0 To 2), MO$(0 To 3), modeAbbrev$(0 To 3)
 Dim sclockOpt$(0 To 2), threeFtOpt$(0 To 1), threePtOpt$(0 To 1)
 Dim yesNo$(0 To 1)
 
-
 ' *** Miscellaneous Use ***
 ' -------------------------
 Dim finalUpdate%
@@ -61,18 +59,17 @@ Dim TC!
 
 
 '----------------------------------------
-' Used across ALIGN, MERGE routines
+' Used in ALIGN / MERGE routines
 '----------------------------------------
 Dim Ycurr%, Yroad%
 
-Dim alignAR$(15)
-Dim AN$(15)
+Dim alignAR$(15), AN$(15)
 Dim mergeH$(100), HRP$(100)
 Dim mergeO$(100), ORP$(100), gameSite$(100), SITERP$(100)
 
-Dim APRD%(100, 1)
-Dim mergeAP%(100, 1)
-Dim mergeA(14, 14), ARD(14, 14), CRD(100), CRDRD(100)
+Dim APRD%(100, 1), ARD(14, 14), CRD(100), CRDRD(100)
+Dim mergeA(14, 14), mergeAP%(100, 1)
+Dim mergeO%(100), mergeT%(100)
 Dim ORD%(100), TRD%(100)
 
 Dim AN!(15, 14), AR!(15, 14)
@@ -84,41 +81,40 @@ Dim ZRD!(15), ZRD1!(15)
 
 
 '----------------------------------------
-' Used across ADDTOURN,
-'   BRACKET routines
-'----------------------------------------
-Dim tourneyN%(17, 17, 3) 'REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-Dim NN%(17) 'Number of Teams Per Region (up to 16 Regions)
-
-Dim slotName$(17, 17, 0 To 3) 'Team Names for Each Seed Slot
-Dim regionNames$(1 To 17) 'Region Names
-
-Dim yearNumber$(MAX_TEAMS, 3)
-
-Dim tourneyDefaults%(14) 'TOURNAMENT DEFAULTS
-Dim consolationSetting%(1) '0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
-
-'----------------------------------------
-' Used across CARVIEW routines
+' Used in CAREER / LEADER routines
 '----------------------------------------
 Dim AR$(62)
 Dim ARS!(15, 62, 15)
 Dim W0S!(15, 62), W1S!(15, 62)
-Dim careerT%(0 To 34)
+
+Dim JB, tStats, ttStats
+
+Dim AL$(600), expanTT$(40, 15)
+Dim TMA$(600), TP$(31), TP1$(39), TT1$(40, 15)
+
+Dim TMM$(600), TPP$(600)
+
+'These should all be single
+Dim GM!(1 To 40), GM1!(1 To 40), GMA!(600)
+Dim statsAL!(1 To 600, 0 To 14)
+Dim TT!(40, 15), TT1!(40, 15)
+Dim TYP!(600)
+Dim W0L!(600), W1L!(600)
 
 
 '----------------------------------------
-' Used across COMPARE routines
+' Used in COMPARE routines
 '----------------------------------------
-Dim HP%(100), compareL%(6), OP%(100), compareT%(34)
+Dim HP%(100), compareL%(6), OP%(100)
 
 Dim compareA!(15, 14)
 Dim A1!(13, 6), X1!(13, 6)
 
 Dim compareB$(14), H1$(40), HP$(100), OP$(100)
 
+
 '----------------------------------------
-' Used across COMPNAT routines
+' Used in COMPILE routines
 '----------------------------------------
 Dim confWins, confLosses
 Dim fullWins, fullLosses
@@ -134,44 +130,36 @@ Dim CP$(25), compO$(100)
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
+
 '----------------------------------------
-' Used across CREAT routines
+' Used in CREATE routines
 '----------------------------------------
 Dim creatZ1$(MAX_CONFERENCES)
 
-'----------------------------------------
-' Used across DRAFT routines
-'----------------------------------------
-Dim draftA$(0 To 1, 0 To 13), draftP$(1, 13), draftT$(1), draftYN$(1)
-Dim teamMascots$(1), teamCoaches$(1), teamStadiums$(1)
-
-Dim draftA!(1, 13, 6), attendance&(1), CK!(1)
-Dim DA!(1), draftDF!(1, 13)
-Dim draftRS!(1, 13, 13), SP!(1), draftX!(1, 13, 6)
-
-Dim draftL%(1, 4), draftT%(1, 9), draftT1%(1, 20), draftTR%(1, 13, 12)
-Dim draftV1%(1), draftV2%(1)
 
 '----------------------------------------
-' Used across NEWLDR routines
+' Used in DRAFT routines
 '----------------------------------------
-Dim JB, tStats, ttStats
+Dim CK!(1)
 
-Dim AL$(600), TP$(31), TP1$(39)
-Dim expanTT$(40, 15), TT1$(40, 15)
-Dim TMA$(600)
+Dim dFGPctAdj_DRAFT!(1)
 
-Dim TMM$(600), TPP$(600)
+Dim lgRat_DRAFT(1, 4), miscRat_DRAFT(1, 13, 12)
+Dim teamRat_DRAFT(1, 9), teamStats_DRAFT(1, 20)
 
-'These should all be single
-Dim GM!(1 To 40), GM1!(1 To 40), GMA!(600)
-Dim statsAL!(1 To 600, 0 To 14)
-Dim TT!(40, 15), TT1!(40, 15)
-Dim TYP!(600)
-Dim W0L!(600), W1L!(600)
+Dim plyrDef_DRAFT!(1, 13), plyrOff_DRAFT!(1, 13, 6)
+Dim plyrRat_DRAFT!(1, 13, 6), plyrStat_DRAFT!(1, 13, 13)
+Dim stamina_DRAFT!(1)
+
+Dim att_DRAFT&(1)
+
+Dim coaches_DRAFT$(1), mascots_DRAFT$(1), stadiums_DRAFT$(1)
+Dim plyrNames_DRAFT$(0 To 1, 0 To 13), posn_DRAFT$(1, 13)
+Dim teamYears$(1), tmName_DRAFT$(1)
+
 
 '----------------------------------------
-' Used across HD2HD routines
+'   Used in Head-To-Head routines
 '----------------------------------------
 Dim AL!(50), AW!(50), HL!(50), HW!(50)
 Dim R1!(50), R2!(50), hd2hdR3!(50), R4!(50)
@@ -180,49 +168,30 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
 
 '----------------------------------------
-' Used across LOOKY/MERGE routines
-'----------------------------------------
-Dim HL%, HW%, NL%, NW%, VL%, VW%
-Dim L%, W%
-
-Dim mergeT%(100)
-Dim mergeO%(100)
-
-Dim lookyA!(0 To 14, 24)
-
-'----------------------------------------
-' Used across RECORDS routines
+' Used in RECORDS routines
 '----------------------------------------
 '---> these should be Single
 Dim REC!(50, 2), TREC!(125, 2)
 
 Dim recordsA$(5), RC$(50, 4), TRC$(125, 3)
 
-'----------------------------------------
-' Used across RECCON routines
-'----------------------------------------
 Dim BRC!(32), TRC!(1 To 21), TRC1!(1 To 21)
 Dim BRC$(32, 1), recconTRC$(1 To 21), recconTRC1$(1 To 21)
 
 Dim TT$(20), recconTB$(25)
 
-'----------------------------------------
-' Used across SCHEDULE routines
-'----------------------------------------
-Dim BS%, NS%
-Dim N$
-
-Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
-
-Dim scheduleAP%(1), scheduleT%(9), scheduleZ1%(1 To 30)
-
-Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
-Dim scheduleYN$(MAX_GAMES, 1)
-
-Dim Z1$(1 To 30), Z2$(1 To 30)
 
 '----------------------------------------
-' Used across SEECON/SEENAT routines
+' Used in STAT / INPUT routines
+'----------------------------------------
+Dim HL%, HW%, NL%, NW%, VL%, VW%
+Dim L%, W%
+
+Dim lookyA!(0 To 14, 24)
+
+
+'----------------------------------------
+' Used in SEExxx routines
 '----------------------------------------
 Dim DL$(60), OL$(60), NOL$(1 To 60), PR$(1200)
 Dim DL!(60, 20), OL!(60, 20) ', seeconP(60)
@@ -232,17 +201,48 @@ Dim seenatZ1$(260), seenatZ2$(260), seenatZ3$(260)
 Dim PT#(1200, 5)
 Dim T$(30)
 
+
 '----------------------------------------
-' Used across TINPUT routines
+' Used in SCHEDULE routines
 '----------------------------------------
-Dim inputL(9)
-Dim inputRS(13, 13), inputX(14, 6)
-Dim inputA(14, 19), inputDF(13)
-Dim inputN$(14), inputP$(14)
+Dim BS%, NS%
+Dim N$
+
+Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
+
+Dim scheduleAP%(1), scheduleZ1%(1 To 30)
+
+Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
+Dim scheduleYN$(MAX_GAMES, 1)
+
+Dim Z1$(1 To 30), Z2$(1 To 30)
 
 
 '----------------------------------------
-' Used across Game Routines
+' Used in ADDTOURN / BRACKET routines
+'----------------------------------------
+'           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
+Dim tourneyN%(17, 17, 3) 
+'Number of Teams Per Region (up to 16 Regions)
+Dim NN%(17) 
+
+'Team Names for Each Seed Slot
+Dim slotName$(17, 17, 0 To 3) 
+
+'Region Names
+Dim regionNames$(1 To 17) 
+
+Dim yearNumber$(MAX_TEAMS, 3)
+
+'TOURNAMENT DEFAULTS
+Dim tourneyDefaults%(14) 
+
+'0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
+Dim consolationSetting%(1) 
+
+
+'----------------------------------------
+' Used in Game Routines
 '----------------------------------------
 Dim scheduleFile$
 
@@ -267,7 +267,7 @@ Dim Shared tourneyFile$, U$, VT$, VT1$, W$, W1$, YN$
 Dim Shared AP%(2), APT%(100, 1), B%(1, 13), CZ%(1), DT%(1), E%(13), FA%(1, 13), FY%(2)
 Dim Shared G9%(1), HF%(1, 6), HT%(100), L%(1, 4), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
 Dim Shared O%(100), OF%(1), PC%(1), PR%(1, 1), ST%(32), SX%(32, 1, 14)
-Dim Shared T2%(1, 20), TF%(1), TM%(1, 13), TP%(1), TR%(1, 9), V1%(1), V2%(1)
+Dim Shared T2%(1, 20), TF%(1), TM%(1, 13), TP%(1), TR%(1, 9), def3FG_Adj(1)
 Dim Shared VG%(8), VH%(8), W%(1, 13, 1)
 
 Dim Shared B1(0 To 1, 0 To 4)
