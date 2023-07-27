@@ -12,12 +12,11 @@ Sub COMPARE ()
 
     Dim posn$(0 To 13)
     
-    'Call SelectTeam_COMPARE(yearNumber$, numberTeams, T$)
-    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
+    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
     If chosenIdx <> 0 Then
 
-        statFile$ = nameStatFile$(teamName$)
+        statFile$ = nameStatFile$(team$)
 
         If Not _FileExists(diskPaths$(1) + statFile$) Then
             Locate 10, 8
@@ -28,6 +27,7 @@ Sub COMPARE ()
 
             Open diskPaths$(1) + statFile$ For Input As #1
 
+            'We don't actually use T$
             Input #1, T$
 
             For I = 0 To 13:
@@ -65,8 +65,11 @@ Sub COMPARE ()
             Input #1, Y
 
             For J = 1 To 100: Input #1, OP%(J): Next
+
             For J = 1 To 100: Input #1, OP$(J): Next
+
             For J = 1 To 100: Input #1, HP%(J): Next
+
             For J = 1 To 100: Input #1, HP$(J): Next
 
             Close #1
@@ -116,10 +119,10 @@ Sub COMPARE ()
                 Select Case UCase$(J$)
 
                     Case "P":
-                        Call Comparisons_Printer(teamName$)
+                        Call Comparisons_Printer(team$)
 
                     Case "S":
-                        Call Comparisons_Screen(teamName$, backToMenu, posn$())
+                        Call Comparisons_Screen(team$, backToMenu, posn$())
 
                 End Select
 

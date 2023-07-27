@@ -8,9 +8,8 @@ Sub EditStats ()
     Shared statPlyrNames$()
     Dim Z2(14, 14)
 
-    'Call GetTeam_EditStats (T1$, YN$, D)
-    Call ChooseTeam (YN$, numberTeams, D, T1$)
-	statFile$ = nameStatFile$(T1$)
+    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
+	statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$) Then
 

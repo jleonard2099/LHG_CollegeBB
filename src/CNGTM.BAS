@@ -37,21 +37,20 @@ Sub CNGTM (userChoice)
 
         If ExitCode% <> 27 Then
 
-            'Call GetTeam_CNGTM(A$, year$, T1)
-            Call ChooseTeam (year$, numberTeams, T1, A$)
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
-            If T1 <> 0 Then
+            If teamNbr <> 0 Then
 
                 Select Case Selection%
 
                     Case 1:
-                        Call EditTeam(A$, T1, year$)
+                        Call EditTeam(team$, T1, YN$)
 
                     Case 2:
-                        Call PrintRoster(A$, T1)
+                        Call PrintRoster(team$, T1)
 
                     Case 3:
-                        Call ViewRoster(A$, T1)
+                        Call ViewRoster(team$, T1)
 
                 End Select
 

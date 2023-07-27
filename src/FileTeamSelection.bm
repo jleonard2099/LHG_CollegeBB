@@ -85,11 +85,11 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                         Close 1
 
+                        previousYear$ = yearNumber$
+                        
                     End If 'Done checking if file exists
 
                 End If 'Done checking for blank year number
-
-                previousYear$ = yearNumber$
 
             Else
 
@@ -104,7 +104,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                 Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
 
-                If ExitCode% <> 27 Then
+                If ExitCode% <> 27 And numberTeams <> 0 Then
 
                     Do
                         Locate 2, 33
@@ -265,9 +265,9 @@ Sub ReadExtraData (teamYear$, targetTeam$, teamIdx)
 
         Get #1, teamIdx
 
-        coach$ = Q$(0)
-        arenaName$ = Q$(1)
-        mascot$ = Q$(2)
+        coach$ = RTRim$(Q$(0))
+        arenaName$ = RTRim$(Q$(1))
+        mascot$ = RTRim$(Q$(2))
         teamAttendance% = CVL(Q$(3))
 
         For I = 0 To 13

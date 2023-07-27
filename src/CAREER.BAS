@@ -115,23 +115,24 @@ Sub CreateCareerFile ()
 
             Color 11
             Locate 15, 5
-            Input "ENTER NAME OF CAREER STAT FILE (MAX. - 8 CHARACTERS)"; careerFile$
+            Input "ENTER NAME OF CAREER STAT FILE "; careerFile$
 
-            'Call GetTeam_CAREER(ti, A$)
-            Call ChooseTeam (yearNumber$, numberTeams, ti, teamName$)
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
-            'ti = team index of chosen team
-            '0 means no team was chosen
-            If ti <> 0 Then
+            If teamNbr <> 0 Then
 
-                statFile$ = nameStatFile$(teamName$)
+                statFile$ = nameStatFile$(team$)
 
                 Do
+
                     Color 15, 0
                     Cls
+
                     Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
                     Locate 9, 25: Print "ANY CHANGE (YN)"
+
                     J$ = GetKeyPress$
+
                 Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N" Or J$ = Chr$(27)
 
                 If UCase$(J$) = "N" Then

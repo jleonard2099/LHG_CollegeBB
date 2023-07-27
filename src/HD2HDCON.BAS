@@ -21,8 +21,7 @@ Sub HD2HDCON ()
 
     Shared D1$, D2$
 
-    'Call GetTeam_HD2HD (team$)
-    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, team$)
+    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
 	statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
@@ -39,8 +38,11 @@ Sub HD2HDCON ()
         Input #4, Y
 
         For J = 1 To 100: Input #4, mergeO%(J): Next
+
         For J = 1 To 100: Input #4, compO$(J): Next
+
         For J = 1 To 100: Input #4, hd2hdTR%(J): Next
+
         For J = 1 To 100: Input #4, homeTeam$(J): Next
 
         Close #4
@@ -52,12 +54,17 @@ Sub HD2HDCON ()
             Cls
 
             J = 5
+
             Locate 8, 8
+
             Color 15, 1: Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
             For II = 1 To J
                 Locate 8 + II, 8: Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
             Next
+
             Locate 9 + J, 8
+
             Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
             Do
@@ -85,9 +92,7 @@ Sub HD2HDCON ()
                 VPP = 1
             End If
 
-            W$ = LG$ + ".LIB"
-
-            Open diskPaths$(1) + W$ For Input As #1
+            Open diskPaths$(1) + LG$ + ".LIB" For Input As #1
 
             Input #1, X
             Input #1, LG$

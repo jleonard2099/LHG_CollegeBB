@@ -465,13 +465,13 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                     If Val(I$) = 1 Then
 
-                        Call ChooseTeam (YN$, numberTeams, teamIdx, A$)
-                        
-                        If teamIdx <> 0 Then
+                        Call ChooseTeam (YN$, NTMS, teamNbr, team$)
 
-                            slotName$(NR, B, 0) = A$
+                        If teamNbr <> 0 Then
+
+                            slotName$(NR, B, 0) = team$
                             slotName$(NR, B, 1) = YN$
-                            tourneyN%(NR, B, 0) = teamIdx
+                            tourneyN%(NR, B, 0) = teamNbr
                             tourneyN%(NR, B, 1) = 3
                             tourneyN%(NR, B, 2) = teamRatings%(0)
                             tourneyN%(NR, B, 3) = teamRatings%(1)

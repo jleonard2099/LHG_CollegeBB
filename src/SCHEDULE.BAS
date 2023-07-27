@@ -81,8 +81,8 @@ Sub SCHEDULE ()
 
                         Locate 7, 32
                         Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
-                        Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-                        Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+                        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                         Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                         Locate , 12: Print "SAMPLE NAMES ARE ARKANSAS, LSU-68, IU76, ETC."
                         Locate 7, 37: Input scheduleFile$
@@ -564,31 +564,31 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
                 Case "E": I$ = "15"
             End Select
 
-            I8% = Val(I$)
+            setting = Val(I$)
 
-            Select Case I8%
+            Select Case setting
                 Case 1:
                     scheduleNG%(gameIndex%, 8) = scheduleNG%(gameIndex%, 8) + 1
                     If scheduleNG%(gameIndex%, 8) > 3 Then scheduleNG%(gameIndex%, 8) = 0
         
-                Case 2 To 3:
+                Case 2, 3:
 
-                    Call ChooseTeam (Y$, numberTeams, T1, N$)
-
-                    If T1 <> 0 Then
+                    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
+                    
+                    If teamNbr <> 0 Then
 
                         Color 15, 0
-                        scheduleNG%(gameIndex%, I8% - 2) = T1
-                        scheduleYN$(gameIndex%, I8% - 2) = YN$
+                        scheduleNG%(gameIndex%, setting - 2) = teamNbr
+                        scheduleYN$(gameIndex%, setting - 2) = YN$
 
-                        If I8% = 2 Then
-                            visitor$ = N$
-                            scheduleV$(gameIndex% - Int(gameIndex% / 20) * 20) = N$
+                        If setting = 2 Then
+                            visitor$ = team$
+                            scheduleV$(gameIndex% - Int(gameIndex% / 20) * 20) = team$
                         End If
 
-                        If I8% = 3 Then
-                            home$ = N$
-                            scheduleH$(gameIndex% - Int(gameIndex% / 20) * 20) = N$
+                        If setting = 3 Then
+                            home$ = team$
+                            scheduleH$(gameIndex% - Int(gameIndex% / 20) * 20) = team$
                         End If
 
                     End If
@@ -633,7 +633,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
             End Select
 
-        Loop Until (I8% >= 0 And I8% <= 15)
+        Loop Until (setting >= 0 And setting <= 15)
 
         If visitor$ <> "" And home$ <> "" And TM$ <> "" And DT$ <> "" Then
 
@@ -652,7 +652,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
         End If
 
-    Loop Until I8% = 0
+    Loop Until setting = 0
 
 End Sub
 
@@ -715,8 +715,8 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
             Do
                 Locate 7, 32
                 Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
-                Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-                Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+                Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                 Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                 Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
                 Locate 7, 37: Input subSchedFile$
@@ -1783,8 +1783,8 @@ Sub CreateConferenceSchedule ()
 
                 Do
                     Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
-                    Locate , 12: Print "THE NAME IS 8 CHARACTERS LONG WITH NO PERIODS OR"
-                    Locate , 12: Print "SPACES. DO NOT ADD A FILE EXTENSION, THE SCHEDULER"
+                    Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                    Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                     Locate , 12: Print "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
                     Locate 7, 37: Input scheduleFile$

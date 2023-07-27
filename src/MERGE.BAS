@@ -75,16 +75,15 @@ Sub MergeStats ()
 
         If UCase$(I$) = "N" And I$ <> Chr$(27) Then
 
-            'Call GetDiskID_MERGE(A$)
-            Call ChooseTeam(yearNumber$, numberTeams, chosenIdx, A$)
-            statFile$ = nameStatFile$(A$)
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+            statFile$ = nameStatFile$(team$)
 
             Color , 0
             Cls
 
             Locate 10, 15: Print "ROAD STATS ARE ON DRIVE "; pathRoadStats$
             Locate , 15: Print "MASTER STATS ARE ON DRIVE "; pathCurrentStats$
-            Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; A$
+            Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; team$
 
             Do
                 Locate 14, 15: Print "ANY CHANGE (YN)"
@@ -96,12 +95,27 @@ Sub MergeStats ()
                 If _FileExists(pathRoadStats$ + statFile$) Then
 
                     Open pathRoadStats$ + statFile$ For Input As #1
+
                     Input #1, B$
 
-                    For I = 0 To 13: Input #1, ARP$(I)
-                    For J = 0 To 13: Input #1, ARD(I, J): Next: Input #1, W0RD!(I): Input #1, W1RD!(I): Next
+                    For I = 0 To 13: 
+
+                        Input #1, ARP$(I)
+
+                        For J = 0 To 13: 
+                            Input #1, ARD(I, J)
+                        Next
+                        
+                        Input #1, W0RD!(I)
+                        
+                        Input #1, W1RD!(I)
+                        
+                    Next
+
                     For L = 0 To 15: Input #1, ZRD!(L): Next
+
                     For L = 0 To 15: Input #1, ZRD1!(L): Next
+
                     Close #1
 
                     Open pathRoadStats$ + statFile$ + "S" For Input As #1
@@ -109,8 +123,11 @@ Sub MergeStats ()
                     Input #1, Yroad%
 
                     For I = 1 To 100: Input #1, ORD%(I): Next I
+
                     For I = 1 To 100: Input #1, ORP$(I): Next I
+
                     For I = 1 To 100: Input #1, TRD%(I): Next I
+
                     For I = 1 To 100: Input #1, HRP$(I): Next I
 
                     For I = 1 To 100
@@ -163,8 +180,11 @@ Sub MergeStats ()
                         Input #1, Ycurr%
 
                         For I = 1 To 100: Input #1, mergeO%(I): Next I
+
                         For I = 1 To 100: Input #1, mergeO$(I): Next I
+
                         For I = 1 To 100: Input #1, mergeT%(I): Next I
+
                         For I = 1 To 100: Input #1, mergeH$(I): Next I
 
                         For I = 1 To 100

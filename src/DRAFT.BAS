@@ -765,9 +765,9 @@ Sub ReadDraftTeam (teamYear$, targetTeam$, teamIdx, draftIdx)
 
     Get #1, teamIdx
 
-    coaches_DRAFT$(draftIdx) = Q$(0)
-    stadiums_DRAFT$(draftIdx) = Q$(1)
-    mascots_DRAFT$(draftIdx) = Q$(2)
+    coaches_DRAFT$(draftIdx) = RTrim$(Q$(0))
+    stadiums_DRAFT$(draftIdx) = RTrim$(Q$(1))
+    mascots_DRAFT$(draftIdx) = RTrim$(Q$(2))
     att_DRAFT&(draftIdx) = CVL(Q$(3))
 
     For I = 0 To 13

@@ -21,9 +21,9 @@ Sub ALIGN ()
             Locate 16, 5: Print Space$(55)
             Color 11
 
-            'Call GetDiskID_ALIGN(A$)
-            Call ChooseTeam(yearNumber$, numberTeams, chosenIdx, A$)
-            statFile$ = nameStatFile$(A$)
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+            
+            statFile$ = nameStatFile$(team$)
 
             Color 12, 0
             Cls
@@ -36,13 +36,18 @@ Sub ALIGN ()
                 Input #1, BR$
 
                 For I = 0 To 13:
+
                     Input #1, alignAR$(I)
+
                     For J = 0 To 13: Input #1, AR!(I, J): Next
+
                     Input #1, W0R!(I)
                     Input #1, WR1!(I)
+
                 Next
 
                 For L = 0 To 15: Input #1, ZR!(L): Next
+
                 For L = 0 To 15: Input #1, ZR1!(L): Next
 
                 Close #1

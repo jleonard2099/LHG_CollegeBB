@@ -9,21 +9,21 @@ Sub LOOKY ()
     
     menuExit = 0
 
-    Call ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
-
-    If chosenIdx <> 0 Then
+    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+    
+    If teamNbr <> 0 Then
 
         Color 15, 0
 
-        statFile$ = nameStatFile$(teamName$)
+        statFile$ = nameStatFile$(team$)
 
         If Not _FileExists(diskPaths$(1) + statFile$) Then
             Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
             I$ = GetKeyPress$
             Call CSMsgBox("", 0, PASS)
         Else
-            Call LoadTeamStats(statFile$, teamName$, totalGames%)
-            Call ViewStatSummary(statFile$, teamName$, totalGames%, menuExit)
+            Call LoadTeamStats(statFile$, team$, totalGames%)
+            Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
 
         End If
 

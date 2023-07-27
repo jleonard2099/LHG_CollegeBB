@@ -39,6 +39,9 @@ Sub CREATCON ()
                 Z1$(X) = "XXX"
             Next
 
+            D1$ = ""
+            D2$ = ""
+
             Select Case Selection%
 
                 Case 1:
@@ -278,7 +281,7 @@ Sub ReviewEditConference (conference$, D1$, D2$)
             If choice = 1 Then
                 'Add team
                 'Call GetTeam_CREATCON(Z1$(teamIndex), Z2$(teamIndex), scheduleZ1%(teamIndex))
-                Call ChooseTeam (Z2$(teamIndex), numberTeams, scheduleZ1%(teamIndex), Z1$(teamIndex))
+                Call ChooseTeam (Z2$(teamIndex), NTMS, scheduleZ1%(teamIndex), Z1$(teamIndex))
             Else
                 'Remove team
                 Z1$(teamIndex) = "XXX"
