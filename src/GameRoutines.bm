@@ -641,131 +641,6 @@ End Sub
 
 
 '------------------------------
-'      ReadGameTeam Subroutine
-'------------------------------
-' ...explanation...
-Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
-
-    Shared d3FG_Adj(), d3FGA_Adj()
-
-    teamYear$ = RTrim$(YN$)
-
-    Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
-
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
-    Get #1, I1
-
-    targetTeam$ = RTrim$(Q$(0))
-    S1(P9) = CVI(Q$(1))
-    D1(P9) = CVI(Q$(2))
-    d3FG_Adj(P9) = CVI(Q$(3))
-    d3FGA_Adj(P9) = CVI(Q$(4))
-
-    For I3 = 0 To 4:
-        L%(P9, I3) = CVI(Q$(I3 + 5))
-    Next
-
-    For I3 = 0 To 9:
-        TR%(P9, I3) = CVI(Q$(I3 + 10))
-    Next
-
-    For I3 = 0 To 13
-        AA$(P9, I3) = RTrim$(Q$(I3 * 15 + 20))
-
-        For I4 = 0 To 6
-            A!(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
-            C(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
-        Next
-    Next
-
-    Close 1
-
-    FY%(P9) = 2 * TR%(P9, 3) - TR%(P9, 4)
-
-    CNT% = 0
-    CNTX% = 0
-
-    Do
-        If TR%(P9, 5) <> 0 Then
-
-            For I = 0 To 13
-                If B%(P9, I) = -1 Then B%(P9, I) = 0
-                RN = Int(Rnd(1) * 100) + 1
-                If UCase$(AA$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
-                If UCase$(AA$(P9, I)) = "XXX" Or (B%(P9, I) = 0 And RN > Int(C(P9, I, 0) / TR%(P9, 5) * 100 + .5)) Then B%(P9, I) = -1
-            Next
-
-            For I = 0 To 13:
-                If B%(P9, I) = 0 Then CNT% = CNT% + 1
-            Next
-
-        End If
-
-    Loop Until (CNT% < 10 And CNTX% < 4) Or (CNTX% >= 5 And CNT% < 8)
-
-    Open diskPaths$(0) + "COLBBTMS." + teamYear$ As #1 Len = 566
-
-    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-    For I = 0 To 13
-        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
-    Next
-
-    Get #1, I1
-
-    gameCoach$(P9) = Q$(0)
-    gamearenaName$(P9) = Q$(1)
-    gameMascot$(P9) = Q$(2)
-    avgatt_DRAFT&(P9) = CVL(Q$(3))
-
-    For I = 0 To 13
-        DF(P9, I) = CVI(Q$(I * 16 + 4))
-        PO$(P9, I) = Q$(I * 16 + 5)
-
-        For I1 = 0 To 13
-            RS(P9, I, I1) = CVI(Q$(I * 16 + I1 + 6))
-        Next
-
-    Next
-
-    For I = 0 To 20
-        T2%(P9, I) = CVI(Q$(228 + I))
-    Next
-
-    CK = CVI(Q$(249))
-
-    Close 1
-
-    If CK <> 999 Then
-
-        gameCoach$(P9) = ""
-        gamearenaName$(P9) = ""
-        gameMascot$(P9) = ""
-        avgatt_DRAFT&(P9) = 0
-
-        For I = 0 To 13:
-            DF(P9, I) = 5
-            PO$(P9, I) = ""
-
-            For I1 = 0 To 13
-                RS(P9, I, I1) = 0
-            Next
-        Next
-
-        For I = 0 To 20: 
-            T2%(P9, I) = 0
-        Next
-
-    End If
-
-End Sub
-
-'------------------------------
 '      HORN Subroutine
 '------------------------------
 ' Players something close to
@@ -4622,179 +4497,6 @@ Sub BADFT ()
 
 End Sub
 
-
-'------------------------------
-'   SelectGameTeam Subroutine
-'------------------------------
-' ...explanation...
-Sub SelectGameTeam (numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, P9)
-
-    If numberTeams > 0 Then
-
-        SELECTION% = 1
-        Count% = numberTeams
-        Start% = 1
-        FileFGColr% = 15: FileBGColr% = 4
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Rows% = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-
-        Color , 4
-        Cls
-        Color 14
-        Locate , 33: Print "TEAM SELECTION"
-        Locate 25, 1
-        Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-        _MouseShow "DEFAULT"
-        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% <> 27 Then
-
-            selectedIdx = teamIndex%(SELECTION%)
-
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
-
-            Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, P9)
-
-        End If
-
-    End If
-
-End Sub
-
-'------------------------------
-'   ChooseGameTeam Subroutine
-'------------------------------
-' ...explanation...
-Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
-
-    Shared previousYear$
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        JJ = 7
-
-        Locate 6, 8
-        Color 15, 4
-
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER DISK ID: "
-        Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-
-        I$ = GetKeyPress$
-
-        If I$ <> Chr$(27) Then
-
-            If I$ <> Chr$(13) Then
-
-                Locate 7, 27: Print I$
-                Locate 7, 28: Line Input NY$
-                NY$ = I$ + NY$
-                Color 15, 0
-
-                If Not (NY$ = "" And yearNumber$ <> "") Then
-
-                    yearNumber$ = RTrim$(NY$)
-                    Erase teamNames$
-                    numberTeams = 0
-
-                    Cls
-
-                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
-
-                        Locate 10, 8
-
-                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
-
-                    Else
-
-                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
-
-                        fileLength& = LOF(1)
-
-                        Field #1, 15 As Q$(0)
-
-                        numberTeams = fileLength& / TEAM_SIZE_BYTES
-
-                        For teamIdx = 1 To numberTeams
-                            Get #1, teamIdx
-                            'numberTeams = numberTeams + 1
-                            teamNames$(teamIdx) = Q$(0)
-                            teamIndex%(teamIdx) = teamIdx
-                        Next teamIdx
-
-                        Close 1
-
-                    End If 'Done checking if file exists
-
-                End If 'Done checking for blank year number
-
-                previousYear$ = yearNumber$
-
-            Else
-
-                yearNumber$ = previousYear$
-
-            End If 'Done checking for ENTER key
-
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
-
-            Do
-
-                Call SelectGameTeam (numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, P9)
-
-                If ExitCode% <> 27 Then
-
-                    Do
-                        Locate 2, 33
-                        Color TR%(P9, 0), TR%(P9, 1): Print teamName$
-
-                        Color 15, 4
-                        Locate 3, 33: Print "ANY CHANGE? (YN)";
-
-                        J$ = GetKeyPress$
-
-                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
-
-                End If
-
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
-
-        End If 'Done checking for ESC
-
-    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
-
-    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
-
-End Sub
 
 '------------------------------
 '    PRDFAT Subroutine
@@ -8801,3 +8503,304 @@ Sub pbplog (lineNumber)
 End Sub
 
 
+'------------------------------
+'   ChooseGameTeam Subroutine
+'------------------------------
+' ...explanation...
+Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
+
+    Shared previousYear$
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        JJ = 7
+
+        Locate 6, 8
+        Color 15, 4
+
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER DISK ID: "
+        Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Print
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+
+        I$ = GetKeyPress$
+
+        If I$ <> Chr$(27) Then
+
+            If I$ <> Chr$(13) Then
+
+                Locate 7, 27: Print I$
+                Locate 7, 28: Line Input NY$
+                NY$ = I$ + NY$
+                Color 15, 0
+
+                If Not (NY$ = "" And yearNumber$ <> "") Then
+
+                    yearNumber$ = RTrim$(NY$)
+                    Erase teamNames$
+                    numberTeams = 0
+
+                    Cls
+
+                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
+
+                        Locate 10, 8
+
+                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, PASS)
+
+                    Else
+
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+                        fileLength& = LOF(1)
+
+                        Field #1, 15 As Q$(0)
+
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
+
+                        For teamIdx = 1 To numberTeams
+                            Get #1, teamIdx
+                            'numberTeams = numberTeams + 1
+                            teamNames$(teamIdx) = Q$(0)
+                            teamIndex%(teamIdx) = teamIdx
+                        Next teamIdx
+
+                        Close 1
+
+                    End If 'Done checking if file exists
+
+                End If 'Done checking for blank year number
+
+                previousYear$ = yearNumber$
+
+            Else
+
+                yearNumber$ = previousYear$
+
+            End If 'Done checking for ENTER key
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Do
+
+                Call SelectGameTeam (numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, P9)
+
+                If ExitCode% <> 27 Then
+
+                    Do
+                        Locate 2, 33
+                        Color TR%(P9, 0), TR%(P9, 1): Print teamName$
+
+                        Color 15, 4
+                        Locate 3, 33: Print "ANY CHANGE? (YN)";
+
+                        J$ = GetKeyPress$
+
+                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+
+                End If
+
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+
+        End If 'Done checking for ESC
+
+    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
+
+    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+
+End Sub
+
+
+'------------------------------
+'   SelectGameTeam Subroutine
+'------------------------------
+' ...explanation...
+Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, P9)
+
+    If numberTeams > 0 Then
+
+        SELECTION% = 1
+        Count% = numberTeams
+        Start% = 1
+        FileFGColr% = 15: FileBGColr% = 4
+        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        Rows% = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
+
+        Color , 4
+        Cls
+        Color 14
+        Locate , 33: Print "TEAM SELECTION"
+        Locate 25, 1
+        Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+
+        _MouseShow "DEFAULT"
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
+
+        If ExitCode% <> 27 Then
+
+            selectedIdx = teamIndex%(SELECTION%)
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, P9)
+
+        End If
+
+    End If
+
+End Sub
+
+
+'------------------------------
+'      ReadGameTeam Subroutine
+'------------------------------
+' ...explanation...
+Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
+
+    Shared d3FG_Adj(), d3FGA_Adj()
+
+    teamYear$ = RTrim$(YN$)
+
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
+    For I = 0 To 13
+        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), TEAM_SIZE_BYTES - 53 - 43 - I * 43 As X$
+    Next
+
+    Get #1, I1
+
+    targetTeam$ = RTrim$(Q$(0))
+    S1(P9) = CVI(Q$(1))
+    D1(P9) = CVI(Q$(2))
+    d3FG_Adj(P9) = CVI(Q$(3))
+    d3FGA_Adj(P9) = CVI(Q$(4))
+
+    For I3 = 0 To 4:
+        L%(P9, I3) = CVI(Q$(I3 + 5))
+    Next
+
+    For I3 = 0 To 9:
+        TR%(P9, I3) = CVI(Q$(I3 + 10))
+    Next
+
+    For I3 = 0 To 13
+        AA$(P9, I3) = RTrim$(Q$(I3 * 15 + 20))
+
+        For I4 = 0 To 6
+            A!(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
+            C(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
+        Next
+    Next
+
+    Close 1
+
+    FY%(P9) = 2 * TR%(P9, 3) - TR%(P9, 4)
+
+    CNT% = 0
+    CNTX% = 0
+
+    Do
+        If TR%(P9, 5) <> 0 Then
+
+            For I = 0 To 13
+                If B%(P9, I) = -1 Then B%(P9, I) = 0
+                RN = Int(Rnd(1) * 100) + 1
+                If UCase$(AA$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
+                If UCase$(AA$(P9, I)) = "XXX" Or (B%(P9, I) = 0 And RN > Int(C(P9, I, 0) / TR%(P9, 5) * 100 + .5)) Then B%(P9, I) = -1
+            Next
+
+            For I = 0 To 13:
+                If B%(P9, I) = 0 Then CNT% = CNT% + 1
+            Next
+
+        End If
+
+    Loop Until (CNT% < 10 And CNTX% < 4) Or (CNTX% >= 5 And CNT% < 8)
+
+    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ As #1 Len = DATA_SIZE_BYTES
+
+    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
+    For I = 0 To 13
+        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+    Next
+
+    Get #1, I1
+
+    gameCoach$(P9) = Q$(0)
+    gamearenaName$(P9) = Q$(1)
+    gameMascot$(P9) = Q$(2)
+    avgatt_DRAFT&(P9) = CVL(Q$(3))
+
+    For I = 0 To 13
+
+        DF(P9, I) = CVI(Q$(I * 16 + 4))
+        PO$(P9, I) = Q$(I * 16 + 5)
+
+        For I1 = 0 To 13
+            RS(P9, I, I1) = CVI(Q$(I * 16 + I1 + 6))
+        Next
+
+    Next
+
+    For I = 0 To 20
+        T2%(P9, I) = CVI(Q$(228 + I))
+    Next
+
+    CK = CVI(Q$(249))
+
+    Close 1
+
+    If CK <> 999 Then
+
+        gameCoach$(P9) = ""
+        gamearenaName$(P9) = ""
+        gameMascot$(P9) = ""
+        avgatt_DRAFT&(P9) = 0
+
+        For I = 0 To 13:
+            DF(P9, I) = 5
+            PO$(P9, I) = ""
+
+            For I1 = 0 To 13
+                RS(P9, I, I1) = 0
+            Next
+        Next
+
+        For I = 0 To 20: 
+            T2%(P9, I) = 0
+        Next
+
+    End If
+
+End Sub

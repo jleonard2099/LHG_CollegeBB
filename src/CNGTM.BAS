@@ -531,141 +531,6 @@ End Sub
 
 
 '----------------------------------------
-'     GetDiskID_CNGTM Subroutine
-'----------------------------------------
-'... explain here ...
-Sub GetDiskID_CNGTM (yearNumber$)
-
-    Color 15, 0
-
-    Cls
-
-    JJ = 6
-
-    Locate 6, 8: Color 15, 4
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    For II = 1 To JJ
-        Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 7 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-    Locate 7, 32
-    Locate , 12: Print "ENTER DISK ID: ": Print
-    Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-    Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-    Locate 7, 27: Input NY$
-    Color 15, 0
-    Cls
-
-    '-- We need to handle ESC!
-    '-- change INPUT to a get key,
-    ' then update remaining code
-    ' this explains all the places
-    ' where ESC outputs the arrow
-
-    yearNumber$ = NY$
-    Erase teamNames$
-
-End Sub
-
-
-'----------------------------------------
-'     SaveTeam_CNGTM Subroutine
-'----------------------------------------
-'... explain here ...
-Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
-
-    Shared def3FG_Adj, def3FGA_Adj
-    Shared teamAttendance%, defFGPctAdj%, staminaRating%
-    Shared mascot$, coach$, arenaName$
-
-    Shared leagueRatings%(), teamRatings%(), teamStats()
-    Shared playerNames$(), position$()
-    Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
-
-    teamYear$ = RTrim$(yearNumber$)
-
-    Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
-
-    fileLength& = LOF(1)
-
-    If newID% = 1 Or teamIdx = 0 Then teamIdx = fileLength& / 655 + 1
-
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
-
-    LSet Q$(0) = RTrim$(teamName$)
-    LSet Q$(1) = MKI$(staminaRating%)
-    LSet Q$(2) = MKI$(defFGPctAdj%)
-    LSet Q$(3) = MKI$(def3FG_Adj)
-    LSet Q$(4) = MKI$(def3FGA_Adj)
-
-    For I = 0 To 4: LSet Q$(I + 5) = MKI$(leagueRatings%(I)): Next
-
-    teamRatings%(2) = 999
-
-    For I = 0 To 9: LSet Q$(I + 10) = MKI$(teamRatings%(I)): Next
-
-    'Players
-    For I = 0 To 13
-        LSet Q$(I * 15 + 20) = playerNames$(I)
-        For I1 = 0 To 6
-            LSet Q$(I * 15 + I1 + 21) = MKI$(playerOff!(I, I1))
-            LSet Q$(I * 15 + I1 + 28) = MKI$(playerRatings!(I, I1))
-        Next
-    Next
-
-    Put #1, teamIdx
-
-    Close 1
-
-    Open diskPaths$(0) + "COLBBTMS." + teamYear$ For Random As #1 Len = 566
-
-    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-    For I = 0 To 13
-        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
-    Next
-
-    LSet Q$(0) = RTrim$(coach$)
-    LSet Q$(1) = RTrim$(arenaName$)
-    LSet Q$(2) = RTrim$(mascot$)
-    LSet Q$(3) = MKL$(teamAttendance%)
-
-    For I = 0 To 13
-        LSet Q$(I * 16 + 4) = MKI$(playerDef!(I))
-        LSet Q$(I * 16 + 5) = position$(I)
-        For I1 = 0 To 13
-            LSet Q$(I * 16 + I1 + 6) = MKI$(playerStats!(I, I1))
-        Next
-    Next
-
-    For I = 0 To 20
-        LSet Q$(228 + I) = MKI$(teamStats(I))
-    Next
-
-    LSet Q$(249) = MKI$(999)
-
-    Put #1, teamIdx
-
-    Close 1
-
-End Sub
-
-
-
-'----------------------------------------
 '       PrintRoster Subroutine
 '----------------------------------------
 '...explanation...
@@ -791,73 +656,10 @@ End Sub
 
 
 '----------------------------------------
-'     GetTeam_CNGTM Subroutine
+'     SaveTeam_CNGTM Subroutine
 '----------------------------------------
 '... explain here ...
-Sub GetTeam_CNGTM (teamName$, yearNumber$, teamIdx)
-
-    Shared teamRatings%()
-
-    Do
-
-        Call GetDiskID_CNGTM(yearNumber$)
-        teamYear$ = RTrim$(yearNumber$)
-
-        If teamYear$ = "" Then
-            Call SelectTeam_CNGTM(teamIdx, NTMS, teamYear$, teamName$)
-        Else
-
-            Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
-
-            fileLength& = LOF(1)
-
-            Field #1, 15 As Q$(0), 640 As X$
-
-            For I1 = 1 To fileLength& / 655
-                Get #1, I1
-                teamNames$(I1) = Q$(0)
-            Next
-
-            Close 1
-
-            NTMS = fileLength& / 655
-            TS% = Int((NTMS - 1) / 80)
-
-            Call SelectTeam_CNGTM(teamIdx, NTMS, teamYear$, teamName$)
-            'We have at least 1 condition where we have to rewind to 1100
-        End If
-
-        If BO% <> 1 Then
-
-            Locate 2, 33
-            Color teamRatings%(0), teamRatings%(1): Print teamName$
-
-            Color 15, 4
-
-            Do
-                Locate 3, 33
-                Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-        Else
-
-            BO% = 0
-
-        End If
-
-    Loop Until UCase$(I$) = "N"
-
-    Color 15, 0
-
-End Sub
-
-
-'----------------------------------------
-'     SelectTeam_CNGTM Subroutine
-'----------------------------------------
-'...explanation...
-Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
+Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%
@@ -867,127 +669,75 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
     Shared playerNames$(), position$()
     Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
-    NS% = 0
+    teamYear$ = RTrim$(yearNumber$)
 
-    Selection% = 1
-    Count% = numberTeams%
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-    Color , 4: Cls: Locate , 33: Color 14
-    Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15
-    Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-    Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
+    fileLength& = LOF(1)
 
-    If ExitCode% <> 27 Then
+    If newID% = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_FILE_BYTES + 1
 
-        teamIdx = Selection%
-        teamYear$ = RTrim$(yearNumber$)
+    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
-        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
+    For I = 0 To 13
+        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), TEAM_SIZE_BYTES - 53 - 43 - I * 43 As X$
+    Next
 
-        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+    LSet Q$(0) = RTrim$(teamName$)
+    LSet Q$(1) = MKI$(staminaRating%)
+    LSet Q$(2) = MKI$(defFGPctAdj%)
+    LSet Q$(3) = MKI$(def3FG_Adj)
+    LSet Q$(4) = MKI$(def3FGA_Adj)
 
-        For I = 0 To 13
-            Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+    For I = 0 To 4: LSet Q$(I + 5) = MKI$(leagueRatings%(I)): Next
+
+    teamRatings%(2) = 999
+
+    For I = 0 To 9: LSet Q$(I + 10) = MKI$(teamRatings%(I)): Next
+
+    'Players
+    For I = 0 To 13
+        LSet Q$(I * 15 + 20) = playerNames$(I)
+        For I1 = 0 To 6
+            LSet Q$(I * 15 + I1 + 21) = MKI$(playerOff!(I, I1))
+            LSet Q$(I * 15 + I1 + 28) = MKI$(playerRatings!(I, I1))
         Next
+    Next
 
-        Get #1, teamIdx
+    Put #1, teamIdx
 
-        selectedTeamName$ = RTrim$(Q$(0))
-        staminaRating% = CVI(Q$(1))
-        defFGPctAdj% = CVI(Q$(2))
-        def3FG_Adj = CVI(Q$(3))
-        def3FGA_Adj = CVI(Q$(4))
+    Close 1
 
-        For I = 0 To 4: 
-            leagueRatings%(I) = CVI(Q$(I + 5))
+    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = DATA_SIZE_BYTES
+
+    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
+    For I = 0 To 13
+        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+    Next
+
+    LSet Q$(0) = RTrim$(coach$)
+    LSet Q$(1) = RTrim$(arenaName$)
+    LSet Q$(2) = RTrim$(mascot$)
+    LSet Q$(3) = MKL$(teamAttendance%)
+
+    For I = 0 To 13
+        LSet Q$(I * 16 + 4) = MKI$(playerDef!(I))
+        LSet Q$(I * 16 + 5) = position$(I)
+        For I1 = 0 To 13
+            LSet Q$(I * 16 + I1 + 6) = MKI$(playerStats!(I, I1))
         Next
+    Next
 
-        For I = 0 To 9: 
-            teamRatings%(I) = CVI(Q$(I + 10))
-        Next
+    For I = 0 To 20
+        LSet Q$(228 + I) = MKI$(teamStats(I))
+    Next
 
-        For I = 0 To 13
+    LSet Q$(249) = MKI$(999)
 
-            playerNames$(I) = RTrim$(Q$(I * 15 + 20))
+    Put #1, teamIdx
 
-            For I1 = 0 To 6
-                playerOff!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
-                playerRatings!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
-            Next
-        Next
-
-        Close 1
-
-        Open diskPaths$(0) + "COLBBTMS." + teamYear$ For Random As #1 Len = 566
-
-        Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-        For I = 0 To 13
-            Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-            Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
-        Next
-
-        Get #1, teamIdx
-
-        coach$ = Q$(0)
-        arenaName$ = Q$(1)
-        mascot$ = Q$(2)
-        teamAttendance% = CVL(Q$(3))
-
-        For I = 0 To 13
-
-            playerDef!(I) = CVI(Q$(I * 16 + 4))
-            position$(I) = Q$(I * 16 + 5)
-
-            For I1 = 0 To 13
-                playerStats!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
-            Next
-
-        Next
-
-        'Just a temporary placeholder???
-        For I = 0 To 20
-            teamStats(I) = CVI(Q$(228 + I))
-        Next
-
-        CK = CVI(Q$(249))
-
-        Close 1
-
-        If CK <> 999 Then
-            coach$ = ""
-            arenaName$ = ""
-            mascot$ = ""
-            teamAttendance% = 0
-
-            For I = 0 To 13
-                playerDef!(I) = 5
-                position$(I) = ""
-                For I1 = 0 To 13
-                    playerStats!(I, I1) = 0
-                Next
-            Next
-
-            For I = 0 To 20
-                teamStats(I) = 0
-            Next
-
-        End If 'done checking for '999
-    Else
-        BO% = 1
-    End If 'Done checking ExitCode
+    Close 1
 
 End Sub
-

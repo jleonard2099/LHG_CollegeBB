@@ -3,36 +3,13 @@
 '----------------------------------------
 Dim opSysType$
 
-Dim Shared diskPaths$(3), Q$(0 To 500)
-
-' *** Reading Team Data ***
-' -------------------------
-'-- transition away from this
-Dim Shared fileLength&
-
+Dim Shared diskPaths$(0 to 3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
-Dim CK, defFGPctAdj%
-Dim def3FG_Adj, def3FGA_Adj
-Dim staminaRating%, teamAttendance%
-
-Dim coach$, mascot$, arenaName$
-
-Dim d3FG_Adj(1), d3FGA_Adj(1)
-
-Dim leagueRatings%(0 To 4)
-Dim teamRatings%(0 To 9), teamStats(20)
-
-Dim playerOff!(0 To 13, 0 To 6), playerRatings!(0 To 13, 0 To 6)
-Dim playerDef!(13), playerStats!(13, 13)
-
-Dim playerNames$(0 To 13), position$(0 To 13)
-Dim statPlyrNames$(0 To 15)
-
-
 ' *** Reading Stat Data ***
 ' -------------------------
+'-- what else can fit here?
 Dim statsW0!(15), statsW1!(15)
 Dim statsZ!(15), statsZ1!(15)
 
@@ -54,9 +31,6 @@ Dim yesNo$(0 To 1)
 ' -------------------------
 Dim finalUpdate%
 Dim replayLosses%, replayWins%
-
-Dim TC!
-
 
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
@@ -221,8 +195,11 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 '----------------------------------------
 ' Used in ADDTOURN / BRACKET routines
 '----------------------------------------
+Dim TC!
+
 '           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
 Dim tourneyN%(17, 17, 3) 
+
 'Number of Teams Per Region (up to 16 Regions)
 Dim NN%(17) 
 

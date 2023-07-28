@@ -741,66 +741,6 @@ End Sub
 
 
 '------------------------------
-'  SelectTeam_TOURN Subroutine
-'------------------------------
-'...explanation...
-Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
-
-    Shared leagueRatings%(), teamRatings%()
-
-    Selection% = 1
-    Count% = numberTeams
-    Start% = 1
-    FileFGColr% = 15: FileBGColr% = 4
-    HiLiteFGColr% = 0: HiLiteBGColr% = 7
-    Rows% = 20
-    Columns% = 4
-    Spacing% = 6
-    Row% = 4
-    Column% = 1
-
-    Color , 4: Cls: Locate , 33: Color 14: Print "TEAM SELECTION": Color 15
-    Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-    _MouseShow "DEFAULT"
-    MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-    _MouseHide
-
-    If ExitCode% <> 27 Then
-
-        'Locate 25, 1: Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  LEFT/RIGHT ARROW  UP/DOWN ARROW  ";: Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
-
-        selectedIndex = teamIndex%(Selection%)
-        teamYear$ = RTRim$(yearNumber$)
-
-        Open diskPaths$(0) + "BASK." + teamYear$ For Random As #1 Len = 655
-
-        Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-
-        Get #1, selectedIndex
-
-        teamName$ = RTrim$(Q$(0))
-        staminaRating% = CVI(Q$(1))
-        defFGPctAdj% = CVI(Q$(2))
-        def3FG_Adj = CVI(Q$(3))
-        def3FGA_Adj = CVI(Q$(4))
-
-        For I = 0 To 4
-            leagueRatings%(I) = CVI(Q$(I + 5))
-        Next
-
-        For I = 0 To 9
-            teamRatings%(I) = CVI(Q$(I + 10))
-        Next
-
-        Close 1
-    Else
-        BO% = 1
-    End If
-
-End Sub
-
-'------------------------------
 '       PickIt Subroutine
 '------------------------------
 '...explanation...
