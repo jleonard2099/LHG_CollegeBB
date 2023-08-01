@@ -22,7 +22,7 @@ Sub HD2HDCON ()
     Shared D1$, D2$
 
     Call ChooseTeam (YN$, NTMS, teamNbr, team$)
-	statFile$ = nameStatFile$(team$)
+    statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
         Cls
@@ -47,9 +47,9 @@ Sub HD2HDCON ()
 
         Close #4
 
-        Call SelectConference_HD2HD(LG$)
+        conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
 
-        If LG$ <> "" Then
+        If ExitCode% <> 27 And ExitCode% <> 0 Then
 
             Cls
 
@@ -92,10 +92,10 @@ Sub HD2HDCON ()
                 VPP = 1
             End If
 
-            Open diskPaths$(1) + LG$ + ".LIB" For Input As #1
+            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
 
             Input #1, X
-            Input #1, LG$
+            Input #1, conferenceFile$
             Input #1, D1$
             Input #1, D2$
 
@@ -718,83 +718,5 @@ Sub Hd2HdColl_Screen (teamName$)
     Color 14
     Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
-
-End Sub
-
-
-'----------------------------------------
-'  SelectConference_HD2HD Subroutine
-'----------------------------------------
-Sub SelectConference_HD2HD (targetFile$)
-
-    Do
-
-        Spec$ = diskPaths$(1) + "*.LIB"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-        Else
-            ReDim conferenceFiles$(0 To Count%)
-            For X = 1 To Count%
-                conferenceFiles$(X) = Space$(12)
-            Next
-
-            conferenceFiles$(0) = Spec$
-            Call ReadFile(conferenceFiles$())
-
-            Do
-                Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT CONFERENCE": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS CONFERENCE";
-
-                _MouseShow "DEFAULT"
-                MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-
-                    targetFile$ = conferenceFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-                targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-            End If
-
-        End If
-
-    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
 End Sub

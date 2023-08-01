@@ -45,12 +45,15 @@ Sub CREATCON ()
             Select Case Selection%
 
                 Case 1:
-                    Call DefineConference(LG$, D1$, D2$)
-                    Call ReviewEditConference(LG$, D1$, D2$)
+                    Call DefineConference(conference$, D1$, D2$)
+                    Call ReviewEditConference(conference$, D1$, D2$)
 
                 Case 2:
-                    Call ChooseConference(LG$)
-                    Call ReviewEditConference(LG$, D1$, D2$)
+                    conference$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+
+                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                        Call ReviewEditConference(conference$, D1$, D2$)
+                    End If
 
             End Select
 
@@ -67,7 +70,7 @@ End Sub
 '       DefineConference Subroutine
 '----------------------------------------
 '...explanation...
-Sub DefineConference (LG$, D1$, D2$)
+Sub DefineConference (conference$, D1$, D2$)
 
     Do
 
@@ -96,11 +99,11 @@ Sub DefineConference (LG$, D1$, D2$)
             Locate 7, 32
 
             Locate , 12: Print "ENTER NAME FOR CONFERENCE: ": Print
-            Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES."
+            Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
             Locate , 12: Print "SAMPLE NAMES ARE SEC, SWC, 94-ACC"
-            Locate 7, 37: Input LG$
+            Locate 7, 37: Input conference$
 
-            If LG$ <> "" Then
+            If conference$ <> "" Then
 
                 Do
                     Locate 13, 12: Print "ANY CHANGE (YN) "
@@ -118,89 +121,6 @@ Sub DefineConference (LG$, D1$, D2$)
     Print
     Locate , 12: Input "ENTER NAME OF DIVISION 1 (ENTER FOR NONE) "; D1$
     Locate , 12: Input "ENTER NAME OF DIVISION 2 (ENTER FOR NONE) "; D2$
-
-End Sub
-
-
-'----------------------------------------
-'       ChooseConference Routine
-'----------------------------------------
-'...explanation...
-Sub ChooseConference (conference$)
-
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(1) + "*.LIB"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-        Else
-
-            ReDim conferenceFiles$(0 To Count%)
-
-            For X = 1 To Count%
-                conferenceFiles$(X) = Space$(12)
-            Next
-
-            conferenceFiles$(0) = Spec$
-            Call ReadFile(conferenceFiles$())
-
-            Do
-
-                Color , 1
-                Cls
-
-                Locate , 28
-                Color 14
-                Print "SELECT CONFERENCE TO SCHEDULE": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS CONFERENCE ";
-
-                _MouseShow "DEFAULT"
-                MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-                    targetFile$ = conferenceFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-                targetFile$ = RTrim$(targetFile$)
-                conference$ = Left$(targetFile$, Len(targetFile$) - 4)
-            End If
-
-        End If
-
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
 
 End Sub
 
@@ -300,17 +220,17 @@ End Sub
 '     SaveConferences Subroutine
 '----------------------------------------
 '...explanation...
-Sub SaveConferences (LG$, D1$, D2$)
+Sub SaveConferences (conference$, D1$, D2$)
 
     Shared scheduleZ1%()
 
     Shared Z1$(), Z2$()
 
-    Open diskPaths$(1) + LG$ + ".LIB" For Output As #2
+    Open diskPaths$(1) + conference$ + ".LIB" For Output As #2
 
     Print #2, 0
 
-    Print #2, LG$ 'League / Conference Name
+    Print #2, conference$ 'League / Conference Name
     Print #2, D1$ 'Division 1 Name
     Print #2, D2$ 'Division 2 Name
 
@@ -334,9 +254,9 @@ Sub SaveConferences (LG$, D1$, D2$)
 
     Next X
 
-    Open diskPaths$(1) + LG$ + ".TMS" For Output As #2
+    Open diskPaths$(1) + conference$ + ".TMS" For Output As #2
 
-    Write #2, LG$
+    Write #2, conference$
     Write #2, D1$
     Write #2, D2$
 

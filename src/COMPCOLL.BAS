@@ -25,7 +25,9 @@ Sub CompileCollege ()
     TRC!(18) = 19999
 
     For I = 1 To 13: TRC1!(I) = 19999: Next
+
     For I = 15 To 17: TRC1!(I) = 19999: Next
+
     For I = 19 To 20: TRC1!(I) = 19999: Next
 
     Erase Z1$
@@ -34,7 +36,6 @@ Sub CompileCollege ()
     For X = 1 To 40
         DL!(X, 19) = 9999
     Next
-
 
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
@@ -60,184 +61,108 @@ Sub CompileCollege ()
 
     End If
 
-    Cls
+    conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
 
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(1) + "*.LIB"
-        Count% = FCount%(Spec$)
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        If Count% = 0 Then
-
-            Locate 10, 8
-            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
+        Do
+            Color 15, 0
+            Cls
+            Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
+            finalUpdate$ = UCase$(I$)
+        Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Else
+        If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
-            ReDim conferenceFiles$(0 To Count%)
+        Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #2
 
-            For X = 1 To Count%
-                conferenceFiles$(X) = Space$(12)
-            Next
+        Input #2, LG$
+        Input #2, D1$
+        Input #2, D2$
 
-            conferenceFiles$(0) = Spec$
+        For XW = 1 To 30
+            Input #2, H1$(XW)
+            Z1$(XW) = H1$(XW)
+        Next
 
-            Call ReadFile(conferenceFiles$())
+        Close 2
 
-            Do
-                Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT CONFERENCE TO UPDATE": Color 15
-                Selection% = 1
-                START% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS CONFERENCE";
+        For XW = 1 To 30
 
-                _MouseShow "DEFAULT"
-                MAMenu conferenceFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
+            'Look for * as terminating char
+            If H1$(XW) <> Chr$(42) Then
 
-                If ExitCode% <> 27 Then
+                haveStats = FindStatsCon%(H1$(XW), numberGames%)
 
-                    Color 15, 1
-                    targetFile$ = conferenceFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
+                If (haveStats) Then
 
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                    L = Len(H1$(XW))
+                    WT$ = ""
 
-                    Color 15, 0
-                Else
-                    BO% = 1
-                End If
+                    For X = 1 To L
+                        A = Asc(Mid$(H1$(XW), X, 1))
+                        WT$ = WT$ + Chr$(A)
+                    Next X
 
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+                    confGame = 0
 
-            If ExitCode% <> 27 Then
+                    For X = 1 To TEAMS_PER_CONFERENCE
 
-                targetFile$ = RTrim$(targetFile$)
-                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
+                        If Z1$(X) = WT$ Then
 
-                Do
-                    Cls
-                    Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-                    Color 15, 0
-                    I$ = GetKeyPress$
-                    finalUpdate$ = UCase$(I$)
-                Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
+                            If O1!(X) = fullWins And O2!(X) = fullLosses Then
+                                confGame = 1
+                            Else
+                                O1!(X) = fullWins
+                                O2!(X) = fullLosses
+                                O4!(X) = confWins
+                                O5!(X) = confLosses
 
-                If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
-
-                Open diskPaths$(1) + WE$ + ".TMS" For Input As #2
-
-                Input #2, LG$
-                Input #2, D1$
-                Input #2, D2$
-
-                For XW = 1 To 30
-                    Input #2, H1$(XW)
-                    Z1$(XW) = H1$(XW)
-                Next
-
-                Close 2
-
-                For XW = 1 To 30
-
-                    'Look for * as terminating char
-                    If H1$(XW) <> Chr$(42) Then
-
-                        haveStats = FindStatsCon%(H1$(XW), numberGames%)
-
-                        If (haveStats) Then
-
-                            L = Len(H1$(XW))
-                            WT$ = ""
-
-                            For X = 1 To L
-                                A = Asc(Mid$(H1$(XW), X, 1))
-                                WT$ = WT$ + Chr$(A)
-                            Next X
-
-                            confGame = 0
-
-                            For X = 1 To TEAMS_PER_CONFERENCE
-
-                                If Z1$(X) = WT$ Then
-
-                                    If O1!(X) = fullWins And O2!(X) = fullLosses Then
-                                        confGame = 1
-                                    Else
-                                        O1!(X) = fullWins
-                                        O2!(X) = fullLosses
-                                        O4!(X) = confWins
-                                        O5!(X) = confLosses
-
-                                        If O1!(X) + O2!(X) = 0 Then
-                                            O3!(X) = 0
-                                        Else
-                                            O3!(X) = O1!(X) / (O1!(X) + O2!(X))
-                                        End If
-
-                                        If O4!(X) + O5!(X) = 0 Then
-                                            O6!(X) = 0
-                                        Else
-                                            O6!(X) = O4!(X) / (O4!(X) + O5!(X))
-                                        End If
-
-                                    End If
-
+                                If O1!(X) + O2!(X) = 0 Then
+                                    O3!(X) = 0
+                                Else
+                                    O3!(X) = O1!(X) / (O1!(X) + O2!(X))
                                 End If
 
-                                If (confGame) Then Exit For
+                                If O4!(X) + O5!(X) = 0 Then
+                                    O6!(X) = 0
+                                Else
+                                    O6!(X) = O4!(X) / (O4!(X) + O5!(X))
+                                End If
 
-                            Next X
-
-                            If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
-
-                                For I = 0 To 13:
-                                    For J = 0 To 22
-                                        compS!(I, J) = 0
-                                    Next
-                                Next
-
-                                Call ReadStatsCon(H1$(XW), TN$)
-                                Call StatsByCategoryCon(numberGames%, TN$, finalUpdate$)
-                                Call CheckStatsCon(TN$)
                             End If
 
-                        End If 'Done checking if we have stats
+                        End If
 
-                    End If 'Done checking valid conference
+                        If (confGame) Then Exit For
 
-                Next XW 'Done "checking stats"
+                    Next X
 
-                Call SortLeadersConf
-                Call PostLeadersConf(WE$)
+                    If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
-            End If 'Done checking for ESC
+                        For I = 0 To 13:
+                            For J = 0 To 22
+                                compS!(I, J) = 0
+                            Next
+                        Next
 
-        End If 'Done checking for file count
+                        Call ReadStatsCon(H1$(XW), TN$)
+                        Call StatsByCategoryCon(numberGames%, TN$, finalUpdate$)
+                        Call CheckStatsCon(TN$)
 
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0
+                    End If
 
-    Cls
+                End If 'Done checking if we have stats
+
+            End If 'Done checking valid conference
+
+        Next XW 'Done "checking stats"
+
+        Call SortLeadersConf
+        Call PostLeadersConf(conferenceFile$)
+
+    End If
 
 End Sub
 

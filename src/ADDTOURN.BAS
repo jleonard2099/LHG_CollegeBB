@@ -554,7 +554,7 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         _MouseHide
 
         Color , 0
-        If ExitCode% <> 27 Then
+        If ExitCode% <> 27 And ExitCode% <> 0 Then
 
             'Save and Exit
             If Selection% < numberRegions + 1 Then
@@ -609,133 +609,62 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
     Shared consolationSetting%()
     Shared tourneyN%(), NN%()
     Shared tourneyDefaults%()
+    
+    tourneyFile$ = ChooseFile$ (diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
+    
+    If ACTION% = 4 Then
+        'Reset tournament
 
-    Do
-        ' *** LOAD IN A SAVED TOURNAMENT ***
-        Spec$ = diskPaths$(1) + "*.TOU"
-        Count% = FCount%(Spec$)
+        'Create TOU file as backup of TCX
+        Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", BUFFER$, ERRCODE%)
+        Locate 10
 
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-        Else
+        Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, PASS)
 
-            ReDim tournamentFiles$(0 To Count%)
+        ACTION% = 1
 
-            For X = 1 To Count%
-                tournamentFiles$(X) = Space$(12)
+    Else
+
+        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #2
+
+        Input #2, tourneyName$
+
+        Input #2, numberRegions ' NUMBER OF REGIONS
+
+        For I = 1 To 16
+            Input #2, NN%(I): ' NUMBER OF TEAMS IN REGION
+            Input #2, regionNames$(I) ' NAME OF REGION
+        Next
+
+        For I = 1 To 16
+            For I1 = 1 To 16
+                For I2 = 0 To 3
+                Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
+                Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                Next
             Next
+        Next
 
-            tournamentFiles$(0) = Spec$
-            Call ReadFile(tournamentFiles$())
+        Input #2, consolationSetting%(0): Input #2, consolationSetting%(1): ' CONSOLATION GAME
 
-            Color , 1
-            Cls
+        Close 2
 
-            Locate , 28: Color 14
+        Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #1
 
-            Print "SELECT TOURNAMENT TO EDIT"
-            Color 15
-            
-            Selection% = 1
-            Start% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1: Color 14: Print "ESC";: Color 15
-            Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-            Print "ENTER";: Color 15
-            Print "-SELECTS TOURNAMENT";
+        For I = 0 To 14
+            Input #1, tourneyDefaults%(I)
+        Next
+        Close 1
 
-            _MouseShow "DEFAULT"
-            MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
+        If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
 
-            If ExitCode% <> 27 Then
+        numberRegions$ = Str$(numberRegions)
 
-                loadFile$ = _Trim$(tournamentFiles$(Selection%))
+        Call SetupTourney(numberRegions$, ACTION%, tourneyName$, tourneyFile$)
 
-                Locate 2, 33: Print loadFile$
-
-                Do
-                    Color 15, 1
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                Color 15, 0
-
-                If UCase$(I$) = "N" Then
-
-                    loadFile$ = Left$(loadFile$, Len(loadFile$) - 4)
-
-                    If ACTION% = 4 Then
-                        'Reset tournament
-
-                        'Create TOU file as backup of TCX
-                        Call FCopy(diskPaths$(1) + loadFile$ + ".TCX", diskPaths$(1) + loadFile$ + ".TOU", BUFFER$, ERRCODE%)
-                        Locate 10
-
-                        Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
-
-                        ACTION% = 1
-
-                        Exit Sub
-
-                    Else
-
-                        Open diskPaths$(1) + loadFile$ + ".INF" For Input As #2
-                        Input #2, tourneyName$
-                        Input #2, numberRegions ' NUMBER OF REGIONS
-
-                        For I = 1 To 16
-                            Input #2, NN%(I): ' NUMBER OF TEAMS IN REGION
-                            Input #2, regionNames$(I) ' NAME OF REGION
-                        Next
-
-                        For I = 1 To 16
-                            For I1 = 1 To 16
-                                For I2 = 0 To 3
-                                    Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                                    Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
-                                Next
-                            Next
-                        Next
-
-                        Input #2, consolationSetting%(0): Input #2, consolationSetting%(1): ' CONSOLATION GAME
-
-                        Close 2
-
-                        Open diskPaths$(1) + loadFile$ + ".TNY" For Input As #1
-
-                        For I = 0 To 14
-                            Input #1, tourneyDefaults%(I)
-                        Next
-                        Close 1
-
-                        If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
-
-                        numberRegions$ = Str$(numberRegions)
-
-                        Call SetupTourney(numberRegions$, ACTION%, tourneyName$, loadFile$)
-
-                    End If 'Done checking ACTION%
-
-                End If 'Done checking for Y/N
-
-            End If 'Done checking for ESC
-
-        End If
-
-    Loop Until Count% = 0 Or ExitCode% = 27 Or UCase$(I$) = "N"
+    End If 'Done checking ACTION%
 
 End Sub
 

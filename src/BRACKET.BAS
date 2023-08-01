@@ -39,9 +39,12 @@ Sub BRACKET ()
         Color , 0
 
         If ExitCode% <> 27 Then
+
             Select Case Selection%
-                Case 1 To 2: Call ViewTourneyInfo(Selection%)
-                Case 3: Cls
+
+                Case 1,2: 
+                    Call ViewTourneyInfo(Selection%)
+
             End Select
         End If
 
@@ -64,142 +67,87 @@ Sub ViewTourneyInfo (ACTION%)
     Shared regionNames$(), slotName$()
     Shared yearNumber$()
 
-    Do
-        ' *** LOAD IN A SAVED TOURNAMENT ***
-		Spec$ = diskPaths$(1) + "*.TOU"
-		Count% = FCount%(Spec$)
+    tourneyFile$ = ChooseFile$ (diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
+    
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO TOURNAMENT FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
-        Else
+        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #2
 
-            ReDim tournamentFiles$(0 To Count%)
-            For X = 1 To Count%
-                tournamentFiles$(X) = Space$(12)
+        Input #2, FF$
+
+        Input #2, R% ' NUMBER OF REGIONS
+
+        For I = 1 To 16
+            Input #2, NN%(I) ' NUMBER OF TEAMS IN REGION
+            Input #2, regionNames$(I) ' NAME OF REGION
+        Next
+
+        For I = 1 To 16
+            For I1 = 1 To 16
+                For I2 = 0 To 3
+                    Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
+                    Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                Next
             Next
-			
-            tournamentFiles$(0) = Spec$
-            Call ReadFile(tournamentFiles$())
+        Next
 
-            Cls
+        Input #2, consolationSetting%(0)
+        Input #2, consolationSetting%(1): ' CONSOLATION GAME
 
-            Color , 1
-            Cls
-            Locate , 28: Color 14
-            Print "SELECT TOURNAMENT TO VIEW": Color 15
-            Selection% = 1
-            Start% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1: Color 14: Print "ESC";: Color 15
-            Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-            Print "ENTER";: Color 15
-            Print "-SELECTS TOURNAMENT";
+        Close 2
 
-            _MouseShow "DEFAULT"
-            MAMenu tournamentFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
+        Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #1
 
-            If ExitCode% <> 27 Then
+        For I = 0 To 14
+            Input #1, tourneyDefaults%(I)
+        Next
 
-                Color 15, 1
-                targetFile$ = tournamentFiles$(Selection%)
-                Locate 2, 33: Print targetFile$
+        Close 1
 
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+        If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
+        NR$ = Str$(R%)
 
-                Color 15, 0
+        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+        fileLength& = LOF(1)
+        Close 1
 
-                If UCase$(I$) <> "Y" Then
+        scheduleAP%(0) = fileLength& / 90
+        BS% = Int((scheduleAP%(0) - 1) / 20)
 
-                    targetFile$ = _Trim$(targetFile$)
-                    targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-                End If
+        For I = 1 To scheduleAP%(0)
+        
+            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
 
-                Open diskPaths$(1) + targetFile$ + ".INF" For Input As #2
-                Input #2, FF$
-                Input #2, R% ' NUMBER OF REGIONS
-                For I = 1 To 16
-                    Input #2, NN%(I) ' NUMBER OF TEAMS IN REGION
-                    Input #2, regionNames$(I) ' NAME OF REGION
-                Next
-                For I = 1 To 16
-                    For I1 = 1 To 16
-                        For I2 = 0 To 3
-                            Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                            Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
-                        Next
-                    Next
-                Next
+            For X = 0 To 14
+                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+            Next
 
-                Input #2, consolationSetting%(0)
-                Input #2, consolationSetting%(1): ' CONSOLATION GAME
-                Close 2
+            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+            Get #1, I
 
-                Open diskPaths$(1) + targetFile$ + ".TNY" For Input As #1
-                For I = 0 To 14
-                    Input #1, tourneyDefaults%(I)
-                Next
-                Close 1
+            For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
+            For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
 
-                If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
-                NR$ = Str$(R%)
+            visitorScores(I) = CVI(Q$(16))
+            homeScores(I) = CVI(Q$(17))
+            visitingTeam$(I) = Q$(18)
+            homeTeam$(I) = Q$(19)
 
-                Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
-                fileLength& = LOF(1)
-                Close 1
+            For X = 1 To 3: scheduleNG%(I, X + 14) = CVI(Q$(X + 23)): Next
+            For X = 2 To 3
+                While Right$(yearNumber$(I, X), 1) = " "
+                    yearNumber$(I, X) = Left$(yearNumber$(I, X), Len(yearNumber$(I, X)) - 1)
+                Wend
+            Next
 
-                scheduleAP%(0) = fileLength& / 90
-                BS% = Int((scheduleAP%(0) - 1) / 20)
+            Close 1
+        Next
 
-                For I = 1 To scheduleAP%(0)
-                    Open diskPaths$(1) + targetFile$ + ".TOU" For Random As #1 Len = 90
+        Call EditBracket(R%, ACTION%)
 
-                    For X = 0 To 14
-                        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-                    Next
-
-                    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-                    Get #1, I
-
-                    For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                    For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
-
-                    visitorScores(I) = CVI(Q$(16))
-                    homeScores(I) = CVI(Q$(17))
-                    visitingTeam$(I) = Q$(18)
-                    homeTeam$(I) = Q$(19)
-
-                    For X = 1 To 3: scheduleNG%(I, X + 14) = CVI(Q$(X + 23)): Next
-                    For X = 2 To 3
-                        While Right$(yearNumber$(I, X), 1) = " "
-                            yearNumber$(I, X) = Left$(yearNumber$(I, X), Len(yearNumber$(I, X)) - 1)
-                        Wend
-                    Next
-
-                    Close 1
-                Next
-
-                Call EditBracket(R%, ACTION%)
-
-            End If 'Done checking for ESC
-
-        End If 'Done checking for no files
-
-    Loop Until Count% = 0 Or ExitCode% = 27 Or UCase$(I$) = "N"
+    End If
 
 End Sub
 
@@ -334,7 +282,7 @@ Sub EditBracket (numberRegions, ACTION%)
 
         Color , 0
 
-        If ExitCode% <> 27 Then
+        If ExitCode% <> 27 And ExitCode% <> 0 Then
 
             regionNbr = Selection%
             If regionNbr = numberRegions + 1 Then regionNbr = 17

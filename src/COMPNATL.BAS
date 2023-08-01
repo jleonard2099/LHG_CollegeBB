@@ -28,7 +28,9 @@ Sub CompileNatlOrg ()
     TRC!(18) = 19999
 
     For I = 1 To 13: TRC1!(I) = 19999: Next
+
     For I = 15 To 17: TRC1!(I) = 19999: Next
+
     For I = 19 To 20: TRC1!(I) = 19999: Next
 
     For X = 1 To 250
@@ -60,230 +62,153 @@ Sub CompileNatlOrg ()
             Input #1, TRC1!(I)
             Input #1, recconTRC1$(I)
         Next
+
         Close 1
+
     End If
 
-    Cls
+    organizationFile$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
 
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(1) + "*.CON"
-        Count% = FCount%(Spec$)
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        If Count% = 0 Then
-
-            Locate 10, 8
-            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
+        Do
+            Color 15, 0
+            Cls
+            Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
+            finalUpdate$ = UCase$(I$)
+        Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Else
+        If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
-            ReDim organizationFiles$(0 To Count%)
+        Open diskPaths$(1) + organizationFile$ + ".CON" For Input As #2
 
-            For X = 1 To Count%
-                organizationFiles$(X) = Space$(12)
-            Next
+        Input #2, X$
 
-            organizationFiles$(0) = Spec$
+        For I = 1 To 40
+            Input #2, CN$(I)
+        Next
 
-            Call ReadFile(organizationFiles$())
+        Close 2
 
-            Do
+        For NC = 1 To 40
+
+            If CN$(NC) <> "XXX" Then
 
                 Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT ORGANIZATION TO UPDATE": Color 15
-                Selection% = 1
-                START% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS ORGANIZATION";
 
-                _MouseShow "DEFAULT"
-                MAMenu organizationFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
+                Erase Z1$
+                Erase DL!, O1!, O2!, O3!, O4!, O5!, O6!
 
-                If ExitCode% <> 27 Then
+                For X = 1 To 40
+                    DL!(X, 19) = 9999
+                Next
 
-                    Color 15, 1
-                    targetFile$ = organizationFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
+                For X = 1 To 30
+                    O1!(X) = 0
+                    O2!(X) = 0
+                    O3!(X) = 0
+                    O4!(X) = 0
+                    O5!(X) = 0
+                    O6!(X) = 0
+                Next
 
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
 
-                    Color 15, 0
-                Else
-                    BO% = 1
-                End If
+                Input #2, LG$
+                Input #2, D1$
+                Input #2, D2$
 
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-
-                targetFile$ = RTrim$(targetFile$)
-                WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-
-                Do
-                    Cls
-                    Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
-                    Color 15, 0
-                    I$ = GetKeyPress$
-                    finalUpdate$ = UCase$(I$)
-                Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
-
-                If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
-
-                Open diskPaths$(1) + WE$ + ".CON" For Input As #2
-
-                Input #2, X$
-
-                For I = 1 To 40
-                    Input #2, CN$(I)
+                For XW = 1 To 30
+                    Input #2, H1$(XW)
+                    Z1$(XW) = H1$(XW)
                 Next
 
                 Close 2
 
-                For NC = 1 To 40
+                For XW = 1 To 30
 
-                    If CN$(NC) <> "XXX" Then
+                    fullWins = 0
+                    fullLosses = 0
+                    confWins = 0
+                    confLosses = 0
 
-                        Cls
+                    'Look for * as terminating char
+                    If H1$(XW) <> Chr$(42) Then
 
-                        Erase Z1$
-                        Erase DL!, O1!, O2!, O3!, O4!, O5!, O6!
+                        haveStats = FindStatsNat%(H1$(XW), numberGames%, NRT)
 
-                        For X = 1 To 40
-                            DL!(X, 19) = 9999
-                        Next
+                        If (haveStats) Then
 
-                        For X = 1 To 30
-                            O1!(X) = 0
-                            O2!(X) = 0
-                            O3!(X) = 0
-                            O4!(X) = 0
-                            O5!(X) = 0
-                            O6!(X) = 0
-                        Next
+                            L = Len(H1$(XW))
+                            WT$ = ""
 
-                        Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
+                            For X = 1 To L
+                                A = Asc(Mid$(H1$(XW), X, 1))
+                                WT$ = WT$ + Chr$(A)
+                            Next X
 
-                        Input #2, LG$
-                        Input #2, D1$
-                        Input #2, D2$
+                            confGame = 0
 
-                        For XW = 1 To 30
-                            Input #2, H1$(XW)
-                            Z1$(XW) = H1$(XW)
-                        Next
+                            For X = 1 To 30
 
-                        Close 2
+                                If Z1$(X) = WT$ Then
 
-                        For XW = 1 To 30
+                                    If O1!(X) = fullWins And O2!(X) = fullLosses Then
+                                        confGame = 1
+                                    Else
+                                        O1!(X) = fullWins
+                                        O2!(X) = fullLosses
+                                        O4!(X) = confWins
+                                        O5!(X) = confLosses
 
-                            fullWins = 0
-                            fullLosses = 0
-                            confWins = 0
-                            confLosses = 0
-
-                            'Look for * as terminating char
-                            If H1$(XW) <> Chr$(42) Then
-
-                                haveStats = FindStatsNat%(H1$(XW), numberGames%, NRT)
-
-                                If (haveStats) Then
-
-                                    L = Len(H1$(XW))
-                                    WT$ = ""
-
-                                    For X = 1 To L
-                                        A = Asc(Mid$(H1$(XW), X, 1))
-                                        WT$ = WT$ + Chr$(A)
-                                    Next X
-
-                                    confGame = 0
-
-                                    For X = 1 To 30
-
-                                        If Z1$(X) = WT$ Then
-
-                                            If O1!(X) = fullWins And O2!(X) = fullLosses Then
-                                                confGame = 1
-                                            Else
-                                                O1!(X) = fullWins
-                                                O2!(X) = fullLosses
-                                                O4!(X) = confWins
-                                                O5!(X) = confLosses
-
-                                                If O1!(X) + O2!(X) = 0 Then
-                                                    O3!(X) = 0
-                                                Else
-                                                    O3!(X) = O1!(X) / (O1!(X) + O2!(X))
-                                                End If
-                                                If O4!(X) + O5!(X) = 0 Then
-                                                    O6!(X) = 0
-                                                Else
-                                                    O6!(X) = O4!(X) / (O4!(X) + O5!(X))
-                                                End If
-
-                                            End If
-
+                                        If O1!(X) + O2!(X) = 0 Then
+                                            O3!(X) = 0
+                                        Else
+                                            O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                        End If
+                                        If O4!(X) + O5!(X) = 0 Then
+                                            O6!(X) = 0
+                                        Else
+                                            O6!(X) = O4!(X) / (O4!(X) + O5!(X))
                                         End If
 
-                                        If (confGame) Then Exit For
-
-                                    Next X
-
-                                    For I = 0 To 13
-                                        For J = 0 To 26
-                                            compS!(I, J) = 0
-                                        Next
-                                    Next
-
-                                    If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
-                                        Call ReadStatsNat(H1$(XW), numberGames%, TN$)
-                                        Call StatsByCategoryTeam(TN$)
-                                        Call CheckStatsLeaders(H1$(XW), TN$)
                                     End If
 
                                 End If
 
-                            End If 'Done looking for * as char
+                                If (confGame) Then Exit For
 
-                        Next XW
+                            Next X
 
-                        Call SortLeadersNat
-                        Call PostConLeaders_Nat(CN$(NC))
+                            For I = 0 To 13
+                                For J = 0 To 26
+                                    compS!(I, J) = 0
+                                Next
+                            Next
 
-                    End If
+                            If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
+                                Call ReadStatsNat(H1$(XW), numberGames%, TN$)
+                                Call StatsByCategoryTeam(TN$)
+                                Call CheckStatsLeaders(H1$(XW), TN$)
+                            End If
 
-                Next NC
+                        End If
 
-                Cls
-                Print
+                    End If 'Done looking for * as char
 
-                Call PostOrgLeaders_Nat(WE$, NRT)
+                Next XW
 
-            End If 'Done checking for ESC
+                Call SortLeadersNat
+                Call PostConLeaders_Nat(CN$(NC))
 
-        End If 'Done checking for file count
+            End If
 
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0 Or I$ = "N"
+        Next NC
+
+        Call PostOrgLeaders_Nat(organizationFile$, NRT)
+
+    End If
 
 End Sub
 
@@ -1725,6 +1650,8 @@ Sub PostOrgLeaders_Nat (WE$, NRT)
     Shared BRC$()
     Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
     Shared PT$(), recconTRC$(), recconTRC1$()
+
+    Cls
 
     Open diskPaths$(1) + WE$ + ".NLD" For Output As #2
 

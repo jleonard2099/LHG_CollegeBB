@@ -81,7 +81,7 @@ Sub SCHEDULE ()
 
                         Locate 7, 32
                         Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
-                        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                         Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                         Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                         Locate , 12: Print "SAMPLE NAMES ARE ARKANSAS, LSU-68, IU76, ETC."
@@ -103,10 +103,13 @@ Sub SCHEDULE ()
                     Call NewSchedule(scheduleFile$)
 
                 Case 2 To 6:
-                    'Have the user pick a schedule
-                    Call LoadSchedule(scheduleFile$)
 
-                    If scheduleFile$ <> "" Then
+                    scheduleFile$ = ChooseFile$ (diskPaths$(0) + "*.SCD", "SCHEDULE", ExitCode%)
+
+                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+
+                        Call LoadScheduleInfo (scheduleFile$)
+
                         Cls
 
                         'Extract / Change / Global
@@ -717,7 +720,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 Do
                     Locate 7, 32
                     Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
-                    Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+                    Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                     Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                     Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
@@ -742,28 +745,11 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 Select Case scheduleAction%
 
                     Case 4:
-                        Spec$ = diskPaths$(1) + "*.LIB"
-                        Count% = FCount%(Spec$)
+                        conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
 
-                        If Count% = 0 Then
-                            Locate 10, 8
-                            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-                            I$ = GetKeyPress$
-                            Call CSMsgBox("", 0, PASS)
-                        Else
+                        If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-                            ReDim leagueFiles$(0 To Count%)
-
-                            For X = 1 To Count%
-                                leagueFiles$(X) = Space$(12)
-                            Next
-
-                            leagueFiles$(0) = Spec$
-                            Call ReadFile(leagueFiles$())
-
-                            Call SelectConferenceFile(leagueFile$, leagueFiles$(), Count%)
-
-                            Open diskPaths$(1) + leagueFile$ + ".LIB" For Input As #1
+                            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
                             
                             Input #1, X%
                             Input #1, LG$
@@ -979,6 +965,7 @@ Sub EditParameters ()
 
 End Sub
 
+
 '----------------------------------------
 '    BoxscoreMaintenance SubRoutine
 '----------------------------------------
@@ -1005,9 +992,11 @@ Sub BoxscoreMaintenance ()
 
     Do
 
+        Color 15, 0
+
         Call TITLE_SCHEDULER
 
-        Call box0(6, 15, 13, 65, 2, 15, 1)
+        Call box0(7, 15, 14, 65, 2, 15, 1)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
@@ -1016,73 +1005,16 @@ Sub BoxscoreMaintenance ()
         If ExitCode% <> 27 Then
 
             Select Case Selection%
+
                 Case 1:
                     Call EditParameters
 
                 Case 2:
-                    Spec$ = diskPaths$(1) + "*.SPC"
-                    Count% = FCount%(Spec$)
+                    boxscoreFile$ = ChooseFile$ (diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
 
-                    If Count% = 0 Then
-                        Locate 10, 8
-                        Call CSMsgBox("NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU", 26, PASS)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
-                    Else
-                        ReDim boxFiles$(0 To Count%)
-                        For X = 1 To Count%
-                            boxFiles$(X) = Space$(12)
-                        Next
-
-                        boxFiles$(0) = Spec$
-                        Call ReadFile(boxFiles$())
-
-                        Do
-                            Cls
-                            Color , 1
-                            Cls
-                            Locate , 28
-                            Color 14
-                            Print "SELECT BOXSCORE TO VIEW": Color 15
-                            Selection% = 1
-                            Start% = 1
-                            FileFGColr% = 15: FileBGColr% = 1
-                            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                            Rows% = 20
-                            Columns% = 4
-                            Spacing% = 6
-                            Row% = 4
-                            Column% = 1
-                            Locate 25, 1
-                            Color 14
-                            Print "ENTER";: Color 15
-                            Print "-SELECTS BOXSCORE";
-
-                            _MouseShow "DEFAULT"
-                            MAMenu boxFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                            _MouseHide
-
-                            If ExitCode% <> 27 Then
-                                Color 15, 1
-                                targetFile$ = boxFiles$(Selection%)
-                                Locate 2, 33: Print targetFile$
-
-                                Do
-                                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                                    I$ = GetKeyPress$
-                                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                                Color 15, 0
-
-                                If UCase$(I$) = "N" Then
-                                    boxName$ = diskPaths$(1) + targetFile$
-                                    'ReDim array$(500) 'holds the main editor string array
-                                End If
-
-                            End If
-
-                        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
+                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                        boxName$ = diskPaths$(1) + boxscoreFile$
+                        'ReDim array$(500) 'holds the main editor string array
                     End If
 
                 Case 3:
@@ -1317,39 +1249,6 @@ Sub ChangeGlobalSettings ()
 
 End Sub
 
-'----------------------------------------
-'       LoadSchedule SubRoutine
-'----------------------------------------
-'...explanation...
-Sub LoadSchedule (targetFile$)
-
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(0) + "*.SCD"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO SCHEDULE FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-        Else
-            ReDim scheduleFiles$(0 To Count%)
-
-            For X = 1 To Count%
-                scheduleFiles$(X) = Space$(12)
-            Next
-
-            scheduleFiles$(0) = Spec$
-            Call ReadFile(scheduleFiles$())
-            Call SelectScheduleFile(targetFile$, scheduleFiles$(), Count%, menuExit%)
-
-        End If
-
-    Loop Until Count% = 0 Or targetFile$ <> "" Or menuExit% = 27
-
-End Sub
-
 
 '----------------------------------------
 '       DeleteSchedules SubRoutine
@@ -1396,73 +1295,6 @@ Sub DeleteSchedules (fileChoice%, fileSpec$)
             Kill (diskPaths$(1) + boxFiles$(X))
             Locate 12, 34: Print "DELETING "; boxFiles$(X)
         Next
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'     SelectScheduleFile SubRoutine
-'----------------------------------------
-'...explanation...
-Sub SelectScheduleFile (targetFile$, scheduleFiles$(), FileCount%, ExitCode%)
-
-    Do
-        Cls
-        Color , 1
-        Cls
-        Locate , 28
-        Color 14
-        Print "SELECT SCHEDULE TO VIEW"
-        Color 15
-        Selection% = 1
-        Start% = 1
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Rows% = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-        Locate 25, 1
-        Color 14
-        Print "ESC";: Color 15
-        Print "-SELECT NEW ID  PGDN  PGUP  ";: Color 14
-        Print "ENTER";: Color 15
-        Print "-SELECTS SCHEDULE";
-
-        _MouseShow "DEFAULT"
-        MAMenu scheduleFiles$(), Selection%, Start%, FileCount%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% <> 27 Then
-            Color 15, 1
-            targetFile$ = RTrim$(scheduleFiles$(Selection%))
-            Locate 2, 33: Print targetFile$
-
-            Do
-                Locate 3, 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-            Color 15, 0
-
-        End If
-
-    Loop Until ExitCode% = 27 Or UCase$(I$) = "N"
-
-    If ExitCode% <> 27 Then
-
-        targetFile$ = RTrim$(targetFile$)
-
-        '-- This is where we strip the file extension
-        '-- If we remove this, we can drop the .SCD in the rest of the code
-        fileNoExt$ = Left$(targetFile$, Len(targetFile$) - 4)
-        targetFile$ = fileNoExt$
-        Color 15, 0
-
-        Call LoadScheduleInfo (targetFile$)
 
     End If
 
@@ -1554,268 +1386,158 @@ Sub CreateConferenceSchedule ()
 
     If D3% <> 0 Then
 
-        Spec$ = diskPaths$(1) + "*.LIB"
-        Count% = FCount%(Spec$)
+        conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
 
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-        Else
-            ReDim leagueFiles$(0 To Count%)
-            For X = 1 To Count%
-                leagueFiles$(X) = Space$(12)
-            Next
-            leagueFiles$(0) = Spec$
-            Call ReadFile(leagueFiles$())
+        If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-            Do
+            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #2
 
-                Cls
-                Color , 1
-                Cls
-                Locate , 28
-                Color 14
-                Print "SELECT CONFERENCE TO SCHEDULE": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS CONFERENCE";
+            X1 = 0
 
-                _MouseShow "DEFAULT"
-                MAMenu leagueFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
+            Input #2, LG%
+            Input #2, LG$
+            Input #2, D1$
+            Input #2, D2$
 
-                If ExitCode% <> 27 Then
+            For X = 1 To 30
 
-                    Color 15, 1
-                    targetFile$ = leagueFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-
-                Open diskPaths$(1) + targetFile$ For Input As #2
-                X1 = 0
-                Input #2, LG%
-                Input #2, LG$
                 Input #2, D1$
+                Input #2, LG%
                 Input #2, D2$
 
-                For X = 1 To 30
-                    Input #2, D1$
-                    Input #2, LG%
-                    Input #2, D2$
-                    If D1$ <> "XXX" And D1$ <> "" And D1$ <> "*" Then
-                        X1 = X1 + 1
-                        Z1$(X1) = D1$
-                        scheduleZ1%(X1) = LG%
-                        Z2$(X1) = D2$
-                    End If
-                Next
+                If D1$ <> "XXX" And D1$ <> "" And D1$ <> "*" Then
+                    X1 = X1 + 1
+                    Z1$(X1) = D1$
+                    scheduleZ1%(X1) = LG%
+                    Z2$(X1) = D2$
+                End If
 
-                Close 2
+            Next
 
-                Select Case D3%
-                    Case 1: F$ = "6TM.SCX"
-                    Case 2: F$ = "7TM.SCX"
-                    Case 3: F$ = "8TM.SCX"
-                    Case 4: F$ = "9TM.SCX"
-                    Case 5: F$ = "10TM.SCX"
-                    Case 6: F$ = "11TM.SCX"
-                    Case 7: F$ = "12TM.SCX"
-                    Case 8: F$ = "13TM.SCX"
-                    Case 9: F$ = "16TM.SCX"
-                End Select
+            Close 2
 
-                'Read in SCX file as a "template" for our SCD
-                'The file literally has 0 values for everything
-                Open F$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
-                fileLength& = LOF(1)
+            Select Case D3%
+                Case 1: F$ = "6TM.SCX"
+                Case 2: F$ = "7TM.SCX"
+                Case 3: F$ = "8TM.SCX"
+                Case 4: F$ = "9TM.SCX"
+                Case 5: F$ = "10TM.SCX"
+                Case 6: F$ = "11TM.SCX"
+                Case 7: F$ = "12TM.SCX"
+                Case 8: F$ = "13TM.SCX"
+                Case 9: F$ = "16TM.SCX"
+            End Select
 
-                scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
-                BS% = Int((scheduleAP%(0) - 1) / 20)
+            'Read in SCX file as a "template" for our SCD
+            'The file literally has 0 values for everything
+            Open F$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
+            fileLength& = LOF(1)
 
-                For X = 0 To 18
-                    Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
-                Next
+            scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
+            BS% = Int((scheduleAP%(0) - 1) / 20)
 
-                Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+            For X = 0 To 18
+                Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
+            Next
 
-                For I = 1 To scheduleAP%(0)
-                    Get #1, I
-                    For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                    For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
-                    visitorScores(I) = CVI(Q$(22))
-                    homeScores(I) = CVI(Q$(23))
-                Next
+            Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-                Close 1
+            For I = 1 To scheduleAP%(0)
+                Get #1, I
+                For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
+                For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
+                visitorScores(I) = CVI(Q$(22))
+                homeScores(I) = CVI(Q$(23))
+            Next
 
-                'Use "Change Global" option to assing defaults
-                Call ChangeGlobalSettings
+            Close 1
 
-                Color 15, 0
-                Cls
-                JJ = 7
+            'Use "Change Global" option to assing defaults
+            Call ChangeGlobalSettings
 
-                Locate 6, 8: Color 15, 1
-                Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-                Locate 7 + JJ, 8
-                Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+            Color 15, 0
+            Cls
+            JJ = 7
 
-                Locate 7, 32
+            Locate 6, 8: Color 15, 1
+            Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
+            Locate 7 + JJ, 8
+            Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
 
-                Do
-                    Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
-                    Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
-                    Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-                    Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
-                    Locate , 12: Print "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
-                    Locate 7, 37: Input scheduleFile$
-
-                    If scheduleFile$ <> "" Then
-                        Do
-                            Locate 13, 12: Print "ANY CHANGE (YN) "
-                            I$ = GetKeyPress$
-                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-                    End If
-
-                Loop Until UCase$(I$) = "N"
-
-                Color 15, 0
-
-                For I = 1 To scheduleAP%(0)
-                    Print "GAME"; I
-                    Print scheduleNG%(I, 0), scheduleYN$(I, 0)
-                    Print scheduleNG%(I, 1), scheduleYN$(I, 1)
-
-                    'Replace template values with those from global change
-                    X = scheduleNG%(I, 0)
-                    scheduleNG%(I, 0) = scheduleZ1%(X)
-                    scheduleYN$(I, 0) = Z2$(X)
-
-                    X = scheduleNG%(I, 1)
-                    scheduleNG%(I, 1) = scheduleZ1%(X)
-                    scheduleYN$(I, 1) = Z2$(X)
-                    '    IF D3% < 7 THEN X = scheduleNG%(I, 0): scheduleNG%(I, 0) = scheduleZ1%(X): scheduleYN$(I, 0) = Z2$(X): X = scheduleNG%(I, 1): scheduleNG%(I, 1) = scheduleZ1%(X): scheduleYN$(I, 1) = Z2$(X)
-                    '    IF D3% = 7 AND scheduleNG%(I, 0) <= 6 THEN X = scheduleNG%(I, 0): PRINT X: scheduleNG%(I, 0) = scheduleZ1%(X): scheduleYN$(I, 0) = Z2$(X): GOTO 3915
-                    '    IF D3% = 7 AND scheduleNG%(I, 0) > 6 THEN X = scheduleNG%(I, 0): PRINT X: scheduleNG%(I, 0) = scheduleZ1%(X + 9): scheduleYN$(I, 0) = Z2$(X + 9)
-                    '3915 IF D3% = 7 AND scheduleNG%(I, 1) <= 6 THEN X = scheduleNG%(I, 1): PRINT X: scheduleNG%(I, 1) = scheduleZ1%(X): scheduleYN$(I, 1) = Z2$(X): GOTO 3916
-                    '     IF D3% = 7 AND scheduleNG%(I, 1) > 6 THEN X = scheduleNG%(I, 1): PRINT X: scheduleNG%(I, 1) = scheduleZ1%(X + 9): scheduleYN$(I, 1) = Z2$(X + 9)
-
-                    Print "GAME"; I
-                    Print scheduleNG%(I, 0), scheduleYN$(I, 0)
-                    Print scheduleNG%(I, 1), scheduleYN$(I, 1)
-                Next
-
-                '-- Save file -- reference the routine?????
-                Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
-
-                fileLength& = LOF(1) / SCHEDULE_SIZE_BYTES
-
-                For X = 0 To 18
-                    Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
-                Next
-
-                Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
-
-                For I = 1 To scheduleAP%(0)
-                    For X = 0 To 18: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
-                    For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
-                    LSet Q$(22) = MKI$(visitorScores(I))
-                    LSet Q$(23) = MKI$(homeScores(I))
-
-                    'With Y being the EOF, this should be appending items to the end
-                    Put #1, I + Y
-                Next
-
-                Close 1
-
-                D3% = 1
-
-            End If 'Done checking for ESC
-
-        End If 'Done checking file count
-
-    End If 'Done checking D3%
-
-End Sub
-
-'----------------------------------------
-'     SelectConferenceFile SubRoutine
-'----------------------------------------
-'...explanation...
-Sub SelectConferenceFile (targetFile$, scheduleFiles$(), Count%)
-
-    Do
-        Cls
-        Color , 1
-        Cls
-        Locate , 28
-        Color 14
-        Print "SELECT CONFERENCE TO VIEW": Color 15
-        Selection% = 1
-        Start% = 1
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
-        Rows% = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-        Locate 25, 1
-        Color 14
-        Print "ENTER";
-        Color 15
-        Print "-SELECTS CONFERENCE";
-
-        _MouseShow "DEFAULT"
-        MAMenu scheduleFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% <> 27 Then
-
-            Color 15, 1
-            targetFile$ = scheduleFiles$(Selection%)
-            Locate 2, 33: Print targetFile$
+            Locate 7, 32
 
             Do
-                Locate 3, 33: Print "ANY CHANGE (YN)";
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Locate , 12: Print "ENTER NAME FOR SCHEDULE: ": Print
+                Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
+                Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
+                Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
+                Locate , 12: Print "SAMPLE NAMES ARE MONTREAL, STL68, NY76, CIN90, ETC"
+                Locate 7, 37: Input scheduleFile$
 
-        End If
+                If scheduleFile$ <> "" Then
+                    Do
+                        Locate 13, 12: Print "ANY CHANGE (YN) "
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                End If
 
-    Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+            Loop Until UCase$(I$) = "N"
 
-    If ExitCode% <> 27 Then
+            Color 15, 0
 
-        targetFile$ = RTrim$(targetFile$)
-        WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-        targetFile$ = WE$
-        Color 15, 0
+            For I = 1 To scheduleAP%(0)
+                Print "GAME"; I
+                Print scheduleNG%(I, 0), scheduleYN$(I, 0)
+                Print scheduleNG%(I, 1), scheduleYN$(I, 1)
 
-    End If
+                'Replace template values with those from global change
+                X = scheduleNG%(I, 0)
+                scheduleNG%(I, 0) = scheduleZ1%(X)
+                scheduleYN$(I, 0) = Z2$(X)
+
+                X = scheduleNG%(I, 1)
+                scheduleNG%(I, 1) = scheduleZ1%(X)
+                scheduleYN$(I, 1) = Z2$(X)
+                '    IF D3% < 7 THEN X = scheduleNG%(I, 0): scheduleNG%(I, 0) = scheduleZ1%(X): scheduleYN$(I, 0) = Z2$(X): X = scheduleNG%(I, 1): scheduleNG%(I, 1) = scheduleZ1%(X): scheduleYN$(I, 1) = Z2$(X)
+                '    IF D3% = 7 AND scheduleNG%(I, 0) <= 6 THEN X = scheduleNG%(I, 0): PRINT X: scheduleNG%(I, 0) = scheduleZ1%(X): scheduleYN$(I, 0) = Z2$(X): GOTO 3915
+                '    IF D3% = 7 AND scheduleNG%(I, 0) > 6 THEN X = scheduleNG%(I, 0): PRINT X: scheduleNG%(I, 0) = scheduleZ1%(X + 9): scheduleYN$(I, 0) = Z2$(X + 9)
+                '3915 IF D3% = 7 AND scheduleNG%(I, 1) <= 6 THEN X = scheduleNG%(I, 1): PRINT X: scheduleNG%(I, 1) = scheduleZ1%(X): scheduleYN$(I, 1) = Z2$(X): GOTO 3916
+                '     IF D3% = 7 AND scheduleNG%(I, 1) > 6 THEN X = scheduleNG%(I, 1): PRINT X: scheduleNG%(I, 1) = scheduleZ1%(X + 9): scheduleYN$(I, 1) = Z2$(X + 9)
+
+                Print "GAME"; I
+                Print scheduleNG%(I, 0), scheduleYN$(I, 0)
+                Print scheduleNG%(I, 1), scheduleYN$(I, 1)
+            Next
+
+            '-- Save file -- reference the routine?????
+            Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+
+            fileLength& = LOF(1) / SCHEDULE_SIZE_BYTES
+
+            For X = 0 To 18
+                Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
+            Next
+
+            Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+
+            For I = 1 To scheduleAP%(0)
+                For X = 0 To 18: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
+                For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
+                LSet Q$(22) = MKI$(visitorScores(I))
+                LSet Q$(23) = MKI$(homeScores(I))
+
+                'With Y being the EOF, this should be appending items to the end
+                Put #1, I + Y
+            Next
+
+            Close 1
+
+            D3% = 1
+
+        End If 'Done checking for ESC
+
+    End If 'Done checking D3%
 
 End Sub
 

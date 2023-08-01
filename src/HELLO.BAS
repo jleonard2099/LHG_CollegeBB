@@ -1,3 +1,4 @@
+
 $Debug
 
 Const GAME_VERSION$ = "4.32"
@@ -549,7 +550,7 @@ Sub Leaders_Menu ()
                 Case 7: Call BLANK
                 Case 8: Call CREATNAT
                 Case 9: Call CompileNatlOrg
-                Case 10: Call SEENAT
+                Case 10: Call SEENATL
                 Case 11: Call SeasonRecords
                 Case 12: Call BLANKORG
                 Case 13 Or 14: Cls
@@ -596,7 +597,7 @@ End Sub
 '$INCLUDE: 'RECORDS.BAS'
 '$INCLUDE: 'SCHEDULE.BAS'
 '$INCLUDE: 'SEECON.BAS'
-'$INCLUDE: 'SEENAT.BAS'
+'$INCLUDE: 'SEENATL.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TINPUT.BAS'
 '$INCLUDE: 'TOURNEY.BAS'

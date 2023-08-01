@@ -2,81 +2,14 @@ Sub SEECON ()
 
     _Title "Courtside College Basketball - View Conference Stats"
 
-    Cls
+    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
 
-    Spec$ = diskPaths$(1) + "*.LDR"
-    Count% = FCount%(Spec$)
+    If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-    If Count% = 0 Then
-        Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
-    Else
+        Call LoadLeaderFiles_Coll(leaderFile$, FF$, D1$, D2$)
+        Call StatOptions_Con (leaderFile$, FF$, D1$, D2$)
 
-        ReDim conferenceLeaderFiles$(0 To Count%)
-        For X = 1 To Count%
-            conferenceLeaderFiles$(X) = Space$(12)
-        Next
-
-        conferenceLeaderFiles$(0) = Spec$
-        Call ReadFile(conferenceLeaderFiles$())
-
-        Do
-
-            Cls
-            Color , 1
-            Cls
-            Locate , 28
-            Color 14
-            Print "SELECT CONFERENCE TO VIEW": Color 15
-            Selection% = 1
-            START% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1
-            Color 14
-            Print "ENTER";
-            Color 15
-            Print "-SELECTS CONFERENCE";
-
-            _MouseShow "DEFAULT"
-            MAMenu conferenceLeaderFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
-
-            If ExitCode% <> 27 Then
-
-                Color 15, 1
-                targetFile$ = conferenceLeaderFiles$(Selection%)
-                Locate 2, 33: Print targetFile$
-
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                Color 15, 0
-
-            End If
-
-        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-        If UCase$(I$) = "N" Then
-
-            targetFile$ = RTrim$(targetFile$)
-            WE$ = Left$(targetFile$, Len(targetFile$) - 4)
-            targetFile$ = Left$(WE$, 8)
-
-            Call LoadLeaderFiles_Coll(targetFile$, FF$, D1$, D2$)
-            Call StatOptions_Con (targetFile$, FF$, D1$, D2$)
-
-        End If 'Done checking for ESC
-
-    End If 'Done checking file count
+    End If
 
 End Sub
 
@@ -93,6 +26,10 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
     Shared OL$(), DL$()
     Shared seenatZ2$(), seenatZ3$()
     Shared T$()
+
+    Cls
+
+    Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
     Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #2
 
@@ -255,7 +192,7 @@ Sub ReportFilePrompt_Con (reportFile$)
         Locate 7, 32
 
         Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES"
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
         Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
         Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
         Locate 7, 37: Input reportFile$
@@ -293,9 +230,12 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Cls
 
     Color 12
+    Locate , Int((80 - Len(FF$) - 11) / 2)
     Print FF$ + " CONFERENCE"
 
-    If D1$ <> "" Then Print D1$; " DIVISION"
+    Color 2
+    If D1$ <> "" Then Print RTrim$(D1$); " DIVISION"
+    Color 12
     Print "                 CONFERENCE                         FULL SEASON"
     Color 14
     Print "                W    L     PCT                          W    L     PCT"
@@ -334,11 +274,13 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     '-----
 
     Cls
-    
+
     Color 12
+    Locate , Int((80 - Len(FF$) - 11) / 2)
     Print FF$ + " CONFERENCE"
 
-    If D2$ <> "" Then Print D2$; " DIVISION"
+    Color 2
+    If D2$ <> "" Then Print RTrim$(D2$); " DIVISION"
     Print "                 CONFERENCE                         FULL SEASON"
     Color 14
     Print "                W    L     PCT                          W    L     PCT"

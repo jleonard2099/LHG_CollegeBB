@@ -43,7 +43,7 @@ Sub CREATNAT ()
                     Call ReviewEditNatOrg(LG$)
 
                 Case 2:
-                    Call ChooseNatOrg(LG$)
+                    LG$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
                     Call ReviewEditNatOrg(LG$)
 
             End Select
@@ -88,7 +88,7 @@ Sub DefineNatOrg (LG$)
             Locate 7, 32
 
             Locate , 12: Print "ENTER NAME FOR LEAGUE: ": Print
-            Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPACES."
+            Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
             Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
             Locate 7, 37: Input LG$
 
@@ -107,164 +107,6 @@ Sub DefineNatOrg (LG$)
 
 End Sub
 
-
-'----------------------------------------
-'      ChooseNatOrg Subroutine
-'----------------------------------------
-'...explanation...
-Sub ChooseNatOrg (organization$)
-
-    Do
-        'Display list of files...
-        Spec$ = diskPaths$(1) + "*.CON"
-        Count% = FCount%(Spec$)
-
-        If Count% = 0 Then
-            Locate 10, 8
-            Call CSMsgBox("NO ORGANIZATION FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-
-        Else
-
-            ReDim organizationFiles$(0 To Count%)
-            For X = 1 To Count%
-                organizationFiles$(X) = Space$(12)
-            Next
-
-            organizationFiles$(0) = Spec$
-            Call ReadFile(organizationFiles$())
-
-            Do
-
-                Color , 1
-                Cls
-
-                Locate , 28
-                Color 14
-                Print "SELECT ORGANIZATION TO SCHEDULE": Color 15
-                Selection% = 1
-                Start% = 1
-                FileFGColr% = 15: FileBGColr% = 1
-                HiLiteFGColr% = 0: HiLiteBGColr% = 7
-                Rows% = 20
-                Columns% = 4
-                Spacing% = 6
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";: Color 15
-                Print "-SELECTS ORGANIZATION";
-
-                _MouseShow "DEFAULT"
-                MAMenu organizationFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-                    targetFile$ = organizationFiles$(Selection%)
-                    Locate 2, 33: Print targetFile$
-
-                    Do
-                        Locate 3, 33: Print "ANY CHANGE (YN)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-            If ExitCode% <> 27 Then
-                targetFile$ = RTrim$(targetFile$)
-                organization$ = Left$(targetFile$, Len(targetFile$) - 4)
-            End If
-
-        End If
-
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
-
-End Sub
-
-
-'----------------------------------------
-'   ChooseConference_NatOrg Subroutine
-'----------------------------------------
-'...explanation...
-Sub ChooseConference_NatOrg (targetFile$)
-
-    Spec$ = diskPaths$(1) + "*.LIB"
-    Count% = FCount%(Spec$)
-
-    If Count% = 0 Then
-        Locate 10, 8
-        Call CSMsgBox("NO CONFERENCE FILES WERE FOUND PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-    Else
-        ReDim conferenceFiles$(0 To Count%)
-
-        For X = 1 To Count%
-            conferenceFiles$(X) = Space$(12)
-        Next
-
-        conferenceFiles$(0) = Spec$
-        Call ReadFile(conferenceFiles$())
-
-        Do
-            Cls
-            Color , 1
-            Cls
-            Locate , 28
-            Color 14
-            Print "SELECT CONFERENCE": Color 15
-            Selection% = 1
-            Start% = 1
-            FileFGColr% = 15: FileBGColr% = 1
-            HiLiteFGColr% = 0: HiLiteBGColr% = 7
-            Rows% = 20
-            Columns% = 4
-            Spacing% = 6
-            Row% = 4
-            Column% = 1
-            Locate 25, 1
-            Color 14
-            Print "ENTER";: Color 15
-            Print "-SELECTS CONFERENCE";
-
-            _MouseShow "DEFAULT"
-            MAMenu conferenceFiles$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
-            _MouseHide
-
-            If ExitCode% <> 27 Then
-
-                Color 15, 1
-                targetFile$ = conferenceFiles$(Selection%)
-                Locate 2, 33: Print targetFile$
-
-                Do
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
-                    I$ = GetKeyPress$
-                Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                Color 15, 0
-
-            End If
-
-        Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-        If ExitCode% <> 27 Then
-            targetFile$ = RTrim$(targetFile$)
-            targetFile$ = Left$(targetFile$, Len(targetFile$) - 4)
-        End If 'Done checking for ESC
-
-    End If 'Done checking file count
-
-End Sub
 
 '----------------------------------------
 '       ReviewEditNatOrg Subroutine
@@ -343,7 +185,7 @@ Sub ReviewEditNatOrg (organization$)
 
             If choice = 1 Then
                 'Add conference
-                Call ChooseConference_NatOrg(creatZ1$(conferenceIndex))
+                creatZ1$(conferenceIndex) = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
                 creatZ1$(conferenceIndex) = "XXX"

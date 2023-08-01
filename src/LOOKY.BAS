@@ -5,8 +5,7 @@ Sub LOOKY ()
     Shared teamRatings%()
 
     '-- we probably don't need this anymore
-    '-- unless we're going to loop around this
-    
+    '-- unless we're going to loop around this    
     menuExit = 0
 
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -71,16 +70,25 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     NL% = 0
 
     Open diskPaths$(1) + statFile$ + "S" For Input As #2
+
     Input #2, totalGames%
 
     For I = 1 To 100: Input #2, mergeO%(I): Next I
+
     For I = 1 To 100: Input #2, compO$(I): Next I
+
     For I = 1 To 100: Input #2, mergeT%(I): Next I
+
     For I = 1 To 100: Input #2, homeTeam$(I): Next I
+
     For I = 1 To 100
-    For I1 = 0 To 1: Input #2, lookyAP%(I, I1): Next: Next
+        For I1 = 0 To 1: Input #2, lookyAP%(I, I1): Next
+    Next
+
     For I = 1 To 100: Input #2, lookyCRD(I): Next I
+
     For I = 1 To 100: Input #2, lookySites$(I): Next I
+
     Close #2
 
     For I = 1 To totalGames%
