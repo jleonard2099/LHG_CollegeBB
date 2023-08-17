@@ -1,3 +1,10 @@
+'----------------------------------------
+'          HD2HDCON Subroutine
+'----------------------------------------
+'This subroutine reads in stats from the
+'selected team and then presents the user 
+'a menu of options for viewing Head-to-Head 
+'team comparisons.
 Sub HD2HDCON ()
 
     _Title "Courtside College Basketball - Head-to-Head Stats"
@@ -25,12 +32,15 @@ Sub HD2HDCON ()
     statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
-        Cls
-        Locate 10, 18
-        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+
+        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
-        Color , 0
+
     Else
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #4
@@ -95,7 +105,7 @@ Sub HD2HDCON ()
             Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
 
             Input #1, X
-            Input #1, conferenceFile$
+            Input #1, conf$
             Input #1, D1$
             Input #1, D2$
 
@@ -167,10 +177,11 @@ Sub HD2HDCON ()
 End Sub
 
 
-'------------------------------
-'  Hd2HdColl_Printer Subroutine
-'------------------------------
-' ...explanation...
+'----------------------------------------
+'      Hd2HdColl_Printer Subroutine
+'----------------------------------------
+'This subroutine outputs the calculated 
+'comparison values to the default printer
 Sub Hd2HdColl_Printer (teamName$)
 
     Shared D1$, D2$
@@ -407,10 +418,11 @@ Sub Hd2HdColl_Printer (teamName$)
 End Sub
 
 
-'------------------------------
-'  Hd2HdColl_Screen Subroutine
-'------------------------------
-' ...explanation...
+'----------------------------------------
+'      Hd2HdColl_Screen Subroutine
+'----------------------------------------
+'This subroutine outputs the calculated 
+'comparison values to the end user display
 Sub Hd2HdColl_Screen (teamName$)
 
     Dim DV$(1 To 4)

@@ -1,3 +1,9 @@
+'----------------------------------------
+'          EditStats Subroutine
+'----------------------------------------
+'This subroutine loads in stats for a TEAM
+'and gives the user an interface for making
+'edits to the stats.
 Sub EditStats ()
 
     _Title "Courtside College Basketball - Stats Input"
@@ -13,10 +19,13 @@ Sub EditStats ()
 
     If Not _FileExists(diskPaths$(1) + statFile$) Then
 
-        Locate 10, 8
-        Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
+        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
+        Call CSMsgBox("", 0, Pass)
 
     Else
 

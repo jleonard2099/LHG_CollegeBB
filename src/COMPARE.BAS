@@ -1,3 +1,9 @@
+'----------------------------------------
+'           COMPARE Subroutine
+'----------------------------------------
+'This subroutine loads in existing stats
+'for a team and provides different options 
+'to the end user for formatting stats 
 Sub COMPARE ()
 
     _Title "Courtside College Basketball - Stats Comparison"
@@ -13,122 +19,120 @@ Sub COMPARE ()
     Dim posn$(0 To 13)
     
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+    statFile$ = nameStatFile$(team$)
 
-    If chosenIdx <> 0 Then
+    If Not _FileExists(diskPaths$(1) + statFile$) Then
+        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
+    Else
 
-        statFile$ = nameStatFile$(team$)
+        Open diskPaths$(1) + statFile$ For Input As #1
 
-        If Not _FileExists(diskPaths$(1) + statFile$) Then
-            Locate 10, 8
-            Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-        Else
+        'We don't actually use T$
+        Input #1, T$
 
-            Open diskPaths$(1) + statFile$ For Input As #1
+        For I = 0 To 13:
 
-            'We don't actually use T$
-            Input #1, T$
+            Input #1, statPlyrNames$(I)
 
-            For I = 0 To 13:
-
-                Input #1, statPlyrNames$(I)
-
-                For J = 0 To 13
-                    Input #1, compareA!(I, J)
-                Next
-
-                Input #1, statsW0!(I)
-
-                Input #1, statsW1!(I)
-
+            For J = 0 To 13
+                Input #1, compareA!(I, J)
             Next
 
-            For L = 0 To 15: Input #1, statsZ!(L): Next
+            Input #1, statsW0!(I)
 
-            For L = 0 To 15: Input #1, statsZ1!(L): Next
+            Input #1, statsW1!(I)
 
-            Close #1
+        Next
 
-            For I = 0 To 13
-                If position$(I) = "F " Then posn$(I) = "FORWARD"
-                If position$(I) = "C " Then posn$(I) = "CENTER"
-                If position$(I) = "G " Then posn$(I) = "GUARD"
-                If position$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
-                If position$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
-                If position$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
-                If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
-            Next
+        For L = 0 To 15: Input #1, statsZ!(L): Next
 
-            Open diskPaths$(1) + statFile$ + "S" For Input As #1
+        For L = 0 To 15: Input #1, statsZ1!(L): Next
 
-            Input #1, Y
+        Close #1
 
-            For J = 1 To 100: Input #1, OP%(J): Next
+        For I = 0 To 13
+            If position$(I) = "F " Then posn$(I) = "FORWARD"
+            If position$(I) = "C " Then posn$(I) = "CENTER"
+            If position$(I) = "G " Then posn$(I) = "GUARD"
+            If position$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
+            If position$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
+            If position$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
+            If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
+        Next
 
-            For J = 1 To 100: Input #1, OP$(J): Next
+        Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-            For J = 1 To 100: Input #1, HP%(J): Next
+        Input #1, Y
 
-            For J = 1 To 100: Input #1, HP$(J): Next
+        For J = 1 To 100: Input #1, OP%(J): Next
 
-            Close #1
+        For J = 1 To 100: Input #1, OP$(J): Next
 
-            replayLosses% = 0
-            replayWins% = 0
+        For J = 1 To 100: Input #1, HP%(J): Next
 
-            For I = 1 To Y
-                If OP%(I) < HP%(I) Then replayLosses% = replayLosses% + 1
-                If OP%(I) > HP%(I) Then replayWins% = replayWins% + 1
-            Next
+        For J = 1 To 100: Input #1, HP$(J): Next
 
-            Color 15, 0
-            Cls
+        Close #1
 
-            JJ = 4
+        replayLosses% = 0
+        replayWins% = 0
 
-            Locate 8, 8: Color 14, 1
+        For I = 1 To Y
+            If OP%(I) < HP%(I) Then replayLosses% = replayLosses% + 1
+            If OP%(I) > HP%(I) Then replayWins% = replayWins% + 1
+        Next
 
-            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
+        Color 15, 0
+        Cls
 
-            For II = 1 To JJ:
-                Locate 8 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
+        JJ = 4
 
-            Locate 9 + JJ, 8
+        Locate 8, 8: Color 14, 1
 
-            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+        Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
 
-            Do
-                Locate 10
-                Color 7, 1
+        For II = 1 To JJ:
+            Locate 8 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
 
-                Locate , 30: Print "STATS TO ";
-                Color 15: Print "S";: Color 7: Print "CREEN"
-                Locate , 30: Print "STATS TO ";
-                Color 15: Print "P";: Color 7: Print "RINTER"
-                J$ = GetKeyPress$
+        Locate 9 + JJ, 8
 
-            Loop Until UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
+        Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
 
-            backToMenu = 0
+        Do
+            Locate 10
+            Color 7, 1
 
-            If J$ <> Chr$(27) Then
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "S";: Color 7: Print "CREEN"
+            Locate , 30: Print "STATS TO ";
+            Color 15: Print "P";: Color 7: Print "RINTER"
+            J$ = GetKeyPress$
 
-                Select Case UCase$(J$)
+        Loop Until UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
 
-                    Case "P":
-                        Call Comparisons_Printer(team$)
+        backToMenu = 0
 
-                    Case "S":
-                        Call Comparisons_Screen(team$, backToMenu, posn$())
+        If J$ <> Chr$(27) Then
 
-                End Select
+            Select Case UCase$(J$)
 
-            End If
+                Case "P":
+                    Call Comparisons_Printer(team$)
 
-        End If 'Done checking file count
+                Case "S":
+                    Call Comparisons_Screen(team$, backToMenu, posn$())
+
+            End Select
+
+        End If
 
     End If 'Done checking for ESC
 
@@ -136,9 +140,22 @@ End Sub
 
 
 '----------------------------------------
+'     Comparisons_Printer Subroutine
+'----------------------------------------
+'This subroutine formats team stats for
+'output to the default printer
+Sub Comparisons_Printer (teamName$)
+
+End Sub
+
+
+'----------------------------------------
 '     Comparisons_Screen Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provides a brief menu of
+'player comparisons that can be done, and 
+'then formats stats for those options for
+'use with the user display
 Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared teamRatings%(), teamStats()
@@ -268,7 +285,9 @@ End Sub
 '----------------------------------------
 '    TeamComparisons_Screen SubRoutine
 '----------------------------------------
-'...explanation...
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
 Sub TeamComparisons_Screen (T$)
 
     Shared teamRatings%(), teamStats()
@@ -454,9 +473,11 @@ End Sub
 
 
 '----------------------------------------
-'   PlayerComparisons_Screen SubRoutine
+'  PlayerComparisons_Screen Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
 Sub PlayerComparisons_Screen (idx, position$, menuExit)
 
     Shared compareA!(), playerStats!()
@@ -681,14 +702,5 @@ Sub PlayerComparisons_Screen (idx, position$, menuExit)
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(61, 177)
-
-End Sub
-
-
-'----------------------------------------
-'   Comparisons_Printer Subroutine
-'----------------------------------------
-'...explanation...
-Sub Comparisons_Printer (teamName$)
 
 End Sub

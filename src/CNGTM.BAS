@@ -1,3 +1,8 @@
+'----------------------------------------
+'            CNGTM Subroutine
+'----------------------------------------
+'This subroutine presents a menu of all 
+'the options related to team rosters
 Sub CNGTM (userChoice)
 
     _Title "Courtside College Basketball - Change Team"
@@ -67,8 +72,8 @@ End Sub
 '----------------------------------------
 '          EditTeam Subroutine
 '----------------------------------------
-'Steps user through screens for adjusting
-'team data and players
+'This subroutine steps the user through 
+'screens for adjusting team data and players
 '
 'NOTE: <ENTER> key is valued as 0 for when
 'a user is prompted to press keys to CONTINUE
@@ -487,7 +492,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
             If T3 > 98 And T3 < 102 Then
 
-                Call SaveTeam_CNGTM(0, yearNumber$, teamName$, teamIdx)
+                Call SaveChangedTeam(0, yearNumber$, teamName$, teamIdx)
 
             Else
                 'We need to warn the user that
@@ -531,9 +536,10 @@ End Sub
 
 
 '----------------------------------------
-'       PrintRoster Subroutine
+'         PrintRoster Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the
+'team roster to the default printer
 Sub PrintRoster (A$, T1)
 
     Shared def3FG_Adj, def3FGA_Adj
@@ -584,9 +590,10 @@ End Sub
 
 
 '----------------------------------------
-'       ViewRoster Subroutine
+'         ViewRoster Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the
+'team roster to the user's display
 Sub ViewRoster (A$, T1)
 
     Shared def3FG_Adj, def3FGA_Adj
@@ -656,10 +663,11 @@ End Sub
 
 
 '----------------------------------------
-'     SaveTeam_CNGTM Subroutine
+'       SaveChangedTeam Subroutine
 '----------------------------------------
-'... explain here ...
-Sub SaveTeam_CNGTM (newID%, yearNumber$, teamName$, teamIdx)
+'This routine saves the modified data back
+'to the original team file
+Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance%, defFGPctAdj%, staminaRating%

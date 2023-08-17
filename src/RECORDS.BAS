@@ -1,3 +1,7 @@
+'----------------------------------------
+'
+'----------------------------------------
+'
 Sub GameRecords (menuChoice)
 
     _Title "Courtside College Basketball - Game Records"

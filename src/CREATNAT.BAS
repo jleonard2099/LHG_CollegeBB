@@ -1,3 +1,9 @@
+'----------------------------------------
+'          CREATNAT Subroutine
+'----------------------------------------
+'This subroutine provides a menu for the
+'user to choose options related to the
+'creation and editing of national orgs
 Sub CREATNAT ()
 
     _Title "Courtside College Basketball - Manage Organizations"
@@ -58,8 +64,10 @@ End Sub
 '----------------------------------------
 '       DefineNatOrg Subroutine
 '----------------------------------------
-'...explanation...
-Sub DefineNatOrg (LG$)
+'This subroutine assists the user with the
+'input of paramters related to the org's
+'general naming and setup
+Sub DefineNatOrg (org$)
 
     Do
 
@@ -87,15 +95,15 @@ Sub DefineNatOrg (LG$)
 
             Locate 7, 32
 
-            Locate , 12: Print "ENTER NAME FOR LEAGUE: ": Print
+            Locate , 12: Print "ENTER NAME FOR ORGANIZATION: ": Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
             Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
-            Locate 7, 37: Input LG$
+            Locate 7, 37: Input org$
 
-            If LG$ <> "" Then
+            If org$ <> "" Then
 
                 Do
-                    Locate 13, 12: Print "ANY CHANGE (YN) "
+                    Locate 13, 12: Print "ANY CHANGE? (Y/N) "
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -111,7 +119,9 @@ End Sub
 '----------------------------------------
 '       ReviewEditNatOrg Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provides an interface to
+'the user allowing them to choose / clear
+'conferences from the org definition.
 Sub ReviewEditNatOrg (organization$)
 
     Shared creatZ1$()
@@ -203,7 +213,9 @@ End Sub
 '----------------------------------------
 '        SaveNatOrg Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine writes the organization's
+'conference memberships and definition to 
+'each of the corresponding files (.CON)
 Sub SaveNatOrg (leagueFile$)
 
     Shared creatZ1$()

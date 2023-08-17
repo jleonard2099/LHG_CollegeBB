@@ -85,7 +85,7 @@ Sub GetDiskID_ALIGN (A$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -266,7 +266,7 @@ Sub GetTeam_CNGTM (teamName$, yearNumber$, teamIdx)
 
             Do
                 Locate 3, 33
-                Print "ANY CHANGE (YN)";
+                Print "ANY CHANGE? (Y/N)";
                 I$ = GetKeyPress$
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -511,7 +511,7 @@ Sub GetTeam_CAREER (teamIdx, A$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -590,10 +590,10 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamIdx)
 End Sub
 
 '----------------------------------------
-'     GetTeam_CREATCON Subroutine
+'     GetTeam_CREATCOL Subroutine
 '----------------------------------------
 '...explanation...
-Sub GetTeam_CREATCON (A$, YN$, T1)
+Sub GetTeam_CREATCOL (A$, YN$, T1)
 
     Shared teamRatings%()
 
@@ -629,7 +629,7 @@ Sub GetTeam_CREATCON (A$, YN$, T1)
         Locate 7, 27: Input NY$
 
         If NY$ = "" And YN$ <> "" Then
-            Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
+            Call SelectTeam_CREATCOL(YN$, NTMS, T1, A$)
 
         Else
             YN$ = RTrim$(NY$)
@@ -652,7 +652,7 @@ Sub GetTeam_CREATCON (A$, YN$, T1)
 
             NTMS = fileLength& / 655
 
-            Call SelectTeam_CREATCON(YN$, NTMS, T1, A$)
+            Call SelectTeam_CREATCOL(YN$, NTMS, T1, A$)
 
         End If
 
@@ -664,7 +664,7 @@ Sub GetTeam_CREATCON (A$, YN$, T1)
 
             Do
                 Color 15, 4
-                Locate 3, 33: Print "ANY CHANGE (YN)";
+                Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                 prompt$ = GetKeyPress$
             Loop Until UCase$(prompt$) = "Y" Or UCase$(prompt$) = "N"
 
@@ -676,9 +676,9 @@ End Sub
 
 
 '----------------------------------------
-'       SelectTeam_CREATCON Routine
+'       SelectTeam_CREATCOL Routine
 '----------------------------------------
-Sub SelectTeam_CREATCON (yearNumber$, numberTeams, teamIdx, teamName$)
+Sub SelectTeam_CREATCOL (yearNumber$, numberTeams, teamIdx, teamName$)
 
     Shared teamRatings%()
 
@@ -807,7 +807,7 @@ Sub GetTeam_HD2HD (TM$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     A$ = GetKeyPress$
                 Loop Until UCase$(A$) = "Y" Or UCase$(A$) = "N"
 
@@ -820,9 +820,9 @@ Sub GetTeam_HD2HD (TM$)
 End Sub
 
 
-'------------------------------
+'----------------------------------------
 '  SelectTeam_HD2HD Subroutine
-'------------------------------
+'----------------------------------------
 ' ...explanation...
 Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
 
@@ -1032,7 +1032,7 @@ Sub GetTeam_EditStats (B$, YN$, D)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
             End If
@@ -1194,7 +1194,7 @@ Sub GetDiskID_MERGE (A$)
 
                 Do
                     Color 15, 4
-                    Locate 3, 33: Print "ANY CHANGE (YN)";
+                    Locate 3, 33: Print "ANY CHANGE? (Y/N)";
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -1282,9 +1282,9 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
 End Sub
 
 
-'------------------------------
+'----------------------------------------
 '  SelectTeam_TOURN Subroutine
-'------------------------------
+'----------------------------------------
 '...explanation...
 Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
 

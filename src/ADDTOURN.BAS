@@ -1,3 +1,9 @@
+'----------------------------------------
+'           ADDTOURN Subroutine
+'----------------------------------------
+'This subroutine provides the main menu
+'for users to interface with the various
+'asepcts of tournament handling.
 Sub ADDTOURN ()
 
     _Title "Courtside College Basketball - Create Tournament"
@@ -80,17 +86,24 @@ Sub ADDTOURN ()
                 Case 3: Call BRACKET
                 Case 5: Call TOURNEY
                 Case 6: Cls
+
             End Select
+
         End If
 
     Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
 
-'------------------------------
-'   SetupTourney Subroutine
-'------------------------------
-' Creates .TNY file
+
+'----------------------------------------
+'        SetupTourney Subroutine
+'----------------------------------------
+'This subroutine presents the user the
+'general options for the tournament being
+'setup. It then steps the user through
+'other screens for tournament setup - which
+'all rely on separate routine.
 Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
     Dim HC$(2)
@@ -266,12 +279,16 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
         If sourceFile$ = "" Then
 
-            Locate 10
-            Call CSMsgBox("TOUNAMENT FILE NAME IS BLANK PRESS ANY KEY TO CONTINUE SELECTING", 28, PASS)
+            MsgText$ = "TOURNAMENT FILE NAME IS BLANK PRESS ANY KEY TO CONTINUE SELECTING"
+            BoxWidth = 18
+            BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Call CSMsgBox(MsgText$, BoxWidth, Pass)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-            GoTo GetData
+            Call CSMsgBox("", 0, Pass)
 
+            GoTo GetData
+            
         Else
 
             numberRegions = Val(numberRegions$)
@@ -298,7 +315,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
                 Next
 
-                Call ScheduleAndSave(sourceFile$, numberRegions, tourneyName$)
+                Call ScheduleAndSaveTourney(sourceFile$, numberRegions, tourneyName$)
 
             End If 'Done checking for Edit Bracket
 
@@ -309,10 +326,13 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 End Sub
 
 
-'------------------------------
-'    SeedBrackets Subroutine
-'------------------------------
-'...explanation...
+'----------------------------------------
+'        SeedBrackets Subroutine
+'----------------------------------------
+'This subroutine lets the user review and
+'make changes to the Tournament Regions 
+'and their corresponding seedings and
+'brackets.
 Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
@@ -427,10 +447,14 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                         For I = 1 To NN%(NR)
 
                             If slotName$(NR, I, 0) = "" Then
-                                Locate 10
-                                Call CSMsgBox("ALL SEEDS HAVE NOT BEEN FILLED PRESS ANY KEY TO CONTINUE SELECTING", 30, PASS)
+
+                                MsgText$ = "ALL SEEDS HAVE NOT BEEN FILLED PRESS ANY KEY TO CONTINUE SELECTING"
+                                BoxWidth = 18
+                                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                                Call CSMsgBox(MsgText$, BoxWidth, Pass)
                                 I$ = GetKeyPress$
-                                Call CSMsgBox("", 0, PASS)
+                                Call CSMsgBox("", 0, Pass)
 
                                 NF = 1
                                 'Return
@@ -496,15 +520,16 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 End Sub
 
 
-
-'------------------------------
-' EditBracket_TOURN Subroutine
-'------------------------------
-' Assists with inputting teams
-' in their seed numbers.
-' Passes this to other routines
-' to build the full bracket.
-
+'----------------------------------------
+'      EditBracket_TOURN Subroutine
+'----------------------------------------
+'This subroutine gives the user a menu of
+'regions that were named previously. For 
+'any region chosen, it calls a  separate 
+'subroutine to assist with populating the
+'seedings for the region. When done, it 
+'then calls a routine to create the schedule 
+'for the tournament and save the file.
 Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
     Shared TC!
@@ -567,17 +592,18 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
     Loop Until Selection% = numberRegions + 1
 
-    Call ScheduleAndSave(saveFile$, numberRegions, tourneyName$)
+    Call ScheduleAndSaveTourney(saveFile$, numberRegions, tourneyName$)
 
 End Sub
 
 
-
-'------------------------------
-'  ScheduleAndSave Subroutine
-'------------------------------
-'...explanation...
-Sub ScheduleAndSave (saveFile$, numberRegions, tourneyName$)
+'----------------------------------------
+'   ScheduleAndSaveTourney Subroutine
+'----------------------------------------
+'This subroutine uses the data loaded so
+'far for the tournament, then calls routines
+'to generate the appropriate schedule.
+Sub ScheduleAndSaveTourney (saveFile$, numberRegions, tourneyName$)
 
     Shared NN%()
 
@@ -597,10 +623,13 @@ Sub ScheduleAndSave (saveFile$, numberRegions, tourneyName$)
 End Sub
 
 
-'------------------------------
-'    LoadTourney Subroutine
-'------------------------------
-'...explanation...
+'----------------------------------------
+'         LoadTourney Subroutine
+'----------------------------------------
+'This file opens a previously saved set of
+'tournament files and reads in the data.
+'It then proceeds to call the routine for
+'editing tournament files.
 Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
     Dim numberRegions$
@@ -617,11 +646,14 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
         'Create TOU file as backup of TCX
         Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", BUFFER$, ERRCODE%)
-        Locate 10
 
-        Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
+        MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
+        BoxWidth = 18
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
+        Call CSMsgBox("", 0, Pass)
 
         ACTION% = 1
 
@@ -641,8 +673,8 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
         For I = 1 To 16
             For I1 = 1 To 16
                 For I2 = 0 To 3
-                Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                    Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
+                    Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                 Next
             Next
         Next
@@ -669,10 +701,12 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 End Sub
 
 
-'------------------------------
+'----------------------------------------
 '       PickIt Subroutine
-'------------------------------
-'...explanation...
+'----------------------------------------
+'This subroutine loads the regular bracket
+'games for the tournament, depending on the
+'number of regions.
 Sub PickIt (var%, currRegion, saveFile$)
 
     Shared TC!
@@ -3059,10 +3093,12 @@ Sub PickIt (var%, currRegion, saveFile$)
 
 End Sub
 
-'------------------------------
-'   CHAMPIONSHIP Subroutine
-'------------------------------
-'...explanation...
+'----------------------------------------
+'        CHAMPIONSHIP Subroutine
+'----------------------------------------
+'This subroutine configures the championship
+'bracket / seed for the tournament, depending
+'on the number of regions.
 Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
 
     Shared TC!
@@ -3074,7 +3110,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
     Select Case numberRegions
 
         Case 1:
-            Call SaveTourney(saveFile$, numberRegions, tournName$)
+            Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
         Case 2:
             '2 REGIONS
@@ -3095,7 +3131,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             yearNumber$(TC!, 1) = "XXX"
             Call WRITEGAME(saveFile$)
 
-            Call SaveTourney(saveFile$, numberRegions, tournName$)
+            Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
         Case 3:
             '3 REGIONS
@@ -3133,7 +3169,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             yearNumber$(TC!, 1) = "XXX"
             Call WRITEGAME(saveFile$)
 
-            Call SaveTourney(saveFile$, numberRegions, tournName$)
+            Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
         Case 4:
             '4 REGIONS
@@ -3206,7 +3242,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
 
                 TC! = TC! + 1
@@ -3226,7 +3262,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -3319,7 +3355,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
                 TC! = TC! + 1
                 REGION = 17
@@ -3338,7 +3374,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 6:
@@ -3446,7 +3482,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
 
                 TC! = TC! + 1
@@ -3466,7 +3502,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -3592,7 +3628,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -3612,7 +3648,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 8:
@@ -3754,7 +3790,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
 
@@ -3775,7 +3811,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -3935,7 +3971,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -3955,7 +3991,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 10:
@@ -4131,7 +4167,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -4151,7 +4187,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -4345,7 +4381,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
                 TC! = TC! + 1
                 REGION = 17
@@ -4364,7 +4400,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 12:
@@ -4574,7 +4610,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
 
@@ -4595,7 +4631,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
@@ -4823,7 +4859,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -4843,7 +4879,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 14:
@@ -5088,7 +5124,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -5108,7 +5144,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 15:
@@ -5370,7 +5406,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -5390,7 +5426,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 16:
@@ -5669,7 +5705,7 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourney(saveFile$, numberRegions, tournName$)
+                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
                 TC! = TC! + 1
@@ -5688,15 +5724,20 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 yearNumber$(TC!, 0) = "XXX"
                 yearNumber$(TC!, 1) = "XXX"
                 Call WRITEGAME(saveFile$)
+
             End If
 
     End Select
 
 End Sub
 
-'------------------------------
+
+'----------------------------------------
 '    SETTINGS Subroutine
-'------------------------------
+'----------------------------------------
+'This subroutine assigns the tournament
+'settings to the current game, using the 
+'defaults set earlier.
 Sub SETTINGS ()
 
     Shared TC!
@@ -5711,14 +5752,18 @@ Sub SETTINGS ()
 
 End Sub
 
-'------------------------------
+'----------------------------------------
 '    WRITEGAME Subroutine
-'------------------------------
-' Creates both TMP and TCX files,
-' which serve as "schedule" files of sorts for tournaments.
-' The .TMP file becomes the final .TOU file for play,
-' while the .TCX file is a backup of all initial settings
-' for if the tournament is reset.
+'----------------------------------------
+'This subroutine writes the current game 
+'being considered to temporary files.
+'Both .TMP and .TCX files are used, which 
+'serve as "schedule" files of sorts for 
+'tournaments.
+'The .TMP file becomes the final .TOU 
+'file for play later, while the .TCX file 
+'is a backup of initial settings if the 
+'tournament is reset.
 
 Sub WRITEGAME (outputFile$)
 
@@ -5789,12 +5834,14 @@ Sub WRITEGAME (outputFile$)
 
 End Sub
 
-'------------------------------
-'    SaveTourney Subroutine
-'------------------------------
-'...explanation...
-' Creates .INF file
-Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
+'----------------------------------------
+'         SaveTourneyInfo Subroutine
+'----------------------------------------
+'This subroutine saves the tournament
+'"INFO" file (.INF), then relies on a
+'separate routine to sort the games and
+'save them to the .TOU file. 
+Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
 
     Shared TC!
 
@@ -5830,21 +5877,24 @@ Sub SaveTourney (saveFile$, numberRegions, tourneyName$)
 
     Locate 22, 25: Print Space$(34)
 
-    Locate 10
-
-    Call CSMsgBox("ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS", 18, PASS)
+    MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
+    BoxWidth = 18
+    BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+    Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+    Call CSMsgBox(MsgText$, BoxWidth, Pass)
     I$ = GetKeyPress$
-    Call CSMsgBox("", 0, PASS)
+    Call CSMsgBox("", 0, Pass)
 
 End Sub
 
-'------------------------------
-'    SortAndSaveGames Subroutine
-'------------------------------
-' Reads data from previously created .TMP file
-' Performs sort on games to schedule.
-' Creates the final .TOU file.
 
+'----------------------------------------
+'      SortAndSaveGames Subroutine
+'----------------------------------------
+'This subroutine reads data from a .TMP 
+'file created earlier in the process. If
+'then performs a sort on all games to be
+'scheduled and creates the final .TOU file.
 Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
     Shared TC!
@@ -5999,4 +6049,3 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
     If _FileExists(tempFile$) Then Kill tempFile$
 
 End Sub
-

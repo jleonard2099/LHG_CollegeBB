@@ -3,7 +3,7 @@
 '----------------------------------------
 Dim opSysType$
 
-Dim Shared diskPaths$(0 to 3), Q$(0 To 500)
+Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
@@ -198,24 +198,24 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 Dim TC!
 
 '           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-Dim tourneyN%(17, 17, 3) 
+Dim tourneyN%(17, 17, 3)
 
 'Number of Teams Per Region (up to 16 Regions)
-Dim NN%(17) 
+Dim NN%(17)
 
 'Team Names for Each Seed Slot
-Dim slotName$(17, 17, 0 To 3) 
+Dim slotName$(17, 17, 0 To 3)
 
 'Region Names
-Dim regionNames$(1 To 17) 
+Dim regionNames$(1 To 17)
 
 Dim yearNumber$(MAX_TEAMS, 3)
 
 'TOURNAMENT DEFAULTS
-Dim tourneyDefaults%(14) 
+Dim tourneyDefaults%(14)
 
 '0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
-Dim consolationSetting%(1) 
+Dim consolationSetting%(1)
 
 
 '----------------------------------------

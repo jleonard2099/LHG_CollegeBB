@@ -1,6 +1,12 @@
+'----------------------------------------
+'          BLANKORG Subroutine
+'----------------------------------------
+'This routine assists the user in choosing
+'a national org, and then proceeds to delete 
+' all stats files for all associated teams
 Sub BLANKORG ()
 
-    _Title "Courtside College Basketball - Delete Org Stats"
+    _Title "Courtside College Basketball - Erase Org Stats"
 
     Dim H1$(40), Z4$(40)
 
@@ -8,8 +14,11 @@ Sub BLANKORG ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Locate 10, 8
-        Call CSMsgBox("WARNING!!!::: THIS WILL ERASE ALL COMPILED STATS FOR THIS ORGANIZATION. IF YOU STILL WISH TO ERASE ALL STATS, HIT 'Y' FOR YES", 26, Pass)
+        MsgText$ = "WARNING!!! THIS WILL ERASE ALL COMPILED STATS FOR THIS ORGANIZATION. IF YOU STILL WISH TO ERASE ALL STATS, HIT 'Y' FOR YES"
+        BoxWidth = 27
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, Pass)
 
@@ -17,7 +26,7 @@ Sub BLANKORG ()
 
             Open diskPaths$(1) + organizationFile$ + ".CON" For Input As #2
 
-            Input #2, LG$
+            Input #2, org$
 
             For X = 1 To MAX_CONFERENCES
                 Input #2, Z4$(X)
@@ -31,7 +40,7 @@ Sub BLANKORG ()
 
                     Open diskPaths$(1) + Z4$(X) + ".TMS" For Input As #2
 
-                    Input #2, LG$, D1$, D2$
+                    Input #2, org$, D1$, D2$
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
                         Input #2, H1$(XW)

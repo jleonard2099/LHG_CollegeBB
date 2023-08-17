@@ -1,4 +1,10 @@
-Sub CREATCON ()
+'----------------------------------------
+'          CREATCOL Subroutine
+'----------------------------------------
+'This subroutine provides a menu for the
+'user to choose options related to the
+'creation and editing of conferences
+Sub CREATCOL ()
 
     _Title "Courtside College Basketball - Manage Conferences"
 
@@ -69,7 +75,9 @@ End Sub
 '----------------------------------------
 '       DefineConference Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine assists the user with the
+'input of paramters related to the conf-
+'erence's general naming and setup
 Sub DefineConference (conference$, D1$, D2$)
 
     Do
@@ -106,7 +114,7 @@ Sub DefineConference (conference$, D1$, D2$)
             If conference$ <> "" Then
 
                 Do
-                    Locate 13, 12: Print "ANY CHANGE (YN) "
+                    Locate 13, 12: Print "ANY CHANGE? (Y/N) "
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
@@ -126,9 +134,11 @@ End Sub
 
 
 '----------------------------------------
-'      ReviewEditConference Subroutine
+'     ReviewEditConference Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provides an interface to
+'the user allowing them to choose / clear
+'teams from the conference
 Sub ReviewEditConference (conference$, D1$, D2$)
 
     Shared scheduleZ1%()
@@ -200,7 +210,6 @@ Sub ReviewEditConference (conference$, D1$, D2$)
 
             If choice = 1 Then
                 'Add team
-                'Call GetTeam_CREATCON(Z1$(teamIndex), Z2$(teamIndex), scheduleZ1%(teamIndex))
                 Call ChooseTeam (Z2$(teamIndex), NTMS, scheduleZ1%(teamIndex), Z1$(teamIndex))
             Else
                 'Remove team
@@ -217,9 +226,11 @@ End Sub
 
 
 '----------------------------------------
-'     SaveConferences Subroutine
+'       SaveConferences Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine writes the conference's
+'team memberships and definition to 
+'each of the corresponding files (.LIB, .TMS)
 Sub SaveConferences (conference$, D1$, D2$)
 
     Shared scheduleZ1%()

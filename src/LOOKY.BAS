@@ -1,3 +1,9 @@
+'----------------------------------------
+'            LOOKY Subroutine
+'----------------------------------------
+'This subroutine guides the user through
+'choosing a team file and then calls other
+'routines to load and view the stats
 Sub LOOKY ()
 
     _Title "Courtside College Basketball - Stats Viewer"
@@ -8,23 +14,26 @@ Sub LOOKY ()
     '-- unless we're going to loop around this    
     menuExit = 0
 
+    Color 15, 0
+
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     
-    If teamNbr <> 0 Then
+    statFile$ = nameStatFile$(team$)
 
-        Color 15, 0
+    If Not _FileExists(diskPaths$(1) + statFile$) Then
 
-        statFile$ = nameStatFile$(team$)
+        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 24
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
 
-        If Not _FileExists(diskPaths$(1) + statFile$) Then
-            Call CSMsgBox("UNABLE TO LOCATE COMPILED STATS FILE PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-        Else
-            Call LoadTeamStats(statFile$, team$, totalGames%)
-            Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
+    Else
 
-        End If
+        Call LoadTeamStats(statFile$, team$, totalGames%)
+        Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
 
     End If
 
@@ -34,7 +43,8 @@ End Sub
 '----------------------------------------
 '        LoadTeamStats Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine loads the selected team's 
+'stats into arrays
 Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     Dim lookyCRD(100)
@@ -146,7 +156,10 @@ End Sub
 '----------------------------------------
 '       ViewStatSummary Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'selected team's record to the display,
+'then provides routines for output of
+'the other stat categories
 Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     'Do these need shared based on the below???
@@ -248,7 +261,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
                 Kill diskPaths$(1) + statFile$ + "S"
 
             Case "P":
-                Call PrintTeamStatSummary(teamName$, totalGames%)
+                Call PrintStatsSchedule(teamName$, totalGames%)
 
         End Select
 
@@ -260,9 +273,10 @@ End Sub
 
 
 '----------------------------------------
-'       PlayerStats Subroutine
+'       ViewPlayerStats Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'team's player stats to the user display
 Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared lookyA!()
@@ -433,7 +447,7 @@ Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                     Kill diskPaths$(1) + statFile$ + "S"
 
                 Case "p", "P"
-                    Call PrintTeamStatSummary(teamName$, totalGames%)
+                    Call PrintStatsSchedule(teamName$, totalGames%)
 
             End Select
 
@@ -446,9 +460,10 @@ Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 End Sub
 
 '----------------------------------------
-'       TeamStats Subroutine
+'       ViewTeamStats Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'team's OFF/DEF stats to the user display
 Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
     Shared lookyA!()
@@ -562,7 +577,7 @@ Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 Kill diskPaths$(1) + statFile$ + "S"
 
             Case "p","P"
-                Call PrintTeamStatSummary(teamName$, totalGames%)
+                Call PrintStatsSchedule(teamName$, totalGames%)
 
         End Select
 
@@ -574,10 +589,12 @@ Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
 
 End Sub
 
+
 '----------------------------------------
 '     ExtendedStatSummary Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine formats and outputs the 
+'team's schedule stats to the  user's display
 Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
@@ -672,7 +689,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
                 Kill diskPaths$(1) + statFile$ + "S"
 
             Case "p", "P":
-                Call PrintTeamStatSummary(teamName$, totalGames%)
+                Call PrintStatsSchedule(teamName$, totalGames%)
 
         End Select
 
@@ -681,10 +698,11 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%)
 End Sub
 
 '----------------------------------------
-'     PrintTeamStatSummary Subroutine
+'     PrintStatsSchedule Subroutine
 '----------------------------------------
-'...explanation...
-Sub PrintTeamStatSummary (teamName$, totalGames%)
+'This subroutine formats and outputs the 
+'team's schedule results to the default printer
+Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
     Shared L%, W%
@@ -845,90 +863,12 @@ Sub PrintTeamStatSummary (teamName$, totalGames%)
 
 End Sub
 
-'----------------------------------------
-'       ResetStatPrompt Subroutine
-'----------------------------------------
-' Prompts user with choice to reset stats
-' If they chose so, and confirm, then
-' it will proceed to delete the files.
-Sub ResetStatPrompt (statFile$)
-
-    Cls
-
-    JJ = 1
-    Locate 6, 8
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    For II = 1 To JJ
-        Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 7 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-    Locate 7
-
-    Do
-        U$ = "RESET COMPILED STATS TO 0 (YN)"
-        Locate , (80 - Len(U$)) / 2
-        Print U$
-        I$ = GetKeyPress$
-    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-    Color 15, 0
-
-    If UCase$(I$) = "Y" Then
-
-        'Do
-        JJ = 1
-        Locate 6, 8
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7
-
-        Do
-            U$ = "ARE YOU SURE (YN)"
-            Locate , (80 - Len(U$)) / 2
-            Print U$
-            I$ = GetKeyPress$
-        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-        Color 15, 0
-
-        If UCase$(I$) = "Y" Then
-            Kill diskPaths$(1) + statFile$
-            Kill diskPaths$(1) + statFile$ + "S"
-            If _FileExists(diskPaths$(1) + statFile$ + "R") Then Kill diskPaths$(1) + statFile$ + "R"
-        End If
-
-        'Loop Until UCase$(I$) = "N"
-
-    End If 'Done checking if reset stats
-
-End Sub
-
 
 '----------------------------------------
 '       SortStats Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine sorts the associate stats
+'based on the chosen category
 Sub SortStats (CP%)
 
     Shared lookyA!()
@@ -980,5 +920,86 @@ Sub SortStats (CP%)
 
     Next Z
 
+
+End Sub
+
+
+'----------------------------------------
+'       ResetStatPrompt Subroutine
+'----------------------------------------
+'This subroutine prompts the user with 
+'a choice to reset stats. If they chose, 
+'and confirm, it will then proceed to 
+'delete the files.
+Sub ResetStatPrompt (statFile$)
+
+    Cls
+
+    JJ = 1
+    Locate 6, 8
+
+    'Print box top
+    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+    'Print box sides
+    For II = 1 To JJ
+        Locate 6 + II, 8
+        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+    Next
+
+    'Print box bottom
+    Locate 7 + JJ, 8
+    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+    Locate 7
+
+    Do
+        U$ = "RESET COMPILED STATS TO 0? (Y/N)"
+        Locate , (80 - Len(U$)) / 2
+        Print U$
+        I$ = GetKeyPress$
+    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+    Color 15, 0
+
+    If UCase$(I$) = "Y" Then
+
+        'Do
+        JJ = 1
+        Locate 6, 8
+
+        'Print box top
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        'Print box sides
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        'Print box bottom
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7
+
+        Do
+            U$ = "ARE YOU SURE? (Y/N)"
+            Locate , (80 - Len(U$)) / 2
+            Print U$
+            I$ = GetKeyPress$
+        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+        Color 15, 0
+
+        If UCase$(I$) = "Y" Then
+            Kill diskPaths$(1) + statFile$
+            Kill diskPaths$(1) + statFile$ + "S"
+            If _FileExists(diskPaths$(1) + statFile$ + "R") Then Kill diskPaths$(1) + statFile$ + "R"
+        End If
+
+        'Loop Until UCase$(I$) = "N"
+
+    End If 'Done checking if reset stats
 
 End Sub

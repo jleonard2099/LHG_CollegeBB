@@ -1,3 +1,11 @@
+'----------------------------------------
+'        CompileNatlOrg SubRoutine
+'----------------------------------------
+'This subroutine reads in existing records,
+'looks for stats matching each team in the
+'organization, and then relies on subroutines
+'to read stats and compare to any existing
+'leaders and records
 Sub CompileNatlOrg ()
 
     _Title "Courtside College Basketball - Update National Stats"
@@ -74,7 +82,7 @@ Sub CompileNatlOrg ()
         Do
             Color 15, 0
             Cls
-            Print "IS THIS THE FINAL UPDATE FOR THE SEASON (YN)";
+            Print "IS THIS THE FINAL UPDATE FOR THE SEASON? (Y/N)";
             I$ = GetKeyPress$
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
@@ -212,10 +220,12 @@ Sub CompileNatlOrg ()
 
 End Sub
 
+
 '----------------------------------------
 '       ReadStatsNat Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine reads stats in for a 
+'single team in the organization
 Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
     Shared BRC$()
@@ -361,9 +371,507 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
 End Sub
 
+
 '----------------------------------------
-'           StatsByCategoryTeam Subroutine
+'       CheckStatsLeaders Subroutine
 '----------------------------------------
+'This subroutine compares pre-loaded stats
+'to existing leaders and updates as needed
+Sub CheckStatsLeaders (statFile$, TN$)
+
+    Shared NDL!(), NOL!(), NLD!()
+    Shared compS!(), statsW0!(), statsW1!()
+
+    Shared DT!(), OT!()
+
+    Shared compN$()
+    Shared NDL$(), NOL$(), NZ0$(), NZ3$()
+
+    Cls
+    Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
+
+    For X = 0 To 14
+
+        Color 14
+        Print "CHECKING STATS OF ";
+        Color 15
+        Print compN$(X)
+
+        'Division 1, 2 Record
+        If compS!(X, 22) > NLD!(20, 1) Then
+
+            NLD!(20, 1) = compS!(X, 22)
+            NLD!(20, 2) = 0
+            NZ0$(20) = compN$(X)
+            NZ3$(20) = TN$
+
+            For Z = 1 To 19
+                For Z1 = Z + 1 To 20
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Division 3, 4 Record
+        If compS!(X, 12) > NLD!(40, 1) Then
+
+            NLD!(40, 1) = compS!(X, 12)
+            NLD!(40, 2) = 0
+            NZ0$(40) = compN$(X)
+            NZ3$(40) = TN$
+
+            For Z = 21 To 39
+                For Z1 = Z + 1 To 40
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Field Goal %
+        If compS!(X, 19) > NLD!(60, 1) Then
+
+            NLD!(60, 1) = compS!(X, 19)
+            NLD!(60, 2) = compS!(X, 1)
+            NZ0$(60) = compN$(X)
+            NZ3$(60) = TN$
+
+            For Z = 41 To 59
+                For Z1 = Z + 1 To 60
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Free Throw %
+        If compS!(X, 20) > NLD!(80, 1) Then
+
+            NLD!(80, 1) = compS!(X, 20)
+            NLD!(80, 2) = compS!(X, 3)
+            NZ0$(80) = compN$(X)
+            NZ3$(80) = TN$
+
+            For Z = 61 To 79
+                For Z1 = Z + 1 To 80
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Steals Per Game
+        If compS!(X, 15) > NLD!(90, 1) Then
+
+            NLD!(90, 1) = compS!(X, 15)
+            NLD!(90, 2) = compS!(X, 7)
+            NZ0$(90) = compN$(X)
+            NZ3$(90) = TN$
+
+            For Z = 81 To 89
+                For Z1 = Z + 1 To 90
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Steals
+        If compS!(X, 7) > NLD!(100, 1) Then
+
+            NLD!(100, 1) = compS!(X, 7)
+            NLD!(100, 2) = 0
+            NZ0$(100) = compN$(X)
+            NZ3$(100) = TN$
+
+            For Z = 91 To 99
+                For Z1 = Z + 1 To 100
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Assist Per Game
+        If compS!(X, 16) > NLD!(110, 1) Then
+
+            NLD!(110, 1) = compS!(X, 16)
+            NLD!(110, 2) = compS!(X, 8)
+            NZ0$(110) = compN$(X)
+            NZ3$(110) = TN$
+
+            For Z = 101 To 109
+                For Z1 = Z + 1 To 110
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Assists
+        If compS!(X, 8) > NLD!(120, 1) Then
+
+            NLD!(120, 1) = compS!(X, 8)
+            NLD!(120, 2) = compS!(X, 8)
+            NZ0$(120) = compN$(X)
+            NZ3$(120) = TN$
+
+            For Z = 111 To 119
+                For Z1 = Z + 1 To 120
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        '3 FG %
+        If compS!(X, 21) > NLD!(130, 1) Then
+
+            NLD!(130, 1) = compS!(X, 21)
+            NLD!(130, 2) = statsW1!(X)
+            NZ0$(130) = compN$(X)
+            NZ3$(130) = TN$
+
+            For Z = 121 To 129
+                For Z1 = Z + 1 To 130
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'FOR Z=131 TO 140
+        If statsW0!(X) > NLD!(140, 1) Then
+
+            NLD!(140, 1) = statsW0!(X)
+            NLD!(140, 2) = 0
+            NZ0$(140) = compN$(X)
+            NZ3$(140) = TN$
+
+            For Z = 131 To 139
+                For Z1 = Z + 1 To 140
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Minutes Per Game
+        If compS!(X, 18) > NLD!(150, 1) Then
+
+            NLD!(150, 1) = compS!(X, 18)
+            NLD!(150, 2) = 0
+            NZ0$(150) = compN$(X)
+            NZ3$(150) = TN$
+
+            For Z = 141 To 149
+                For Z1 = Z + 1 To 150
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Total Minutes
+        If compS!(X, 10) / 60 > NLD!(160, 1) Then
+
+            NLD!(160, 1) = compS!(X, 10) / 60
+            NLD!(160, 2) = 0
+            NZ0$(160) = compN$(X)
+            NZ3$(160) = TN$
+
+            For Z = 151 To 159
+                For Z1 = Z + 1 To 160
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'FOR Z=161 TO 170
+        If compS!(X, 13) > NLD!(170, 1) Then
+
+            NLD!(170, 1) = compS!(X, 13)
+            NLD!(170, 2) = compS!(X, 5)
+            NZ0$(170) = compN$(X)
+            NZ3$(170) = TN$
+
+            For Z = 161 To 169
+                For Z1 = Z + 1 To 170
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Rebounds
+        If compS!(X, 5) > NLD!(180, 1) Then
+
+            NLD!(180, 1) = compS!(X, 5)
+            NLD!(18, 2) = 0
+            NZ0$(180) = compN$(X)
+            NZ3$(180) = TN$
+
+            For Z = 171 To 179
+                For Z1 = Z + 1 To 180
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Blocks Per Game
+        If compS!(X, 17) > NLD!(190, 1) Then
+
+            NLD!(190, 1) = compS!(X, 17)
+            NLD!(190, 2) = 0
+            NZ0$(190) = compN$(X)
+            NZ3$(190) = TN$
+
+            For Z = 181 To 189
+                For Z1 = Z + 1 To 190
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Blocks
+        If compS!(X, 9) > NLD!(200, 1) Then
+
+            NLD!(200, 1) = compS!(X, 9)
+            NLD!(200, 2) = 0
+            NZ0$(200) = compN$(X)
+            NZ3$(200) = TN$
+
+            For Z = 191 To 199
+                For Z1 = Z + 1 To 200
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'FG Made
+        If compS!(X, 2) > NLD!(210, 1) Then
+
+            NLD!(210, 1) = compS!(X, 2)
+            NLD!(210, 2) = 0
+            NZ0$(210) = compN$(X)
+            NZ3$(210) = TN$
+
+            For Z = 201 To 209
+                For Z1 = Z + 1 To 210
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'FT Made
+        If compS!(X, 4) > NLD!(220, 1) Then
+
+            NLD!(220, 1) = compS!(X, 4)
+            NLD!(220, 2) = 0
+            NZ0$(220) = compN$(X)
+            NZ3$(220) = TN$
+
+            For Z = 211 To 219
+                For Z1 = Z + 1 To 220
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Fouls Per Game
+        If compS!(X, 14) > NLD!(230, 1) Then
+
+            NLD!(230, 1) = compS!(X, 14)
+            NLD!(230, 2) = 0
+            NZ0$(230) = compN$(X)
+            NZ3$(230) = TN$
+
+            For Z = 221 To 229
+                For Z1 = Z + 1 To 230
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'Fouls
+        If compS!(X, 6) > NLD!(240, 1) Then
+
+            NLD!(240, 1) = compS!(X, 6)
+            NLD!(240, 2) = 0
+            NZ0$(240) = compN$(X)
+            NZ3$(240) = TN$
+
+            For Z = 231 To 239
+                For Z1 = Z + 1 To 240
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+        'MVP Points
+        If compS!(X, 24) > NLD!(250, 1) Then
+
+            NLD!(250, 1) = compS!(X, 24)
+            NLD!(250, 2) = 0
+            NZ0$(250) = compN$(X)
+            NZ3$(250) = TN$
+
+            For Z = 241 To 249
+                For Z1 = Z + 1 To 250
+                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
+                        Swap NZ0$(Z1), NZ0$(Z)
+                        Swap NZ3$(Z1), NZ3$(Z)
+                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
+                    End If
+                Next Z1
+            Next Z
+
+        End If
+
+    Next X
+
+    'FOR X=1 TO 40
+    If OT!(19) > NOL!(40, 19) Then
+
+        For M = 1 To 20
+            NOL!(40, M) = OT!(M)
+        Next
+
+        NOL$(40) = TN$
+
+        For X = 1 To 39
+            For X1 = 1 + X To 40
+                If NOL!(X, 19) < NOL!(X1, 19) Then
+                    Swap NOL$(X1), NOL$(X)
+                    For M = 1 To 20
+                        Swap NOL!(X1, M), NOL!(X, M)
+                    Next
+                End If
+            Next X1
+        Next X
+
+    End If
+
+    'FOR X=1 TO 15
+    If DT!(19) < NDL!(40, 19) Then
+
+        For M = 1 To 20
+            NDL!(40, M) = DT!(M)
+        Next
+
+        NDL$(40) = TN$
+
+        For X = 1 To 39
+            For X1 = 1 + X To 40:
+                If NDL!(X, 19) > NDL!(X1, 19) Then
+                    Swap NDL$(X1), NDL$(X)
+                    For M = 1 To 20
+                        Swap NDL!(X1, M), NDL!(X, M)
+                    Next
+                End If
+            Next X1
+        Next X
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'     StatsByCategoryTeam Subroutine
+'----------------------------------------
+'This subroutine compares all pre-loaded 
+'stats to each of the record categories to 
+'see if any should be updated
 Sub StatsByCategoryTeam (TN$)
 
     Shared DL!(), LD!()
@@ -913,7 +1421,12 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
     Shared confWins, confLosses
     Shared fullWins, fullLosses
 
-    If _FileExists(diskPaths$(1) + statFile$ + "S") Then
+    If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
+
+        Print "NO STATS FOUND FOR "; statFile$
+        FindStatsNat% = 0
+
+    Else
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
@@ -1036,515 +1549,17 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
         FindStatsNat% = 1
 
-    Else
-
-        Print "NO STATS FOUND FOR "; statFile$
-        FindStatsNat% = 0
-
     End If
 
 
 End Function
 
 
-
 '----------------------------------------
-'       CheckStatsLeaders Subroutine
+'       SortLeadersNat Subroutine
 '----------------------------------------
-'...explanation...
-Sub CheckStatsLeaders (statFile$, TN$)
-
-    Shared NDL!(), NOL!(), NLD!()
-    Shared compS!(), statsW0!(), statsW1!()
-
-    Shared DT!(), OT!()
-
-    Shared compN$()
-    Shared NDL$(), NOL$(), NZ0$(), NZ3$()
-
-    Cls
-    Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
-
-    For X = 0 To 14
-
-        Color 14
-        Print "CHECKING STATS OF ";
-        Color 15
-        Print compN$(X)
-
-        'Division 1, 2 Record
-        If compS!(X, 22) > NLD!(20, 1) Then
-
-            NLD!(20, 1) = compS!(X, 22)
-            NLD!(20, 2) = 0
-            NZ0$(20) = compN$(X)
-            NZ3$(20) = TN$
-
-            For Z = 1 To 19
-                For Z1 = Z + 1 To 20
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Division 3, 4 Record
-        If compS!(X, 12) > NLD!(40, 1) Then
-
-            NLD!(40, 1) = compS!(X, 12)
-            NLD!(40, 2) = 0
-            NZ0$(40) = compN$(X)
-            NZ3$(40) = TN$
-
-            For Z = 21 To 39
-                For Z1 = Z + 1 To 40
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Field Goal %
-        If compS!(X, 19) > NLD!(60, 1) Then
-
-            NLD!(60, 1) = compS!(X, 19)
-            NLD!(60, 2) = compS!(X, 1)
-            NZ0$(60) = compN$(X)
-            NZ3$(60) = TN$
-
-            For Z = 41 To 59
-                For Z1 = Z + 1 To 60
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Free Throw %
-        If compS!(X, 20) > NLD!(80, 1) Then
-
-            NLD!(80, 1) = compS!(X, 20)
-            NLD!(80, 2) = compS!(X, 3)
-            NZ0$(80) = compN$(X)
-            NZ3$(80) = TN$
-
-            For Z = 61 To 79
-                For Z1 = Z + 1 To 80
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Steals Per Game
-        If compS!(X, 15) > NLD!(90, 1) Then
-
-            NLD!(90, 1) = compS!(X, 15)
-            NLD!(90, 2) = compS!(X, 7)
-            NZ0$(90) = compN$(X)
-            NZ3$(90) = TN$
-
-            For Z = 81 To 89
-                For Z1 = Z + 1 To 90
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Steals
-        If compS!(X, 7) > NLD!(100, 1) Then
-
-            NLD!(100, 1) = compS!(X, 7)
-            NLD!(100, 2) = 0
-            NZ0$(100) = compN$(X)
-            NZ3$(100) = TN$
-
-            For Z = 91 To 99
-                For Z1 = Z + 1 To 100
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Assist Per Game
-        If compS!(X, 16) > NLD!(110, 1) Then
-
-            NLD!(110, 1) = compS!(X, 16)
-            NLD!(110, 2) = compS!(X, 8)
-            NZ0$(110) = compN$(X)
-            NZ3$(110) = TN$
-
-            For Z = 101 To 109
-                For Z1 = Z + 1 To 110
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Assists
-        If compS!(X, 8) > NLD!(120, 1) Then
-
-            NLD!(120, 1) = compS!(X, 8)
-            NLD!(120, 2) = compS!(X, 8)
-            NZ0$(120) = compN$(X)
-            NZ3$(120) = TN$
-
-            For Z = 111 To 119
-                For Z1 = Z + 1 To 120
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        '3 FG %
-        If compS!(X, 21) > NLD!(130, 1) Then
-
-            NLD!(130, 1) = compS!(X, 21)
-            NLD!(130, 2) = statsW1!(X)
-            NZ0$(130) = compN$(X)
-            NZ3$(130) = TN$
-
-            For Z = 121 To 129
-                For Z1 = Z + 1 To 130
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'FOR Z=131 TO 140
-        If statsW0!(X) > NLD!(140, 1) Then
-
-            NLD!(140, 1) = statsW0!(X)
-            NLD!(140, 2) = 0
-            NZ0$(140) = compN$(X)
-            NZ3$(140) = TN$
-
-            For Z = 131 To 139
-                For Z1 = Z + 1 To 140
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Minutes Per Game
-        If compS!(X, 18) > NLD!(150, 1) Then
-
-            NLD!(150, 1) = compS!(X, 18)
-            NLD!(150, 2) = 0
-            NZ0$(150) = compN$(X)
-            NZ3$(150) = TN$
-
-            For Z = 141 To 149
-                For Z1 = Z + 1 To 150
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Total Minutes
-        If compS!(X, 10) / 60 > NLD!(160, 1) Then
-
-            NLD!(160, 1) = compS!(X, 10) / 60
-            NLD!(160, 2) = 0
-            NZ0$(160) = compN$(X)
-            NZ3$(160) = TN$
-
-            For Z = 151 To 159
-                For Z1 = Z + 1 To 160
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'FOR Z=161 TO 170
-        If compS!(X, 13) > NLD!(170, 1) Then
-
-            NLD!(170, 1) = compS!(X, 13)
-            NLD!(170, 2) = compS!(X, 5)
-            NZ0$(170) = compN$(X)
-            NZ3$(170) = TN$
-
-            For Z = 161 To 169
-                For Z1 = Z + 1 To 170
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Rebounds
-        If compS!(X, 5) > NLD!(180, 1) Then
-
-            NLD!(180, 1) = compS!(X, 5)
-            NLD!(18, 2) = 0
-            NZ0$(180) = compN$(X)
-            NZ3$(180) = TN$
-
-            For Z = 171 To 179
-                For Z1 = Z + 1 To 180
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Blocks Per Game
-        If compS!(X, 17) > NLD!(190, 1) Then
-
-            NLD!(190, 1) = compS!(X, 17)
-            NLD!(190, 2) = 0
-            NZ0$(190) = compN$(X)
-            NZ3$(190) = TN$
-
-            For Z = 181 To 189
-                For Z1 = Z + 1 To 190
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Blocks
-        If compS!(X, 9) > NLD!(200, 1) Then
-
-            NLD!(200, 1) = compS!(X, 9)
-            NLD!(200, 2) = 0
-            NZ0$(200) = compN$(X)
-            NZ3$(200) = TN$
-
-            For Z = 191 To 199
-                For Z1 = Z + 1 To 200
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'FG Made
-        If compS!(X, 2) > NLD!(210, 1) Then
-
-            NLD!(210, 1) = compS!(X, 2)
-            NLD!(210, 2) = 0
-            NZ0$(210) = compN$(X)
-            NZ3$(210) = TN$
-
-            For Z = 201 To 209
-                For Z1 = Z + 1 To 210
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'FT Made
-        If compS!(X, 4) > NLD!(220, 1) Then
-
-            NLD!(220, 1) = compS!(X, 4)
-            NLD!(220, 2) = 0
-            NZ0$(220) = compN$(X)
-            NZ3$(220) = TN$
-
-            For Z = 211 To 219
-                For Z1 = Z + 1 To 220
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Fouls Per Game
-        If compS!(X, 14) > NLD!(230, 1) Then
-
-            NLD!(230, 1) = compS!(X, 14)
-            NLD!(230, 2) = 0
-            NZ0$(230) = compN$(X)
-            NZ3$(230) = TN$
-
-            For Z = 221 To 229
-                For Z1 = Z + 1 To 230
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'Fouls
-        If compS!(X, 6) > NLD!(240, 1) Then
-
-            NLD!(240, 1) = compS!(X, 6)
-            NLD!(240, 2) = 0
-            NZ0$(240) = compN$(X)
-            NZ3$(240) = TN$
-
-            For Z = 231 To 239
-                For Z1 = Z + 1 To 240
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-        'MVP Points
-        If compS!(X, 24) > NLD!(250, 1) Then
-
-            NLD!(250, 1) = compS!(X, 24)
-            NLD!(250, 2) = 0
-            NZ0$(250) = compN$(X)
-            NZ3$(250) = TN$
-
-            For Z = 241 To 249
-                For Z1 = Z + 1 To 250
-                    If NLD!(Z, 1) < NLD!(Z1, 1) Then
-                        Swap NZ0$(Z1), NZ0$(Z)
-                        Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: Swap NLD!(Z1, M), NLD!(Z, M): Next
-                    End If
-                Next Z1
-            Next Z
-
-        End If
-
-    Next X
-
-    'FOR X=1 TO 40
-    If OT!(19) > NOL!(40, 19) Then
-
-        For M = 1 To 20
-            NOL!(40, M) = OT!(M)
-        Next
-
-        NOL$(40) = TN$
-
-        For X = 1 To 39
-            For X1 = 1 + X To 40
-                If NOL!(X, 19) < NOL!(X1, 19) Then
-                    Swap NOL$(X1), NOL$(X)
-                    For M = 1 To 20
-                        Swap NOL!(X1, M), NOL!(X, M)
-                    Next
-                End If
-            Next X1
-        Next X
-
-    End If
-
-    'FOR X=1 TO 15
-    If DT!(19) < NDL!(40, 19) Then
-
-        For M = 1 To 20
-            NDL!(40, M) = DT!(M)
-        Next
-
-        NDL$(40) = TN$
-
-        For X = 1 To 39
-            For X1 = 1 + X To 40:
-                If NDL!(X, 19) > NDL!(X1, 19) Then
-                    Swap NDL$(X1), NDL$(X)
-                    For M = 1 To 20
-                        Swap NDL!(X1, M), NDL!(X, M)
-                    Next
-                End If
-            Next X1
-        Next X
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'       SortLeadersConf Subroutine
-'----------------------------------------
-'Sort leaders in conference
+'This subroutine sorts the leaders in the
+'target organization
 Sub SortLeadersNat
 
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
@@ -1585,11 +1600,12 @@ Sub SortLeadersNat
 End Sub
 
 
-
-'------------------------------
-'   PostConLeaders_Nat Subroutine
-'------------------------------
-' ...explanation...
+'----------------------------------------
+'     PostConLeaders_Nat Subroutine
+'----------------------------------------
+'This subroutine opens the existing leader
+'and record files for the conferences,
+'and writes the updated stats to the file
 Sub PostConLeaders_Nat (conferenceName$)
 
     Shared DL!(), LD!(), OL!()
@@ -1632,12 +1648,14 @@ Sub PostConLeaders_Nat (conferenceName$)
 End Sub
 
 
-
-'------------------------------
-'   PostConLeaders_Nat Subroutine
-'------------------------------
-' ...explanation...
-Sub PostOrgLeaders_Nat (WE$, NRT)
+'----------------------------------------
+'     PostOrgLeaders_Nat Subroutine
+'----------------------------------------
+'This subroutine opens the existing leader
+'and record files for the organization,
+'and writes the updated stats to the file
+'This includes the national poll.
+Sub PostOrgLeaders_Nat (organization$, NRT)
 
     Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
 
@@ -1653,9 +1671,9 @@ Sub PostOrgLeaders_Nat (WE$, NRT)
 
     Cls
 
-    Open diskPaths$(1) + WE$ + ".NLD" For Output As #2
+    Open diskPaths$(1) + organization$ + ".NLD" For Output As #2
 
-    Print "    POSTING NEW "; WE$; " LEADERS"
+    Print "    POSTING NEW "; organization$; " LEADERS"
 
     For X = 1 To 30
         Write #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
@@ -1692,9 +1710,9 @@ Sub PostOrgLeaders_Nat (WE$, NRT)
         Next Z1
     Next Z
 
-    Open diskPaths$(1) + WE$ + ".POL" For Output As #2
+    Open diskPaths$(1) + organization$ + ".POL" For Output As #2
 
-    Print "POSTING "; WE$; " POLL"
+    Print "POSTING "; organization$; " POLL"
 
     Write #2, NRT
 

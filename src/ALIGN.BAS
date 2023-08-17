@@ -1,3 +1,12 @@
+'----------------------------------------
+'             ALIGN Subroutine
+'----------------------------------------
+'This routine presents a menu / interface
+'that assists the user with aligning 
+'player names in separate stat files. 
+'(ie, Road Vs. Local) This should be done 
+'before merging stats, since player name 
+'entry may not be consistent.
 Sub ALIGN ()
 
     _Title "Courtside College Basketball - Align Stats"
@@ -27,7 +36,8 @@ Sub ALIGN ()
 
             Color 12, 0
             Cls
-            Locate 18, 5: Color 12: Print "SEARCHING FOR FILES . . ."
+
+            Locate 18, 5: Print "SEARCHING FOR FILES . . ."
 
             If _FileExists(pathRoadStats$ + statFile$) Then
 
@@ -85,8 +95,8 @@ Sub ALIGN ()
 
                     Cls
 
-                    Locate 2, 10
                     Color 7
+                    Locate 2, 10
                     Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
                     Print
                     Locate , 10
@@ -98,8 +108,8 @@ Sub ALIGN ()
 
                 Cls
 
-                Locate 2, 10
                 Color 7
+                Locate 2, 10
                 Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
                 Print
                 Locate , 10
@@ -115,9 +125,13 @@ End Sub
 
 
 '----------------------------------------
-'       AlignStats Subroutine
+'         AlignStats Subroutine
 '----------------------------------------
-'...explanation...
+'This routine presents the user with a 
+'summary of the statistics in each file.
+'It then performs the alignment before 
+'presenting the user a chance to review 
+'the results.
 Sub AlignStats (pathRoadStats$, statFile$)
 
     Shared statPlyrNames$()
@@ -131,11 +145,12 @@ Sub AlignStats (pathRoadStats$, statFile$)
     Shared W0N!(), WN1!()
 
     Cls
-    Locate 1, 34
-    Color 12: Print "STAT ROSTERS"
 
-    Locate , 26
-    Color 15: Print "CURRENT  ";
+    Color 12
+    Locate 1, 34: Print "STAT ROSTERS"
+
+    Color 15
+    Locate , 26: Print "CURRENT  ";
     Color 7: Print "             ROAD"
 
     For I = 0 To 13:
@@ -153,7 +168,6 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
     Color 11
     Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
-    Color 11
     Locate 22: Print "ALIGNING FILES . . .             "
 
     N = 0
@@ -193,12 +207,13 @@ Sub AlignStats (pathRoadStats$, statFile$)
             If SEQ = 0 Then
                 Call ReviewAndSaveAlignment(pathRoadStats$, statFile$)
             Else
-                Locate 20
                 Color 14
+                Locate 20
                 Print "WARNING !! - - ROAD STAT FILE CONTAINS PLAYERS NOT IN EXISTING STATS.  YOU MUST"
                 Print "CHANGE ROAD STAT FILE USING OPTION #6 ON GAME MENU BEFORE ATTEMPTING STAT MERGE."
+                Color 13
                 Locate 23, 30
-                Color 13: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+                Line Input "HIT ENTER TO CONTINUE"; DUMMY$
             End If 'Done checking if players are in sequence
 
         End If 'Done checking N = 15
@@ -212,7 +227,9 @@ End Sub
 '----------------------------------------
 '    ReviewAndSaveAlignment Subroutine
 '----------------------------------------
-'...explanation...
+'This routine displays the results of the 
+'player name alignment, then gives the end
+'user a chance to actually save the results 
 Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Shared statPlyrNames$()
@@ -224,24 +241,26 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Shared W0N!(), WN1!()
 
     Cls
-    Locate 1, 32
-    Color 12: Print "STAT ROSTERS"
 
-    Locate , 26
-    Color 15: Print "CURRENT  ";
+    Color 12
+    Locate 1, 32: Print "STAT ROSTERS"
+
+    Color 15
+    Locate , 26: Print "CURRENT  ";
     Color 7: Print "             ROAD"
 
     For I = 0 To 13:
         Locate I + 4, 22
-        Color 12: Print Using "##"; I;: Print " ";
+        Color 12: Print Using "##"; I;
+        Print " ";
         Color 15: Print statPlyrNames$(I);
-        Color 12: Print Tab(44); Using "##"; I;: Print " ";
+        Color 12: Print Tab(44); Using "##"; I;
+        Print " ";
         Color 7: Print AN$(I)
     Next
 
     Color 11
     Locate 22: Line Input "HIT ENTER TO ALIGN"; DUMMY$
-    Color 11
     Locate 22: Print "ALIGNING FILES . . .             "
 
     Open pathRoadStats$ + statFile$ For Output As #1
@@ -271,9 +290,9 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Cls
 
     Locate 8, 20: Print "RE-ALIGNMENT COMPLETED"
-    Print
+    Color 12
     Locate 12, 20
-    Color 12: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
+    Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
     Cls
 

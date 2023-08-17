@@ -1,3 +1,7 @@
+'----------------------------------------
+'
+'----------------------------------------
+'
 SUB SeasonRecords ()
 
 	_Title "Courtside College Basketball - Analyze Records"
@@ -11,9 +15,13 @@ SUB SeasonRecords ()
 
     If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
-        Call CSMsgBox("UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+		MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
+		BoxWidth = 24
+		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+		Call CSMsgBox(MsgText$, BoxWidth, Pass)
+		I$ = GetKeyPress$
+		Call CSMsgBox("", 0, Pass)
 
     Else
 
@@ -96,7 +104,11 @@ Sub ViewSeasonRecords ()
 
 	If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
 
-		Call CSMsgBox("UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+		MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
+		BoxWidth = 24
+		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+		Call CSMsgBox(MsgText$, BoxWidth, Pass)
 		I$ = GetKeyPress$
 		Call CSMsgBox("", 0, Pass)
 

@@ -1,3 +1,9 @@
+'----------------------------------------
+'          CAREER Subroutine
+'----------------------------------------
+'This routine gives the user a menu from 
+'which they can choose several options
+'for managing career files
 Sub CAREER ()
 
     _Title "Courtside College Basketball - Career Stats"
@@ -60,10 +66,15 @@ Sub CAREER ()
 
 End Sub
 
+
 '----------------------------------------
-'      CreateCareerFile Subroutine
+'       CreateCareerFile Subroutine
 '----------------------------------------
-' ...explanation...
+'This routine assists the user with the
+'creation of a team's first career file.
+'This naturally means it will guide them 
+'through also adding the first year's
+'stats to the file.
 Sub CreateCareerFile ()
 
     Do
@@ -99,9 +110,11 @@ End Sub
 
 
 '----------------------------------------
-'      MergeFirstYear Subroutine
+'        MergeFirstYear Subroutine
 '----------------------------------------
-'...explanation...
+'This routine actually prompts the user for 
+'parameters to be used for merging the first
+'year's worth of stats to the career file
 Sub MergeFirstYear ()
 
     Dim NB%, TMR
@@ -140,7 +153,7 @@ Sub MergeFirstYear ()
                 Cls
 
                 Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-                Locate 9, 25: Print "ANY CHANGE (YN)"
+                Locate 9, 25: Print "ANY CHANGE? (Y/N)"
 
                 J$ = GetKeyPress$
 
@@ -158,10 +171,13 @@ Sub MergeFirstYear ()
 
                 If Not _FileExists(diskPaths$(1) + statFile$) Then
 
-                    Locate 10, 18
-                    Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, PASS)
+                    MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+                    BoxWidth = 24
+                    BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                    Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                    Call CSMsgBox(MsgText$, BoxWidth, Pass)
                     I$ = GetKeyPress$
-                    Call CSMsgBox("", 0, PASS)
+                    Call CSMsgBox("", 0, Pass)
 
                 Else
 
@@ -265,9 +281,13 @@ End Sub
 
 
 '----------------------------------------
-'   ViewPrintCareerRecords Subroutine
+'    ViewPrintCareerRecords Subroutine
 '----------------------------------------
-' ...explanation...
+'This routine loads in leader records from
+'the .CLD file (which were compiled from  
+'the career file). It then gives the user
+'an option to View or Print results, AND
+'formats the results for them as directed.
 Sub ViewPrintCareerRecords ()
 
     Dim BL$(21)
@@ -373,7 +393,7 @@ Sub ViewPrintCareerRecords ()
                         Color 15
 
                         Do
-                            Locate 22: Print "VIEW AGAIN (Y/N)"
+                            Locate 22: Print "VIEW AGAIN? (Y/N)"
                             I$ = GetKeyPress$
                         Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
@@ -389,10 +409,14 @@ End Sub
 
 
 '----------------------------------------
-'    MergeCareerFiles Subroutine
+'       MergeCareerFiles Subroutine
 '----------------------------------------
-' ...explanation...
+'This routine assists thet user with the
+'addition of career stats from any extra 
+'season years that have been compiled.
 Sub MergeCareerFiles ()
+
+    _Title "Courtside College Basketball - Update Career Files"
 
     Do
 
@@ -436,13 +460,20 @@ Sub MergeCareerFiles ()
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
             statFile$ = nameStatFile$(team$)
 
-            If _FileExists(diskPaths$(1) + statFile$) Then 
-                Call MergeAddYear(careerFile$, statFile$)
-            Else
-                Locate 10, 18
-                Call CSMsgBox("NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU", 26, Pass)
+            If Not _FileExists(diskPaths$(1) + statFile$) Then 
+
+                MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+                BoxWidth = 24
+                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Call CSMsgBox(MsgText$, BoxWidth, Pass)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, Pass)
+
+            Else
+
+                Call MergeAddYear(careerFile$, statFile$)
+
             End If
 
         End If 'Done checking for ESC
@@ -455,7 +486,12 @@ End Sub
 '----------------------------------------
 '         MergeAddYear Subroutine
 '----------------------------------------
-'... explain here ...
+'This routine actually prompts the user
+'for parameters for the team / year to
+'be updated. It then loads the existing 
+'career stats, adds the team's stats to 
+'them, then overwrites the career file 
+'with the new values. 
 Sub MergeAddYear (selectedFile$, statFile$)
 
     Dim NB%, TMR1%
@@ -476,7 +512,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
     Do
         Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-        Locate 9, 25: Print "ANY CHANGE (YN)"
+        Locate 9, 25: Print "ANY CHANGE? (Y/N)"
         J$ = GetKeyPress$
     Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
 
@@ -511,7 +547,8 @@ Sub MergeAddYear (selectedFile$, statFile$)
                 Input #2, W0S!(N, I)
                 Input #2, W1S!(N, I)
 
-                Locate 21, 38: Color 5
+                Color 5
+                Locate 21, 38
                 TMR1% = TMR1% - 1
                 Print Using "####"; TMR1%
 
@@ -652,7 +689,10 @@ End Sub
 '----------------------------------------
 '     UpdateCareerLeaders Subroutine
 '----------------------------------------
-' ...explanation...
+'This routine reads in any existing career 
+'leader files (.CLD), adds the new stats,
+'and then saves the changes back to the
+'career leader file (.CLD)
 Sub UpdateCareerLeaders (targetFile$)
 
     Dim BL$(21)

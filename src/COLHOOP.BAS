@@ -1,3 +1,11 @@
+'----------------------------------------
+'           COLHOOP Subroutine
+'----------------------------------------
+'This subroutine serves as the main "source"
+'for the action in the game. It steps the
+'user through choosing game parameters and
+'teams, as well as determining players to
+'disable, etc.
 Sub COLHOOP ()
 
     _Title "Courtside College Basketball v" + GAME_VERSION$ + " - HOOPS!"
@@ -417,10 +425,10 @@ Sub COLHOOP ()
 
     'Determine attendance
     ' N = 2 is a non-neutral site
-    If N = 2 Or avgatt_DRAFT&(1) = 0 Then
+    If N = 2 Or avgAttendance&(1) = 0 Then
         actualAttendance& = Int(Rnd(1) * 2000) + 9000
     Else
-        actualAttendance& = Int(Rnd(1) * 2000) + avgatt_DRAFT&(1) - 1000
+        actualAttendance& = Int(Rnd(1) * 2000) + avgAttendance&(1) - 1000
     End If
 
     '----------------------------------------
@@ -440,7 +448,7 @@ Sub COLHOOP ()
     
     End Select
 
-    Call LOADSTATS_Game
+    Call LOADSTATS
 
     If AP = 1 Then N = NG%(2)
 
@@ -454,12 +462,11 @@ Sub COLHOOP ()
 
     For P9 = 0 To 1
 
-        If U5 = 1 And P9 = CT Or U5 = 2 Then
-            Call SETSTAMINA
+        Call SETSTAMINA
+
+        If U5 = 1 And P9 = CT Or U5 = 2 Then        
             Call COMCOACH
         Else
-
-            Call SETSTAMINA
             Call LINEUPS
             Call FOULSAFE
         End If
@@ -482,27 +489,27 @@ Sub COLHOOP ()
 
     Next P9
 
-    Call CheckZeroTime
+    Call CheckGameClock
     Call SCOREBOARD
     Call STEALADJ
 
-    250 P = Int(Rnd(1) * 2)
-    'P has value of 0 or 1
+    250 '
+    P = Int(Rnd(1) * 2) '0 or 1
+
     If P = 0 Then
         D = 1
     Else
-        'P = 1
         D = 0
     End If
 
     PB$ = ""
+    
     If P = 1 Then
         P = 0
         D = 1
         P9 = 0
         C1 = 2
     Else
-        'P = 0
         P = 1
         D = 0
         P9 = 1
@@ -510,7 +517,7 @@ Sub COLHOOP ()
     End If
 
     Call LASTSHOT
-    Call CheckZeroTime
+    Call CheckGameClock
     If gameClock! = 0 Then 170
 
     Call ResetShotClock
@@ -539,7 +546,8 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    170 For I = 0 To 1
+    170 '
+    For I = 0 To 1
         DT%(I) = 0
         D2(I) = 0
         P7(I) = 0
@@ -608,7 +616,7 @@ Sub COLHOOP ()
         P2(0) = 0
         P2(1) = 0
 
-        Call CheckZeroTime
+        Call CheckGameClock
         Call SCOREBOARD
 
         Print
@@ -618,7 +626,7 @@ Sub COLHOOP ()
 
         gameClock! = 1200
 
-        Call MAINSCREEN
+        Call UPDATESCREEN
 
         For I = 0 To 1
             For I1 = 0 To 13:
@@ -635,7 +643,7 @@ Sub COLHOOP ()
     'Would have to be careful with
     'all involved conditionals to
     'make sure we reach end game
-    Call CheckZeroTime
+    Call CheckGameClock
     Call SCOREBOARD
 
     If H = 3 Then
@@ -669,12 +677,11 @@ Sub COLHOOP ()
                 Call DELAY
         End Select
 
-        190 '
         T1(0) = T1(0) + 1
         T1(1) = T1(1) + 1
         gameClock! = 300
 
-        Call MAINSCREEN
+        Call UPDATESCREEN
 
         For I = 0 To 1
             For I1 = 0 To 13:
@@ -742,7 +749,7 @@ Sub COLHOOP ()
     timeElapsed! = gameClock!
     Call AdjustPlayTime
     gameClock! = 0
-    Call ZeroCheck
+    Call CheckGameShotClock
 
     GoTo 170
 
@@ -754,7 +761,7 @@ Sub COLHOOP ()
         timeElapsed! = gameClock!
         Call AdjustPlayTime
         gameClock! = 0
-        Call ZeroCheck
+        Call CheckGameShotClock
 
         Call WINDEX
         Print B$(P); " RUNS THE CLOCK OUT!"
@@ -765,12 +772,13 @@ Sub COLHOOP ()
 
     End If
 
+    '--- RESUME HERE 
     If gameClock! <= 5 And (X3% = 1 And S!(D, 0) - S!(P, 0) <= 3 Or X3% = 0 And S!(D, 0) - S!(P, 0) <= 2) And S!(D, 0) - S!(P, 0) >= 0 And H >= 2 Then
 
         'Last 5 seconds!!!
         If U5 = 2 Or U5 = 1 And P = CT Then
             ' Computer handle last 5 seconds
-            RN = Int(Rnd(1) * 100) + 1
+            Call d100(RN)
             R0! = S!(P, 0) - S!(D, 0)
             If gameClock! >= 3 And gameClock! <= 5 And X3% = 0 And R0! < 3 Then I1% = 5
             If gameClock! >= 3 And gameClock! <= 5 And X3% = 1 And R0! = 3 Then I1% = 4
@@ -785,8 +793,12 @@ Sub COLHOOP ()
 
             Call LASTFIVEMENU
 
-            280 I$ = GetKeyPress$
-            I1% = Val(I$): If I1% < 0 Or I1% > 5 Then 280
+            280 '
+            Do
+                I$ = GetKeyPress$
+                I1% = Val(I$)
+            Loop Until I1% >= 0 And I1% <= 5
+
             If I1% = 3 And T1(P9) <= 0 Then 280
             If (I1% = 1 Or I1% = 4) And X3% = 0 Then 280
 
@@ -795,10 +807,9 @@ Sub COLHOOP ()
 
         End If
 
-        281 '
         B = Int(Rnd(1) * 5)
 
-        RN = Int(Rnd(1) * 100) + 1
+        Call d100(RN)
 
         If I1% = 0 And RN <= 50 Or I1% = 1 And RN <= 33 Then
             U$ = "LONG PASS DOWN COURT"
@@ -811,8 +822,10 @@ Sub COLHOOP ()
 
         If I1% = 2 Then
             I3% = Int(Rnd(1) * 45) + 45
+
             U$ = AA$(P, B1(P, B)) + " HAS THE BALL"
             Call PBP
+
             U$ = "HE PUTS IT UP FROM" + Str$(I3%) + " FEET"
             Call PBP
             Call DELAY
@@ -836,7 +849,7 @@ Sub COLHOOP ()
                     W%(P, B1(P, B), 0) = W%(P, B1(P, B), 0) + 1
                 End If
 
-                Call MAINSCREEN
+                Call UPDATESCREEN
 
                 GoTo TIMEEXP
 
@@ -903,7 +916,7 @@ Sub COLHOOP ()
         If I1% = 0 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
 
             ' TAKE3
-            RN = Int(Rnd(1) * 100) + 1
+            Call d100(RN)
             If gameClock! <= .5 Then XX% = 2
             If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 12
             If gameClock! > 1.8 Then XX% = 20
@@ -923,14 +936,14 @@ Sub COLHOOP ()
                 W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) + 1
                 W%(P, B1(P, B), 0) = W%(P, B1(P, B), 0) + 1
                 Call GoodBasket
-                Call MAINSCREEN
+                Call UPDATESCREEN
             End If
 
             GoTo TIMEEXP
 
         End If
 
-        RN = Int(Rnd(1) * 100) + 1
+        Call d100(RN)
         If gameClock! <= .5 Then XX% = 3
         If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 16
         If gameClock! > 1.8 Then XX% = 29
@@ -947,7 +960,7 @@ Sub COLHOOP ()
             S!(P, H) = S!(P, H) + 2
             S!(P, 0) = S!(P, 0) + 2
             Call GoodBasket
-            Call MAINSCREEN
+            Call UPDATESCREEN
         End If
 
         GoTo TIMEEXP
@@ -993,7 +1006,8 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    350 PASS% = PASS% + 1
+    350 '
+    PASS% = PASS% + 1
     P6 = 0
     A4 = 0
     D6 = 0
@@ -1040,7 +1054,8 @@ Sub COLHOOP ()
         If H >= 2 And gameClock! <= 180 And P7(D) = 5 Then
 
             'DENIAL
-            If Int(Rnd(1) * 100) + 1 <= 10 Then
+            Call d100(RN0)
+            If RN0 <= 10 Then
 
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
@@ -1063,11 +1078,14 @@ Sub COLHOOP ()
 
             End If
 
-            RN = Int(Rnd(1) * 100) + 1
-            R0! = Int(Rnd(1) * 100) + 1
+            Call d100(RN)
+            Call d100(R0!)
+
             IN = 99
-            C1 = 2: P9 = D
-            U$ = "DESIGNATED FOULER (0-4)"
+            C1 = 2
+            P9 = D
+
+            U$ = "DESIGNATED FOULER (0-4)"            
             Call SELECTPBP
 
             skipInbound% = 0
@@ -1148,19 +1166,29 @@ Sub COLHOOP ()
                 Call SELECTPBP
             End If
 
-            434 If Int(Rnd(1) * 100) + 1 <= 5 Then IN% = 1
+            Call d100(RN0)
+            If RN0 <= 5 Then IN% = 1
 
-            RN = Int(Rnd(1) * 100) + 1
+            Call d100(RN)
+
             Select Case RN
-                Case 1 To 80: timeElapsed! = Int(Rnd(1) * 3) + 1
-                Case 81 To 90: timeElapsed! = Int(Rnd(1) * 3) + 8
-                Case 91 To 100: timeElapsed! = Int(Rnd(1) * 3) + 5
+
+                Case 1 To 80: 
+                    timeElapsed! = Int(Rnd(1) * 3) + 1
+
+                Case 81 To 90: 
+                    timeElapsed! = Int(Rnd(1) * 3) + 8
+
+                Case 91 To 100: 
+                    timeElapsed! = Int(Rnd(1) * 3) + 5
+
             End Select
+
             gameClock! = gameClock! - timeElapsed!
             Call AdjustPlayTime
             Call AdjustShotClock
 
-            RN = Int(Rnd(1) * 100) + 1
+            Call d100(RN)
             If RN <= 80 Then
                 W5 = DF%
                 Call FoulCalled(0)
@@ -1175,7 +1203,7 @@ Sub COLHOOP ()
         If P7(D) = 1 Then X0% = 25: X1% = -1: FA%(P, B1(P, BU%)) = FA%(P, B1(P, BU%)) - 1: Call PRPFAT
         If P7(D) > 1 Then X0% = 25: X1% = -1: Call PRPFAT
 
-        R0! = Int(Rnd(1) * 100) + 1
+        Call d100(R0!)
         If P7(D) = 1 Or P7(D) = 3 Then gameClock! = gameClock! - 2: timeElapsed! = 2
         If P7(D) = 2 And R0! <= 75 Then gameClock! = gameClock! - 2: timeElapsed! = 2
         If P7(D) = 2 And R0! > 75 Then gameClock! = gameClock! + 2: timeElapsed! = -2
@@ -1185,12 +1213,16 @@ Sub COLHOOP ()
         Call AdjustPlayTime
         Call AdjustShotClock
 
-        R0! = Int(Rnd(1) * 100) + 1
+        Call d100(R0!)
 
         If R0! <= DP(2, P7(D)) Then
+
             Call LASTSHOT
+
             Call ResetShotClock
-            Call MAINSCREEN
+
+            Call UPDATESCREEN
+
             X = 88
 
             Call FoulCalled(1)
@@ -1216,14 +1248,18 @@ Sub COLHOOP ()
 
     Else
 
-        R0! = Int(Rnd(1) * 100) + 1
+        Call d100(R0!)
 
         If (OF%(P) <> 8 And OF%(P) <> 7) Or D2(D) <> 2 Then
 
             If R0! <= D8(4, D2(D)) Then
+
                 Call LASTSHOT
+
                 Call ResetShotClock
-                Call MAINSCREEN
+
+                Call UPDATESCREEN
+
                 X = 88
 
                 Call FoulCalled(1)
@@ -1254,7 +1290,8 @@ Sub COLHOOP ()
 
     '-----
 
-    465 R0! = Int(Rnd(1) * 100) + 1
+    465 '
+    Call d100(R0!)
 
     '--- What to do for 30 second shot clock?
     '   What is GS%?
@@ -1306,7 +1343,9 @@ Sub COLHOOP ()
                     P6 = 1
                     X = 0
 
-                    If PZ% = 2 And Int(Rnd(1) * 100) + 1 <= 50 Then
+                    Call d100(RN0)
+
+                    If PZ% = 2 And RN0 <= 50 Then
                         PZ% = 3
                         P6 = 1
                     End If
@@ -1321,7 +1360,6 @@ Sub COLHOOP ()
 
     End If
 
-    445 '
     If OF%(P) = 4 Then
         GoTo 437
     Else
@@ -1341,7 +1379,8 @@ Sub COLHOOP ()
 
         X = 0
 
-        If PZ% = 2 And Int(Rnd(1) * 100) + 1 <= 50 Then
+        Call d100(RN0)
+        If PZ% = 2 And RN0 <= 50 Then
             PZ% = 3
             P6 = 1
         End If
@@ -1353,18 +1392,19 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    435 P9 = Int(Rnd(1) * 5)
+    435 '
+    P9 = Int(Rnd(1) * 5)
 
     If Int(Rnd(1) * 5) + 1 <= A!(D, B1(D, P9), 5) Then
 
         A!(D, B1(D, P9), 18) = A!(D, B1(D, P9), 18) + 1
 
-        513 '
         If P7(D) <= 0 Or PASS% <> 1 Then
             Call LASTSHOT
         End If
 
         Call ResetShotClock
+
         A!(P, B1(P, B), 23) = A!(P, B1(P, B), 23) + 1
 
         If pbpDelay! <> 0 Then
@@ -1377,7 +1417,7 @@ Sub COLHOOP ()
                 Call DELAY
             Else
 
-                RN = Int(Rnd(1) * 100) + 1
+                Call d100(RN)
                 Select Case RN
                     Case 1 To 3
                         U$ = AA$(D, B1(D, P9)) + " QUICKLY REACHES IN!": Call PBP
@@ -1440,11 +1480,10 @@ Sub COLHOOP ()
 
         End If
 
-        505 '
         A!(D, B1(D, P9), 13) = A!(D, B1(D, P9), 13) + 1
         T0(P) = T0(P) + 1
 
-        Call MAINSCREEN
+        Call UPDATESCREEN
 
         C1 = 2
         P9 = D
@@ -1467,14 +1506,14 @@ Sub COLHOOP ()
 
         FB% = 1
 
-        RN = Int(Rnd(1) * 100) + 1
+        Call d100(RN)
         If RN <= 38 Then B = 0
         If RN > 38 And RN <= 75 Then B = 1
         If RN > 75 And RN <= 83 Then B = 2
         If RN > 83 And RN <= 91 Then B = 3
         If RN > 91 Then B = 4
 
-        RN = Int(Rnd(1) * 100) + 1
+        Call d100(RN)
         If PASS% > 1 And (D2(P9) = 0 Or D2(P9) = 1 Or D2(P9) = 3) And RN <= 15 Then GoTo LAYUP
         If PASS% > 1 And D2(P9) = 2 And RN <= 5 Then GoTo LAYUP
         If PASS% = 1 And P7(P) > 0 And RN <= 33 Then GoTo LAYUP
@@ -1484,7 +1523,7 @@ Sub COLHOOP ()
 
     End If
 
-    R0! = Int(Rnd(1) * 100) + 1
+    Call d100(R0!)
 
     If P7(D) = 1 And PASS% = 1 And R0! <= A!(P, B1(P, BU%), 4) Then GoTo LAYUP
     If P7(D) = 2 And PASS% = 1 And R0! <= A!(P, B1(P, BU%), 4) * 2 Then GoTo LAYUP
@@ -1499,26 +1538,34 @@ Sub COLHOOP ()
 
     ' --- I think this is by itself and the above are separate??? ---
 
-    437 P6 = 0: R0! = Int(Rnd(1) * 3) + 1: J8% = 0: F3S% = Int(Rnd(1) * 7) + 3
+    437 '
+    
+    P6 = 0
+    R0! = Int(Rnd(1) * 3) + 1
+    J8% = 0
+    F3S% = Int(Rnd(1) * 7) + 3
+    PZ% = 1
+
     If A!(P, B1(P, B), 0) > 60 And R0! = 1 Then F! = 24
     If A!(P, B1(P, B), 0) > 60 And R0! = 2 Then F! = 30
     If A!(P, B1(P, B), 0) > 60 And R0! = 3 Then F! = 36
     If A!(P, B1(P, B), 0) <= 60 And R0! = 1 Then F! = Int(A!(P, B1(P, B), 0) * .4 + .5)
     If A!(P, B1(P, B), 0) <= 60 And R0! = 2 Then F! = Int(A!(P, B1(P, B), 0) * .5 + .5)
     If A!(P, B1(P, B), 0) <= 60 And R0! = 3 Then F! = Int(A!(P, B1(P, B), 0) * .6 + .5)
-    PZ% = 1
 
     If Int(Rnd(1) * 150) + 1 = 40 Then
         GoTo TIEUP
     Else
         X = 0
-        If PZ% = 2 And Int(Rnd(1) * 100) + 1 <= 50 Then PZ% = 3: P6 = 1
+        Call d100(RN0)
+        If PZ% = 2 And RN0 <= 50 Then PZ% = 3: P6 = 1
         GoTo 520
     End If
 
     '----- NOODLE -----
 
-    517 Call ResetShotClock
+    517 '
+    Call ResetShotClock
 
     R0! = Int(Rnd(1) * 25) + 1
 
@@ -1543,7 +1590,7 @@ Sub COLHOOP ()
         If PB% = 1 And pbpDelay! <> 0 Then Print U$: Call DELAY
 
         Call DELAY
-        Call MAINSCREEN
+        Call UPDATESCREEN
 
         Locate 10, 1
 
@@ -1588,7 +1635,8 @@ Sub COLHOOP ()
     PZ% = Int(Rnd(1) * 3) + 5
     X = 0
 
-    If PZ% = 2 And Int(Rnd(1) * 100) + 1 <= 50 Then PZ% = 3: P6 = 1
+    Call d100(RN0)
+    If PZ% = 2 And RN0 <= 50 Then PZ% = 3: P6 = 1
 
     520 '
     If J8% = 1 Then PZ% = 4
@@ -1604,14 +1652,14 @@ Sub COLHOOP ()
             GDSHOTDES:
             If pbpDelay! <> 0 Then
 
-                RN = Int(Rnd(1) * 100) + 1
+                Call d100(RN)
                 If RN <= 25 Then U$ = AA$(P, B1(P, B)) + " BREAKS IN TO FRONT COURT"
                 If RN > 25 And RN <= 50 Then U$ = AA$(P, B1(P, B)) + " GETS THE PASS IN FRONT COURT"
                 If RN > 50 And RN <= 75 Then U$ = AA$(P, B1(P, B)) + " BREAKS THE PRESS"
                 If RN > 75 Then U$ = AA$(P, B1(P, B)) + " DEFEATS THE PRESS"
                 Call PBP
 
-                RN = Int(Rnd(1) * 100) + 1
+                Call d100(RN)
                 If RN <= 33 Then U$ = "HE HAS AN OPEN JUMPER AT THE FT LINE"
                 If RN > 33 And RN <= 66 Then U$ = "HE'S OPEN ON THE BASELINE"
                 If RN > 66 Then U$ = "HE'S OPEN FROM THE WING"
@@ -1694,13 +1742,14 @@ Sub COLHOOP ()
 
                             P6 = 1
 
-                            RN = Int(Rnd(1) * 100) + 1
+                            Call d100(RN)
                             If B = 4 And RN <= 25 Then U$ = YY$ + " MAKES A MOVE DOWN LOW": Call PBP: GoTo 602
                             If B = 4 And RN <= 50 Then U$ = YY$ + " POSITIONS HIMSELF DOWN LOW": Call PBP: GoTo 602
                             If B = 4 And RN <= 75 Then U$ = YY$ + " POSTS UP UNDERNEATH": Call PBP: GoTo 602
                             If B = 4 Then U$ = YY$ + " BACKS IN AGAINST " + AA$(D, B1(D, 4)): Call PBP
 
-                            602 If B = 4 Then U$ = "HE HAS A GOOD SHOT INSIDE": Call SHOTSTRING: Call PBP: GoTo 529
+                            602 '
+                            If B = 4 Then U$ = "HE HAS A GOOD SHOT INSIDE": Call SHOTSTRING: Call PBP: GoTo 529
                             If (B = 3 Or B = 2) And RN <= 17 Then U$ = YY$ + " DRIVES THE BASELINE": Call PBP: GoTo 603
                             If (B = 3 Or B = 2) And RN <= 34 Then U$ = YY$ + " PENETRATES THE LANE": Call PBP: GoTo 603
                             If (B = 3 Or B = 2) And RN <= 50 Then U$ = YY$ + " MOVES INSIDE": Call PBP: GoTo 603
@@ -1708,13 +1757,15 @@ Sub COLHOOP ()
                             If (B = 3 Or B = 2) And RN <= 84 Then U$ = YY$ + " MOVES INTO THE PAINT": Call PBP: GoTo 603
                             If (B = 3 Or B = 2) Then U$ = YY$ + " DRIVES UNDERNEATH": Call PBP
 
-                            603 If (B = 3 Or B = 2) Then U$ = "HE'S GOT A GOOD SHOT UNDERNEATH": Call SHOTSTRING: Call PBP: GoTo 529
+                            603 '
+                            If (B = 3 Or B = 2) Then U$ = "HE'S GOT A GOOD SHOT UNDERNEATH": Call SHOTSTRING: Call PBP: GoTo 529
                             If (B = 0 Or B = 1) And RN <= 25 Then U$ = YY$ + " DRIVES THE LANE": Call PBP: GoTo 604
                             If (B = 0 Or B = 1) And RN <= 50 Then U$ = YY$ + " DRIVES THROUGH THE KEY": Call PBP: U$ = "HE'S INTO THE LANE": Call PBP: GoTo 604
                             If (B = 0 Or B = 1) And RN <= 75 Then U$ = YY$ + " DRIVES TO THE BASKET": Call PBP: GoTo 604
                             U$ = YY$ + " DRIVES THROUGH AN OPENING": Call PBP
 
-                            604 U$ = "HE HAS A GOOD SHOT CLOSE IN": Call SHOTSTRING: Call PBP
+                            604 '
+                            U$ = "HE HAS A GOOD SHOT CLOSE IN": Call SHOTSTRING: Call PBP
                         End If
 
                     Case 4:
@@ -1790,13 +1841,13 @@ Sub COLHOOP ()
 
     End If
 
-    528 '
     Print
     If PB% = 1 And pbpDelay! <> 0 Then Call DELAY
 
     If U5 <> 0 Or coachOpt = 1 Then
-        '949
+
         If Not (H >= 2 And gameClock! <= 240 And S!(P, 0) - S!(D, 0) > 0 And U5 = 1 And P = CT) Then
+
             If U5 = 2 Or U5 = 1 And D = CT Then
                 If (U5 = 1 Or U5 = 0) And coachOpt <> 1 Then
                     GoTo 530
@@ -1805,7 +1856,6 @@ Sub COLHOOP ()
 
         End If
 
-        951 '
         If gameClock! <= 1 Or sClockVal >= 1 And shotClock <= 7 Then
             P6 = 1
         Else
@@ -1858,8 +1908,6 @@ Sub COLHOOP ()
 
         End If
 
-        'GoTo 532
-
     Else
 
         530 '
@@ -1884,7 +1932,6 @@ Sub COLHOOP ()
 
     End If
 
-    532 '
     If Val(I$) = 3 And (U5 = 0 Or U5 = 1 And P = CT) And H >= 4 And gameClock! < 240 Then P6 = 3
     If Val(I$) = 2 And (U5 = 0 Or U5 = 1 And D = CT) And T1(P) > 0 Then P6 = 2
     P3 = P6
@@ -1916,7 +1963,7 @@ Sub COLHOOP ()
             S = 0
             SS = 0
 
-            R0! = Int(Rnd(1) * 100) + 1
+            Call d100(R0!)
 
             A!(P, B1(P, B), 7) = A!(P, B1(P, B), 7) + 1
             GG = S!(D, 0) - S!(P, 0)
@@ -1924,15 +1971,18 @@ Sub COLHOOP ()
             If Not (H > 1 And gameClock! <= 30 And GG = 2 Or H > 1 And gameClock! <= 30 And GG = 0 Or H > 1 And gameClock! <= 30 And GG = -2) Then
 
                 If R0! <= A!(P, B1(P, B), 16) + F5%(D, 7) Then
-                    A!(P, B1(P, B), 7) = A!(P, B1(P, B), 7) - 1
-                    Call ResetShotClock
-                    LT = 0
 
+                    A!(P, B1(P, B), 7) = A!(P, B1(P, B), 7) - 1
+
+                    Call ResetShotClock
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
                     Call AdjustPlayTime
                     Call AdjustShotClock
-                    Call MAINSCREEN
+                    
+                    LT = 0
+                    
+                    Call UPDATESCREEN
 
                     Call FoulCalled(1)
 
@@ -1972,7 +2022,7 @@ Sub COLHOOP ()
                     'Two FT Attempts
                     For F3 = 1 To 2:
 
-                        S = Int(Rnd(1) * 100) + 1
+                        Call d100(S)
 
                         'FT Success Chance
                         FX% = A!(P, B1(P, B), 1)
@@ -2002,8 +2052,8 @@ Sub COLHOOP ()
 
                     'Increase FT ATT
                     A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 2
-
                     LT = 0
+
                     If gameClock! <= 0 Then
                         timeElapsed! = gameClock!
                         Call AdjustPlayTime
@@ -2047,134 +2097,144 @@ Sub COLHOOP ()
 
             End If
 
-            540 '
-            S = Int(Rnd(1) * 100) + 1
+            Call d100(S)
             R0! = F! * ((DY / 100) + (.03 * X3%))
 
-            If H > 1 And gameClock! < 30 And GG = 2 Or H > 1 And gameClock! < 30 And GG = 0 Or H > 1 And gameClock! < 30 And GG = -2 Then 542
+            If Not (H > 1 And gameClock! < 30 And GG = 2 Or H > 1 And gameClock! < 30 And GG = 0 Or H > 1 And gameClock! < 30 And GG = -2) Then
 
-            If S <= R0! Then
-                Call ResetShotClock
-                LT = 0
+                If S <= R0! Then
 
-                610 '
-                gameClock! = gameClock! - 4
-                timeElapsed! = 4
-                Call AdjustPlayTime
-                Call AdjustShotClock
-                Call MAINSCREEN
-                Call GoodBasket
-
-                If DK% = 1 And PB% = 0 Then PT% = 2: Call MAKEPBP: U$ = "STUFF BY " + AA$(P, B1(P, B)): Call PBP: DK% = 0: GoTo 617
-                If DK% = 1 And PB% = 1 Then Call WINDEX: Print "STUFF BY " + AA$(P, B1(P, B)): Call DELAY: DK% = 0: GoTo 617
-                If PZ% = 8 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call PBP: GoTo 617
-
-                F3 = 1
-                If PB% = 0 Then
-                    U$ = "BASKET GOOD BY " + AA$(P, B1(P, B))
-                    Call PBP
-                Else
-                    'PB% = 1
-                    If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B)): Call DELAY
-                End If
-
-                617 U$ = "... AND HE'S FOULED !!!"
-
-                If PB% = 0 Then Call PBP
-                If PB% = 1 And pbpDelay! <> 0 Then Print U$: Call DELAY
-
-                Call DELAY
-
-                F3 = 1
-                S!(P, H) = S!(P, H) + 2
-                S!(P, 0) = S!(P, 0) + 2
-                A!(P, B1(P, B), 8) = A!(P, B1(P, B), 8) + 1
-                Call MAINSCREEN
-                Call FoulCalled(1)
-
-                619 '
-                If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print B$(P): Print "1 FT: "; AA$(P, B1(P, B)); "   "; A!(P, B1(P, B), 1); " %"
-                If PB% = 0 Then U$ = AA$(P, B1(P, B)) + " WILL SHOOT 1": Call PBP
-
-                X = 50
-                Call DEADBALLOPTIONS
-
-                For I = 0 To 1
-                    If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
-                Next
-
-                X = 0
-
-                S = Int(Rnd(1) * 100) + 1
-
-                If PB% = 1 And pbpDelay! <> 0 Then
-                    Call WINDEX
-                    Print B$(P)
-                    Print "1 FT: "; AA$(P, B1(P, B)); "   "; A!(P, B1(P, B), 1); " %"
-                End If
-
-                FX% = A!(P, B1(P, B), 1)
-                If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
-
-                If S <= FX% And PB% = 0 Then
-                    'Increase FTM
-                    A!(P, B1(P, B), 10) = A!(P, B1(P, B), 10) + 1
-
-                    If pbpDelay! <> 0 Then U$ = "FREE THROW IS GOOD": Call PBP
-
-                    S!(P, H) = S!(P, H) + 1
-                    S!(P, 0) = S!(P, 0) + 1
-
-                    Call MAINSCREEN
-
-                End If
-
-                If S <= FX% And PB% = 1 Then Call MADEFT
-                If S > FX% And PB% = 0 Then If pbpDelay! <> 0 Then U$ = "FREE THROW IS MISSED": Call PBP
-                If S > FX% And PB% = 1 Then Call MISSFT
-
-                'Increase FT ATT
-                A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
-
-                If gameClock! <= 0 Then
-                    timeElapsed! = gameClock!
+                    Call ResetShotClock
+                    gameClock! = gameClock! - 4
+                    timeElapsed! = 4
                     Call AdjustPlayTime
-                    GoTo 170
+                    Call AdjustShotClock
+
+                    LT = 0
+
+                    Call UPDATESCREEN
+                    Call GoodBasket
+
+                    If DK% = 1 And PB% = 0 Then PT% = 2: Call MAKEPBP: U$ = "STUFF BY " + AA$(P, B1(P, B)): Call PBP: DK% = 0: GoTo 617
+                    If DK% = 1 And PB% = 1 Then Call WINDEX: Print "STUFF BY " + AA$(P, B1(P, B)): Call DELAY: DK% = 0: GoTo 617
+                    If PZ% = 8 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call PBP: GoTo 617
+
+                    F3 = 1
+                    If PB% = 0 Then
+                        U$ = "BASKET GOOD BY " + AA$(P, B1(P, B))
+                        Call PBP
+                    Else
+                        'PB% = 1
+                        If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + AA$(P, B1(P, B)): Call DELAY
+                    End If
+
+                    617 '
+                    U$ = "... AND HE'S FOULED !!!"
+
+                    If PB% = 0 Then Call PBP
+                    If PB% = 1 And pbpDelay! <> 0 Then Print U$: Call DELAY
+
+                    Call DELAY
+
+                    F3 = 1
+                    S!(P, H) = S!(P, H) + 2
+                    S!(P, 0) = S!(P, 0) + 2
+                    A!(P, B1(P, B), 8) = A!(P, B1(P, B), 8) + 1
+                    Call UPDATESCREE
+                    N
+                    Call FoulCalled(1)
+
+                    619 '
+                    If PB% = 0 Then U$ = AA$(P, B1(P, B)) + " WILL SHOOT 1": Call PBP
+                    If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print B$(P): Print "1 FT: "; AA$(P, B1(P, B)); "   "; A!(P, B1(P, B), 1); " %"
+
+                    X = 50
+                    Call DEADBALLOPTIONS
+
+                    For I = 0 To 1
+                        If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+                    Next
+
+                    X = 0
+
+                    Call d100(S)
+
+                    If PB% = 1 And pbpDelay! <> 0 Then
+                        Call WINDEX
+                        Print B$(P)
+                        Print "1 FT: "; AA$(P, B1(P, B)); "   "; A!(P, B1(P, B), 1); " %"
+                    End If
+
+                    FX% = A!(P, B1(P, B), 1)
+                    If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
+
+                    If S <= FX% And PB% = 0 Then
+                        'Increase FTM
+                        A!(P, B1(P, B), 10) = A!(P, B1(P, B), 10) + 1
+
+                        If pbpDelay! <> 0 Then U$ = "FREE THROW IS GOOD": Call PBP
+
+                        S!(P, H) = S!(P, H) + 1
+                        S!(P, 0) = S!(P, 0) + 1
+
+                        Call UPDATESCREEN
+
+                    End If
+
+                    If S <= FX% Then 
+                        PB% = 1 Then Call MADEFT
+                    Else
+                        If PB% = 0 Then If pbpDelay! <> 0 Then U$ = "FREE THROW IS MISSED": Call PBP
+                        If PB% = 1 Then Call MISSFT
+                    End If
+
+                    'Increase FT ATT
+                    A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
+
+                    If gameClock! <= 0 Then
+                        timeElapsed! = gameClock!
+                        Call AdjustPlayTime
+                        GoTo 170
+                    End If
+
+                    X = 99
+
+                    If S > FX% Then 670
+
+                    PB$ = ""
+                    If P = 1 Then
+                        P = 0
+                        D = 1
+                        P9 = 0
+                        C1 = 2
+                    Else
+                        'P = 0
+                        P = 1
+                        D = 0
+                        P9 = 1
+                        C1 = 2
+                    End If
+
+                    U$ = B$(P) + " BALL O.B. AFTER SCORE"
+                    Call SELECTPBP
+
+                    Locate 8, 41: Print Space$(12)
+
+                    Call DELAY
+                    Call STOPPAGE
+
+                    B = 6
+                    X = 0
+                    Call PRESSGUARD
+
+                    GoTo 300
+
                 End If
-
-                X = 99
-
-                If S > FX% Then 670
-
-                PB$ = ""
-                If P = 1 Then
-                    P = 0
-                    D = 1
-                    P9 = 0
-                    C1 = 2
-                Else
-                    'P = 0
-                    P = 1
-                    D = 0
-                    P9 = 1
-                    C1 = 2
-                End If
-
-                U$ = B$(P) + " BALL O.B. AFTER SCORE"
-                Call SELECTPBP
-                Locate 8, 41: Print Space$(12)
-                Call DELAY
-                Call STOPPAGE
-                B = 6
-                X = 0
-                Call PRESSGUARD
-
-                GoTo 300
 
             End If
 
-            542 '
             If S <= F! Then
+
                 LT = 0
 
                 If DK% = 1 And PB% = 0 Then
@@ -2200,14 +2260,17 @@ Sub COLHOOP ()
                             U$ = U$ + AA$(P, B1(P, B)) + " !!!"
 
                             If PB% = 1 And pbpDelay! <> 0 Then
-                                Call WINDEX: Print U$: Call DELAY
+                                Call WINDEX
+                                Print U$
+                                Call DELAY
                             Else
 
-                                RN = Int(Rnd(1) * 100) + 1
+                                Call d100(RN)
 
                                 If RN > 50 Then
 
                                     RN = Int(Rnd(1) * 22) + 1
+
                                     Select Case RN
                                         Case 1
                                             U$ = "NOTHING BUT THE BOTTOM OF THE NET!"
@@ -2267,25 +2330,26 @@ Sub COLHOOP ()
 
                 End If
 
-                560 S!(P, H) = S!(P, H) + 2
+                560 '
+                S!(P, H) = S!(P, H) + 2
                 S!(P, 0) = S!(P, 0) + 2
 
                 Call GoodBasket
 
-                Call MAINSCREEN
+                Call UPDATESCREEN
 
                 A!(P, B1(P, B), 8) = A!(P, B1(P, B), 8) + 1
 
-                562 U$ = B$(D) + " BALL O.B. AFTER SCORE"
-                If PB% = 1 And pbpDelay! <> 0 Then Locate 9, 1: Print U$
+                562 '
+                U$ = B$(D) + " BALL O.B. AFTER SCORE"
+
                 If PB% = 0 Then Locate 8, 41: Print Space$(12): Call PBP
+                If PB% = 1 And pbpDelay! <> 0 Then Locate 9, 1: Print U$
 
                 Call DELAY
                 Call ResetShotClock
-
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
-
                 Call AdjustPlayTime
                 Call AdjustShotClock
 
@@ -2295,7 +2359,7 @@ Sub COLHOOP ()
                     GoTo 170
                 End If
 
-                Call MAINSCREEN
+                Call UPDATESCREEN
 
                 PB$ = ""
                 If P = 1 Then
@@ -2317,22 +2381,20 @@ Sub COLHOOP ()
                 GoTo 300
 
             Else
-                R0! = Int(Rnd(1) * 100) + 1
-                LT = 0
 
+                Call d100(R0!)
+                LT = 0
                 I2 = Int(Rnd(1) * 5) + 1
                 I3 = Int(Rnd(1) * 5)
 
                 If I2 > A!(D, B1(D, I3), 6) Then
 
-                    545 '
-                    If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "SHOT MISSED BY "; AA$(P, B1(P, B)): Call DELAY
                     If PB% = 0 Then PT% = 8: Call MAKEPBP: Call PBP
+                    If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "SHOT MISSED BY "; AA$(P, B1(P, B)): Call DELAY
 
                     Call ResetShotClock
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
-
                     Call AdjustPlayTime
                     Call AdjustShotClock
 
@@ -2342,7 +2404,7 @@ Sub COLHOOP ()
                         GoTo 170
                     End If
 
-                    Call MAINSCREEN
+                    Call UPDATESCREEN
 
                     LT = 0
 
@@ -2358,7 +2420,8 @@ Sub COLHOOP ()
                         Call DELAY
                     Else
 
-                        RN = Int(Rnd(1) * 100) + 1
+                        Call d100(RN)
+
                         Select Case RN
                             Case 1 To 10
                                 U$ = AA$(D, B1(D, I3)) + " STUFFS THE SHOT!!"
@@ -2390,11 +2453,9 @@ Sub COLHOOP ()
                 X = 98
 
                 Call ResetShotClock
-
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
                 Call AdjustPlayTime
-
                 Call AdjustShotClock
 
                 If gameClock! <= 0 Then
@@ -2404,7 +2465,7 @@ Sub COLHOOP ()
                     GoTo 170
                 End If
 
-                Call MAINSCREEN
+                Call UPDATESCREEN
 
                 GoTo 670
 
@@ -2416,13 +2477,13 @@ Sub COLHOOP ()
             GoTo 640
 
         Case 4
-            584 '
             IN = 99
             Call LASTSHOT
 
             If gameClock! <= 0 Then 170
 
-            C1 = 2: P9 = D
+            C1 = 2
+            P9 = D
             U$ = "DESIGNATED FOULER (0-4)"
 
             Call SELECTPBP
@@ -2447,7 +2508,8 @@ Sub COLHOOP ()
                 P6 = 1
                 GoTo 537
             Else
-                S = Int(Rnd(1) * 100) + 1
+                Call d100(S)
+
                 W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) + 1
                 A!(P, B1(P, B), 7) = A!(P, B1(P, B), 7) + 1
                 PT% = 3
@@ -2463,13 +2525,12 @@ Sub COLHOOP ()
                     W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) - 1
 
                     Call ResetShotClock
-
-                    9055 '
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
                     Call AdjustPlayTime
                     Call AdjustShotClock
-                    Call MAINSCREEN
+
+                    Call UPDATESCREEN
 
                     Call FoulCalled(1)
 
@@ -2512,7 +2573,7 @@ Sub COLHOOP ()
                     '3 FT Attempts
                     For F3 = 1 To 3:
 
-                        S = Int(Rnd(1) * 100) + 1
+                        Call d100(S)
 
                         'FT Success Chance
                         FX% = A!(P, B1(P, B), 1)
@@ -2560,7 +2621,7 @@ Sub COLHOOP ()
                     timeElapsed! = 4
                     Call AdjustPlayTime
                     Call AdjustShotClock
-                    Call MAINSCREEN
+                    Call UPDATESCREEN
                     Call GoodBasket
                     U$ = "3 PT BASKET GOOD BY " + AA$(P, B1(P, B))
                     Call SELECTPBP
@@ -2576,7 +2637,7 @@ Sub COLHOOP ()
                     S!(P, 0) = S!(P, 0) + 3
                     A!(P, B1(P, B), 8) = A!(P, B1(P, B), 8) + 1
                     W%(P, B1(P, B), 0) = W%(P, B1(P, B), 0) + 1
-                    Call MAINSCREEN
+                    Call UPDATESCREEN
 
                     Call FoulCalled(1)
 
@@ -2590,11 +2651,9 @@ Sub COLHOOP ()
                     If PB% = 0 Then PT% = 5: TP% = 1: Call MAKEPBP: Call PBP
 
                     Call ResetShotClock
-
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
                     Call AdjustPlayTime
-
                     Call AdjustShotClock
 
                     If gameClock! <= 0 Then
@@ -2604,7 +2663,7 @@ Sub COLHOOP ()
                         GoTo 170
                     End If
 
-                    Call MAINSCREEN
+                    Call UPDATESCREEN
 
                     GoTo 670
 
@@ -2613,7 +2672,8 @@ Sub COLHOOP ()
                     If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "3 PT FG GOOD BY "; AA$(P, B1(P, B)); " !!!": Call DELAY
                     If PB% = 0 Then PT% = 4: Call MAKEPBP: Call PBP
 
-                    369 If XX% = 1 Then
+                    369 '
+                    If XX% = 1 Then
                         XX% = 0: S!(P, H) = S!(P, H) + 2: S!(P, 0) = S!(P, 0) + 2: W%(P, B1(P, B), 1) = W%(P, B1(P, B), 1) - 1
                     Else
                         S!(P, H) = S!(P, H) + 3: S!(P, 0) = S!(P, 0) + 3: W%(P, B1(P, B), 0) = W%(P, B1(P, B), 0) + 1
@@ -2621,7 +2681,7 @@ Sub COLHOOP ()
 
                     A!(P, B1(P, B), 8) = A!(P, B1(P, B), 8) + 1
                     Call GoodBasket
-                    Call MAINSCREEN
+                    Call UPDATESCREEN
 
                     GoTo 562
 
@@ -2646,7 +2706,6 @@ Sub COLHOOP ()
 
     End If
 
-    571 '
     X = 50
     Call DEADBALLOPTIONS
 
@@ -2669,15 +2728,14 @@ Sub COLHOOP ()
 
     End If
 
-    572 '
     '2 FT Attempts
     For F3 = 1 To 2
 
         'Increase FT ATT
         A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
 
-        S = Int(Rnd(1) * 100) + 1
-
+        Call d100(S) 
+        
         'FT Success Chance
         FX% = A!(P, B1(P, B), 1)
         If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
@@ -2705,7 +2763,8 @@ Sub COLHOOP ()
 
     Next F3
 
-    575 If gameClock! <= 0 Then 170
+    575 '
+    If gameClock! <= 0 Then 170
 
     If S > FX% Then 650
 
@@ -2737,6 +2796,7 @@ Sub COLHOOP ()
 
     580 '
     Call LASTSHOT
+
     Call ResetShotClock
 
     PB$ = ""
@@ -2770,7 +2830,7 @@ Sub COLHOOP ()
     Locate 8, 41: Print Space$(12): B = 6
     Call DELAY
     T0(D) = T0(D) + 1
-    Call MAINSCREEN
+    Call UPDATESCREEN
     Call DEADBALLOPTIONS
 
     For I = 0 To 1
@@ -2832,21 +2892,23 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    650 A6 = 1
+    650 '
+    A6 = 1
     P6 = 0
     A4 = 0
     D6 = 0
-    Call ResetShotClock
     S = 0
 
-    R0! = Int(Rnd(1) * 100) + 1
+    Call ResetShotClock
+
+    Call d100(R0!)
 
     If H > 1 And gameClock! < 30 And S!(D, 0) - S!(P, 0) = 2 And R0! <= 12 Or H > 1 And gameClock! < 30 And S!(P, 0) - S!(D, 0) = 0 And R0! <= 12 Then
         Call OFFREBOUND
         GoTo 760
     End If
 
-    R0! = Int(Rnd(1) * 100) + 1
+    Call d100(R0!)
 
     Select Case R0!
         Case 1 To 11
@@ -2862,18 +2924,21 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    670 A6 = 1
+    670 '
+    A6 = 1
     P6 = 0
     A4 = 0
     D6 = 0
+
     Call ResetShotClock
 
     '--- loop
-    700 S = 0
+    700 '
+    S = 0
     A4 = 0
     D6 = 0
 
-    R0! = Int(Rnd(1) * 100) + 1
+    Call d100(R0!)
     GG = S!(D, 0) - S!(P, 0)
 
     If H > 1 And gameClock! < 30 And (GG = 2 Or GG = 0 Or GG = -2) And R0! <= 12 Then 700
@@ -2884,7 +2949,8 @@ Sub COLHOOP ()
     Select Case R0!
         Case 0 To 1
 
-            725 If X = 98 Then 700
+            725 '
+            If X = 98 Then 700
             T0(P) = T0(P) + 1
             U$ = "OFFENSIVE GOAL TENDING"
             Call SELECTPBP
@@ -2920,12 +2986,12 @@ Sub COLHOOP ()
             FF% = 1
 
         Case DY + 1 To 17
-            750 '
-            R0! = Int(Rnd(1) * 100) + 1
+
+            Call d100(R0!)
 
             If R0! > 35 Then
 
-                R3!(D) = R3!(D) + 1: Call MAINSCREEN
+                R3!(D) = R3!(D) + 1: Call UPDATESCREEN
                 U$ = "RB KNOCKED O.B. TO " + B$(D)
                 Call SELECTPBP
                 Call DELAY
@@ -2956,7 +3022,8 @@ Sub COLHOOP ()
 
             Else
 
-                752 R3!(P) = R3!(P) + 1: Call MAINSCREEN
+                752 '
+                R3!(P) = R3!(P) + 1: Call UPDATESCREEN
                 U$ = "RB KNOCKED O.B. TO " + B$(P)
                 Call SELECTPBP
                 Call DELAY
@@ -2973,7 +3040,7 @@ Sub COLHOOP ()
             End If
 
         Case 18 To 19
-            730 '
+
             If X = 99 Then 700
 
             Call OFFREBOUND
@@ -2983,7 +3050,7 @@ Sub COLHOOP ()
             A!(P, B1(P, B), 11) = A!(P, B1(P, B), 11) + 1
             R3!(P) = R3!(P) + 1: S!(P, H) = S!(P, H) + 2
             S!(P, 0) = S!(P, 0) + 2
-            Call MAINSCREEN
+            Call UPDATESCREEN
 
             If PB% = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "TIPPED IN BY "; AA$(P, B1(P, B)): Print "   BASKET GOOD !!!": Call DELAY
             If PB% = 0 Then U$ = AA$(P, B1(P, B)) + " TIPS IT IN!!": Call PBP
@@ -3036,7 +3103,7 @@ Sub COLHOOP ()
 
                 A!(P, B1(P, B), 8) = A!(P, B1(P, B), 8) + 1
                 Call GoodBasket
-                Call MAINSCREEN
+                Call UPDATESCREEN
 
                 GoTo 562
 
@@ -3072,11 +3139,16 @@ Sub COLHOOP ()
     ORB = RB
 
     For I = 0 To 4
+
         XZ = A!(1 - P, B1(1 - P, I), 2)
-        If H > 2 Or H = 2 And gameClock! <= 120 Then 778
-        If A!(1 - P, B1(1 - P, I), 3) - A!(1 - P, B1(1 - P, I), 7) - A!(1 - P, B1(1 - P, I), 11) - A!(1 - P, B1(1 - P, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
-        778 If FA%(1 - P, B1(1 - P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
+
+        If Not (H > 2 Or H = 2 And gameClock! <= 120 Then)
+            If A!(1 - P, B1(1 - P, I), 3) - A!(1 - P, B1(1 - P, I), 7) - A!(1 - P, B1(1 - P, I), 11) - A!(1 - P, B1(1 - P, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
+        End If
+
+        If FA%(1 - P, B1(1 - P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
         RB(I + 5) = RB(I + 5) + XZ: RB = RB + XZ
+
     Next
 
     DRB = RB - ORB
@@ -3126,7 +3198,6 @@ Sub COLHOOP ()
 
         FF% = 0
 
-        710 '
         If pbpDelay! <> 0 Then
             If PB% = 1 Then
                 Call WINDEX
@@ -3144,7 +3215,7 @@ Sub COLHOOP ()
         R3!(D) = R3!(D) + 1
         A!(D, B1(D, B), 11) = A!(D, B1(D, B), 11) + 1
 
-        Call MAINSCREEN
+        Call UPDATESCREEN
 
         PB$ = ""
         If P = 1 Then
@@ -3169,7 +3240,7 @@ Sub COLHOOP ()
 
     A!(D, B1(D, B), 11) = A!(D, B1(D, B), 11) + 1
     R3!(D) = R3!(D) + 1
-    Call MAINSCREEN
+    Call UPDATESCREEN
     U$ = AA$(D, B1(D, B)) + " HAS THE DEF RB"
 
     If PB% = 0 And pbpDelay! <> 0 Then Call PBP
@@ -3200,7 +3271,8 @@ Sub COLHOOP ()
 
     If R0! = 15 Then FB% = 0: GoTo RBTIEUP
 
-    If CZ%(D) = 1 And Int(Rnd(1) * 100) + 1 <= 50 Then
+    Call d100(RN0)
+    If CZ%(D) = 1 And RN0 <= 50 Then
 
         gameClock! = gameClock! - 4
         timeElapsed! = 4
@@ -3235,7 +3307,8 @@ Sub COLHOOP ()
         A!(P, B1(P, B), 24) = A!(P, B1(P, B), 24) + 1
         R3!(P) = R3!(P) + 1
 
-        Call MAINSCREEN
+        Call UPDATESCREEN
+
         Call FoulCalled(1)
         LT = 4
 
@@ -3246,7 +3319,7 @@ Sub COLHOOP ()
     A!(P, B1(P, B), 24) = A!(P, B1(P, B), 24) + 1
     A!(P, B1(P, B), 11) = A!(P, B1(P, B), 11) + 1
     R3!(P) = R3!(P) + 1
-    Call MAINSCREEN
+    Call UPDATESCREEN
 
     U$ = AA$(P, B1(P, B)) + " HAS THE OFF RB"
     If PB% = 0 And pbpDelay! <> 0 Then Call PBP
@@ -3288,7 +3361,7 @@ Sub COLHOOP ()
     TIEUP:
     If PB% <> 1 Then
 
-        R0! = Int(Rnd(1) * 100) + 1
+        Call d100(R0!)
 
         Select Case R0!
             Case 1 To 20
@@ -3308,7 +3381,7 @@ Sub COLHOOP ()
     End If
 
     RBTIEUP:
-    R0! = Int(Rnd(1) * 100) + 1
+    Call d100(R0!)
     P9 = Int(Rnd(1) * 5)
 
     If PB% = 1 And pbpDelay! <> 0 Then
@@ -3422,7 +3495,7 @@ Sub COLHOOP ()
             'Increase FT ATT
             A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
 
-            S = Int(Rnd(1) * 100) + 1
+            Call d100(S)
 
             'FT Success Chance
             FX% = A!(P, B1(P, B), 1)
@@ -3499,7 +3572,6 @@ Sub COLHOOP ()
 
         If P2(D) > 6 Then 570
 
-        567 '
         If gameClock! <= 0 Then 170
 
         Call DEADBALLOPTIONS
@@ -3520,7 +3592,7 @@ Sub COLHOOP ()
             GoTo 350
         End If
 
-        Call MAINSCREEN
+        Call UPDATESCREEN
 
         U$ = "1 FT: " + AA$(P, B1(P, B)) + Str$(A!(P, B1(P, B), 1)) + " %"
         Call PBP
@@ -3544,9 +3616,11 @@ Sub COLHOOP ()
         'Increase FT ATT
         A!(P, B1(P, B), 9) = A!(P, B1(P, B), 9) + 1
 
-        S = Int(Rnd(1) * 100) + 1
+
         FX% = A!(P, B1(P, B), 1)
         If FA%(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
+
+        Call d100(S)
 
         If S <= FX% Then
             If PB% = 0 Then

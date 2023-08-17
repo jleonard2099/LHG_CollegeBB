@@ -1,3 +1,8 @@
+'----------------------------------------
+'           TINPUT Subroutine
+'----------------------------------------
+'This subroutine assists the user with the
+'steps for entering a new team.
 Sub TINPUT ()
 
     _Title "Courtside College Basketball - Team Input"
@@ -132,7 +137,7 @@ Sub TINPUT ()
 
             Print
             Color 14: Print "(1) ";
-            Color 15: Print "TEAM/INDIVID ASSISTS (Y/N): ";
+            Color 15: Print "TEAM/INDIVID ASSISTS? (Y/N): ";
 
             Do
                 I$ = GetKeyPress$
@@ -147,7 +152,7 @@ Sub TINPUT ()
 
                 Print
                 Color 14: Print "(2) ";
-                Color 15: Print "PERSONAL FOULS (Y/N): ";
+                Color 15: Print "PERSONAL FOULS? (Y/N): ";
 
                 Do
                     I$ = GetKeyPress$
@@ -162,7 +167,7 @@ Sub TINPUT ()
 
                     Print
                     Color 14: Print "(3) ";
-                    Color 15: Print "STEALS & TURNOVERS (Y/N): ";
+                    Color 15: Print "STEALS & TURNOVERS? (Y/N): ";
 
                     Do
                         I$ = GetKeyPress$
@@ -177,7 +182,7 @@ Sub TINPUT ()
 
                         Print
                         Color 14: Print "(4) ";
-                        Color 15: Print "TEAM / INDIVIDUAL BLOCKS (Y/N): ";
+                        Color 15: Print "TEAM / INDIVIDUAL BLOCKS? (Y/N): ";
 
                         Do
                             I$ = GetKeyPress$
@@ -194,7 +199,7 @@ Sub TINPUT ()
 
                             Do
 
-                                Print "ANY CHANGE (Y/N)";
+                                Print "ANY CHANGE?? (Y/N)";
                                 I$ = GetKeyPress$
 
                             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
@@ -1055,7 +1060,9 @@ End Sub
 '----------------------------------------
 '          SaveTeam Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine saves the modifed team
+'data (from corresponding arrays) to an
+'appropriate spot in the select team file
 Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
