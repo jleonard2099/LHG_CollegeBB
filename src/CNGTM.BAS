@@ -454,7 +454,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
         Color 15, 0
 
-        T3 = 0
+        totalCX = 0
 
         For I = 0 To 13
             Print Using "## "; I + 1;
@@ -462,14 +462,14 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
             Locate , 17
             Print playerOff!(I, 3)
             Locate , 1
-            T3 = T3 + playerOff!(I, 3)
+            totalCX = totalCX + playerOff!(I, 3)
         Next I
 
         Print
         Color 14: Print "TOTAL CP ";
 
         Locate , 17
-        Color 15, 0: Print T3
+        Color 15, 0: Print totalCX
 
         Do
             Locate 21
@@ -490,7 +490,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
             Cls
 
-            If T3 > 98 And T3 < 102 Then
+            If totalCX > 98 And totalCX < 102 Then
 
                 Call SaveChangedTeam(0, yearNumber$, teamName$, teamIdx)
 

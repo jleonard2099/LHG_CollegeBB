@@ -10,7 +10,6 @@ Sub HD2HDCON ()
     _Title "Courtside College Basketball - Head-to-Head Stats"
 
     Shared mergeO%()
-    Shared leagueRatings%(), teamRatings%()
 
     Shared AL!(), AW!(), HL!(), HW!()
     Shared R1!(), R2!(), hd2hdR3!(), R4!()
@@ -19,12 +18,11 @@ Sub HD2HDCON ()
 
     Shared compO$(), compareB$(), homeTeam$(), Z1$()
 
-    Dim hd2hdB%(14, 19)
-    Dim hd2hdTR%(100), hd2hdZ1%(40)
+    Dim teamRat_HD2HD(100), Z1_HD2HD(40)
 
-    Dim hd2hdA$(14, 1), DV$(4)
+    Dim A_HD2HD$(14, 1), DV$(4)
     Dim OPP$(100), TM1$(40)
-    Dim hd2hdZ2$(40), ZA$(40)
+    Dim Z2_HD2HD$(40), ZA$(40)
 
     Shared D1$, D2$
 
@@ -51,7 +49,7 @@ Sub HD2HDCON ()
 
         For J = 1 To 100: Input #4, compO$(J): Next
 
-        For J = 1 To 100: Input #4, hd2hdTR%(J): Next
+        For J = 1 To 100: Input #4, teamRat_HD2HD(J): Next
 
         For J = 1 To 100: Input #4, homeTeam$(J): Next
 
@@ -111,8 +109,8 @@ Sub HD2HDCON ()
 
             For X = 1 To 30
                 Input #1, Z1$(X)
-                Input #1, hd2hdZ1%(X)
-                Input #1, hd2hdZ2$(X)
+                Input #1, Z1_HD2HD(X)
+                Input #1, Z2_HD2HD$(X)
             Next
 
             NTMS = 30
@@ -150,13 +148,13 @@ Sub HD2HDCON ()
                 If Z1$(K) <> "XXX" Then
 
                     For I = 1 To Y
-                        If mergeO%(I) > hd2hdTR%(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-                        If mergeO%(I) > hd2hdTR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-                        If mergeO%(I) < hd2hdTR%(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
-                        If mergeO%(I) < hd2hdTR%(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
-                        If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + hd2hdTR%(I)
+                        If mergeO%(I) > teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
+                        If mergeO%(I) > teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
+                        If mergeO%(I) < teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
+                        If mergeO%(I) < teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
+                        If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + teamRat_HD2HD(I)
                         If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + mergeO%(I)
-                        If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + hd2hdTR%(I)
+                        If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + teamRat_HD2HD(I)
                         If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then hd2hdR3!(K) = hd2hdR3!(K) + mergeO%(I)
                     Next I
 

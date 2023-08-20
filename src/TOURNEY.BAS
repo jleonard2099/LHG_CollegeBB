@@ -21,7 +21,7 @@ Sub TOURNEY ()
     Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS), YR%(MAX_TEAMS)
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared MO$(), sclockOpt$(), yesNo$()
+    Shared playMode$(), sclockOpt$(), yesNo$()
 
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
@@ -340,7 +340,7 @@ Sub EditGame_TOURNEY ()
     Shared scheduleNG%(), scheduleAP%()
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared MO$(), sclockOpt$(), yesNo$()
+    Shared playMode$(), sclockOpt$(), yesNo$()
 
     Dim displayPause!
 
@@ -372,7 +372,7 @@ Sub EditGame_TOURNEY ()
             Color 15: Print "HOME TEAM: "; H$
 
             Color 14: Print " (1) ";:
-            Color 15: Print MO$(scheduleNG%(NG%, 8))
+            Color 15: Print playMode$(scheduleNG%(NG%, 8))
 
             Color 14: Print " (2) ";:
             Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(NG%, 3))

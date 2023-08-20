@@ -541,7 +541,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
     Shared scheduleNG%(), teamRatings%()
 
     Shared coachMode$(), foulShotOpt$()
-    Shared location$(), MO$()
+    Shared location$(), playMode$()
     Shared sclockOpt$(), yesNo$()
     
     Dim displayPause!
@@ -553,7 +553,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
         Color 2: Print Tab(29); "SELECT GAME OPTIONS"
         Print
 
-        Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print MO$(scheduleNG%(gameIndex%, 8))
+        Locate 2, 2: Color 14: Print "(1) ";: Color 15: Print playMode$(scheduleNG%(gameIndex%, 8))
         Locate 3, 2: Color 14: Print "(2) ";: Color 15: Print "VISITING TEAM: "; visitor$
         Locate 4, 2: Color 14: Print "(3) ";: Color 15: Print "HOME TEAM: "; home$
         Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(gameIndex%, 3))
@@ -1191,7 +1191,7 @@ Sub ChangeGlobalSettings ()
     Shared scheduleAP%(), scheduleNG%()
 
     Shared coachMode$(), foulShotOpt$()
-    Shared location$(), MO$()
+    Shared location$(), playMode$()
     Shared sclockOpt$(), yesNo$()
 
     Dim displayPause!
@@ -1214,7 +1214,7 @@ Sub ChangeGlobalSettings ()
         Cls
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
-        Locate 3, 2: Color 14: Print "(1) ";: Color 15: Print "TYPE OF GAME: "; MO$(U5%)
+        Locate 3, 2: Color 14: Print "(1) ";: Color 15: Print "TYPE OF GAME: "; playMode$(U5%)
         Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; displayPause!
         Locate 5, 2: Color 14: Print "(3) ";: Color 15: Print "RESERVED FOR FUTURE"
         Locate 6, 2: Color 14: Print "(4) ";: Color 15: Print "SHOT CLOCK: "; sclockOpt$(SC%)
