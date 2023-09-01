@@ -39,39 +39,38 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
 
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #2
+    Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #1
 
     For X = 1 To 30: 
-        Input #2, T$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+        Input #1, T$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
     For X = 1 To 250: 
-        Input #2, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1!(X)
+        Input #1, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1!(X)
     Next
 
     For X = 1 To 40: 
-        Input #2, OL$(X)
+        Input #1, OL$(X)
         For M = 1 To 20: 
-            Input #2, OL!(X, M)
+            Input #1, OL!(X, M)
         Next
     Next
 
     For X = 1 To 40: 
-        Input #2, DL$(X)
+        Input #1, DL$(X)
         For M = 1 To 20: 
-            Input #2, DL!(X, M)
+            Input #1, DL!(X, M)
         Next
     Next
 
-    Close #2
+    Close #1
 
     Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
     Input #2, FF$, D1$, D2$
-    Close 2
+    Close #2
 
     D1$ = PadRight$(D1$, 8)
     D2$ = PadRight$(D2$, 8)
-
 
     Cls
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
@@ -92,24 +91,7 @@ Sub StatOptions_Con (targetFile$, FF$, D1$, D2$)
         Cls
         Call TITLE_STATS
 
-        J = 5
-
-        Locate 8, 8: Color 15, 1
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To J
-            Locate 8 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 9 + J, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
+        Call MenuBox (8, 8, 61, 5, 15, 1)
 
         Do
 
@@ -192,13 +174,7 @@ Sub ReportFilePrompt_Con (reportFile$)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8: Color 15, 1
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";: For II = 1 To JJ: Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";: Next
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox (6, 8, 61, 7, 15, 1)
 
         Locate 7, 32
 
@@ -786,361 +762,397 @@ Sub SavePrintConLeaders (reportFile$, destination)
     Shared T$()
 
     If destination <> 1 Then
-        Open "REPORT" For Output As #2
+        Open "REPORT" For Output As #1
     Else
-        Open reportFile$ + ".RPT" For Output As #2
+        Open reportFile$ + ".RPT" For Output As #1
     End If
 
     Color 0, 15
     Cls
 
-    Print #2, FF$ + " CONFERENCE"
+    Print #1, FF$ + " CONFERENCE"
 
-    If D1$ <> "" Then Print #2, D1$; " DIVISION"
-    Print #2, "                 CONFERENCE                         FULL SEASON"
-    Print #2, "                W    L     PCT                          W    L     PCT"
+    If D1$ <> "" Then Print #1, D1$; " DIVISION"
+    Print #1, "                 CONFERENCE                         FULL SEASON"
+    Print #1, "                W    L     PCT                          W    L     PCT"
 
     For P = 1 To 15
 
         If T$(P) <> "" And T$(P) <> "*" Then
-            Print #2, T$(P); Tab(16);
-            Print #2, Using "##   ##   "; O4!(P); O5!(P);
+            Print #1, T$(P); Tab(16);
+            Print #1, Using "##   ##   "; O4!(P); O5!(P);
 
-            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #2, " .---";
-            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #2, " .000";
-            If O6!(P) = 1 Then Print #2, "1.000";
-            If O6!(P) <> 0 And O6!(P) <> 1 Then Print #2, Using " .###"; O6!(P);
+            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #1, " .---";
+            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #1, " .000";
+            If O6!(P) = 1 Then Print #1, "1.000";
+            If O6!(P) <> 0 And O6!(P) <> 1 Then Print #1, Using " .###"; O6!(P);
 
-            Print #2, Tab(41);
-            Print #2, T$(P); Tab(56);
-            Print #2, Using "##   ##   "; O1!(P); O2!(P);
+            Print #1, Tab(41);
+            Print #1, T$(P); Tab(56);
+            Print #1, Using "##   ##   "; O1!(P); O2!(P);
 
-            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #2, " .---"
-            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #2, " .000"
-            If O3!(P) = 1 Then Print #2, "1.000"
-            If O3!(P) <> 0 And O3!(P) <> 1 Then Print #2, Using " .###"; O3!(P)
+            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #1, " .---"
+            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #1, " .000"
+            If O3!(P) = 1 Then Print #1, "1.000"
+            If O3!(P) <> 0 And O3!(P) <> 1 Then Print #1, Using " .###"; O3!(P)
         End If
 
     Next P
 
-    Print #2,
-    Print #2, FF$ + " CONFERENCE"
+    Print #1,
+    Print #1, FF$ + " CONFERENCE"
 
-    If D2$ <> "" Then Print #2, D2$; " DIVISION"
+    If D2$ <> "" Then Print #1, D2$; " DIVISION"
 
-    Print #2, "                 CONFERENCE                         FULL SEASON"
-    Print #2, "                W    L     PCT                          W    L     PCT"
+    Print #1, "                 CONFERENCE                         FULL SEASON"
+    Print #1, "                W    L     PCT                          W    L     PCT"
 
     For P = 16 To 30
 
         If T$(P) <> "" And T$(P) <> "*" Then
-            Print #2, T$(P); Tab(16);
-            Print #2, Using "##   ##   "; O4!(P); O5!(P);
+            Print #1, T$(P); Tab(16);
+            Print #1, Using "##   ##   "; O4!(P); O5!(P);
 
-            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #2, " .---";
-            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #2, " .000";
-            If O6!(P) = 1 Then Print #2, "1.000";
-            If O6!(P) <> 0 And O6!(P) <> 1 Then Print #2, Using " .###"; O6!(P);
+            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #1, " .---";
+            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #1, " .000";
+            If O6!(P) = 1 Then Print #1, "1.000";
+            If O6!(P) <> 0 And O6!(P) <> 1 Then Print #1, Using " .###"; O6!(P);
 
-            Print #2, Tab(41);
-            Print #2, T$(P); Tab(56);
-            Print #2, Using "##   ##   "; O1!(P); O2!(P);
+            Print #1, Tab(41);
+            Print #1, T$(P); Tab(56);
+            Print #1, Using "##   ##   "; O1!(P); O2!(P);
 
-            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #2, " .---"
-            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #2, " .000"
-            If O3!(P) = 1 Then Print #2, "1.000"
-            If O3!(P) <> 0 And O3!(P) <> 1 Then Print #2, Using " .###"; O3!(P)
+            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #1, " .---"
+            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #1, " .000"
+            If O3!(P) = 1 Then Print #1, "1.000"
+            If O3!(P) <> 0 And O3!(P) <> 1 Then Print #1, Using " .###"; O3!(P)
         End If
 
     Next P
 
-    Print #2, Chr$(12)
-    Print #2, "FIELD GOAL % (MIN 5 FGM/G)"; Tab(41); "FREE THROW % (MIN 2.5 FTM/G)"
-    Print #2,
-    Print #2, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
+    Print #1, Chr$(12)
+    Print #1, "FIELD GOAL % (MIN 5 FGM/G)"; Tab(41); "FREE THROW % (MIN 2.5 FTM/G)"
+    Print #1,
+    Print #1, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
 
     For P = 41 To 60
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
-            Print #2, Tab(28);
-            Print #2, Using "##.#  ####"; seenatZ!(P) * 100; seenatZ1!(P);
-            Print #2, Tab(41);
+            Print #1, Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
+            Print #1, Tab(28);
+            Print #1, Using "##.#  ####"; seenatZ!(P) * 100; seenatZ1!(P);
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 20) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, Left$(seenatZ2$(P + 20), 10) + ", " + seenatZ3$(P + 20);
-            Print #2, Tab(67);
-            Print #2, Using "###.#  ####"; seenatZ!(P + 20) * 100; seenatZ1!(P)
+            Print #1, Left$(seenatZ2$(P + 20), 10) + ", " + seenatZ3$(P + 20);
+            Print #1, Tab(67);
+            Print #1, Using "###.#  ####"; seenatZ!(P + 20) * 100; seenatZ1!(P)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "SCORING"; Tab(41); "TOTAL POINTS"
+    Print #1,
+    Print #1, "SCORING"; Tab(41); "TOTAL POINTS"
 
     For P = 1 To 20
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
         If seenatZ2$(P + 20) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 20)
+            Print #1, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 20)
         End If
 
     Next
 
-    Print #2, Chr$(12)
-    Print #2, "STEALS PER GAME"; Tab(41); "STEALS"
+    Print #1, Chr$(12)
+    Print #1, "STEALS PER GAME"; Tab(41); "STEALS"
 
     For P = 81 To 90
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 10) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 10)
+            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 10)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "ASSISTS PER GAME"; Tab(41); "ASSISTS"
+    Print #1,
+    Print #1, "ASSISTS PER GAME"; Tab(41); "ASSISTS"
 
     For P = 101 To 110
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 10) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 10)
+            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 10)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "THREE FIELD GOAL % (MIN 1.5 3FGM/G)"; Tab(41); "MINUTES PER GAME"
+    Print #1,
+    Print #1, "THREE FIELD GOAL % (MIN 1.5 3FGM/G)"; Tab(41); "MINUTES PER GAME"
 
     For P = 121 To 130
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P) * 100;
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P) * 100;
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 20) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
-            Print #2, Tab(74);
-            Print #2, Using "##.#"; seenatZ!(P + 20)
+            Print #1, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
+            Print #1, Tab(74);
+            Print #1, Using "##.#"; seenatZ!(P + 20)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "THREE POINT FIELD GOALS MADE"; Tab(41); "MINUTES"
+    Print #1,
+    Print #1, "THREE POINT FIELD GOALS MADE"; Tab(41); "MINUTES"
 
     For P = 131 To 140
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "####"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "####"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 20) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 20)
+            Print #1, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 20)
         End If
 
     Next
 
-    Print #2,
-    Print #2, Chr$(12)
-    Print #2, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
+    Print #1,
+    Print #1, Chr$(12)
+    Print #1, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
 
     For P = 161 To 170
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 10) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 10)
+            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 10)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "BLOCKS PER GAME"; Tab(41); "BLOCKS"
+    Print #1,
+    Print #1, "BLOCKS PER GAME"; Tab(41); "BLOCKS"
 
     For P = 181 To 190
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 20)
+            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 20)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "FIELD GOALS MADE"; Tab(41); "FREE THROWS MADE"
+    Print #1,
+    Print #1, "FIELD GOALS MADE"; Tab(41); "FREE THROWS MADE"
 
     For P = 201 To 210
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "####"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "####"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
         If seenatZ2$(P + 10) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 10)
+            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 10)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "FOULS PER GAME"; Tab(41); "FOULS"
+    Print #1,
+    Print #1, "FOULS PER GAME"; Tab(41); "FOULS"
 
     For P = 221 To 230
 
         If seenatZ2$(P) = "" Then
-            Print #2, Tab(41);
+            Print #1, Tab(41);
         Else
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "##.#"; seenatZ!(P);
-            Print #2, Tab(41);
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Tab(41);
         End If
 
         If seenatZ2$(P + 10) = "" Then
-            Print #2,
+            Print #1,
         Else
-            Print #2, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
-            Print #2, Tab(74);
-            Print #2, Using "####"; seenatZ!(P + 10)
+            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, Tab(74);
+            Print #1, Using "####"; seenatZ!(P + 10)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "MOST VALUABLE PLAYER"
+    Print #1,
+    Print #1, "MOST VALUABLE PLAYER"
 
     For P = 241 To 250
 
         If seenatZ2$(P) <> "" Then
-            Print #2, seenatZ2$(P) + ", " + seenatZ3$(P);
-            Print #2, Tab(34);
-            Print #2, Using "####"; seenatZ!(P)
+            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, Tab(34);
+            Print #1, Using "####"; seenatZ!(P)
         End If
 
     Next
 
-    Print #2,
-    Print #2, Chr$(12)
-    Print #2, "                         OFFENSIVE TOTALS"
-    Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print #1,
+    Print #1, Chr$(12)
+    Print #1, "                         OFFENSIVE TOTALS"
+    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
     For X = 1 To 20
 
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
-            Print #2, Left$(OL$(X), 11); Tab(13);: Print #2, Using "##"; OL!(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; OL!(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; OL!(X, 3);: Print #2, Tab(26);
-            Print #2, Using ".###"; OL!(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
-            Print #2, Tab(46);: Print #2, Using "####"; OL!(X, 6);: Print #2, Tab(51);: Print #2, Using "####"; OL!(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; OL!(X, 7);: Print #2, Tab(61);
-            Print #2, Using "###"; OL!(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; OL!(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; OL!(X, 20);
-            Print #2, Tab(75);: Print #2, Using "###.#"; OL!(X, 19)
+            Print #1, Left$(OL$(X), 11); Tab(13);
+			Print #1, Using "##"; OL!(X, 16);
+			Print #1, Tab(16);
+			Print #1, Using "####"; OL!(X, 2);
+			Print #1, Tab(21);
+			Print #1, Using "####"; OL!(X, 3);
+			Print #1, Tab(26);
+            Print #1, Using ".###"; OL!(X, 17);
+			Print #1, Tab(31);
+			Print #1, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
+            Print #1, Tab(46);
+			Print #1, Using "####"; OL!(X, 6);
+			Print #1, Tab(51);
+			Print #1, Using "####"; OL!(X, 9);
+			Print #1, Tab(56);
+			Print #1, Using "####"; OL!(X, 7);
+			Print #1, Tab(61);
+            Print #1, Using "###"; OL!(X, 8);
+			Print #1, Tab(65);
+			Print #1, Using "###"; OL!(X, 10);
+			Print #1, Tab(69);
+			Print #1, Using "#####"; OL!(X, 20);
+            Print #1, Tab(75);
+			Print #1, Using "###.#"; OL!(X, 19)
         End If
 
     Next
 
-    Print #2,
-    Print #2, "                         DEFENSIVE TOTALS"
-    Print #2, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
+    Print #1,
+    Print #1, "                         DEFENSIVE TOTALS"
+    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
     For X = 1 To 20
 
         If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print #2, Left$(DL$(X), 11); Tab(13);: Print #2, Using "##"; DL!(X, 16);: Print #2, Tab(16);: Print #2, Using "####"; DL!(X, 2);: Print #2, Tab(21);: Print #2, Using "####"; DL!(X, 3);: Print #2, Tab(26);
-            Print #2, Using ".###"; DL!(X, 17);: Print #2, Tab(31);: Print #2, Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
-            Print #2, Tab(46);: Print #2, Using "#### ####"; DL!(X, 6); DL!(X, 9);: Print #2, Tab(56);: Print #2, Using "####"; DL!(X, 7);: Print #2, Tab(61);
-            Print #2, Using "###"; DL!(X, 8);: Print #2, Tab(65);: Print #2, Using "###"; DL!(X, 10);: Print #2, Tab(69);: Print #2, Using "#####"; DL!(X, 20);
-            Print #2, Tab(75);: Print #2, Using "###.#"; DL!(X, 19)
+            Print #1, Left$(DL$(X), 11); Tab(13);
+            Print #1, Using "##"; DL!(X, 16);
+            Print #1, Tab(16);
+            Print #1, Using "####"; DL!(X, 2);
+            Print #1, Tab(21);
+            Print #1, Using "####"; DL!(X, 3);
+            Print #1, Tab(26);
+            Print #1, Using ".###"; DL!(X, 17);
+            Print #1, Tab(31);
+            Print #1, Using "#### #### .###"; DL!(X, 4); DL!(X, 5); DL!(X, 18);
+            Print #1, Tab(46);
+            Print #1, Using "#### ####"; DL!(X, 6); DL!(X, 9);
+            Print #1, Tab(56);
+            Print #1, Using "####"; DL!(X, 7);
+            Print #1, Tab(61);
+            Print #1, Using "###"; DL!(X, 8);
+            Print #1, Tab(65);
+            Print #1, Using "###"; DL!(X, 10);
+            Print #1, Tab(69);
+            Print #1, Using "#####"; DL!(X, 20);
+            Print #1, Tab(75);
+            Print #1, Using "###.#"; DL!(X, 19)
         End If
 
     Next
 
-    Close 2
+    Close #1
 
     If destination <> 1 Then
 
@@ -1151,7 +1163,7 @@ Sub SavePrintConLeaders (reportFile$, destination)
             LPrint X$
         Loop
 
-        Close 2
+        Close #2
 
         LPrint Chr$(12)
 

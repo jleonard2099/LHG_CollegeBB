@@ -71,7 +71,7 @@ Sub CompileNatlOrg ()
             Input #1, recconTRC1$(I)
         Next
 
-        Close 1
+        Close #1
 
     End If
 
@@ -97,7 +97,7 @@ Sub CompileNatlOrg ()
             Input #2, CN$(I)
         Next
 
-        Close 2
+        Close #2
 
         For NC = 1 To 40
 
@@ -121,18 +121,18 @@ Sub CompileNatlOrg ()
                     O6!(X) = 0
                 Next
 
-                Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #2
+                Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #3
 
-                Input #2, LG$
-                Input #2, D1$
-                Input #2, D2$
+                Input #3, LG$
+                Input #3, D1$
+                Input #3, D2$
 
                 For XW = 1 To 30
-                    Input #2, H1$(XW)
+                    Input #3, H1$(XW)
                     Z1$(XW) = H1$(XW)
                 Next
 
-                Close 2
+                Close #3
 
                 For XW = 1 To 30
 
@@ -240,21 +240,21 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
     If _FileExists(diskPaths$(1) + statFile$) Then
 
-        Open diskPaths$(1) + statFile$ For Input As #2
-        Input #2, TN$
+        Open diskPaths$(1) + statFile$ For Input As #1
+        Input #1, TN$
 
         For I = 0 To 13
-            Input #2, compN$(I)
+            Input #1, compN$(I)
             For J = 0 To 13
-                Input #2, compS!(I, J)
+                Input #1, compS!(I, J)
             Next
-            Input #2, statsW0!(I)
-            Input #2, statsW1!(I)
+            Input #1, statsW0!(I)
+            Input #1, statsW1!(I)
         Next
 
-        For L = 1 To 16: Input #2, OT!(L): Next: For L = 1 To 16: Input #2, DT!(L): Next
+        For L = 1 To 16: Input #1, OT!(L): Next: For L = 1 To 16: Input #1, DT!(L): Next
 
-        Close 2
+        Close #1
 
         For I = 0 To 13
 
@@ -1428,28 +1428,28 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
     Else
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #2
+        Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-        Input #2, numberGames%
+        Input #1, numberGames%
 
-        For I = 1 To 100: Input #2, mergeO%(I): Next I
+        For I = 1 To 100: Input #1, mergeO%(I): Next I
 
-        For I = 1 To 100: Input #2, compO$(I): Next I
+        For I = 1 To 100: Input #1, compO$(I): Next I
 
-        For I = 1 To 100: Input #2, compT%(I): Next I
+        For I = 1 To 100: Input #1, compT%(I): Next I
 
-        For I = 1 To 100: Input #2, compH$(I): Next I
+        For I = 1 To 100: Input #1, compH$(I): Next I
 
         For I = 1 To 100
             For I1 = 0 To 1
-                Input #2, compAP%(I, I1)
+                Input #1, compAP%(I, I1)
             Next
         Next
 
-        For I = 1 To 100: Input #2, CRD(I): Next I
-        For I = 1 To 100: Input #2, gameSite$(I): Next I
+        For I = 1 To 100: Input #1, CRD(I): Next I
+        For I = 1 To 100: Input #1, gameSite$(I): Next I
 
-        Close 2
+        Close #1
 
         fullWins = 0
         fullLosses = 0
@@ -1617,33 +1617,33 @@ Sub PostConLeaders_Nat (conferenceName$)
     Cls
     Print
 
-    Open diskPaths$(1) + conferenceName$ + ".LDR" For Output As #2
+    Open diskPaths$(1) + conferenceName$ + ".LDR" For Output As #1
 
     Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
     For X = 1 To 30:
-        Write #2, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+        Write #1, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
     For X = 1 To 250
-        Write #2, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
+        Write #1, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
     Next X
 
     For X = 1 To 40:
-        Write #2, OL$(X)
+        Write #1, OL$(X)
         For Y = 1 To 20:
-            Write #2, OL!(X, Y)
+            Write #1, OL!(X, Y)
         Next
     Next
 
     For X = 1 To 40:
-        Write #2, DL$(X)
+        Write #1, DL$(X)
         For Y = 1 To 20:
-            Write #2, DL!(X, Y)
+            Write #1, DL!(X, Y)
         Next
     Next
 
-    Close 2
+    Close #1
 
 End Sub
 
@@ -1671,33 +1671,33 @@ Sub PostOrgLeaders_Nat (organization$, NRT)
 
     Cls
 
-    Open diskPaths$(1) + organization$ + ".NLD" For Output As #2
+    Open diskPaths$(1) + organization$ + ".NLD" For Output As #1
 
     Print "    POSTING NEW "; organization$; " LEADERS"
 
     For X = 1 To 30
-        Write #2, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
+        Write #1, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
     Next
 
     For X = 1 To 250
-        Write #2, NZ0$(X), NZ3$(X), NLD!(X, 1), NLD!(X, 2)
+        Write #1, NZ0$(X), NZ3$(X), NLD!(X, 1), NLD!(X, 2)
     Next X
 
     For X = 1 To 40
-        Write #2, NOL$(X)
+        Write #1, NOL$(X)
         For Y = 1 To 20
-            Write #2, NOL!(X, Y)
+            Write #1, NOL!(X, Y)
         Next
     Next
 
     For X = 1 To 40
-        Write #2, NDL$(X)
+        Write #1, NDL$(X)
         For Y = 1 To 20
-            Write #2, NDL!(X, Y)
+            Write #1, NDL!(X, Y)
         Next
     Next
 
-    Close 2
+    Close #1
 
     For Z = 1 To NRT - 1
         For Z1 = Z + 1 To NRT
@@ -1720,27 +1720,27 @@ Sub PostOrgLeaders_Nat (organization$, NRT)
         Write #2, PT$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
     Next
 
-    Close 2
+    Close #2
 
-    Open diskPaths$(1) + "RECORDS.CBB" For Output As #1
+    Open diskPaths$(1) + "RECORDS.CBB" For Output As #3
 
     For I = 1 To 25
-        Print #1, BRC!(I)
-        Print #1, BRC$(I, 0)
-        Print #1, BRC$(I, 1)
+        Print #3, BRC!(I)
+        Print #3, BRC$(I, 0)
+        Print #3, BRC$(I, 1)
     Next
 
     For I = 1 To 21
-        Print #1, TRC!(I)
-        Print #1, recconTRC$(I)
+        Print #3, TRC!(I)
+        Print #3, recconTRC$(I)
     Next
 
     For I = 1 To 21
-        Print #1, TRC1!(I)
-        Print #1, recconTRC1$(I)
+        Print #3, TRC1!(I)
+        Print #3, recconTRC1$(I)
     Next
 
-    Close 1
+    Close #3
 
 End Sub
 

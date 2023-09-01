@@ -79,27 +79,27 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     VL% = 0
     NL% = 0
 
-    Open diskPaths$(1) + statFile$ + "S" For Input As #2
+    Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-    Input #2, totalGames%
+    Input #1, totalGames%
 
-    For I = 1 To 100: Input #2, mergeO%(I): Next I
+    For I = 1 To 100: Input #1, mergeO%(I): Next I
 
-    For I = 1 To 100: Input #2, compO$(I): Next I
+    For I = 1 To 100: Input #1, compO$(I): Next I
 
-    For I = 1 To 100: Input #2, mergeT%(I): Next I
+    For I = 1 To 100: Input #1, mergeT%(I): Next I
 
-    For I = 1 To 100: Input #2, homeTeam$(I): Next I
+    For I = 1 To 100: Input #1, homeTeam$(I): Next I
 
     For I = 1 To 100
-        For I1 = 0 To 1: Input #2, lookyAP%(I, I1): Next
+        For I1 = 0 To 1: Input #1, lookyAP%(I, I1): Next
     Next
 
-    For I = 1 To 100: Input #2, lookyCRD(I): Next I
+    For I = 1 To 100: Input #1, lookyCRD(I): Next I
 
-    For I = 1 To 100: Input #2, lookySites$(I): Next I
+    For I = 1 To 100: Input #1, lookySites$(I): Next I
 
-    Close #2
+    Close #1
 
     For I = 1 To totalGames%
         If mergeO%(I) > mergeT%(I) Then W% = W% + 1
@@ -117,28 +117,28 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
         P%(1) = P%(1) + mergeT%(I)
     Next
 
-    Open diskPaths$(1) + statFile$ For Input As #1
+    Open diskPaths$(1) + statFile$ For Input As #2
 
-    Input #1, teamName$
+    Input #2, teamName$
 
     For I = 0 To 13: 
     
-        Input #1, statPlyrNames$(I)
+        Input #2, statPlyrNames$(I)
 
         For J = 0 To 13: 
-            Input #1, lookyA!(I, J)
+            Input #2, lookyA!(I, J)
         Next
         
-        Input #1, statsW0!(I)
-        Input #1, statsW1!(I)
+        Input #2, statsW0!(I)
+        Input #2, statsW1!(I)
 
     Next
 
-    For K = 0 To 15: Input #1, statsZ!(K): Next
+    For K = 0 To 15: Input #2, statsZ!(K): Next
 
-    For M = 0 To 15: Input #1, statsZ1!(M): Next
+    For M = 0 To 15: Input #2, statsZ1!(M): Next
 
-    Close #1
+    Close #2
 
     For I = 0 To 13
         If lookyA!(I, 0) <> 0 Then lookyA!(I, 14) = lookyA!(I, 10) / lookyA!(I, 0): lookyA!(I, 20) = (lookyA!(I, 2) * 2 + lookyA!(I, 4) + statsW0!(I)) / lookyA!(I, 0): lookyA!(I, 21) = lookyA!(I, 5) / lookyA!(I, 0)
@@ -935,21 +935,7 @@ Sub ResetStatPrompt (statFile$)
 
     Cls
 
-    JJ = 1
-    Locate 6, 8
-
-    'Print box top
-    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-    'Print box sides
-    For II = 1 To JJ
-        Locate 6 + II, 8
-        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-    Next
-
-    'Print box bottom
-    Locate 7 + JJ, 8
-    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+    Call MenuBox (6, 8, 61, 1, 15, 1)
 
     Locate 7
 
@@ -964,22 +950,7 @@ Sub ResetStatPrompt (statFile$)
 
     If UCase$(I$) = "Y" Then
 
-        'Do
-        JJ = 1
-        Locate 6, 8
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox (6, 8, 61, 1, 15, 1)
 
         Locate 7
 

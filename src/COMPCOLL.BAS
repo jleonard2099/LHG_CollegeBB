@@ -65,7 +65,7 @@ Sub CompileCollege ()
             Input #1, recconTRC1$(I)
         Next
 
-        Close 1
+        Close #1
 
     End If
 
@@ -94,7 +94,7 @@ Sub CompileCollege ()
             Z1$(XW) = H1$(XW)
         Next
 
-        Close 2
+        Close #2
 
         For XW = 1 To 30
 
@@ -187,33 +187,33 @@ Sub ReadStatsCon (statFile$, TN$)
 
     Shared compN$()
 
-    Open diskPaths$(1) + statFile$ For Input As #2
+    Open diskPaths$(1) + statFile$ For Input As #1
 
-    Input #2, TN$
+    Input #1, TN$
 
     For I = 0 To 13
 
-        Input #2, compN$(I)
+        Input #1, compN$(I)
 
         For J = 0 To 13:
-            Input #2, compS!(I, J)
+            Input #1, compS!(I, J)
         Next
 
-        Input #2, statsW0!(I)
+        Input #1, statsW0!(I)
 
-        Input #2, statsW1!(I)
+        Input #1, statsW1!(I)
 
     Next
 
     For L = 1 To 16:
-        Input #2, OT!(L)
+        Input #1, OT!(L)
     Next
 
     For L = 1 To 16:
-        Input #2, DT!(L)
+        Input #1, DT!(L)
     Next
 
-    Close 2
+    Close #1
 
 End Sub
 
@@ -953,53 +953,53 @@ Sub PostLeadersConf (leaderFile$)
 
     Print
 
-    Open diskPaths$(1) + leaderFile$ + ".LDR" For Output As #2
+    Open diskPaths$(1) + leaderFile$ + ".LDR" For Output As #1
 
     Print "    POSTING NEW "; leaderFile$; " CONFERENCE LEADERS"
 
     For X = 1 To 30
-        Write #2, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+        Write #1, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
     For X = 1 To 250
-        Write #2, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
+        Write #1, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
     Next X
 
     For X = 1 To 40:
-        Write #2, OL$(X)
+        Write #1, OL$(X)
         For Y = 1 To 20:
-            Write #2, OL!(X, Y)
+            Write #1, OL!(X, Y)
         Next
     Next
 
     For X = 1 To 40:
-        Write #2, DL$(X):
+        Write #1, DL$(X):
         For Y = 1 To 20:
-            Write #2, DL!(X, Y)
+            Write #1, DL!(X, Y)
         Next
     Next
 
-    Close 2
+    Close #1
 
-    Open diskPaths$(1) + "RECORDS.CBB" For Output As #1
+    Open diskPaths$(1) + "RECORDS.CBB" For Output As #2
 
     For I = 1 To 25
-        Print #1, BRC!(I)
-        Print #1, BRC$(I, 0)
-        Print #1, BRC$(I, 1)
+        Print #2, BRC!(I)
+        Print #2, BRC$(I, 0)
+        Print #2, BRC$(I, 1)
     Next
 
     For I = 1 To 21
-        Print #1, TRC!(I)
-        Print #1, recconTRC$(I)
+        Print #2, TRC!(I)
+        Print #2, recconTRC$(I)
     Next
 
     For I = 1 To 21
-        Print #1, TRC1!(I)
-        Print #1, recconTRC1$(I)
+        Print #2, TRC1!(I)
+        Print #2, recconTRC1$(I)
     Next
 
-    Close 1
+    Close #2
 
 End Sub
 
@@ -1025,15 +1025,15 @@ Function FindStatsCon% (teamName$, numberGames%)
 
     Else
 
-        Open diskPaths$(1) + teamName$ + "S" For Input As #2
+        Open diskPaths$(1) + teamName$ + "S" For Input As #1
 
-        Input #2, numberGames%
+        Input #1, numberGames%
 
-        For I = 1 To 100: Input #2, mergeO%(I): Next I
-        For I = 1 To 100: Input #2, compO$(I): Next I
-        For I = 1 To 100: Input #2, mergeT%(I): Next I
+        For I = 1 To 100: Input #1, mergeO%(I): Next I
+        For I = 1 To 100: Input #1, compO$(I): Next I
+        For I = 1 To 100: Input #1, mergeT%(I): Next I
 
-        Close 2
+        Close #1
 
         fullWins = 0
         fullLosses = 0

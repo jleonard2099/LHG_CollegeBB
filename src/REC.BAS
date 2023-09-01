@@ -134,7 +134,7 @@ Sub ViewSeasonRecords ()
 			If TRC1!(I) = 19999 Then TRC1!(I) = 0: recconTRC1$(I) = ""
 		Next
 
-		Close 1
+		Close #1
 
 		Color 0, 0
 		Cls

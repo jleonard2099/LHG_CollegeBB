@@ -24,15 +24,15 @@ Sub BLANKORG ()
 
         If UCase$(I$) = "Y" Then
 
-            Open diskPaths$(1) + organizationFile$ + ".CON" For Input As #2
+            Open diskPaths$(1) + organizationFile$ + ".CON" For Input As #1
 
-            Input #2, org$
+            Input #1, org$
 
             For X = 1 To MAX_CONFERENCES
-                Input #2, Z4$(X)
+                Input #1, Z4$(X)
             Next
 
-            Close 2
+            Close #1
 
             For X = 1 To MAX_CONFERENCES
 
@@ -46,7 +46,7 @@ Sub BLANKORG ()
                         Input #2, H1$(XW)
                     Next
 
-                    Close 2
+                    Close #2
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
                         If H1$(XW) <> Chr$(42) Then

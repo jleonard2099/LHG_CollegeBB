@@ -157,33 +157,24 @@ Sub TOURNEY ()
 
                     Next
 
-                    Close 1
+                    Close #1
 
                     ' *** PLAY GAMES ***
                     Color , 0
                     Cls
 
-                    JJ = 7
-                    Locate 6, 8: Color 15, 4
-                    Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-                    
-                    For II = 1 To JJ: 
-                        Locate 6 + II, 8
-                        Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                    Next
-                    
-                    Locate 7 + JJ, 8
-                    
-                    Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+                    Call MenuBox (6, 8, 61, 7, 15, 4)
 
                     Do
-                        'Locate 7, 32
+
                         Locate 8, 12: Print "TOTAL GAMES ="; scheduleAP%(0)
                         Locate 9, 12: Print "SELECT GAME # TO START AND END WITH": Print
                         Locate 10, 12: Input "ENTER START GAME #: "; SG%: Print
                         Locate 11, 12: Input "ENTER END GAME #:"; EG%
                         Locate 13, 12: Print "ANY CHANGE? (Y/N)"
+
                         I$ = GetKeyPress$
+
                     Loop Until UCase$(I$) = "N"
 
                     If SG% <= 0 Then SG% = 1
@@ -194,7 +185,7 @@ Sub TOURNEY ()
                     Print #2, SG%
                     Print #2, EG%
                     Print #2, 0
-                    Close 2
+                    Close #2
 
                     For I = 1 To scheduleAP%(0)
 
@@ -214,27 +205,27 @@ Sub TOURNEY ()
 
                     Next
 
-                    Open "TICKER" For Output As #2
+                    Open "TICKER" For Output As #3
 
                     For I = 1 To 32:
                         For I1 = 0 To 1:
                             For I2 = 1 To 14
-                                Print #2, -1
+                                Print #3, -1
                             Next
                         Next
                     Next
 
                     For I = 1 To 32:
                         For I1 = 0 To 1:
-                            Print #2, "XXX"
+                            Print #3, "XXX"
                         Next
                     Next
 
                     For I = SG% To SG% + 31
-                        Print #2, scheduleNG%(I, 12)
+                        Print #3, scheduleNG%(I, 12)
                     Next
 
-                    Close 2
+                    Close #3
 
                     Call COLHOOP
 
@@ -282,24 +273,24 @@ Sub ReadTourneyFile (tourneyFile$)
 
     Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
     fileLength& = LOF(1)
-    Close 1
+    Close #1
 
     scheduleAP%(0) = fileLength& / 90
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
     For I = 1 To scheduleAP%(0)
 
-        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 90
 
         For X = 0 To 14
-            Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+            Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
         Next
 
-        Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+        Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+        Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+        Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-        Get #1, I
+        Get #2, I
 
         For X = 0 To 14:
             scheduleNG%(I, X) = CVI(Q$(X + 1))
@@ -322,7 +313,7 @@ Sub ReadTourneyFile (tourneyFile$)
             yearNumber$(I, X) = RTrim$(yearNumber$(I, X))
         Next
 
-        Close 1
+        Close #2
 
     Next
 

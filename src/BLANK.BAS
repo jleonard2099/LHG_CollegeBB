@@ -25,15 +25,15 @@ Sub BLANK ()
 
         If UCase$(G$) = "Y" Then
 
-            Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #2
+            Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #1
 
-            Input #2, conf$, D1$, D2$ ', D3$, D4$
+            Input #1, conf$, D1$, D2$ ', D3$, D4$
 
             For XW = 1 To TEAMS_PER_CONFERENCE
-                Input #2, H1$(XW)
+                Input #1, H1$(XW)
             Next
 
-            Close 2
+            Close #1
 
             For XW = 1 To TEAMS_PER_CONFERENCE
 

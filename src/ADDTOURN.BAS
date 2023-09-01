@@ -301,7 +301,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
                 Print #1, tourneyDefaults%(I)
             Next
 
-            Close 1
+            Close #1
 
             If ACTION% = 2 Then
 
@@ -640,63 +640,68 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
     Shared tourneyDefaults%()
     
     tourneyFile$ = ChooseFile$ (diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
-    
-    If ACTION% = 4 Then
-        'Reset tournament
 
-        'Create TOU file as backup of TCX
-        Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", BUFFER$, ERRCODE%)
+    If ExitCode% <> 27 Then
 
-        MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
-        BoxWidth = 18
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        If ACTION% = 4 Then
+            'Reset tournament
 
-        ACTION% = 1
+            'Create TOU file as backup of TCX
+            Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", BUFFER$, ERRCODE%)
 
-    Else
+            MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
+            BoxWidth = 18
+            BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Call CSMsgBox(MsgText$, BoxWidth, Pass)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, Pass)
 
-        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #2
+            ACTION% = 1
 
-        Input #2, tourneyName$
+        Else
 
-        Input #2, numberRegions ' NUMBER OF REGIONS
+            Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #1
 
-        For I = 1 To 16
-            Input #2, NN%(I): ' NUMBER OF TEAMS IN REGION
-            Input #2, regionNames$(I) ' NAME OF REGION
-        Next
+            Input #1, tourneyName$
 
-        For I = 1 To 16
-            For I1 = 1 To 16
-                For I2 = 0 To 3
-                    Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                    Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+            Input #1, numberRegions ' NUMBER OF REGIONS
+
+            For I = 1 To 16
+                Input #1, NN%(I): ' NUMBER OF TEAMS IN REGION
+                Input #1, regionNames$(I) ' NAME OF REGION
+            Next
+
+            For I = 1 To 16
+                For I1 = 1 To 16
+                    For I2 = 0 To 3
+                        Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
+                        Input #1, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                    Next
                 Next
             Next
-        Next
 
-        Input #2, consolationSetting%(0): Input #2, consolationSetting%(1): ' CONSOLATION GAME
+            Input #1, consolationSetting%(0): Input #1, consolationSetting%(1): ' CONSOLATION GAME
 
-        Close 2
+            Close #1
 
-        Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #1
+            Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #2
 
-        For I = 0 To 14
-            Input #1, tourneyDefaults%(I)
-        Next
-        Close 1
+            For I = 0 To 14
+                Input #2, tourneyDefaults%(I)
+            Next
 
-        If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
+            Close #2
 
-        numberRegions$ = Str$(numberRegions)
+            If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
 
-        Call SetupTourney(numberRegions$, ACTION%, tourneyName$, tourneyFile$)
+            numberRegions$ = Str$(numberRegions)
 
-    End If 'Done checking ACTION%
+            Call SetupTourney(numberRegions$, ACTION%, tourneyName$, tourneyFile$)
+
+        End If 'Done checking ACTION%
+
+    End If
 
 End Sub
 
@@ -5798,18 +5803,18 @@ Sub WRITEGAME (outputFile$)
 
     Put #1, TC!
 
-    Close 1
+    Close #1
 
     'TCX file
-    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #1 Len = 90
+    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #2 Len = 90
 
     For X = 0 To 14
-        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+        Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
     Next
 
-    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+    Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+    Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
     For X = 0 To 14: 
         LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
@@ -5828,9 +5833,9 @@ Sub WRITEGAME (outputFile$)
         LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
     Next
 
-    Put #1, TC!
+    Put #2, TC!
 
-    Close 1
+    Close #2
 
 End Sub
 
@@ -5871,7 +5876,7 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
     Print #2, consolationSetting%(0)
     Print #2, consolationSetting%(1): ' CONSOLATION GAME
 
-    Close 2
+    Close #2
 
     Call SortAndSaveGames(saveFile$, numberRegions)
 
@@ -5917,12 +5922,15 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                         'Read data from .TMP file
                         Open diskPaths$(1) + tourneyFile$ + ".TMP" For Random As #1 Len = 90
+
                         For X = 0 To 14
                             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
                         Next
+
                         Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                         Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                         Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
                         Get #1, AP
 
                         For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
@@ -5936,22 +5944,23 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                         For X = 1 To 3
                             scheduleNG%(0, X + 14) = CVI(Q$(X + 23))
                         Next
-                        Close 1
+
+                        Close #1
 
                         'Create matches in .TOU file
                         If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = NR Then
 
                             MATCH = MATCH + 1
 
-                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 90
 
                             For X = 0 To 14
-                                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                                Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
                             Next
 
-                            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                            Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                            Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                            Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                             For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
                             For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
@@ -5965,8 +5974,10 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                                 LSet Q$(X) = MKI$(scheduleNG%(0, X - 9))
                             Next
 
-                            Put #1, MATCH
-                            Close 1
+                            Put #2, MATCH
+
+                            Close #2
+
                         End If
 
                     Next AP 'Done looping through all games
@@ -6010,21 +6021,21 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                 For X = 1 To 3: scheduleNG%(0, X + 14) = CVI(Q$(X + 23)): Next
 
-                Close 1
+                Close #1
 
                 If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = NR Then
 
                     MATCH = MATCH + 1
 
-                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 90
 
                     For X = 0 To 14
-                        Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                        Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
                     Next
 
-                    Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                    Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+                    Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                    Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                     For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
                     For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
@@ -6034,9 +6045,9 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                     For X = 24 To 26: LSet Q$(X) = MKI$(scheduleNG%(0, X - 9)): Next
 
-                    Put #1, MATCH
+                    Put #2, MATCH
 
-                    Close 1
+                    Close #2
 
                 End If
 

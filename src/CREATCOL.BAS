@@ -55,9 +55,9 @@ Sub CREATCOL ()
                     Call ReviewEditConference(conference$, D1$, D2$)
 
                 Case 2:
-                    conference$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+                    conference$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", FileExit%)
 
-                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                    If FileExit% <> 27 And FileExit% <> 0 Then
                         Call ReviewEditConference(conference$, D1$, D2$)
                     End If
 
@@ -85,22 +85,7 @@ Sub DefineConference (conference$, D1$, D2$)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8: Color 15, 1
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox (6, 8, 61, 7, 15, 1)
 
         Do
 
@@ -147,17 +132,17 @@ Sub ReviewEditConference (conference$, D1$, D2$)
 
     If _FileExists(diskPaths$(1) + conference$ + ".LIB") Then
 
-        Open diskPaths$(1) + conference$ + ".LIB" For Input As #2
+        Open diskPaths$(1) + conference$ + ".LIB" For Input As #1
 
-        Input #2, LG%, conference$, D1$, D2$
+        Input #1, LG%, conference$, D1$, D2$
 
         For X = 1 To 30
-            Input #2, Z1$(X)
-            Input #2, scheduleZ1%(X)
-            Input #2, Z2$(X)
+            Input #1, Z1$(X)
+            Input #1, scheduleZ1%(X)
+            Input #1, Z2$(X)
         Next
 
-        Close 2
+        Close #1
 
     End If
 
@@ -237,21 +222,21 @@ Sub SaveConferences (conference$, D1$, D2$)
 
     Shared Z1$(), Z2$()
 
-    Open diskPaths$(1) + conference$ + ".LIB" For Output As #2
+    Open diskPaths$(1) + conference$ + ".LIB" For Output As #1
 
-    Print #2, 0
+    Print #1, 0
 
-    Print #2, conference$ 'League / Conference Name
-    Print #2, D1$ 'Division 1 Name
-    Print #2, D2$ 'Division 2 Name
+    Print #1, conference$ 'League / Conference Name
+    Print #1, D1$ 'Division 1 Name
+    Print #1, D2$ 'Division 2 Name
 
     For X = 1 To 30
-        Print #2, Z1$(X) 'Team Name
-        Print #2, scheduleZ1%(X) 'Team Index ?
-        Print #2, Z2$(X) 'Year Number
+        Print #1, Z1$(X) 'Team Name
+        Print #1, scheduleZ1%(X) 'Team Index ?
+        Print #1, Z2$(X) 'Year Number
     Next
 
-    Close 2
+    Close #1
 
     For X = 1 To 30
 
@@ -275,7 +260,7 @@ Sub SaveConferences (conference$, D1$, D2$)
         Write #2, Z1$(X)
     Next
 
-    Close 2
+    Close #2
 
 End Sub
 

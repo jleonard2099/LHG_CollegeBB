@@ -64,29 +64,29 @@ Sub ALIGN ()
 
                 If _FileExists(pathCurrentStats$ + statFile$) Then
 
-                    Open pathCurrentStats$ + statFile$ For Input As #1
+                    Open pathCurrentStats$ + statFile$ For Input As #2
 
-                    Input #1, B$
+                    Input #2, B$
 
                     For I = 0 To 13:
 
-                        Input #1, statPlyrNames$(I)
+                        Input #2, statPlyrNames$(I)
 
                         For J = 0 To 13:
-                            Input #1, compareA(I, J)
+                            Input #2, compareA(I, J)
                         Next
 
-                        Input #1, statsW0!(I)
+                        Input #2, statsW0!(I)
 
-                        Input #1, statsW1!(I)
+                        Input #2, statsW1!(I)
 
                     Next
 
-                    For L = 0 To 15: Input #1, Z!(L): Next
+                    For L = 0 To 15: Input #2, Z!(L): Next
 
-                    For L = 0 To 15: Input #1, Z1!(L): Next
+                    For L = 0 To 15: Input #2, Z1!(L): Next
 
-                    Close #1
+                    Close #2
 
                     Call AlignStats(pathRoadStats$, statFile$)
                     DUMMY$ = "OK"

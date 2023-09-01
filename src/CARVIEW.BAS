@@ -23,22 +23,22 @@ Sub CARVIEW ()
         
         Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
-        Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #2
+        Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #1
 
-        Input #2, NB%, B$
+        Input #1, NB%, B$
 
         For N = 1 To 15
 
             For I = 0 To 61
 
-                Input #2, carviewA$(I)
+                Input #1, carviewA$(I)
 
                 For J = 0 To 15
-                    Input #2, ARS!(N, I, J)
+                    Input #1, ARS!(N, I, J)
                 Next J
 
-                Input #2, W0S!(N, I)
-                Input #2, W1S!(N, I)
+                Input #1, W0S!(N, I)
+                Input #1, W1S!(N, I)
 
                 TMR% = TMR% - 1
 
@@ -50,7 +50,7 @@ Sub CARVIEW ()
 
         Next N
 
-        Close #2
+        Close #1
 
         Color 15, 0
         Cls

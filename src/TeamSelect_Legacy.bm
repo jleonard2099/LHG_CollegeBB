@@ -65,7 +65,7 @@ Sub GetDiskID_ALIGN (A$)
                         teamIndex%(I1) = I1
                     Next
 
-                    Close 1
+                    Close #1
 
                     numberTeams = fileLength& / 655
 
@@ -163,7 +163,7 @@ Sub SelectTeam_ALIGN (yearNumber$, numberTeams)
             For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
             For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
-            Close 1
+            Close #1
 
         End If
 
@@ -248,7 +248,7 @@ Sub GetTeam_CNGTM (teamName$, yearNumber$, teamIdx)
                 teamNames$(I1) = Q$(0)
             Next
 
-            Close 1
+            Close #1
 
             NTMS = fileLength& / 655
             TS% = Int((NTMS - 1) / 80)
@@ -358,7 +358,7 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
             Next
         Next
 
-        Close 1
+        Close #1
 
         Open diskPaths$(0) + "COLBBTMS." + teamYear$ For Random As #1 Len = 566
 
@@ -394,7 +394,7 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
 
         CK = CVI(Q$(249))
 
-        Close 1
+        Close #1
 
         If CK <> 999 Then
             coach$ = ""
@@ -491,7 +491,7 @@ Sub GetTeam_CAREER (teamIdx, A$)
                         teamIndex%(I1) = I1
                     Next
 
-                    Close 1
+                    Close #1
 
                     NTMS = fileLength& / 655
 
@@ -582,7 +582,7 @@ Sub SelectTeam_CAREER (yearNumber$, numberTeams, teamIdx)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
     Else
         BO% = 1
     End If
@@ -648,7 +648,7 @@ Sub GetTeam_CREATCOL (A$, YN$, T1)
                 teamIndex%(I1) = I1
             Next
 
-            Close 1
+            Close #1
 
             NTMS = fileLength& / 655
 
@@ -723,7 +723,7 @@ Sub SelectTeam_CREATCOL (yearNumber$, numberTeams, teamIdx, teamName$)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
     Else
         BO% = 1
     End If
@@ -788,7 +788,7 @@ Sub GetTeam_HD2HD (TM$)
                         teamIndex%(I1) = I1
                     Next
 
-                    Close 1
+                    Close #1
 
                     NTMS = fileLength& / 655
 
@@ -873,7 +873,7 @@ Sub SelectTeam_HD2HD (yearNumber$, numberTeams, teamName$)
         For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
         For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
-        Close 1
+        Close #1
 
     Else
 
@@ -952,7 +952,7 @@ Sub SelectTeam_Schedule (numberTeams, yearNumber$)
 
         Next
 
-        Close 1
+        Close #1
 
     End if
 
@@ -1015,7 +1015,7 @@ Sub GetTeam_EditStats (B$, YN$, D)
                         teamNames$(I1) = Q$(0)
                     Next
 
-                    Close 1
+                    Close #1
 
                     NTMS = fileLength& / 655
 
@@ -1100,7 +1100,7 @@ Sub SelectTeam_EditStats (T$, YN$, numberTeams, T1)
 
         For I = 0 To 9: teamRatings%(I) = CVI(Q$(I + 10)): Next
 
-        Close 1
+        Close #1
     Else
         BO% = 1
     End If 'Done checking ExitCode code
@@ -1175,7 +1175,7 @@ Sub GetDiskID_MERGE (A$)
                         teamIndex%(I1) = I1
                     Next
 
-                    Close 1
+                    Close #1
 
                     numberTeams = fileLength& / 655
 
@@ -1271,7 +1271,7 @@ Sub SelectTeam_MERGE (yearNumber$, numberTeams)
             For I = 0 To 4: leagueRatings%(I) = CVI(Q$(I + 5)): Next
             For I = 0 To 9: mergeT%(I) = CVI(Q$(I + 10)): Next
 
-            Close 1
+            Close #1
 
         End If
 
@@ -1335,7 +1335,7 @@ Sub SelectTeam_TOURN (yearNumber$, numberTeams, teamName$, selectedIndex)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
     Else
         BO% = 1
     End If
@@ -1415,7 +1415,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
             Next
         Next
 
-        Close 1
+        Close #1
 
         Open diskPaths$(0) + "COLBBTMS." + yearNumber$ For Random As #1 Len = 566
 
@@ -1447,7 +1447,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
 
         CK = CVI(Q$(249))
 
-        Close 1
+        Close #1
 
         '-- Everything from here down needs to be in the calling routine
         If CK <> 999 Then
@@ -1537,7 +1537,7 @@ Sub SelectTeam_LOOKY (numberTeams, yearNumber$)
             teamRatings%(I) = CVI(Q$(I + 10))
         Next
 
-        Close 1
+        Close #1
 
     Else
 

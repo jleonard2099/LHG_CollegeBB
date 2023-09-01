@@ -38,67 +38,67 @@ Sub COLHOOP ()
             Print #1, _CWD$ + "\"
         Next
 
-        Close 1
+        Close #1
 
     End If
 
-    Open "DEV.BAS" For Input As #1
+    Open "DEV.BAS" For Input As #2
 
     For I = 0 To 1
-        Input #1, diskPaths$(I)
+        Input #2, diskPaths$(I)
     Next
 
-    Close 1
+    Close #2
 
     If Not _FileExists("DEFAULT") Then
 
-        Open "DEFAULT" For Output As #1
+        Open "DEFAULT" For Output As #3
 
         For I = 1 To 11:
-            Print #1, 0
+            Print #3, 0
         Next
 
-        Close 1
+        Close #3
 
     End If
 
-    Open "DEFAULT" For Input As #1
-    Input #1, playerOpt
-    Input #1, threePtOpt
-    Input #1, sClockVal
-    Input #1, gameLoc
-    Input #1, foulsToDQ
-    Input #1, pbpDelay!
-    Input #1, coachOpt
-    Input #1, ft10thFoul
-    Input #1, ft3PtFoul
-    Input #1, ft6FloorFouls
-    Input #1, pbpOpt
-    Close 1
+    Open "DEFAULT" For Input As #4
+    Input #4, playerOpt
+    Input #4, threePtOpt
+    Input #4, sClockVal
+    Input #4, gameLoc
+    Input #4, foulsToDQ
+    Input #4, pbpDelay!
+    Input #4, coachOpt
+    Input #4, ft10thFoul
+    Input #4, ft3PtFoul
+    Input #4, ft6FloorFouls
+    Input #4, pbpOpt
+    Close #4
 
     If _FileExists("TICKER") Then
 
-        Open "TICKER" For Input As #2
+        Open "TICKER" For Input As #5
 
         For I = 1 To 32
             For I1 = 0 To 1
                 For I2 = 1 To 14
-                    Input #2, SX%(I, I1, I2)
+                    Input #5, SX%(I, I1, I2)
                 Next
             Next
         Next
 
         For I = 1 To 32
             For I1 = 0 To 1
-                Input #2, SX$(I, I1)
+                Input #5, SX$(I, I1)
             Next
         Next
 
         For I = 1 To 32:
-            Input #2, ST%(I)
+            Input #5, ST%(I)
         Next
 
-        Close 2
+        Close #5
 
         TMT = 1
     Else
@@ -108,25 +108,25 @@ Sub COLHOOP ()
     'Load game in-progress, if there is one
     If _FileExists("GAME82") Then
 
-        Open "GAME82" For Input As #2
+        Open "GAME82" For Input As #6
 
-        Input #2, scheduleFile$
+        Input #6, scheduleFile$
 
         For I = 0 To 2:
-            Input #2, schedGame(I)
+            Input #6, schedGame(I)
         Next
 
-        Close 2
+        Close #6
 
-        Open diskPaths$(0) + scheduleFile$ For Random As #1 Len = 48
+        Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
 
         For X = 0 To 18
-            Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
+            Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
         Next
 
-        Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+        Field #7, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-        Get #1, schedGame(0) + schedGame(2)
+        Get #7, schedGame(0) + schedGame(2)
 
         For X = 0 To 18:
             NG%(X) = CVI(Q$(X + 1))
@@ -139,7 +139,7 @@ Sub COLHOOP ()
         VS% = CVI(Q$(22))
         HS% = CVI(Q$(23))
 
-        Close 1
+        Close #7
 
         autoPlay = 1
 
@@ -147,15 +147,15 @@ Sub COLHOOP ()
 
     If _FileExists("TOURNEY") Then
 
-        Open "TOURNEY" For Input As #2
+        Open "TOURNEY" For Input As #8
 
-        Input #2, tourneyFile$
+        Input #8, tourneyFile$
 
         For I = 0 To 2:
-            Input #2, schedGame(I)
+            Input #8, schedGame(I)
         Next
 
-        Close 2
+        Close #8
 
         'If start game = end game,
         'we're all done!
@@ -167,17 +167,17 @@ Sub COLHOOP ()
 
         Else
 
-            Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
+            Open diskPaths$(1) + tourneyFile$ + ".TOU" As #9 Len = 90
 
             For X = 0 To 14
-                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                Field #9, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
             Next
 
-            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+            Field #9, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+            Field #9, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+            Field #9, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-            Get #1, schedGame(0) + schedGame(2)
+            Get #9, schedGame(0) + schedGame(2)
 
             VS% = CVI(Q$(16))
             HS% = CVI(Q$(17))
@@ -196,7 +196,7 @@ Sub COLHOOP ()
                 NG%(X + 14) = CVI(Q$(X + 23))
             Next
 
-            Close 1
+            Close #9
 
             autoPlay = 1
             TOU = 1
@@ -348,19 +348,19 @@ Sub COLHOOP ()
                         If foulsToDQ > 6 Then foulsToDQ = 5
 
                     Case 10:
-                        Open "DEFAULT" For Output As #1
-                        Print #1, playerOpt
-                        Print #1, threePtOpt
-                        Print #1, sClockVal
-                        Print #1, gameLoc
-                        Print #1, foulsToDQ
-                        Print #1, pbpDelay!
-                        Print #1, coachOpt
-                        Print #1, ft10thFoul
-                        Print #1, ft3PtFoul
-                        Print #1, ft6FloorFouls
-                        Print #1, pbpOpt
-                        Close 1
+                        Open "DEFAULT" For Output As #10
+                        Print #10, playerOpt
+                        Print #10, threePtOpt
+                        Print #10, sClockVal
+                        Print #10, gameLoc
+                        Print #10, foulsToDQ
+                        Print #10, pbpDelay!
+                        Print #10, coachOpt
+                        Print #10, ft10thFoul
+                        Print #10, ft3PtFoul
+                        Print #10, ft6FloorFouls
+                        Print #10, pbpOpt
+                        Close #10
 
                     Case 11:
                         ft10thFoul = 1 - ft10thFoul

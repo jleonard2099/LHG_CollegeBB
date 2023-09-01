@@ -138,15 +138,15 @@ Sub InitVar ()
 
     Erase B1
     Erase dFGPA, D2, DF, d3FG_Adj, d3FGA_Adj
-    Erase F1, G4, G5
+    Erase eventSettings, F1, G4, G5
     Erase leagRat_GAME
     Erase P2, P4, P5, P7, plyrRat_GAME
     Erase QQ, QR, RB, RS
     Erase schedGame, teamStamina, threeFG, tmFatigue
-    Erase S3, T0, statTotals
+    Erase plyrStamina, turnovers, statTotals
     Erase W2, W3, Z5, Z6, timePlayed
 
-    Erase APT%, B%, CZ%, DT%, E%, F5%, FY%
+    Erase APT%, B%, CZ%, DT%, F5%, FY%
     Erase G9%, HT%, N%, NG%, NG1%
     Erase O%, OF%, PR%, ST%, SX%
     Erase T2%, ft3PtFoul, TM%, TP%, teamIndex%
@@ -208,27 +208,27 @@ Sub AUTOSETUP ()
         YN$(0) = RTrim$(YN$(0))
         YN$(1) = RTrim$(YN$(1))
 
-        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #2
+        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #1
 
-        Input #2, X$
+        Input #1, X$
 
-        Input #2, X$ ' NUMBER OF REGIONS
+        Input #1, X$ ' NUMBER OF REGIONS
 
         For I = 1 To 16
-            Input #2, X$ ' NUMBER OF TEAMS IN REGION
-            Input #2, X$ ' NAME OF REGION
+            Input #1, X$ ' NUMBER OF TEAMS IN REGION
+            Input #1, X$ ' NAME OF REGION
         Next
 
         For I = 1 To 16
             For I1 = 1 To 16
                 For I2 = 1 To 4
-                    Input #2, N$(I, I1, I2) ' SEED SLOT NAME
-                    Input #2, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                    Input #1, N$(I, I1, I2) ' SEED SLOT NAME
+                    Input #1, N%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                 Next
             Next
         Next
 
-        Close 2
+        Close #1
 
         TOU = 0
 
@@ -2771,27 +2771,27 @@ Sub TickerSchedule
             SX$(schedGame(2) + 1, X) = gameTeams$(X)
         Next
 
-        Open "TICKER" For Output As #2
+        Open "TICKER" For Output As #1
 
         For I = 1 To 32
             For I1 = 0 To 1
                 For I2 = 1 To 14
-                    Print #2, SX%(I, I1, I2)
+                    Print #1, SX%(I, I1, I2)
                 Next
             Next
         Next
 
         For I = 1 To 32
             For I1 = 0 To 1
-                Print #2, SX$(I, I1)
+                Print #1, SX$(I, I1)
             Next
         Next
 
         For I = 1 To 32
-            Print #2, ST%(I)
+            Print #1, ST%(I)
         Next
 
-        Close 2
+        Close #1
 
     End If
 
@@ -2818,7 +2818,7 @@ Sub TickerSchedule
 
     Put #1, schedGame(0) + schedGame(2)
 
-    Close 1
+    Close #1
 
     schedGame(2) = schedGame(2) + 1
     autoPlay = 1
@@ -3229,7 +3229,7 @@ Sub TOURNEY_Game ()
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
     Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
     fileLength& = LOF(1)
-    Close 1
+    Close #1
 
     NTMS = fileLength& / 90
 
@@ -3255,7 +3255,7 @@ Sub TOURNEY_Game ()
         For X = 0 To 3: YN1$(X) = Q$(20 + X): Next
         For X = 1 To 3: NG1%(X + 14) = CVI(Q$(X + 23)): Next
 
-        Close 1
+        Close #1
 
         If NG1%(15) = NG%(15) And NG%(15) <> 17 Then
 
@@ -3330,7 +3330,7 @@ Sub UpdateTourneyFile ()
 
     Put #1, I
 
-    Close 1
+    Close #1
 
 End Sub
 
@@ -3783,25 +3783,25 @@ Sub LOADSTATS ()
 
         If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-            Open diskPaths$(1) + statFile$ + "S" For Input As #2
+            Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-            Input #2, YY%
+            Input #1, YY%
 
-            For I1 = 1 To 100: Input #2, O%(I1): Next
-            For I1 = 1 To 100: Input #2, HO$(I1): Next
-            For I1 = 1 To 100: Input #2, HT%(I1): Next
-            For I1 = 1 To 100: Input #2, HO$(I1): Next
+            For I1 = 1 To 100: Input #1, O%(I1): Next
+            For I1 = 1 To 100: Input #1, HO$(I1): Next
+            For I1 = 1 To 100: Input #1, HT%(I1): Next
+            For I1 = 1 To 100: Input #1, HO$(I1): Next
 
             For I1 = 1 To 100
                 For I2 = 0 To 1
-                    Input #2, APT%(I1, I2)
+                    Input #1, APT%(I1, I2)
                 Next
             Next
 
-            For I1 = 1 To 100: Input #2, CRD&(I1): Next I1
-            For I1 = 1 To 100: Input #2, SITE$(I1): Next I1
+            For I1 = 1 To 100: Input #1, CRD&(I1): Next I1
+            For I1 = 1 To 100: Input #1, SITE$(I1): Next I1
 
-            Close 2
+            Close #1
 
             For I1 = 1 To YY%
                 If O%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
@@ -5867,15 +5867,17 @@ Sub EVENTS (specialCount, specialStat)
     If _FileExists("EVENTS.BOX") Then
 
         Open "EVENTS.BOX" For Input As #1
+
         For X = 1 To 13
-            Input #1, E%(X)
+            Input #1, eventSettings(X)
         Next
-        Close 1
+
+        Close #1
 
         checkSpecial% = 0
 
         'Team / game conditions for special box score
-        If H - 3 > E%(1) Or score(1, 0) + score(0, 0) > E%(2) Or R3!(0) + R3!(1) > E%(3) Or score(1, 0) > E%(4) Or score(0, 0) > E%(4) Or R3!(1) > E%(5) Or R3!(0) > E%(5) Then
+        If H - 3 > eventSettings(1) Or score(1, 0) + score(0, 0) > eventSettings(2) Or R3!(0) + R3!(1) > eventSettings(3) Or score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Or R3!(1) > eventSettings(5) Or R3!(0) > eventSettings(5) Then
 
             checkSpecial% = 1
 
@@ -5887,7 +5889,7 @@ Sub EVENTS (specialCount, specialStat)
 
                     'Player conditions for special box score
                     'FGM * 2 + FTM + 3FM = Points / Game
-                    If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > E%(6) Or plyrOff_GAME!(I, I1, 11) > E%(7) Or plyrOff_GAME!(I, I1, 14) > E%(8) Or plyrOff_GAME!(I, I1, 15) > E%(9) Or plyrOff_GAME!(I, I1, 13) > E%(10) Or threeFG(I, I1, 0) > E%(11) Then
+                    If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Or plyrOff_GAME!(I, I1, 11) > eventSettings(7) Or plyrOff_GAME!(I, I1, 14) > eventSettings(8) Or plyrOff_GAME!(I, I1, 15) > eventSettings(9) Or plyrOff_GAME!(I, I1, 13) > eventSettings(10) Or threeFG(I, I1, 0) > eventSettings(11) Then
                         checkSpecial% = 1
                     End If
 
@@ -6234,95 +6236,95 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
 
     If isSpecial = 1 Then
         'special scores come after the events
-        Open diskPaths$(1) + NM$ For Append As #2
+        Open diskPaths$(1) + NM$ For Append As #1
     Else
-        Open diskPaths$(1) + NM$ For Output As #2
+        Open diskPaths$(1) + NM$ For Output As #1
     End If
 
     If gameLoc = 2 Then
-        Print #2, "SITE: NEUTRAL"
+        Print #1, "SITE: NEUTRAL"
     Else
-        Print #2, "SITE: "; gameArena$(gameLoc)
+        Print #1, "SITE: "; gameArena$(gameLoc)
     End If
 
-    Print #2, Using "ATTENDANCE: ###,###"; actualAttendance&
-    Print #2,
+    Print #1, Using "ATTENDANCE: ###,###"; actualAttendance&
+    Print #1,
 
-    Print #2, ; Tab(17); "H1 H2 ";
+    Print #1, ; Tab(17); "H1 H2 ";
 
     If score(0, 1) + score(0, 2) = score(1, 1) + score(1, 2) Then
-        Print #2, ; Tab(23); "O1 ";
+        Print #1, ; Tab(23); "O1 ";
 
         If score(0, 1) + score(0, 2) + score(0, 3) = score(1, 1) + score(1, 2) + score(1, 3) Then
-            Print #2, ; Tab(26); "O2 ";
+            Print #1, ; Tab(26); "O2 ";
 
             If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) Then
-                Print #2, ; Tab(29); "O3 ";
+                Print #1, ; Tab(29); "O3 ";
 
                 If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) Then
-                    Print #2, ; Tab(32); "O4 ";
+                    Print #1, ; Tab(32); "O4 ";
 
                     If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) + score(0, 6) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) + score(1, 6) Then
-                        Print #2, ; Tab(35); "O5";
-                        Print #2, ; Tab(40); "GAME"
+                        Print #1, ; Tab(35); "O5";
+                        Print #1, ; Tab(40); "GAME"
                     Else
-                        Print #2, ; Tab(37); "GAME"
+                        Print #1, ; Tab(37); "GAME"
                     End If
                 Else
-                    Print #2, ; Tab(34); "GAME"
+                    Print #1, ; Tab(34); "GAME"
                 End If
             Else
-                Print #2, ; Tab(31); "GAME"
+                Print #1, ; Tab(31); "GAME"
             End If
         Else
-            Print #2, ; Tab(28); "GAME"
+            Print #1, ; Tab(28); "GAME"
         End If
     Else
-        Print #2, ; Tab(25); "GAME"
+        Print #1, ; Tab(25); "GAME"
     End If
 
     For I = 0 To 1
 
-        Print #2, gameTeams$(I); Tab(16); Str$(score(I, 1)); Tab(19); Str$(score(I, 2));
+        Print #1, gameTeams$(I); Tab(16); Str$(score(I, 1)); Tab(19); Str$(score(I, 2));
 
         If score(0, 1) + score(0, 2) = score(1, 1) + score(1, 2) Then
 
-            Print #2, ; Tab(22); Str$(score(I, 3));
+            Print #1, ; Tab(22); Str$(score(I, 3));
 
             If score(0, 1) + score(0, 2) + score(0, 3) = score(1, 1) + score(1, 2) + score(1, 3) Then
-                Print #2, ; Tab(25); Str$(score(I, 4));
+                Print #1, ; Tab(25); Str$(score(I, 4));
 
                 If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) Then
-                    Print #2, ; Tab(28); Str$(score(I, 5));
+                    Print #1, ; Tab(28); Str$(score(I, 5));
 
                     If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) Then
-                        Print #2, ; Tab(31); Str$(score(I, 6));
+                        Print #1, ; Tab(31); Str$(score(I, 6));
 
                         If score(0, 1) + score(0, 2) + score(0, 3) + score(0, 4) + score(0, 5) + score(0, 6) = score(1, 1) + score(1, 2) + score(1, 3) + score(1, 4) + score(1, 5) + score(1, 6) Then
-                            Print #2, ; Tab(35); Str$(score(I, 7)); " -  "; Str$(score(I, 0))
+                            Print #1, ; Tab(35); Str$(score(I, 7)); " -  "; Str$(score(I, 0))
                         Else
-                            Print #2, ; Tab(34); " - "; Str$(score(I, 0))
+                            Print #1, ; Tab(34); " - "; Str$(score(I, 0))
                         End If
                     Else
-                        Print #2, ; Tab(31); " - "; Str$(score(I, 0))
+                        Print #1, ; Tab(31); " - "; Str$(score(I, 0))
                     End If
                 Else
-                    Print #2, ; Tab(28); " - "; Str$(score(I, 0))
+                    Print #1, ; Tab(28); " - "; Str$(score(I, 0))
                 End If
             Else
-                Print #2, ; Tab(25); " - "; score(I, 0)
+                Print #1, ; Tab(25); " - "; score(I, 0)
             End If
         Else
-            Print #2, ; Tab(22); " - "; score(I, 0)
+            Print #1, ; Tab(22); " - "; score(I, 0)
         End If
 
     Next I
 
     For I = 0 To 1:
 
-        Print #2,
-        Print #2, gameTeams$(I)
-        Print #2, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB REB PTS PF  AST BLK STL TO"
+        Print #1,
+        Print #1, gameTeams$(I)
+        Print #1, "NAME"; Tab(14); " MIN   FG- A 3FG- A  FT- A ORB REB PTS PF  AST BLK STL TO"
 
         Erase statTotals
 
@@ -6331,40 +6333,40 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
             If players$(I, I1) <> "XXX" Then
 
                 'Player Name
-                Print #2, players$(I, I1); Tab(14);
+                Print #1, players$(I, I1); Tab(14);
 
                 'Player Time
                 If timePlayed(I, I1) = 0 Then
-                    Print #2, ; Tab(15); "DNP";
+                    Print #1, ; Tab(15); "DNP";
                 Else
-                    Print #2, Using "##"; Int(timePlayed(I, I1) / 60);: Print #2, ":";
+                    Print #1, Using "##"; Int(timePlayed(I, I1) / 60);: Print #1, ":";
 
                     If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
-                        Print #2, Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                        Print #1, Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     Else
-                        Print #2, "0";: Print #2, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                        Print #1, "0";: Print #1, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     End If
                 End If
 
-                Print #2, ; Tab(21);
+                Print #1, ; Tab(21);
 
                 'FGM - FGA
-                Print #2, Using "##"; plyrOff_GAME!(I, I1, 8);
-                Print #2, "-";
-                Print #2, Using "##"; plyrOff_GAME!(I, I1, 7);
+                Print #1, Using "##"; plyrOff_GAME!(I, I1, 8);
+                Print #1, "-";
+                Print #1, Using "##"; plyrOff_GAME!(I, I1, 7);
 
                 '3FGM - 3FGA
-                Print #2, Using "  ##"; threeFG(I, I1, 0);
-                Print #2, "-";
-                Print #2, Using "##"; threeFG(I, I1, 1);
+                Print #1, Using "  ##"; threeFG(I, I1, 0);
+                Print #1, "-";
+                Print #1, Using "##"; threeFG(I, I1, 1);
 
                 'FTM - FTA
-                Print #2, Using "  ##"; plyrOff_GAME!(I, I1, 10);
-                Print #2, "-";
-                Print #2, Using "##"; plyrOff_GAME!(I, I1, 9);
+                Print #1, Using "  ##"; plyrOff_GAME!(I, I1, 10);
+                Print #1, "-";
+                Print #1, Using "##"; plyrOff_GAME!(I, I1, 9);
 
                 'Rebounds / PT / F / A /  B / S / TO
-                Print #2, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; plyrOff_GAME!(I, I1, 24), plyrOff_GAME!(I, I1, 11), plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0), plyrOff_GAME!(I, I1, 12), plyrOff_GAME!(I, I1, 14), plyrOff_GAME!(I, I1, 15), plyrOff_GAME!(I, I1, 13), plyrOff_GAME!(I, I1, 23)
+                Print #1, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; plyrOff_GAME!(I, I1, 24), plyrOff_GAME!(I, I1, 11), plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0), plyrOff_GAME!(I, I1, 12), plyrOff_GAME!(I, I1, 14), plyrOff_GAME!(I, I1, 15), plyrOff_GAME!(I, I1, 13), plyrOff_GAME!(I, I1, 23)
 
                 statTotals(0) = statTotals(0) + plyrOff_GAME!(I, I1, 8)
                 statTotals(1) = statTotals(1) + plyrOff_GAME!(I, I1, 7)
@@ -6388,41 +6390,41 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
 
         If statTotals(3) = 0 Then statTotals(3) = 1
 
-        Print #2,
-        Print #2, "TOTALS"; Tab(14); Int(statTotals(10) / 60); Tab(21);
+        Print #1,
+        Print #1, "TOTALS"; Tab(14); Int(statTotals(10) / 60); Tab(21);
 
-        Print #2, Using "##"; statTotals(0);
-        Print #2, "-";
-        Print #2, Using "###"; statTotals(1);
+        Print #1, Using "##"; statTotals(0);
+        Print #1, "-";
+        Print #1, Using "###"; statTotals(1);
 
-        Print #2, ; Tab(28);
-        Print #2, Using "##"; statTotals(13);
-        Print #2, "-";
-        Print #2, Using "##"; statTotals(14);
+        Print #1, ; Tab(28);
+        Print #1, Using "##"; statTotals(13);
+        Print #1, "-";
+        Print #1, Using "##"; statTotals(14);
 
-        Print #2, ; Tab(35);
-        Print #2, Using "##"; statTotals(2);
-        Print #2, "-";
-        Print #2, Using "##"; statTotals(3);
+        Print #1, ; Tab(35);
+        Print #1, Using "##"; statTotals(2);
+        Print #1, "-";
+        Print #1, Using "##"; statTotals(3);
 
-        Print #2, ; Tab(42);
-        Print #2, Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11), statTotals(4), statTotals(5), statTotals(6), statTotals(7), statTotals(8), statTotals(9), statTotals(12)
+        Print #1, ; Tab(42);
+        Print #1, Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11), statTotals(4), statTotals(5), statTotals(6), statTotals(7), statTotals(8), statTotals(9), statTotals(12)
 
-        Print #2, ; Tab(22); Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; Tab(35); Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        Print #1, ; Tab(22); Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; Tab(35); Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
 
-        Print #2,
-        Print #2, "TOTAL TURNOVERS -"; turnovers(I)
-        Print #2, "TOTAL REBOUNDS  -"; R3!(I)
+        Print #1,
+        Print #1, "TOTAL TURNOVERS -"; turnovers(I)
+        Print #1, "TOTAL REBOUNDS  -"; R3!(I)
 
     Next I
 
-    Print #2,
+    Print #1,
 
     '-- The code below was used to print
     '-- disabled players in the boxscore
     '-- output so that they could be easily identified.
-    'Print #2, "BENCH WARMERS"
-    '--Print #2, "DISABLED BUT PLAYED"
+    'Print #1, "BENCH WARMERS"
+    '--Print #1, "DISABLED BUT PLAYED"
 
     'For I = 0 To 1
 
@@ -6430,16 +6432,16 @@ Sub BOX2FILE (printChoice, NM$, isSpecial)
 
     '        'If players$(I, I1) <> "XXX" And B%(I, I1) = -1 Then
     '--If players$(I, I1) <> "XXX" And B%(I, I1) = -1 And timePlayed(I, I1) > 0 Then
-    '            Print #2, players$(I, I1); " ["; gameTeams$(I); "]"
+    '            Print #1, players$(I, I1); " ["; gameTeams$(I); "]"
     '        End If
 
     '    Next I1
 
     'Next I
 
-    If printChoice = 1 Then Print #2, Chr$(12)
+    If printChoice = 1 Then Print #1, Chr$(12)
 
-    Close #2
+    Close #1
 
     If printChoice = 1 Then
 
@@ -6466,33 +6468,33 @@ End Sub
 'information to a boxscore file
 Sub BOX2SPC (NM$)
 
-    Open diskPaths$(1) + NM$ For Append As #2
+    Open diskPaths$(1) + NM$ For Append As #1
 
-    Print #2,
+    Print #1,
 
     'Output any special events
-    If H - 3 > E%(1) Then Print #2, Using "MORE THAN ## OVERTIMES"; E%(1)
-    If score(1, 0) + score(0, 0) > E%(2) Then Print #2, Using "MORE THAN ### COMBINED POINTS"; E%(2)
-    If R3!(0) + R3!(1) > E%(3) Then Print #2, Using "MORE THAN ### COMBINED REBOUNDS"; E%(3)
-    If score(0, 0) > E%(4) Then Print #2, gameTeams$(0);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
-    If score(1, 0) > E%(4) Then Print #2, gameTeams$(1);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(4)
-    If R3!(0) > E%(5) Then Print #2, gameTeams$(0);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
-    If R3!(1) > E%(5) Then Print #2, gameTeams$(1);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(5)
+    If H - 3 > eventSettings(1) Then Print #1, Using "MORE THAN ## OVERTIMES"; eventSettings(1)
+    If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
+    If R3!(0) + R3!(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    If R3!(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If R3!(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
 
     For I = 0 To 1
         For I1 = 0 To 13
-            If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > E%(6) Then Print #2, players$(I, I1);: Print #2, Using " SCORED MORE THAN ### POINTS"; E%(6)
-            If plyrOff_GAME!(I, I1, 11) > E%(7) Then Print #2, players$(I, I1);: Print #2, Using " HAD MORE THAN ### REBOUNDS"; E%(7)
-            If plyrOff_GAME!(I, I1, 14) > E%(8) Then Print #2, players$(I, I1);: Print #2, Using " HAD MORE THAN ### ASSISTS"; E%(8)
-            If plyrOff_GAME!(I, I1, 15) > E%(9) Then Print #2, players$(I, I1);: Print #2, Using " BLOCKED MORE THAN ### SHOTS"; E%(9)
-            If plyrOff_GAME!(I, I1, 13) > E%(10) Then Print #2, players$(I, I1);: Print #2, Using " HAD MORE THAN ### STEALS"; E%(10)
-            If threeFG(I, I1, 0) > E%(11) Then Print #2, players$(I, I1);: Print #2, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; E%(11)
+            If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then Print #1, players$(I, I1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
+            If plyrOff_GAME!(I, I1, 11) > eventSettings(7) Then Print #1, players$(I, I1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
+            If plyrOff_GAME!(I, I1, 14) > eventSettings(8) Then Print #1, players$(I, I1);: Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
+            If plyrOff_GAME!(I, I1, 15) > eventSettings(9) Then Print #1, players$(I, I1);: Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
+            If plyrOff_GAME!(I, I1, 13) > eventSettings(10) Then Print #1, players$(I, I1);: Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
+            If threeFG(I, I1, 0) > eventSettings(11) Then Print #1, players$(I, I1);: Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
         Next
     Next
 
-    Print #2,
+    Print #1,
 
-    Close #2
+    Close #1
 
 End Sub
 
@@ -6676,15 +6678,15 @@ Sub SAVESTATS ()
                 endAllGames = 1
             Else
 
-                Open "GAME82" For Output As #2
+                Open "GAME82" For Output As #1
 
-                Print #2, RTrim$(scheduleFile$)
+                Print #1, RTrim$(scheduleFile$)
 
                 For I = 0 To 2
-                    Print #2, schedGame(I)
+                    Print #1, schedGame(I)
                 Next
 
-                Close 2
+                Close #1
 
             End If
 
@@ -6700,7 +6702,7 @@ Sub SAVESTATS ()
                     Input #2, schedGame(I)
                 Next
 
-                Close 2
+                Close #2
 
                 Open diskPaths$(1) + tourneyFile$ + ".TOU" As #1 Len = 90
 
@@ -6725,7 +6727,7 @@ Sub SAVESTATS ()
 
                 Put #1, schedGame(0) + schedGame(2)
 
-                Close 1
+                Close #1
 
                 schedGame(2) = schedGame(2) + 1
                 autoPlay = 1
@@ -6738,7 +6740,7 @@ Sub SAVESTATS ()
                     Print #2, schedGame(I)
                 Next
 
-                Close 2
+                Close #2
 
                 Call TOURNEY_Game
 
@@ -6829,28 +6831,28 @@ Sub COMPILESTATFILES (teamIdx)
 
     If _FileExists(diskPaths$(1) + statFile$) Then
 
-        Open diskPaths$(1) + statFile$ For Input As #2
+        Open diskPaths$(1) + statFile$ For Input As #1
 
-        Input #2, gameTeams$(teamIdx)
+        Input #1, gameTeams$(teamIdx)
 
         For I = 0 To 13:
 
-            Input #2, players$(teamIdx, I)
+            Input #1, players$(teamIdx, I)
 
             For J = 0 To 13:
-                Input #2, Z2!(I, J)
+                Input #1, Z2!(I, J)
             Next J
 
-            Input #2, W2(teamIdx, I)
-            Input #2, W3(teamIdx, I)
+            Input #1, W2(teamIdx, I)
+            Input #1, W3(teamIdx, I)
 
         Next I
 
-        For L = 0 To 15: Input #2, Z!(L): Next L
+        For L = 0 To 15: Input #1, Z!(L): Next L
 
-        For L = 0 To 15: Input #2, Z1!(L): Next L
+        For L = 0 To 15: Input #1, Z1!(L): Next L
 
-        Close #2
+        Close #1
 
     End If
 
@@ -6913,34 +6915,35 @@ Sub COMPILESTATFILES (teamIdx)
     U$ = "SAVING STATS FOR " + gameTeams$(teamIdx)
     Locate , (80 - Len(U$)) / 2
     Print U$
+
     Color 15, 0
 
-    Open diskPaths$(1) + statFile$ For Output As #1
+    Open diskPaths$(1) + statFile$ For Output As #2
 
-    Print #1, gameTeams$(teamIdx)
+    Print #2, gameTeams$(teamIdx)
 
     For I = 0 To 13:
 
-        Print #1, players$(teamIdx, I)
+        Print #2, players$(teamIdx, I)
 
         For J = 0 To 13:
-            Print #1, Z2!(I, J)
+            Print #2, Z2!(I, J)
         Next J
 
-        Print #1, W2(teamIdx, I):
-        Print #1, W3(teamIdx, I)
+        Print #2, W2(teamIdx, I):
+        Print #2, W3(teamIdx, I)
 
     Next I
 
     For L = 0 To 15:
-        Print #1, Z!(L)
+        Print #2, Z!(L)
     Next L
 
     For L = 0 To 15:
-        Print #1, Z1!(L)
+        Print #2, Z1!(L)
     Next L
 
-    Close #1
+    Close #2
 
     Print
 
@@ -6948,25 +6951,25 @@ Sub COMPILESTATFILES (teamIdx)
 
     If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #1
+        Open diskPaths$(1) + statFile$ + "S" For Input As #3
 
-        Input #1, YY%
+        Input #3, YY%
 
-        For I = 1 To 100: Input #1, O%(I): Next I
-        For I = 1 To 100: Input #1, HO$(I): Next I
-        For I = 1 To 100: Input #1, HT%(I): Next I
-        For I = 1 To 100: Input #1, H$(I): Next I
+        For I = 1 To 100: Input #3, O%(I): Next I
+        For I = 1 To 100: Input #3, HO$(I): Next I
+        For I = 1 To 100: Input #3, HT%(I): Next I
+        For I = 1 To 100: Input #3, H$(I): Next I
 
         For I = 1 To 100
             For I1 = 0 To 1
-                Input #1, APT%(I, I1)
+                Input #3, APT%(I, I1)
             Next
         Next
 
-        For I = 1 To 100: Input #1, CRD&(I): Next I
-        For I = 1 To 100: Input #1, SITE$(I): Next I
+        For I = 1 To 100: Input #3, CRD&(I): Next I
+        For I = 1 To 100: Input #3, SITE$(I): Next I
 
-        Close #1
+        Close #3
 
     End If
 
@@ -7007,25 +7010,25 @@ Sub COMPILESTATFILES (teamIdx)
         SITE$(YY%) = gameArena$(1)
     End If
 
-    Open diskPaths$(1) + statFile$ + "S" For Output As #1
+    Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
-    Print #1, YY%
+    Print #4, YY%
 
-    For I = 1 To 100: Print #1, O%(I): Next I
-    For I = 1 To 100: Print #1, HO$(I): Next I
-    For I = 1 To 100: Print #1, HT%(I): Next I
-    For I = 1 To 100: Print #1, H$(I): Next I
+    For I = 1 To 100: Print #4, O%(I): Next I
+    For I = 1 To 100: Print #4, HO$(I): Next I
+    For I = 1 To 100: Print #4, HT%(I): Next I
+    For I = 1 To 100: Print #4, H$(I): Next I
 
     For I = 1 To 100
         For I1 = 0 To 1
-            Print #1, APT%(I, I1)
+            Print #4, APT%(I, I1)
         Next
     Next
 
-    For I = 1 To 100: Print #1, CRD&(I): Next I
-    For I = 1 To 100: Print #1, SITE$(I): Next I
+    For I = 1 To 100: Print #4, CRD&(I): Next I
+    For I = 1 To 100: Print #4, SITE$(I): Next I
 
-    Close #1
+    Close #4
 
     For I = 1 To 100
         O%(I) = 0
@@ -7163,7 +7166,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
                             teamIndex%(teamIdx) = teamIdx
                         Next teamIdx
 
-                        Close 1
+                        Close #1
 
                     End If 'Done checking if file exists
 
@@ -7304,7 +7307,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
         Next
     Next
 
-    Close 1
+    Close #1
 
     FY%(P9) = 2 * teamRat_GAME(P9, 3) - teamRat_GAME(P9, 4)
 
@@ -7329,16 +7332,16 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
 
     Loop Until (CNT% < 10 And CNTX% < 4) Or (CNTX% >= 5 And CNT% < 8)
 
-    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ As #1 Len = DATA_SIZE_BYTES
+    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ As #2 Len = DATA_SIZE_BYTES
 
-    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+    Field #2, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
     For I = 0 To 13
-        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+        Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
-    Get #1, I1
+    Get #2, I1
 
     gameCoaches$(P9) = Q$(0)
     gameArena$(P9) = Q$(1)
@@ -7362,7 +7365,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
 
     CK = CVI(Q$(249))
 
-    Close 1
+    Close #2
 
     If CK <> 999 Then
 
@@ -7470,7 +7473,7 @@ Sub CheckRecords ()
             Next
         Next
 
-        Close 1
+        Close #1
 
     End If
 
@@ -9158,16 +9161,16 @@ Sub CheckRecords ()
 
     Next
 
-    Open diskPaths$(1) + "RECORDS.GAM" For Output As #1
+    Open diskPaths$(1) + "RECORDS.GAM" For Output As #2
 
     For I = 0 To 48
 
         For I1 = 0 To 2
-            Write #1, REC!(I, I1)
+            Write #2, REC!(I, I1)
         Next
 
         For I1 = 0 To 4
-            Write #1, RC$(I, I1)
+            Write #2, RC$(I, I1)
         Next
 
     Next
@@ -9175,16 +9178,16 @@ Sub CheckRecords ()
     For I = 0 To 125
 
         For I1 = 0 To 2
-            Write #1, TREC!(I, I1)
+            Write #2, TREC!(I, I1)
         Next
 
         For I1 = 0 To 3
-            Write #1, TRC$(I, I1)
+            Write #2, TRC$(I, I1)
         Next
 
     Next
 
-    Close 1
+    Close #2
 
 End Sub
 

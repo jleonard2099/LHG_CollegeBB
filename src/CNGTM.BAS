@@ -1,7 +1,7 @@
 '----------------------------------------
 '            CNGTM Subroutine
 '----------------------------------------
-'This subroutine presents a menu of all 
+'This subroutine presents a menu of all
 'the options related to team rosters
 Sub CNGTM (userChoice)
 
@@ -31,6 +31,7 @@ Sub CNGTM (userChoice)
         If (userChoice <> 0) Then
             Selection% = userChoice
         Else
+
             Call box0(7, 24, 12, 46, 2, 15, 1)
 
             _MouseShow "DEFAULT"
@@ -42,26 +43,25 @@ Sub CNGTM (userChoice)
 
         If ExitCode% <> 27 Then
 
-            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+            Select Case Selection%
 
-            If teamNbr <> 0 Then
+                Case 1:
+                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+                    If teamNbr > 0 Then Call EditTeam(team$, teamNbr, YN$)
 
-                Select Case Selection%
+                Case 2:
+                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+                    If teamNbr > 0 Then Call PrintRoster(team$, teamNbr)
 
-                    Case 1:
-                        Call EditTeam(team$, T1, YN$)
+                Case 3:
+                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+                    If teamNbr > 0 Then Call ViewRoster(team$, teamNbr)
 
-                    Case 2:
-                        Call PrintRoster(team$, T1)
+            End Select
 
-                    Case 3:
-                        Call ViewRoster(team$, T1)
-
-                End Select
-
-                userChoice = 0
-                
-            End If
+            'Reset "user choice" after first call
+            'We're at the menu now, no purpose in forcing shortcuts
+            userChoice = 0
 
         End If
 
@@ -72,7 +72,7 @@ End Sub
 '----------------------------------------
 '          EditTeam Subroutine
 '----------------------------------------
-'This subroutine steps the user through 
+'This subroutine steps the user through
 'screens for adjusting team data and players
 '
 'NOTE: <ENTER> key is valued as 0 for when
@@ -101,7 +101,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
     Print " 3. TEAM NAME "; teamName$; Tab(37); "22. AVG ATTENDANCE "; teamAttendance%
     Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(37); "23. WINS "; teamRatings%(7)
     Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(37); "24. LOSSES "; teamRatings%(8)
-    Print " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj; Tab(37);"25. POWER RATING "; teamRatings%(9)
+    Print " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj; Tab(37); "25. POWER RATING "; teamRatings%(9)
     Print " 7. DEF 3FG% ADJ "; def3FG_Adj
     Print " 8. OFF STEAL RATING "; leagueRatings%(0)
     Print " 9. OFF TURNOVER RATING "; leagueRatings%(1)
@@ -714,15 +714,15 @@ Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
 
     Put #1, teamIdx
 
-    Close 1
+    Close #1
 
-    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = DATA_SIZE_BYTES
+    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ For Random As #2 Len = DATA_SIZE_BYTES
 
-    Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+    Field #2, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
     For I = 0 To 13
-        Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
+        Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
 
     LSet Q$(0) = RTrim$(coach$)
@@ -744,8 +744,9 @@ Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
 
     LSet Q$(249) = MKI$(999)
 
-    Put #1, teamIdx
+    Put #2, teamIdx
 
-    Close 1
+    Close #2
 
 End Sub
+

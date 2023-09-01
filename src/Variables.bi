@@ -136,7 +136,7 @@ Dim teamYears$(1), tmName_DRAFT$(1)
 '   Used in Head-To-Head routines
 '----------------------------------------
 Dim AL!(50), AW!(50), HL!(50), HW!(50)
-Dim R1!(50), R2!(50), hd2hdR3!(50), R4!(50)
+Dim R1!(50), R2!(50), R3_HD2HD!(50), R4!(50)
 Dim TAW!(40), THW!(40), THL!(40), TAL!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
@@ -241,7 +241,7 @@ Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, prevBall$
 Dim Shared tourneyFile$, U$, VT$, VT1$, W$, W1$, YN$
 
 '-- FA%() I believe is related to tracking player fatigue
-Dim Shared APT%(100, 1), B%(1, 13), CZ%(1), DT%(1), E%(13), FY%(2)
+Dim Shared APT%(100, 1), B%(1, 13), CZ%(1), DT%(1), eventSettings(13), FY%(2)
 Dim Shared G9%(1), HF%(1, 6), HT%(100), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
 Dim Shared O%(100), OF%(1), PC%(1), PR%(1, 1)
 Dim Shared ST%(32), SX%(32, 1, 14)

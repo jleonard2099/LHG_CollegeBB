@@ -83,61 +83,62 @@ Sub ViewTourneyInfo (ACTION%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #2
+        Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #1
 
-        Input #2, FF$
+        Input #1, FF$
 
-        Input #2, R% ' NUMBER OF REGIONS
+        Input #1, R% ' NUMBER OF REGIONS
 
         For I = 1 To 16
-            Input #2, NN%(I) ' NUMBER OF TEAMS IN REGION
-            Input #2, regionNames$(I) ' NAME OF REGION
+            Input #1, NN%(I) ' NUMBER OF TEAMS IN REGION
+            Input #1, regionNames$(I) ' NAME OF REGION
         Next
 
         For I = 1 To 16
             For I1 = 1 To 16
                 For I2 = 0 To 3
-                    Input #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                    Input #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                    Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
+                    Input #1, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                 Next
             Next
         Next
 
-        Input #2, consolationSetting%(0)
-        Input #2, consolationSetting%(1): ' CONSOLATION GAME
+        Input #1, consolationSetting%(0)
+        Input #1, consolationSetting%(1): ' CONSOLATION GAME
 
-        Close 2
+        Close #1
 
-        Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #1
+        Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #2
 
         For I = 0 To 14
-            Input #1, tourneyDefaults%(I)
+            Input #2, tourneyDefaults%(I)
         Next
 
-        Close 1
+        Close #2
 
         If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
         NR$ = Str$(R%)
 
-        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #3 Len = 90
         fileLength& = LOF(1)
-        Close 1
+        Close #3
 
         scheduleAP%(0) = fileLength& / 90
         BS% = Int((scheduleAP%(0) - 1) / 20)
 
         For I = 1 To scheduleAP%(0)
 
-            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #4 Len = 90
 
             For X = 0 To 14
-                Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+                Field #4, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
             Next
 
-            Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-            Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-            Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-            Get #1, I
+            Field #4, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+            Field #4, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+            Field #4, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+
+            Get #4, I
 
             For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
             For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
@@ -157,7 +158,8 @@ Sub ViewTourneyInfo (ACTION%)
                 Wend
             Next
 
-            Close 1
+            Close #4
+
         Next
 
         Call EditBracket(R%, ACTION%)

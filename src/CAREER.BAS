@@ -530,22 +530,22 @@ Sub MergeAddYear (selectedFile$, statFile$)
         Locate 20, 5
         Print "LOADING CAREER STATS AND LEADER FILE . . . . PLEASE WAIT"
 
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #2
+        Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #1
 
-        Input #2, NB%, B$
+        Input #1, NB%, B$
 
         For N = 1 To 15
 
             For I = 0 To 61:
 
-                Input #2, AR$(I)
+                Input #1, AR$(I)
 
                 For J = 0 To 15:
-                    Input #2, ARS!(N, I, J)
+                    Input #1, ARS!(N, I, J)
                 Next J
 
-                Input #2, W0S!(N, I)
-                Input #2, W1S!(N, I)
+                Input #1, W0S!(N, I)
+                Input #1, W1S!(N, I)
 
                 Color 5
                 Locate 21, 38
@@ -556,23 +556,23 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next N
 
-        Close #2
+        Close #1
 
         Locate 20, 5
         Print "LOADING STATS FILE . . . . PLEASE WAIT"
 
-        Open diskPaths$(1) + statFile$ For Input As #1
+        Open diskPaths$(1) + statFile$ For Input As #2
 
-        Input #1, B$
+        Input #2, B$
 
         For I = 0 To 13:
 
-            Input #1, careerA$(I)
+            Input #2, careerA$(I)
 
-            For J = 0 To 13: Input #1, A(I, J): Next
+            For J = 0 To 13: Input #2, A(I, J): Next
 
-            Input #1, careerW0!(I)
-            Input #1, careerW1!(I)
+            Input #2, careerW0!(I)
+            Input #2, careerW1!(I)
 
             Color 5
             Locate 21, 38
@@ -581,11 +581,11 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next
 
-        For L = 0 To 15: Input #1, careerZ!(L): Next
+        For L = 0 To 15: Input #2, careerZ!(L): Next
 
-        For L = 0 To 15: Input #1, careerZ1!(L): Next
+        For L = 0 To 15: Input #2, careerZ1!(L): Next
 
-        Close #1
+        Close #2
 
         For I = 0 To 13
             RR = 0
@@ -653,22 +653,22 @@ Sub MergeAddYear (selectedFile$, statFile$)
         Locate 20, 5
         Print "MERGING CAREER STATS . . . . PLEASE WAIT"
 
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Output As #2
+        Open diskPaths$(1) + selectedFile$ + ".CAR" For Output As #3
 
-        Write #2, NB%, B$
+        Write #3, NB%, B$
 
         For N = 1 To 15
 
             For I = 0 To 61
 
-                Write #2, AR$(I)
+                Write #3, AR$(I)
 
                 For J = 0 To 15:
-                    Write #2, ARS!(N, I, J)
+                    Write #3, ARS!(N, I, J)
                 Next J
 
-                Write #2, W0S!(N, I)
-                Write #2, W1S!(N, I)
+                Write #3, W0S!(N, I)
+                Write #3, W1S!(N, I)
 
                 Color 5
                 Locate 21, 38
@@ -679,7 +679,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         Next N
 
-        Close #2
+        Close #3
 
     End If
 
@@ -860,12 +860,12 @@ Sub UpdateCareerLeaders (targetFile$)
 
     Next I
 
-    Open diskPaths$(1) + targetFile$ + ".CLD" For Output As #1
+    Open diskPaths$(1) + targetFile$ + ".CLD" For Output As #2
 
     For I = 0 To 20
-        Write #1, BLYR(I), BL$(I), BL(I)
+        Write #2, BLYR(I), BL$(I), BL(I)
     Next
 
-    Close #1
+    Close #2
 
 End Sub

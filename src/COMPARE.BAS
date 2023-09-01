@@ -66,19 +66,19 @@ Sub COMPARE ()
             If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
         Next
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #1
+        Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
-        Input #1, Y
+        Input #2, Y
 
-        For J = 1 To 100: Input #1, OP%(J): Next
+        For J = 1 To 100: Input #2, OP%(J): Next
 
-        For J = 1 To 100: Input #1, OP$(J): Next
+        For J = 1 To 100: Input #2, OP$(J): Next
 
-        For J = 1 To 100: Input #1, HP%(J): Next
+        For J = 1 To 100: Input #2, HP%(J): Next
 
-        For J = 1 To 100: Input #1, HP$(J): Next
+        For J = 1 To 100: Input #2, HP$(J): Next
 
-        Close #1
+        Close #2
 
         replayLosses% = 0
         replayWins% = 0

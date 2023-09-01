@@ -45,12 +45,15 @@ Sub CREATNAT ()
             Select Case Selection%
 
                 Case 1:
-                    Call DefineNatOrg(LG$)
-                    Call ReviewEditNatOrg(LG$)
+                    Call DefineNatOrg(league$)
+                    Call ReviewEditNatOrg(league$)
 
                 Case 2:
-                    LG$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
-                    Call ReviewEditNatOrg(LG$)
+                    league$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+                        Call ReviewEditNatOrg(league$)
+                    End If
 
             End Select
 
@@ -74,31 +77,18 @@ Sub DefineNatOrg (org$)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8: Color 15, 1
-
-        'Print box top
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        'Print box sides
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        'Print box bottom
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox (6, 8, 61, 7, 15, 1)
 
         Do
 
             Locate 7, 32
 
-            Locate , 12: Print "ENTER NAME FOR ORGANIZATION: ": Print
+            Locate , 12: Print "ENTER NAME FOR ORGANIZATION: "
+            Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
             Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
-            Locate 7, 37: Input org$
+
+            Locate 7, 40: Input org$
 
             If org$ <> "" Then
 
@@ -128,15 +118,15 @@ Sub ReviewEditNatOrg (organization$)
 
     If _FileExists(diskPaths$(1) + organization$ + ".CON") Then
 
-        Open diskPaths$(1) + organization$ + ".CON" For Input As #2
+        Open diskPaths$(1) + organization$ + ".CON" For Input As #1
 
-        Input #2, organization$
+        Input #1, organization$
 
         For X = 1 To MAX_CONFERENCES
-            Input #2, creatZ1$(X)
+            Input #1, creatZ1$(X)
         Next
 
-        Close 2
+        Close #1
 
     End If
 
@@ -220,15 +210,15 @@ Sub SaveNatOrg (leagueFile$)
 
     Shared creatZ1$()
 
-    Open diskPaths$(1) + leagueFile$ + ".CON" For Output As #2
+    Open diskPaths$(1) + leagueFile$ + ".CON" For Output As #1
 
-    Print #2, leagueFile$
+    Print #1, leagueFile$
 
     For idx = 1 To MAX_CONFERENCES
-        Print #2, creatZ1$(idx)
+        Print #1, creatZ1$(idx)
     Next
 
-    Close 2
+    Close #1
 
     Cls
 

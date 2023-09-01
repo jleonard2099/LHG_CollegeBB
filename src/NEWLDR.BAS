@@ -76,15 +76,15 @@ Sub ViewExpandedStats ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #2
+        Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #1
 
-        Input #2, conf$, D1$, D2$
+        Input #1, conf$, D1$, D2$
 
         For X = 1 To 30
-            Input #2, expanZ1$(X)
+            Input #1, expanZ1$(X)
         Next
 
-        Close 2
+        Close #1
 
         Call UpdateExpandedLeaders(conferenceFile$, expanZ1$(), JB, TS, TTS)
 
@@ -156,11 +156,11 @@ Sub UpdateExpandedLeaders (statFile$, Z1$(), JB, tStats, ttStats)
 
                 Close #1
 
-                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #1
+                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #2
 
-                Input #1, year
+                Input #2, year
 
-                Close #1
+                Close #2
 
                 tStats = tStats + 1
 
