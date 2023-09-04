@@ -199,7 +199,7 @@ Sub TINPUT ()
 
                             Do
 
-                                Print "ANY CHANGE?? (Y/N)";
+                                Print "ANY CHANGE? (Y/N)";
                                 I$ = GetKeyPress$
 
                             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
@@ -213,7 +213,7 @@ Sub TINPUT ()
             End If
 
             If I$ = Chr$(27) Then Exit Sub
-            
+
         Loop Until UCase$(I$) = "N"
 
         '---------------
@@ -456,29 +456,29 @@ Sub TINPUT ()
 
                 If playerNames$(I) <> "XXX" Then
 
-                    Locate 4: Input " 2. POSITION "; position$(I)
-                    Locate 5: Input " 3. GAMES "; playerOff!(I, 7)
+                    Locate 4, 1: Input " 2. POSITION "; position$(I)
+                    Locate 5, 1: Input " 3. GAMES "; playerOff!(I, 7)
                     playerRatings!(I, 0) = playerOff!(I, 7)
-                    Locate 6: Input " 4. MP "; playerOff!(I, 8)
-                    Locate 7: Input " 5. FGM "; playerStats!(I, 3)
-                    Locate 8: Input " 6. FGA "; playerOff!(I, 9)
+                    Locate 6, 1: Input " 4. MP "; playerOff!(I, 8)
+                    Locate 7, 1: Input " 5. FGM "; playerStats!(I, 3)
+                    Locate 8, 1: Input " 6. FGA "; playerOff!(I, 9)
                     playerRatings!(I, 1) = playerOff!(I, 9)
-                    Locate 9: Input " 7. FTM "; playerStats!(I, 5)
-                    Locate 10: Input " 8. FTA "; playerOff!(I, 16)
-                    Locate 11: Input " 9. ORB "; playerOff!(I, 19)
-                    Locate 12: Input "10. TOT RB "; playerOff!(I, 10)
-                    Locate 13: Input "11. PF "; playerOff!(I, 12)
-                    Locate 14: Input "12. AST "; playerOff!(I, 11)
-                    Locate 15: Input "13. BLK "; playerOff!(I, 14)
-                    Locate 16: Input "14. STL "; playerOff!(I, 13)
-                    Locate 17: Input "15. 3 FGM "; playerStats!(I, 13)
-                    Locate 18: Input "16. 3 FGA "; playerOff!(I, 17)
-                    Locate 19: Input "17. DEFENSE (1-9) "; playerDef!(I)
+                    Locate 9, 1: Input " 7. FTM "; playerStats!(I, 5)
+                    Locate 10, 1: Input " 8. FTA "; playerOff!(I, 16)
+                    Locate 11, 1: Input " 9. ORB "; playerOff!(I, 19)
+                    Locate 12, 1: Input "10. TOT RB "; playerOff!(I, 10)
+                    Locate 13, 1: Input "11. PF "; playerOff!(I, 12)
+                    Locate 14, 1: Input "12. AST "; playerOff!(I, 11)
+                    Locate 15, 1: Input "13. BLK "; playerOff!(I, 14)
+                    Locate 16, 1: Input "14. STL "; playerOff!(I, 13)
+                    Locate 17, 1: Input "15. 3 FGM "; playerStats!(I, 13)
+                    Locate 18, 1: Input "16. 3 FGA "; playerOff!(I, 17)
+                    Locate 19, 1: Input "17. DEFENSE (1-9) "; playerDef!(I)
 
                     Do
 
                         Do
-                            Locate 22
+                            Locate 22, 1
                             Input "# TO CHANGE (0 TO CONTINUE) "; B9
                         Loop Until B9 >= 0 And B9 <= 17
 
@@ -487,57 +487,57 @@ Sub TINPUT ()
                             Select Case B9
 
                                 Case 1
-                                    Locate 3: Input " 1. NAME (XXX TO QUIT) "; playerNames$(I)
+                                    Locate 3, 1: Input " 1. NAME (XXX TO QUIT) "; playerNames$(I)
 
                                 Case 2
-                                    Locate 4: Input "2. POSITION "; position$(I)
+                                    Locate 4, 1: Input "2. POSITION "; position$(I)
 
                                 Case 3
-                                    Locate 5: Input " 3. GAMES "; playerOff!(I, 7)
+                                    Locate 5, 1: Input " 3. GAMES "; playerOff!(I, 7)
                                     playerRatings!(I, 0) = playerOff!(I, 7)
 
                                 Case 4
-                                    Locate 6: Input " 4. MP "; playerOff!(I, 8)
+                                    Locate 6, 1: Input " 4. MP "; playerOff!(I, 8)
 
                                 Case 5
-                                    Locate 7: Input " 5. FGM "; playerStats!(I, 3)
+                                    Locate 7, 1: Input " 5. FGM "; playerStats!(I, 3)
 
                                 Case 6
-                                    Locate 8: Input " 6. FGA "; playerOff!(I, 9)
+                                    Locate 8, 1: Input " 6. FGA "; playerOff!(I, 9)
                                     playerRatings!(I, 1) = playerOff!(I, 9)
 
                                 Case 7
-                                    Locate 9: Input " 7. FTM "; playerStats!(I, 5)
+                                    Locate 9, 1: Input " 7. FTM "; playerStats!(I, 5)
 
                                 Case 8
-                                    Locate 10: Input " 8. FTA "; playerOff!(I, 16)
+                                    Locate 10, 1: Input " 8. FTA "; playerOff!(I, 16)
 
                                 Case 9
-                                    Locate 11: Input " 9. ORB "; playerOff!(I, 19)
+                                    Locate 11, 1: Input " 9. ORB "; playerOff!(I, 19)
 
                                 Case 10
-                                    Locate 12: Input " 10. TOT RB "; playerOff!(I, 10)
+                                    Locate 12, 1: Input " 10. TOT RB "; playerOff!(I, 10)
 
                                 Case 11
-                                    Locate 13: Input "11. PF "; playerOff!(I, 12)
+                                    Locate 13, 1: Input "11. PF "; playerOff!(I, 12)
 
                                 Case 12
-                                    Locate 14: Input "12. AST "; playerOff!(I, 11)
+                                    Locate 14, 1: Input "12. AST "; playerOff!(I, 11)
 
                                 Case 13
-                                    Locate 15: Input "13. BLK "; playerOff!(I, 14)
+                                    Locate 15, 1: Input "13. BLK "; playerOff!(I, 14)
 
                                 Case 14
-                                    Locate 16: Input "14. STL "; playerOff!(I, 13)
+                                    Locate 16, 1: Input "14. STL "; playerOff!(I, 13)
 
                                 Case 15
-                                    Locate 17: Input "15. 3 FGM "; playerStats!(I, 13)
+                                    Locate 17, 1: Input "15. 3 FGM "; playerStats!(I, 13)
 
                                 Case 16
-                                    Locate 18: Input "16. 3 FGA "; playerOff!(I, 17)
+                                    Locate 18, 1: Input "16. 3 FGA "; playerOff!(I, 17)
 
                                 Case 17
-                                    Locate 19: Input "17. DEFENSE (1-9) "; playerDef!(I)
+                                    Locate 19, 1: Input "17. DEFENSE (1-9) "; playerDef!(I)
 
                             End Select
 
@@ -599,7 +599,7 @@ Sub TINPUT ()
             '-- between 2000 and 2052
             If (X1 >= 39 And X1 <= 72) Then
 
-                If X1 >= 53 And X1 <= 57 Then 
+                If X1 >= 53 And X1 <= 57 Then
                     '1953 - 1957
                     '70% of entered value
                     X2 = .7
@@ -659,7 +659,7 @@ Sub TINPUT ()
                     'Steals / Game
                     If inputQQ(2) = 0 Then playerOff!(I, 5) = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * M) + .5)
                     'Blocks / Game
-                    If inputQQ(3) = 0 Then playerOff!(I, 6) = Int (((playerOff!(I, 14) / playerOff!(I, 7)) * M) + .5)
+                    If inputQQ(3) = 0 Then playerOff!(I, 6) = Int(((playerOff!(I, 14) / playerOff!(I, 7)) * M) + .5)
 
                 End If
 
@@ -1207,3 +1207,4 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     Erase N$
 
 End Sub
+

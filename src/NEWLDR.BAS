@@ -17,22 +17,22 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "VIEW EXPANDED LEAGUE STATISTICS "
-        menuChoices$(2) = "RETURN TO LEAGUE LEADER MENU    "
+        menuChoices$(1) = "VIEW EXPANDED LEAGUE STATISTICS"
+        menuChoices$(2) = "RETURN TO LEAGUE LEADER MENU   "
         Selection% = 1
         Count% = 2
         Start% = 1
         ExitCode% = 2
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        FileFGColor% = 15: FileBGColor% = 1
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         Column% = 25
 
-        Call box0(7, 24, 10, 57, 2, 15, 1)
+        Call box0(7, 24, 10, 56, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
@@ -302,23 +302,23 @@ Sub ExpandedLeaders_Menu (JB, TS, TTS)
         Cls
 
         Call TITLE
-        menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS  "
-        menuChoices$(2) = "VIEW TEAM TOTALS                "
-        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU    "
+        menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS"
+        menuChoices$(2) = "VIEW TEAM TOTALS              "
+        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU  "
         Selection% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        FileFGColor% = 15: FileBGColor% = 1
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         Column% = 25
 
-        Call box0(7, 24, 11, 57, 2, 15, 1)
+        Call box0(7, 24, 11, 55, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0

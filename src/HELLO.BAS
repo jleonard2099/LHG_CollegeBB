@@ -22,7 +22,6 @@ DefInt A-Z
 '$INCLUDE: 'PadRight.bi'
 '$INCLUDE: 'Variables.bi'
 
-
 ' For Utils
 '$INCLUDE: 'MainRoutines.bi'
 '$INCLUDE: 'TITLE.bi'
@@ -270,15 +269,15 @@ Sub Main_Menu (menuSelection%)
         Count% = 9
         Start% = 1
         ExitCode% = 9
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        FileFGColor% = 15: FileBGColor% = 1
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         Column% = 25
 
         Call box0(7, 24, 17, 57, 2, 15, 1)
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), menuSelection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
@@ -402,26 +401,29 @@ Sub TeamMgt_Menu ()
     Do
 
         Call TITLE
+
         ReDim menuChoices$(1 To 6)
-        menuChoices$(1) = "INPUT A NEW TEAM             "
-        menuChoices$(2) = "EDIT AN EXISTING TEAM        "
-        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT   "
-        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT    "
-        menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM "
-        menuChoices$(6) = "RETURN TO MAIN MENU          "
+
+        menuChoices$(1) = "INPUT A NEW TEAM            "
+        menuChoices$(2) = "EDIT AN EXISTING TEAM       "
+        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT  "
+        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT   "
+        menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM"
+        menuChoices$(6) = "RETURN TO MAIN MENU         "
         Selection% = 1
         Count% = 6
         Start% = 1
         ExitCode% = 6
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        FileFGColor% = 15: FileBGColor% = 1
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
-        Column% = 27
-        Call box0(7, 26, 14, 57, 2, 15, 1)
+        Column% = 26
+
+        Call box0(7, 25, 14, 55, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
@@ -457,25 +459,26 @@ Sub Replay_Menu ()
         Call TITLE
 
         ReDim menuChoices$(1 To 5)
-        menuChoices$(1) = "VIEW / PRINT COMPILED STATISTICS "
-        menuChoices$(2) = "ENCYCLOPEDIA/ TEAM REPLAY OPTIONS"
-        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL   "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES "
-        menuChoices$(5) = "RETURN TO COURTSIDE MAIN MENU    "
+
+        menuChoices$(1) = "VIEW / PRINT COMPILED STATS       "
+        menuChoices$(2) = "ENCYCLOPEDIA / TEAM REPLAY OPTIONS"
+        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL    "
+        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES  "
+        menuChoices$(5) = "RETURN TO COURTSIDE MAIN MENU     "
         Selection% = 1
         Count% = 5
         Start% = 1
         ExitCode% = 5
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        FileFGColor% = 15: FileBGColor% = 1
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
-        Column% = 25
+        Column% = 23
 
-        Call box0(7, 24, 13, 58, 2, 15, 1)
+        Call box0(7, 22, 13, 57, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
@@ -505,38 +508,40 @@ Sub Leaders_Menu ()
         Cls
 
         Call TITLE
+
         ReDim menuChoices$(1 To 14)
-        menuChoices$(1) = "CREATE/ EDIT A CONFERENCE"
-        menuChoices$(2) = "UPDATE STATS/ STANDINGS  "
-        menuChoices$(3) = "VIEW/ PRINT REPORTS      "
-        menuChoices$(4) = "HEAD-TO-HEAD STATS       "
-        menuChoices$(5) = "RECORD BOOKS             "
-        menuChoices$(6) = "EXPANDED LEADERS         "
-        menuChoices$(7) = "DELETE CONFERENCE STATS  "
-        menuChoices$(8) = "CREATE/ EDIT ORGANIZATION"
-        menuChoices$(9) = "UPDATE POLL/ STATS       "
-        menuChoices$(10) = "VIEW/ PRINT REPORTS      "
-        menuChoices$(11) = "RECORD BOOKS             "
-        menuChoices$(12) = "DELETE ORGANIZATION STATS"
-        menuChoices$(13) = "RETURN TO COURTSIDE MENU "
-        menuChoices$(14) = "EXIT TO DOS              "
+
+        menuChoices$(1) = "CREATE / EDIT A CONFERENCE"
+        menuChoices$(2) = "UPDATE STATS / STANDINGS  "
+        menuChoices$(3) = "VIEW / PRINT REPORTS      "
+        menuChoices$(4) = "HEAD-TO-HEAD STATS        "
+        menuChoices$(5) = "RECORD BOOKS              "
+        menuChoices$(6) = "EXPANDED LEADERS          "
+        menuChoices$(7) = "DELETE CONFERENCE STATS   "
+        menuChoices$(8) = "CREATE / EDIT ORGANIZATION"
+        menuChoices$(9) = "UPDATE POLL / STATS       "
+        menuChoices$(10) = "VIEW / PRINT REPORTS      "
+        menuChoices$(11) = "RECORD BOOKS              "
+        menuChoices$(12) = "DELETE ORGANIZATION STATS "
+        menuChoices$(13) = "RETURN TO COURTSIDE MENU  "
+        menuChoices$(14) = "EXIT TO DOS               "
         Selection% = 1
         Count% = 14
         Start% = 1
-        FileFGColr% = 15: FileBGColr% = 1
-        HiLiteFGColr% = 0: HiLiteBGColr% = 7
+        FileFGColor% = 15: FileBGColor% = 1
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Rows% = 7
         Columns% = 2
-        Spacing% = 4
+        Spacing% = 3
         Row% = 9
         Column% = 12
 
-        Call box0(7, 11, 16, 37, 2, 15, 1)
-        Call box0(7, 40, 16, 66, 2, 15, 1)
+        Call box0(7, 11, 16, 38, 2, 15, 1)
+        Call box0(7, 40, 16, 67, 2, 15, 1)
 
         Color 15, 0
         Locate 8, 14: Print "COLLEGE CONFERENCE"
-        Locate 8, 41: Print "NATIONAL ORGANIZATION"
+        Locate 8, 44: Print "NATIONAL ORGANIZATION"
 
         Locate 18
         Locate , 10
@@ -548,7 +553,7 @@ Sub Leaders_Menu ()
         Print "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
 
         _MouseShow "DEFAULT"
-        MAMenu menuChoices$(), Selection%, Start%, Count%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu menuChoices$(), Selection%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% <> 27 Then
@@ -569,6 +574,7 @@ Sub Leaders_Menu ()
                 Case 11: Call SeasonRecords
                 Case 12: Call BLANKORG
                 Case 13 Or 14: Cls
+
             End Select
 
         End If 'Done checking for ESC

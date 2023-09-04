@@ -42,8 +42,8 @@ SUB SeasonRecords ()
 			Count% = 7
 			Start% = 1
 			ExitCode% = 7
-			FileFGColr% = 15: FileBGColr% = 1
-			HiLiteFGColr% = 0: HiLiteBGColr% = 7
+			FileFGColor% = 15: FileBGColor% = 1
+			HiLiteFGColor% = 0: HiLiteBGColor% = 7
 			Spacing% = 1
 			Row% = 8
 			Column% = 25
@@ -51,7 +51,7 @@ SUB SeasonRecords ()
 			CALL box0(7, 24, 15, 50, 2,  15, 1)
 
 			_MouseShow "DEFAULT"
-			MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColr%, FileBGColr%, HiLiteFGColr%, HiLiteBGColr%, Count%, Row%, Column%
+			MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
 			_MouseHide
 
 			Color , 0
