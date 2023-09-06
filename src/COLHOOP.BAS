@@ -54,7 +54,14 @@ Sub COLHOOP ()
 
         Open "DEFAULT" For Output As #3
 
-        For I = 1 To 11:
+        For I = 1 To 3:
+            Print #3, 0
+        Next
+
+        'Location
+        Print #3, 1
+
+        For I = 5 To 11:
             Print #3, 0
         Next
 
@@ -213,7 +220,8 @@ Sub COLHOOP ()
 
         ' USER SELECTION OF OPTIONS
         'gameLoc = 1 is neutral site
-        gameLoc = 1
+        'gameLoc of 0 is not used
+        If gameLoc = 0 Then gameLoc = 1
 
         Do
             Color 15, 0
@@ -459,7 +467,7 @@ Sub COLHOOP ()
 
         Case 3:
             playerOpt = 2
-    
+
     End Select
 
     Call LOADSTATS
@@ -517,7 +525,7 @@ Sub COLHOOP ()
     End If
 
     PB$ = ""
-    
+
     If P = 1 Then
         P = 0
         D = 1
@@ -1569,7 +1577,7 @@ Sub COLHOOP ()
     ' --- I think this is by itself and the above are separate??? ---
 
     437 '
-    
+
     P6 = 0
     RN0 = Int(Rnd(1) * 3) + 1
     J8% = 0
@@ -2776,7 +2784,7 @@ Sub COLHOOP ()
         plyrOff_GAME!(P, B1(P, B), 9) = plyrOff_GAME!(P, B1(P, B), 9) + 1
 
         Call d100(S)
-        
+
         'FT Success Chance
         FX% = plyrOff_GAME!(P, B1(P, B), 1)
         If tmFatigue(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .9 + .5)
@@ -2869,12 +2877,12 @@ Sub COLHOOP ()
     If pbpOpt = 1 And pbpDelay! <> 0 Then Print U$: Call DELAY
 
     Locate 8, 41: Print Space$(12)
-    
+
     B = 6
     Call DELAY
-    
+
     turnovers(D) = turnovers(D) + 1
-    
+
     Call UPDATESCREEN
     Call DEADBALLOPTIONS
 
@@ -3734,3 +3742,4 @@ Sub COLHOOP ()
     End If
 
 End Sub
+

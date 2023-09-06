@@ -67,10 +67,10 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
                         Locate 10, 8
-
                         Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, PASS)
+                        Exit Sub
 
                     Else
 
