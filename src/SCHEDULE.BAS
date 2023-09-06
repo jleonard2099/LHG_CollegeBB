@@ -847,7 +847,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                                         Open diskPaths$(0) + subSchedFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
 
-                                        fileLength& = LOF(1)
+                                        fileLength& = LOF(3)
 
                                         numberGames% = fileLength& / SCHEDULE_SIZE_BYTES
 
@@ -1464,7 +1464,7 @@ Sub CreateConferenceSchedule ()
             'The file literally has 0 values for everything
             Open templateFile$ For Random As #2 Len = SCHEDULE_SIZE_BYTES
 
-            fileLength& = LOF(1)
+            fileLength& = LOF(2)
 
             scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
             BS% = Int((scheduleAP%(0) - 1) / 20)
@@ -1546,7 +1546,7 @@ Sub CreateConferenceSchedule ()
             '-- Save file -- reference the routine?????
             Open diskPaths$(0) + scheduleFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
 
-            fileLength& = LOF(1) / SCHEDULE_SIZE_BYTES
+            fileLength& = LOF(3) / SCHEDULE_SIZE_BYTES
 
             For X = 0 To 18
                 Field #3, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$

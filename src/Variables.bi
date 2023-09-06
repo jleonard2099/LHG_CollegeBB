@@ -223,8 +223,8 @@ Dim consolationSetting%(1)
 '----------------------------------------
 Dim scheduleFile$
 
-Dim Shared autoPlay, B, C1, DY, compTeam, D, endGame, endAllGames, FO, F3, G9
-Dim Shared H, halfTime, I, J, IN, M5, MJ, N, nbrLines, NTMS
+Dim Shared autoPlay, B, C1, DY, compTeam, D, endGame, endAllGames, FO, F3
+Dim Shared G9, gameLoc, H, halfTime, I, J, IN, M5, MJ, nbrLines, NTMS
 Dim Shared P, P9, playerOpt, Q, S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 

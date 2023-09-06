@@ -3402,7 +3402,7 @@ Sub UPDATESCREEN ()
     Locate , 35: Print Using "##  "; R3!(0);
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; R3!(1)
-    
+
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";
     Color 7: Print Using "##"; P2(1);
@@ -7144,10 +7144,10 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
                         Locate 10, 8
-
                         Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, PASS)
+                        Exit Sub
 
                     Else
 
@@ -9190,4 +9190,5 @@ Sub CheckRecords ()
     Close #2
 
 End Sub
+
 
