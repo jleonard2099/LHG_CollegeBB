@@ -233,8 +233,8 @@ Errhandler:
 Open "errlog" For Append As #9
 Print #9, "Error #"; Err; "on program file line"; _ErrorLine
 If _FileExists("GAME82") Then
-    Print #9, "Schedule game # "; Using "###"; AP%(0) + AP%(2)
-    Print #9, B$(0) + " vs. " + B$(1)
+    Print #9, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
+    Print #9, gameTeams$(0) + " vs. " + gameTeams$(1)
 End If
 Print #9,
 Close #9
