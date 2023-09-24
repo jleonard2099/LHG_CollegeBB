@@ -12,7 +12,7 @@ Sub TINPUT ()
     Shared W0, W1, XX
 
     Shared def3FG_Adj, def3FGA_Adj
-    Shared teamAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
     Dim E0(16)
@@ -251,7 +251,7 @@ Sub TINPUT ()
             Locate 5, 37: Input "23. POWER RATING "; teamRatings%(9)
             Locate 6, 37: Input "24. COACH "; coach$
             Locate 7, 37: Input "25. ARENA "; arenaName$
-            Locate 8, 37: Input "26. AVG ATT "; teamAttendance%
+            Locate 8, 37: Input "26. AVG ATT "; teamAttendance&
 
             Locate 10, 10: Print A$;
             Locate 10, 30: Print "OPPONENTS"
@@ -418,7 +418,7 @@ Sub TINPUT ()
                         Locate 7, 37: Input "24. ARENA "; arenaName$
 
                     Case 26
-                        Locate 8, 37: Input "25. AVG ATT "; teamAttendance%
+                        Locate 8, 37: Input "25. AVG ATT "; teamAttendance&
 
                 End Select
 
@@ -1066,7 +1066,7 @@ End Sub
 Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
-    Shared teamAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
     Shared BE, BF, BG, BI, BJ, BK, BH
@@ -1137,7 +1137,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     LSet Q$(0) = coach$
     LSet Q$(1) = arenaName$
     LSet Q$(2) = mascot$
-    LSet Q$(3) = MKL$(teamAttendance%)
+    LSet Q$(3) = MKL$(teamAttendance&)
 
     For I = 0 To 13
 
@@ -1202,7 +1202,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     mascot$ = ""
     arenaName$ = ""
     coach$ = ""
-    teamAttendance% = 0
+    teamAttendance& = 0
 
     Erase N$
 

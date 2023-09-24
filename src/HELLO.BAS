@@ -10,19 +10,21 @@ Const TEAMS_PER_DIV = 15
 Const DIVS_PER_CONFERENCE = 2
 Const TEAMS_PER_CONFERENCE = 30
 
-'Const NUM_STATRECORDS = 162
+Const NUM_STATRECORDS = 100
 Const SCHEDULE_SIZE_BYTES = 48
 
 DefInt A-Z
 
-'$INCLUDE: 'BoxRoutines.bi'
-'$INCLUDE: 'FileTeamSelection.bi'
+' General purpose
 '$INCLUDE: 'KeyInput.bi'
 '$INCLUDE: 'QPProEqu.bi'
 '$INCLUDE: 'PadRight.bi'
-'$INCLUDE: 'Variables.bi'
+'$INCLUDE: 'QBWRITE.bi'
 
 ' For Utils
+'$INCLUDE: 'BoxRoutines.bi'
+'$INCLUDE: 'FileTeamSelection.bi'
+'$INCLUDE: 'Variables.bi'
 '$INCLUDE: 'MainRoutines.bi'
 '$INCLUDE: 'TITLE.bi'
 
@@ -589,13 +591,15 @@ Sub Leaders_Menu ()
 End Sub
 
 
-'$INCLUDE: 'BoxRoutines.bm'
-'$INCLUDE: 'FileTeamSelection.bm'
+' General purpose
 '$INCLUDE: 'KeyInput.bm'
 '$INCLUDE: 'QPProEqu.bm'
 '$INCLUDE: 'PadRight.bm'
+'$INCLUDE: 'QBWRITE.bm'
 
 ' For Utils
+'$INCLUDE: 'BoxRoutines.bm'
+'$INCLUDE: 'FileTeamSelection.bm'
 '$INCLUDE: 'TITLE.bm'
 '$INCLUDE: 'ADDTOURN.BAS'
 '$INCLUDE: 'ALIGN.BAS'

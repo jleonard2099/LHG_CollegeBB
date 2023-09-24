@@ -290,7 +290,7 @@ End Sub
 Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
-    Shared teamAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
     Shared leagueRatings%(), teamRatings%(), teamStats()
@@ -374,7 +374,7 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
         coach$ = Q$(0)
         arenaName$ = Q$(1)
         mascot$ = Q$(2)
-        teamAttendance% = CVL(Q$(3))
+        teamAttendance& = CVL(Q$(3))
 
         For I = 0 To 13
 
@@ -400,7 +400,7 @@ Sub SelectTeam_CNGTM (teamIdx, numberTeams%, yearNumber$, selectedTeamName$)
             coach$ = ""
             arenaName$ = ""
             mascot$ = ""
-            teamAttendance% = 0
+            teamAttendance& = 0
 
             For I = 0 To 13
                 playerDef!(I) = 5
@@ -1351,7 +1351,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
 
     Shared mascot$, coach$, arenaName$
     Shared CK, defFGPctAdj%, replayLosses%, replayWins%
-    Shared staminaRating%, teamAttendance%
+    Shared staminaRating%, teamAttendance&
     Shared def3FG_Adj, def3FGA_Adj
 
     Shared HP%(), OP%(), compareL%(), teamRatings%(), teamStats()
@@ -1431,7 +1431,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
         coach$ = RTrim$(Q$(0))
         arenaName$ = RTrim$(Q$(1))
         mascot$ = RTrim$(Q$(2))
-        teamAttendance% = CVL(Q$(3))
+        teamAttendance& = CVL(Q$(3))
 
         For I = 0 To 13
             playerDef!(I) = CVI(Q$(I * 16 + 4))
@@ -1455,7 +1455,7 @@ Sub SelectTeam_COMPARE (yearNumber$, numberTeams, teamName$)
             coach$ = ""
             arenaName$ = ""
             mascot$ = ""
-            teamAttendance% = 0
+            teamAttendance& = 0
 
             For I = 0 To 13
 

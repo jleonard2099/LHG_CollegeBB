@@ -46,10 +46,10 @@ End Sub
 'stats into arrays
 Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
-    Dim lookyCRD(100)
-    Dim lookyAP%(100, 1), P%(100)
+    Dim lookyCRD(NUM_STATRECORDS)
+    Dim lookyAP%(NUM_STATRECORDS, 1), P%(NUM_STATRECORDS)
 
-    Dim lookySites$(100)
+    Dim lookySites$(NUM_STATRECORDS)
 
     'Do these need shared based on the below???
     'All are assigned 0s and read in from file
@@ -82,21 +82,21 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     Input #1, totalGames%
 
-    For I = 1 To 100: Input #1, mergeO%(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
 
-    For I = 1 To 100: Input #1, compO$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, compO$(I): Next I
 
-    For I = 1 To 100: Input #1, mergeT%(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, mergeT%(I): Next I
 
-    For I = 1 To 100: Input #1, homeTeam$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, homeTeam$(I): Next I
 
-    For I = 1 To 100
+    For I = 1 To NUM_STATRECORDS
         For I1 = 0 To 1: Input #1, lookyAP%(I, I1): Next
     Next
 
-    For I = 1 To 100: Input #1, lookyCRD(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, lookyCRD(I): Next I
 
-    For I = 1 To 100: Input #1, lookySites$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, lookySites$(I): Next I
 
     Close #1
 

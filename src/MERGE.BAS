@@ -139,21 +139,21 @@ Sub MergeStats ()
 
                     Input #2, Yroad%
 
-                    For I = 1 To 100: Input #2, ORD%(I): Next I
+                    For I = 1 To NUM_STATRECORDS: Input #2, ORD%(I): Next I
 
-                    For I = 1 To 100: Input #2, ORP$(I): Next I
+                    For I = 1 To NUM_STATRECORDS: Input #2, ORP$(I): Next I
 
-                    For I = 1 To 100: Input #2, TRD%(I): Next I
+                    For I = 1 To NUM_STATRECORDS: Input #2, TRD%(I): Next I
 
-                    For I = 1 To 100: Input #2, HRP$(I): Next I
+                    For I = 1 To NUM_STATRECORDS: Input #2, HRP$(I): Next I
 
-                    For I = 1 To 100
+                    For I = 1 To NUM_STATRECORDS
                         For I1 = 0 To 1: Input #2, APRD%(I, I1): Next
                     Next
 
-                    For I = 1 To 100: Input #2, CRDRD(I): Next I
+                    For I = 1 To NUM_STATRECORDS: Input #2, CRDRD(I): Next I
 
-                    For I = 1 To 100: Input #2, SITERP$(I): Next I
+                    For I = 1 To NUM_STATRECORDS: Input #2, SITERP$(I): Next I
 
                     Close #2
 
@@ -197,15 +197,15 @@ Sub MergeStats ()
 
                         Input #4, Ycurr%
 
-                        For I = 1 To 100: Input #4, mergeO%(I): Next I
+                        For I = 1 To NUM_STATRECORDS: Input #4, mergeO%(I): Next I
 
-                        For I = 1 To 100: Input #4, mergeO$(I): Next I
+                        For I = 1 To NUM_STATRECORDS: Input #4, mergeO$(I): Next I
 
-                        For I = 1 To 100: Input #4, mergeT%(I): Next I
+                        For I = 1 To NUM_STATRECORDS: Input #4, mergeT%(I): Next I
 
-                        For I = 1 To 100: Input #4, mergeH$(I): Next I
+                        For I = 1 To NUM_STATRECORDS: Input #4, mergeH$(I): Next I
 
-                        For I = 1 To 100
+                        For I = 1 To NUM_STATRECORDS
 
                             For I1 = 0 To 1: 
                                 Input #4, mergeAP%(I, I1)
@@ -213,11 +213,11 @@ Sub MergeStats ()
 
                         Next
 
-                        For I = 1 To 100: 
+                        For I = 1 To NUM_STATRECORDS: 
                             Input #4, CRD(I)
                         Next I
 
-                        For I = 1 To 100: 
+                        For I = 1 To NUM_STATRECORDS: 
                             Input #4, gameSite$(I)
                         Next I
 
@@ -392,17 +392,21 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Write #2, Ycurr%
 
-    For I = 1 To 100: Write #2, mergeO%(I): Next I
-    For I = 1 To 100: Write #2, mergeO$(I): Next I
-    For I = 1 To 100: Write #2, mergeT%(I): Next I
-    For I = 1 To 100: Write #2, mergeH$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Write #2, mergeO%(I): Next I
+    
+    For I = 1 To NUM_STATRECORDS: Write #2, mergeO$(I): Next I
 
-    For I = 1 To 100
+    For I = 1 To NUM_STATRECORDS: Write #2, mergeT%(I): Next I
+
+    For I = 1 To NUM_STATRECORDS: Write #2, mergeH$(I): Next I
+
+    For I = 1 To NUM_STATRECORDS
         For I1 = 0 To 1: Write #2, mergeAP%(I, I1): Next
     Next
 
-    For I = 1 To 100: Write #2, CRD(I): Next I
-    For I = 1 To 100: Write #2, gameSite$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Write #2, CRD(I): Next I
+    
+    For I = 1 To NUM_STATRECORDS: Write #2, gameSite$(I): Next I
 
     Close #2
 

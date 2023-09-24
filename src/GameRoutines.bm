@@ -10,7 +10,6 @@ Sub INFO ()
     Color , 1
     Locate 1, 1
     Print Tab(80);
-    Print Tab(80);
 
     Locate , 33: Color 14
     Print "GAME OPTIONS MENU"
@@ -19,7 +18,8 @@ Sub INFO ()
     Print Tab(80);
     Locate , 1
     Print "(C) LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
-    Locate 3, 1: Color , 0
+    Locate 3, 1
+    Color , 0
 
 End Sub
 
@@ -27,9 +27,9 @@ End Sub
 '----------------------------------------
 '           InitVar Subroutine
 '----------------------------------------
-'This suhroutine initializes variables for
-'the game. It does not process any that will
-' be read in from file or assigned elsewhere
+' Initializes variables for the game
+' Does not process any that will be read
+' in from file or assigned elsewhere
 Sub InitVar ()
 
     Shared scheduleFile$
@@ -526,11 +526,13 @@ Sub PBP ()
 
     If UCase$(i$) = "Q" Then End
 
+    'Positive delay or Verbose PBP
     If pbpDelay! <> 0 And pbpOpt <> 1 Then
 
         U$ = PadRight$(U$, 38)
 
         Locate 8, 1
+
         If nbrLines = 1 Then A1$ = U$: VG%(1) = teamRat_GAME(P, 0): VH%(1) = teamRat_GAME(P, 1)
         If nbrLines = 2 Then B1$ = U$: VG%(2) = teamRat_GAME(P, 0): VH%(2) = teamRat_GAME(P, 1)
         If nbrLines = 3 Then C1$ = U$: VG%(3) = teamRat_GAME(P, 0): VH%(3) = teamRat_GAME(P, 1)
@@ -3785,25 +3787,25 @@ Sub LOADSTATS ()
 
             Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
-            Input #1, YY%
+            Input #1, numberGames
 
-            For I1 = 1 To 100: Input #1, O%(I1): Next
-            For I1 = 1 To 100: Input #1, HO$(I1): Next
-            For I1 = 1 To 100: Input #1, HT%(I1): Next
-            For I1 = 1 To 100: Input #1, HO$(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, O%(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, HT%(I1): Next
+            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
 
-            For I1 = 1 To 100
+            For I1 = 1 To NUM_STATRECORDS
                 For I2 = 0 To 1
                     Input #1, APT%(I1, I2)
                 Next
             Next
 
-            For I1 = 1 To 100: Input #1, CRD&(I1): Next I1
-            For I1 = 1 To 100: Input #1, SITE$(I1): Next I1
+            For I1 = 1 To NUM_STATRECORDS: Input #1, CRD&(I1): Next I1
+            For I1 = 1 To NUM_STATRECORDS: Input #1, SITE$(I1): Next I1
 
             Close #1
 
-            For I1 = 1 To YY%
+            For I1 = 1 To numberGames
                 If O%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
                 If O%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
             Next
@@ -6947,90 +6949,90 @@ Sub COMPILESTATFILES (teamIdx)
 
     Print
 
-    YY% = 0
+    numberGames = 0
 
     If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #3
 
-        Input #3, YY%
+        Input #3, numberGames
 
-        For I = 1 To 100: Input #3, O%(I): Next I
-        For I = 1 To 100: Input #3, HO$(I): Next I
-        For I = 1 To 100: Input #3, HT%(I): Next I
-        For I = 1 To 100: Input #3, H$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, O%(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, H$(I): Next I
 
-        For I = 1 To 100
+        For I = 1 To NUM_STATRECORDS
             For I1 = 0 To 1
                 Input #3, APT%(I, I1)
             Next
         Next
 
-        For I = 1 To 100: Input #3, CRD&(I): Next I
-        For I = 1 To 100: Input #3, SITE$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, CRD&(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, SITE$(I): Next I
 
         Close #3
 
     End If
 
-    If YY% < 100 Then YY% = YY% + 1
-    If H% = 2 And TG < 12100 Then H$(YY%) = "N": GoTo 6540
-    If H% <> teamIdx And TG < 12100 Then H$(YY%) = "V": GoTo 6540
-    If H% = teamIdx And TG < 12100 Then H$(YY%) = "H": GoTo 6540
-    If H% = teamIdx And TG < 13600 Then H$(YY%) = "H1": GoTo 6540
-    If H% = teamIdx And TG < 15100 Then H$(YY%) = "H2": GoTo 6540
-    If H% = teamIdx And TG < 16600 Then H$(YY%) = "H3": GoTo 6540
-    If H% = teamIdx And TG < 18100 Then H$(YY%) = "H4": GoTo 6540
-    If H% = 2 And TG < 13600 Then H$(YY%) = "N1": GoTo 6540
-    If H% = 2 And TG < 15100 Then H$(YY%) = "N2": GoTo 6540
-    If H% = 2 And TG < 16600 Then H$(YY%) = "N3": GoTo 6540
-    If H% = 2 And TG < 18100 Then H$(YY%) = "N4": GoTo 6540
-    If H% <> teamIdx And TG < 13600 Then H$(YY%) = "V1": GoTo 6540
-    If H% <> teamIdx And TG < 15100 Then H$(YY%) = "V2": GoTo 6540
-    If H% <> teamIdx And TG < 16600 Then H$(YY%) = "V3": GoTo 6540
-    If H% <> teamIdx And TG < 18100 Then H$(YY%) = "V4": GoTo 6540
+    If numberGames < NUM_STATRECORDS Then numberGames = numberGames + 1
+    If H% = 2 And TG < 12100 Then H$(numberGames) = "N": GoTo 6540
+    If H% <> teamIdx And TG < 12100 Then H$(numberGames) = "V": GoTo 6540
+    If H% = teamIdx And TG < 12100 Then H$(numberGames) = "H": GoTo 6540
+    If H% = teamIdx And TG < 13600 Then H$(numberGames) = "H1": GoTo 6540
+    If H% = teamIdx And TG < 15100 Then H$(numberGames) = "H2": GoTo 6540
+    If H% = teamIdx And TG < 16600 Then H$(numberGames) = "H3": GoTo 6540
+    If H% = teamIdx And TG < 18100 Then H$(numberGames) = "H4": GoTo 6540
+    If H% = 2 And TG < 13600 Then H$(numberGames) = "N1": GoTo 6540
+    If H% = 2 And TG < 15100 Then H$(numberGames) = "N2": GoTo 6540
+    If H% = 2 And TG < 16600 Then H$(numberGames) = "N3": GoTo 6540
+    If H% = 2 And TG < 18100 Then H$(numberGames) = "N4": GoTo 6540
+    If H% <> teamIdx And TG < 13600 Then H$(numberGames) = "V1": GoTo 6540
+    If H% <> teamIdx And TG < 15100 Then H$(numberGames) = "V2": GoTo 6540
+    If H% <> teamIdx And TG < 16600 Then H$(numberGames) = "V3": GoTo 6540
+    If H% <> teamIdx And TG < 18100 Then H$(numberGames) = "V4": GoTo 6540
 
     6540 '
-    O%(YY%) = score(teamIdx, 0)
-    HO$(YY%) = gameTeams$(1 - teamIdx)
-    HT%(YY%) = score(1 - teamIdx, 0)
-    CRD&(YY%) = actualAttendance&
+    O%(numberGames) = score(teamIdx, 0)
+    HO$(numberGames) = gameTeams$(1 - teamIdx)
+    HT%(numberGames) = score(1 - teamIdx, 0)
+    CRD&(numberGames) = actualAttendance&
 
     If teamRat_GAME(0, 9) = 0 Then teamRat_GAME(0, 9) = 78
     If teamRat_GAME(1, 9) = 0 Then teamRat_GAME(1, 9) = 78
 
-    APT%(YY%, 0) = teamRat_GAME(teamIdx, 9)
-    APT%(YY%, 1) = teamRat_GAME(1 - teamIdx, 9)
+    APT%(numberGames, 0) = teamRat_GAME(teamIdx, 9)
+    APT%(numberGames, 1) = teamRat_GAME(1 - teamIdx, 9)
 
     If gameArena$(1) = "" Then gameArena$(1) = "MEMORIAL COLISEUM"
 
     If gameLoc = 2 Then
-        SITE$(YY%) = "NEUTRAL SITE"
+        SITE$(numberGames) = "NEUTRAL SITE"
     Else
-        SITE$(YY%) = gameArena$(1)
+        SITE$(numberGames) = gameArena$(1)
     End If
 
     Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
-    Print #4, YY%
+    Print #4, numberGames
 
-    For I = 1 To 100: Print #4, O%(I): Next I
-    For I = 1 To 100: Print #4, HO$(I): Next I
-    For I = 1 To 100: Print #4, HT%(I): Next I
-    For I = 1 To 100: Print #4, H$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, O%(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, HO$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, HT%(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, H$(I): Next I
 
-    For I = 1 To 100
+    For I = 1 To NUM_STATRECORDS
         For I1 = 0 To 1
             Print #4, APT%(I, I1)
         Next
     Next
 
-    For I = 1 To 100: Print #4, CRD&(I): Next I
-    For I = 1 To 100: Print #4, SITE$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, CRD&(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, SITE$(I): Next I
 
     Close #4
 
-    For I = 1 To 100
+    For I = 1 To NUM_STATRECORDS
         O%(I) = 0
         HT%(I) = 0
         HO$(I) = ""
@@ -7409,7 +7411,32 @@ Sub CheckRecords ()
     VERSUS$(0) = "AT"
     VERSUS$(1) = "VS."
 
-    If Not _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+    If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+
+        Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
+
+        For I = 0 To 48
+            For I1 = 0 To 2
+                Input #1, REC!(I, I1)
+            Next
+            For I1 = 0 To 4
+                Input #1, RC$(I, I1)
+            Next
+        Next
+
+        For I = 0 To 125
+            For I1 = 0 To 2
+                Input #1, TREC!(I, I1)
+            Next
+            For I1 = 0 To 3
+                Input #1, TRC$(I, I1)
+            Next
+        Next
+
+        Close #1
+
+    Else
+
         TREC!(2, 0) = 999
         TREC!(4, 0) = 999
         TREC!(7, 0) = 999
@@ -7451,29 +7478,6 @@ Sub CheckRecords ()
         TREC!(120, 0) = 999
         TREC!(123, 0) = 999
         TREC!(125, 0) = 999
-    Else
-
-        Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
-
-        For I = 0 To 48
-            For I1 = 0 To 2
-                Input #1, REC!(I, I1)
-            Next
-            For I1 = 0 To 4
-                Input #1, RC$(I, I1)
-            Next
-        Next
-
-        For I = 0 To 125
-            For I1 = 0 To 2
-                Input #1, TREC!(I, I1)
-            Next
-            For I1 = 0 To 3
-                Input #1, TRC$(I, I1)
-            Next
-        Next
-
-        Close #1
 
     End If
 

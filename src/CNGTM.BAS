@@ -82,7 +82,7 @@ End Sub
 Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
     Shared def3FG_Adj, def3FGA_Adj
-    Shared teamAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
     Shared leagueRatings%(), teamRatings%(), teamStats()
@@ -98,7 +98,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
     Print " 1. TEAM NUMBER "; teamIdx; Tab(37); "20. NICKNAME "; mascot$
     Print " 2. DISK ID "; yearNumber$; Tab(37); "21. COACH "; coach$
-    Print " 3. TEAM NAME "; teamName$; Tab(37); "22. AVG ATTENDANCE "; teamAttendance%
+    Print " 3. TEAM NAME "; teamName$; Tab(37); "22. AVG ATTENDANCE "; teamAttendance&
     Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(37); "23. WINS "; teamRatings%(7)
     Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(37); "24. LOSSES "; teamRatings%(8)
     Print " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj; Tab(37); "25. POWER RATING "; teamRatings%(9)
@@ -229,7 +229,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
             Case 22
                 Locate 2, 20: Print Space$(5)
-                Locate 4, 37: Input "22. AVG ATTENDANCE "; teamAttendance%
+                Locate 4, 37: Input "22. AVG ATTENDANCE "; teamAttendance&
 
             Case 23
                 Locate 2, 10: Print Space$(5)
@@ -490,7 +490,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
 
             Cls
 
-            If totalCX > 98 And totalCX < 102 Then
+            If (totalCX > 99 And totalCX < 101) Or X9 = 0 Then
 
                 Call SaveChangedTeam(0, yearNumber$, teamName$, teamIdx)
 
@@ -670,7 +670,7 @@ End Sub
 Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
-    Shared teamAttendance%, defFGPctAdj%, staminaRating%
+    Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
     Shared leagueRatings%(), teamRatings%(), teamStats()
@@ -728,7 +728,7 @@ Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
     LSet Q$(0) = RTrim$(coach$)
     LSet Q$(1) = RTrim$(arenaName$)
     LSet Q$(2) = RTrim$(mascot$)
-    LSet Q$(3) = MKL$(teamAttendance%)
+    LSet Q$(3) = MKL$(teamAttendance&)
 
     For I = 0 To 13
         LSet Q$(I * 16 + 4) = MKI$(playerDef!(I))

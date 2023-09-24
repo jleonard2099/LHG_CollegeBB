@@ -247,7 +247,7 @@ Sub COLHOOP ()
             Locate 7, 2: Color 14
             Print "(6) ";: Color 15: Print "LOCATION: "; location$(gameLoc)
             Locate 8, 2: Color 14
-            Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#"; pbpDelay!
+            Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
             Locate 9, 2: Color 14
             Print "(8) ";: Color 15: Print "START GAME"
             Locate 10, 2: Color 14
@@ -469,6 +469,12 @@ Sub COLHOOP ()
             playerOpt = 2
 
     End Select
+
+    'At this point, the value of playerOpt has been changed.
+    'It now represents the following values:
+    '   0 = Human
+    '   1 = Computer Team
+    '   2 = PC vs. PC
 
     Call LOADSTATS
 

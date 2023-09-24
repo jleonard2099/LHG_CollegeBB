@@ -18,7 +18,7 @@ Dim Shared fileLength&
 
 Dim CK, defFGPctAdj%
 Dim def3FG_Adj, def3FGA_Adj
-Dim staminaRating%, teamAttendance%
+Dim staminaRating%, teamAttendance&
 
 Dim coach$, mascot$, arenaName$
 

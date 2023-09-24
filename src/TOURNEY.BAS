@@ -375,7 +375,7 @@ Sub EditGame_TOURNEY ()
             Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
 
             Color 14: Print " (5) ";:
-            Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(NG%, 4) / 10
+            Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; scheduleNG%(NG%, 4) / 10
 
             Color 14: Print " (6) ";:
             Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)

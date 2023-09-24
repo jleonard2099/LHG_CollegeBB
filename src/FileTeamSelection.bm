@@ -266,7 +266,7 @@ End Sub
 ' been included for.
 Sub ReadExtraData (teamYear$, targetTeam$, teamIdx)
 
-    Shared CK, teamAttendance%
+    Shared CK, teamAttendance&
 
     Shared coach$, arenaName$, mascot$
 
@@ -300,7 +300,7 @@ Sub ReadExtraData (teamYear$, targetTeam$, teamIdx)
         coach$ = RTrim$(Q$(0))
         arenaName$ = RTrim$(Q$(1))
         mascot$ = RTrim$(Q$(2))
-        teamAttendance% = CVL(Q$(3))
+        teamAttendance& = CVL(Q$(3))
 
         For I = 0 To 13
 

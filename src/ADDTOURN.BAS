@@ -162,7 +162,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         Color 14: Print " (2) ";
         Color 15: Print SC$(tourneyDefaults%(7))
         Color 14: Print " (3) ";
-        Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; tourneyDefaults%(4) / 10
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; tourneyDefaults%(4) / 10
         Color 14: Print " (4) ";
         Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
         Color 14: Print " (5) ";

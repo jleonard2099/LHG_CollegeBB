@@ -38,13 +38,13 @@ Dim replayLosses%, replayWins%
 Dim Ycurr%, Yroad%
 
 Dim alignAR$(15), AN$(15)
-Dim mergeH$(100), HRP$(100)
-Dim mergeO$(100), ORP$(100), gameSite$(100), SITERP$(100)
+Dim mergeH$(NUM_STATRECORDS), HRP$(NUM_STATRECORDS)
+Dim mergeO$(NUM_STATRECORDS), ORP$(NUM_STATRECORDS), gameSite$(NUM_STATRECORDS), SITERP$(NUM_STATRECORDS)
 
-Dim APRD%(100, 1), ARD(14, 14), CRD(100), CRDRD(100)
-Dim mergeA(14, 14), mergeAP%(100, 1)
-Dim mergeO%(100), mergeT%(100)
-Dim ORD%(100), TRD%(100)
+Dim APRD%(NUM_STATRECORDS, 1), ARD(14, 14), CRD(NUM_STATRECORDS), CRDRD(NUM_STATRECORDS)
+Dim mergeA(14, 14), mergeAP%(NUM_STATRECORDS, 1)
+Dim mergeO%(NUM_STATRECORDS), mergeT%(NUM_STATRECORDS)
+Dim ORD%(NUM_STATRECORDS), TRD%(NUM_STATRECORDS)
 
 Dim AN!(15, 14), AR!(15, 14)
 Dim W0N!(15), WN1!(15)
@@ -79,12 +79,12 @@ Dim W0L!(600), W1L!(600)
 '----------------------------------------
 ' Used in COMPARE routines
 '----------------------------------------
-Dim HP%(100), compareleagRat_GAME(6), OP%(100)
+Dim HP%(NUM_STATRECORDS), compareleagRat_GAME(6), OP%(NUM_STATRECORDS)
 
 Dim compareA!(15, 14)
 Dim A1!(13, 6), X1!(13, 6)
 
-Dim compareB$(14), H1$(40), HP$(100), OP$(100)
+Dim compareB$(14), H1$(40), HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
 
 
 '----------------------------------------
@@ -99,8 +99,8 @@ Dim NDL!(1 To 40, 1 To 20), NLD!(1 To 250, 1 To 2), NOL!(1 To 40, 1 To 20)
 Dim compS!(0 To 14, 0 To 26)
 
 
-Dim compH$(100), compN$(0 To 14)
-Dim CP$(25), compO$(100)
+Dim compH$(NUM_STATRECORDS), compN$(0 To 14)
+Dim CP$(25), compO$(NUM_STATRECORDS)
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
@@ -241,9 +241,9 @@ Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, prevBall$
 Dim Shared tourneyFile$, U$, VT$, VT1$, W$, W1$, YN$
 
 '-- FA%() I believe is related to tracking player fatigue
-Dim Shared APT%(100, 1), B%(1, 13), CZ%(1), DT%(1), eventSettings(13), FY%(2)
-Dim Shared G9%(1), HF%(1, 6), HT%(100), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
-Dim Shared O%(100), OF%(1), PC%(1), PR%(1, 1)
+Dim Shared APT%(NUM_STATRECORDS, 1), B%(1, 13), CZ%(1), DT%(1), eventSettings(13), FY%(2)
+Dim Shared G9%(1), HF%(1, 6), HT%(NUM_STATRECORDS), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
+Dim Shared O%(NUM_STATRECORDS), OF%(1), PC%(1), PR%(1, 1)
 Dim Shared ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TM%(1, 13), TP%(1)
 Dim Shared VG%(8), VH%(8), threeFG(1, 13, 1)
@@ -266,12 +266,12 @@ Dim Shared R3!(1), W0!(1, 13), W1!(1, 13)
 'CRD stores attendance for stat files
 '  I think this is because files are operated on
 '   linearly, so 100 records is the most supported?
-Dim Shared avgAttendance&(1), CRD&(100)
+Dim Shared avgAttendance&(1), CRD&(NUM_STATRECORDS)
 
 Dim Shared players$(1, 13), D$(15), DB$(14)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
-Dim Shared H$(100), HO$(100), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
-Dim Shared pbpType$(1), PS$(4), R$(14), SITE$(100), SX$(32, 2)
+Dim Shared H$(NUM_STATRECORDS), HO$(NUM_STATRECORDS), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
+Dim Shared pbpType$(1), PS$(4), R$(14), SITE$(NUM_STATRECORDS), SX$(32, 2)
 Dim Shared PO$(1, 13)
 Dim Shared X$(3), Y$(1), YN$(5), YN1$(3)
 

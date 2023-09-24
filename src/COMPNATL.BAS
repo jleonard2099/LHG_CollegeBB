@@ -82,7 +82,7 @@ Sub CompileNatlOrg ()
         Do
             Color 15, 0
             Cls
-            Print "IS THIS THE FINAL UPDATE FOR THE SEASON? (Y/N)";
+            Print "WOULD YOU LIKE TO POST SEASON LEADERS? (Y/N)";
             I$ = GetKeyPress$
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
@@ -1407,7 +1407,7 @@ End Sub
 '...explanation...
 Function FindStatsNat% (statFile$, numberGames%, NRT)
 
-    Dim compAP%(100, 1), compT%(1 To 100)
+    Dim compAP%(100, 1), compT%(1 To NUM_STATRECORDS)
     Dim CRD(100)
 
     Dim gameSite$(100)
@@ -1432,22 +1432,22 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
         Input #1, numberGames%
 
-        For I = 1 To 100: Input #1, mergeO%(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
 
-        For I = 1 To 100: Input #1, compO$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, compO$(I): Next I
 
-        For I = 1 To 100: Input #1, compT%(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, compT%(I): Next I
 
-        For I = 1 To 100: Input #1, compH$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, compH$(I): Next I
 
-        For I = 1 To 100
+        For I = 1 To NUM_STATRECORDS
             For I1 = 0 To 1
                 Input #1, compAP%(I, I1)
             Next
         Next
 
-        For I = 1 To 100: Input #1, CRD(I): Next I
-        For I = 1 To 100: Input #1, gameSite$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, CRD(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, gameSite$(I): Next I
 
         Close #1
 

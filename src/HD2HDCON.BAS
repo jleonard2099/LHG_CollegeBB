@@ -18,10 +18,10 @@ Sub HD2HDCON ()
 
     Shared compO$(), compareB$(), homeTeam$(), Z1$()
 
-    Dim teamRat_HD2HD(100), Z1_HD2HD(40)
+    Dim teamRat_HD2HD(NUM_STATRECORDS), Z1_HD2HD(40)
 
     Dim A_HD2HD$(14, 1), DV$(4)
-    Dim OPP$(100), TM1$(40)
+    Dim OPP$(NUM_STATRECORDS), TM1$(40)
     Dim Z2_HD2HD$(40), ZA$(40)
 
     Shared D1$, D2$
@@ -45,13 +45,13 @@ Sub HD2HDCON ()
 
         Input #1, Y
 
-        For J = 1 To 100: Input #1, mergeO%(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #1, mergeO%(J): Next
 
-        For J = 1 To 100: Input #1, compO$(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #1, compO$(J): Next
 
-        For J = 1 To 100: Input #1, teamRat_HD2HD(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #1, teamRat_HD2HD(J): Next
 
-        For J = 1 To 100: Input #1, homeTeam$(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #1, homeTeam$(J): Next
 
         Close #1
 

@@ -70,13 +70,13 @@ Sub COMPARE ()
 
         Input #2, Y
 
-        For J = 1 To 100: Input #2, OP%(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #2, OP%(J): Next
 
-        For J = 1 To 100: Input #2, OP$(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #2, OP$(J): Next
 
-        For J = 1 To 100: Input #2, HP%(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #2, HP%(J): Next
 
-        For J = 1 To 100: Input #2, HP$(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #2, HP$(J): Next
 
         Close #2
 

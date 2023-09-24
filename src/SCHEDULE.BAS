@@ -7,8 +7,6 @@
 'auto-played games
 Sub SCHEDULE ()
 
-    _Title "Courtside College Basketball - Scheduler"
-
     Dim scheduleFile$
     ReDim menuChoices$(1 To 9)
 
@@ -16,6 +14,10 @@ Sub SCHEDULE ()
 
     Shared scheduleAP%(), scheduleNG%()
 
+    _Title "Courtside College Basketball - Scheduler"
+
+    '--- Pay close attention to this and consider the "why"
+    '--- I think this is setting defaults - much like we want to do!
     scheduleNG%(0, 8) = 3
     scheduleNG%(0, 3) = 1
     scheduleNG%(0, 7) = 1
@@ -28,6 +30,11 @@ Sub SCHEDULE ()
         Cls
 
         Call TITLE_SCHEDULER
+        Locate 19
+        Color 2
+        Print "GENERATING A STANDARD CONFERENCE SCHEDULE IS TO BE USED IN CONJUNCTION"
+        Print "WITH THE STANDINGS AND LEAGUE LEADERS OPTIONS. YOU MUST ALREADY HAVE"
+        Print "CREATED AN APPROPRIATE CONFERENCE FOR THIS OPTION TO PROPERLY FUNCTION."
 
         menuChoices$(1) = "ENTER A NEW SCHEDULE                            "
         menuChoices$(2) = "RETRIEVE / EDIT / PLAY AN EXISTING SCHEDULE     "
@@ -295,13 +302,14 @@ Sub NewSchedule (scheduleFile$)
 
             Case "B":
                 'ReDim array$(500) 'holds the main editor string array
-                'Do
-                '   Locate 23, 1: Print "ENTER GAME # TO GO TO        "
-                '   Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
-                'Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
-                'NS% = Int((targetGame%- 1) / 20)
-                'BN$ = diskPaths$(1) + "box" + Mid$(Str$(targetGame%, 2, Len(Str$(targetGame%))
-                'Call EditBoxscore (BN$)
+                Do
+                   Locate 23, 1: Print "ENTER GAME # TO GO TO        "
+                   Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
+                Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
+                NS% = Int((targetGame%- 1) / 20)
+                boxName$ = diskPaths$(1) + "BOX" + Mid$( Str$(targetGame%), 2, Len(Str$(targetGame%)) )
+                Call EditBoxscore (boxName$)
+                Color 15, 0
 
             Case "D":
                 ' *** DELETE A GAME FROM THE SCHEDULE ***
@@ -533,7 +541,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
         Locate 5, 2: Color 14: Print "(4) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(gameIndex%, 3))
         Locate 6, 2: Color 14: Print "(5) ";: Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(gameIndex%, 7))
         Locate 7, 2: Color 14: Print "(6) ";: Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(gameIndex%, 2))
-        Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; scheduleNG%(gameIndex%, 4) / 10
+        Locate 8, 2: Color 14: Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; scheduleNG%(gameIndex%, 4) / 10
         Locate 9, 2: Color 14: Print "(8) ";: Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(gameIndex%, 5)
         Locate 10, 2: Color 14: Print "(9) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
         Locate 11, 2: Color 14: Print "(A) ";: Color 15: Print "GAME DATE (XX-XX-XX) "; DT$; "   "
@@ -682,7 +690,6 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
     Select Case scheduleAction%
 
         Case 6
-            ' GLOBAL SETTINGS FOR A SCHEDULE
             Call ChangeGlobalSettings
             Call SaveScheduleFile(scheduleFile$)
             Call NewSchedule(scheduleFile$)
@@ -823,7 +830,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                 Loop Until C$ = "0" Or C$ = "1"
 
                                 Print
-                                Input "ENTER DISPLAY PAUSE FOR THESE GAMES "; displayPause!
+                                Input "ENTER PLAY-BY-PLAY DELAY FOR THESE GAMES "; displayPause!
 
                             End If
 
@@ -1010,9 +1017,9 @@ Sub BoxscoreMaintenance ()
                 Case 2:
                     boxscoreFile$ = ChooseFile$ (diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
 
-                    If ExitCode% <> 27 And ExitCode% <> 0 Then
+                    If ExitCode% <> 27 And ExitCode% <> 0 And boxscoreFile$ <> "" Then
                         boxName$ = diskPaths$(1) + boxscoreFile$
-                        'ReDim array$(500) 'holds the main editor string array
+                        Call EditBoxscore (boxName$)
                     End If
 
                 Case 3:
@@ -1169,35 +1176,46 @@ Sub ChangeGlobalSettings ()
 
     Dim displayPause!
 
+    ' GLOBAL SETTINGS FOR A SCHEDULE
+    playerOpt = 3
+    sClockVal = 2
+    coachOpt = 1
+    threePtOpt = 1
+    foulsToDQ = 5
+    ft10thFoul = 0
+    ft3PtFoul = 1
+    ft6FloorFouls = 0
+
     DT$ = "10-01-96"
     TM$ = "07:30P"
-
-    ' GLOBAL SETTINGS FOR A SCHEDULE
-    U5% = 3
-    RC% = 1
-    SC% = 1
-    coachOpt = 1
-    NF% = 5
-    FT% = 0
-    FR% = 1
-    LP% = 0
 
     Do
         Color 15, 0
         Cls
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
-        Locate 3, 2: Color 14: Print "(1) ";: Color 15: Print "TYPE OF GAME: "; playMode$(U5%)
-        Locate 4, 2: Color 14: Print "(2) ";: Color 15: Print Using "DISPLAY PAUSE IN SECONDS: ##.#  "; displayPause!
-        Locate 5, 2: Color 14: Print "(3) ";: Color 15: Print "RESERVED FOR FUTURE"
-        Locate 6, 2: Color 14: Print "(4) ";: Color 15: Print "SHOT CLOCK: "; sclockOpt$(SC%)
-        Locate 7, 2: Color 14: Print "(5) ";: Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)
-        Locate 8, 2: Color 14: Print "(6) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(RC%)
-        Locate 9, 2: Color 14: Print "(7) ";: Color 15: Print Using "FOULS TO DISQUALIFY: ##"; NF%
-        Locate 10, 2: Color 14: Print "(8) ";: Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(FT%)
-        Locate 11, 2: Color 14: Print "(9) ";: Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(FR%)
-        Locate 12, 2: Color 14: Print "(A) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(LP%)
-        Locate 13, 2: Color 14: Print "(0) ";: Color 15: Print "ACCEPT GLOBAL SETTINGS"
+        Locate 3, 2: Color 14: Print "(1) ";
+        Color 15: Print "TYPE OF GAME: "; playMode$(playerOpt)
+        Locate 4, 2: Color 14: Print "(2) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
+        Locate 5, 2: Color 14: Print "(3) ";
+        Color 15: Print "RESERVED FOR FUTURE"
+        Locate 6, 2: Color 14: Print "(4) ";
+        Color 15: Print "SHOT CLOCK: "; sclockOpt$(sClockVal)
+        Locate 7, 2: Color 14: Print "(5) ";
+        Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)
+        Locate 8, 2: Color 14: Print "(6) ";
+        Color 15: Print "3-POINT SHOT: "; yesNo$(threePtOpt)
+        Locate 9, 2: Color 14: Print "(7) ";
+        Color 15: Print Using "FOULS TO DISQUALIFY: ##"; foulsToDQ
+        Locate 10, 2: Color 14: Print "(8) ";
+        Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(ft10thFoul)
+        Locate 11, 2: Color 14: Print "(9) ";
+        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(ft3PtFoul)
+        Locate 12, 2: Color 14: Print "(A) ";
+        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(ft6FloorFouls)
+        Locate 13, 2: Color 14: Print "(0) ";
+        Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
         Do
             I$ = GetKeyPress$
@@ -1208,8 +1226,8 @@ Sub ChangeGlobalSettings ()
         Select Case I
 
             Case 1:
-                U5% = U5% + 1
-                If U5% > 3 Then U5% = 0
+                playerOpt = playerOpt + 1
+                If playerOpt > 3 Then playerOpt = 0
 
             Case 2:
                 Input "DISPLAY VARIABLE "; displayPause!
@@ -1217,42 +1235,42 @@ Sub ChangeGlobalSettings ()
             Case 3: '
 
             Case 4:
-                SC% = 1 + SC%
-                If SC% > 2 Then SC% = 0
+                sClockVal = 1 + sClockVal
+                If sClockVal > 2 Then sClockVal = 0
 
             Case 5:
                 coachOpt = 1 - coachOpt
 
             Case 6:
-                RC% = 1 - RC%
+                threePtOpt = 1 - threePtOpt
 
             Case 7:
-                NF% = NF% + 1
-                If NF% > 6 Then NF% = 5
+                foulsToDQ = foulsToDQ + 1
+                If foulsToDQ > 6 Then foulsToDQ = 5
 
             Case 8:
-                FT% = 1 - FT%
+                ft10thFoul = 1 - ft10thFoul
 
             Case 9:
-                FR% = 1 - FR%
+                ft3PtFoul = 1 - ft3PtFoul
 
             Case 10:
-                LP% = 1 - LP%
+                ft6FloorFouls = 1 - ft6FloorFouls
 
         End Select
 
     Loop Until I = 0
 
     For I = 1 To scheduleAP%(0)
-        scheduleNG%(I, 8) = U5%
+        scheduleNG%(I, 8) = playerOpt
         scheduleNG%(I, 4) = displayPause! * 10
-        scheduleNG%(I, 7) = SC%
+        scheduleNG%(I, 7) = sClockVal
         scheduleNG%(I, 9) = coachOpt
-        scheduleNG%(I, 3) = RC%
-        scheduleNG%(I, 5) = NF%
-        scheduleNG%(I, 6) = FT%
-        scheduleNG%(I, 10) = FR%
-        scheduleNG%(I, 14) = LP%
+        scheduleNG%(I, 3) = threePtOpt
+        scheduleNG%(I, 5) = foulsToDQ
+        scheduleNG%(I, 6) = ft10thFoul
+        scheduleNG%(I, 10) = ft3PtFoul
+        scheduleNG%(I, 14) = ft6FloorFouls
     Next
 
 End Sub
@@ -1589,9 +1607,6 @@ End Sub
 'boxscores in their favorite text editor.
 Sub EditBoxscore (boxName$)
 
-    F2$ = Chr$(0) + Chr$(60) 'extended code for the F2 function key
-    F3$ = Chr$(0) + Chr$(61) 'extended code for the F3 function key
-
     If Not _FileExists(boxName$) Then
 
         MsgText$ = "BOXSCORE DOES NOT EXIST PRESS ANY KEY TO RETURN TO MAIN MENU"
@@ -1604,69 +1619,7 @@ Sub EditBoxscore (boxName$)
 
     Else
 
-        Open boxName$ For Input As #1
-
-        CURLINE = 1
-
-        While Not EOF(1)
-            Line Input #1, array$(CURLINE)
-            CURLINE = CURLINE + 1
-        Wend
-
-        Close #1
-
-        Cls '  show how QEdit saves the screen
-
-        Color 15, 0 'print instructions on bottom of screen
-        Locate 25, 1
-        Print " ESC - Quit    F1 - Help    F2 - Print Boxscore   F3 - Save Boxscore"; Tab(79);
-
-        '----- fill in editing parameters
-        Select Case Monitor% 'determine the monitor type
-            Case 3, 5, 7, 9, 10, 12 'CGA, EGA, VGA monitors
-                Ed.AColor = 23 'white on blue
-            Case Else 'all other monitors
-                Ed.AColor = 7 'white on black
-        End Select
-        Ed.Wrap = 0 'word wrap at column 65 (use 0 for to disable word wrap)
-        Ed.Frame = 0 'frame code (1 = show ruler line & scroll bars, 0 = don't)
-        Ed.Rows = 24 'number of text lines to display on the screen (3 - 25)
-        Ed.Wide = 80 'width of the active screen (10 - 80)
-        Ed.HTab = 4 'set tab stops to 4 spaces
-        Locate 1, 1 'locate the upper left corner of the edit window frame
-        Action = 1 'Action 1 to save underlying screen and
-        '  display text, operate in polled mode
-
-        '----- main loop for editing
-        Do
-            '----- call QEdit in polled mode
-            'CALL QEdit(array$(), Ky$, Action, Ed)
-            '----- F2 function key pressed? - change margin
-            If Ky$ = F2$ Then: For I = 1 To CURLINE - 1: LPrint array$(I): Next
-            If Ky$ = F3$ Then
-
-                Open BN$ For Output As #2
-
-                For I = 1 To CURLINE - 1
-                    Print #2, array$(I)
-                Next
-
-                Close #2
-
-                MsgText$ = "REVISED BOXSCORE HAS BEEN SAVED... PRESS ANY KEY TO CONTINUE"
-                BoxWidth = 18
-                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-                Call CSMsgBox(MsgText$, BoxWidth, Pass)
-                I$ = GetKeyPress$
-                Call CSMsgBox("", 0, Pass)
-
-            End If
-
-        Loop Until Ky$ = Chr$(27) 'keep calling QEdit until Esc is pressed
-
-        '----- call QEdit again with an Action flag of 5 to restore the screen
-        'CALL QEdit(array$(), Ky$, 5, Ed)
+        Call QBWRITE (boxName$)
 
     End If
 

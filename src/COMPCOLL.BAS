@@ -76,7 +76,7 @@ Sub CompileCollege ()
         Do
             Color 15, 0
             Cls
-            Print "IS THIS THE FINAL UPDATE FOR THE SEASON? (Y/N)";
+            Print "WOULD YOU LIKE TO POST SEASON LEADERS? (Y/N)";
             I$ = GetKeyPress$
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
@@ -1029,9 +1029,9 @@ Function FindStatsCon% (teamName$, numberGames%)
 
         Input #1, numberGames%
 
-        For I = 1 To 100: Input #1, mergeO%(I): Next I
-        For I = 1 To 100: Input #1, compO$(I): Next I
-        For I = 1 To 100: Input #1, mergeT%(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, compO$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, mergeT%(I): Next I
 
         Close #1
 
