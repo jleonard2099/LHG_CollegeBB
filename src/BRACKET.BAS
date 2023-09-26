@@ -35,9 +35,11 @@ Sub BRACKET ()
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 10
-        Column% = 25
+    	menuWidth% = Len(menuChoices$(1))
+    	Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(9, 24, 13, 50, 2, 15, 1)
+    	Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
@@ -303,6 +305,7 @@ Sub EditBracket (numberRegions, ACTION%)
         menuChoices$(numberRegions + 2) = "EXIT                "
 
         Call box0(3, 31, 3 + numberRegions + 3, 52, 2, 15, 1)
+
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
