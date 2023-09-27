@@ -1,14 +1,17 @@
 '----------------------------------------
 '           NEWLDR Subroutine
 '----------------------------------------
-'This subroutine provides the user a menu 
+'This subroutine provides the user a menu
 'for viewing stats compiled for the new
 '"Expanded" Stats/Standings screens
 Sub NEWLDR ()
 
     _Title "Courtside College Basketball - Expanded Leaders"
 
-    ReDim menuChoices$(1 To 2)
+    Dim printOrView%
+    Dim expanZ1$(40)
+
+    ReDim menuChoices$(1 To 3)
 
     Do
 
@@ -17,20 +20,21 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "VIEW EXPANDED LEAGUE STATISTICS"
-        menuChoices$(2) = "RETURN TO LEAGUE LEADER MENU   "
+        menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADER FILES"
+        menuChoices$(2) = "VIEW EXPANDED LEAGUE STATISTICS    "
+        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU       "
         Selection% = 1
-        Count% = 2
+        Count% = 3
         Start% = 1
-        ExitCode% = 2
+        ExitCode% = 3
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
-    	menuWidth% = Len(menuChoices$(1))
-    	Column% = (80 - menuWidth% - 2) / 2
+        menuWidth% = Len(menuChoices$(1))
+        Column% = (80 - menuWidth% - 2) / 2
 
-    	Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -40,16 +44,47 @@ Sub NEWLDR ()
 
         If ExitCode% <> 27 Then
 
+            printOrView% = 0
+
             Select Case Selection%
 
                 Case 1:
-                    Call ViewExpandedStats
+                    confStatFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "CONFERENCE STATS", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+
+                        For X = 1 To 40
+                            expanZ1$(X) = "XXX"
+                        Next
+
+                        Open diskPaths$(1) + confStatFile$ + ".TMS" For Input As #1
+
+                        Input #1, conf$, D1$, D2$
+
+                        For X = 1 To 30
+                            Input #1, expanZ1$(X)
+                        Next
+
+                        Close #1
+
+                        Call UpdateExpandedLeaders(confStatFile$, expanZ1$(), JB, TS, TTS)
+                        Call SAVELEADER(confStatFile$, JB, TS, TTS)
+
+                    End If
+
+                Case 2:
+                    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+
+                    If FileExit% <> 27 And FileExit% <> 0 Then
+                        Call READLEADER(leaderFile$, JB, TS, TTS)
+                        Call ExpandedLeaders_Menu (JB, TS, TTS)
+                    End If
 
             End Select
 
         End If
 
-    Loop Until Selection% = 2 Or ExitCode% = 27
+    Loop Until Selection% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -62,6 +97,7 @@ End Sub
 'routines to calculate the expanded stats, 
 'write them to a file and present a categ-
 'orized menu to use for reviewing them
+' XXXX NO LONGER USED WITH NEW STRUCTURE XXXX
 Sub ViewExpandedStats ()
 
     Dim printOrView%
@@ -87,9 +123,7 @@ Sub ViewExpandedStats ()
 
         Close #1
 
-        Call UpdateExpandedLeaders(conferenceFile$, expanZ1$(), JB, TS, TTS)
-
-        Call SAVELEADER(conferenceFile$, JB, TS, TTS)
+        Call READLEADER(conferenceFile$, JB, TS, TTS)
 
         Call ExpandedLeaders_Menu (JB, TS, TTS)
 
@@ -215,7 +249,7 @@ End Sub
 '        SAVELEADER Subroutine
 '----------------------------------------
 'This subroutine compiles the leader files 
-'(.LDS) for the exapnded standings modules 
+'(.LDS) for the expanded standings modules 
 Sub SAVELEADER (statFile$, JB, tStats, ttStats)
 
     Shared statPlyrNames$(), AL$(), expanTT$()
@@ -249,10 +283,12 @@ Sub SAVELEADER (statFile$, JB, tStats, ttStats)
 
         Write #1, W0L!(I)
         Write #1, W1L!(I)
+
         Color 14
         Locate 18, 38
         TMR% = TMR% - 1
         Print Using "#####"; TMR%
+
     Next I
 
     For I = 1 To 40
@@ -289,6 +325,99 @@ End Sub
 
 
 '----------------------------------------
+'        READLEADER Subroutine
+'----------------------------------------
+'This subroutine reads in the leader files 
+'(.LDS) for the expanded standings modules 
+Sub READLEADER (statFile$, JB, tStats, ttStats)
+
+    Shared statPlyrNames$(), AL$(), expanTT$()
+    Shared TMA$(), TT1$()
+
+    Shared statsAL!()
+    Shared GM!(), GMA!(), GM1!()
+    Shared TT!(), TT1!()
+    Shared W0L!(), W1L!()
+
+    TMR = 600
+
+    'Print "READING LEADER FILES . . . . PLEASE WAIT"
+
+    If Not _FileExists (diskPaths$(1) + statFile$ + ".LDS") Then
+    
+        MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
+        BoxWidth = 20
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
+
+    Else
+
+        Open diskPaths$(1) + statFile$ + ".LDS" For Input As #1
+
+        Input #1, JB, tStats, ttStats
+
+        For I = 1 To 600:
+
+            Input #1, AL$(I), TMA$(I), GMA!(I)
+
+            Color 14
+            Locate 18, 38
+            TMR% = TMR% - 1
+            Print Using "#####"; TMR%
+
+            For I1 = 1 To 14:
+                Input #1, statsAL!(I, I1)
+            Next I1
+
+            Input #1, W0L!(I)
+            Input #1, W1L!(I)
+
+            Color 14
+            Locate 18, 38
+            TMR% = TMR% - 1
+            Print Using "#####"; TMR%
+
+        Next I
+
+        For I = 1 To 40
+
+            For I1 = 0 To 14
+                Input #1, TT!(I, I1), expanTT$(I, I1)
+            Next
+
+            Color 14
+            Locate 18, 38
+            TMR% = TMR% - 1
+            Print Using "#####"; TMR%
+            Input #1, GM!(I)
+
+        Next
+
+        For I = 1 To 40
+
+            For I1 = 0 To 14
+                Input #1, TT1!(I, I1), TT1$(I, I1)
+            Next
+
+            Color 14
+            Locate 18, 45
+            TMR% = TMR% - 1
+            Print Using "#####"; TMR%
+            Input #1, GM1!(I)
+
+        Next
+
+        Close #1
+
+    End If
+    
+End Sub
+
+
+'----------------------------------------
 '    ExpandedLeaders_Menu Subroutine
 '----------------------------------------
 'This subroutine presents a categorized
@@ -314,10 +443,10 @@ Sub ExpandedLeaders_Menu (JB, TS, TTS)
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
-    	menuWidth% = Len(menuChoices$(1))
-    	Column% = (80 - menuWidth% - 2) / 2
+        menuWidth% = Len(menuChoices$(1))
+        Column% = (80 - menuWidth% - 2) / 2
 
-    	Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -363,10 +492,6 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
         Color 15, 0
         Cls
-        'Print
-        'Print
-        'Print
-        'Print
 
         Color 15, 12
 
