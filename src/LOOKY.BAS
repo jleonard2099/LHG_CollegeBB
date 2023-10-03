@@ -14,25 +14,28 @@ Sub LOOKY ()
     '-- unless we're going to loop around this
     menuExit = 0
 
-    Color 15, 0
-
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-    statFile$ = nameStatFile$(team$)
 
-    If Not _FileExists(diskPaths$(1) + statFile$) Then
+    If teamNbr > 0 Then
 
-        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
-        BoxWidth = 24
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
+        statFile$ = nameStatFile$(team$)
 
-    Else
+        If Not _FileExists(diskPaths$(1) + statFile$) Then
 
-        Call LoadTeamStats(statFile$, team$, totalGames%)
-        Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
+            MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+            BoxWidth = 24
+            BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+            Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+            Call CSMsgBox(MsgText$, BoxWidth, PASS)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, PASS)
+
+        Else
+
+            Call LoadTeamStats(statFile$, team$, totalGames%)
+            Call ViewStatSummary(statFile$, team$, totalGames%, menuExit)
+
+        End If
 
     End If
 
@@ -291,8 +294,7 @@ Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
         Call TITLE_STATS
 
         Color , 1
-
-        Locate 23, 1
+        Locate 24, 1
 
         Color 15, 1: Print "SCHEDULE ";
         Color 14: Print "[Pg UP]  ";
@@ -301,7 +303,9 @@ Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
         Color 15: Print "NEW TEAM ";
         Color 14: Print "[ESC]  ";
         Color 15: Print "SORT ";
-        Color 14: Print "<-,-> and [ENTER]    "
+        Color 14: Print "<-,-> and [ENTER]";
+        Print Space$(4);
+        Locate 25, 1
         Color 15: Print "PRINT ";
         Color 14: Print "[P]  ";
         Color 15: Print "DELETE STATS ";
@@ -325,6 +329,8 @@ Sub ViewPlayerStats (statFile$, teamName$, CP%, totalGames%, menuExit)
                 If I / 2 = Int(I / 2) Then Color 15
 
                 Print Left$(statPlyrNames$(I), 13); Tab(15);
+
+                'Games
                 Print Using "## "; lookyA!(I, 0);
 
                 If lookyA!(I, 10) > 0 Then Locate , 18: Print Using "####"; Int((lookyA!(I, 10) + 30) / 60);: Locate , 24: Print Using "##"; Int(((lookyA!(I, 10) / 60) / lookyA!(I, 0)) + .5);
@@ -479,19 +485,21 @@ Sub ViewTeamStats (statFile$, teamName$, CP%, totalGames%, menuExit)
         Call TITLE_STATS
 
         Color , 1
-        Locate 23, 1
+        Locate 24, 1
 
         Color 15: Print "MORE STATS ";
         Color 14: Print "[Pg UP]  ";
         Color 15: Print "SELECT NEW TEAM ";
         Color 14: Print "[ESC]  ";
         Color 15: Print "SORT ";
-        Color 14: Print "<-,-> and [ENTER]  ";
+        Color 14: Print "<-,-> and [ENTER]";
+        Print Space$(15);
+        Locate 25, 1
         Color 15: Print "PRINT ";
         Color 14: Print "[P]    ";
         Color 15: Print "DELETE STATS ";
         Color 14: Print "[D]";
-        Print Space$(64);
+        Print Space$(51);
 
         Color 3, 0
         Locate 2, 1: Print "SORT BY: "; CP$(CP%); Tab(40);

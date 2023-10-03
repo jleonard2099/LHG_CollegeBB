@@ -1404,8 +1404,6 @@ Sub CreateConferenceSchedule ()
 
     Cls
 
-    Call TITLE_SCHEDCREATE
-
     Locate 5, 1: Color , 0
     Color 15: Print "(1) ";
     Color 14: Print "6 TEAM, 30 GAME SCHEDULE"
