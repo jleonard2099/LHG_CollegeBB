@@ -23,9 +23,10 @@ Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
 Dim Shared DT$, TM$
 
 Dim coachMode$(0 To 1), foulShotOpt$(0 To 2)
-Dim location$(0 To 2), playMode$(0 To 3), modeAbbrev$(0 To 3)
-Dim sclockOpt$(0 To 2), threeFtOpt$(0 To 1), threePtOpt$(0 To 1)
-Dim yesNo$(0 To 1)
+Dim location$(0 To 2), modeAbbrev$(0 To 3)
+Dim playMode$(0 To 3), sclockOpt$(0 To 2)
+Dim teamIndicator$(1)
+Dim threeFtOpt$(0 To 1), threePtOpt$(0 To 1), yesNo$(0 To 1)
 
 ' *** Miscellaneous Use ***
 ' -------------------------
@@ -222,10 +223,16 @@ Dim consolationSetting%(1)
 ' Used in Game Routines
 '----------------------------------------
 Dim scheduleFile$
+Dim actualAttendance&
+
+'CRD stores attendance for stat files
+'  I think this is because files are operated on
+'   linearly, so 100 records is the most supported?
+Dim avgAttendance&(1), CRD&(NUM_STATRECORDS)
 
 Dim Shared autoPlay, B, C1, DY, compTeam, D, endGame, endAllGames, FO, F3
 Dim Shared G9, gameLoc, H, halfTime, I, J, IN, M5, MJ, nbrLines, NTMS
-Dim Shared P, P9, playerOpt, Q, S2, S9, sClockVal, shotClock
+Dim Shared P, P9, playerMode, playerOpt, Q, S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 
 Dim Shared BO%, BU%, coachOpt, DK%, F3S%, FB%, FT%, J8%, LC%, ft6FloorFouls, foulsToDQ
@@ -234,8 +241,6 @@ Dim Shared PA%, PASS%, pbpOpt, PT%, PZ%, ST%, ft10thFoul, ft3PtFoul, threePtOpt,
 Dim Shared F!
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
-
-Dim Shared actualAttendance&
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, prevBall$
 Dim Shared tourneyFile$, U$, VT$, VT1$, W$, W1$, YN$
@@ -262,11 +267,6 @@ Dim Shared F5%(0 To 1, 0 To 8)
 
 Dim Shared plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared R3!(1), W0!(1, 13), W1!(1, 13)
-
-'CRD stores attendance for stat files
-'  I think this is because files are operated on
-'   linearly, so 100 records is the most supported?
-Dim Shared avgAttendance&(1), CRD&(NUM_STATRECORDS)
 
 Dim Shared players$(1, 13), D$(15), DB$(14)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)

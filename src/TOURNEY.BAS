@@ -331,7 +331,7 @@ Sub EditGame_TOURNEY ()
     Shared scheduleNG%(), scheduleAP%()
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared playMode$(), sclockOpt$(), yesNo$()
+    Shared playMode$(), sclockOpt$(), yesNoText$()
 
     Dim displayPause!
 
@@ -366,7 +366,7 @@ Sub EditGame_TOURNEY ()
             Color 15: Print playMode$(scheduleNG%(NG%, 8))
 
             Color 14: Print " (2) ";:
-            Color 15: Print "3-POINT SHOT: "; yesNo$(scheduleNG%(NG%, 3))
+            Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(NG%, 3))
 
             Color 14: Print " (3) ";:
             Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(NG%, 7))
@@ -387,10 +387,10 @@ Sub EditGame_TOURNEY ()
             Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
 
             Color 14: Print " (9) ";:
-            Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(scheduleNG%(NG%, 10))
+            Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNoText$(scheduleNG%(NG%, 10))
 
             Color 14: Print " (A) ";:
-            Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(scheduleNG%(NG%, 14))
+            Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNoText$(scheduleNG%(NG%, 14))
 
             Color 14: Print " (0) ";:
             Color 15: Print "ACCEPT SETTINGS"

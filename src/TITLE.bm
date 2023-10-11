@@ -74,7 +74,7 @@ Sub TITLE_HEADER ()
     Print Tab(80); " ";
 
     Locate , 25
-    Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
+    Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
 
     Locate 3, 1
     Color 2, 0
@@ -174,7 +174,7 @@ Sub TITLE_STATS ()
     Print Tab(80); " ";
 
     Locate , 26
-    Print "BASKETBALL: THE PRO GAME STATISTICS"
+    Print "COURTSIDE COLLEGE BASKETBALL STATISTICS"
 
     Locate 24, 1
     Print Tab(80); " ";
@@ -284,12 +284,13 @@ Sub TITLE ()
     Cls
 
     'Header
+    Color , 1
     Locate 1, 1
     Print Tab(80); " ";
 
     Color 12
     Locate , 25
-    Print "BASKETBALL: THE PRO GAME V" + GAME_VERSION$
+    Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
 
     'Footer
     Locate 24, 1

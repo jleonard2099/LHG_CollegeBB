@@ -15,7 +15,7 @@ Sub EditStats ()
     Dim Z2(14, 14)
 
     Call ChooseTeam (YN$, NTMS, teamNbr, team$)
-	statFile$ = nameStatFile$(team$)
+    statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$) Then
 
@@ -150,7 +150,7 @@ Sub EditStats ()
         '---------------
         Cls
         X$ = "DEFENSIVE TEAM STATS"
-        Call TITLE_EDITSTATS(2, X$)
+        Call TITLE_EDITSTATS '(2, X$)
 
         Locate 3, 1
         Print "1. OPP FGA "; statsZ1!(1)

@@ -8,6 +8,9 @@
 'disable, etc.
 Sub COLHOOP ()
 
+    Shared actualAttendance&
+    Shared avgAttendance&()
+    
     _Title "Courtside College Basketball v" + GAME_VERSION$ + " - HOOPS!"
 
     'Open "pbplog" For Output As #7
@@ -17,7 +20,7 @@ Sub COLHOOP ()
     Shared tickerStart
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared playMode$(), sclockOpt$(), yesNo$()
+    Shared playMode$(), sclockOpt$(), yesNoText$()
 
     Color 7, 0
     Cls
@@ -60,8 +63,9 @@ Sub COLHOOP ()
 
         'Location
         Print #3, 1
+        Print #3, 5
 
-        For I = 5 To 11:
+        For I = 6 To 11:
             Print #3, 0
         Next
 
@@ -219,64 +223,66 @@ Sub COLHOOP ()
     If autoPlay <> 1 And TOU <> 1 Then
 
         ' USER SELECTION OF OPTIONS
+        'gameLoc = 0 is not used ("Visitor")
         'gameLoc = 1 is neutral site
-        'gameLoc of 0 is not used
         If gameLoc = 0 Then gameLoc = 1
 
         Do
+
             Color 15, 0
             Cls
 
             Color 2
-            Print ; Tab(29); "SELECT OPENING OPTIONS"
-            Print
+            Print Tab(29); "SELECT OPENING OPTIONS"
+
             Locate 2, 2: Color 14
             Print "(1) ";: Color 15: Print playMode$(playerOpt)
             Locate 3, 2: Color 14
-            Print "(2) ";: Color 15: Print "VISITING TEAM: ";
+            Print "(2) ";
+            Color 15: Print "VISITING TEAM: ";
             Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0)
             Color , 0
-            Locate 4, 2: Color 14
-            Print "(3) ";: Color 15: Print "HOME TEAM: ";
+            Locate 4, 2: Color 14, 0
+            Print "(3) ";
+            Color 15: Print "HOME TEAM: ";
             Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
-            Color , 0
-            Locate 5, 2: Color 14
-            Print "(4) ";: Color 15: Print "3-POINT SHOT: "; yesNo$(threePtOpt)
+            Locate 5, 2: Color 14, 0
+            Print "(4) ";
+            Color 15: Print "GAME LOCATION: "; location$(gameLoc)
             Locate 6, 2: Color 14
-            Print "(5) ";: Color 15: Print sclockOpt$(sClockVal)
+            Print "(5) ";
+            Color 15: Print "SHOT CLOCK: "; sclockOpt$(sClockVal)
             Locate 7, 2: Color 14
-            Print "(6) ";: Color 15: Print "LOCATION: "; location$(gameLoc)
+            Print "(6) ";
+            Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
             Locate 8, 2: Color 14
-            Print "(7) ";: Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
+            Print "(7) ";
+            Color 15: Print "FOULS TO DISQUALIFY: "; foulsToDQ
             Locate 9, 2: Color 14
-            Print "(8) ";: Color 15: Print "START GAME"
+            Print "(8) ";
+            Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(ft10thFoul)
             Locate 10, 2: Color 14
-            Print "(9) ";: Color 15: Print "FOULS TO DISQUALIFY: "; foulsToDQ
+            Print "(9) ";
+            Color 15: Print "START GAME"
             Locate 11, 2: Color 14
-            Print "(0) ";: Color 15: Print "SAVE SETTINGS"
+            Print "(0) ";
+            Color 15: Print "SAVE SETTINGS"
             Locate 12, 2: Color 14
-            Print "(A) ";: Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(ft10thFoul)
+            Print "(A) ";
+            Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
             Locate 13, 2: Color 14
-            Print "(B) ";: Color 15: Print "HUMAN COACHES WILL: "; coachMode$(coachOpt);
+            Print "(B) ";
+            Color 15: Print "HUMAN COACHES WILL: "; coachMode$(coachOpt);
             Locate 1, 1
             Locate 14, 2: Color 14
-            Print "(C) ";: Color 15: Print "3 FT WHEN FOULED ON 3-PT ATT: "; yesNo$(ft3PtFoul)
+            Print "(C) ";
+            Color 15: Print "3 FT WHEN FOULED ON 3-PT ATT: "; yesNoText$(ft3PtFoul)
             Locate 15, 2: Color 14
-            Print "(D) ";: Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS : "; yesNo$(ft6FloorFouls)
+            Print "(D) ";
+            Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS : "; yesNoText$(ft6FloorFouls)
             Locate 16, 2: Color 14
-            Print "(E) ";: Color 15: Print "PLAY BY PLAY: "; pbpType$(pbpOpt)
-
-            Locate 17, 2: Print "NOTE:: 1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
-            Locate , 2: Print "       45 SEC SHOT CLOCK WAS ADOPTED IN 1984-85, BUT NOT USED IN"
-            Locate , 2: Print "       84-85 POST SEASON TOURNAMENTS"
-            Locate , 2: Print "       3 PT SHOT WAS ADOPTED IN 1986-87"
-            Locate , 2: Print "       2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED IN 1990-91"
-            Locate , 2: Print "       3 FT WHEN FOULED ON A 3 PT ATT ADOPTED IN 1990-91"
-            Locate , 2: Print "       35 SEC SHOT CLOCK WAS ADOPTED IN 1993-94"
-
-            'Start opening options with:
-            'Locate 3, 2:
-            'Options wil go up to Locate 17, 2 before the below:
+            Print "(E) ";
+            Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpType$(pbpOpt)
 
             'Locate 19, 2: Print "NOTE::"
             'Print "        1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
@@ -286,6 +292,18 @@ Sub COLHOOP ()
             'Print "        3 FT WHEN FOULED ON A 3 PT ATT ADOPTED 1990-91"
             'Print "        35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16";
 
+            Locate 18, 2: Color 14
+            Print "NOTE:: "
+            Color 15
+
+            Locate , 3: Print "* 1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
+            'Locate , 3: Print "* 45 SEC SHOT CLOCK ADOPTED 1984-85, BUT NOT IN TOURNAMENTS"
+            Locate , 3: Print "* NO SHOT CLOCK UNTIL 1984-1985; 45 SEC CLOCK ADOPTED BUT NOT FOR TOURNAMENT"
+            Locate , 3: Print "* 35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2014-15"
+            Locate , 3: Print "* 3 PT SHOT ADOPTED IN 1986-87"
+            Locate , 3: Print "* BEFORE 1990-91, 10TH FOUL ALLOWED 1+1 FT; NOW IT IS 2 FT"
+            Locate , 3: Print "* STARTING 1990-91, 3 FT REWARDED WHEN FOULED ON A 3 PT ATT";
+
             Do
                 Color 7
 
@@ -293,69 +311,20 @@ Sub COLHOOP ()
 
                 If I$ <> Chr$(27) Then
                     iVal = Val(I$)
-                    If UCase$(I$) = "A" Then iVal = 11
-                    If UCase$(I$) = "B" Then iVal = 12
-                    If UCase$(I$) = "C" Then iVal = 13
-                    If UCase$(I$) = "D" Then iVal = 14
-                    If UCase$(I$) = "E" Then iVal = 15
-                    If iVal = 0 Then iVal = 10
+                    If UCase$(I$) = "A" Then iVal = 10
+                    If UCase$(I$) = "B" Then iVal = 11
+                    If UCase$(I$) = "C" Then iVal = 12
+                    If UCase$(I$) = "D" Then iVal = 13
+                    If UCase$(I$) = "E" Then iVal = 14
                 End If
 
-            Loop Until iVal >= 0 And iVal <= 15 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
+            Loop Until iVal >= 0 And iVal <= 14 Or I$ = Chr$(27) Or UCase$(I$) = "Q"
 
             If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
                 Select Case iVal
-
-                    Case 1:
-                        playerOpt = playerOpt + 1
-                        If playerOpt > 3 Then playerOpt = 0
-
-                    Case 2:
-                        P9 = 0
-                        Call ChooseGameTeam(YN$, numberTeams, tmIdx, gameTeams$(P9), P9)
-                        If tmIdx <> 0 Then
-                            Color 15, 0
-                            Call TEAMSETUP
-                            Call DISABLEPLAYERS
-                        End If
-
-                    Case 3:
-                        P9 = 1
-                        Call ChooseGameTeam(YN$, numberTeams, tmIdx, gameTeams$(P9), P9)
-                        If tmIdx <> 0 Then
-                            Color 15, 0
-                            Call TEAMSETUP
-                            Call DISABLEPLAYERS
-                        End If
-
-                    Case 4:
-                        threePtOpt = 1 - threePtOpt
-
-                    Case 5:
-                        sClockVal = sClockVal + 1
-                        '-- for 30 second shot clock option
-                        '-- If sClockVal > 3 Then sClockVal = 0
-                        If sClockVal > 2 Then sClockVal = 0
-
-                    Case 6:
-                        gameLoc = gameLoc + 1
-                        If gameLoc > 2 Then gameLoc = 1
-
-                    Case 7:
-                        Do
-                            Locate 8, 32
-                            Input pbpDelay!
-                        Loop Until pbpDelay! >= 0
-
-                    Case 8:
-                        If gameTeams$(0) <> "" And gameTeams$(1) <> "" Then Exit Do
-
-                    Case 9:
-                        foulsToDQ = foulsToDQ + 1
-                        If foulsToDQ > 6 Then foulsToDQ = 5
-
-                    Case 10:
+                    
+                    Case 0:
                         Open "DEFAULT" For Output As #10
                         Print #10, playerOpt
                         Print #10, threePtOpt
@@ -369,27 +338,71 @@ Sub COLHOOP ()
                         Print #10, ft6FloorFouls
                         Print #10, pbpOpt
                         Close #10
+                    
+                    Case 1:
+                        playerOpt = playerOpt + 1
+                        If playerOpt > 3 Then playerOpt = 0
 
-                    Case 11:
+                    Case 2:
+                        Call ChooseGameTeam(YN$, numberTeams, tmIdx, gameTeams$(0), 0)
+                        If tmIdx <> 0 Then
+                            Call TEAMSETUP
+                            Call DISABLEPLAYERS(0)
+                        End If
+
+                    Case 3:
+                        Call ChooseGameTeam(YN$, numberTeams, tmIdx, gameTeams$(1), 1)
+                        If tmIdx <> 0 Then
+                            Call TEAMSETUP
+                            Call DISABLEPLAYERS(1)
+                        End If
+
+                    Case 4:
+                        gameLoc = gameLoc + 1
+                        If gameLoc > 2 Then gameLoc = 1
+
+                    Case 5:
+                        sClockVal = sClockVal + 1
+                        '-- for 30 second shot clock option
+                        '-- If sClockVal > 3 Then sClockVal = 0
+                        If sClockVal > 2 Then sClockVal = 0
+
+                    Case 6:
+                        threePtOpt = 1 - threePtOpt
+
+                    Case 7:
+                        foulsToDQ = foulsToDQ + 1
+                        If foulsToDQ > 6 Then foulsToDQ = 5
+
+                    Case 8:
                         ft10thFoul = 1 - ft10thFoul
 
-                    Case 12:
+                    Case 9:
+                        '
+                        
+                    Case 10:
+                        Do
+                            Locate 12, 32
+                            Input pbpDelay!
+                        Loop Until pbpDelay! >= 0
+
+                    Case 11:
                         coachOpt = 1 - coachOpt
 
-                    Case 13:
+                    Case 12:
                         ft3PtFoul = 1 - ft3PtFoul
 
-                    Case 14:
+                    Case 13:
                         ft6FloorFouls = 1 - ft6FloorFouls
 
-                    Case 15:
+                    Case 14:
                         pbpOpt = 1 - pbpOpt
 
                 End Select
 
             End If
 
-        Loop Until (iVal = 8 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27)
+        Loop Until (iVal = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
@@ -444,11 +457,16 @@ Sub COLHOOP ()
     Next
 
     'Determine attendance
-    ' gameLoc = 2 is a non-neutral site
     If gameLoc = 2 Or avgAttendance&(1) = 0 Then
-        actualAttendance& = Int(Rnd(1) * 2000) + 9000
+        'Neutral Site
+        'Random # 2,000 - 14,000
+        '-- Yes, some teams struggle to get 1,500
+        '-- but it's rare, or D2, or an outlier
+        '-- Original game ranged 9,000 to 11,000
+        actualAttendance& = Int(Rnd(1) * 12000) + 2000
     Else
-        actualAttendance& = Int(Rnd(1) * 2000) + avgAttendance&(1) - 1000
+        'Random # +/ 1,000 of team's average attendance
+        actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 2000) - 1000
     End If
 
     '----------------------------------------
@@ -459,19 +477,19 @@ Sub COLHOOP ()
     Select Case playerOpt
 
         Case 1:
+            playerMode = 1
             compTeam = 0
 
         Case 2:
-            playerOpt = 1
+            playerMode = 1
             compTeam = 1
 
         Case 3:
-            playerOpt = 2
+            playerMode = 2
 
     End Select
 
-    'At this point, the value of playerOpt has been changed.
-    'It now represents the following values:
+    'playerMode represents the following values:
     '   0 = Human
     '   1 = Computer Team
     '   2 = PC vs. PC
@@ -492,7 +510,7 @@ Sub COLHOOP ()
 
         Call SETSTAMINA
 
-        If playerOpt = 1 And P9 = compTeam Or playerOpt = 2 Then
+        If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
             Call COMCOACH
         Else
             Call LINEUPS
@@ -635,9 +653,9 @@ Sub COLHOOP ()
 
     End If
 
-    If H < 3 And playerOpt <> 0 Then
-        If playerOpt = 1 Then P9 = compTeam: Call COMCOACH
-        If playerOpt = 2 Then P9 = 0: Call COMCOACH: P9 = 1: Call COMCOACH
+    If H < 3 And playerMode <> 0 Then
+        If playerMode = 1 Then P9 = compTeam: Call COMCOACH
+        If playerMode = 2 Then P9 = 0: Call COMCOACH: P9 = 1: Call COMCOACH
     End If
 
     If H < 3 Then
@@ -727,7 +745,7 @@ Sub COLHOOP ()
 
     End If
 
-    If Not (autoPlay = 1 And playerOpt = 2) Then
+    If Not (autoPlay = 1 And playerMode = 2) Then
         I$ = GetKeyPress
     End If
 
@@ -804,7 +822,7 @@ Sub COLHOOP ()
     If gameClock! <= 5 And (threePtOpt = 1 And score(D, 0) - score(P, 0) <= 3 Or threePtOpt = 0 And score(D, 0) - score(P, 0) <= 2) And score(D, 0) - score(P, 0) >= 0 And H >= 2 Then
 
         'Last 5 seconds!!!
-        If playerOpt = 2 Or playerOpt = 1 And P = compTeam Then
+        If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' Computer handle last 5 seconds
             Call d100(RN)
             RN0 = score(P, 0) - score(D, 0)
@@ -1119,7 +1137,7 @@ Sub COLHOOP ()
 
             skipInbound% = 0
 
-            If playerOpt = 1 And D = compTeam Or playerOpt = 2 Then
+            If playerMode = 1 And D = compTeam Or playerMode = 2 Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
                 Do
@@ -1888,12 +1906,12 @@ Sub COLHOOP ()
     Print
     If pbpOpt = 1 And pbpDelay! <> 0 Then Call DELAY
 
-    If playerOpt <> 0 Or coachOpt = 1 Then
+    If playerMode <> 0 Or coachOpt = 1 Then
 
-        If Not (H >= 2 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerOpt = 1 And P = compTeam) Then
+        If Not (H >= 2 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam) Then
 
-            If playerOpt = 2 Or playerOpt = 1 And D = compTeam Then
-                If (playerOpt = 1 Or playerOpt = 0) And coachOpt <> 1 Then
+            If playerMode = 2 Or playerMode = 1 And D = compTeam Then
+                If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then
                     GoTo 530
                 End If
             End If
@@ -1916,7 +1934,7 @@ Sub COLHOOP ()
 
                     If P6 <> 1 Then
 
-                        If (playerOpt = 0 And coachOpt = 1 Or playerOpt = 1 And D = compTeam And coachOpt = 1 Or playerOpt = 1 And P = compTeam Or playerOpt = 2) Then
+                        If (playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2) Then
 
                             If gameClock! <= 660 And gameClock! >= 540 And H = 1 And timeouts(P) >= 5 Then
                                 P6 = 2: CTO% = 1
@@ -1969,6 +1987,12 @@ Sub COLHOOP ()
             GoTo 529
         End If
 
+        If UCase$(I$) = "O" Then
+            Call OPTIONS
+            GoTo 529
+        End If
+
+        'Should this also be a loop to force a choice???
         P6 = Val(I$)
 
         If P6 < 1 Or P6 > 4 Then P6 = 0
@@ -1976,14 +2000,14 @@ Sub COLHOOP ()
 
     End If
 
-    If Val(I$) = 3 And (playerOpt = 0 Or playerOpt = 1 And P = compTeam) And H >= 4 And gameClock! < 240 Then P6 = 3
-    If Val(I$) = 2 And (playerOpt = 0 Or playerOpt = 1 And D = compTeam) And timeouts(P) > 0 Then P6 = 2
+    If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And H >= 4 And gameClock! < 240 Then P6 = 3
+    If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then P6 = 2
     P3 = P6
 
-    If P6 = 2 And timeouts(P) = 0 Or P6 = 3 And H = 1 Or P6 = 3 And playerOpt = 1 And D = compTeam Or P6 = 3 And H = 2 And gameClock! > 240 Then 530
+    If P6 = 2 And timeouts(P) = 0 Or P6 = 3 And H = 1 Or P6 = 3 And playerMode = 1 And D = compTeam Or P6 = 3 And H = 2 And gameClock! > 240 Then 530
 
-    If playerOpt = 1 And P = compTeam And J8% = 1 Or playerOpt = 2 And J8% = 1 Then P6 = 4
-    If playerOpt = 1 And P = compTeam And H >= 2 And gameClock! < 30 And score(D, 0) - score(P, 0) = 3 Or playerOpt = 2 And H >= 2 And gameClock! < 30 And score(D, 0) - score(P, 0) = 3 Then P6 = 4
+    If playerMode = 1 And P = compTeam And J8% = 1 Or playerMode = 2 And J8% = 1 Then P6 = 4
+    If playerMode = 1 And P = compTeam And H >= 2 And gameClock! < 30 And score(D, 0) - score(P, 0) = 3 Or playerMode = 2 And H >= 2 And gameClock! < 30 And score(D, 0) - score(P, 0) = 3 Then P6 = 4
     If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
 
     caseVar% = P6 + 1
@@ -2536,7 +2560,7 @@ Sub COLHOOP ()
 
             Call SELECTPBP
 
-            If playerOpt = 1 And D = compTeam Or playerOpt = 2 Then
+            If playerMode = 1 And D = compTeam Or playerMode = 2 Then
                 W5 = Int(Rnd(1) * 5)
             Else
                 Do

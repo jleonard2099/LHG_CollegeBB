@@ -1,6 +1,6 @@
 $Debug
 
-Const GAME_VERSION$ = "4.32"
+Const GAME_VERSION$ = "4.85"
 Const MAX_TEAMS = 1000
 Const MAX_GAMES = 1500
 Const MAX_FILES = 10240
@@ -154,6 +154,17 @@ Next I
 
 
 ' Game options
+
+coachMode$(0) = "COACH AND SELECT SHOTS           "
+coachMode$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
+
+foulShotOpt$(0) = "SHOOT 1+1"
+foulShotOpt$(1) = "SHOOT 2  "
+
+location$(0) = "@ VISITING TEAM     "
+location$(1) = "HOME COURT ADVANTAGE"
+location$(2) = "NEUTRAL SITE        "
+
 modeAbbrev$(0) = "HH"
 modeAbbrev$(1) = "CV"
 modeAbbrev$(2) = "CH"
@@ -168,18 +179,12 @@ sclockOpt$(0) = "NO SHOT CLOCK       "
 sclockOpt$(1) = "45 SECOND SHOT CLOCK"
 sclockOpt$(2) = "35 SECOND SHOT CLOCK"
 
+yesNoText$(0) = "NO "
+yesNoText$(1) = "YES"
+
 yesNo$(0) = "N"
 yesNo$(1) = "Y"
 
-foulShotOpt$(0) = "SHOOT 1+1"
-foulShotOpt$(1) = "SHOOT 2  "
-
-location$(0) = "@ TEAM 1            "
-location$(1) = "HOME COURT ADVANTAGE"
-location$(2) = "NEUTRAL SITE        "
-
-coachMode$(0) = "COACH AND SELECT SHOTS           "
-coachMode$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
 
 '----------------------------------------
 '               MAIN CODE

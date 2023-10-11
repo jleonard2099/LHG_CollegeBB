@@ -17,7 +17,7 @@ Sub INFO ()
     Locate 24, 1
     Print Tab(80);
     Locate , 1
-    Print "(C) LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
+    Print "    LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
     Locate 3, 1
     Color , 0
 
@@ -33,14 +33,30 @@ End Sub
 Sub InitVar ()
 
     Shared scheduleFile$
+    Shared actualAttendance&
+
+    Shared avgAttendance&(), CRD&()
 
     Shared d3FG_Adj(), d3FGA_Adj()
+
+    Shared teamIndicator$()
 
     For I = 0 To 1
         For I1 = 0 To 4
             B1(I, I1) = -1
         Next I1
     Next I
+
+    teamIndicator$(0) = "VISITING TEAM"
+    teamIndicator$(1) = "HOME TEAM"
+
+    X$(0) = "A "
+    X$(1) = "B "
+    X$(2) = "C "
+    X$(3) = "D "
+
+    pbpType$(0) = "VERBOSE        "
+    pbpType$(1) = "HAFFNER CLASSIC"
 
     gameClock! = 1200
 
@@ -52,20 +68,12 @@ Sub InitVar ()
     timeouts(1) = 5
     timeouts(0) = 5
 
-    X$(0) = "A "
-    X$(1) = "B "
-    X$(2) = "C "
-    X$(3) = "D "
-
     PA% = -1
 
     teamRat_GAME(0, 0) = 15
     teamRat_GAME(0, 1) = 1
     teamRat_GAME(1, 0) = 15
     teamRat_GAME(1, 1) = 1
-
-    pbpType$(0) = "VERBOSE        "
-    pbpType$(1) = "HAFFNER CLASSIC"
 
     autoPlay = 0
     B = 0
@@ -405,9 +413,11 @@ End Sub
 'face for disabling team players. It will
 'then take care of updating the associated
 'arrays for the available roster.
-Sub DISABLEPLAYERS ()
+Sub DISABLEPLAYERS (P9)
 
     Do
+
+        Color 15, 0
         Cls
 
         Call TEAMBOX(1, P9)
@@ -522,12 +532,13 @@ End Sub
 'delay is 0.
 Sub PBP ()
 
-    i$ = InKey$
+    M$ = InKey$
 
-    If UCase$(i$) = "Q" Then End
+    If UCase$(M$) = "Q" Then Cls: End
+    If UCase$(M$) = "O" Then Call OPTIONS
 
     'Positive delay or Verbose PBP
-    If pbpDelay! <> 0 And pbpOpt <> 1 Then
+    If pbpDelay! > 0 And pbpOpt <> 1 Then
 
         U$ = PadRight$(U$, 38)
 
@@ -2105,7 +2116,7 @@ End Sub
 'matches the current game time / period.
 Sub TICKER ()
 
-    If autoPlay <> 1 Or playerOpt <> 2 Then
+    If autoPlay <> 1 Or playerMode <> 2 Then
 
         Color 14, 0
         Cls
@@ -2975,7 +2986,7 @@ Sub FoulCalled (randomCalcs%)
 
         If P2(D) > 6 Then X = 50
 
-        If playerOpt = 0 Or playerOpt = 1 And D <> compTeam Then
+        If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
             P9 = D
             C1 = 1
             Call LINEUPS
@@ -3774,6 +3785,8 @@ End Sub
 'corresponding stat file.
 Sub LOADSTATS ()
 
+    Shared CRD&()
+
     If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then Call COLCNG
 
     For I = 0 To 1
@@ -3893,7 +3906,7 @@ Sub SETUPRATINGS ()
 
     9300 '
 
-    If autoPlay <> 1 Or playerOpt <> 2 Then
+    If autoPlay <> 1 Or playerMode <> 2 Then
 
         Color 15, 0: Cls
         Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
@@ -3985,7 +3998,7 @@ End Sub
 'their zone strategy.
 Sub ZONECHANGE ()
 
-    If Not (playerOpt = 1 And compTeam = D Or playerOpt = 2) Or DT%(D) = 2 Or DT%(D) = 7 Or DT%(D) = 12 Or (OF%(P) <= 8 And OF%(P) >= 4) Then
+    If Not (playerMode = 1 And compTeam = D Or playerMode = 2) Or DT%(D) = 2 Or DT%(D) = 7 Or DT%(D) = 12 Or (OF%(P) <= 8 And OF%(P) >= 4) Then
 
         Call FRAMEOPTION(8, P)
         Locate 10, 15
@@ -4175,7 +4188,7 @@ Sub COMPUTERSUBS ()
     M4 = 0
     skipG9% = 0
 
-    If Not (playerOpt = 1 And P9 = compTeam And X = 50 Or playerOpt = 2 And P9 = P And X = 50) Then
+    If Not (playerMode = 1 And P9 = compTeam And X = 50 Or playerMode = 2 And P9 = P And X = 50) Then
 
         For I1 = 0 To 13
 
@@ -4976,7 +4989,7 @@ Sub BALLDISTRIBUTE ()
 
     RN0 = Int(Rnd(1) * 100) + 1
 
-    If playerOpt = 0 And coachOpt = 1 Or playerOpt = 1 And D = compTeam And coachOpt = 1 Or playerOpt = 1 And P = compTeam Or playerOpt = 2 Then
+    If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
         Call WHOGETSBALL
     Else
         'Select / Case statement
@@ -5018,7 +5031,7 @@ Sub BALLDISTRIBUTE ()
             End If
 
             If pbpDelay! > 0 And pbpOpt = 1 Then
-                'IF autoPlay=1 AND playerOpt=2 OR pbpDelay!=0 THEN 425
+                'IF autoPlay=1 AND playerMode=2 OR pbpDelay!=0 THEN 425
                 For I = 8 To 15
                     Locate I, 1
                     Call BLANKLINE
@@ -5029,12 +5042,24 @@ Sub BALLDISTRIBUTE ()
             End If
 
             I$ = GetKeyPress$
-            If UCase$(I$) = "T" Then
-                Call TICKER
-                Call SCOREBOARD
-            Else
-                B = Val(I$)
-            End If
+
+            Select Case UCase$(I$)
+            
+                Case "T"
+                    Call TICKER
+                    Call SCOREBOARD
+
+                Case "Q"
+                    Cls
+                    End
+
+                Case "O"
+                    Call OPTIONS 
+                    
+                Case Else
+                    B = Val(I$)
+            
+            End Select
 
         Loop Until B >= 0 And B <= 4
 
@@ -5058,15 +5083,15 @@ Sub DEADBALLOPTIONS ()
     PB$ = ""
     Call CLEARPBP
 
-    If playerOpt = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
-    If playerOpt = 1 Then P9 = compTeam: Call COMPUTERSUBS: Call FATIGUE
+    If playerMode = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
+    If playerMode = 1 Then P9 = compTeam: Call COMPUTERSUBS: Call FATIGUE
 
     FO = 0
     XM = 0
 
     Call CLEARPBPBOX
 
-    If playerOpt = 2 Then
+    If playerMode = 2 Then
         S2 = 0
         P9 = P
         C1 = 2
@@ -5088,7 +5113,7 @@ Sub DEADBALLOPTIONS ()
         I$ = GetKeyPress$
         P3 = Val(I$)
 
-        If P3 < 1 Or P3 > 6 Or playerOpt = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And timeouts(P) <= 0) And P = compTeam Or playerOpt = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And timeouts(D) <= 0) And D = compTeam Then
+        If P3 < 1 Or P3 > 6 Or playerMode = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And timeouts(P) <= 0) And P = compTeam Or playerMode = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And timeouts(D) <= 0) And D = compTeam Then
 
             'This is essentially the case for automated input,
             'or anything outside 1-6 (ie, press ENTER)
@@ -5200,13 +5225,13 @@ Sub STOPPAGE ()
     810 '
     Call CLEARPBP
 
-    If playerOpt <> 0 Then
-        If playerOpt = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
-        If playerOpt = 1 Then P9 = compTeam: Call COMPUTERSUBS: Call FATIGUE
+    If playerMode <> 0 Then
+        If playerMode = 2 Then P9 = 0: Call COMPUTERSUBS: Call FATIGUE: P9 = 1: Call COMPUTERSUBS: Call FATIGUE
+        If playerMode = 1 Then P9 = compTeam: Call COMPUTERSUBS: Call FATIGUE
         XM = 0
     End If
 
-    If playerOpt = 2 Then
+    If playerMode = 2 Then
         S2 = 0
         P9 = P
         C1 = 2
@@ -5232,7 +5257,7 @@ Sub STOPPAGE ()
             C1 = 2
             Call CheckGameClock
         Else
-            If P3 = 1 And timeouts(P) <= 0 Or P3 = 2 And timeouts(D) <= 0 Or (P3 = 1 Or P3 = 3) And P = compTeam And playerOpt = 1 Or (P3 = 2 Or P3 = 4) And D = compTeam And playerOpt = 1 Then 813
+            If P3 = 1 And timeouts(P) <= 0 Or P3 = 2 And timeouts(D) <= 0 Or (P3 = 1 Or P3 = 3) And P = compTeam And playerMode = 1 Or (P3 = 2 Or P3 = 4) And D = compTeam And playerMode = 1 Then 813
             If P3 = 3 Then P9 = P: Call PlayStyle: Call SCOREBOARD: GoTo 810
             If P3 = 4 Then P9 = D: Call PlayStyle: Call SCOREBOARD: GoTo 810
 
@@ -5272,7 +5297,7 @@ Sub PRESSGUARD ()
 
     If P7(D) <> 0 And P7(D) <= 2 Then
 
-        If playerOpt = 2 Or playerOpt = 1 And P = compTeam Then
+        If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' COMPUTER GUARD FOR PRESS
             BU% = 1
             If plyrOff_GAME!(P, B1(P, 0), 4) >= plyrOff_GAME!(P, B1(P, 1), 4) And tmFatigue(P, B1(P, 0)) <= 3 Then BU% = 0
@@ -5858,6 +5883,72 @@ End Sub
 
 
 '----------------------------------------
+'           OPTIONS Subroutine
+'----------------------------------------
+'This subroutine gives you a small menu
+'for changing some of the game options
+'(such as pbp delay, coaching mode) in
+'the middle of game play.
+Sub OPTIONS ()
+
+    Shared playMode$()
+
+	Screen , , 0, 0
+
+    Call INFO
+
+    Do
+
+        Color , 0
+        Locate 3, 1
+        Color 14: Print "(1) ";
+        Color 15: Print playMode$(playerOpt)
+        Color 14: Print "(2) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY: #.# "; pbpDelay!
+        Print
+        Color 14: Print "<ENTER> ";
+        Color 15: Print "RETURN TO GAME PLAY"
+
+        Do
+            Color 7, 0
+            'Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+            I$ = GetKeyPress$
+            I = Val(I$)
+        Loop Until I >= 0 And I <= 2
+
+        Select Case I 
+            Case 1
+                playerOpt = playerOpt + 1
+                If playerOpt > 3 Then playerOpt = 0
+            Case 2
+                Locate 4, 23: Input pbpDelay!
+        End Select
+
+        ' Determine computer team
+        Select Case playerOpt
+
+            Case 1:
+                playerMode = 1
+                compTeam = 0
+
+            Case 2:
+                playerMode = 1
+                compTeam = 1
+
+            Case 3:
+                playerMode = 2
+
+        End Select
+
+    Loop Until I$ = Chr$(13)
+
+	Screen , , 0, 0
+    Call SCOREBOARD
+
+End Sub
+
+
+'----------------------------------------
 '           EVENTS Subroutine
 '----------------------------------------
 'This subroutine works with another to
@@ -5925,7 +6016,7 @@ Sub FoundSpecial (specialCount, specialStat)
 
     'Get count of SPC files to determine
     'number to assign next one
-    Spec$ = diskPaths$(1) + "*.SPC"
+    Spec$ = diskPaths$(1) + "*.BSS"
     specialCount = FileCount%(Spec$)
     specialCount = specialCount + 1
     specialStat = 1
@@ -5963,7 +6054,7 @@ Sub POSTGAME ()
         Color 14: Print "(2) ";
         Color 15: Print "STATS TO TEXT FILE"
 
-        If autoPlay = 1 And playerOpt = 2 Then
+        If autoPlay = 1 And playerMode = 2 Then
             X = 2
         Else
             Do
@@ -5982,7 +6073,7 @@ Sub POSTGAME ()
         Color 15, 0
         Cls
 
-        If Not (autoPlay = 1 And playerOpt = 2) Then
+        If Not (autoPlay = 1 And playerMode = 2) Then
 
             Do
                 'Using Home Team's color for the box
@@ -5996,12 +6087,12 @@ Sub POSTGAME ()
 
         End If
 
-    Loop Until UCase$(I$) = "N" Or (autoPlay = 1 And playerOpt = 2)
+    Loop Until UCase$(I$) = "N" Or (autoPlay = 1 And playerMode = 2)
 
     'If we had special events
     If specialStat = 1 Then
 
-        NM$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
+        NM$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
 
         'Append special events
         Call BOX2SPC(NM$)
@@ -6053,14 +6144,15 @@ Sub BOXOPTIONS (outputChoice)
                 If autoPlay <> 1 Then
                     Cls
                     Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input boxFile$
-                    boxFile$ = boxFile$ + ".SPC"
+                    boxFile$ = boxFile$ + ".BSS"
                 Else
-                    ' NM$ = "BOXSCORE." + MID$(STR$(schedGame(0) + schedGame(2)), 2, LEN(STR$(schedGame(0) + schedGame(2))))
-                    boxFile$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
+                    'ScheduleName_GameXXX.BS
+                    NM$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
                 End If
 
             End If
 
+            'Includes a special option to send to printer when done
             Call BOX2FILE(outputChoice, boxFile$, specialStat)
 
     End Select
@@ -6074,6 +6166,8 @@ End Sub
 'This subroutine formats the boxscore
 'for output to the end user display
 Sub BOX2SCREEN ()
+
+    Shared actualAttendance&
 
     Cls
 
@@ -6096,7 +6190,7 @@ Sub BOX2SCREEN ()
 
     Call ScoreSummary
 
-    If Not (autoPlay = 1 And playerOpt = 2) Then
+    If Not (autoPlay = 1 And playerMode = 2) Then
         Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress
     End If
@@ -6235,7 +6329,9 @@ End Sub
 'create a temporary file, then loop THROUGH
 'it to print each line.
 Sub BOX2FILE (printChoice, NM$, isSpecial)
-
+    
+    Shared actualAttendance&
+    
     If isSpecial = 1 Then
         'special scores come after the events
         Open diskPaths$(1) + NM$ For Append As #1
@@ -6628,7 +6724,7 @@ Sub STATS2SCREEN
         Color 14: Print "TOTAL REBOUNDS  -";
         Color 15: Print R3!(I)
 
-        If Not (autoPlay = 1 And playerOpt = 2) Then
+        If Not (autoPlay = 1 And playerMode = 2) Then
             Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
         End If
@@ -6829,6 +6925,9 @@ End Sub
 'the stats generated for a completed game.
 Sub COMPILESTATFILES (teamIdx)
 
+    Shared actualAttendance&
+    Shared CRD&()
+    
     statFile$ = nameStatFile$(gameTeams$(teamIdx))
 
     If _FileExists(diskPaths$(1) + statFile$) Then
@@ -7091,9 +7190,11 @@ End Sub
 '----------------------------------------
 'This subroutine provides interface for
 'choosing a team for the game
-Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
+Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
     Shared previousYear$
+
+    Shared teamIndicator$()
 
     Do
 
@@ -7117,12 +7218,14 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
         Locate 7, 32
 
+        Locate , 12: Print teamIndicator$(gameIdx)
         Locate , 12: Print "ENTER DISK ID: "
         Print
         Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Print
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate 8,
 
         I$ = GetKeyPress$
 
@@ -7130,8 +7233,8 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
             If I$ <> Chr$(13) Then
 
-                Locate 7, 27: Print I$
-                Locate 7, 28: Line Input NY$
+                Locate 8, 27: Print I$
+                Locate 8, 28: Line Input NY$
                 NY$ = I$ + NY$
                 Color 15, 0
 
@@ -7145,10 +7248,13 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-                        Locate 10, 8
-                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
+                        MsgText$ = "NO TEAM FILES WERE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO MAIN MENU"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
                         I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
+                        Call CSMsgBox("", 0, Pass)
                         Exit Sub
 
                     Else
@@ -7170,11 +7276,11 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
                         Close #1
 
+                        previousYear$ = yearNumber$
+
                     End If 'Done checking if file exists
 
                 End If 'Done checking for blank year number
-
-                previousYear$ = yearNumber$
 
             Else
 
@@ -7187,16 +7293,16 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, P9)
 
             Do
 
-                Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, P9)
+                Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, gameIdx)
 
-                If ExitCode% <> 27 Then
+                If ExitCode% <> 27 And numberTeams <> 0 Then
 
                     Do
                         Locate 2, 33
-                        Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1): Print teamName$
+                        Color teamRat_GAME(gameIdx, 0), teamRat_GAME(gameIdx, 1): Print teamName$
 
                         Color 15, 4
-                        Locate 3, 33: Print "ANY CHANGE? (YN)";
+                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
 
                         J$ = GetKeyPress$
 
@@ -7221,7 +7327,7 @@ End Sub
 'This subroutine provides an interface for
 'selecting a team from the list loaded by
 'the disk ID.
-Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, P9)
+Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%, gameIdx)
 
     If numberTeams > 0 Then
 
@@ -7255,7 +7361,7 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
             'Locate 2, 33
             'Color 31: Print "LOADING..."
 
-            Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, P9)
+            Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, gameIdx)
 
         End If
 
@@ -7270,10 +7376,11 @@ End Sub
 'This subroutine reads in the data for the
 'selected tema into each of the data arrays
 'needed by the game.
-Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
+Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     Shared d3FG_Adj(), d3FGA_Adj()
-
+    Shared avgAttendance&()
+    
     teamYear$ = RTrim$(YN$)
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
@@ -7287,47 +7394,47 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
     Get #1, I1
 
     targetTeam$ = RTrim$(Q$(0))
-    teamStamina(P9) = CVI(Q$(1))
-    dFGPA(P9) = CVI(Q$(2))
-    d3FG_Adj(P9) = CVI(Q$(3))
-    d3FGA_Adj(P9) = CVI(Q$(4))
+    teamStamina(gameIdx) = CVI(Q$(1))
+    dFGPA(gameIdx) = CVI(Q$(2))
+    d3FG_Adj(gameIdx) = CVI(Q$(3))
+    d3FGA_Adj(gameIdx) = CVI(Q$(4))
 
     For I3 = 0 To 4:
-        leagRat_GAME(P9, I3) = CVI(Q$(I3 + 5))
+        leagRat_GAME(gameIdx, I3) = CVI(Q$(I3 + 5))
     Next
 
     For I3 = 0 To 9:
-        teamRat_GAME(P9, I3) = CVI(Q$(I3 + 10))
+        teamRat_GAME(gameIdx, I3) = CVI(Q$(I3 + 10))
     Next
 
     For I3 = 0 To 13
-        players$(P9, I3) = RTrim$(Q$(I3 * 15 + 20))
+        players$(gameIdx, I3) = RTrim$(Q$(I3 * 15 + 20))
 
         For I4 = 0 To 6
-            plyrOff_GAME!(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
-            plyrRat_GAME(P9, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
+            plyrOff_GAME!(gameIdx, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
+            plyrRat_GAME(gameIdx, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
         Next
     Next
 
     Close #1
 
-    FY%(P9) = 2 * teamRat_GAME(P9, 3) - teamRat_GAME(P9, 4)
+    FY%(gameIdx) = 2 * teamRat_GAME(gameIdx, 3) - teamRat_GAME(gameIdx, 4)
 
     CNT% = 0
     CNTX% = 0
 
     Do
-        If teamRat_GAME(P9, 5) <> 0 Then
+        If teamRat_GAME(gameIdx, 5) <> 0 Then
 
             For I = 0 To 13
-                If B%(P9, I) = -1 Then B%(P9, I) = 0
+                If B%(gameIdx, I) = -1 Then B%(gameIdx, I) = 0
                 Call d100(RN)
-                If UCase$(players$(P9, I)) = "XXX" Then CNTX% = CNTX% + 1
-                If UCase$(players$(P9, I)) = "XXX" Or (B%(P9, I) = 0 And RN > Int(plyrRat_GAME(P9, I, 0) / teamRat_GAME(P9, 5) * 100 + .5)) Then B%(P9, I) = -1
+                If UCase$(players$(gameIdx, I)) = "XXX" Then CNTX% = CNTX% + 1
+                If UCase$(players$(gameIdx, I)) = "XXX" Or (B%(gameIdx, I) = 0 And RN > Int(plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5) * 100 + .5)) Then B%(gameIdx, I) = -1
             Next
 
             For I = 0 To 13:
-                If B%(P9, I) = 0 Then CNT% = CNT% + 1
+                If B%(gameIdx, I) = 0 Then CNT% = CNT% + 1
             Next
 
         End If
@@ -7345,24 +7452,24 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
 
     Get #2, I1
 
-    gameCoaches$(P9) = Q$(0)
-    gameArena$(P9) = Q$(1)
-    gameMascots$(P9) = Q$(2)
-    avgAttendance&(P9) = CVL(Q$(3))
+    gameCoaches$(gameIdx) = Q$(0)
+    gameArena$(gameIdx) = Q$(1)
+    gameMascots$(gameIdx) = Q$(2)
+    avgAttendance&(gameIdx) = CVL(Q$(3))
 
     For I = 0 To 13
 
-        DF(P9, I) = CVI(Q$(I * 16 + 4))
-        PO$(P9, I) = Q$(I * 16 + 5)
+        DF(gameIdx, I) = CVI(Q$(I * 16 + 4))
+        PO$(gameIdx, I) = Q$(I * 16 + 5)
 
         For I1 = 0 To 13
-            RS(P9, I, I1) = CVI(Q$(I * 16 + I1 + 6))
+            RS(gameIdx, I, I1) = CVI(Q$(I * 16 + I1 + 6))
         Next
 
     Next
 
     For I = 0 To 20
-        T2%(P9, I) = CVI(Q$(228 + I))
+        T2%(gameIdx, I) = CVI(Q$(228 + I))
     Next
 
     CK = CVI(Q$(249))
@@ -7371,22 +7478,22 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, P9)
 
     If CK <> 999 Then
 
-        gameCoaches$(P9) = ""
-        gameArena$(P9) = ""
-        gameMascots$(P9) = ""
-        avgAttendance&(P9) = 0
+        gameCoaches$(gameIdx) = ""
+        gameArena$(gameIdx) = ""
+        gameMascots$(gameIdx) = ""
+        avgAttendance&(gameIdx) = 0
 
         For I = 0 To 13:
-            DF(P9, I) = 5
-            PO$(P9, I) = ""
+            DF(gameIdx, I) = 5
+            PO$(gameIdx, I) = ""
 
             For I1 = 0 To 13
-                RS(P9, I, I1) = 0
+                RS(gameIdx, I, I1) = 0
             Next
         Next
 
         For I = 0 To 20:
-            T2%(P9, I) = 0
+            T2%(gameIdx, I) = 0
         Next
 
     End If
