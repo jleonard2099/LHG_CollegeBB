@@ -10,10 +10,10 @@ Sub COLHOOP ()
 
     Shared actualAttendance&
     Shared avgAttendance&()
-    
+
     _Title "Courtside College Basketball v" + GAME_VERSION$ + " - HOOPS!"
 
-    'Open "pbplog" For Output As #7
+    'Open "pbplog" For Output As #11
 
     Shared scheduleFile$
 
@@ -129,6 +129,10 @@ Sub COLHOOP ()
 
         Close #6
 
+        'currGame = schedGame(0) + schedGame(2)
+
+        'Open "pbplog" + Str$(currGame) For Append As #11
+
         Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
 
         For X = 0 To 18
@@ -153,6 +157,10 @@ Sub COLHOOP ()
         Close #7
 
         autoPlay = 1
+
+    Else
+
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -323,7 +331,7 @@ Sub COLHOOP ()
             If I$ <> Chr$(27) And UCase$(I$) <> "Q" Then
 
                 Select Case iVal
-                    
+
                     Case 0:
                         Open "DEFAULT" For Output As #10
                         Print #10, playerOpt
@@ -338,7 +346,7 @@ Sub COLHOOP ()
                         Print #10, ft6FloorFouls
                         Print #10, pbpOpt
                         Close #10
-                    
+
                     Case 1:
                         playerOpt = playerOpt + 1
                         If playerOpt > 3 Then playerOpt = 0
@@ -378,7 +386,7 @@ Sub COLHOOP ()
 
                     Case 9:
                         '
-                        
+
                     Case 10:
                         Do
                             Locate 12, 32
@@ -550,7 +558,7 @@ Sub COLHOOP ()
         D = 0
     End If
 
-    PB$ = ""
+    prevBall$ = ""
 
     If P = 1 Then
         P = 0
@@ -1232,6 +1240,7 @@ Sub COLHOOP ()
 
                 432 '
                 U$ = "PASS TO " + players$(P, B1(P, B))
+                Call pbplog(1890)
                 Call SELECTPBP
 
             End If
@@ -1275,24 +1284,24 @@ Sub COLHOOP ()
         If P7(D) > 1 Then X0% = 25: X1% = -1: Call PRPFAT
 
         Call d100(RN0)
-        
+
         Select Case P7(D)
 
             Case 1, 3
                 gameClock! = gameClock! - 2
                 timeElapsed! = 2
-                
+
             Case 2
-                If RN0 <= 75 Then 
+                If RN0 <= 75 Then
                     gameClock! = gameClock! - 2
                     timeElapsed! = 2
                 Else
                     gameClock! = gameClock! + 2
                     timeElapsed! = -2
                 End If
-            
+
             Case 4
-                If RN0 <= 50 Then 
+                If RN0 <= 50 Then
                     gameClock! = gameClock! - 2
                     timeElapsed! = 2
                 Else
@@ -1321,7 +1330,7 @@ Sub COLHOOP ()
             LT = 4
 
             GoTo 9065
-            
+
         End If
 
         'We have some near identical behavior below,
@@ -1359,7 +1368,7 @@ Sub COLHOOP ()
                 LT = 4
 
                 GoTo 9065
-                
+
             End If
 
             If RN0 <= D8(4, defType(D)) + 1 Then X = 0: GoTo 580
@@ -1386,7 +1395,7 @@ Sub COLHOOP ()
 
     465 '
     Call d100(RN0)
-    
+
     'GS% = GoodShot% ???
     'In other words, how does the player's accuracy line up with the shot difficulty ?
 
@@ -1394,7 +1403,7 @@ Sub COLHOOP ()
     '-- Most values fall in the range of -8 to 8 statistically
 
     Select Case sClockVal
-    
+
         Case 0
             'No Shot Clock
             'Will range from -8 to 5 for most teams
@@ -1409,12 +1418,12 @@ Sub COLHOOP ()
             '35 Sec Shot Clock
             'Will range from -2 to 0 for most teams
             GS% = 39 + Int(((FY%(2) - 58) * .8) + .5)
-        
+
         Case 3
             '30 Sec Shot Clock
             'Will range from -2 to 0 for most teams
             GS% = 39 + Int(((FY%(2) - 58) * .8) + .5)
-        
+
     End Select
 
 
@@ -1429,13 +1438,13 @@ Sub COLHOOP ()
     'Quick Off
     '6 to 23
     If offStrat(P) = 3 Then GS% = GS% + 21
-    
+
     'Delay Off
     '-36 to -23
     If offStrat(P) = 4 Then GS% = GS% - 21
-    
+
     'Total Stall / Hold Ball / Milk Clock and More than 15 Secs on Shot Clock
-    If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1 ) Then 437
+    If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1) Then 437
 
     If RN0 > GS% Then
         'This is the only place GS% is used
@@ -1621,7 +1630,7 @@ Sub COLHOOP ()
 
         If gameClock! <= 0 Then 170
 
-        PB$ = ""
+        prevBall$ = ""
         If P = 1 Then
             P = 0
             D = 1
@@ -1657,15 +1666,15 @@ Sub COLHOOP ()
     Call d100(RN0)
 
     Select Case P7(D)
-    
+
         Case 1
             If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then GoTo LAYUP
             If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo GDSHOT
-        
+
         Case 2
             If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo LAYUP
             If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then GoTo GDSHOT
-        
+
         Case 3
             If PASS% = 1 And RN0 <= 7 Then GoTo LAYUP
             If PASS% = 1 And RN0 <= 14 Then GoTo GDSHOT
@@ -1673,10 +1682,10 @@ Sub COLHOOP ()
         Case 4
             If PASS% = 1 And RN0 <= 15 Then GoTo LAYUP
             If PASS% = 1 And RN0 <= 30 Then GoTo GDSHOT
-            
+
         Case 5
             GoTo 432
-        
+
     End Select
 
     ' --- I think this is by itself and the above are separate??? ---
@@ -1693,7 +1702,7 @@ Sub COLHOOP ()
     If plyrOff_GAME!(P, B1(P, B), 0) > 60 Then
 
         Select Case RN0
-            Case 1 
+            Case 1
                 F! = 24
             Case 2
                 F! = 30
@@ -1704,7 +1713,7 @@ Sub COLHOOP ()
     Else
 
         Select Case RN0
-            Case 1 
+            Case 1
                 F! = Int(plyrOff_GAME!(P, B1(P, B), 0) * .4 + .5)
             Case 2
                 F! = Int(plyrOff_GAME!(P, B1(P, B), 0) * .5 + .5)
@@ -1722,7 +1731,7 @@ Sub COLHOOP ()
         X = 0
         Call d100(RN0)
 
-        If PZ% = 2 And RN0 <= 50 Then 
+        If PZ% = 2 And RN0 <= 50 Then
             PZ% = 3
             P6 = 1
         End If
@@ -1766,7 +1775,7 @@ Sub COLHOOP ()
 
         If gameClock! <= 0 Then 170
 
-        PB$ = ""
+        prevBall$ = ""
         If P = 1 Then
             P = 0
             D = 1
@@ -1823,19 +1832,19 @@ Sub COLHOOP ()
             If pbpDelay! <> 0 Then
 
                 Call d100(RN)
-                
+
                 Select Case RN
 
                     Case Is <= 25
                         U$ = players$(P, B1(P, B)) + " BREAKS IN TO FRONT COURT"
-                        
-                    Case 25 to 50
+
+                    Case 25 To 50
                         U$ = players$(P, B1(P, B)) + " GETS THE PASS IN FRONT COURT"
-                    
-                    Case 51 to 75 
+
+                    Case 51 To 75
                         U$ = players$(P, B1(P, B)) + " BREAKS THE PRESS"
-                        
-                    Case 76 to 100
+
+                    Case 76 To 100
                         U$ = players$(P, B1(P, B)) + " DEFEATS THE PRESS"
 
                 End Select
@@ -1849,10 +1858,10 @@ Sub COLHOOP ()
                     Case Is <= 33
                         U$ = "HE HAS AN OPEN JUMPER AT THE FT LINE"
 
-                    Case 34 to 66 
+                    Case 34 To 66
                         U$ = "HE'S OPEN ON THE BASELINE"
 
-                    Case 66 to 100
+                    Case 66 To 100
                         U$ = "HE'S OPEN FROM THE WING"
 
                 End Select
@@ -1873,9 +1882,20 @@ Sub COLHOOP ()
 
             Else
 
-                If players$(P, B1(P, B)) <> PB$ And PB$ = "" Then U$ = "PASS TO " + players$(P, B1(P, B)): Call PBP
-                If players$(P, B1(P, B)) <> prevBall$ And prevBall$ <> "" Then PT% = 10: Call MAKEPBP: Call PBP
-                If players$(P, B1(P, B)) = prevBall$ Then PT% = 9: Call MAKEPBP: Call PBP
+                If players$(P, B1(P, B)) <> prevBall$ Then
+                    If prevBall$ = "" Then
+                        U$ = "PASS TO " + players$(P, B1(P, B))
+                        Call PBP
+                    Else
+                        PT% = 10
+                        Call MAKEPBP
+                        Call PBP
+                    End If
+                Else
+                    PT% = 9
+                    Call MAKEPBP
+                    Call PBP
+                End If
 
                 If shotClock <= 0 And sClockVal > 0 Then
                     U$ = "SHOT CLOCK HAS EXPIRED!"
@@ -1946,22 +1966,22 @@ Sub COLHOOP ()
                             If B = 4 Then
 
                                 Select Case RN
-                                    Case Is <= 25 
+                                    Case Is <= 25
                                         U$ = YY$ + " MAKES A MOVE DOWN LOW"
                                         Call PBP
-                                        
-                                    Case 26 to 50 
+
+                                    Case 26 To 50
                                         U$ = YY$ + " POSITIONS HIMSELF DOWN LOW"
                                         Call PBP
-                                        
-                                    Case 51 to 75 
+
+                                    Case 51 To 75
                                         U$ = YY$ + " POSTS UP UNDERNEATH"
                                         Call PBP
-                                        
-                                    Case 76 to 100
+
+                                    Case 76 To 100
                                         U$ = YY$ + " BACKS IN AGAINST " + players$(D, B1(D, 4))
 
-                                End Select 
+                                End Select
 
                                 Call PBP
 
@@ -1971,27 +1991,27 @@ Sub COLHOOP ()
 
                             End If
 
-                            
+
                             If (B = 3 Or B = 2) Then
 
-                                Select Case RN 
+                                Select Case RN
 
-                                    Case Is <= 17 
+                                    Case Is <= 17
                                         U$ = YY$ + " DRIVES THE BASELINE"
-                                        
-                                    Case 18 to 34 
+
+                                    Case 18 To 34
                                         U$ = YY$ + " PENETRATES THE LANE"
 
-                                    Case 35 to 50 
+                                    Case 35 To 50
                                         U$ = YY$ + " MOVES INSIDE"
-                                        
-                                    Case 51 to 67
+
+                                    Case 51 To 67
                                         U$ = YY$ + " DRIVES THE LANE"
 
-                                    Case 68 to 84 
+                                    Case 68 To 84
                                         U$ = YY$ + " MOVES INTO THE PAINT"
-                            
-                                    Case 85 to 100
+
+                                    Case 85 To 100
                                         U$ = YY$ + " DRIVES UNDERNEATH"
 
                                 End Select
@@ -2006,25 +2026,25 @@ Sub COLHOOP ()
 
                             If (B = 0 Or B = 1) Then
 
-                                Select Case RN 
-                                    Case Is <= 25 
-                                        U$ = YY$ + " DRIVES THE LANE": 
+                                Select Case RN
+                                    Case Is <= 25
+                                        U$ = YY$ + " DRIVES THE LANE":
 
-                                    Case 26 to 50 
+                                    Case 26 To 50
                                         U$ = YY$ + " DRIVES THROUGH THE KEY"
                                         Call PBP
                                         U$ = "HE'S INTO THE LANE"
-                            
-                                    Case 51 to 75 
+
+                                    Case 51 To 75
                                         U$ = YY$ + " DRIVES TO THE BASKET"
 
-                                    Case 76 to 100
+                                    Case 76 To 100
                                         U$ = YY$ + " DRIVES THROUGH AN OPENING"
 
                                 End Select
 
                                 Call PBP
-                                
+
                                 U$ = "HE HAS A GOOD SHOT CLOSE IN"
                                 Call SHOTSTRING
                                 Call PBP
@@ -2087,7 +2107,7 @@ Sub COLHOOP ()
             Locate 10
             Print "3 PT SHOT % "; F3S%;: Print " *";
             skipShotPct% = 1
-        End if
+        End If
 
     End If
 
@@ -2115,14 +2135,14 @@ Sub COLHOOP ()
     '--- This definitely can be done much better!!!
 
     If playerMode <> 0 Or coachOpt = 1 Then
-    'Computer Opponent or "Let Computer Shoot"
+        'Computer Opponent or "Let Computer Shoot"
 
         ' NOT (Overtime, 4 minutes left, Offense Ahead, Computer is Visitor / On Offense)
         If Not (H >= 2 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam) Then
 
             'Computer vs PC, Computer on Defense
             If playerMode = 2 Or playerMode = 1 And D = compTeam Then
-            
+
                 'Human Opponent | PC is Visitor AND Coach Shots
                 If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then
                     GoTo 530
@@ -3640,7 +3660,7 @@ Sub COLHOOP ()
     U$ = players$(P, B1(P, B)) + " HAS THE OFF RB"
     If pbpDelay! <> 0 Then
         If pbpOpt = 0 Then Call PBP
-        If pbpOpt = 1 Then 
+        If pbpOpt = 1 Then
             Call WINDEX
             Print U$
             Print "FOR " + gameTeams$(P)
