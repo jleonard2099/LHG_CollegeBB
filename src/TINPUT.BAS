@@ -7,9 +7,10 @@ Sub TINPUT ()
 
     _Title "Courtside College Basketball - Team Input"
 
-    Shared BE, BF, BG, BI, BJ, BK, BH
-    Shared L3, L5, T1, T2, T6, T7, T8, T3, T4, T0, T9
-    Shared W0, W1, XX
+    Shared nbrGmsPlayed, oppAsst, opp3FGA, opp3FGAPct, oppFGPct
+    Shared oppFouls, oppFTA, oppFTPct, oppReb, oppSteal, oppTO
+    Shared tmFouls, tmFGA, oppFGA, tmFGPct, tmFTA
+    Shared tmFTPct, tmReb, tmAsst, tmSteal, tmTO
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance&, defFGPctAdj%, staminaRating%
@@ -17,7 +18,7 @@ Sub TINPUT ()
 
     Dim E0(16)
     Dim inputQQ(3), inputX$(3)
-
+        
     Shared teamRatings%()
 
     Shared playerOff!(), playerDef!(), leagueRatings%()
@@ -55,13 +56,13 @@ Sub TINPUT ()
         If H = 0 Then
             'College BB
             L7 = 6
-            L3 = 20
+            tmFouls = 20
             L6 = 14
         Else
             'High School BB
             L7 = 5
             L6 = 11
-            L3 = 16
+            tmFouls = 16
         End If
 
         '---------------
@@ -73,13 +74,13 @@ Sub TINPUT ()
         Print inputX$(H); Tab(31); "LEAGUE INFORMATION"
         Color 15
 
-        Locate 3: Input "1. SEASON FGA/G "; L1
-        Locate 4: Input "2. SEASON REBOUNDS/GAME "; L2
-        Locate 5: Input "3. SEASON FG % "; L4
-        Locate 6: Input "4. SEASON STEALS/GAME "; BA
-        Locate 7: Input "5. SEASON TURNOVERS/GAME "; BB
-        Locate 8: Input "6. SEASON 3 FGA/FGA % "; Q7
-        Locate 9: Input "7. SEASON 3 FG % "; Q8
+        Locate 3: Input "1. SEASON FGA/G "; leagFGAPerGm
+        Locate 4: Input "2. SEASON REBOUNDS/GAME "; leagRebPerGm
+        Locate 5: Input "3. SEASON FG % "; leagFGPct
+        Locate 6: Input "4. SEASON STEALS/GAME "; leagStlsPerGm
+        Locate 7: Input "5. SEASON TURNOVERS/GAME "; leagTOPerGm
+        Locate 8: Input "6. SEASON 3 FGA/FGA % "; leag3FGAPct
+        Locate 9: Input "7. SEASON 3 FG % "; leag3FGPct
         teamRatings%(2) = 999
 
         Do
@@ -92,25 +93,25 @@ Sub TINPUT ()
             Select Case B9
 
                 Case 1:
-                    Locate 3: Input "1. SEASON FGA/G "; L1
+                    Locate 3: Input "1. SEASON FGA/G "; leagFGAPerGm
 
                 Case 2:
-                    Locate 4: Input "2. SEASON REBOUNDS/GAME "; L2
+                    Locate 4: Input "2. SEASON REBOUNDS/GAME "; leagRebPerGm
 
                 Case 3:
-                    Locate 5: Input "3. SEASON FG % "; L4
+                    Locate 5: Input "3. SEASON FG % "; leagFGPct
 
                 Case 4
-                    Locate 6: Input "4. SEASON STEALS/GAME "; BA
+                    Locate 6: Input "4. SEASON STEALS/GAME "; leagStlsPerGm
 
                 Case 5
-                    Locate 7: Input "5. SEASON TURNOVERS/GAME "; BB
+                    Locate 7: Input "5. SEASON TURNOVERS/GAME "; leagTOPerGm
 
                 Case 6
-                    Locate 8: Input "6. SEASON 3 FGA/FGA % "; Q7
+                    Locate 8: Input "6. SEASON 3 FGA/FGA % "; leag3FGAPct
 
                 Case 7
-                    Locate 9: Input "7. SEASON 3 FG % "; Q8
+                    Locate 9: Input "7. SEASON 3 FG % "; leag3FGPct
 
             End Select
 
@@ -243,7 +244,7 @@ Sub TINPUT ()
         Print A$ + " " + mascot$
         Color 15, 0
 
-        Locate 2, 37: Input "20. GAMES PLAYED "; L5
+        Locate 2, 37: Input "20. GAMES PLAYED "; nbrGmsPlayed
         Locate 3, 37: Input "21. WINS "; teamRatings%(7)
         Locate 4, 37: Input "22. LOSSES "; teamRatings%(8)
         Locate 5, 37: Input "23. POWER RATING "; teamRatings%(9)
@@ -256,45 +257,45 @@ Sub TINPUT ()
         Locate 11, 30: Print "OPPONENTS"
         Color 15
         Locate 12, 1: Print " 8. FGA ";
-        Locate 12, 14: Input T1
-        Locate 12, 29: Input T2
+        Locate 12, 14: Input tmFGA
+        Locate 12, 29: Input oppFGA
         Locate 13, 1: Print " 9. FG % ";
-        Locate 13, 14: Input T6
-        Locate 13, 29: Input BE
+        Locate 13, 14: Input tmFGPct
+        Locate 13, 29: Input oppFGPct
         Locate 14, 1: Print "10. FTA";
-        Locate 14, 14: Input T7
-        Locate 14, 29: Input BF
+        Locate 14, 14: Input tmFTA
+        Locate 14, 29: Input oppFTA
         Locate 15, 1: Print "11. FT %";
-        Locate 15, 14: Input T8
-        Locate 15, 29: Input BG
+        Locate 15, 14: Input tmFTPct
+        Locate 15, 29: Input oppFTPct
         Locate 16, 1: Print "12. RB";
-        Locate 16, 14: Input T3
-        Locate 16, 29: Input T4
+        Locate 16, 14: Input tmReb
+        Locate 16, 29: Input oppReb
         Locate 17, 1: Print "13. AST";
-        Locate 17, 14: Input T0
-        Locate 17, 29: Input XX
+        Locate 17, 14: Input tmAsst
+        Locate 17, 29: Input oppAsst
         Locate 18, 1: Print "14. FOULS";
-        Locate 18, 14: Input L3
-        Locate 18, 29: Input BI
+        Locate 18, 14: Input tmFouls
+        Locate 18, 29: Input oppFouls
         Locate 19, 1: Print "15. TO";
-        Locate 19, 14: Input BJ
-        Locate 19, 29: Input BK
+        Locate 19, 14: Input tmTO
+        Locate 19, 29: Input oppTO
         Locate 20, 1: Print "16. STLS";
-        Locate 20, 14: Input T9
-        Locate 20, 29: Input BH
+        Locate 20, 14: Input tmSteal
+        Locate 20, 29: Input oppSteal
         Locate 21, 1: Print "17. 3 FGA ";
         Locate 21, 14: Print "---";
-        Locate 21, 29: Input W0
+        Locate 21, 29: Input opp3FGA
         Locate 22, 1: Print "18. 3 FGA % ";
         Locate 22, 14: Print "---";
-        Locate 22, 29: Input W1
+        Locate 22, 29: Input opp3FGAPct
 
-        Locate 23: Input "19. OPP 2FG% "; OE
+        Locate 23: Input "19. OPP 2FG% "; opp2FGPct
 
         'FOULS
         'Average 20 / game if none entered
-        If BI = 0 Then BI = 20 * L5
-        If L3 = 0 Then L3 = 20 * L5
+        If oppFouls = 0 Then oppFouls = 20 * nbrGmsPlayed
+        If tmFouls = 0 Then tmFouls = 20 * nbrGmsPlayed
 
         Do
 
@@ -344,63 +345,63 @@ Sub TINPUT ()
 
                 Case 8
                     Locate 12, 1: Print " 8. FGA ";
-                    Locate 12, 14: Input T1
-                    Locate 12, 29: Input T2
+                    Locate 12, 14: Input tmFGA
+                    Locate 12, 29: Input oppFGA
 
                 Case 9
                     Locate 13, 1: Print " 9. FG % ";
-                    Locate 13, 14: Input T6
-                    Locate 13, 29: Input BE
+                    Locate 13, 14: Input tmFGPct
+                    Locate 13, 29: Input oppFGPct
 
                 Case 10
                     Locate 14, 1: Print "10. FTA";
-                    Locate 14, 14: Input T7
-                    Locate 14, 29: Input BF
+                    Locate 14, 14: Input tmFTA
+                    Locate 14, 29: Input oppFTA
 
                 Case 11
                     Locate 15, 1: Print "11. FT %";
-                    Locate 15, 14: Input T8
-                    Locate 15, 29: Input BG
+                    Locate 15, 14: Input tmFTPct
+                    Locate 15, 29: Input oppFTPct
 
                 Case 12
                     Locate 16, 1: Print "12. RB";
-                    Locate 16, 14: Input T3
-                    Locate 16, 29: Input T4
+                    Locate 16, 14: Input tmReb
+                    Locate 16, 29: Input oppReb
 
                 Case 13
                     Locate 17, 1: Print "13. AST";
-                    Locate 17, 14: Input T0
-                    Locate 17, 29: Input XX
+                    Locate 17, 14: Input tmAsst
+                    Locate 17, 29: Input oppAsst
 
                 Case 14
                     Locate 18, 1: Print "14. FOULS";
-                    Locate 18, 14: Input L3
-                    Locate 18, 29: Input BI
+                    Locate 18, 14: Input tmFouls
+                    Locate 18, 29: Input oppFouls
 
                 Case 15
                     Locate 19, 1: Print "15. TO";
-                    Locate 19, 14: Input BJ
-                    Locate 19, 29: Input BK
+                    Locate 19, 14: Input tmTO
+                    Locate 19, 29: Input oppTO
 
                 Case 16
                     Locate 20, 1: Print "16. STLS";
-                    Locate 20, 14: Input T9
-                    Locate 20, 29: Input BH
+                    Locate 20, 14: Input tmSteal
+                    Locate 20, 29: Input oppSteal
 
                 Case 17
                     Locate 21, 1: Print "17. 3 FGA ";
                     Locate 21, 14: Print "---";
-                    Locate 21, 29: Input W0
+                    Locate 21, 29: Input opp3FGA
 
                 Case 18
                     Locate 22, 1: Print "18. 3 FGA % ";
                     Locate 22, 14: Print "---";
 
                 Case 19
-                    Locate 23, 1: Input "OPP 2FG% "; OE
+                    Locate 23, 1: Input "OPP 2FG% "; opp2FGPct
 
                 Case 20
-                    Locate 2, 37: Input " 3. GAMES PLAYED "; L5
+                    Locate 2, 37: Input " 3. GAMES PLAYED "; nbrGmsPlayed
 
                 Case 21
                     Locate 3, 37: Input "20. WINS "; teamRatings%(7)
@@ -429,10 +430,10 @@ Sub TINPUT ()
         '---------------
         ' Players
         '---------------
-        ' *** TM FGA/G
-        teamRatings%(3) = Int(((T1 + T2) / (L5 * 2)) + .5)
-        teamRatings%(4) = L1
-        teamRatings%(5) = L5
+        'Average FGA/G for this team (Off + Def)
+        teamRatings%(3) = Int( ((tmFGA + oppFGA) / (nbrGmsPlayed * 2)) + .5)
+        teamRatings%(4) = leagFGAPerGm
+        teamRatings%(5) = nbrGmsPlayed
 
         If H = 1 Then
             F3 = 32
@@ -606,8 +607,8 @@ Sub TINPUT ()
                 X2 = .83
             End If
 
-            T7 = Int((T7 * X2) + .5)
-            BF = Int((BF * X2) + .5)
+            tmFTA = Int((tmFTA * X2) + .5)
+            oppFTA = Int((oppFTA * X2) + .5)
 
             For I = 0 To 13:
                 playerOff!(I, 16) = Int((playerOff!(I, 16) * X2) + .5)
@@ -617,12 +618,12 @@ Sub TINPUT ()
 
         X9 = 0
 
-        X1 = T2 - ((BE * T2) / 100) + BF - ((BF * BG) / 100)
-        X2 = T1 - ((T1 * T6) / 100) + T7 - ((T7 * T8) / 100)
-        RD = (T3 - X1 + X2 - T4) / (L5 * 2): HS = T3 - X1 + X2 - T4
-        M7 = ((35 + RD) / L2)
+        X1 = oppFGA - ((oppFGPct * oppFGA) / 100) + oppFTA - ((oppFTA * oppFTPct) / 100)
+        X2 = tmFGA - ((tmFGA * tmFGPct) / 100) + tmFTA - ((tmFTA * tmFTPct) / 100)
+        RD = (tmReb - X1 + X2 - oppReb) / (nbrGmsPlayed * 2): HS = tmReb - X1 + X2 - oppReb
+        M7 = ((35 + RD) / leagRebPerGm)
 
-        If H = 2 Then M7 = ((44 + RD) / L2)
+        If H = 2 Then M7 = ((44 + RD) / leagRebPerGm)
 
         For I = 0 To 13
 
@@ -652,7 +653,7 @@ Sub TINPUT ()
                 playerOff!(I, 2) = X - playerRatings!(I, 4)
 
                 'Assists / Game
-                If inputQQ(0) = 0 Then playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * M) * (L6 / (T0 / L5)) + .5)
+                If inputQQ(0) = 0 Then playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * M) * (L6 / (tmAsst / nbrGmsPlayed)) + .5)
                 'Steals / Game
                 If inputQQ(2) = 0 Then playerOff!(I, 5) = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * M) + .5)
                 'Blocks / Game
@@ -662,12 +663,12 @@ Sub TINPUT ()
 
         Next I
 
-        X = L1 + L2 + 20
+        X = leagFGAPerGm + leagRebPerGm + 20
 
-        inputY! = (T1 + T2 + T3 + T4 + L3 + BI) / (2 * L5)
+        inputY! = (tmFGA + oppFGA + tmReb + oppReb + tmFouls + oppFouls) / (2 * nbrGmsPlayed)
         staminaRating% = Int(((2 * inputY!) - X) + .5)
 
-        X1 = (T1 + T2) / (L5 * 2)
+        X1 = (tmFGA + oppFGA) / (nbrGmsPlayed * 2)
         X3 = (BC / 2) / X1
         X3 = Int((X3 * 100) + .5)
         BC = Int(X3 / 2)
@@ -677,8 +678,8 @@ Sub TINPUT ()
         If X3 - BC - BY > 0 And X4 = 0 Then BC = BC + 1
         If X3 - BC - BY > 0 And X4 = 1 Then BY = BY + 1
 
-        U7 = Int((46 - L4) / 2)
-        defFGPctAdj% = OE - L4 + BY - U7
+        U7 = Int((46 - leagFGPct) / 2)
+        defFGPctAdj% = opp2FGPct - leagFGPct + BY - U7
 
         For I = 0 To 13
 
@@ -689,8 +690,8 @@ Sub TINPUT ()
 
         Next I
 
-        V% = Int(((W0 / T2) + .005) * 100)
-        def3FGA_Adj = V% - Q7
+        V% = Int(((opp3FGA / oppFGA) + .005) * 100)
+        def3FGA_Adj = V% - leag3FGAPct
 
         'DEF 3FGA/3FGA ADJ
         '-- Here is where 100 is being added to the value
@@ -698,7 +699,7 @@ Sub TINPUT ()
         '-- will show values as 95-99
         If def3FGA_Adj < 0 Then def3FGA_Adj = 100 + def3FGA_Adj
 
-        def3FG_Adj = W1 - Q8
+        def3FG_Adj = opp3FGAPct - leag3FGPct
 
         'DEF 3FG %
         '-- Here is where 100 is being added to the value
@@ -756,21 +757,21 @@ Sub TINPUT ()
 
         Next I
 
-        inputY! = BH / L5
+        inputY! = oppSteal / nbrGmsPlayed
         X! = (inputY! - 7) / .4
         X! = Int(X! + .5)
 
         If X! < 0 Then leagueRatings%(0) = 100 + X!
         If X! > 0 Then leagueRatings%(0) = X!
 
-        R! = 1200 - (((T1 + T2) / (L5 * 2)) * 4)
+        R! = 1200 - (((tmFGA + oppFGA) / (nbrGmsPlayed * 2)) * 4)
         R! = R! / 6
-        inputY! = (BJ - BH) / L5
+        inputY! = (tmTO - oppSteal) / nbrGmsPlayed
         X! = (inputY! / R!) - .01
         X! = Int((X! * 100) + .5)
         leagueRatings%(1) = X!
 
-        inputY! = (BK - T9) / L5
+        inputY! = (oppTO - tmSteal) / nbrGmsPlayed
         X! = (inputY! / R!) - .01
         X! = Int((X! * 100) + .5)
         X! = X! - 4
@@ -778,10 +779,10 @@ Sub TINPUT ()
         If X! < 0 Then leagueRatings%(2) = 100 + X!
         If X! > 0 Then leagueRatings%(2) = X!
 
-        R1! = Int(((T2 * BE) / 100) + .5)
-        X! = (R1! * .1) + (L5 * 8.2)
-        X! = (BF - X!) / 2
-        X! = (X! / (T2 + X!)) - .09
+        R1! = Int(((oppFGA * oppFGPct) / 100) + .5)
+        X! = (R1! * .1) + (nbrGmsPlayed * 8.2)
+        X! = (oppFTA - X!) / 2
+        X! = (X! / (oppFGA + X!)) - .09
         X! = Int((X! * 100) + .5)
 
         If X! > 0 Then leagueRatings%(3) = X!
@@ -900,8 +901,8 @@ Sub TINPUT ()
         '---------------
         If inputQQ(2) = 1 Then
 
-            HQ = T1 - T2
-            HR = T7 - BF
+            HQ = tmFGA - oppFGA
+            HR = tmFTA - oppFTA
             HW = HR / 350
             If HW > 1 Then HW = 1
             HW = ((HW * 35) + 32) / 100
@@ -909,7 +910,7 @@ Sub TINPUT ()
             HR = HR * HW
             HS = HS / 2
             HX = Int((HR + HS - HQ) + .5)
-            HX = Int(((HX / L5) * 10) + .5)
+            HX = Int(((HX / nbrGmsPlayed) * 10) + .5)
 
             Cls
             leagueRatings%(4) = 99
@@ -1060,13 +1061,14 @@ End Sub
 'appropriate spot in the select team file
 Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
+    Shared nbrGmsPlayed, oppAsst, opp3FGA, opp3FGAPct, oppFGPct
+    Shared oppFouls, oppFTA, oppFTPct, oppReb, oppSteal, oppTO
+    Shared tmFouls, tmFGA, oppFGA, tmFGPct, tmFTA
+    Shared tmFTPct, tmReb, tmAsst, tmSteal, tmTO
+
     Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
-
-    Shared BE, BF, BG, BI, BJ, BK, BH
-    Shared L3, L5, T1, T2, T6, T7, T8, T3, T4, T0, T9
-    Shared W0, W1, XX
 
     Shared teamRatings%()
 
@@ -1147,27 +1149,27 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Next
 
-    LSet Q$(228) = MKI$(L5)
-    LSet Q$(229) = MKI$(T1)
-    LSet Q$(230) = MKI$(T2)
-    LSet Q$(231) = MKI$(T6)
-    LSet Q$(232) = MKI$(BE)
-    LSet Q$(233) = MKI$(T7)
-    LSet Q$(234) = MKI$(BF)
-    LSet Q$(235) = MKI$(T8)
-    LSet Q$(236) = MKI$(BG)
-    LSet Q$(237) = MKI$(T3)
-    LSet Q$(238) = MKI$(T4)
-    LSet Q$(239) = MKI$(T0)
-    LSet Q$(240) = MKI$(XX)
-    LSet Q$(241) = MKI$(L3)
-    LSet Q$(242) = MKI$(BI)
-    LSet Q$(243) = MKI$(BJ)
-    LSet Q$(244) = MKI$(BK)
-    LSet Q$(245) = MKI$(T9)
-    LSet Q$(246) = MKI$(BH)
-    LSet Q$(247) = MKI$(W0)
-    LSet Q$(248) = MKI$(W1)
+    LSet Q$(228) = MKI$(nbrGmsPlayed)
+    LSet Q$(229) = MKI$(tmFGA)
+    LSet Q$(230) = MKI$(oppFGA)
+    LSet Q$(231) = MKI$(tmFGPct)
+    LSet Q$(232) = MKI$(oppFGPct)
+    LSet Q$(233) = MKI$(tmFTA)
+    LSet Q$(234) = MKI$(oppFTA)
+    LSet Q$(235) = MKI$(tmFTPct)
+    LSet Q$(236) = MKI$(oppFTPct)
+    LSet Q$(237) = MKI$(tmReb)
+    LSet Q$(238) = MKI$(oppReb)
+    LSet Q$(239) = MKI$(tmAsst)
+    LSet Q$(240) = MKI$(oppAsst)
+    LSet Q$(241) = MKI$(tmFouls)
+    LSet Q$(242) = MKI$(oppFouls)
+    LSet Q$(243) = MKI$(tmTO)
+    LSet Q$(244) = MKI$(oppTO)
+    LSet Q$(245) = MKI$(tmSteal)
+    LSet Q$(246) = MKI$(oppSteal)
+    LSet Q$(247) = MKI$(opp3FGA)
+    LSet Q$(248) = MKI$(opp3FGAPct)
 
     LSet Q$(249) = MKI$(999)
 
@@ -1177,7 +1179,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Call CSMsgBox("", 0, Pass)
 
-    T9 = 0
+    tmSteal = 0
 
     For I = 0 To 13
 

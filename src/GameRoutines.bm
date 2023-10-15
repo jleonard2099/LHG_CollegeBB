@@ -58,6 +58,11 @@ Sub InitVar ()
     pbpType$(0) = "VERBOSE        "
     pbpType$(1) = "HAFFNER CLASSIC"
 
+    scSettings(0) = 0
+    scSettings(1) = 45
+    scSettings(2) = 35
+    scSettings(3) = 30
+
     gameClock! = 1200
 
     nbrLines = 1
@@ -145,18 +150,19 @@ Sub InitVar ()
     YN$ = ""
 
     Erase B1
-    Erase dFGPA, D2, DF, d3FG_Adj, d3FGA_Adj
+    Erase dFGPA, DF, d3FG_Adj, d3FGA_Adj
+    Erase defStrat, defType
     Erase eventSettings, F1, G4, G5
-    Erase leagRat_GAME
+    Erase leagRat_GAME, offStrat
     Erase P2, P4, P5, P7, plyrRat_GAME
     Erase QQ, QR, RB, RS
     Erase schedGame, teamStamina, threeFG, tmFatigue
     Erase plyrStamina, turnovers, statTotals
     Erase W2, W3, Z5, Z6, timePlayed
 
-    Erase APT%, B%, CZ%, DT%, F5%, FY%
+    Erase APT%, B%, CZ%, F5%, FY%
     Erase G9%, HT%, N%, NG%, NG1%
-    Erase O%, OF%, PR%, ST%, SX%
+    Erase O%, PR%, ST%, SX%
     Erase T2%, ft3PtFoul, TM%, TP%, teamIndex%
     Erase VG%, VH%
 
@@ -630,7 +636,9 @@ Sub MAKEPBP ()
 
         Call d100(RN)
 
+        'PT% = pbpType
         Select Case PT%
+
             Case 1
                 'TURNOVER
                 U$ = players$(P, B1(P, B))
@@ -758,9 +766,11 @@ Sub MAKEPBP ()
                 End Select
 
             Case 3
+                'SHOT
                 U$ = players$(P, B1(P, B))
 
                 Select Case PZ%
+
                     Case 1
                         'BAD
                         Select Case RN
@@ -3075,7 +3085,9 @@ End Sub
 'which represents the % chance of making
 'the current shot (rounding up)
 Sub SHOTSTRING ()
+
     U$ = U$ + Str$(Int(F! + .5)) + "*"
+
 End Sub
 
 
@@ -3442,8 +3454,10 @@ Sub UPDATESCREEN ()
     'Shot Clock
     Locate 6, 37: Print Using " :##"; shotClock
 
-    'If no shot clock, or shot clock expired
-    If sClockVal = 0 Or gameClock! < 45 And shotClock >= gameClock! And sClockVal = 1 Or gameClock! < 35 And shotClock >= gameClock! And sClockVal = 2 Or (sClockVal = 1 Or sClockVal = 2) And H > 2 And gameClock! = 300 Then
+    'If no shot clock | < X secs left with X sec shot clock | Overtime with 5 Mins Left (and a shot clock)
+    If gameClock! < scSettings(sClockVal) And shotClock >= gameClock! Or sClockVal >= 1 And H > 2 And gameClock! = 300 Then
+    'If sClockVal = 0 Or gameClock! < 45 And shotClock >= gameClock! And sClockVal = 1 Or gameClock! < 35 And shotClock >= gameClock! And sClockVal = 2 Or gameClock! < 30 And shotClock >= gameClock! And sClockVal = 3 Or sClockVal >= 1 And H > 2 And gameClock! = 300 Then
+        'Print a blank shot clock as the game clock is now our shot clock
         Locate 6, 37: Print " :  "
     End If
 
@@ -3452,9 +3466,9 @@ Sub UPDATESCREEN ()
 
         'Team Play Styles
         Locate 9, 41
-        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1): Print "DEF-"; DgameTeams$(DT%(D))
+        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1): Print "DEF-"; defStyles_brief$(defStrat(D))
         Locate , 41
-        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1): Print "OFF-"; OgameTeams$(OF%(P))
+        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1): Print "OFF-"; offStyles_brief$(offStrat(P))
 
         Color 15, 0
         Locate 11, 41
@@ -3639,9 +3653,9 @@ Sub SCOREBOARD ()
 
     'Team strategies / decisions
     Locate 9, 41
-    Color teamRat_GAME(D, 0), teamRat_GAME(D, 1): Print "DEF-"; DB$(DT%(D))
+    Color teamRat_GAME(D, 0), teamRat_GAME(D, 1): Print "DEF-"; defStyles_brief$(defStrat(D))
     Locate , 41
-    Color teamRat_GAME(P, 0), teamRat_GAME(P, 1): Print "OFF-"; OB$(OF%(P))
+    Color teamRat_GAME(P, 0), teamRat_GAME(P, 1): Print "OFF-"; offStyles_brief$(offStrat(P))
 
     Color 15, 0
     Locate 11, 41: Color 14: Print "ENTER";: Color 14: Print "-PASS"
@@ -3998,7 +4012,7 @@ End Sub
 'their zone strategy.
 Sub ZONECHANGE ()
 
-    If Not (playerMode = 1 And compTeam = D Or playerMode = 2) Or DT%(D) = 2 Or DT%(D) = 7 Or DT%(D) = 12 Or (OF%(P) <= 8 And OF%(P) >= 4) Then
+    If Not (playerMode = 1 And compTeam = D Or playerMode = 2) Or defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or (offStrat(P) <= 8 And offStrat(P) >= 4) Then
 
         Call FRAMEOPTION(8, P)
         Locate 10, 15
@@ -4015,24 +4029,24 @@ Sub ZONECHANGE ()
         Loop Until I1 >= 0 And I1 <= 2
 
         If I1 = 2 Then I1 = 3
-        If DT%(D) <= 3 Then DT%(D) = I1
-        If DT%(D) = 7 Then DT%(D) = I + 8
-        If DT%(D) = 10 Then DT%(D) = 3
-        If DT%(D) = 12 Then DT%(D) = I + 10
-        If DT%(D) = 12 Then DT%(D) = 13
+        If defStrat(D) <= 3 Then defStrat(D) = I1
+        If defStrat(D) = 7 Then defStrat(D) = I + 8
+        If defStrat(D) = 10 Then defStrat(D) = 3
+        If defStrat(D) = 12 Then defStrat(D) = I + 10
+        If defStrat(D) = 12 Then defStrat(D) = 13
 
         P9 = D
 
-        If DT%(P9) <= 3 Then P7(P9) = 0
-        If DT%(P9) = 4 Then P7(P9) = 1
-        If DT%(P9) = 5 Or DT%(P9) = 6 Then P7(P9) = 2
-        If DT%(P9) > 6 And DT%(P9) <= 10 Then P7(P9) = 3
-        If DT%(P9) > 9 And DT%(P9) < 14 Then P7(P9) = 4
-        If DT%(P9) = 14 Then P7(P9) = 5
-        If DT%(P9) = 0 Or DT%(P9) = 4 Or DT%(P9) = 5 Or DT%(P9) = 8 Or DT%(P9) = 10 Then D2(P9) = 0
-        If DT%(P9) = 1 Or DT%(P9) = 6 Or DT%(P9) = 9 Or DT%(P9) = 11 Then D2(P9) = 1
-        If DT%(P9) = 2 Or DT%(P9) = 7 Or DT%(P9) = 12 Then D2(P9) = 2
-        If DT%(P9) = 3 Or DT%(P9) = 13 Then D2(P9) = 3
+        If defStrat(P9) <= 3 Then P7(P9) = 0
+        If defStrat(P9) = 4 Then P7(P9) = 1
+        If defStrat(P9) = 5 Or defStrat(P9) = 6 Then P7(P9) = 2
+        If defStrat(P9) > 6 And defStrat(P9) <= 10 Then P7(P9) = 3
+        If defStrat(P9) > 9 And defStrat(P9) < 14 Then P7(P9) = 4
+        If defStrat(P9) = 14 Then P7(P9) = 5
+        If defStrat(P9) = 0 Or defStrat(P9) = 4 Or defStrat(P9) = 5 Or defStrat(P9) = 8 Or defStrat(P9) = 10 Then defType(P9) = 0
+        If defStrat(P9) = 1 Or defStrat(P9) = 6 Or defStrat(P9) = 9 Or defStrat(P9) = 11 Then defType(P9) = 1
+        If defStrat(P9) = 2 Or defStrat(P9) = 7 Or defStrat(P9) = 12 Then defType(P9) = 2
+        If defStrat(P9) = 3 Or defStrat(P9) = 13 Then defType(P9) = 3
         Color 15, 0
 
     End If
@@ -4067,7 +4081,7 @@ Sub DEFENSEMENU ()
             If I = 12 Then Locate , 5: Print "C ";
             If I = 13 Then Locate , 5: Print "D ";
             If I = 14 Then Locate , 5: Print "E ";
-            Print D$(I)
+            Print defStyles$(I)
         Next
 
         Print
@@ -4079,9 +4093,9 @@ Sub DEFENSEMENU ()
             Call LetterToNumber(I$, I1)
         Loop Until I1 >= 0 And I1 <= 14
 
-        DT%(P9) = I1
+        defStrat(P9) = I1
 
-        Select Case DT%(P9)
+        Select Case defStrat(P9)
 
             Case 0 To 3
                 P7(P9) = 0
@@ -4112,19 +4126,23 @@ Sub DEFENSEMENU ()
 
     Loop Until wrongChoice% = 0
 
-    Select Case DT%(P9)
+    Select Case defStrat(P9)
 
         Case 0, 4, 5, 8, 10
-            D2(P9) = 0
+            'Solid Man-to-Man
+            defType(P9) = 0
 
         Case 1, 6, 9, 11
-            D2(P9) = 1
+            'Pressure Man-to-Man
+            defType(P9) = 1
 
         Case 2, 7, 12
-            D2(P9) = 2
+            '2-3 Zone
+            defType(P9) = 2
 
         Case 3, 13
-            D2(P9) = 3
+            'Trapping Zone
+            defType(P9) = 3
 
     End Select
 
@@ -4179,7 +4197,7 @@ End Sub
 Sub COMPUTERSUBS ()
 
     If H >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then
-        OF%(P9) = 9
+        offStrat(P9) = 9
     End If
 
     M1 = 0
@@ -4249,7 +4267,11 @@ Sub FATIGUE ()
         If tmFatigue(P9, B1(P9, I)) <= -4 Then FQ% = 1
     Next
 
-    If FD% < -15 Or FQ% = 1 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
+    If FD% < -15 Or FQ% = 1 Then 
+        defType(P9) = 2
+        P7(P9) = 0
+        defStrat(P9) = 2
+    End If
 
 End Sub
 
@@ -4527,7 +4549,7 @@ Sub PlayStyle ()
     Print
 
     For I = 0 To 9
-        Locate , 5: Print Using "# "; I;: Print O$(I)
+        Locate , 5: Print Using "# "; I;: Print offStyles$(I)
     Next
 
     Print
@@ -4539,7 +4561,7 @@ Sub PlayStyle ()
     Loop Until I1 >= 0 And I1 <= 9
 
     If (I1 = 3 Or I1 = 4 Or I1 = 7 Or I1 = 9) And (H < 2 Or H >= 2 And gameClock! > 180) Then Beep: Locate 18, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT": I$ = GetKeyPress$: GoTo 109
-    If I1 = 8 And D2(1 - P9) <> 2 Then Beep: Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE": I$ = GetKeyPress$: GoTo 109
+    If I1 = 8 And defType(1 - P9) <> 2 Then Beep: Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE": I$ = GetKeyPress$: GoTo 109
     If I1 = 4 And score(P9, 0) - score(1 - P9, 0) > -11 Then Beep: Locate 18, 1: Print "ILLEGAL SELECTION": I$ = GetKeyPress$: GoTo 109
     If I1 = 9 And threePtOpt = 0 Then Beep: Locate 18, 1: Print "NOT USING 3 POINT SHOT": I$ = GetKeyPress$: GoTo 109
     If I1 = 5 And sClockVal = 0 Then Beep: Locate 18, 1: Print "NOT USING SHOT CLOCK": I$ = GetKeyPress$: GoTo 109
@@ -4547,7 +4569,7 @@ Sub PlayStyle ()
 
     'How to loop around this with so many conditions?
     'Possibly build a bunch of nested If/Then statements?
-    OF%(P9) = I1
+    offStrat(P9) = I1
     CZ%(P9) = 0
 
     If Not (H < 2 Or H >= 2 And gameClock! > 120) Then
@@ -4741,7 +4763,8 @@ Sub SHOTPERCENT ()
 
     If tmFatigue(P, B1(P, B)) <= -5 Then FX% = FX% - 10
 
-    F! = FX% + dFGPA(D) + D8(0, D2(D)): J8% = 0
+    F! = FX% + dFGPA(D) + D8(0, defType(D))
+    J8% = 0
 
     If gameLoc = P Then
         F! = F! + HF%(0, teamRat_GAME(P, 6))
@@ -4752,16 +4775,19 @@ Sub SHOTPERCENT ()
     F3S% = Int(Rnd(1) * 100) + 1
     TPA% = 0
 
-    If DT%(D) = 2 Or DT%(D) = 7 Or DT%(D) = 12 Then TPA% = 3
-    If DT%(D) = 1 Or DT%(D) = 6 Or DT%(D) = 9 Or DT%(D) = 11 Then TPA% = -5
+    If defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Then TPA% = 3
+    If defStrat(D) = 1 Or defStrat(D) = 6 Or defStrat(D) = 9 Or defStrat(D) = 11 Then TPA% = -5
 
     skipCalcs% = 0
 
-    If OF%(P) = 9 And (F3S% > plyrOff_GAME!(P, B1(P, B), 19) + F5%(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, B), 19) = 0) Then
+    If offStrat(P) = 9 And (F3S% > plyrOff_GAME!(P, B1(P, B), 19) + F5%(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, B), 19) = 0) Then
+
         F3S% = Int(Rnd(1) * 5) + 11
         J8% = 1
+
     Else
-        If OF%(P) <> 9 Then
+
+        If offStrat(P) <> 9 Then
 
             If F3S% > plyrOff_GAME!(P, B1(P, B), 19) + F5%(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, B), 19) = 0 Then
                 F3S% = Int(Rnd(1) * 5) + 3
@@ -4771,6 +4797,7 @@ Sub SHOTPERCENT ()
         End If
 
         If skipCalcs% = 0 Then
+
             FX% = plyrOff_GAME!(P, B1(P, B), 20)
 
             If tmFatigue(P, B1(P, B)) <= -5 Then FX% = Int(FX% * .67 + .5)
@@ -4778,6 +4805,7 @@ Sub SHOTPERCENT ()
             F3S% = FX% + F5%(D, 2): J8% = 1
 
             If plyrOff_GAME!(P, B1(P, B), 3) - plyrOff_GAME!(P, B1(P, B), 7) - plyrOff_GAME!(P, B1(P, B), 11) - plyrOff_GAME!(P, B1(P, B), 12) <= 0 And (H = 1 Or H = 2 And gameClock! > 120) Then F3S% = Int(Rnd(1) * 5) + 3: J8% = 0
+
         End If
 
     End If
@@ -4993,7 +5021,7 @@ Sub BALLDISTRIBUTE ()
         Call WHOGETSBALL
     Else
         'Select / Case statement
-        If D2(D) = 2 Or D2(D) = 3 Then 415
+        If defType(D) = 2 Or defType(D) = 3 Then 415
         If S9 <= 90 And RN0 <= 15 Then 424
         If S9 <= 100 And RN0 <= 20 Then 424
         If S9 <= 110 And RN0 <= 25 Then 424
@@ -5512,95 +5540,103 @@ Sub COMPUTERCOACH ()
         I5 = score(I6, 0) - score(P9, 0)
 
         RN0 = Int(Rnd(1) * 100) + 1
-        If H = 1 And RN0 > 37 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 1 And RN0 > 10 And RN0 <= 36 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
-        If H = 1 And RN0 > 5 And RN0 <= 10 Then D2(P9) = 3: P7(P9) = 0: DT%(P9) = 3
-        If H = 1 And RN0 <= 5 Then D2(P9) = 1: P7(P9) = 0: DT%(P9) = 1
+        If H = 1 And RN0 > 37 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 1 And RN0 > 10 And RN0 <= 36 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
+        If H = 1 And RN0 > 5 And RN0 <= 10 Then defType(P9) = 3: P7(P9) = 0: defStrat(P9) = 3
+        If H = 1 And RN0 <= 5 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
 
         RN0 = Int(Rnd(1) * 100) + 1
-        If H = 1 And RN0 <= 15 Then D2(P9) = 0: P7(P9) = 1: DT%(P9) = 4
-        If H = 1 And RN0 > 9 And RN0 <= 12 Then D2(P9) = 0: P7(P9) = 3: DT%(P9) = 8
-        If H = 1 And RN0 > 6 And RN0 <= 9 Then D2(P9) = 2: P7(P9) = 3: DT%(P9) = 7
-        If H = 1 And RN0 > 3 And RN0 <= 6 Then D2(P9) = 1: P7(P9) = 3: DT%(P9) = 9
-        If H = 1 And RN0 <= 3 Then D2(P9) = 0: P7(P9) = 4: DT%(P9) = 10
+        If H = 1 And RN0 <= 15 Then defType(P9) = 0: P7(P9) = 1: defStrat(P9) = 4
+        If H = 1 And RN0 > 9 And RN0 <= 12 Then defType(P9) = 0: P7(P9) = 3: defStrat(P9) = 8
+        If H = 1 And RN0 > 6 And RN0 <= 9 Then defType(P9) = 2: P7(P9) = 3: defStrat(P9) = 7
+        If H = 1 And RN0 > 3 And RN0 <= 6 Then defType(P9) = 1: P7(P9) = 3: defStrat(P9) = 9
+        If H = 1 And RN0 <= 3 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
 
         RN0 = Int(Rnd(1) * 100) + 1
-        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then D2(P9) = 1: P7(P9) = 0: DT%(P9) = 1
-        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then D2(P9) = 1: P7(P9) = 2: DT%(P9) = 6
-        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 90 And RN0 <= 95 Then D2(P9) = 0: P7(P9) = 4: DT%(P9) = 10
-        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 95 Then D2(P9) = 1: P7(P9) = 4: DT%(P9) = 11
-        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 <= 75 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 75 And RN0 <= 83 Then D2(P9) = 0: P7(P9) = 1: DT%(P9) = 4
-        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 83 And RN0 <= 91 Then D2(P9) = 1: P7(P9) = 0: DT%(P9) = 1
-        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 91 And RN0 <= 96 Then D2(P9) = 0: P7(P9) = 4: DT%(P9) = 10
-        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 96 Then D2(P9) = 1: P7(P9) = 4: DT%(P9) = 11
-        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 <= 70 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 70 And RN0 <= 75 Then D2(P9) = 1: P7(P9) = 0: DT%(P9) = 1
-        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 76 And RN0 <= 85 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
-        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 85 And RN0 <= 93 Then D2(P9) = 0: P7(P9) = 2: DT%(P9) = 5
-        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 93 And RN0 <= 97 Then D2(P9) = 3: P7(P9) = 0: DT%(P9) = 3
-        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 97 Then D2(P9) = 2: P7(P9) = 4: DT%(P9) = 12
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 <= 70 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 70 And RN0 <= 80 Then D2(P9) = 0: P7(P9) = 2: DT%(P9) = 5
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then D2(P9) = 0: P7(P9) = 4: DT%(P9) = 10
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 90 Then D2(P9) = 3: P7(P9) = 4: DT%(P9) = 13
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 <= 70 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 70 And RN0 <= 80 Then D2(P9) = 0: P7(P9) = 2: DT%(P9) = 5
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 80 And RN0 <= 90 Then D2(P9) = 1: P7(P9) = 4: DT%(P9) = 12
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 90 Then D2(P9) = 1: P7(P9) = 0: DT%(P9) = 1
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 <= 70 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 70 And RN0 <= 90 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 90 And RN0 <= 96 Then D2(P9) = 1: P7(P9) = 0: DT%(P9) = 1
-        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 96 Then D2(P9) = 0: P7(P9) = 4: DT%(P9) = 10
-        If H = 2 And gameClock! < 120 And I5 > 10 And RN0 <= 50 Then D2(P9) = 1: P7(P9) = 4: DT%(P9) = 11
-        If H = 2 And gameClock! < 120 And I5 > 10 And RN0 > 50 Then D2(P9) = 3: P7(P9) = 4: DT%(P9) = 13
-        If H = 2 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then D2(P9) = 3: P7(P9) = 5: DT%(P9) = 14
-        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 <= 25 Then D2(P9) = 0: P7(P9) = 2: DT%(P9) = 5
-        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 25 And RN0 <= 50 Then D2(P9) = 1: P7(P9) = 2: DT%(P9) = 6
-        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 50 And RN0 <= 75 Then D2(P9) = 1: P7(P9) = 4: DT%(P9) = 11
-        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 75 Then D2(P9) = 3: P7(P9) = 4: DT%(P9) = 13
-        If H > 2 And RN0 <= 50 Then D2(P9) = 0: P7(P9) = 0: DT%(P9) = 0
-        If H > 2 And RN0 > 50 Then D2(P9) = 2: P7(P9) = 0: DT%(P9) = 2
+        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
+        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 1: P7(P9) = 2: defStrat(P9) = 6
+        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 90 And RN0 <= 95 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
+        If H = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 95 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
+        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 <= 75 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 75 And RN0 <= 83 Then defType(P9) = 0: P7(P9) = 1: defStrat(P9) = 4
+        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 83 And RN0 <= 91 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
+        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 91 And RN0 <= 96 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
+        If H = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 96 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
+        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 70 And RN0 <= 75 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
+        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 76 And RN0 <= 85 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
+        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 85 And RN0 <= 93 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
+        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 93 And RN0 <= 97 Then defType(P9) = 3: P7(P9) = 0: defStrat(P9) = 3
+        If H = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 97 Then defType(P9) = 2: P7(P9) = 4: defStrat(P9) = 12
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 70 And RN0 <= 80 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 90 Then defType(P9) = 3: P7(P9) = 4: defStrat(P9) = 13
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 70 And RN0 <= 80 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 12
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 90 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 70 And RN0 <= 90 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 90 And RN0 <= 96 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
+        If H = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 96 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
+        If H = 2 And gameClock! < 120 And I5 > 10 And RN0 <= 50 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
+        If H = 2 And gameClock! < 120 And I5 > 10 And RN0 > 50 Then defType(P9) = 3: P7(P9) = 4: defStrat(P9) = 13
+        If H = 2 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defType(P9) = 3: P7(P9) = 5: defStrat(P9) = 14
+        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 <= 25 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
+        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 25 And RN0 <= 50 Then defType(P9) = 1: P7(P9) = 2: defStrat(P9) = 6
+        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 50 And RN0 <= 75 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
+        If H = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 75 Then defType(P9) = 3: P7(P9) = 4: defStrat(P9) = 13
+        If H > 2 And RN0 <= 50 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
+        If H > 2 And RN0 > 50 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
 
     Else
 
         RN0 = Int(Rnd(1) * 100) + 1
-        DT%(P9) = 0
-        D2(P9) = 0
+        defStrat(P9) = 0
+        defType(P9) = 0
         P7(P9) = 0
 
         Select Case RN0
+
             Case 1 To 10
-                D2(P9) = 1
-                DT%(P9) = 1
+                defType(P9) = 1
+                defStrat(P9) = 1
                 P7(P9) = 0
+
             Case 11 To 36
-                D2(P9) = 2
-                DT%(P9) = 2
+                defType(P9) = 2
+                defStrat(P9) = 2
                 P7(P9) = 0
+
             Case 37 To 100
-                DT%(P9) = 0
-                D2(P9) = 0
+                defStrat(P9) = 0
+                defType(P9) = 0
                 P7(P9) = 0
+
         End Select
 
         RN0 = Int(Rnd(1) * 100) + 1
 
         Select Case RN0
+
             Case 1 To 5
                 P7(P9) = 1
-                DT%(P9) = 4
-                D2(P9) = 0
+                defStrat(P9) = 4
+                defType(P9) = 0
+
             Case 6 To 9
                 P7(P9) = 3
-                DT%(P9) = 8
-                D2(P9) = 0
+                defStrat(P9) = 8
+                defType(P9) = 0
+
             Case 10
                 P7(P9) = 3
-                DT%(P9) = 7
-                D2(P9) = 2
+                defStrat(P9) = 7
+                defType(P9) = 2
                 'Nothing for 11 to 100
+
         End Select
 
     End If
@@ -5611,11 +5647,11 @@ Sub COMPUTERCOACH ()
 
         Select Case RN0
             Case 1 To 80
-                OF%(P9) = 0
+                offStrat(P9) = 0
             Case 81 To 90
-                OF%(P9) = 1
+                offStrat(P9) = 1
             Case 91 To 100
-                OF%(P9) = 2
+                offStrat(P9) = 2
         End Select
 
     End If
@@ -5623,10 +5659,10 @@ Sub COMPUTERCOACH ()
     If H >= 2 And score(P9, 0) - score(I6, 0) < 0 Then
 
         If RN0 <= 80 Then
-            OF%(P9) = 0
+            offStrat(P9) = 0
         Else
             'R0 > 80
-            OF%(P9) = 1
+            offStrat(P9) = 1
         End If
 
     End If
@@ -5634,10 +5670,10 @@ Sub COMPUTERCOACH ()
     If H >= 2 And score(P9, 0) - score(I6, 0) >= 0 Then
 
         If RN0 <= 80 Then
-            OF%(P9) = 0
+            offStrat(P9) = 0
         Else
             'RN0 > 80
-            OF%(P9) = 2
+            offStrat(P9) = 2
         End If
 
     End If
@@ -5645,15 +5681,15 @@ Sub COMPUTERCOACH ()
     If H >= 2 And gameClock! <= 180 And score(P9, 0) - score(I6, 0) < 0 Then
 
         If RN0 <= 30 Then
-            OF%(P9) = 3
+            offStrat(P9) = 3
         Else
             'RN0 <= 30
-            OF%(P9) = 4
+            offStrat(P9) = 4
         End If
 
     End If
 
-    If H >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then OF%(P9) = 9
+    If H >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then offStrat(P9) = 9
 
 End Sub
 
@@ -5893,7 +5929,7 @@ Sub OPTIONS ()
 
     Shared playMode$()
 
-	Screen , , 0, 0
+    Screen , , 0, 0
 
     Call INFO
 
@@ -5942,7 +5978,7 @@ Sub OPTIONS ()
 
     Loop Until I$ = Chr$(13)
 
-	Screen , , 0, 0
+    Screen , , 0, 0
     Call SCOREBOARD
 
 End Sub
@@ -7418,6 +7454,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     Close #1
 
+    'FY% = 2 * (Average FGA/G for this team (Off + Def) - League FGA/G)
     FY%(gameIdx) = 2 * teamRat_GAME(gameIdx, 3) - teamRat_GAME(gameIdx, 4)
 
     CNT% = 0

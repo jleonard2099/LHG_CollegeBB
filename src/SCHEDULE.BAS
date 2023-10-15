@@ -572,7 +572,7 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
         Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(scheduleNG%(gameIndex%, 6))
         Locate 13, 2: Color 14
         Print "(C) ";
-        Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(gameIndex%, 9))
+        Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
         Locate 14, 2: Color 14
         Print "(D) ";
         Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(scheduleNG%(gameIndex%, 10))
@@ -639,8 +639,8 @@ Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
                 Case 8:
                     scheduleNG%(gameIndex%, 7) = 1 + scheduleNG%(gameIndex%, 7)
-                    'If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
-                    If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
+                    If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
+                    'If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
 
                 Case 9:
                     scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
@@ -1224,12 +1224,12 @@ Sub ChangeGlobalSettings ()
     'Usually when I want to change global settings, I want to keep most
     'settings in the schedule the same.
     playerOpt = scheduleNG%(0, 8)
-    displayPause! = scheduleNG%(0, 4) / 10
     sClockVal = scheduleNG%(0, 7)
-    coachOpt = scheduleNG%(0, 9)
     threePtOpt = scheduleNG%(0, 3)
     foulsToDQ = scheduleNG%(0, 5)
     ft10thFoul = scheduleNG%(0, 6)
+    displayPause! = scheduleNG%(0, 4) / 10
+    coachOpt = scheduleNG%(0, 9)
     ft3PtFoul = scheduleNG%(0, 10)
     ft6FloorFouls = scheduleNG%(0, 14)
 
@@ -1242,25 +1242,24 @@ Sub ChangeGlobalSettings ()
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
         Locate 3, 2: Color 14: Print "(1) ";
-        Color 15: Print "TYPE OF GAME: "; playMode$(playerOpt)
+        Color 15: Print "GAME PLAY: "; playMode$(playerOpt)
         Locate 4, 2: Color 14: Print "(2) ";
-        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
-        Locate 5, 2: Color 14: Print "(3) ";
-        Color 15: Print "RESERVED FOR FUTURE"
-        Locate 6, 2: Color 14: Print "(4) ";
         Color 15: Print "SHOT CLOCK: "; sclockOpt$(sClockVal)
-        Locate 7, 2: Color 14: Print "(5) ";
-        Color 15: Print "HUMAN PLAYERS: "; coachMode$(coachOpt)
-        Locate 8, 2: Color 14: Print "(6) ";
+        Locate 5, 2: Color 14: Print "(3) ";
         Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
-        Locate 9, 2: Color 14: Print "(7) ";
+        Locate 6, 2: Color 14: Print "(4) ";
         Color 15: Print Using "FOULS TO DISQUALIFY: ##"; foulsToDQ
+        Locate 7, 2: Color 14: Print "(5) ";
+        Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(ft10thFoul)
+        Locate 8, 2: Color 14: Print "(6) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
+        Locate 9, 2: Color 14: Print "(7) ";
+        Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
         Locate 10, 2: Color 14: Print "(8) ";
-        Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(ft10thFoul)
+        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(ft3PtFoul)
         Locate 11, 2: Color 14: Print "(9) ";
-        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNoText$(ft3PtFoul)
-        Locate 12, 2: Color 14: Print "(A) ";
-        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNoText$(ft6FloorFouls)
+        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS: "; yesNoText$(ft6FloorFouls)
+
         Locate 13, 2: Color 14: Print "(0) ";
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
@@ -1277,31 +1276,29 @@ Sub ChangeGlobalSettings ()
                 If playerOpt > 3 Then playerOpt = 0
 
             Case 2:
-                Input "DISPLAY VARIABLE "; displayPause!
-
-            Case 3: '
-
-            Case 4:
                 sClockVal = 1 + sClockVal
-                If sClockVal > 2 Then sClockVal = 0
+                If sClockVal > 3 Then sClockVal = 0
 
-            Case 5:
-                coachOpt = 1 - coachOpt
-
-            Case 6:
+            Case 3:
                 threePtOpt = 1 - threePtOpt
 
-            Case 7:
+            Case 4:
                 foulsToDQ = foulsToDQ + 1
                 If foulsToDQ > 6 Then foulsToDQ = 5
 
-            Case 8:
+            Case 5:
                 ft10thFoul = 1 - ft10thFoul
 
-            Case 9:
+            Case 6:
+                Locate 8, 32: Input displayPause!
+
+            Case 7:
+                coachOpt = 1 - coachOpt
+
+            Case 8:
                 ft3PtFoul = 1 - ft3PtFoul
 
-            Case 10:
+            Case 9:
                 ft6FloorFouls = 1 - ft6FloorFouls
 
         End Select
@@ -1309,13 +1306,13 @@ Sub ChangeGlobalSettings ()
     Loop Until I = 0
 
     For I = 1 To scheduleAP%(0)
-        scheduleNG%(I, 8) = playerOpt
-        scheduleNG%(I, 4) = displayPause! * 10
-        scheduleNG%(I, 7) = sClockVal
-        scheduleNG%(I, 9) = coachOpt
         scheduleNG%(I, 3) = threePtOpt
+        scheduleNG%(I, 4) = displayPause! * 10
         scheduleNG%(I, 5) = foulsToDQ
         scheduleNG%(I, 6) = ft10thFoul
+        scheduleNG%(I, 7) = sClockVal
+        scheduleNG%(I, 8) = playerOpt
+        scheduleNG%(I, 9) = coachOpt
         scheduleNG%(I, 10) = ft3PtFoul
         scheduleNG%(I, 14) = ft6FloorFouls
     Next

@@ -1,4 +1,4 @@
-'$INCLUDE: 'KeyInput.BI'
+'$INCLUDE: 'KeyInput.bi'
 
 10 KEY OFF: COLOR 0, 7: CLS : PN$ = "COLBB"
 

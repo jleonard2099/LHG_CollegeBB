@@ -24,7 +24,7 @@ Dim Shared DT$, TM$
 
 Dim coachMode$(0 To 1), foulShotOpt$(0 To 2)
 Dim location$(0 To 2), modeAbbrev$(0 To 3)
-Dim playMode$(0 To 3), sclockOpt$(0 To 2)
+Dim playMode$(0 To 3), sclockOpt$(0 To 3)
 Dim teamIndicator$(1)
 Dim threeFtOpt$(0 To 1), threePtOpt$(0 To 1), yesNo$(0 To 1)
 
@@ -194,6 +194,14 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 
 
 '----------------------------------------
+' Used in TINPUT routine
+'----------------------------------------
+Dim nbrGmsPlayed, oppAsst, opp3FGA, opp3FGAPct, oppFGPct
+Dim oppFouls, oppFTA, oppFTPct, oppReb, oppSteal, oppTO
+Dim tmFouls, tmFGA, oppFGA, tmFGPct, tmFTA
+Dim tmFTPct, tmReb, tmAsst, tmSteal, tmTO
+
+'----------------------------------------
 ' Used in ADDTOURN / BRACKET routines
 '----------------------------------------
 Dim TC!
@@ -243,23 +251,23 @@ Dim Shared F!
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, prevBall$
-Dim Shared tourneyFile$, U$, VT$, VT1$, W$, W1$, YN$
+Dim Shared tourneyFile$, U$, VT$, VT1$, W$, opp3FGAPct$, YN$
 
 '-- FA%() I believe is related to tracking player fatigue
-Dim Shared APT%(NUM_STATRECORDS, 1), B%(1, 13), CZ%(1), DT%(1), eventSettings(13), FY%(2)
+Dim Shared APT%(NUM_STATRECORDS, 1), B%(1, 13), CZ%(1), defStrat(1), eventSettings(13), FY%(2)
 Dim Shared G9%(1), HF%(1, 6), HT%(NUM_STATRECORDS), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
-Dim Shared O%(NUM_STATRECORDS), OF%(1), PC%(1), PR%(1, 1)
+Dim Shared O%(NUM_STATRECORDS), offStrat(1), PC%(1), PR%(1, 1)
 Dim Shared ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TM%(1, 13), TP%(1)
 Dim Shared VG%(8), VH%(8), threeFG(1, 13, 1)
 
 Dim Shared B1(0 To 1, 0 To 4)
-Dim Shared dFGPA(1), def3FG_Adj(1), D2(1), D8(4, 3), DP(2, 4), DF(1, 13)
+Dim Shared dFGPA(1), def3FG_Adj(1), defType(1), D8(4, 3), DP(2, 4), DF(1, 13)
 Dim Shared ft3PtFoul(1), F1(13), G4(13), G5(13)
 Dim Shared leagRat_GAME(1, 4), plyrRat_GAME(1, 13, 6), plyrStamina(13)
 Dim Shared P2(1), P4(14), P5(14), P7(1)
 Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9), RS(1, 13, 13)
-Dim Shared schedGame(2), score(1, 9), statTotals(14)
+Dim Shared schedGame(2), score(1, 9), scSettings(0 To 3), statTotals(14)
 Dim Shared teamRat_GAME(1, 9), teamStamina(1), timeouts(1), timePlayed(1, 13), tmFatigue(1, 13), turnovers(1)
 Dim Shared W2(1, 13), W3(1, 13), Z5(1), Z6(1)
 
@@ -268,9 +276,9 @@ Dim Shared F5%(0 To 1, 0 To 8)
 Dim Shared plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared R3!(1), W0!(1, 13), W1!(1, 13)
 
-Dim Shared players$(1, 13), D$(15), DB$(14)
+Dim Shared players$(1, 13), defStyles$(15), defStyles_brief$(14)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
-Dim Shared H$(NUM_STATRECORDS), HO$(NUM_STATRECORDS), LC$(2), N$(16, 16, 0 To 4), O$(9), OB$(9)
+Dim Shared H$(NUM_STATRECORDS), HO$(NUM_STATRECORDS), LC$(2), N$(16, 16, 0 To 4), offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), PS$(4), R$(14), SITE$(NUM_STATRECORDS), SX$(32, 2)
 Dim Shared PO$(1, 13)
 Dim Shared X$(3), Y$(1), YN$(5), YN1$(3)
