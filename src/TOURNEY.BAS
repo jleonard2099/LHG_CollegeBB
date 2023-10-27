@@ -41,10 +41,10 @@ Sub TOURNEY ()
         yearNumber$(0, 0) = ""
         yearNumber$(0, 1) = ""
 
+        Erase homeTeam$, visitingTeam$
+
         For I = 1 To 500
-            visitingTeam$(I) = ""
             scheduleNG%(I, 13) = 0
-            homeTeam$(I) = ""
         Next
 
         Call ReadTourneyFile(tourneyFile$)

@@ -35,17 +35,19 @@ Sub CompileNatlOrg ()
     TRC!(14) = 19999
     TRC!(18) = 19999
 
-    For I = 1 To 13: TRC1!(I) = 19999: Next
+    For I = 1 To 13: 
+        TRC1!(I) = 19999
+    Next
 
-    For I = 15 To 17: TRC1!(I) = 19999: Next
+    For I = 15 To 17: 
+        TRC1!(I) = 19999
+    Next
 
-    For I = 19 To 20: TRC1!(I) = 19999: Next
+    For I = 19 To 20: 
+        TRC1!(I) = 19999
+    Next
 
-    For X = 1 To 250
-        For Y = 1 To 2
-            NLD!(X, Y) = 0
-        Next Y
-    Next X
+    Erase NLD!
 
     For X = 1 To 40
         NDL!(X, 19) = 9999
@@ -189,11 +191,7 @@ Sub CompileNatlOrg ()
 
                             Next X
 
-                            For I = 0 To 13
-                                For J = 0 To 26
-                                    compS!(I, J) = 0
-                                Next
-                            Next
+                            Erase compS!
 
                             If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
                                 Call ReadStatsNat(H1$(XW), numberGames%, TN$)

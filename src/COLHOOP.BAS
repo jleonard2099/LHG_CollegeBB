@@ -16,11 +16,12 @@ Sub COLHOOP ()
     'Open "pbplog" For Output As #11
 
     Shared scheduleFile$
-
     Shared tickerStart
 
-    Shared coachMode$(), foulShotOpt$(), location$()
-    Shared playMode$(), sclockOpt$(), yesNoText$()
+    Shared coachMode$(), foulShotOpt$()
+    Shared location$()
+    Shared playMode$()
+    Shared sclockOpt$(), yesNoText$()
 
     Color 7, 0
     Cls
@@ -160,7 +161,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -226,8 +227,7 @@ Sub COLHOOP ()
 
     If autoPlay = 1 Then Call AUTOSETUP
 
-    'AUTOSETUP will reset TOU = 0
-    'in many circumstances
+    'AUTOSETUP will reset TOU = 0 in many circumstances
     If autoPlay <> 1 And TOU <> 1 Then
 
         ' USER SELECTION OF OPTIONS
@@ -443,8 +443,6 @@ Sub COLHOOP ()
             TM = HR * 60 + MIN
             tickerStart = Int(TM / 30) - 18
 
-            Call SETUPRATINGS
-
         Else
 
             'End
@@ -453,30 +451,6 @@ Sub COLHOOP ()
 
         End If
 
-    End If
-
-    'FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA / GM)
-    'FY%(1) = 2 * (Home Tm Average FGA/G - League FGA / GM)
-    'FY%(2) = Average of the 2 Ratings
-    FY%(2) = Int(((FY%(1) + FY%(0)) / 2) + .5)
-
-    For I = 0 To 1
-        For I1 = 0 To 13
-            TM%(I, I1) = 1200
-        Next
-    Next
-
-    'Determine attendance
-    If gameLoc = 2 Or avgAttendance&(1) = 0 Then
-        'Neutral Site
-        'Random # 2,000 - 14,000
-        '-- Yes, some teams struggle to get 1,500
-        '-- but it's rare, or D2, or an outlier
-        '-- Original game ranged 9,000 to 11,000
-        actualAttendance& = Int(Rnd(1) * 12000) + 2000
-    Else
-        'Random # +/ 1,000 of team's average attendance
-        actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 2000) - 1000
     End If
 
     '----------------------------------------
@@ -503,6 +477,32 @@ Sub COLHOOP ()
     '   0 = Human
     '   1 = Computer Team
     '   2 = PC vs. PC
+
+    Call ChangeContributions
+
+    'FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA / GM)
+    'FY%(1) = 2 * (Home Tm Average FGA/G - League FGA / GM)
+    'JY = Average of the 2 Ratings
+    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
+
+    For I = 0 To 1
+        For I1 = 0 To 13
+            TM%(I, I1) = 1200
+        Next
+    Next
+
+    'Determine attendance
+    If gameLoc = 2 Or avgAttendance&(1) = 0 Then
+        'Neutral Site
+        'Random # 2,000 - 14,000
+        '-- Yes, some teams struggle to get 1,500
+        '-- but it's rare, or D2, or an outlier
+        '-- Original game ranged 9,000 to 11,000
+        actualAttendance& = Int(Rnd(1) * 12000) + 2000
+    Else
+        'Random # +/ 1,000 of team's average attendance
+        actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 2000) - 1000
+    End If
 
     Call LOADSTATS
 
@@ -550,6 +550,9 @@ Sub COLHOOP ()
     Call STEALADJ
 
     250 '
+    prevBall$ = ""
+
+    'Determine which team gets the ball 1st
     P = Int(Rnd(1) * 2) '0 or 1
 
     If P = 0 Then
@@ -558,8 +561,8 @@ Sub COLHOOP ()
         D = 0
     End If
 
-    prevBall$ = ""
-
+    '-- Why do we do this?
+    '-- Confirm from original source
     If P = 1 Then
         P = 0
         D = 1
@@ -583,8 +586,8 @@ Sub COLHOOP ()
         If (H = 1 Or H = 3) And pbpOpt = 0 Then U$ = gameTeams$(P) + " GETS THE JUMP": PA% = D: Call PBP
         If (H = 1 Or H = 3) And pbpOpt = 1 Then Call WINDEX: Print gameTeams$(P) + " GETS THE JUMP": PA% = D: Call DELAY
 
-        If (H <> 1 And H <> 3 Or H > 3) And pbpOpt = 0 Then P = PA%: D = 1 - P: PA% = 1 - PA%: U$ = gameTeams$(P) + " INBOUNDS THE BALL": Call PBP
-        If (H <> 1 And H <> 3 Or H > 3) And pbpOpt = 1 Then P = PA%: D = 1 - P: PA% = 1 - PA%: Call WINDEX: Print gameTeams$(P) + " INBOUNDS THE BALL": Call DELAY
+        If (H = 2 Or H >= 4) And pbpOpt = 0 Then P = PA%: D = 1 - P: PA% = 1 - PA%: U$ = gameTeams$(P) + " INBOUNDS THE BALL": Call PBP
+        If (H = 2 Or H >= 4) And pbpOpt = 1 Then P = PA%: D = 1 - P: PA% = 1 - PA%: Call WINDEX: Print gameTeams$(P) + " INBOUNDS THE BALL": Call DELAY
 
     Else
 
@@ -603,11 +606,7 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     170 '
-    For I = 0 To 1
-        defStrat(I) = 0
-        defType(I) = 0
-        P7(I) = 0
-    Next
+    Erase defStrat, defType, P7
 
     gameClock! = 0
     Call QUARTERTOTAL
@@ -664,8 +663,19 @@ Sub COLHOOP ()
     End If
 
     If H < 3 And playerMode <> 0 Then
-        If playerMode = 1 Then P9 = compTeam: Call COMCOACH
-        If playerMode = 2 Then P9 = 0: Call COMCOACH: P9 = 1: Call COMCOACH
+
+        If playerMode = 1 Then 
+            P9 = compTeam
+            Call COMCOACH
+        End If
+        
+        If playerMode = 2 Then 
+            P9 = 0
+            Call COMCOACH
+            P9 = 1
+            Call COMCOACH
+        End If
+
     End If
 
     If H < 3 Then
@@ -684,10 +694,11 @@ Sub COLHOOP ()
 
         Call UPDATESCREEN
 
+        Erase tmFatigue
+
         For I = 0 To 1
             For I1 = 0 To 13:
                 TM%(I, I1) = 1200
-                tmFatigue(I, I1) = 0
             Next
         Next
 
@@ -710,7 +721,10 @@ Sub COLHOOP ()
                 Call WINDEX
                 Print U$
             Case 1:
-                If pbpDelay! > 0 Then Call WINDEX: Print U$
+                If pbpDelay! > 0 Then 
+                    Call WINDEX
+                    Print U$
+                End If
         End Select
     End If
 
@@ -739,10 +753,11 @@ Sub COLHOOP ()
 
         Call UPDATESCREEN
 
+        Erase tmFatigue
+
         For I = 0 To 1
             For I1 = 0 To 13:
                 TM%(I, I1) = 300
-                tmFatigue(I, I1) = 0
             Next
         Next
 
@@ -828,9 +843,9 @@ Sub COLHOOP ()
 
     End If
 
+    'Last 5 seconds, down by 1 score!!!
     If gameClock! <= 5 And (threePtOpt = 1 And score(D, 0) - score(P, 0) <= 3 Or threePtOpt = 0 And score(D, 0) - score(P, 0) <= 2) And score(D, 0) - score(P, 0) >= 0 And H >= 2 Then
 
-        'Last 5 seconds!!!
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' Computer handle last 5 seconds
             Call d100(RN)
@@ -854,10 +869,7 @@ Sub COLHOOP ()
             Do
                 I$ = GetKeyPress$
                 I1% = Val(I$)
-            Loop Until I1% >= 0 And I1% <= 5
-
-            If I1% = 3 And timeouts(P9) <= 0 Then 280
-            If (I1% = 1 Or I1% = 4) And threePtOpt = 0 Then 280
+            Loop Until I1% >= 0 And I1% <= 5 And Not (I1% = 3 And timeouts(P9) <= 0) And Not ((I1% = 1 Or I1% = 4) And threePtOpt = 0)
 
             Color 15, 0
             Call SCOREBOARD
@@ -1094,19 +1106,20 @@ Sub COLHOOP ()
 
         ' *** FULL COURT PRESS ***
 
-        'Yes I see it odd that Case 1, 2 and 4
-        'all have identical outcome.
+        'Yes it's odd that Case 1, 2 and 4
+        'have identical outcome.
         'That is the code as it was written.
-        'I wonder if 2,4 should be a value
-        'between 25 and 50.
 
         Select Case P7(D)
             Case 1:
-                X0% = 50: X1% = -1
+                X0% = 50
+                X1% = -1
             Case 2, 4:
-                X0% = 50: X1% = -1
+                X0% = 50
+                X1% = -1
             Case 3:
-                X0% = 25: X1% = -1
+                X0% = 25
+                X1% = -1
         End Select
 
         Call PRDFAT
@@ -1240,7 +1253,7 @@ Sub COLHOOP ()
 
                 432 '
                 U$ = "PASS TO " + players$(P, B1(P, B))
-                Call pbplog(1890)
+                'Call pbplog(1890)
                 Call SELECTPBP
 
             End If
@@ -1337,16 +1350,31 @@ Sub COLHOOP ()
         'and these are some of the only places these
         'code branches "GoTo". But I don't think it
         'can be condensed at all.
-        If RN0 <= DP(2, P7(D)) + 1 Then X = 0: GoTo 580
+        If RN0 <= DP(2, P7(D)) + 1 Then 
+            X = 0
+            GoTo 580
+        Else
 
-        CY = DP(2, P7(D)) + 1 + F5%(P, 5) + F5%(D, 6) + DP(0, P7(D)) - PR%(D, 0)
-        If RN0 <= CY Then Call LASTSHOT: GoTo 517
+            CY = DP(2, P7(D)) + 1 + F5%(P, 5) + F5%(D, 6) + DP(0, P7(D)) - PR%(D, 0)
 
-        CY = CY + F5%(P, 4) + DP(1, P7(D)) - PR%(D, 1)
-        PC%(D) = PC%(D) + 1
-        If PC%(D) > 3 Then PR%(D, 0) = 0: PR%(D, 1) = 0
+            If RN0 <= CY Then 
+                Call LASTSHOT
+                GoTo 517
+            Else
 
-        If RN0 <= CY Then 435
+                CY = CY + F5%(P, 4) + DP(1, P7(D)) - PR%(D, 1)
+                PC%(D) = PC%(D) + 1
+                
+                If PC%(D) > 3 Then 
+                    PR%(D, 0) = 0
+                    PR%(D, 1) = 0
+                End If
+
+                If RN0 <= CY Then 435
+
+            End If
+
+        End If
 
     Else
 
@@ -1399,7 +1427,7 @@ Sub COLHOOP ()
     'GS% = GoodShot% ???
     'In other words, how does the player's accuracy line up with the shot difficulty ?
 
-    'FY%(2) = Average FGA/G Adjustment For Both Teams
+    'JY = Average FGA/G Adjustment For Both Teams
     '-- Most values fall in the range of -8 to 8 statistically
 
     Select Case sClockVal
@@ -1407,22 +1435,21 @@ Sub COLHOOP ()
         Case 0
             'No Shot Clock
             'Will range from -8 to 5 for most teams
-            GS% = 39 + Int(((FY%(2) - 52) * .8) + .5)
+            GS% = 39 + Int(((JY - 52) * .8) + .5)
 
         Case 1
             '45 Sec Shot Clock
             'Will range from -8 to 5 for most teams
-            GS% = 39 + Int(((FY%(2) - 52) * .8) + .5)
+            GS% = 39 + Int(((JY - 52) * .8) + .5)
 
         Case 2
             '35 Sec Shot Clock
             'Will range from -2 to 0 for most teams
-            GS% = 39 + Int(((FY%(2) - 58) * .8) + .5)
+            GS% = 39 + Int(((JY - 58) * .8) + .5)
 
         Case 3
             '30 Sec Shot Clock
-            'Will range from -2 to 0 for most teams
-            GS% = 39 + Int(((FY%(2) - 58) * .8) + .5)
+            GS% = 39 + Int(((JY - 62) * .8) + .5)
 
     End Select
 
@@ -1690,11 +1717,12 @@ Sub COLHOOP ()
 
     ' --- I think this is by itself and the above are separate??? ---
 
+    ' ***BAD SHOT ***
     437 '
 
     P6 = 0
-    RN0 = Int(Rnd(1) * 3) + 1
     J8% = 0
+    RN0 = Int(Rnd(1) * 3) + 1
     F3S% = Int(Rnd(1) * 7) + 3
     PZ% = 1
 
@@ -1792,7 +1820,11 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+            If P7(I) = 0 Then 
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                PC%(I) = 0
+            End If
         Next
 
         GoTo 300
@@ -2249,11 +2281,10 @@ Sub COLHOOP ()
 
     If playerMode = 1 And P = compTeam And J8% = 1 Or playerMode = 2 And J8% = 1 Then P6 = 4
     If playerMode = 1 And P = compTeam And H >= 2 And gameClock! < 30 And score(D, 0) - score(P, 0) = 3 Or playerMode = 2 And H >= 2 And gameClock! < 30 And score(D, 0) - score(P, 0) = 3 Then P6 = 4
+
     If (P6 = 1 Or P6 = 4) And PZ% = 4 Then P6 = 4
 
     ' *** Done determining value for P6 ***
-
-
     caseVar% = P6 + 1
 
     Select Case caseVar%
@@ -2315,7 +2346,11 @@ Sub COLHOOP ()
                     Call DEADBALLOPTIONS
 
                     For I = 0 To 1
-                        If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+                        If P7(I) = 0 Then 
+                            PR%(I, 0) = 1
+                            PR%(I, 1) = 7
+                            PC%(I) = 0
+                        End If
                     Next
 
                     X = 0
@@ -2466,7 +2501,11 @@ Sub COLHOOP ()
                     Call DEADBALLOPTIONS
 
                     For I = 0 To 1
-                        If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+                        If P7(I) = 0 Then 
+                            PR%(I, 0) = 1
+                            PR%(I, 1) = 7
+                            PC%(I) = 0
+                        End If
                     Next
 
                     X = 0
@@ -2866,7 +2905,11 @@ Sub COLHOOP ()
                     Call DEADBALLOPTIONS
 
                     For I = 0 To 1
-                        If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+                        If P7(I) = 0 Then 
+                            PR%(I, 0) = 1
+                            PR%(I, 1) = 7
+                            PC%(I) = 0
+                        End If
                     Next
 
                     X = 0
@@ -3031,7 +3074,11 @@ Sub COLHOOP ()
     Call DEADBALLOPTIONS
 
     For I = 0 To 1
-        If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+        If P7(I) = 0 Then 
+            PR%(I, 0) = 1
+            PR%(I, 1) = 7
+            PC%(I) = 0
+        End If
     Next
 
     X = 0
@@ -3198,11 +3245,7 @@ Sub COLHOOP ()
 
         If sClockVal >= 1 Then shotClock = shotClock + M5
 
-        For I = 0 To 1
-            For I1 = 0 To 1
-                PR%(I, I1) = 0
-            Next
-        Next
+        Erase PR%
 
         U$ = "TIME OUT " + gameTeams$(P)
         Call SELECTPBP
@@ -3235,7 +3278,7 @@ Sub COLHOOP ()
 
     Call d100(RN0)
 
-    If H > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12 Or H > 1 And gameClock! < 30 And score(P, 0) - score(D, 0) = 0 And RN0 <= 12 Then
+    If (H > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12) Or (H > 1 And gameClock! < 30 And score(P, 0) - score(D, 0) = 0 And RN0 <= 12) Then
         Call OFFREBOUND
         GoTo 760
     End If
@@ -3336,7 +3379,11 @@ Sub COLHOOP ()
                 Call DEADBALLOPTIONS
 
                 For I = 0 To 1
-                    If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+                    If P7(I) = 0 Then 
+                        PR%(I, 0) = 1
+                        PR%(I, 1) = 7
+                        PC%(I) = 0
+                    End If
                 Next
 
                 prevBall$ = ""
@@ -3368,7 +3415,11 @@ Sub COLHOOP ()
                 Call DEADBALLOPTIONS
 
                 For I = 0 To 1
-                    If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+                    If P7(I) = 0 Then 
+                        PR%(I, 0) = 1
+                        PR%(I, 1) = 7
+                        PC%(I) = 0
+                    End If
                 Next
 
                 LT = 4
@@ -3758,7 +3809,11 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+            If P7(I) = 0 Then 
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                PC%(I) = 0
+            End If
         Next
 
         prevBall$ = ""
@@ -3786,7 +3841,11 @@ Sub COLHOOP ()
         PA% = 1 - PA%
         Call DEADBALLOPTIONS
         For I = 0 To 1
-            If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+            If P7(I) = 0 Then 
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                PC%(I) = 0
+            End If
         Next
         LT = 4
 
@@ -3816,7 +3875,11 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+            If P7(I) = 0 Then 
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                PC%(I) = 0
+            End If
         Next
 
         X = 0
@@ -3920,7 +3983,11 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+            If P7(I) = 0 Then 
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                PC%(I) = 0
+            End If
         Next
 
         If ft6FloorFouls = 0 And pbpOpt = 0 Or ft6FloorFouls = 0 And pbpDelay! = 0 Then
@@ -3945,7 +4012,11 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then PR%(I, 0) = 1: PR%(I, 1) = 7: PC%(I) = 0
+            If P7(I) = 0 Then 
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                PC%(I) = 0
+            End If
         Next
 
         X = 0

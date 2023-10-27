@@ -14,7 +14,7 @@ Sub EditStats ()
     Shared statPlyrNames$()
     Dim Z2(14, 14)
 
-    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
+    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$) Then
@@ -23,9 +23,9 @@ Sub EditStats ()
         BoxWidth = 24
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -33,24 +33,24 @@ Sub EditStats ()
 
         Input #1, A$
 
-        For I = 0 To 13: 
+        For I = 0 To 13:
+
             Input #1, statPlyrNames$(I)
 
-            For J = 0 To 13: 
+            For J = 0 To 13:
                 Input #1, Z2(I, J)
             Next J
 
             Input #1, statsW0!(I)
-
             Input #1, statsW1!(I)
 
         Next I
 
-        For L = 0 To 15: 
+        For L = 0 To 15:
             Input #1, statsZ!(L)
         Next L
 
-        For L = 0 To 15: 
+        For L = 0 To 15:
             Input #1, statsZ1!(L)
         Next L
 
@@ -67,8 +67,8 @@ Sub EditStats ()
 
         Locate 3, 1
         Print "1. STAT FILE NAME "; statFile$
-        Print "2. TM MINUTES "; 
-        Print Using "####"; statsZ!(0)
+        Print "2. TM MINUTES ";
+        Print Using "#####"; Int(statsZ!(0)/60)
         Print "3. TM FGA "; statsZ!(1)
         Print "4. TM FGM "; statsZ!(2)
         Print "5. TM 3FGA "; statsZ!(14)
@@ -97,7 +97,8 @@ Sub EditStats ()
                     Locate 3, 1: Input "1. STAT FILE NAME "; statFile$
 
                 Case 2
-                    Locate 4, 1: Input "2. TM MINUTES "; statsZ!(0): statsZ!(0) = statsZ!(0) * 60
+                    Locate 4, 1: Input "2. TM MINUTES "; statsZ!(0)
+                    statsZ!(0) = statsZ!(0) * 60
 
                 Case 3
                     Locate 5, 1: Input "3. TM FGA "; statsZ!(1)
@@ -143,7 +144,7 @@ Sub EditStats ()
 
             End Select
 
-        Loop Until B9 >= 0
+        Loop Until B9 = 0
 
         '---------------
         ' Defense Stats
@@ -237,7 +238,7 @@ Sub EditStats ()
                 Color 7
                 If I / 2 = Int(I / 2) Then Color 15
                 Print (I + 1);
-                Print " "; inputA$(I)
+                Print " "; statPlyrNames$(I)
             Next I
 
             Print
@@ -251,8 +252,9 @@ Sub EditStats ()
                 I = I - 1
 
                 Cls
+                Call TITLE_STAT_HEADER(X$)
 
-                Locate 2, 1: PRINT "PLAYER - " + Str$(I + 1)
+                Locate 2, 1: Print "PLAYER - " + Str$(I + 1)
                 Locate 3, 1
                 Print "1. NAME "; statPlyrNames$(I)
                 Print "2. GAMES "; Z2(I, 0)
@@ -353,7 +355,7 @@ Sub EditStats ()
 
             Print #2, statPlyrNames$(I)
 
-            For J = 0 To 13: 
+            For J = 0 To 13:
                 Print #2, Z2(I, J)
             Next J
 

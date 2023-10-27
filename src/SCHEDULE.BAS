@@ -741,12 +741,13 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                     Locate 7, 32
 
-                    Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: ": Print
+                    Locate , 12: Print "ENTER NAME FOR SUB-SCHEDULE: "
+                    Print
                     Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
                     Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
                     Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
                     Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
-                    Locate 7, 37: Input subSchedFile$
+                    Locate 7, 40: Input subSchedFile$
 
                     If subSchedFile$ <> "" Then
 
@@ -1223,15 +1224,15 @@ Sub ChangeGlobalSettings ()
     'This code will assign defaults based on the first game in the schedule.
     'Usually when I want to change global settings, I want to keep most
     'settings in the schedule the same.
-    playerOpt = scheduleNG%(0, 8)
-    sClockVal = scheduleNG%(0, 7)
-    threePtOpt = scheduleNG%(0, 3)
-    foulsToDQ = scheduleNG%(0, 5)
-    ft10thFoul = scheduleNG%(0, 6)
-    displayPause! = scheduleNG%(0, 4) / 10
-    coachOpt = scheduleNG%(0, 9)
-    ft3PtFoul = scheduleNG%(0, 10)
-    ft6FloorFouls = scheduleNG%(0, 14)
+    playerOpt = scheduleNG%(1, 8)
+    sClockVal = scheduleNG%(1, 7)
+    threePtOpt = scheduleNG%(1, 3)
+    foulsToDQ = scheduleNG%(1, 5)
+    ft10thFoul = scheduleNG%(1, 6)
+    displayPause! = scheduleNG%(1, 4) / 10
+    coachOpt = scheduleNG%(1, 9)
+    ft3PtFoul = scheduleNG%(1, 10)
+    ft6FloorFouls = scheduleNG%(1, 14)
 
     DT$ = "10-01-23"
     TM$ = "07:30P"
@@ -1276,7 +1277,8 @@ Sub ChangeGlobalSettings ()
                 If playerOpt > 3 Then playerOpt = 0
 
             Case 2:
-                sClockVal = 1 + sClockVal
+                sClockVal = sClockVal + 1
+                'If sClockVal > 2 Then sClockVal = 0
                 If sClockVal > 3 Then sClockVal = 0
 
             Case 3:

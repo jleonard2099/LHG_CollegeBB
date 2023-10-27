@@ -1181,24 +1181,8 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     tmSteal = 0
 
-    For I = 0 To 13
-
-        For I1 = 0 To 19
-            playerOff!(I, I1) = 0
-        Next I1
-
-        For I1 = 0 To 6
-            playerRatings!(I, 0) = 0
-        Next I1
-
-        For I1 = 0 To 13
-            playerStats!(I, I1) = 0
-        Next I1
-
-        playerDef!(I) = 0
-        position$(I) = ""
-
-    Next I
+    Erase playerDef!, playerOff!, playerRatings!, playerStats!
+    Erase position$
 
     mascot$ = ""
     arenaName$ = ""

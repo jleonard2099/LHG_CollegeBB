@@ -66,20 +66,8 @@ Sub ADDTOURN ()
                     Call SetupTourney(NR$, Selection%, newTourneyName$, tourneyFile$)
 
                 Case 2, 4:
-                    For I = 1 To 16
-                        NN%(I) = 0
-                        regionNames$(I) = ""
-                    Next
-
-                    For I = 1 To 16
-                        For I1 = 1 To 16
-                            For I2 = 0 To 3
-                                slotName$(I, I1, I2) = ""
-                                tourneyN%(I, I1, I2) = 0
-                            Next
-                        Next
-                    Next
-
+                    Erase NN%, tourneyN%
+                    Erase regionNames$, slotName$
                     consolationSetting%(0) = 0
                     consolationSetting%(1) = 0
 

@@ -48,28 +48,16 @@ Sub DRAFT ()
 
                 Case 1:
 
+                    Erase dFGPctAdj_DRAFT!, d3FGA_Adj, d3FG_Adj
+                    Erase lgRat_DRAFT, plyrOff_DRAFT!, plyrRat_DRAFT!
+                    Erase stamina_DRAFT!, teamRat_DRAFT
+                    
                     For I = 0 To 1
 
                         tmName_DRAFT$(I) = "XXX"
-                        stamina_DRAFT!(I) = 0
-                        dFGPctAdj_DRAFT!(I) = 0
-                        d3FG_Adj(I) = 0
-                        d3FGA_Adj(I) = 0
-
-                        For I1 = 0 To 4:
-                            lgRat_DRAFT(I, I1) = 0
-                        Next
-
-                        For I1 = 0 To 9:
-                            teamRat_DRAFT(I, I1) = 0
-                        Next
 
                         For I1 = 0 To 13
                             plyrNames_DRAFT$(I, I1) = "XXX"
-                            For I2 = 0 To 6
-                                plyrOff_DRAFT!(I, I1, I2) = 0
-                                plyrRat_DRAFT!(I, I1, I2) = 0
-                            Next
                         Next
 
                     Next

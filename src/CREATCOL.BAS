@@ -80,7 +80,7 @@ End Sub
 'This subroutine assists the user with the
 'input of paramters related to the conf-
 'erence's general naming and setup
-Sub DefineConference (conference$, D1$, D2$)
+Sub DefineConference (conference$, div1$, div2$)
 
     Do
 
@@ -111,11 +111,47 @@ Sub DefineConference (conference$, D1$, D2$)
 
     Loop Until UCase$(I$) = "N"
 
-    Color 15, 0
-    Print
-    Print
-    Locate , 12: Input "ENTER NAME OF DIVISION 1 (ENTER FOR NONE) "; D1$
-    Locate , 12: Input "ENTER NAME OF DIVISION 2 (ENTER FOR NONE) "; D2$
+    'Color 15, 0
+    'Print
+    'Print
+    'Locate , 12: Input "ENTER NAME OF DIVISION 1 (ENTER FOR NONE) "; div1$
+    'Locate , 12: Input "ENTER NAME OF DIVISION 2 (ENTER FOR NONE) "; div2$
+
+    FG = 0
+    BG = 7
+
+    Cls
+    Color 15, 1
+
+    Locate 5, 1: QPrint "Name for Division 1 ", 14, 1, -1
+    Locate , 21: QPrint PadRight$(div1$, 50), FG, BG, -1
+    Locate 7, 1: QPrint "Name for Division 2 ", 14, 1, -1
+    Locate , 21: QPrint PadRight$(div2$, 50), FG, BG, -1
+
+    GetDiv1:
+    Locate 5, 21 'location of beginning of field
+    CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
+    Call TextIn(div1$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
+    If XCode = 2 GoTo Done 'all done entering data
+
+    GetDiv2:
+    Locate 7, 21 'location of beginning of field
+    CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
+    Call TextIn(div2$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
+
+    Done:
+    Color 14, 1
+    Locate 23, 1
+    Print "Is this okay? (Yes/No) ";
+    X$ = ""
+    Call YesNoB(X$, XCode, FG, BG)
+    Locate , 1
+    ClearEOL 14, 1
+    If XCode = 1 GoTo GetDiv2
+    If X$ = "N" GoTo GetDiv1
+    If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
 End Sub
 
@@ -126,7 +162,7 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the conference
-Sub ReviewEditConference (conference$, D1$, D2$)
+Sub ReviewEditConference (conference$, div1$, div2$)
 
     Shared scheduleZ1%()
 
@@ -136,7 +172,7 @@ Sub ReviewEditConference (conference$, D1$, D2$)
 
         Open diskPaths$(1) + conference$ + ".LIB" For Input As #1
 
-        Input #1, LG%, conference$, D1$, D2$
+        Input #1, LG%, conference$, div1$, div2$
 
         For X = 1 To 30
             Input #1, Z1$(X)
@@ -158,8 +194,8 @@ Sub ReviewEditConference (conference$, D1$, D2$)
         Print
 
         Color 12
-        Locate , 6: Print D1$;
-        Locate , 53: Print D2$
+        Locate , 6: Print div1$;
+        Locate , 53: Print div2$
 
         For I = 1 To 15
 
@@ -207,7 +243,7 @@ Sub ReviewEditConference (conference$, D1$, D2$)
 
     Loop Until choice = 3
 
-    Call SaveConferences(conference$, D1$, D2$)
+    Call SaveConferences(conference$, div1$, div2$)
 
 End Sub
 
@@ -218,7 +254,7 @@ End Sub
 'This subroutine writes the conference's
 'team memberships and definition to 
 'each of the corresponding files (.LIB, .TMS)
-Sub SaveConferences (conference$, D1$, D2$)
+Sub SaveConferences (conference$, div1$, div2$)
 
     Shared scheduleZ1%()
 
@@ -229,8 +265,8 @@ Sub SaveConferences (conference$, D1$, D2$)
     Print #1, 0
 
     Print #1, conference$ 'League / Conference Name
-    Print #1, D1$ 'Division 1 Name
-    Print #1, D2$ 'Division 2 Name
+    Print #1, div1$ 'Division 1 Name
+    Print #1, div2$ 'Division 2 Name
 
     For X = 1 To 30
         Print #1, Z1$(X) 'Team Name
@@ -255,8 +291,8 @@ Sub SaveConferences (conference$, D1$, D2$)
     Open diskPaths$(1) + conference$ + ".TMS" For Output As #2
 
     Write #2, conference$
-    Write #2, D1$
-    Write #2, D2$
+    Write #2, div1$
+    Write #2, div2$
 
     For X = 1 To 30:
         Write #2, Z1$(X)

@@ -1612,7 +1612,11 @@ Sub MAKEPBP ()
                     Case 27
                         U$ = players$(P, B1(P, B)) + "...IN YOUR FACE SLAM!!!"
                     Case 28
-                        U$ = players$(P, B1(P, B)) + " IS UP": Call PBP: U$ = "HE SPINS": Call PBP: U$ = "BEHIND THE BACK SLAM!!!"
+                        U$ = players$(P, B1(P, B)) + " IS UP"
+                        Call PBP
+                        U$ = "HE SPINS"
+                        Call PBP
+                        U$ = "BEHIND THE BACK SLAM!!!"
                     Case 29
                         U$ = "HE SLAMS IT HOME!!"
                     Case 30
@@ -1660,7 +1664,9 @@ Sub MAKEPBP ()
                     End Select
 
                 Else
+
                     RN = Int(Rnd(1) * 50) + 1
+
                     Select Case RN
                         Case 1
                             U$ = "IT RATTLES IN AND OUT...NO GOOD"
@@ -3770,10 +3776,10 @@ Sub SCOREBOARD ()
 End Sub
 
 '------------------------------
-'    COLCNG Subroutine
+'    ColorChange Subroutine
 '------------------------------
 ' ...explanation...
-Sub COLCNG ()
+Sub ColorChange ()
 
     If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 4 Then teamRat_GAME(1, 0) = 4: teamRat_GAME(1, 1) = 7
     If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 1 Then teamRat_GAME(1, 0) = 1: teamRat_GAME(1, 1) = 7
@@ -3794,7 +3800,7 @@ Sub LOADSTATS ()
 
     Shared CRD&()
 
-    If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then Call COLCNG
+    If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then Call ColorChange
 
     For I = 0 To 1
 
@@ -3905,92 +3911,108 @@ End Sub
 
 
 '----------------------------------------
-'        SETUPRATINGS Subroutine
+'     ChangeContributions Subroutine
 '----------------------------------------
 'This subroutine lets the user adjust the
 'contribution ratings for players
-Sub SETUPRATINGS ()
-
-    9300 '
+Sub ChangeContributions ()
 
     If autoPlay <> 1 Or playerMode <> 2 Then
 
-        Color 15, 0: Cls
-        Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
-        Print
-        Color 14
-        Print "(0) - ";: Color teamRat_GAME(0, 0), teamRat_GAME(0, 1)
-        Print gameTeams$(0): Color , 0
-        Print
-        Color 14
-        Print "(1) - ";: Color teamRat_GAME(1, 0), teamRat_GAME(1, 1)
-        Print gameTeams$(1): Color , 0
-        Print
-        Color 14
-        Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
-        Color 15, 0
-        Print
-        Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
-        Print "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
-
         Do
-            I$ = GetKeyPress$
-            I = Val(I$)
-        Loop Until I >= 0 And I <= 2
 
-        If I <> 2 Then
-
+            Color 15, 0
             Cls
-            TX = 0
-            For I1 = 0 To 13: TX = TX + plyrOff_GAME!(I, I1, 3): Next
-            For I1 = 0 To 13: plyrOff_GAME!(I, I1, 3) = plyrOff_GAME!(I, I1, 3) / TX * 100: Next
 
-            9305 '
-            Locate 2, 1: Print "CONTRIBUTION RATINGS FOR ";
-            Color teamRat_GAME(I, 0), teamRat_GAME(I, 1): Print gameTeams$(I)
+            Print "EDIT CONTRIBUTION PERCENTAGES OF PLAYERS FROM:"
+            Print
+            Color 14
+            Print "(0) - ";: Color teamRat_GAME(0, 0), teamRat_GAME(0, 1)
+            Print gameTeams$(0): Color , 0
+            Print
+            Color 14
+            Print "(1) - ";: Color teamRat_GAME(1, 0), teamRat_GAME(1, 1)
+            Print gameTeams$(1): Color , 0
+            Print
+            Color 14
+            Print "(2) - ";: Color 3: Print "PROCEED TO GAME"
             Color 15, 0
             Print
-            Print " #  PLAYER             CX"
-            TY% = 0
+            Print "NOTE:: THE CONTRIBUTION RATING CONSISTS OF THE PLAYER'S"
+            Print "       FREQUENCY TO SHOOT, REBOUND, AND COMMIT FOULS."
 
-            For I1 = 0 To 13:
-                TY% = TY% + plyrOff_GAME!(I, I1, 3)
-                If B%(I, I1) = -1 Then Color teamRat_GAME(I, 0), teamRat_GAME(I, 1)
-                Print Using "## "; I1 + 1;
-                Print players$(I, I1);
-                Locate , 24
-                Print Using "##"; plyrOff_GAME!(I, I1, 3)
-                Color 15, 0
-            Next
+            Do
+                I$ = GetKeyPress$
+                I = Val(I$)
+            Loop Until I >= 0 And I <= 2
 
-            Locate , 23: Print Using "###"; TY%
+            If I <> 2 Then
 
-            Input "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1
-            I1 = I1 - 1
+                Cls
 
-            If I1 > 13 Or I1 < 0 Then
+                TX = 0
 
-                If TY% <> 100 Then
-                    Locate 22, 1: Print "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
-                    I$ = GetKeyPress$
-                    Locate 22, 1: Print Space$(52)
-                    GoTo 9305
-                End If
+                For I1 = 0 To 13: 
+                    TX = TX + plyrOff_GAME!(I, I1, 3)
+                Next
+                
+                For I1 = 0 To 13: 
+                    plyrOff_GAME!(I, I1, 3) = plyrOff_GAME!(I, I1, 3) / TX * 100
+                Next
 
-                For I1 = 0 To 13: plyrOff_GAME!(I, I1, 3) = plyrOff_GAME!(I, I1, 3) / 100 * TX: Next
+                Do 
+                
+                    Locate 2, 1
+                    Print "CONTRIBUTION RATINGS FOR ";
+                    Color teamRat_GAME(I, 0), teamRat_GAME(I, 1): Print gameTeams$(I)
+                    Color 15, 0
+                    Print
+                    Print " #  PLAYER             CX"
+                    TY% = 0
 
-                GoTo 9300
+                    For I1 = 0 To 13:
+
+                        TY% = TY% + plyrOff_GAME!(I, I1, 3)
+                        If B%(I, I1) = -1 Then Color teamRat_GAME(I, 0), teamRat_GAME(I, 1)
+
+                        Print Using "## "; I1 + 1;
+                        Print players$(I, I1);
+                        Locate , 24
+                        Print Using "##"; plyrOff_GAME!(I, I1, 3)
+                        Color 15, 0
+
+                    Next
+
+                    Locate , 23: Print Using "###"; TY%
+
+                    Input "SELECT PLAYER TO CHANGE (0 TO CONTINUE)"; I1
+                    I1 = I1 - 1
+
+                    If I1 <= 13 And I1 >= 0 Then
+                        Locate 22, 1
+                        Print "ENTER NEW CX RATING FOR "; players$(I, I1); " ";
+                        Input plyrOff_GAME!(I, I1, 3)
+                        Locate 22, 1: Print Space$(52)
+                    Else
+
+                        If TY% <> 100 Then
+                            Locate 22, 1: Print "TOTAL MUST ADD UP TO 100%! PRESS ANY KEY"
+                            I$ = GetKeyPress$
+                            Locate 22, 1: Print Space$(52)
+                        End If
+
+                    End If
+                    
+                Loop Until I1 < 0
+
+                For I1 = 0 To 13: 
+                    plyrOff_GAME!(I, I1, 3) = plyrOff_GAME!(I, I1, 3) / 100 * TX
+                Next
 
             End If
 
-            Locate 22, 1: Print "ENTER NEW CX RATING FOR "; players$(I, I1); " ";
-            Input plyrOff_GAME!(I, I1, 3)
-
-            Locate 22, 1: Print Space$(52)
-            GoTo 9305
-
-        End If
-
+        Loop Until I = 2
+        
     End If
 
     X = 0
@@ -6124,7 +6146,7 @@ Sub POSTGAME ()
         'Append special events
         Call BOX2SPC(NM$)
 
-        Call BOX2FILE(2, NM$, specialStat)
+        Call BOX2FILE(2, NM$)
 
     End If
 
@@ -6176,11 +6198,10 @@ Sub BOXOPTIONS (outputChoice)
                     'ScheduleName_GameXXX.BS
                     NM$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
                 End If
-
             End If
 
             'Includes a special option to send to printer when done
-            Call BOX2FILE(outputChoice, boxFile$, specialStat)
+            Call BOX2FILE(outputChoice, NM$)
 
     End Select
 
@@ -6355,16 +6376,11 @@ End Sub
 'The option to send to printer will first
 'create a temporary file, then loop THROUGH
 'it to print each line.
-Sub BOX2FILE (printChoice, NM$, isSpecial)
+Sub BOX2FILE (printChoice, NM$)
 
     Shared actualAttendance&
 
-    If isSpecial = 1 Then
-        'special scores come after the events
-        Open diskPaths$(1) + NM$ For Append As #1
-    Else
-        Open diskPaths$(1) + NM$ For Output As #1
-    End If
+    Open diskPaths$(1) + NM$ For Append As #1
 
     If gameLoc = 2 Then
         Print #1, "SITE: NEUTRAL"
@@ -6976,9 +6992,13 @@ Sub COMPILESTATFILES (teamIdx)
 
         Next I
 
-        For L = 0 To 15: Input #1, Z!(L): Next L
+        For L = 0 To 15:
+            Input #1, Z!(L)
+        Next L
 
-        For L = 0 To 15: Input #1, Z1!(L): Next L
+        For L = 0 To 15:
+            Input #1, Z1!(L)
+        Next L
 
         Close #1
 
@@ -7158,32 +7178,33 @@ Sub COMPILESTATFILES (teamIdx)
 
     Close #4
 
-    For I = 1 To NUM_STATRECORDS
-        O%(I) = 0
-        HT%(I) = 0
-        HO$(I) = ""
-        H$(I) = ""
-        CRD&(I) = 0
-        SITE$(I) = ""
-
-        For I1 = 0 To 1
-            APT%(I, I1) = 0
-        Next
-
-    Next I
-
-    For J = 0 To 13
-        For K = 0 To 13
-            Z2!(J, K) = 0
-        Next K
-    Next J
-
-    For L = 0 To 15
-        Z!(L) = 0
-        Z1!(L) = 0
-    Next L
+    Erase APT%, O%, HT%, CRD&
+    Erase Z!, Z1!, Z2!
 
 End Sub
+
+
+'----------------------------------------
+'          GetTeamYear Function
+'----------------------------------------
+'This subroutine determines the 4-digit
+'team year from the team loaded by the
+'file. It uses the 2 digit year to make
+'assumptions. (00 to 24 are year 2000.)
+'The first NCAA tournament was held in
+'1939, so it's safe to guess teams from
+'00 to 38 are year 2000.
+Function GetTeamYear% (yearFromName$)
+
+    teamYear% = Val(yearFromName$)
+
+    If teamYear% >= 0 And teamYear% < 39 Then
+        GetTeamYear% = 2000 + teamYear%
+    Else
+        GetTeamYear% = 1900 + teamYear%
+    End If
+
+End Function
 
 
 '----------------------------------------

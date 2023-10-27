@@ -110,27 +110,9 @@ Sub HD2HDCON ()
             Color 15
             Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
 
-            For Q = 1 To 30
-                AW!(Q) = 0
-                HW!(Q) = 0
-                AL!(Q) = 0
-                HL!(Q) = 0
-                R1!(Q) = 0
-                R2!(Q) = 0
-                R3_HD2HD!(Q) = 0
-                R4!(Q) = 0
-            Next
-
-            For K = 1 To 2
-                THW!(K) = 0
-                THL!(K) = 0
-                TAW!(K) = 0
-                TAL!(K) = 0
-                TR1!(K) = 0
-                TR2!(K) = 0
-                TR3!(K) = 0
-                TR4!(K) = 0
-            Next
+            Erase AL!, AW!, HL!, HW!
+            Erase R1!, R2!, R3_HD2HD!, R4!
+            Erase TAL!, TAW!, THL!, THW!, TR1!, TR2!, TR3!, TR4!
 
             For K = 1 To 30
 

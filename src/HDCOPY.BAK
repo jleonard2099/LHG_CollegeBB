@@ -1,0 +1,137 @@
+Sub HDCOPY ()
+
+	_Title "Courtside College Basketball - Hard Drive Installation"
+
+	KEY OFF
+	COLOR 0,7
+	
+	CLS
+	
+	PN$="COLBB"
+	
+	Do
+
+		LOCATE 1,1		
+		COLOR 15,1
+		PRINT STRING$(80,32);
+		U$="HARD DISK INSTALLATION PROGRAM"
+		LOCATE 1,(80-LEN(U$))/2
+		PRINT U$
+
+		Call MenuBox (6, 8, 61, 7, 15, 1)
+		
+		LOCATE ,12:PRINT "ENTER LETTER OF DRIVE YOU WISH TO INSTALL FROM: ";
+
+		S$=GetKeyPress$
+		PRINT S$+":"
+
+		LOCATE ,12:PRINT "ENTER HARD DRIVE LETTER TO INSTALL TO: ";
+
+		D$=GetKeyPress$
+		PRINT D$+":"
+
+		LOCATE ,12
+		INPUT "SUBDIRECTORY NAME TO INSTALL TO: ";NN$
+		
+		IF NN$="" THEN NN$=PN$
+		
+		LOCATE ,12
+		PRINT "FILES WILL BE COPIED TO "D$+":\"+NN$
+		
+		LOCATE ,12
+		PRINT "ANY CHANGE? (Y/N) "
+
+		I$=GetKeyPress$
+	
+	Loop Until UCASE$(I$)="N"
+
+	If Not _FileExists(D$+":\"+NN$) Then
+		MKDIR D$+":\"+NN$
+	End If
+
+	CHDIR D$+":\"+NN$
+
+	Call MenuBox (16, 8, 61, 1, 15, 1)
+	
+	LOCATE 17, 12
+	U$="COPYING FILES TO "+D$+":\"+NN$
+	LOCATE ,(80-LEN(U$))/2
+	PRINT U$
+
+	'SHELL "ECHO OFF"
+	'SHELL "COPY "+S$+":*.* "+D$+":\"+NN$+" >NUL:"
+	'CHDIR S$+":\"
+	'CHDIR D$+":\"+NN$
+
+	Do
+
+		Call MenuBox (16, 8, 61, 1, 15, 1)
+		
+		LOCATE 17, 12
+
+		'SHELL "COPY "+S$+":*.* "+D$+":\"+NN$+" >NUL:"
+
+		Call MenuBox (16, 8, 61, 1, 15, 1)
+		
+		LOCATE 17, 12
+
+		U$="INSTALL ANOTHER DISK? (Y/N)"
+		LOCATE ,(80-LEN(U$))/2
+		PRINT U$
+
+		Do
+			I$=GetKeyPress$
+		Loop Until UCASE$(I$) = "N" Or UCASE$(I$) = "Y"
+
+		IF UCASE$(I$) = "N" THEN
+
+			Call MenuBox (16, 8, 61, 1, 15, 1)
+			LOCATE 17,12
+			U$="INSERT DISK AND HIT ANY KEY"
+			LOCATE ,(80-LEN(U$))/2
+			PRINT U$
+
+			I$=GetKeyPress$
+
+		End If
+
+	Loop Until UCase$(I$) = "Y"
+
+	Do
+	
+		Call MenuBox (6, 8, 61, 7, 15, 1)
+
+		LOCATE 17,12
+		U$="INSERT TEAMS DISK IN DRIVE "+S$+":"+" AND HIT ANY KEY"
+		LOCATE ,(80-LEN(U$))/2
+		PRINT U$
+
+		I$=GetKeyPress
+
+		'SHELL "COPY "+S$+":BASK.* "+D$+":\"+NN$
+
+		Call MenuBox (16, 8, 61, 1, 15, 1)
+
+		LOCATE 17,12
+		U$="INSTALL ANOTHER TEAMS DISK? (Y/N)"
+		LOCATE ,(80-LEN(U$))/2
+		PRINT U$
+
+	Loop Until UCase$(I$) = "N"
+
+	'OPEN D$+":\"+NN$+"\DEV.BAS" FOR OUTPUT AS #2
+	'PRINT #2,D$+":\"+NN$+"\"
+	'PRINT #2,D$+":\"+NN$+"\"
+	'CLOSE 2
+
+	Call MenuBox (16, 8, 61, 1, 15, 1)
+	LOCATE 17,12
+	U$="INSTALLATION IS COMPLETE! TO START PROGRAM, TYPE HELLO"
+	LOCATE ,(80-LEN(U$))/2
+	PRINT U$
+
+	LOCATE 20,1
+
+	'SHELL "ECHO ON"
+
+End Sub

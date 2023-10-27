@@ -129,13 +129,19 @@ Sub ViewSeasonRecords ()
 		For I = 1 To 21
 			Input #1, TRC!(I)
 			Input #1, recconTRC$(I)
-			If TRC!(I) = 19999 Then TRC!(I) = 0: recconTRC$(I) = ""
+			If TRC!(I) = 19999 Then 
+				TRC!(I) = 0
+				recconTRC$(I) = ""
+			End If
 		Next
 
 		For I = 1 To 21
 			Input #1, TRC1!(I)
 			Input #1, recconTRC1$(I)
-			If TRC1!(I) = 19999 Then TRC1!(I) = 0: recconTRC1$(I) = ""
+			If TRC1!(I) = 19999 Then 
+				TRC1!(I) = 0
+				recconTRC1$(I) = ""
+			End If
 		Next
 
 		Close #1

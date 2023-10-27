@@ -149,11 +149,7 @@ Sub CompileCollege ()
 
                     If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
-                        For I = 0 To 13:
-                            For J = 0 To 22
-                                compS!(I, J) = 0
-                            Next
-                        Next
+                        Erase compS!
 
                         Call ReadStatsCon(H1$(XW), TN$)
                         Call StatsByCategoryCon(numberGames%, TN$, finalUpdate$)

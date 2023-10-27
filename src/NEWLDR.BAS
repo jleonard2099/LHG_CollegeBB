@@ -976,9 +976,11 @@ Sub ViewTeamLeaders (printOrView%, tStats, ttStats)
 
                     For I = 1 To ttStats
                         If TT1!(I, X1) = 0 Then
-                            TMM$(I) = TT1$(I, X): TYP!(I) = 0
+                            TMM$(I) = TT1$(I, X)
+                            TYP!(I) = 0
                         Else
-                            TMM$(I) = TT1$(I, X): TYP!(I) = TT1!(I, X) / TT1!(I, X1)
+                            TMM$(I) = TT1$(I, X)
+                            TYP!(I) = TT1!(I, X) / TT1!(I, X1)
                         End If
                     Next
 

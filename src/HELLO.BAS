@@ -2,7 +2,8 @@ $Debug
 
 Const GAME_VERSION$ = "4.85"
 Const MAX_TEAMS = 1000
-Const MAX_GAMES = 1500
+'Const MAX_GAMES = 1500
+Const MAX_GAMES = 6000
 Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
 Const MAX_CONFERENCES = 40
@@ -51,7 +52,7 @@ For I = 0 To 38: Read TP1$(I): Next
 
 Data NAME,G,MIN,MIN/G,FGM,FGA,FG PCT,3FGM,3FGA,3FG PCT,FTM,FTA,FT PCT
 Data NAME,PTS,PTG/G,HI,OFF REB,DEF REB,TOT REB,REB/G,PF,AST,BLK,STL,TO
-For I = 0 To 25: Read CP$(I): Next
+For I = 0 To 25: Read categories$(I): Next
 
 Data GAMES PLAYED,FIELD GOALS ATTEMPTED,FIELD GOALS MADE,FIELD GOAL %,3-FIELD GOALS ATTEMPTED,3-FIELD GOALS MADE,3-FIELD GOAL %
 Data FREE THROWS ATTEMPTED,FREE THROWS MADE,FREE THROW %,MINUTES PLAYED,POINTS,SCORING AVERAGE,HI-GAME,OFFENSIVE REBOUNDS
@@ -230,7 +231,7 @@ Do
 
     Call Main_Menu(Selection%)
 
-Loop Until Selection% = 9
+Loop Until Selection% = 8
 
 End
 
@@ -255,7 +256,7 @@ Resume Next ' moves program to code following the error.
 '----------------------------------------
 Sub Main_Menu (menuSelection%)
 
-    ReDim menuChoices$(1 To 9)
+    ReDim menuChoices$(1 To 8)
 
     Do
 
@@ -271,14 +272,14 @@ Sub Main_Menu (menuSelection%)
         menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
         menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
         menuChoices$(6) = "TOURNAMENT PLAY                 "
-        menuChoices$(7) = "HARD DRIVE INSTALLATION         "
-        menuChoices$(8) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-        menuChoices$(9) = "EXIT TO DOS                     "
+        'menuChoices$(7) = "HARD DRIVE INSTALLATION         "
+        menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
+        menuChoices$(8) = "EXIT TO DOS                     "
 
         Selection% = 1
-        Count% = 9
+        Count% = 8
         Start% = 1
-        ExitCode% = 9
+        ExitCode% = 8
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -296,21 +297,34 @@ Sub Main_Menu (menuSelection%)
 
         If ExitCode% <> 27 Then
             Select Case menuSelection%
-                Case 1: Call COLHOOP
-                Case 2: Call TeamMgt_Menu
-                Case 3: Call Replay_Menu
-                Case 4: Call Leaders_Menu
-                Case 5: Call SCHEDULE
-                Case 6: Call ADDTOURN
-                Case 7: '
-                Case 8: Call ConfigureDrives
-                Case 9: Cls
+
+                Case 1:
+                    Call COLHOOP
+
+                Case 2:
+                    Call TeamMgt_Menu
+
+                Case 3:
+                    Call Replay_Menu
+
+                Case 4:
+                    Call Leaders_Menu
+
+                Case 5:
+                    Call SCHEDULE
+
+                Case 6:
+                    Call ADDTOURN
+
+                Case 7:
+                    Call ConfigureDrives
+
             End Select
         End If
 
-    Loop Until menuSelection% = 9 Or ExitCode% = 27
+    Loop Until menuSelection% = 8 Or ExitCode% = 27
 
-    If ExitCode% = 27 Then menuSelection% = 9
+    If ExitCode% = 27 Then menuSelection% = 8
 
 End Sub
 
@@ -463,25 +477,30 @@ End Sub
 '----------------------------------------
 '         Replay_Menu Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provodes the user with
+'several options for managing replay
+'data, from statistics to reports and
+'team careers
 Sub Replay_Menu ()
 
     Do
+
         Cls
 
         Call TITLE
 
-        ReDim menuChoices$(1 To 5)
+        ReDim menuChoices$(1 To 6)
 
         menuChoices$(1) = "VIEW / PRINT COMPILED STATS       "
         menuChoices$(2) = "ENCYCLOPEDIA / TEAM REPLAY OPTIONS"
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL    "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES  "
-        menuChoices$(5) = "RETURN TO COURTSIDE MAIN MENU     "
+        menuChoices$(4) = "MODIFY REPLAY STATS               "
+        menuChoices$(5) = "MERGE SEPARATE STATISTICAL FILES  "
+        menuChoices$(6) = "RETURN TO MAIN MENU               "
         Selection% = 1
-        Count% = 5
+        Count% = 6
         Start% = 1
-        ExitCode% = 5
+        ExitCode% = 6
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -498,16 +517,29 @@ Sub Replay_Menu ()
         Color , 0
 
         If ExitCode% <> 27 Then
+
             Select Case Selection%
-                Case 1: Call LOOKY
-                Case 2: Call CAREER
-                Case 3: Call COMPARE
-                Case 4: Call MERGE
-                Case 5: Cls
+
+                Case 1:
+                    Call LOOKY
+
+                Case 2:
+                    Call CAREER
+
+                Case 3:
+                    Call COMPARE
+
+                Case 4:
+                    Call EditStats
+
+                Case 5:
+                    Call MERGE
+
             End Select
+
         End If
 
-    Loop Until Selection% = 5 Or ExitCode% = 27
+    Loop Until Selection% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -515,7 +547,9 @@ End Sub
 '----------------------------------------
 '        Leaders_Menu Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provodes the user with
+'several options for managing team
+'leaders, stats and standings
 Sub Leaders_Menu ()
 
     Do
