@@ -1,7 +1,7 @@
 '----------------------------------------
 '            SEECON Subroutine
 '----------------------------------------
-'This subroutine lets the user choose a 
+'This subroutine lets the user choose a
 'conference stat file to view, then calls
 'other routines to both load the Stats
 'and then provide options for display
@@ -14,7 +14,7 @@ Sub SEECON ()
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Call LoadLeaderFiles_Coll(leaderFile$, FF$, D1$, D2$)
-        Call StatOptions_Con (leaderFile$, FF$, D1$, D2$)
+        Call StatOptions_Con (FF$, D1$, D2$)
 
     End If
 
@@ -30,10 +30,10 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
 
     Shared DL!(), OL!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared seenatZ!(), seenatZ1!()
+    Shared seeZ!(), seeZ1!()
     Shared OL$(), DL$()
-    Shared seenatZ2$(), seenatZ3$()
-    Shared T$()
+    Shared seeZ2$(), seeZ3$()
+    Shared seeT$()
 
     Cls
 
@@ -42,11 +42,11 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
     Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #1
 
     For X = 1 To 30: 
-        Input #1, T$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+        Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
     For X = 1 To 250: 
-        Input #1, seenatZ2$(X), seenatZ3$(X), seenatZ!(X), seenatZ1!(X)
+        Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1!(X)
     Next
 
     For X = 1 To 40: 
@@ -84,7 +84,7 @@ End Sub
 'This subroutine gives the user various
 'options for viewing the previously loaded
 'stats, and then calls routines for each
-Sub StatOptions_Con (targetFile$, FF$, D1$, D2$)
+Sub StatOptions_Con (FF$, D1$, D2$)
 
     Do
 
@@ -129,21 +129,7 @@ Sub StatOptions_Con (targetFile$, FF$, D1$, D2$)
             Color 15, 0
             Cls
 
-            JJ = 4
-
-            Locate 6, 8
-            Color 15, 1
-
-            Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-            For II = 1 To JJ:
-                Locate 6 + II, 8
-                Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-            Next
-
-            Locate 7 + JJ, 8
-
-            Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
+            Call box0 (6, 8, 11, 70, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -210,10 +196,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
 
     Shared DL!(), OL!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared seenatZ!(), seenatZ1!()
+    Shared seeZ!(), seeZ1!()
     Shared OL$(), DL$()
-    Shared seenatZ2$(), seenatZ3$()
-    Shared T$()
+    Shared seeZ2$(), seeZ3$()
+    Shared seeT$()
 
     Color 15, 0
     Cls
@@ -232,9 +218,9 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
 
     For P = 1 To 15
 
-        If T$(P) <> "" And T$(P) <> "*" Then
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
 
-            Print T$(P); Tab(16);
+            Print seeT$(P); Tab(16);
             Print Using "##   ##   "; O4!(P); O5!(P);
 
             If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
@@ -243,7 +229,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
             If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
 
             Locate , 41
-            Print T$(P); Tab(56);
+            Print seeT$(P); Tab(56);
             Print Using "##   ##   "; O1!(P); O2!(P);
 
             If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print " .---"
@@ -277,8 +263,8 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
 
     For P = 16 To 30
 
-        If T$(P) <> "" And T$(P) <> "*" Then
-            Print T$(P); Tab(16);
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
+            Print seeT$(P); Tab(16);
             Print Using "##   ##   "; O4!(P); O5!(P);
 
             If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
@@ -287,7 +273,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
             If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
 
             Locate , 41
-            Print T$(P); Tab(56);
+            Print seeT$(P); Tab(56);
             Print Using "##   ##   "; O1!(P); O2!(P);
 
             If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print " .---"
@@ -313,10 +299,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 41 To 60
-        If seenatZ2$(P) <> "" Then
-            Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
             Locate , 28
-            Print Using "###.#  ####"; seenatZ!(P) * 100; seenatZ1!(P)
+            Print Using "###.#  ####"; seeZ!(P) * 100; seeZ1!(P)
         End If
     Next
 
@@ -328,11 +314,11 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 61 To 80
-        If seenatZ2$(P) <> "" Then
+        If seeZ2$(P) <> "" Then
             Locate , 41
-            Print Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
+            Print Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
             Locate , 68
-            Print Using "###.#  ####"; seenatZ!(P) * 100; seenatZ1!(P)
+            Print Using "###.#  ####"; seeZ!(P) * 100; seeZ1!(P)
         End If
     Next
 
@@ -351,10 +337,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 1 To 20
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
     Next
 
@@ -366,10 +352,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 21 To 40
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
     Next
 
@@ -387,10 +373,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 81 To 90
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
     Next
 
@@ -401,10 +387,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
 
     For P = 91 To 100
 
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -414,10 +400,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 101 To 110
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
 
     Next
@@ -428,10 +414,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 111 To 120
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -450,10 +436,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 121 To 130
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "###.#"; seenatZ!(P) * 100
+            Print Using "###.#"; seeZ!(P) * 100
         End If
     Next P
 
@@ -463,10 +449,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 141 To 150
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
 
     Next P
@@ -476,10 +462,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 131 To 140
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -490,10 +476,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 151 To 160
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
     Next
 
@@ -511,10 +497,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 161 To 170
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
 
     Next
@@ -525,9 +511,9 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 171 To 180
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);: Locate , 74
-            Print Using "####"; seenatZ!(P)
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);: Locate , 74
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -536,10 +522,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 181 To 190
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
     Next
 
@@ -549,10 +535,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 191 To 200
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -571,10 +557,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 201 To 210
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -585,10 +571,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 211 To 220
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
     Next
 
@@ -598,10 +584,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 221 To 230
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "##.#"; seenatZ!(P)
+            Print Using "##.#"; seeZ!(P)
         End If
 
     Next
@@ -612,10 +598,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 231 To 240
-        If seenatZ2$(P) <> "" Then
-            Locate , 41: Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 74
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -634,10 +620,10 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
 
     For P = 241 To 250
-        If seenatZ2$(P) <> "" Then
-            Print seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print seeZ2$(P) + ", " + seeZ3$(P);
             Locate , 34
-            Print Using "####"; seenatZ!(P)
+            Print Using "####"; seeZ!(P)
         End If
 
     Next
@@ -755,11 +741,11 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     Shared DL!(), OL!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared seenatZ!(), seenatZ1!()
+    Shared seeZ!(), seeZ1!()
 
     Shared OL$(), DL$()
-    Shared seenatZ2$(), seenatZ3$()
-    Shared T$()
+    Shared seeZ2$(), seeZ3$()
+    Shared seeT$()
 
     If destination <> 1 Then
         Open "REPORT" For Output As #1
@@ -778,8 +764,8 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 1 To 15
 
-        If T$(P) <> "" And T$(P) <> "*" Then
-            Print #1, T$(P); Tab(16);
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
+            Print #1, seeT$(P); Tab(16);
             Print #1, Using "##   ##   "; O4!(P); O5!(P);
 
             If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #1, " .---";
@@ -788,7 +774,7 @@ Sub SavePrintConLeaders (reportFile$, destination)
             If O6!(P) <> 0 And O6!(P) <> 1 Then Print #1, Using " .###"; O6!(P);
 
             Print #1, Tab(41);
-            Print #1, T$(P); Tab(56);
+            Print #1, seeT$(P); Tab(56);
             Print #1, Using "##   ##   "; O1!(P); O2!(P);
 
             If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #1, " .---"
@@ -809,8 +795,8 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 16 To 30
 
-        If T$(P) <> "" And T$(P) <> "*" Then
-            Print #1, T$(P); Tab(16);
+        If seeT$(P) <> "" And seeT$(P) <> "*" Then
+            Print #1, seeT$(P); Tab(16);
             Print #1, Using "##   ##   "; O4!(P); O5!(P);
 
             If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #1, " .---";
@@ -819,7 +805,7 @@ Sub SavePrintConLeaders (reportFile$, destination)
             If O6!(P) <> 0 And O6!(P) <> 1 Then Print #1, Using " .###"; O6!(P);
 
             Print #1, Tab(41);
-            Print #1, T$(P); Tab(56);
+            Print #1, seeT$(P); Tab(56);
             Print #1, Using "##   ##   "; O1!(P); O2!(P);
 
             If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #1, " .---"
@@ -837,21 +823,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 41 To 60
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Left$(seenatZ2$(P), 10) + ", " + seenatZ3$(P);
+            Print #1, Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
             Print #1, Tab(28);
-            Print #1, Using "##.#  ####"; seenatZ!(P) * 100; seenatZ1!(P);
+            Print #1, Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P);
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 20) = "" Then
+        If seeZ2$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Left$(seenatZ2$(P + 20), 10) + ", " + seenatZ3$(P + 20);
+            Print #1, Left$(seeZ2$(P + 20), 10) + ", " + seeZ3$(P + 20);
             Print #1, Tab(67);
-            Print #1, Using "###.#  ####"; seenatZ!(P + 20) * 100; seenatZ1!(P)
+            Print #1, Using "###.#  ####"; seeZ!(P + 20) * 100; seeZ1!(P)
         End If
 
     Next
@@ -861,20 +847,20 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 1 To 20
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Using "##.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
-        If seenatZ2$(P + 20) = "" Then
+        If seeZ2$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
+            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 20)
+            Print #1, Using "####"; seeZ!(P + 20)
         End If
 
     Next
@@ -884,21 +870,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 81 To 90
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Using "##.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 10) = "" Then
+        If seeZ2$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -908,21 +894,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 101 To 110
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Using "##.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 10) = "" Then
+        If seeZ2$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -932,21 +918,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 121 To 130
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P) * 100;
+            Print #1, Using "##.#"; seeZ!(P) * 100;
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 20) = "" Then
+        If seeZ2$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
+            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "##.#"; seenatZ!(P + 20)
+            Print #1, Using "##.#"; seeZ!(P + 20)
         End If
 
     Next
@@ -956,21 +942,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 131 To 140
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seenatZ!(P);
+            Print #1, Using "####"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 20) = "" Then
+        If seeZ2$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 20) + ", " + seenatZ3$(P + 20);
+            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 20)
+            Print #1, Using "####"; seeZ!(P + 20)
         End If
 
     Next
@@ -981,21 +967,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 161 To 170
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Using "##.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 10) = "" Then
+        If seeZ2$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1005,20 +991,20 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 181 To 190
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Using "##.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
-        If seenatZ2$(P + 10) = "" Then
+        If seeZ2$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 20)
+            Print #1, Using "####"; seeZ!(P + 20)
         End If
 
     Next
@@ -1028,20 +1014,20 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 201 To 210
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seenatZ!(P);
+            Print #1, Using "####"; seeZ!(P);
             Print #1, Tab(41);
         End If
-        If seenatZ2$(P + 10) = "" Then
+        If seeZ2$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1051,21 +1037,21 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 221 To 230
 
-        If seenatZ2$(P) = "" Then
+        If seeZ2$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seenatZ!(P);
+            Print #1, Using "##.#"; seeZ!(P);
             Print #1, Tab(41);
         End If
 
-        If seenatZ2$(P + 10) = "" Then
+        If seeZ2$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seenatZ2$(P + 10) + ", " + seenatZ3$(P + 10);
+            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seenatZ!(P + 10)
+            Print #1, Using "####"; seeZ!(P + 10)
         End If
 
     Next
@@ -1075,10 +1061,10 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
     For P = 241 To 250
 
-        If seenatZ2$(P) <> "" Then
-            Print #1, seenatZ2$(P) + ", " + seenatZ3$(P);
+        If seeZ2$(P) <> "" Then
+            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seenatZ!(P)
+            Print #1, Using "####"; seeZ!(P)
         End If
 
     Next
@@ -1092,29 +1078,29 @@ Sub SavePrintConLeaders (reportFile$, destination)
 
         If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
             Print #1, Left$(OL$(X), 11); Tab(13);
-			Print #1, Using "##"; OL!(X, 16);
-			Print #1, Tab(16);
-			Print #1, Using "####"; OL!(X, 2);
-			Print #1, Tab(21);
-			Print #1, Using "####"; OL!(X, 3);
-			Print #1, Tab(26);
+            Print #1, Using "##"; OL!(X, 16);
+            Print #1, Tab(16);
+            Print #1, Using "####"; OL!(X, 2);
+            Print #1, Tab(21);
+            Print #1, Using "####"; OL!(X, 3);
+            Print #1, Tab(26);
             Print #1, Using ".###"; OL!(X, 17);
-			Print #1, Tab(31);
-			Print #1, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
+            Print #1, Tab(31);
+            Print #1, Using "#### #### .###"; OL!(X, 4); OL!(X, 5); OL!(X, 18);
             Print #1, Tab(46);
-			Print #1, Using "####"; OL!(X, 6);
-			Print #1, Tab(51);
-			Print #1, Using "####"; OL!(X, 9);
-			Print #1, Tab(56);
-			Print #1, Using "####"; OL!(X, 7);
-			Print #1, Tab(61);
+            Print #1, Using "####"; OL!(X, 6);
+            Print #1, Tab(51);
+            Print #1, Using "####"; OL!(X, 9);
+            Print #1, Tab(56);
+            Print #1, Using "####"; OL!(X, 7);
+            Print #1, Tab(61);
             Print #1, Using "###"; OL!(X, 8);
-			Print #1, Tab(65);
-			Print #1, Using "###"; OL!(X, 10);
-			Print #1, Tab(69);
-			Print #1, Using "#####"; OL!(X, 20);
+            Print #1, Tab(65);
+            Print #1, Using "###"; OL!(X, 10);
+            Print #1, Tab(69);
+            Print #1, Using "#####"; OL!(X, 20);
             Print #1, Tab(75);
-			Print #1, Using "###.#"; OL!(X, 19)
+            Print #1, Using "###.#"; OL!(X, 19)
         End If
 
     Next

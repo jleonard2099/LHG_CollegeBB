@@ -72,14 +72,14 @@ Sub MergeStats ()
     Shared Ycurr%, Yroad%
 
     Shared statPlyrNames$()
-    Shared mergeH$(), HRP$()
-    Shared mergeO$(), ORP$(), gameSite$(), SITERP$()
+    Shared statH$(), HRP$()
+    Shared statO$(), ORP$(), gameSite$(), SITERP$()
 
     Shared ARD(), CRD(), CRDRD()
 
     Shared APRD%()
     Shared mergeO%(), mergeT%()
-    Shared mergeA(), mergeAP%()
+    Shared mergeA%(), mergeAP%()
     Shared ORD%(), TRD%()
 
     Shared statsW0!(), statsW1!()
@@ -176,7 +176,7 @@ Sub MergeStats ()
                             Input #3, statPlyrNames$(I)
 
                             For J = 0 To 13: 
-                                Input #3, mergeA(I, J)
+                                Input #3, mergeA%(I, J)
                             Next
 
                             Input #3, statsW0!(I)
@@ -200,11 +200,11 @@ Sub MergeStats ()
 
                         For I = 1 To NUM_STATRECORDS: Input #4, mergeO%(I): Next I
 
-                        For I = 1 To NUM_STATRECORDS: Input #4, mergeO$(I): Next I
+                        For I = 1 To NUM_STATRECORDS: Input #4, statO$(I): Next I
 
                         For I = 1 To NUM_STATRECORDS: Input #4, mergeT%(I): Next I
 
-                        For I = 1 To NUM_STATRECORDS: Input #4, mergeH$(I): Next I
+                        For I = 1 To NUM_STATRECORDS: Input #4, statH$(I): Next I
 
                         For I = 1 To NUM_STATRECORDS
 
@@ -323,12 +323,12 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Shared Ycurr%, Yroad%
 
     Shared statPlyrNames$()
-    Shared mergeH$(), HRP$()
-    Shared mergeO$(), ORP$(), gameSite$(), SITERP$()
+    Shared statH$(), HRP$()
+    Shared statO$(), ORP$(), gameSite$(), SITERP$()
 
     Shared APRD%(), ARD(), CRD(), CRDRD()
     Shared mergeO%(), mergeT%()
-    Shared mergeA(), mergeAP%()
+    Shared mergeA%(), mergeAP%()
     Shared ORD%(), TRD%()
     Shared W0RD!(), W1RD!()
 
@@ -339,9 +339,9 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     For K = 1 To Yroad%
         Ycurr% = Ycurr% + 1
         mergeO%(Ycurr%) = ORD%(K)
-        mergeO$(Ycurr%) = ORP$(K)
+        statO$(Ycurr%) = ORP$(K)
         mergeT%(Ycurr%) = TRD%(K)
-        mergeH$(Ycurr%) = HRP$(K)
+        statH$(Ycurr%) = HRP$(K)
         mergeAP%(Ycurr%, 0) = APRD%(Ycurr%, 0)
         mergeAP%(Ycurr%, 1) = APRD%(Ycurr%, 1)
         CRD(Ycurr%) = CRDRD(Ycurr%)
@@ -353,16 +353,16 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     For I = 0 To 13
 
         For J = 0 To 12: 
-            mergeA(I, J) = mergeA(I, J) + ARD(I, J)
+            mergeA%(I, J) = mergeA%(I, J) + ARD(I, J)
         Next J
 
         statsW0!(I) = statsW0!(I) + W0RD!(I)
         statsW1!(I) = statsW1!(I) + W1RD!(I)
 
-        If mergeA(I, 13) < ARD(I, 13) Then 
-            mergeA(I, 13) = ARD(I, 13) 
+        If mergeA%(I, 13) < ARD(I, 13) Then 
+            mergeA%(I, 13) = ARD(I, 13) 
         Else 
-            mergeA(I, 13) = mergeA(I, 13)
+            mergeA%(I, 13) = mergeA%(I, 13)
         End If
 
     Next I
@@ -378,7 +378,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     For I = 0 To 13: 
         Write #1, statPlyrNames$(I)
-        For J = 0 To 13: Write #1, mergeA(I, J): Next
+        For J = 0 To 13: Write #1, mergeA%(I, J): Next
         Write #1, statsW0!(I)
         Write #1, statsW1!(I)
     Next
@@ -395,11 +395,11 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     For I = 1 To NUM_STATRECORDS: Write #2, mergeO%(I): Next I
     
-    For I = 1 To NUM_STATRECORDS: Write #2, mergeO$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Write #2, statO$(I): Next I
 
     For I = 1 To NUM_STATRECORDS: Write #2, mergeT%(I): Next I
 
-    For I = 1 To NUM_STATRECORDS: Write #2, mergeH$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Write #2, statH$(I): Next I
 
     For I = 1 To NUM_STATRECORDS
         For I1 = 0 To 1: Write #2, mergeAP%(I, I1): Next

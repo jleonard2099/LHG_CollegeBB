@@ -10,7 +10,7 @@ Sub GameRecords (menuChoice)
 
     Shared REC!(), TREC!()
     
-    Shared recordsA$(), RC$(), TRC$()
+    Shared RC$(), TRC$()
 
     If Not _FileExists (diskPaths$(1) + "RECORDS.GAM") Then
 
@@ -68,7 +68,7 @@ End Sub
 Sub ViewGameRecords
 
     Shared REC!(), TREC!()
-    Shared recordsA$(), RC$(), TRC$()
+    Shared RC$(), TRC$()
 
     Dim HALF$(2), QTR$(6)
 
@@ -1084,7 +1084,7 @@ End Sub
 Sub PrintGameRecords ()
 
     Shared REC!(), TREC!()
-    Shared recordsA$(), RC$(), TRC$()
+    Shared RC$(), TRC$()
 
     Dim HALF$(2), QTR$(6)
 

@@ -3371,7 +3371,7 @@ Sub COLHOOP ()
 
             If RN0 > 35 Then
 
-                R3!(D) = R3!(D) + 1
+                gameR3!(D) = gameR3!(D) + 1
                 Call UPDATESCREEN
                 U$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
                 Call SELECTPBP
@@ -3408,7 +3408,7 @@ Sub COLHOOP ()
             Else
 
                 752 '
-                R3!(P) = R3!(P) + 1: Call UPDATESCREEN
+                gameR3!(P) = gameR3!(P) + 1: Call UPDATESCREEN
                 U$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
                 Call SELECTPBP
                 Call DELAY
@@ -3437,7 +3437,7 @@ Sub COLHOOP ()
             plyrOff_GAME!(P, B1(P, B), 7) = plyrOff_GAME!(P, B1(P, B), 7) + 1
             plyrOff_GAME!(P, B1(P, B), 8) = plyrOff_GAME!(P, B1(P, B), 8) + 1
             plyrOff_GAME!(P, B1(P, B), 11) = plyrOff_GAME!(P, B1(P, B), 11) + 1
-            R3!(P) = R3!(P) + 1
+            gameR3!(P) = gameR3!(P) + 1
             score(P, H) = score(P, H) + 2
             score(P, 0) = score(P, 0) + 2
             Call UPDATESCREEN
@@ -3599,7 +3599,7 @@ Sub COLHOOP ()
             End If
         End If
 
-        R3!(D) = R3!(D) + 1
+        gameR3!(D) = gameR3!(D) + 1
         plyrOff_GAME!(D, B1(D, B), 11) = plyrOff_GAME!(D, B1(D, B), 11) + 1
 
         Call UPDATESCREEN
@@ -3626,7 +3626,7 @@ Sub COLHOOP ()
     End If
 
     plyrOff_GAME!(D, B1(D, B), 11) = plyrOff_GAME!(D, B1(D, B), 11) + 1
-    R3!(D) = R3!(D) + 1
+    gameR3!(D) = gameR3!(D) + 1
     Call UPDATESCREEN
     U$ = players$(D, B1(D, B)) + " HAS THE DEF RB"
 
@@ -3692,7 +3692,7 @@ Sub COLHOOP ()
 
         plyrOff_GAME!(P, B1(P, B), 11) = plyrOff_GAME!(P, B1(P, B), 11) + 1
         plyrOff_GAME!(P, B1(P, B), 24) = plyrOff_GAME!(P, B1(P, B), 24) + 1
-        R3!(P) = R3!(P) + 1
+        gameR3!(P) = gameR3!(P) + 1
 
         Call UPDATESCREEN
 
@@ -3705,7 +3705,7 @@ Sub COLHOOP ()
 
     plyrOff_GAME!(P, B1(P, B), 24) = plyrOff_GAME!(P, B1(P, B), 24) + 1
     plyrOff_GAME!(P, B1(P, B), 11) = plyrOff_GAME!(P, B1(P, B), 11) + 1
-    R3!(P) = R3!(P) + 1
+    gameR3!(P) = gameR3!(P) + 1
     Call UPDATESCREEN
 
     U$ = players$(P, B1(P, B)) + " HAS THE OFF RB"

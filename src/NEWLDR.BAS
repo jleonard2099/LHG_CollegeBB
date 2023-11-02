@@ -67,7 +67,7 @@ Sub NEWLDR ()
 
                         Close #1
 
-                        Call UpdateExpandedLeaders(confStatFile$, expanZ1$(), JB, TS, TTS)
+                        Call UpdateExpandedLeaders(expanZ1$(), JB, TS, TTS)
                         Call SAVELEADER(confStatFile$, JB, TS, TTS)
 
                     End If
@@ -123,9 +123,9 @@ Sub ViewExpandedStats ()
 
         Close #1
 
-        Call READLEADER(conferenceFile$, JB, TS, TTS)
+        Call READLEADER(conferenceFile$, JB, tStats, ttStats)
 
-        Call ExpandedLeaders_Menu (JB, TS, TTS)
+        Call ExpandedLeaders_Menu (JB, tStats, ttStats)
 
     End If 'Done checking for ESC
 
@@ -140,12 +140,12 @@ End Sub
 'stats from those previously read in to
 'a variety of arrays.
 
-Sub UpdateExpandedLeaders (statFile$, Z1$(), JB, tStats, ttStats)
+Sub UpdateExpandedLeaders (Z1$(), JB, tStats, ttStats)
 
     Shared statPlyrNames$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
-    Shared playerOff!(), statsAL!()
+    Shared playerOff!(), leadersAL!()
     Shared GM!(), GMA!(), GM1!()
     Shared TT!(), TT1!()
     Shared statsW0!(), statsW1!(), W0L!(), W1L!()
@@ -226,7 +226,7 @@ Sub UpdateExpandedLeaders (statFile$, Z1$(), JB, tStats, ttStats)
 
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            statsAL!(JB, K1) = playerOff!(I, I1)
+                            leadersAL!(JB, K1) = playerOff!(I, I1)
                         Next I1
 
                     End If
@@ -255,7 +255,7 @@ Sub SAVELEADER (statFile$, JB, tStats, ttStats)
     Shared statPlyrNames$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
-    Shared statsAL!()
+    Shared leadersAL!()
     Shared GM!(), GMA!(), GM1!()
     Shared TT!(), TT1!()
     Shared W0L!(), W1L!()
@@ -278,7 +278,7 @@ Sub SAVELEADER (statFile$, JB, tStats, ttStats)
         Print Using "#####"; TMR%
 
         For I1 = 1 To 14:
-            Write #1, statsAL!(I, I1)
+            Write #1, leadersAL!(I, I1)
         Next I1
 
         Write #1, W0L!(I)
@@ -334,7 +334,7 @@ Sub READLEADER (statFile$, JB, tStats, ttStats)
     Shared statPlyrNames$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
 
-    Shared statsAL!()
+    Shared leadersAL!()
     Shared GM!(), GMA!(), GM1!()
     Shared TT!(), TT1!()
     Shared W0L!(), W1L!()
@@ -369,7 +369,7 @@ Sub READLEADER (statFile$, JB, tStats, ttStats)
             Print Using "#####"; TMR%
 
             For I1 = 1 To 14:
-                Input #1, statsAL!(I, I1)
+                Input #1, leadersAL!(I, I1)
             Next I1
 
             Input #1, W0L!(I)
@@ -424,7 +424,7 @@ End Sub
 'menu for viewing expanded leaders. It then
 'relies on various subroutines for the end
 'user display of those statistics.
-Sub ExpandedLeaders_Menu (JB, TS, TTS)
+Sub ExpandedLeaders_Menu (JB, tStats, ttStats)
 
     ReDim menuChoices$(1 To 3)
 
@@ -462,7 +462,7 @@ Sub ExpandedLeaders_Menu (JB, TS, TTS)
                     Call ViewIndividualLeaders (printOrView%, JB)
 
                 Case 2:
-                    Call ViewTeamLeaders(printOrView%, TS, TTS)
+                    Call ViewTeamLeaders(printOrView%, tStats, ttStats)
 
             End Select
 
@@ -485,7 +485,7 @@ Sub ViewIndividualLeaders (printOrView%, JB)
     Shared AL$()
     Shared TMA$(), TMM$(), TP$(), TPP$()
 
-    Shared statsAL!(), GMA!(), TYP!()
+    Shared leadersAL!(), GMA!(), TYP!()
     Shared W0L!(), W1L!()
 
     Do
@@ -580,12 +580,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
                 Case 0, 2 To 3, 8 To 9, 13 To 14, 16, 18 To 22:
 
                     For I = 1 To JB
-                        If statsAL!(I, X) <> 0 Then
+                        If leadersAL!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = statsAL!(I, X)
+                            TYP!(PPP) = leadersAL!(I, X)
                         End If
                     Next I
 
@@ -594,12 +594,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 1:
                     For I = 1 To JB
-                        If statsAL!(I, X) <> 0 Then
+                        If leadersAL!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (statsAL!(I, X) + 30) / 60
+                            TYP!(PPP) = (leadersAL!(I, X) + 30) / 60
                         End If
                     Next I
 
@@ -608,12 +608,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 4:
                     For I = 1 To JB
-                        If statsAL!(I, X) >= GMA!(I) * 3.65 Then
+                        If leadersAL!(I, X) >= GMA!(I) * 3.65 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = statsAL!(I, X) / statsAL!(I, X1)
+                            TYP!(PPP) = leadersAL!(I, X) / leadersAL!(I, X1)
                         End If
                     Next I
 
@@ -664,12 +664,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 10:
                     For I = 1 To JB
-                        If statsAL!(I, X) >= GMA!(I) * 1.52 Then
+                        If leadersAL!(I, X) >= GMA!(I) * 1.52 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = statsAL!(I, X) / statsAL!(I, X1)
+                            TYP!(PPP) = leadersAL!(I, X) / leadersAL!(I, X1)
                         End If
                     Next I
 
@@ -678,12 +678,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 11:
                     For I = 1 To JB
-                        If (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I) <> 0 Then
+                        If (leadersAL!(I, X) * 2) + leadersAL!(I, X1) + W0L!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I)
+                            TYP!(PPP) = (leadersAL!(I, X) * 2) + leadersAL!(I, X1) + W0L!(I)
                         End If
                     Next I
 
@@ -692,12 +692,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 12:
                     For I = 1 To JB
-                        If (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I) <> 0 And statsAL!(I, X2) <> 0 Then
+                        If (leadersAL!(I, X) * 2) + leadersAL!(I, X1) + W0L!(I) <> 0 And leadersAL!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I)) / statsAL!(I, X2)
+                            TYP!(PPP) = ((leadersAL!(I, X) * 2) + leadersAL!(I, X1) + W0L!(I)) / leadersAL!(I, X2)
                         End If
                     Next I
 
@@ -706,12 +706,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 15:
                     For I = 1 To JB
-                        If statsAL!(I, X) - statsAL!(I, X1) <> 0 Then
+                        If leadersAL!(I, X) - leadersAL!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = statsAL!(I, X) - statsAL!(I, X1)
+                            TYP!(PPP) = leadersAL!(I, X) - leadersAL!(I, X1)
                         End If
                     Next I
 
@@ -720,12 +720,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 17:
                     For I = 1 To JB
-                        If statsAL!(I, X) <> 0 Then
+                        If leadersAL!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = statsAL!(I, X) / statsAL!(I, X1)
+                            TYP!(PPP) = leadersAL!(I, X) / leadersAL!(I, X1)
                         End If
                     Next I
 
@@ -734,12 +734,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 23:
                     For I = 1 To JB
-                        If (statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I) <> 0 And statsAL!(I, X2) <> 0 Then
+                        If (leadersAL!(I, X) * 2) + leadersAL!(I, X1) + W0L!(I) <> 0 And leadersAL!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (((statsAL!(I, X) * 2) + statsAL!(I, X1) + W0L!(I))) * 48 / ((statsAL!(I, X2) + 30) / 60)
+                            TYP!(PPP) = (((leadersAL!(I, X) * 2) + leadersAL!(I, X1) + W0L!(I))) * 48 / ((leadersAL!(I, X2) + 30) / 60)
                         End If
                     Next I
 
@@ -748,12 +748,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 24 To 29:
                     For I = 1 To JB
-                        If statsAL!(I, X) <> 0 And statsAL!(I, X1) <> 0 Then
+                        If leadersAL!(I, X) <> 0 And leadersAL!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (statsAL!(I, X)) * 48 / ((statsAL!(I, X1) + 30) / 60)
+                            TYP!(PPP) = (leadersAL!(I, X)) * 48 / ((leadersAL!(I, X1) + 30) / 60)
                         End If
                     Next I
 
@@ -762,12 +762,12 @@ Sub ViewIndividualLeaders (printOrView%, JB)
 
                 Case 30:
                     For I = 1 To JB
-                        If statsAL!(I, X) <> 0 And statsAL!(I, X1) <> 0 Then
+                        If leadersAL!(I, X) <> 0 And leadersAL!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((statsAL!(I, X) + 30) / 60) / statsAL!(I, X1)
+                            TYP!(PPP) = ((leadersAL!(I, X) + 30) / 60) / leadersAL!(I, X1)
                         End If
                     Next I
 
@@ -1074,7 +1074,7 @@ Sub SortOptions (JB, ZZ, printOrView%, sortType%)
                     Case "V": printOrView% = 1
                     Case "R":
                         If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, TS, TTS)
+                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, tStats, ttStats)
                 End Select
 
                 sortType% = 1
@@ -1088,14 +1088,14 @@ Sub SortOptions (JB, ZZ, printOrView%, sortType%)
                     Case "R":
                         'I$ = "R" will also put us into the next "R" statement
                         If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, TS, TTS)
+                        If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, tStats, ttStats)
                 End Select
 
                 sortType% = 2
 
             Case "R":
                 If ZZ = 1 Then Call ViewIndividualLeaders(JB, printOrView%)
-                If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, TS, TTS)
+                If ZZ = 3 Then Call ViewTeamLeaders(printOrView%, tStats, ttStats)
 
         End Select
 

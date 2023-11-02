@@ -67,7 +67,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared statPlyrNames$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), statO$()
 
     ' *** READ IN TEAM STATS ***
 
@@ -89,7 +89,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
 
-    For I = 1 To NUM_STATRECORDS: Input #1, compO$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Input #1, statO$(I): Next I
 
     For I = 1 To NUM_STATRECORDS: Input #1, mergeT%(I): Next I
 
@@ -177,7 +177,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared mergeT%(), mergeO%()
 
-    Shared statPlyrNames$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), statO$()
 
     Color , 0
     Cls
@@ -205,7 +205,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
         If I > 36 Then
             Locate I - 35, 53: Print Using "###"; mergeO%(I);
-            Print Tab(57); Left$(compO$(I), 14);
+            Print Tab(57); Left$(statO$(I), 14);
             Print Tab(72); Using "###"; mergeT%(I);
             Print Tab(76); homeTeam$(I)
 
@@ -213,12 +213,12 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
             If I > 18 Then
                 Locate I - 17, 27: Print Using "###"; mergeO%(I);
-                Print Tab(31); Left$(compO$(I), 14);
+                Print Tab(31); Left$(statO$(I), 14);
                 Print Tab(46); Using "###"; mergeT%(I);
                 Print Tab(50); homeTeam$(I)
             Else
                 Print Using "###"; mergeO%(I);
-                Print Tab(5); Left$(compO$(I), 14);
+                Print Tab(5); Left$(statO$(I), 14);
                 Print Tab(20); Using "###"; mergeT%(I);
                 Print Tab(24); homeTeam$(I)
             End If
@@ -683,7 +683,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared mergeO%(), mergeT%()
 
-    Shared compO$()
+    Shared statO$()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -718,7 +718,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
             If I <= 72 Then
 
                 Print Using "###"; mergeO%(I);
-                Print Tab(5); Left$(compO$(I), 14);
+                Print Tab(5); Left$(statO$(I), 14);
                 Print Tab(20); Using "###"; mergeT%(I);
                 Print Tab(24); homeTeam$(I)
 
@@ -726,7 +726,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
                 Locate I - 71, 27
                 Print Using "###"; mergeO%(I);
-                Print Tab(31); Left$(compO$(I), 14);
+                Print Tab(31); Left$(statO$(I), 14);
                 Print Tab(46); Using "###"; mergeT%(I);
                 Print Tab(50); homeTeam$(I)
 
@@ -805,7 +805,7 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
     Shared values!(), statsW0!(), statsW1!(), statsZ!(), statsZ1!()
 
     Shared mergeT%(), mergeO%()
-    Shared statPlyrNames$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), statO$()
 
     LPrint "SCHEDULE RESULTS FOR "; teamName$
     LPrint
@@ -813,19 +813,19 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
     For I = 1 To 28
 
         LPrint Using "###"; mergeO%(I);
-        LPrint Tab(5); Left$(compO$(I), 14);
+        LPrint Tab(5); Left$(statO$(I), 14);
         LPrint Tab(20); Using "###"; mergeT%(I);
         LPrint Tab(24); homeTeam$(I); Tab(27);
 
         If I + 28 <= totalGames% Then
             LPrint Using "###"; mergeO%(I + 28);
-            LPrint Tab(31); Left$(compO$(I + 28), 14);
+            LPrint Tab(31); Left$(statO$(I + 28), 14);
             LPrint Tab(46); Using "###"; mergeT%(I + 28);
             LPrint Tab(50); homeTeam$(I + 28); Tab(53);
 
             If I + 56 <= totalGames% Then
                 LPrint Using "###"; mergeO%(I + 56);
-                LPrint Tab(57); Left$(compO$(I + 56), 14);
+                LPrint Tab(57); Left$(statO$(I + 56), 14);
                 LPrint Tab(72); Using "###"; mergeT%(I + 56);
                 LPrint Tab(76); homeTeam$(I + 56)
             Else
@@ -860,7 +860,7 @@ Sub PrintStatsSummary (teamName$, totalGames%)
     Shared values!(), statsW0!(), statsW1!(), statsZ!(), statsZ1!()
 
     Shared mergeT%(), mergeO%()
-    Shared statPlyrNames$(), homeTeam$(), compO$()
+    Shared statPlyrNames$(), homeTeam$(), statO$()
 
     LPrint "STATISTICS SUMMARY FOR "; teamName$
     LPrint "NAME"; Tab(15);

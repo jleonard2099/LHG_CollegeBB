@@ -9,9 +9,16 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
-'-- what else can fit here?
+Dim statsA!(15, 14)
 Dim statsW0!(15), statsW1!(15)
 Dim statsZ!(15), statsZ1!(15)
+Dim statsZ2!(13, 13)
+
+Dim gameSite$(NUM_STATRECORDS), SITERP$(NUM_STATRECORDS)
+Dim HO$(NUM_STATRECORDS)
+Dim HRP$(NUM_STATRECORDS), ORP$(NUM_STATRECORDS)
+Dim statH$(NUM_STATRECORDS), statO$(NUM_STATRECORDS) 
+
 
 ' *** Schedule Data ***
 ' -------------------------
@@ -26,11 +33,11 @@ Dim coachMode$(0 To 1), foulShotOpt$(0 To 2)
 Dim location$(0 To 2), modeAbbrev$(0 To 3)
 Dim playMode$(0 To 3), sclockOpt$(0 To 3)
 Dim teamIndicator$(1)
-Dim threeFtOpt$(0 To 1), threePtOpt$(0 To 1), yesNo$(0 To 1)
+Dim yesNo$(0 To 1)
 
 ' *** Miscellaneous Use ***
 ' -------------------------
-Dim finalUpdate%
+'Dim doPostLeaders
 Dim replayLosses%, replayWins%
 
 '----------------------------------------
@@ -39,11 +46,10 @@ Dim replayLosses%, replayWins%
 Dim Ycurr%, Yroad%
 
 Dim alignAR$(15), AN$(15)
-Dim mergeH$(NUM_STATRECORDS), HRP$(NUM_STATRECORDS)
-Dim mergeO$(NUM_STATRECORDS), ORP$(NUM_STATRECORDS), gameSite$(NUM_STATRECORDS), SITERP$(NUM_STATRECORDS)
 
-Dim APRD%(NUM_STATRECORDS, 1), ARD(14, 14), CRD(NUM_STATRECORDS), CRDRD(NUM_STATRECORDS)
-Dim mergeA(14, 14), mergeAP%(NUM_STATRECORDS, 1)
+Dim APRD%(NUM_STATRECORDS, 1), ARD(14, 14)
+Dim CRD(NUM_STATRECORDS), CRDRD(NUM_STATRECORDS)
+Dim mergeA%(14, 14), mergeAP%(NUM_STATRECORDS, 1)
 Dim mergeO%(NUM_STATRECORDS), mergeT%(NUM_STATRECORDS)
 Dim ORD%(NUM_STATRECORDS), TRD%(NUM_STATRECORDS)
 
@@ -54,24 +60,22 @@ Dim W0RD!(15), W1RD!(15)
 Dim ZR!(15), ZR1!(15)
 Dim ZRD!(15), ZRD1!(15)
 
-
 '----------------------------------------
 ' Used in CAREER / LEADER routines
 '----------------------------------------
-Dim AR$(62)
 Dim ARS!(15, 62, 15)
 Dim W0S!(15, 62), W1S!(15, 62)
-
-Dim JB, tStats, ttStats
 
 Dim AL$(600), expanTT$(40, 15)
 Dim TMA$(600), TP$(31), TP1$(39), TT1$(40, 15)
 
+'-- does the "R" refer to "Replay"?
+'-- for instance, A$ is player Names; AR$ is player names in the replay stats?
+Dim careerAR$(62)
 Dim TMM$(600), TPP$(600)
 
-'These should all be single
 Dim GM!(1 To 40), GM1!(1 To 40), GMA!(600)
-Dim statsAL!(1 To 600, 0 To 14)
+Dim leadersAL!(1 To 600, 0 To 14)
 Dim TT!(40, 15), TT1!(40, 15)
 Dim TYP!(600)
 Dim W0L!(600), W1L!(600)
@@ -80,12 +84,11 @@ Dim W0L!(600), W1L!(600)
 '----------------------------------------
 ' Used in COMPARE routines
 '----------------------------------------
-Dim HP%(NUM_STATRECORDS), compareleagRat_GAME(6), OP%(NUM_STATRECORDS)
+Dim HP%(NUM_STATRECORDS), OP%(NUM_STATRECORDS)
 
-Dim compareA!(15, 14)
-Dim A1!(13, 6), X1!(13, 6)
+Dim X1!(13, 6)
 
-Dim compareB$(14), H1$(40), HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
+Dim H1$(40), HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
 
 
 '----------------------------------------
@@ -99,9 +102,7 @@ Dim LD!(1 To 250, 0 To 2)
 Dim NDL!(1 To 40, 1 To 20), NLD!(1 To 250, 1 To 2), NOL!(1 To 40, 1 To 20)
 Dim compS!(0 To 14, 0 To 26)
 
-
-Dim compH$(NUM_STATRECORDS), compN$(0 To 14)
-Dim categories$(25), compO$(NUM_STATRECORDS)
+Dim categories$(25)
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
@@ -137,7 +138,7 @@ Dim teamYears$(1), tmName_DRAFT$(1)
 '   Used in Head-To-Head routines
 '----------------------------------------
 Dim AL!(50), AW!(50), HL!(50), HW!(50)
-Dim R1!(50), R2!(50), R3_HD2HD!(50), R4!(50)
+Dim R1!(50), R2!(50), hd2hdR3!(50), R4!(50)
 Dim TAW!(40), THW!(40), THL!(40), TAL!(40)
 Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 
@@ -145,15 +146,13 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 '----------------------------------------
 ' Used in RECORDS routines
 '----------------------------------------
-'---> these should be Single
-Dim REC!(50, 2), TREC!(125, 2)
-
-Dim recordsA$(5), RC$(50, 4), TRC$(125, 3)
-
 Dim BRC!(32), TRC!(1 To 21), TRC1!(1 To 21)
-Dim BRC$(32, 1), recconTRC$(1 To 21), recconTRC1$(1 To 21)
+Dim REC!(50, 2), TREC!(0 to 125, 0 to 2)
 
-Dim TT$(20), recconTB$(25)
+Dim BRC$(32, 1), recconTRC$(1 To 21), recconTRC1$(1 To 21)
+Dim RC$(50, 4), TRC$(0 to 125, 0 to 3)
+
+Dim recconTB$(25), recconTT$(20)
 
 
 '----------------------------------------
@@ -169,12 +168,15 @@ Dim values!(0 To 14, 24)
 ' Used in SEExxx routines
 '----------------------------------------
 Dim DL$(60), OL$(60), NOL$(1 To 60), PR$(1200)
-Dim DL!(60, 20), OL!(60, 20) ', seeconP(60)
+Dim seeT$(30)
+
+Dim DL!(60, 20), OL!(60, 20)
 Dim O1!(30), O2!(30), O3!(30), O4!(30), O5!(30), O6!(30)
-Dim seenatZ!(260), seenatZ1!(260)
-Dim seenatZ1$(260), seenatZ2$(260), seenatZ3$(260)
+
+Dim seeZ!(260), seeZ1!(260)
+Dim seeZ1$(260), seeZ2$(260), seeZ3$(260)
+
 Dim PT#(1200, 5)
-Dim T$(30)
 
 
 '----------------------------------------
@@ -183,9 +185,8 @@ Dim T$(30)
 Dim BS%, NS%
 Dim N$
 
-Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
-
 Dim scheduleAP%(1), scheduleZ1%(1 To 30)
+Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
 
 Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
 Dim scheduleYN$(MAX_GAMES, 1)
@@ -251,13 +252,14 @@ Dim Shared F!
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, prevBall$
-Dim Shared tourneyFile$, U$, VT$, VT1$, W$, opp3FGAPct$, YN$
+Dim Shared tourneyFile$, U$, VT$, VT1$, W$, YN$
 
-'-- FA%() I believe is related to tracking player fatigue
-Dim Shared APT%(NUM_STATRECORDS, 1), B%(1, 13), CZ%(1)
-Dim Shared F5%(0 To 1, 0 To 8), FY%(0 to 1)
-Dim Shared G9%(1), HF%(1, 6), HT%(NUM_STATRECORDS), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
-Dim Shared O%(NUM_STATRECORDS), offStrat(1), PC%(1), PR%(1, 1)
+Dim Shared APT%(NUM_STATRECORDS, 1)
+Dim Shared HT%(NUM_STATRECORDS), O%(NUM_STATRECORDS)
+
+Dim Shared B%(1, 13), CZ%(1), F5%(0 To 1, 0 To 8), FY%(0 To 1)
+Dim Shared G9%(1), HF%(1, 6), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
+Dim Shared offStrat(1), PC%(1), PR%(1, 1)
 Dim Shared ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TM%(1, 13), TP%(1)
 Dim Shared VG%(8), VH%(8), YR%(1)
@@ -273,14 +275,13 @@ Dim Shared teamRat_GAME(1, 9), teamStamina(1), threeFG(1, 13, 1)
 Dim Shared timeouts(1), timePlayed(1, 13), tmFatigue(1, 13), turnovers(1)
 Dim Shared W2(1, 13), W3(1, 13), Z5(1), Z6(1)
 
+Dim Shared gameR3!(1)
 Dim Shared plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
-Dim Shared R3!(1), W0!(1, 13), W1!(1, 13)
+Dim gameW0!(1, 13), gameW1!(1, 13)
 
-Dim Shared players$(1, 13), defStyles$(15), defStyles_brief$(14)
+Dim Shared defStyles$(15), defStyles_brief$(14)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
-Dim Shared H$(NUM_STATRECORDS), HO$(NUM_STATRECORDS), LC$(2), N$(16, 16, 0 To 4), offStyles$(9), offStyles_brief$(9)
-Dim Shared pbpType$(1), PS$(4), R$(14), SITE$(NUM_STATRECORDS), SX$(32, 2)
-Dim Shared PO$(1, 13)
+Dim Shared N$(16, 16, 0 To 4), offStyles$(9), offStyles_brief$(9)
+Dim Shared pbpType$(1), players$(1, 13), PO$(1, 13), PS$(4)
+Dim Shared R$(14), SITE$(NUM_STATRECORDS), SX$(32, 2)
 Dim Shared X$(3), Y$(1), YN$(5), YN1$(3)
-
-Dim Shared Z!(15), Z1!(15), Z2!(13, 13)

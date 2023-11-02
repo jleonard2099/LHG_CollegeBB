@@ -125,7 +125,7 @@ Sub MergeFirstYear ()
     Dim careerW0!(62), careerW1!(62)
     Dim careerZ!(15), careerZ1!(15)
 
-    Shared AR$()
+    Shared careerAR$()
     Shared ARS!()
     Shared W0S!(), W1S!()
 
@@ -168,7 +168,7 @@ Sub MergeFirstYear ()
                     K$ = GetKeyPress$
                 Loop Until UCase$(K$) = "Y" Or UCase$(K$) = "N" Or K$ = Chr$(27)
 
-                If UCase$(K$) = "Y" Then finalUpdate% = 1 Else finalUpdate% = 0
+                If UCase$(K$) = "Y" Then doPostLeaders = 1 Else doPostLeaders = 0
 
                 If Not _FileExists(diskPaths$(1) + statFile$) Then
 
@@ -235,9 +235,9 @@ Sub MergeFirstYear ()
 
                     Next I
 
-                    For I = 0 To 61: AR$(I) = careerA$(I): Next
+                    For I = 0 To 61: careerAR$(I) = careerA$(I): Next
 
-                    If finalUpdate% = 1 Then Call UpdateCareerLeaders(careerFile$)
+                    If doPostLeaders = 1 Then Call UpdateCareerLeaders(careerFile$)
 
                     Locate 20, 5
                     Color 15: Print "MERGING AND UPDATING CAREER STATS . . . . PLEASE WAIT"
@@ -250,7 +250,7 @@ Sub MergeFirstYear ()
 
                         For I = 0 To 61
 
-                            Write #2, AR$(I)
+                            Write #2, careerAR$(I)
 
                             For J = 0 To 15
                                 Write #2, ARS!(N, I, J)
@@ -502,7 +502,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
     Dim careerW0!(62), careerW1!(62)
     Dim careerZ!(15), careerZ1!(15)
 
-    Shared AR$()
+    Shared careerAR$()
     Shared ARS!(), W0S!(), W1S!()
 
     TMR1% = 1875
@@ -526,7 +526,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
             finalUpdate$ = UCase$(K$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N" Or K$ = Chr$(27)
 
-        If finalUpdate$ = "Y" Then finalupdate% = 1 Else finalupdate% = 0
+        If finalUpdate$ = "Y" Then doPostLeaders = 1 Else doPostLeaders = 0
 
         Locate 20, 5
         Print "LOADING CAREER STATS . . . . PLEASE WAIT"
@@ -539,7 +539,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
             For I = 0 To 61:
 
-                Input #1, AR$(I)
+                Input #1, careerAR$(I)
 
                 For J = 0 To 15:
                     Input #1, ARS!(N, I, J)
@@ -594,7 +594,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
             For J = 0 To 61
 
-                If AR$(J) = careerA$(I) Then
+                If careerAR$(J) = careerA$(I) Then
 
                     For W = 1 To 15
                         If ARS!(W, J, 15) = statYear Then
@@ -630,7 +630,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
                         If careerA$(I) <> "END" And careerA$(I) <> "XXX" And careerA$(I) <> "" Then
 
                             NB% = NB% + 1
-                            AR$(NB%) = careerA$(I)
+                            careerAR$(NB%) = careerA$(I)
                             N = 1
 
                             For K = 0 To 13: ARS!(N, NB%, K) = A(I, K): Next
@@ -643,13 +643,13 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
                     End If
 
-                End If 'Done comparing AR$() to careerA$()
+                End If 'Done comparing careerAR$() to careerA$()
 
             Next J
 
         Next I
 
-        If finalUpdate% = 1 Then Call UpdateCareerLeaders(selectedFile$)
+        If doPostLeaders = 1 Then Call UpdateCareerLeaders(selectedFile$)
 
         Locate 20, 5
         Print "MERGING CAREER STATS . . . . PLEASE WAIT"
@@ -662,7 +662,7 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
             For I = 0 To 61
 
-                Write #3, AR$(I)
+                Write #3, careerAR$(I)
 
                 For J = 0 To 15:
                     Write #3, ARS!(N, I, J)
@@ -699,7 +699,7 @@ Sub UpdateCareerLeaders (targetFile$)
     Dim BL$(21)
     Dim BLYR(21), BL(21)
 
-    Shared AR$()
+    Shared careerAR$()
     Shared ARS!(), W0S!(), W1S!()
 
     If _FileExists(diskPaths$(1) + targetFile$ + ".CLD") Then
@@ -716,7 +716,7 @@ Sub UpdateCareerLeaders (targetFile$)
 
     For I = 0 To 61
 
-        If AR$(I) <> "" And AR$(I) <> "XXX" And AR$(I) <> "END" Then
+        If careerAR$(I) <> "" And careerAR$(I) <> "XXX" And careerAR$(I) <> "END" Then
 
             For J = 1 To 15
 
@@ -724,132 +724,132 @@ Sub UpdateCareerLeaders (targetFile$)
 
                     If ARS!(J, I, 1) > BL(0) Then
                         BL(0) = ARS!(J, I, 1)
-                        BL$(0) = AR$(I)
+                        BL$(0) = careerAR$(I)
                         BLYR(0) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 2) > BL(1) Then
                         BL(1) = ARS!(J, I, 2)
-                        BL$(1) = AR$(I)
+                        BL$(1) = careerAR$(I)
                         BLYR(1) = ARS!(J, I, 15)
                     End If
 
                     If Not (ARS!(J, I, 1) = 0 Or ARS!(J, I, 1) / ARS!(J, I, 0) < 3.65) Then
                         If ARS!(J, I, 2) / ARS!(J, I, 1) > BL(2) Then
                             BL(2) = ARS!(J, I, 2) / ARS!(J, I, 1)
-                            BL$(2) = AR$(I)
+                            BL$(2) = careerAR$(I)
                             BLYR(2) = ARS!(J, I, 15)
                         End If
                     End If
 
                     If ARS!(J, I, 4) > BL(3) Then
                         BL(3) = ARS!(J, I, 4)
-                        BL$(3) = AR$(I): BLYR(3) = ARS!(J, I, 15)
+                        BL$(3) = careerAR$(I): BLYR(3) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 3) > BL(4) Then
                         BL(4) = ARS!(J, I, 3)
-                        BL$(4) = AR$(I)
+                        BL$(4) = careerAR$(I)
                         BLYR(4) = ARS!(J, I, 15)
                     End If
 
                     If Not (ARS!(J, I, 3) = 0 Or ARS!(J, I, 3) / ARS!(J, I, 0) < 1.5) Then
                         If ARS!(J, I, 4) / ARS!(J, I, 3) > BL(5) Then
                             BL(5) = ARS!(J, I, 4) / ARS!(J, I, 3)
-                            BL$(5) = AR$(I): BLYR(5) = ARS!(J, I, 15)
+                            BL$(5) = careerAR$(I): BLYR(5) = ARS!(J, I, 15)
                         End If
                     End If
 
                     If W0S!(J, I) > BL(6) Then
                         BL(6) = W0S!(J, I)
-                        BL$(6) = AR$(I)
+                        BL$(6) = careerAR$(I)
                         BLYR(6) = ARS!(J, I, 15)
                     End If
 
                     If W1S!(J, I) > BL(7) Then
                         BL(7) = W1S!(J, I)
-                        BL$(7) = AR$(I)
+                        BL$(7) = careerAR$(I)
                         BLYR(7) = ARS!(J, I, 15)
                     End If
 
                     If Not (W1S!(J, I) = 0 Or W1S!(J, I) / ARS!(J, I, 0) < .3) Then
                         If W0S!(J, I) / W1S!(J, I) > BL(8) Then
                             BL(8) = W0S!(J, I) / W1S!(J, I)
-                            BL$(8) = AR$(I)
+                            BL$(8) = careerAR$(I)
                             BLYR(8) = ARS!(J, I, 15)
                         End If
                     End If
 
                     If ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I) > BL(9) Then
                         BL(9) = ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I)
-                        BL$(9) = AR$(I): BLYR(9) = ARS!(J, I, 15)
+                        BL$(9) = careerAR$(I): BLYR(9) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 0) <> 0 Then
                         If (ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I)) / ARS!(J, I, 0) > BL(10) Then
                             BL(10) = (ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + W0S!(J, I)) / ARS!(J, I, 0)
-                            BL$(10) = AR$(I)
+                            BL$(10) = careerAR$(I)
                             BLYR(10) = ARS!(J, I, 15)
                         End If
                     End If
 
                     If ARS!(J, I, 12) > BL(11) Then
                         BL(11) = ARS!(J, I, 12)
-                        BL$(11) = AR$(I): BLYR(11) = ARS!(J, I, 15)
+                        BL$(11) = careerAR$(I): BLYR(11) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 5) - ARS!(J, I, 12) > BL(12) Then
                         BL(12) = ARS!(J, I, 5) - ARS!(J, I, 12)
-                        BL$(12) = AR$(I): BLYR(12) = ARS!(J, I, 15)
+                        BL$(12) = careerAR$(I): BLYR(12) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 5) > BL(13) Then
                         BL(13) = ARS!(J, I, 5)
-                        BL$(13) = AR$(I)
+                        BL$(13) = careerAR$(I)
                         BLYR(13) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 0) <> 0 Then
                         If ARS!(J, I, 5) / ARS!(J, I, 0) > BL(14) Then
                             BL(14) = ARS!(J, I, 5) / ARS!(J, I, 0)
-                            BL$(14) = AR$(I)
+                            BL$(14) = careerAR$(I)
                             BLYR(14) = ARS!(J, I, 15)
                         End If
                     End If
 
                     If ARS!(J, I, 6) > BL(15) Then
                         BL(15) = ARS!(J, I, 6)
-                        BL$(15) = AR$(I)
+                        BL$(15) = careerAR$(I)
                         BLYR(15) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 8) > BL(16) Then
                         BL(16) = ARS!(J, I, 8)
-                        BL$(16) = AR$(I)
+                        BL$(16) = careerAR$(I)
                         BLYR(16) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 9) > BL(17) Then
                         BL(17) = ARS!(J, I, 9)
-                        BL$(17) = AR$(I)
+                        BL$(17) = careerAR$(I)
                         BLYR(17) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 7) > BL(18) Then
                         BL(18) = ARS!(J, I, 7)
-                        BL$(18) = AR$(I)
+                        BL$(18) = careerAR$(I)
                         BLYR(18) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 11) > BL(19) Then
                         BL(19) = ARS!(J, I, 11)
-                        BL$(19) = AR$(I)
+                        BL$(19) = careerAR$(I)
                         BLYR(19) = ARS!(J, I, 15)
                     End If
 
                     If ARS!(J, I, 13) <= BL(20) Then
                         BL(20) = ARS!(J, I, 13)
-                        BL$(20) = AR$(I)
+                        BL$(20) = careerAR$(I)
                         BLYR(20) = ARS!(J, I, 15)
                     End If
 

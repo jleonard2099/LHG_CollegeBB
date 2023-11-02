@@ -183,7 +183,7 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
             'Color 31: Print "LOADING..."
 
             Call ReadTeam(yearNumber$, teamName$, selectedIdx)
-            Call ReadExtraData(yearNumber$, teamName$, selectedIdx)
+            Call ReadExtraData(yearNumber$, selectedIdx)
 
         End If
 
@@ -264,7 +264,7 @@ End Sub
 'This routine is highly customized TO
 ' the specific game for which it has
 ' been included for.
-Sub ReadExtraData (teamYear$, targetTeam$, teamIdx)
+Sub ReadExtraData (teamYear$, teamIdx)
 
     Shared CK, teamAttendance&
 
@@ -276,13 +276,13 @@ Sub ReadExtraData (teamYear$, targetTeam$, teamIdx)
 
     If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
 
-		MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
-		BoxWidth = 20
-		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-		Call CSMsgBox(MsgText$, BoxWidth, Pass)
-		I$ = GetKeyPress$
-		Call CSMsgBox("", 0, Pass)
+        MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
+        BoxWidth = 20
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, Pass)
 
     Else
 

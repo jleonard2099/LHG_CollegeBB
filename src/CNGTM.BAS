@@ -54,11 +54,11 @@ Sub CNGTM (userChoice)
 
                 Case 2:
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-                    If teamNbr > 0 Then Call PrintRoster(team$, teamNbr)
+                    If teamNbr > 0 Then Call PrintRoster(team$)
 
                 Case 3:
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-                    If teamNbr > 0 Then Call ViewRoster(team$, teamNbr)
+                    If teamNbr > 0 Then Call ViewRoster(team$)
 
             End Select
 
@@ -500,21 +500,8 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
             Else
                 'We need to warn the user that
                 'our total doesn't add up!!
-                JJ = 4
+                Call box0 (6, 8, 11, 70, 2, 15, 1)
 
-                Locate 6, 8
-                Color 15, 1
-
-                Print " "; Chr$(201); String$(61, 205); Chr$(187); " ";
-
-                For II = 1 To JJ:
-                    Locate 6 + II, 8
-                    Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-                Next
-
-                Locate 7 + JJ, 8
-
-                Print " "; Chr$(200); String$(61, 205); Chr$(188); " ";
                 Locate 7
 
                 U$ = "TOTAL CONTRIBUTION MUST BE 100 %"
@@ -543,7 +530,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the default printer
-Sub PrintRoster (A$, T1)
+Sub PrintRoster (teamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj%, staminaRating%
@@ -558,7 +545,7 @@ Sub PrintRoster (A$, T1)
 
     Cls
 
-    LPrint "TEAM ROSTER FOR "; A$
+    LPrint "TEAM ROSTER FOR "; teamName$
     LPrint
     LPrint "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj%
     LPrint "OPP PCT OF 3FG ATT ADJ = "; def3FGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
@@ -597,7 +584,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the user's display
-Sub ViewRoster (A$, T1)
+Sub ViewRoster (teamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj%, staminaRating%
@@ -614,7 +601,7 @@ Sub ViewRoster (A$, T1)
     Cls
 
     Print "TEAM ROSTER FOR ";
-    Color teamRatings%(0), teamRatings%(1): Print A$
+    Color teamRatings%(0), teamRatings%(1): Print teamName$
 
     Color 14, 0
     Print "    AVG SHOTS PER GAME = ";

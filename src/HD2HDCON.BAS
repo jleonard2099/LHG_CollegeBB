@@ -2,8 +2,8 @@
 '          HD2HDCON Subroutine
 '----------------------------------------
 'This subroutine reads in stats from the
-'selected team and then presents the user 
-'a menu of options for viewing Head-to-Head 
+'selected team and then presents the user
+'a menu of options for viewing Head-to-Head
 'team comparisons.
 Sub HD2HDCON ()
 
@@ -12,17 +12,17 @@ Sub HD2HDCON ()
     Shared mergeO%()
 
     Shared AL!(), AW!(), HL!(), HW!()
-    Shared R1!(), R2!(), R3_HD2HD!(), R4!()
+    Shared R1!(), R2!(), hd2hdR3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    Shared compO$(), compareB$(), homeTeam$(), Z1$()
+    Shared statO$(), homeTeam$(), Z1$()
 
     Dim teamRat_HD2HD(NUM_STATRECORDS), Z1_HD2HD(40)
 
-    Dim A_HD2HD$(14, 1), DV$(4)
-    Dim OPP$(NUM_STATRECORDS), TM1$(40)
-    Dim Z2_HD2HD$(40), ZA$(40)
+    'xxDim A_HD2HD$(14, 1), DV$(4)
+    'xxDim OPP$(NUM_STATRECORDS), TM1$(40), ZA$(40)
+    Dim Z2_HD2HD$(40)
 
     Shared D1$, D2$
 
@@ -47,7 +47,7 @@ Sub HD2HDCON ()
 
         For J = 1 To NUM_STATRECORDS: Input #1, mergeO%(J): Next
 
-        For J = 1 To NUM_STATRECORDS: Input #1, compO$(J): Next
+        For J = 1 To NUM_STATRECORDS: Input #1, statO$(J): Next
 
         For J = 1 To NUM_STATRECORDS: Input #1, teamRat_HD2HD(J): Next
 
@@ -61,7 +61,7 @@ Sub HD2HDCON ()
 
             Cls
 
-			Call MenuBox (8, 8, 61, 5, 15, 1)
+            Call MenuBox (8, 8, 61, 5, 15, 1)
 
             Do
 
@@ -111,7 +111,7 @@ Sub HD2HDCON ()
             Locate 18, 18: Print "COMPUTING W/L/T RECORDS . . . PLEASE WAIT"
 
             Erase AL!, AW!, HL!, HW!
-            Erase R1!, R2!, R3_HD2HD!, R4!
+            Erase R1!, R2!, hd2hdR3!, R4!
             Erase TAL!, TAW!, THL!, THW!, TR1!, TR2!, TR3!, TR4!
 
             For K = 1 To 30
@@ -119,14 +119,14 @@ Sub HD2HDCON ()
                 If Z1$(K) <> "XXX" Then
 
                     For I = 1 To Y
-                        If mergeO%(I) > teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-                        If mergeO%(I) > teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-                        If mergeO%(I) < teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And compO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
-                        If mergeO%(I) < teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And compO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
-                        If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + teamRat_HD2HD(I)
-                        If compO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + mergeO%(I)
-                        If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + teamRat_HD2HD(I)
-                        If compO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R3_HD2HD!(K) = R3_HD2HD!(K) + mergeO%(I)
+                        If mergeO%(I) > teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And statO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
+                        If mergeO%(I) > teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And statO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
+                        If mergeO%(I) < teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And statO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
+                        If mergeO%(I) < teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And statO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
+                        If statO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + teamRat_HD2HD(I)
+                        If statO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + mergeO%(I)
+                        If statO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + teamRat_HD2HD(I)
+                        If statO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then hd2hdR3!(K) = hd2hdR3!(K) + mergeO%(I)
                     Next I
 
                 End If
@@ -160,7 +160,7 @@ Sub Hd2HdColl_Printer (teamName$)
     Shared Z1$()
 
     Shared AL!(), AW!(), HL!(), HW!()
-    Shared R1!(), R2!(), R3_HD2HD!(), R4!()
+    Shared R1!(), R2!(), hd2hdR3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
@@ -208,8 +208,8 @@ Sub Hd2HdColl_Printer (teamName$)
                     If AW!(K) = AW!(K) + AL!(K) And AW!(K) <> 0 Then LPrint Tab(60); "1.000";
                     If AW!(K) = 0 Then LPrint Tab(61); ".000";
                     If AW!(K) > 0 And AW!(K) < AW!(K) + AL!(K) Then statPCT! = (AW!(K) / (AW!(K) + AL!(K))): LPrint Tab(61); Using ".###"; statPCT!;
-                    If R3_HD2HD!(K) = 0 Then LPrint Tab(67); "  0.0";
-                    If R3_HD2HD!(K) > 0 Then LPrint Tab(67); Using "###.#"; R3_HD2HD!(K) / (AW!(K) + AL!(K));
+                    If hd2hdR3!(K) = 0 Then LPrint Tab(67); "  0.0";
+                    If hd2hdR3!(K) > 0 Then LPrint Tab(67); Using "###.#"; hd2hdR3!(K) / (AW!(K) + AL!(K));
                     If R4!(K) = 0 Then LPrint Tab(74); "  0.0";
                     If R4!(K) > 0 Then LPrint Tab(74); Using "###.#"; R4!(K) / (AW!(K) + AL!(K));
 
@@ -219,8 +219,8 @@ Sub Hd2HdColl_Printer (teamName$)
                     If HW!(K) + AW!(K) = HW!(K) + AW!(K) + HL!(K) + AL!(K) And HW!(K) + AW!(K) <> 0 Then LPrint Tab(95); "1.000";
                     If (HW!(K) + AW!(K)) = 0 Then LPrint Tab(96); ".000";
                     If (HW!(K) + AW!(K)) > 0 And (HW!(K) + AW!(K)) < (HW!(K) + AW!(K) + HL!(K) + AL!(K)) Then statPCT! = ((HW!(K) + AW!(K)) / (HW!(K) + AW!(K) + HL!(K) + AL!(K))): LPrint Tab(96); Using ".###"; statPCT!;
-                    If R1!(K) + R3_HD2HD!(K) = 0 Then LPrint Tab(102); "  0.0";
-                    If R1!(K) + R3_HD2HD!(K) > 0 Then LPrint Tab(102); Using "###.#"; (R1!(K) + R3_HD2HD!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K));
+                    If R1!(K) + hd2hdR3!(K) = 0 Then LPrint Tab(102); "  0.0";
+                    If R1!(K) + hd2hdR3!(K) > 0 Then LPrint Tab(102); Using "###.#"; (R1!(K) + hd2hdR3!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K));
                     If R2!(K) + R4!(K) = 0 Then LPrint Tab(109); "  0.0"
                     If R2!(K) + R4!(K) > 0 Then LPrint Tab(109); Using "###.#"; (R2!(K) + R4!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K))
 
@@ -230,7 +230,7 @@ Sub Hd2HdColl_Printer (teamName$)
                     TAL!(RDD) = TAL!(RDD) + AL!(K)
                     TR1!(RDD) = TR1!(RDD) + R1!(K)
                     TR2!(RDD) = TR2!(RDD) + R2!(K)
-                    TR3!(RDD) = TR3!(RDD) + R3_HD2HD!(K)
+                    TR3!(RDD) = TR3!(RDD) + hd2hdR3!(K)
                     TR4!(RDD) = TR4!(RDD) + R4!(K)
                 End If
 
@@ -403,7 +403,7 @@ Sub Hd2HdColl_Screen (teamName$)
     Shared Z1$()
 
     Shared AL!(), AW!(), HL!(), HW!()
-    Shared R1!(), R2!(), R3_HD2HD!(), R4!()
+    Shared R1!(), R2!(), hd2hdR3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
@@ -468,8 +468,8 @@ Sub Hd2HdColl_Screen (teamName$)
                     If AW!(K) = AW!(K) + AL!(K) And AW!(K) <> 0 Then Locate , 41: Print "1.000";
                     If AW!(K) = 0 Then Locate , 42: Print ".000";
                     If AW!(K) > 0 And AW!(K) < AW!(K) + AL!(K) Then statPCT! = (AW!(K) / (AW!(K) + AL!(K))): Locate , 42: Print Using ".###"; statPCT!;
-                    If R3_HD2HD!(K) = 0 Then Locate , 47: Print "  0.0";
-                    If R3_HD2HD!(K) > 0 Then Locate , 47: Print Using "###.#"; R3_HD2HD!(K) / (AW!(K) + AL!(K));
+                    If hd2hdR3!(K) = 0 Then Locate , 47: Print "  0.0";
+                    If hd2hdR3!(K) > 0 Then Locate , 47: Print Using "###.#"; hd2hdR3!(K) / (AW!(K) + AL!(K));
                     If R4!(K) = 0 Then Locate , 53: Print "  0.0";
                     If R4!(K) > 0 Then Locate , 53: Print Using "###.#"; R4!(K) / (AW!(K) + AL!(K));
 
@@ -482,8 +482,8 @@ Sub Hd2HdColl_Screen (teamName$)
                     If (HW!(K) + AW!(K)) = (HW!(K) + AW!(K) + HL!(K) + AL!(K)) And (HW!(K) + AW!(K)) <> 0 Then Locate , 63: Print "1.000";
                     If (HW!(K) + AW!(K)) = 0 Then Locate , 64: Print ".000";
                     If (HW!(K) + AW!(K)) > 0 And (HW!(K) + AW!(K)) < (HW!(K) + AW!(K) + HL!(K) + AL!(K)) Then statPCT! = ((HW!(K) + AW!(K)) / (HW!(K) + AW!(K) + HL!(K) + AL!(K))): Locate , 64: Print Using ".###"; statPCT!;
-                    If R1!(K) + R3_HD2HD!(K) = 0 Then Locate , 69: Print "  0.0";
-                    If R1!(K) + R3_HD2HD!(K) > 0 Then Locate , 69: Print Using "###.#"; (R1!(K) + R3_HD2HD!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K));
+                    If R1!(K) + hd2hdR3!(K) = 0 Then Locate , 69: Print "  0.0";
+                    If R1!(K) + hd2hdR3!(K) > 0 Then Locate , 69: Print Using "###.#"; (R1!(K) + hd2hdR3!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K));
                     If R2!(K) + R4!(K) = 0 Then Locate , 75: Print "  0.0"
                     If R2!(K) + R4!(K) > 0 Then Locate , 75: Print Using "###.#"; (R2!(K) + R4!(K)) / (HW!(K) + HL!(K) + AW!(K) + AL!(K))
 
@@ -495,7 +495,7 @@ Sub Hd2HdColl_Screen (teamName$)
                     TAL!(RDD) = TAL!(RDD) + AL!(K)
                     TR1!(RDD) = TR1!(RDD) + R1!(K)
                     TR2!(RDD) = TR2!(RDD) + R2!(K)
-                    TR3!(RDD) = TR3!(RDD) + R3_HD2HD!(K)
+                    TR3!(RDD) = TR3!(RDD) + hd2hdR3!(K)
                     TR4!(RDD) = TR4!(RDD) + R4!(K)
                 End If
 

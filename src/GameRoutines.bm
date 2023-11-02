@@ -39,7 +39,10 @@ Sub InitVar ()
 
     Shared d3FG_Adj(), d3FGA_Adj()
 
-    Shared teamIndicator$()
+    Shared HO$(), statH$(), teamIndicator$()
+
+    Shared gameW0!(), gameW1!()
+    Shared statsZ!(), statsZ1!(), statsZ2!()
 
     For I = 0 To 1
         For I1 = 0 To 4
@@ -146,7 +149,6 @@ Sub InitVar ()
     VT$ = ""
     VT1$ = ""
     W$ = ""
-    W1$ = ""
     YN$ = ""
 
     Erase B1
@@ -154,10 +156,10 @@ Sub InitVar ()
     Erase defStrat, defType
     Erase eventSettings, F1, G4, G5
     Erase leagRat_GAME, offStrat
-    Erase P2, P4, P5, P7, plyrRat_GAME
+    Erase P2, P4, P5, P7, plyrRat_GAME, plyrStamina
     Erase QQ, QR, RB, RS
-    Erase schedGame, teamStamina, threeFG, tmFatigue
-    Erase plyrStamina, turnovers, statTotals
+    Erase schedGame, score, teamStamina, threeFG, tmFatigue
+    Erase turnovers, statTotals
     Erase W2, W3, Z5, Z6, timePlayed
 
     Erase APT%, B%, CZ%, F5%, FY%
@@ -167,12 +169,13 @@ Sub InitVar ()
     Erase VG%, VH%
 
     Erase gameArena$, gameCoaches$, gameMascots$, gameTeams$
-    Erase H$, HO$, N$
-    Erase players$, PO$, PS$, Q$, SITE$, SX$
+    Erase HO$, N$
+    Erase players$, PO$, PS$, Q$
+    Erase statH$, SITE$, SX$
     Erase teamNames$, Y$, YN$, YN1$
 
-    Erase plyrOff_GAME!, R3!, score, W0!, W1!
-    Erase Z!, Z1!, Z2!
+    Erase plyrOff_GAME!, gameR3!, gameW0!, gameW1!
+    Erase statsZ!, statsZ1!, statsZ2!
 
     actualAttendance& = 0
     Erase avgAttendance&, CRD&
@@ -3306,14 +3309,17 @@ Sub TOURNEY_Game ()
         If score(1, 0) > score(0, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
         If score(0, 0) > score(1, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
         If score(1, 0) > score(0, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
+
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
+
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(0): YN1$(0) = YN$(0): VT1$ = VT$: Call UpdateTourneyFile
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then NG1%(0) = NG%(1): YN1$(0) = YN$(1): VT1$ = W$: Call UpdateTourneyFile
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(0): YN1$(1) = YN$(0): W1$ = VT$: Call UpdateTourneyFile
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then NG1%(1) = NG%(1): YN1$(1) = YN$(1): W1$ = W$: Call UpdateTourneyFile
+
     Next
 
 End Sub
@@ -3424,9 +3430,9 @@ Sub UPDATESCREEN ()
     Color 12: Print "TO  ";
     Color 7: Print Using "##"; turnovers(1)
 
-    Locate , 35: Print Using "##  "; R3!(0);
+    Locate , 35: Print Using "##  "; gameR3!(0);
     Color 12: Print "RB  ";
-    Color 7: Print Using "##"; R3!(1)
+    Color 7: Print Using "##"; gameR3!(1)
 
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";
@@ -3625,9 +3631,9 @@ Sub SCOREBOARD ()
     Color 12: Print "TO  ";
     Color 7: Print Using "##"; turnovers(1)
 
-    Locate , 35: Print Using "##  "; R3!(0);
+    Locate , 35: Print Using "##  "; gameR3!(0);
     Color 12: Print "RB  ";
-    Color 7: Print Using "##"; R3!(1)
+    Color 7: Print Using "##"; gameR3!(1)
 
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";
@@ -3799,6 +3805,7 @@ End Sub
 Sub LOADSTATS ()
 
     Shared CRD&()
+    Shared statH$(), HO$()
 
     If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then Call ColorChange
 
@@ -6019,7 +6026,7 @@ Sub EVENTS (specialCount, specialStat)
         checkSpecial% = 0
 
         'Team / game conditions for special box score
-        If H - 3 > eventSettings(1) Or score(1, 0) + score(0, 0) > eventSettings(2) Or R3!(0) + R3!(1) > eventSettings(3) Or score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Or R3!(1) > eventSettings(5) Or R3!(0) > eventSettings(5) Then
+        If H - 3 > eventSettings(1) Or score(1, 0) + score(0, 0) > eventSettings(2) Or gameR3!(0) + gameR3!(1) > eventSettings(3) Or score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Or gameR3!(1) > eventSettings(5) Or gameR3!(0) > eventSettings(5) Then
 
             checkSpecial% = 1
 
@@ -6555,7 +6562,7 @@ Sub BOX2FILE (printChoice, NM$)
 
         Print #1,
         Print #1, "TOTAL TURNOVERS -"; turnovers(I)
-        Print #1, "TOTAL REBOUNDS  -"; R3!(I)
+        Print #1, "TOTAL REBOUNDS  -"; gameR3!(I)
 
     Next I
 
@@ -6616,11 +6623,11 @@ Sub BOX2SPC (NM$)
     'Output any special events
     If H - 3 > eventSettings(1) Then Print #1, Using "MORE THAN ## OVERTIMES"; eventSettings(1)
     If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
-    If R3!(0) + R3!(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    If gameR3!(0) + gameR3!(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
     If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
     If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If R3!(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
-    If R3!(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If gameR3!(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If gameR3!(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
 
     For I = 0 To 1
         For I1 = 0 To 13
@@ -6765,7 +6772,7 @@ Sub STATS2SCREEN
         Color 15: Print turnovers(I)
 
         Color 14: Print "TOTAL REBOUNDS  -";
-        Color 15: Print R3!(I)
+        Color 15: Print gameR3!(I)
 
         If Not (autoPlay = 1 And playerMode = 2) Then
             Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
@@ -6787,6 +6794,8 @@ End Sub
 'since at this point only can the game be
 'considered fully complete.
 Sub SAVESTATS ()
+
+    Shared gameW0!(), gameW1!()
 
     Shared scheduleFile$
 
@@ -6914,8 +6923,8 @@ Sub SAVESTATS ()
                     plyrOff_GAME!(PX, I, J) = plyrOff_GAME!(PX, I, J + 6)
                 Next
 
-                W0!(PX, I) = threeFG(PX, I, 0)
-                W1!(PX, I) = threeFG(PX, I, 1)
+                gameW0!(PX, I) = threeFG(PX, I, 0)
+                gameW1!(PX, I) = threeFG(PX, I, 1)
 
             Next
 
@@ -6951,7 +6960,7 @@ Sub SAVESTATS ()
 
             End If
 
-            Z!(12) = 0
+            statsZ!(12) = 0
 
         Next idx
 
@@ -6971,6 +6980,11 @@ Sub COMPILESTATFILES (teamIdx)
     Shared actualAttendance&
     Shared CRD&()
 
+    Shared gameW0!(), gameW1!()
+    Shared statsZ!(), statsZ1!(), statsZ2!()
+
+    Shared statH$(), HO$()
+
     statFile$ = nameStatFile$(gameTeams$(teamIdx))
 
     If _FileExists(diskPaths$(1) + statFile$) Then
@@ -6984,7 +6998,7 @@ Sub COMPILESTATFILES (teamIdx)
             Input #1, players$(teamIdx, I)
 
             For J = 0 To 13:
-                Input #1, Z2!(I, J)
+                Input #1, statsZ2!(I, J)
             Next J
 
             Input #1, W2(teamIdx, I)
@@ -6993,11 +7007,11 @@ Sub COMPILESTATFILES (teamIdx)
         Next I
 
         For L = 0 To 15:
-            Input #1, Z!(L)
+            Input #1, statsZ!(L)
         Next L
 
         For L = 0 To 15:
-            Input #1, Z1!(L)
+            Input #1, statsZ1!(L)
         Next L
 
         Close #1
@@ -7008,24 +7022,24 @@ Sub COMPILESTATFILES (teamIdx)
 
     For I = 0 To 13
 
-        If plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + W0!(teamIdx, I) > Z2!(I, 13) Then
-            Z2!(I, 13) = plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + W0!(teamIdx, I)
+        If plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + gameW0!(teamIdx, I) > statsZ2!(I, 13) Then
+            statsZ2!(I, 13) = plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + gameW0!(teamIdx, I)
         End If
 
-        If plyrOff_GAME!(teamIdx, I, 10) > 0 Then Z2!(I, 0) = Z2!(I, 0) + 1
+        If plyrOff_GAME!(teamIdx, I, 10) > 0 Then statsZ2!(I, 0) = statsZ2!(I, 0) + 1
 
         For J = 1 To 12
 
-            Z2!(I, J) = Z2!(I, J) + plyrOff_GAME!(teamIdx, I, J)
+            statsZ2!(I, J) = statsZ2!(I, J) + plyrOff_GAME!(teamIdx, I, J)
 
             If J <> 5 And J <> 10 And J <> 11 Then
-                Z!(J) = Z!(J) + plyrOff_GAME!(teamIdx, I, J)
-                Z1!(J) = Z1!(J) + plyrOff_GAME!(1 - teamIdx, I, J)
+                statsZ!(J) = statsZ!(J) + plyrOff_GAME!(teamIdx, I, J)
+                statsZ1!(J) = statsZ1!(J) + plyrOff_GAME!(1 - teamIdx, I, J)
             End If
 
         Next J
 
-        Z!(0) = Z!(0) + plyrOff_GAME!(teamIdx, I, 10)
+        statsZ!(0) = statsZ!(0) + plyrOff_GAME!(teamIdx, I, 10)
         TG = TG + plyrOff_GAME!(teamIdx, I, 10)
 
     Next I
@@ -7040,24 +7054,24 @@ Sub COMPILESTATFILES (teamIdx)
 
     Next
 
-    Z!(15) = Z!(15) + R3!(teamIdx) - statTotals(teamIdx)
-    Z1!(15) = Z1!(15) + R3!(1 - teamIdx) - statTotals(1 - teamIdx)
-    Z!(5) = Z!(5) + R3!(teamIdx)
-    Z1!(5) = Z1!(5) + R3!(1 - teamIdx)
-    Z!(11) = Z!(11) + turnovers(teamIdx)
-    Z1!(11) = Z1!(11) + turnovers(1 - teamIdx)
+    statsZ!(15) = statsZ!(15) + gameR3!(teamIdx) - statTotals(teamIdx)
+    statsZ1!(15) = statsZ1!(15) + gameR3!(1 - teamIdx) - statTotals(1 - teamIdx)
+    statsZ!(5) = statsZ!(5) + gameR3!(teamIdx)
+    statsZ1!(5) = statsZ1!(5) + gameR3!(1 - teamIdx)
+    statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
+    statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
     For J = 0 To 13:
-        Z!(13) = Z!(13) + W0!(teamIdx, J)
-        Z!(14) = Z!(14) + W1!(teamIdx, J)
-        Z1!(13) = Z1!(13) + W0!(1 - teamIdx, J)
-        Z1!(14) = Z1!(14) + W1!(1 - teamIdx, J)
-        W2(teamIdx, J) = W2(teamIdx, J) + W0!(teamIdx, J)
-        W3(teamIdx, J) = W3(teamIdx, J) + W1!(teamIdx, J)
+        statsZ!(13) = statsZ!(13) + gameW0!(teamIdx, J)
+        statsZ!(14) = statsZ!(14) + gameW1!(teamIdx, J)
+        statsZ1!(13) = statsZ1!(13) + gameW0!(1 - teamIdx, J)
+        statsZ1!(14) = statsZ1!(14) + gameW1!(1 - teamIdx, J)
+        W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
+        W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
     Next J
 
-    Z!(10) = Z!(10) + score(teamIdx, 0)
-    Z1!(10) = Z1!(10) + score(1 - teamIdx, 0)
+    statsZ!(10) = statsZ!(10) + score(teamIdx, 0)
+    statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
 
     Call TEAMBOX(1, teamIdx)
     U$ = "SAVING STATS FOR " + gameTeams$(teamIdx)
@@ -7075,7 +7089,7 @@ Sub COMPILESTATFILES (teamIdx)
         Print #2, players$(teamIdx, I)
 
         For J = 0 To 13:
-            Print #2, Z2!(I, J)
+            Print #2, statsZ2!(I, J)
         Next J
 
         Print #2, W2(teamIdx, I):
@@ -7084,11 +7098,11 @@ Sub COMPILESTATFILES (teamIdx)
     Next I
 
     For L = 0 To 15:
-        Print #2, Z!(L)
+        Print #2, statsZ!(L)
     Next L
 
     For L = 0 To 15:
-        Print #2, Z1!(L)
+        Print #2, statsZ1!(L)
     Next L
 
     Close #2
@@ -7106,7 +7120,7 @@ Sub COMPILESTATFILES (teamIdx)
         For I = 1 To NUM_STATRECORDS: Input #3, O%(I): Next I
         For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
         For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #3, H$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #3, statH$(I): Next I
 
         For I = 1 To NUM_STATRECORDS
             For I1 = 0 To 1
@@ -7122,21 +7136,25 @@ Sub COMPILESTATFILES (teamIdx)
     End If
 
     If numberGames < NUM_STATRECORDS Then numberGames = numberGames + 1
-    If H% = 2 And TG < 12100 Then H$(numberGames) = "N": GoTo 6540
-    If H% <> teamIdx And TG < 12100 Then H$(numberGames) = "V": GoTo 6540
-    If H% = teamIdx And TG < 12100 Then H$(numberGames) = "H": GoTo 6540
-    If H% = teamIdx And TG < 13600 Then H$(numberGames) = "H1": GoTo 6540
-    If H% = teamIdx And TG < 15100 Then H$(numberGames) = "H2": GoTo 6540
-    If H% = teamIdx And TG < 16600 Then H$(numberGames) = "H3": GoTo 6540
-    If H% = teamIdx And TG < 18100 Then H$(numberGames) = "H4": GoTo 6540
-    If H% = 2 And TG < 13600 Then H$(numberGames) = "N1": GoTo 6540
-    If H% = 2 And TG < 15100 Then H$(numberGames) = "N2": GoTo 6540
-    If H% = 2 And TG < 16600 Then H$(numberGames) = "N3": GoTo 6540
-    If H% = 2 And TG < 18100 Then H$(numberGames) = "N4": GoTo 6540
-    If H% <> teamIdx And TG < 13600 Then H$(numberGames) = "V1": GoTo 6540
-    If H% <> teamIdx And TG < 15100 Then H$(numberGames) = "V2": GoTo 6540
-    If H% <> teamIdx And TG < 16600 Then H$(numberGames) = "V3": GoTo 6540
-    If H% <> teamIdx And TG < 18100 Then H$(numberGames) = "V4": GoTo 6540
+    If H% = 2 And TG < 12100 Then statH$(numberGames) = "N": GoTo 6540
+
+    If H% <> teamIdx And TG < 12100 Then statH$(numberGames) = "V": GoTo 6540
+    If H% = teamIdx And TG < 12100 Then statH$(numberGames) = "H": GoTo 6540
+
+    If H% = teamIdx And TG < 13600 Then statH$(numberGames) = "H1": GoTo 6540
+    If H% = teamIdx And TG < 15100 Then statH$(numberGames) = "H2": GoTo 6540
+    If H% = teamIdx And TG < 16600 Then statH$(numberGames) = "H3": GoTo 6540
+    If H% = teamIdx And TG < 18100 Then statH$(numberGames) = "H4": GoTo 6540
+
+    If H% = 2 And TG < 13600 Then statH$(numberGames) = "N1": GoTo 6540
+    If H% = 2 And TG < 15100 Then statH$(numberGames) = "N2": GoTo 6540
+    If H% = 2 And TG < 16600 Then statH$(numberGames) = "N3": GoTo 6540
+    If H% = 2 And TG < 18100 Then statH$(numberGames) = "N4": GoTo 6540
+
+    If H% <> teamIdx And TG < 13600 Then statH$(numberGames) = "V1": GoTo 6540
+    If H% <> teamIdx And TG < 15100 Then statH$(numberGames) = "V2": GoTo 6540
+    If H% <> teamIdx And TG < 16600 Then statH$(numberGames) = "V3": GoTo 6540
+    If H% <> teamIdx And TG < 18100 Then statH$(numberGames) = "V4": GoTo 6540
 
     6540 '
     O%(numberGames) = score(teamIdx, 0)
@@ -7165,7 +7183,7 @@ Sub COMPILESTATFILES (teamIdx)
     For I = 1 To NUM_STATRECORDS: Print #4, O%(I): Next I
     For I = 1 To NUM_STATRECORDS: Print #4, HO$(I): Next I
     For I = 1 To NUM_STATRECORDS: Print #4, HT%(I): Next I
-    For I = 1 To NUM_STATRECORDS: Print #4, H$(I): Next I
+    For I = 1 To NUM_STATRECORDS: Print #4, statH$(I): Next I
 
     For I = 1 To NUM_STATRECORDS
         For I1 = 0 To 1
@@ -7179,7 +7197,7 @@ Sub COMPILESTATFILES (teamIdx)
     Close #4
 
     Erase APT%, O%, HT%, CRD&
-    Erase Z!, Z1!, Z2!
+    Erase statsZ!, statsZ1!, statsZ2!
 
 End Sub
 
@@ -7552,8 +7570,9 @@ End Sub
 'for later updating the files.
 Sub CheckRecords ()
 
-    Dim RC$(50, 4), TRC$(125, 3)
-    Dim REC!(50, 2), TREC!(125, 2)
+    Shared RC$(), TRC$()
+    Shared REC!(), TREC!()
+
     Dim V8(1, 14)
     Dim VERSUS$(1)
 
@@ -8917,8 +8936,8 @@ Sub CheckRecords ()
             TRC$(77, 3) = Date$
         End If
 
-        If R3!(I) > TREC!(80, 0) Then
-            TREC!(80, 0) = R3!(I)
+        If gameR3!(I) > TREC!(80, 0) Then
+            TREC!(80, 0) = gameR3!(I)
             TREC!(80, 1) = 0
             TREC!(80, 2) = 0
             TRC$(80, 0) = gameTeams$(I)
@@ -8927,8 +8946,8 @@ Sub CheckRecords ()
             TRC$(80, 3) = Date$
         End If
 
-        If R3!(I) < TREC!(81, 0) Then
-            TREC!(81, 0) = R3!(I)
+        If gameR3!(I) < TREC!(81, 0) Then
+            TREC!(81, 0) = gameR3!(I)
             TREC!(81, 1) = 0
             TREC!(81, 2) = 0
             TRC$(81, 0) = gameTeams$(I)
@@ -8937,20 +8956,20 @@ Sub CheckRecords ()
             TRC$(81, 3) = Date$
         End If
 
-        If R3!(I) + R3!(1 - I) > TREC!(82, 0) Then
-            TREC!(82, 0) = R3!(I) + R3!(1 - I)
-            TREC!(82, 1) = R3!(I)
-            TREC!(82, 2) = R3!(1 - I)
+        If gameR3!(I) + gameR3!(1 - I) > TREC!(82, 0) Then
+            TREC!(82, 0) = gameR3!(I) + gameR3!(1 - I)
+            TREC!(82, 1) = gameR3!(I)
+            TREC!(82, 2) = gameR3!(1 - I)
             TRC$(82, 0) = gameTeams$(I)
             TRC$(82, 1) = VERSUS$(I)
             TRC$(82, 2) = gameTeams$(1 - I)
             TRC$(82, 3) = Date$
         End If
 
-        If R3!(I) + R3!(1 - I) < TREC!(83, 0) Then
-            TREC!(83, 0) = R3!(I) + R3!(1 - I)
-            TREC!(83, 1) = R3!(I)
-            TREC!(83, 2) = R3!(1 - I)
+        If gameR3!(I) + gameR3!(1 - I) < TREC!(83, 0) Then
+            TREC!(83, 0) = gameR3!(I) + gameR3!(1 - I)
+            TREC!(83, 1) = gameR3!(I)
+            TREC!(83, 2) = gameR3!(1 - I)
             TRC$(83, 0) = gameTeams$(I)
             TRC$(83, 1) = VERSUS$(I)
             TRC$(83, 2) = gameTeams$(1 - I)

@@ -21,7 +21,7 @@ Sub CompileNatlOrg ()
 
     Shared DT!(), OT!()
 
-    Shared BRC$(), compH$(), compO$(), DL$()
+    Shared BRC$(), statH$(), statO$(), DL$()
     Shared H1$(), OL$()
     Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
     Shared recconTRC$(), recconTRC1$()
@@ -227,7 +227,7 @@ End Sub
 Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
     Shared BRC$()
-    Shared compN$(), OL$(), recconTRC$(), recconTRC1$()
+    Shared statPlyrNames$(), OL$(), recconTRC$(), recconTRC1$()
 
     Shared BRC!()
     Shared compS!(), DT!(), OL!(), OT!()
@@ -242,7 +242,7 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
         Input #1, TN$
 
         For I = 0 To 13
-            Input #1, compN$(I)
+            Input #1, statPlyrNames$(I)
             For J = 0 To 13
                 Input #1, compS!(I, J)
             Next
@@ -284,33 +284,33 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
                 compS!(I, 22) = compS!(I, 12) / compS!(I, 0): ' *** PTS/G ***
 
-                If compS!(I, 0) > BRC!(1) Then BRC!(1) = compS!(I, 0): BRC$(1, 0) = compN$(I): BRC$(1, 1) = TN$
-                If compS!(I, 1) > BRC!(2) Then BRC!(2) = compS!(I, 1): BRC$(2, 0) = compN$(I): BRC$(2, 1) = TN$
-                If compS!(I, 2) > BRC!(3) Then BRC!(3) = compS!(I, 2): BRC$(3, 0) = compN$(I): BRC$(3, 1) = TN$
-                If compS!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames% >= 5 Then BRC!(4) = compS!(I, 19): BRC$(4, 0) = compN$(I): BRC$(4, 1) = TN$
+                If compS!(I, 0) > BRC!(1) Then BRC!(1) = compS!(I, 0): BRC$(1, 0) = statPlyrNames$(I): BRC$(1, 1) = TN$
+                If compS!(I, 1) > BRC!(2) Then BRC!(2) = compS!(I, 1): BRC$(2, 0) = statPlyrNames$(I): BRC$(2, 1) = TN$
+                If compS!(I, 2) > BRC!(3) Then BRC!(3) = compS!(I, 2): BRC$(3, 0) = statPlyrNames$(I): BRC$(3, 1) = TN$
+                If compS!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames% >= 5 Then BRC!(4) = compS!(I, 19): BRC$(4, 0) = statPlyrNames$(I): BRC$(4, 1) = TN$
 
-                If statsW1!(I) > BRC!(5) Then BRC!(5) = statsW1!(I): BRC$(5, 0) = compN$(I): BRC$(5, 1) = TN$
-                If statsW0!(I) > BRC!(6) Then BRC!(6) = statsW0!(I): BRC$(6, 0) = compN$(I): BRC$(6, 1) = TN$
+                If statsW1!(I) > BRC!(5) Then BRC!(5) = statsW1!(I): BRC$(5, 0) = statPlyrNames$(I): BRC$(5, 1) = TN$
+                If statsW0!(I) > BRC!(6) Then BRC!(6) = statsW0!(I): BRC$(6, 0) = statPlyrNames$(I): BRC$(6, 1) = TN$
 
-                If compS!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames% >= 1.5 Then BRC!(7) = compS!(I, 21): BRC$(7, 0) = compN$(I): BRC$(7, 1) = TN$
-                If compS!(I, 3) > BRC!(8) Then BRC!(8) = compS!(I, 3): BRC$(8, 0) = compN$(I): BRC$(8, 1) = TN$
-                If compS!(I, 4) > BRC!(9) Then BRC!(9) = compS!(I, 4): BRC$(9, 0) = compN$(I): BRC$(9, 1) = TN$
-                If compS!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames% >= 2.5 Then BRC!(10) = compS!(I, 20): BRC$(10, 0) = compN$(I): BRC$(10, 1) = TN$
-                If compS!(I, 10) / 60 > BRC!(11) Then BRC!(11) = compS!(I, 10) / 60: BRC$(11, 0) = compN$(I): BRC$(11, 1) = TN$
-                If compS!(I, 12) > BRC!(12) Then BRC!(12) = compS!(I, 12): BRC$(12, 0) = compN$(I): BRC$(12, 1) = TN$
-                If compS!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = compS!(I, 22): BRC$(13, 0) = compN$(I): BRC$(13, 1) = TN$
-                If compS!(I, 25) > BRC!(14) Then BRC!(14) = compS!(I, 25): BRC$(14, 0) = compN$(I): BRC$(14, 1) = TN$
-                If compS!(I, 26) > BRC!(15) Then BRC!(15) = compS!(I, 26): BRC$(15, 0) = compN$(I): BRC$(15, 1) = TN$
-                If compS!(I, 5) - compS!(I, 26) > BRC!(16) Then BRC!(16) = compS!(I, 5) - compS!(I, 26): BRC$(16, 0) = compN$(I): BRC$(16, 1) = TN$
-                If compS!(I, 5) > BRC!(17) Then BRC!(17) = compS!(I, 5): BRC$(17, 0) = compN$(I): BRC$(17, 1) = TN$
-                If compS!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = compS!(I, 13): BRC$(18, 0) = compN$(I): BRC$(18, 1) = TN$
-                If compS!(I, 6) > BRC!(19) Then BRC!(19) = compS!(I, 6): BRC$(19, 0) = compN$(I): BRC$(19, 1) = TN$
-                If compS!(I, 7) > BRC!(20) Then BRC!(20) = compS!(I, 7): BRC$(20, 0) = compN$(I): BRC$(20, 1) = TN$
-                If compS!(I, 8) > BRC!(21) Then BRC!(21) = compS!(I, 8): BRC$(21, 0) = compN$(I): BRC$(21, 1) = TN$
-                If compS!(I, 9) > BRC!(22) Then BRC!(22) = compS!(I, 9): BRC$(22, 0) = compN$(I): BRC$(22, 1) = TN$
-                If compS!(I, 11) > BRC!(23) Then BRC!(23) = compS!(I, 11): BRC$(23, 0) = compN$(I): BRC$(23, 1) = TN$
-                If compS!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = compS!(I, 18): BRC$(24, 0) = compN$(I): BRC$(24, 1) = TN$
-                If compS!(I, 24) > BRC!(25) Then BRC!(25) = compS!(I, 24): BRC$(25, 0) = compN$(I): BRC$(25, 1) = TN$
+                If compS!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames% >= 1.5 Then BRC!(7) = compS!(I, 21): BRC$(7, 0) = statPlyrNames$(I): BRC$(7, 1) = TN$
+                If compS!(I, 3) > BRC!(8) Then BRC!(8) = compS!(I, 3): BRC$(8, 0) = statPlyrNames$(I): BRC$(8, 1) = TN$
+                If compS!(I, 4) > BRC!(9) Then BRC!(9) = compS!(I, 4): BRC$(9, 0) = statPlyrNames$(I): BRC$(9, 1) = TN$
+                If compS!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames% >= 2.5 Then BRC!(10) = compS!(I, 20): BRC$(10, 0) = statPlyrNames$(I): BRC$(10, 1) = TN$
+                If compS!(I, 10) / 60 > BRC!(11) Then BRC!(11) = compS!(I, 10) / 60: BRC$(11, 0) = statPlyrNames$(I): BRC$(11, 1) = TN$
+                If compS!(I, 12) > BRC!(12) Then BRC!(12) = compS!(I, 12): BRC$(12, 0) = statPlyrNames$(I): BRC$(12, 1) = TN$
+                If compS!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = compS!(I, 22): BRC$(13, 0) = statPlyrNames$(I): BRC$(13, 1) = TN$
+                If compS!(I, 25) > BRC!(14) Then BRC!(14) = compS!(I, 25): BRC$(14, 0) = statPlyrNames$(I): BRC$(14, 1) = TN$
+                If compS!(I, 26) > BRC!(15) Then BRC!(15) = compS!(I, 26): BRC$(15, 0) = statPlyrNames$(I): BRC$(15, 1) = TN$
+                If compS!(I, 5) - compS!(I, 26) > BRC!(16) Then BRC!(16) = compS!(I, 5) - compS!(I, 26): BRC$(16, 0) = statPlyrNames$(I): BRC$(16, 1) = TN$
+                If compS!(I, 5) > BRC!(17) Then BRC!(17) = compS!(I, 5): BRC$(17, 0) = statPlyrNames$(I): BRC$(17, 1) = TN$
+                If compS!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = compS!(I, 13): BRC$(18, 0) = statPlyrNames$(I): BRC$(18, 1) = TN$
+                If compS!(I, 6) > BRC!(19) Then BRC!(19) = compS!(I, 6): BRC$(19, 0) = statPlyrNames$(I): BRC$(19, 1) = TN$
+                If compS!(I, 7) > BRC!(20) Then BRC!(20) = compS!(I, 7): BRC$(20, 0) = statPlyrNames$(I): BRC$(20, 1) = TN$
+                If compS!(I, 8) > BRC!(21) Then BRC!(21) = compS!(I, 8): BRC$(21, 0) = statPlyrNames$(I): BRC$(21, 1) = TN$
+                If compS!(I, 9) > BRC!(22) Then BRC!(22) = compS!(I, 9): BRC$(22, 0) = statPlyrNames$(I): BRC$(22, 1) = TN$
+                If compS!(I, 11) > BRC!(23) Then BRC!(23) = compS!(I, 11): BRC$(23, 0) = statPlyrNames$(I): BRC$(23, 1) = TN$
+                If compS!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = compS!(I, 18): BRC$(24, 0) = statPlyrNames$(I): BRC$(24, 1) = TN$
+                If compS!(I, 24) > BRC!(25) Then BRC!(25) = compS!(I, 24): BRC$(25, 0) = statPlyrNames$(I): BRC$(25, 1) = TN$
 
             End If
 
@@ -382,7 +382,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
     Shared DT!(), OT!()
 
-    Shared compN$()
+    Shared statPlyrNames$()
     Shared NDL$(), NOL$(), NZ0$(), NZ3$()
 
     Cls
@@ -393,14 +393,14 @@ Sub CheckStatsLeaders (statFile$, TN$)
         Color 14
         Print "CHECKING STATS OF ";
         Color 15
-        Print compN$(X)
+        Print statPlyrNames$(X)
 
         'Division 1, 2 Record
         If compS!(X, 22) > NLD!(20, 1) Then
 
             NLD!(20, 1) = compS!(X, 22)
             NLD!(20, 2) = 0
-            NZ0$(20) = compN$(X)
+            NZ0$(20) = statPlyrNames$(X)
             NZ3$(20) = TN$
 
             For Z = 1 To 19
@@ -420,7 +420,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(40, 1) = compS!(X, 12)
             NLD!(40, 2) = 0
-            NZ0$(40) = compN$(X)
+            NZ0$(40) = statPlyrNames$(X)
             NZ3$(40) = TN$
 
             For Z = 21 To 39
@@ -440,7 +440,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(60, 1) = compS!(X, 19)
             NLD!(60, 2) = compS!(X, 1)
-            NZ0$(60) = compN$(X)
+            NZ0$(60) = statPlyrNames$(X)
             NZ3$(60) = TN$
 
             For Z = 41 To 59
@@ -460,7 +460,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(80, 1) = compS!(X, 20)
             NLD!(80, 2) = compS!(X, 3)
-            NZ0$(80) = compN$(X)
+            NZ0$(80) = statPlyrNames$(X)
             NZ3$(80) = TN$
 
             For Z = 61 To 79
@@ -480,7 +480,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(90, 1) = compS!(X, 15)
             NLD!(90, 2) = compS!(X, 7)
-            NZ0$(90) = compN$(X)
+            NZ0$(90) = statPlyrNames$(X)
             NZ3$(90) = TN$
 
             For Z = 81 To 89
@@ -500,7 +500,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(100, 1) = compS!(X, 7)
             NLD!(100, 2) = 0
-            NZ0$(100) = compN$(X)
+            NZ0$(100) = statPlyrNames$(X)
             NZ3$(100) = TN$
 
             For Z = 91 To 99
@@ -520,7 +520,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(110, 1) = compS!(X, 16)
             NLD!(110, 2) = compS!(X, 8)
-            NZ0$(110) = compN$(X)
+            NZ0$(110) = statPlyrNames$(X)
             NZ3$(110) = TN$
 
             For Z = 101 To 109
@@ -540,7 +540,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(120, 1) = compS!(X, 8)
             NLD!(120, 2) = compS!(X, 8)
-            NZ0$(120) = compN$(X)
+            NZ0$(120) = statPlyrNames$(X)
             NZ3$(120) = TN$
 
             For Z = 111 To 119
@@ -560,7 +560,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(130, 1) = compS!(X, 21)
             NLD!(130, 2) = statsW1!(X)
-            NZ0$(130) = compN$(X)
+            NZ0$(130) = statPlyrNames$(X)
             NZ3$(130) = TN$
 
             For Z = 121 To 129
@@ -580,7 +580,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(140, 1) = statsW0!(X)
             NLD!(140, 2) = 0
-            NZ0$(140) = compN$(X)
+            NZ0$(140) = statPlyrNames$(X)
             NZ3$(140) = TN$
 
             For Z = 131 To 139
@@ -600,7 +600,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(150, 1) = compS!(X, 18)
             NLD!(150, 2) = 0
-            NZ0$(150) = compN$(X)
+            NZ0$(150) = statPlyrNames$(X)
             NZ3$(150) = TN$
 
             For Z = 141 To 149
@@ -620,7 +620,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(160, 1) = compS!(X, 10) / 60
             NLD!(160, 2) = 0
-            NZ0$(160) = compN$(X)
+            NZ0$(160) = statPlyrNames$(X)
             NZ3$(160) = TN$
 
             For Z = 151 To 159
@@ -640,7 +640,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(170, 1) = compS!(X, 13)
             NLD!(170, 2) = compS!(X, 5)
-            NZ0$(170) = compN$(X)
+            NZ0$(170) = statPlyrNames$(X)
             NZ3$(170) = TN$
 
             For Z = 161 To 169
@@ -660,7 +660,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(180, 1) = compS!(X, 5)
             NLD!(18, 2) = 0
-            NZ0$(180) = compN$(X)
+            NZ0$(180) = statPlyrNames$(X)
             NZ3$(180) = TN$
 
             For Z = 171 To 179
@@ -680,7 +680,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(190, 1) = compS!(X, 17)
             NLD!(190, 2) = 0
-            NZ0$(190) = compN$(X)
+            NZ0$(190) = statPlyrNames$(X)
             NZ3$(190) = TN$
 
             For Z = 181 To 189
@@ -700,7 +700,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(200, 1) = compS!(X, 9)
             NLD!(200, 2) = 0
-            NZ0$(200) = compN$(X)
+            NZ0$(200) = statPlyrNames$(X)
             NZ3$(200) = TN$
 
             For Z = 191 To 199
@@ -720,7 +720,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(210, 1) = compS!(X, 2)
             NLD!(210, 2) = 0
-            NZ0$(210) = compN$(X)
+            NZ0$(210) = statPlyrNames$(X)
             NZ3$(210) = TN$
 
             For Z = 201 To 209
@@ -740,7 +740,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(220, 1) = compS!(X, 4)
             NLD!(220, 2) = 0
-            NZ0$(220) = compN$(X)
+            NZ0$(220) = statPlyrNames$(X)
             NZ3$(220) = TN$
 
             For Z = 211 To 219
@@ -760,7 +760,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(230, 1) = compS!(X, 14)
             NLD!(230, 2) = 0
-            NZ0$(230) = compN$(X)
+            NZ0$(230) = statPlyrNames$(X)
             NZ3$(230) = TN$
 
             For Z = 221 To 229
@@ -780,7 +780,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(240, 1) = compS!(X, 6)
             NLD!(240, 2) = 0
-            NZ0$(240) = compN$(X)
+            NZ0$(240) = statPlyrNames$(X)
             NZ3$(240) = TN$
 
             For Z = 231 To 239
@@ -800,7 +800,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
             NLD!(250, 1) = compS!(X, 24)
             NLD!(250, 2) = 0
-            NZ0$(250) = compN$(X)
+            NZ0$(250) = statPlyrNames$(X)
             NZ3$(250) = TN$
 
             For Z = 241 To 249
@@ -878,7 +878,7 @@ Sub StatsByCategoryTeam (TN$)
 
     Shared DT!(), OT!()
 
-    Shared compN$(), DL$()
+    Shared statPlyrNames$(), DL$()
     Shared NDL$(), NOL$(), NZ0$(), NZ3$()
     Shared OL$(), Z0$(), Z3$()
 
@@ -886,14 +886,14 @@ Sub StatsByCategoryTeam (TN$)
 
         Color 14
         Print "CHECKING STATS OF ";
-        Color 15: Print compN$(X)
+        Color 15: Print statPlyrNames$(X)
 
         'Division 1, 2 Record
         If compS!(X, 22) > LD!(20, 1) Then
 
             LD!(20, 1) = compS!(X, 22)
             LD!(20, 2) = 0
-            Z0$(20) = compN$(X)
+            Z0$(20) = statPlyrNames$(X)
             Z3$(20) = TN$
 
             For Z = 1 To 19:
@@ -915,7 +915,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(40, 1) = compS!(X, 12)
             LD!(40, 2) = 0
-            Z0$(40) = compN$(X)
+            Z0$(40) = statPlyrNames$(X)
             Z3$(40) = TN$
 
             For Z = 21 To 39
@@ -937,7 +937,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(60, 1) = compS!(X, 19)
             LD!(60, 2) = compS!(X, 1)
-            Z0$(60) = compN$(X)
+            Z0$(60) = statPlyrNames$(X)
             Z3$(60) = TN$
 
             For Z = 41 To 59
@@ -959,7 +959,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(80, 1) = compS!(X, 20)
             LD!(80, 2) = compS!(X, 3)
-            Z0$(80) = compN$(X)
+            Z0$(80) = statPlyrNames$(X)
             Z3$(80) = TN$
 
             For Z = 61 To 79
@@ -981,7 +981,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(90, 1) = compS!(X, 15)
             LD!(90, 2) = compS!(X, 7)
-            Z0$(90) = compN$(X)
+            Z0$(90) = statPlyrNames$(X)
             Z3$(90) = TN$
 
             For Z = 81 To 89
@@ -1003,7 +1003,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(100, 1) = compS!(X, 7)
             LD!(100, 2) = 0
-            Z0$(100) = compN$(X)
+            Z0$(100) = statPlyrNames$(X)
             Z3$(100) = TN$
 
             For Z = 91 To 99
@@ -1025,7 +1025,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(110, 1) = compS!(X, 16)
             LD!(110, 2) = compS!(X, 8)
-            Z0$(110) = compN$(X)
+            Z0$(110) = statPlyrNames$(X)
             Z3$(110) = TN$
 
             For Z = 101 To 109
@@ -1047,7 +1047,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(120, 1) = compS!(X, 8)
             LD!(120, 2) = compS!(X, 8)
-            Z0$(120) = compN$(X)
+            Z0$(120) = statPlyrNames$(X)
             Z3$(120) = TN$
 
             For Z = 111 To 119
@@ -1069,7 +1069,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(130, 1) = compS!(X, 21)
             LD!(130, 2) = statsW1!(X)
-            Z0$(130) = compN$(X)
+            Z0$(130) = statPlyrNames$(X)
             Z3$(130) = TN$
 
             For Z = 121 To 129
@@ -1091,7 +1091,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(140, 1) = statsW0!(X)
             LD!(140, 2) = 0
-            Z0$(140) = compN$(X)
+            Z0$(140) = statPlyrNames$(X)
             Z3$(140) = TN$
 
             For Z = 131 To 139
@@ -1113,7 +1113,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(150, 1) = compS!(X, 18)
             LD!(150, 2) = 0
-            Z0$(150) = compN$(X)
+            Z0$(150) = statPlyrNames$(X)
             Z3$(150) = TN$
 
             For Z = 141 To 149
@@ -1135,7 +1135,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(160, 1) = compS!(X, 10) / 60
             LD!(160, 2) = 0
-            Z0$(160) = compN$(X)
+            Z0$(160) = statPlyrNames$(X)
             Z3$(160) = TN$
 
             For Z = 151 To 159
@@ -1157,7 +1157,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(170, 1) = compS!(X, 13)
             LD!(170, 2) = compS!(X, 5)
-            Z0$(170) = compN$(X)
+            Z0$(170) = statPlyrNames$(X)
             Z3$(170) = TN$
 
             For Z = 161 To 169
@@ -1179,7 +1179,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(180, 1) = compS!(X, 5)
             LD!(18, 2) = 0
-            Z0$(180) = compN$(X)
+            Z0$(180) = statPlyrNames$(X)
             Z3$(180) = TN$
 
             For Z = 171 To 179
@@ -1201,7 +1201,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(190, 1) = compS!(X, 17)
             LD!(190, 2) = 0
-            Z0$(190) = compN$(X)
+            Z0$(190) = statPlyrNames$(X)
             Z3$(190) = TN$
 
             For Z = 181 To 189
@@ -1223,7 +1223,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(200, 1) = compS!(X, 9)
             LD!(200, 2) = 0
-            Z0$(200) = compN$(X)
+            Z0$(200) = statPlyrNames$(X)
             Z3$(200) = TN$
 
             For Z = 191 To 199
@@ -1245,7 +1245,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(210, 1) = compS!(X, 2)
             LD!(210, 2) = 0
-            Z0$(210) = compN$(X)
+            Z0$(210) = statPlyrNames$(X)
             Z3$(210) = TN$
 
             For Z = 201 To 209
@@ -1267,7 +1267,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(220, 1) = compS!(X, 4)
             LD!(220, 2) = 0
-            Z0$(220) = compN$(X)
+            Z0$(220) = statPlyrNames$(X)
             Z3$(220) = TN$
 
             For Z = 211 To 219
@@ -1289,7 +1289,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(230, 1) = compS!(X, 14)
             LD!(230, 2) = 0
-            Z0$(230) = compN$(X)
+            Z0$(230) = statPlyrNames$(X)
             Z3$(230) = TN$
 
             For Z = 221 To 229
@@ -1311,7 +1311,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(240, 1) = compS!(X, 6)
             LD!(240, 2) = 0
-            Z0$(240) = compN$(X)
+            Z0$(240) = statPlyrNames$(X)
             Z3$(240) = TN$
 
             For Z = 231 To 239
@@ -1333,7 +1333,7 @@ Sub StatsByCategoryTeam (TN$)
 
             LD!(250, 1) = compS!(X, 24)
             LD!(250, 2) = 0
-            Z0$(250) = compN$(X)
+            Z0$(250) = statPlyrNames$(X)
             Z3$(250) = TN$
 
             For Z = 241 To 249
@@ -1414,7 +1414,7 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
     Shared PT#()
 
-    Shared compO$(), compH$(), H1$(), PT$()
+    Shared statO$(), statH$(), H1$(), PT$()
 
     Shared confWins, confLosses
     Shared fullWins, fullLosses
@@ -1432,11 +1432,11 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
         For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
 
-        For I = 1 To NUM_STATRECORDS: Input #1, compO$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, statO$(I): Next I
 
         For I = 1 To NUM_STATRECORDS: Input #1, compT%(I): Next I
 
-        For I = 1 To NUM_STATRECORDS: Input #1, compH$(I): Next I
+        For I = 1 To NUM_STATRECORDS: Input #1, statH$(I): Next I
 
         For I = 1 To NUM_STATRECORDS
             For I1 = 0 To 1
@@ -1457,31 +1457,31 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
         For I = 1 To numberGames%
 
             For P = 4 To 11
-                If Mid$(compO$(I), P, 1) = " " Or Mid$(compO$(I), P, 1) = "." Then Mid$(compO$(I), P, 1) = "_"
+                If Mid$(statO$(I), P, 1) = " " Or Mid$(statO$(I), P, 1) = "." Then Mid$(statO$(I), P, 1) = "_"
             Next P
 
             For P = 12 To 14
-                If Mid$(compO$(I), P, 2) = "ST" Then Mid$(compO$(I), 9, 1) = "_": Mid$(compO$(I), 10, 2) = "ST"
+                If Mid$(statO$(I), P, 2) = "ST" Then Mid$(statO$(I), 9, 1) = "_": Mid$(statO$(I), 10, 2) = "ST"
             Next P
 
             QQ = 8
             For P = 11 To 4 Step -1:
-                If Mid$(compO$(I), P, 1) = "_" Then
+                If Mid$(statO$(I), P, 1) = "_" Then
                     QQ = P - 4
                 Else
                     Exit For
                 End If
             Next P
 
-            f$ = Mid$(compO$(I), 4, QQ)
-            R$ = f$ + "." + Left$(compO$(I), 2)
-            compO$(I) = R$
+            f$ = Mid$(statO$(I), 4, QQ)
+            R$ = f$ + "." + Left$(statO$(I), 2)
+            statO$(I) = R$
 
             confGame = 0
 
             For EC = 1 To 30
 
-                If compO$(I) = H1$(EC) Then
+                If statO$(I) = H1$(EC) Then
                     confGame = 1
                     Exit For
                 End If
@@ -1516,8 +1516,8 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
         For I = 1 To numberGames%
             RAT = mergeO%(I) - compT%(I) + compAP%(I, 1)
-            If Left$(compH$(I), 1) = "H" Then RAT = RAT - 4.5
-            If Left$(compH$(I), 1) = "A" Then RAT = RAT + 4.5
+            If Left$(statH$(I), 1) = "H" Then RAT = RAT - 4.5
+            If Left$(statH$(I), 1) = "A" Then RAT = RAT + 4.5
             PW = PW + RAT
         Next
 

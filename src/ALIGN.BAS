@@ -2,10 +2,10 @@
 '             ALIGN Subroutine
 '----------------------------------------
 'This routine presents a menu / interface
-'that assists the user with aligning 
-'player names in separate stat files. 
-'(ie, Road Vs. Local) This should be done 
-'before merging stats, since player name 
+'that assists the user with aligning
+'player names in separate stat files.
+'(ie, Road Vs. Local) This should be done
+'before merging stats, since player name
 'entry may not be consistent.
 Sub ALIGN ()
 
@@ -14,10 +14,10 @@ Sub ALIGN ()
     Shared statPlyrNames$()
     Shared alignAR$()
 
-    Shared AR!(), compareA!()
+    Shared AR!(), statsA!()
     Shared statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
     Shared W0R!(), WR1!()
-    Shared Z!(), Z1!()
     Shared ZR!(), ZR1!()
 
     Do
