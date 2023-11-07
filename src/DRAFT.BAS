@@ -215,8 +215,8 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                 Do
                     Locate 21, 20: Print "SLOT # (0-13) ";
                     N = 1
-                    Input B
-                Loop Until B >= 0 And B <= 14
+                    Input slot
+                Loop Until slot >= 0 And slot <= 14
 
                 draftIdx = 1
                 Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, destIdx, tmName_DRAFT$(draftIdx), draftIdx)
@@ -237,24 +237,24 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                 Do
                     Color 14
                     Locate 21, 1: Print "SELECT PLAYER # TO DRAFT ";
-                    Input B1
-                Loop Until B1 >= 0 And B1 <= 13
+                    Input player
+                Loop Until player >= 0 And player <= 13
 
-                plyrNames_DRAFT$(0, B) = plyrNames_DRAFT$(1, B1)
-                plyrDef_DRAFT!(0, B) = plyrDef_DRAFT!(1, B1)
-                posn_DRAFT$(0, B) = posn_DRAFT$(1, B1)
+                plyrNames_DRAFT$(0, slot) = plyrNames_DRAFT$(1, player)
+                plyrDef_DRAFT!(0, slot) = plyrDef_DRAFT!(1, player)
+                posn_DRAFT$(0, slot) = posn_DRAFT$(1, player)
 
                 For I = 0 To 13
-                    plyrStat_DRAFT!(0, B, I) = plyrStat_DRAFT!(1, B1, I)
+                    plyrStat_DRAFT!(0, slot, I) = plyrStat_DRAFT!(1, player, I)
                 Next
 
                 For I = 1 To 12
-                    miscRat_DRAFT(0, B, I) = miscRat_DRAFT(1, B1, I)
+                    miscRat_DRAFT(0, slot, I) = miscRat_DRAFT(1, player, I)
                 Next
 
                 For I = 0 To 6
-                    plyrOff_DRAFT!(0, B, I) = plyrOff_DRAFT!(1, B1, I)
-                    plyrRat_DRAFT!(0, B, I) = plyrRat_DRAFT!(1, B1, I)
+                    plyrOff_DRAFT!(0, slot, I) = plyrOff_DRAFT!(1, player, I)
+                    plyrRat_DRAFT!(0, slot, I) = plyrRat_DRAFT!(1, player, I)
                 Next
 
             Case 2

@@ -59,7 +59,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     'Do these need shared based on the below???
     'All are assigned 0s and read in from file
     Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, W%
+    Shared losses, wins
 
     Shared mergeT%(), mergeO%()
 
@@ -73,12 +73,15 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     P%(0) = 0
     P%(1) = 0
-    L% = 0
-    W% = 0
-    X% = 0
+
+    losses = 0
+    wins = 0
+    tiedGames = 0
+
     HW% = 0
     VW% = 0
     NW% = 0
+
     HL% = 0
     VL% = 0
     NL% = 0
@@ -106,17 +109,17 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     Close #1
 
     For I = 1 To totalGames%
-        If mergeO%(I) > mergeT%(I) Then W% = W% + 1
+        If mergeO%(I) > mergeT%(I) Then wins = wins + 1
         If mergeO%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "H" Then HW% = HW% + 1
         If mergeO%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "V" Then VW% = VW% + 1
         If mergeO%(I) > mergeT%(I) And Left$(homeTeam$(I), 1) = "N" Then NW% = NW% + 1
 
-        If mergeO%(I) < mergeT%(I) Then L% = L% + 1
+        If mergeO%(I) < mergeT%(I) Then losses = losses + 1
         If mergeO%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "H" Then HL% = HL% + 1
         If mergeO%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "V" Then VL% = VL% + 1
         If mergeO%(I) < mergeT%(I) And Left$(homeTeam$(I), 1) = "N" Then NL% = NL% + 1
 
-        If mergeO%(I) = mergeT%(I) Then X% = X% + 1
+        If mergeO%(I) = mergeT%(I) Then tiedGames = tiedGames + 1
         P%(0) = P%(0) + mergeO%(I)
         P%(1) = P%(1) + mergeT%(I)
     Next
@@ -170,7 +173,7 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
     'Do these need shared based on the below???
     'All are assigned 0s and read in from file
     Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, W%
+    Shared L%, wins
 
     Shared values!()
     Shared statsZ!(), statsZ1!()
@@ -679,7 +682,7 @@ End Sub
 Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, W%
+    Shared L%, wins
 
     Shared mergeO%(), mergeT%()
 
@@ -800,7 +803,7 @@ End Sub
 Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, W%
+    Shared L%, wins
 
     Shared values!(), statsW0!(), statsW1!(), statsZ!(), statsZ1!()
 

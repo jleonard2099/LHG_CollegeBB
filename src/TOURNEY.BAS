@@ -18,7 +18,7 @@ Sub TOURNEY ()
 
     Dim NGG(MAX_TEAMS)
 
-    Dim DY%(MAX_TEAMS), MON%(MAX_TEAMS), YR%(MAX_TEAMS)
+    Dim gameDay(MAX_TEAMS), gameMonth(MAX_TEAMS), gameYear(MAX_TEAMS)
 
     Shared coachMode$(), foulShotOpt$(), location$()
     Shared playMode$(), sclockOpt$(), yesNo$()
@@ -163,7 +163,7 @@ Sub TOURNEY ()
                     Color , 0
                     Cls
 
-                    Call MenuBox (6, 8, 61, 7, 15, 4)
+                    Call MenuBox(6, 8, 61, 7, 15, 4)
 
                     Do
 
@@ -181,7 +181,7 @@ Sub TOURNEY ()
                     If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
 
                     Open "TOURNEY" For Output As #2
-                    Print #2, tourneyFile$ ' + ".TNY"
+                    Print #2, tourneyFile$ + ".TOU" '".TNY"
                     Print #2, SG%
                     Print #2, EG%
                     Print #2, 0
@@ -193,9 +193,9 @@ Sub TOURNEY ()
                         If L = 5 Then HR = Val(Left$(yearNumber$(I, 2), 1)): MIN = Val(Mid$(yearNumber$(I, 2), 3, 2))
                         If L = 6 Then HR = Val(Left$(yearNumber$(I, 2), 2)): MIN = Val(Mid$(yearNumber$(I, 2), 4, 2))
 
-                        MON%(I) = Val(Left$(yearNumber$(I, 3), 2))
-                        DY%(I) = Val(Mid$(yearNumber$(I, 3), 4, 2))
-                        YR%(I) = Val(Mid$(yearNumber$(I, 3), 7, 2))
+                        gameMonth(I) = Val(Left$(yearNumber$(I, 3), 2))
+                        gameDay(I) = Val(Mid$(yearNumber$(I, 3), 4, 2))
+                        gameYear(I) = Val(Mid$(yearNumber$(I, 3), 7, 2))
 
                         T$ = Right$(yearNumber$(I, 2), 1)
                         If UCase$(T$) = "P" And Left$(yearNumber$(I, 2), 2) <> "12" Then HR = HR + 12

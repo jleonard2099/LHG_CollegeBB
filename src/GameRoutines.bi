@@ -81,7 +81,7 @@ Declare Sub TickerSchedule
 Declare Sub TICKERUPDATE ()
 Declare Sub TOURNEY_Game ()
 Declare Sub UPDATESCREEN ()
-Declare Sub UpdateTourneyFile ()
+Declare Sub UpdateTourneyFile (gameIdx, loseTeam$, winTeam$)
 Declare Sub WHOGETSBALL ()
 Declare Sub WHOLAY ()
 Declare Sub WINDEX ()

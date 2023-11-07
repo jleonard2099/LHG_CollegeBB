@@ -17,7 +17,9 @@ Dim statsZ2!(13, 13)
 Dim gameSite$(NUM_STATRECORDS), SITERP$(NUM_STATRECORDS)
 Dim HO$(NUM_STATRECORDS)
 Dim HRP$(NUM_STATRECORDS), ORP$(NUM_STATRECORDS)
-Dim statH$(NUM_STATRECORDS), statO$(NUM_STATRECORDS) 
+Dim statH$(NUM_STATRECORDS), statO$(NUM_STATRECORDS)
+
+Dim statO%(NUM_STATRECORDS)
 
 
 ' *** Schedule Data ***
@@ -97,9 +99,9 @@ Dim H1$(40), HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
 Dim confWins, confLosses
 Dim fullWins, fullLosses
 
-Dim DT!(21), OT!(21)
-Dim LD!(1 To 250, 0 To 2)
-Dim NDL!(1 To 40, 1 To 20), NLD!(1 To 250, 1 To 2), NOL!(1 To 40, 1 To 20)
+Dim defTotals!(21), offTotals!(21)
+Dim leaderVals!(1 To 250, 0 To 2), natLeaderVals!(1 To 250, 1 To 2)
+Dim natDefLeaders!(1 To 40, 1 To 20), natOffLeaders!(1 To 40, 1 To 20)
 Dim compS!(0 To 14, 0 To 26)
 
 Dim categories$(25)
@@ -147,10 +149,10 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 ' Used in RECORDS routines
 '----------------------------------------
 Dim BRC!(32), TRC!(1 To 21), TRC1!(1 To 21)
-Dim REC!(50, 2), TREC!(0 to 125, 0 to 2)
+Dim indRec!(50, 2), teamRec!(0 To 125, 0 To 2)
 
 Dim BRC$(32, 1), recconTRC$(1 To 21), recconTRC1$(1 To 21)
-Dim RC$(50, 4), TRC$(0 to 125, 0 to 3)
+Dim indRecDesc$(50, 4), teamRecDesc$(0 To 125, 0 To 3)
 
 Dim recconTB$(25), recconTT$(20)
 
@@ -159,7 +161,7 @@ Dim recconTB$(25), recconTT$(20)
 ' Used in STAT / INPUT routines
 '----------------------------------------
 Dim HL%, HW%, NL%, NW%, VL%, VW%
-Dim L%, W%
+Dim losses, wins
 
 Dim values!(0 To 14, 24)
 
@@ -170,7 +172,7 @@ Dim values!(0 To 14, 24)
 Dim DL$(60), OL$(60), NOL$(1 To 60), PR$(1200)
 Dim seeT$(30)
 
-Dim DL!(60, 20), OL!(60, 20)
+Dim defLeaders!(60, 20), offLeaders!(60, 20)
 Dim O1!(30), O2!(30), O3!(30), O4!(30), O5!(30), O6!(30)
 
 Dim seeZ!(260), seeZ1!(260)
@@ -183,7 +185,6 @@ Dim PT#(1200, 5)
 ' Used in SCHEDULE routines
 '----------------------------------------
 Dim BS%, NS%
-Dim N$
 
 Dim scheduleAP%(1), scheduleZ1%(1 To 30)
 Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
@@ -208,7 +209,7 @@ Dim tmFTPct, tmReb, tmAsst, tmSteal, tmTO
 Dim TC!
 
 '           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-Dim tourneyN%(17, 17, 3)
+Dim tourneyN%(1 To 17, 1 To 17, 0 To 3)
 
 'Number of Teams Per Region (up to 16 Regions)
 Dim NN%(17)
@@ -231,17 +232,21 @@ Dim consolationSetting%(1)
 '----------------------------------------
 ' Used in Game Routines
 '----------------------------------------
-Dim scheduleFile$
+Dim scheduleFile$, tourneyFile$
 Dim actualAttendance&
+
+Dim alpha$(3), tickerPeriod$(14), teamYrTourn$(0 To 3)
+
+Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
 
 'CRD stores attendance for stat files
 '  I think this is because files are operated on
 '   linearly, so 100 records is the most supported?
 Dim avgAttendance&(1), CRD&(NUM_STATRECORDS)
 
-Dim Shared autoPlay, B, C1, DY, compTeam, D, endGame, endAllGames, FO, F3
-Dim Shared G9, gameLoc, H, halfTime, I, J, JY, IN, M5, MJ, nbrLines, NTMS
-Dim Shared P, P9, playerMode, playerOpt, Q, S2, S9, sClockVal, shotClock
+Dim Shared autoPlay, ballCarrier, C1, currHalf, DY, compTeam, D, endGame, endAllGames, FO, F3
+Dim Shared G9, gameLoc, halfTime, JY, IN, M5, MJ, nbrLines
+Dim Shared P, P9, playerMode, playerOpt, S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 
 Dim Shared BO%, BU%, coachOpt, DK%, F3S%, FB%, FT%, J8%, LC%, ft6FloorFouls, foulsToDQ
@@ -251,16 +256,16 @@ Dim Shared F!
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, J$, prevBall$
-Dim Shared tourneyFile$, U$, VT$, VT1$, W$, YN$
+Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, prevBall$
+Dim Shared pbpString$, schedVisTm$, schedHomeTm$, YN$
 
 Dim Shared APT%(NUM_STATRECORDS, 1)
-Dim Shared HT%(NUM_STATRECORDS), O%(NUM_STATRECORDS)
+Dim Shared HT%(NUM_STATRECORDS)
 
-Dim Shared B%(1, 13), CZ%(1), F5%(0 To 1, 0 To 8), FY%(0 To 1)
-Dim Shared G9%(1), HF%(1, 6), N%(16, 16, 0 To 4), NG%(18), NG1%(18)
+Dim Shared CZ%(1), F5%(0 To 1, 0 To 8), FY%(0 To 1)
+Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
 Dim Shared offStrat(1), PC%(1), PR%(1, 1)
-Dim Shared ST%(32), SX%(32, 1, 14)
+Dim Shared rosterStatus(1, 13), ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TM%(1, 13), TP%(1)
 Dim Shared VG%(8), VH%(8), YR%(1)
 
@@ -281,7 +286,7 @@ Dim gameW0!(1, 13), gameW1!(1, 13)
 
 Dim Shared defStyles$(15), defStyles_brief$(14)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
-Dim Shared N$(16, 16, 0 To 4), offStyles$(9), offStyles_brief$(9)
+Dim Shared N$(1 To 16, 1 To 16, 0 To 4), offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13), PO$(1, 13), PS$(4)
-Dim Shared R$(14), SITE$(NUM_STATRECORDS), SX$(32, 2)
-Dim Shared X$(3), Y$(1), YN$(5), YN1$(3)
+Dim Shared SITE$(NUM_STATRECORDS), SX$(32, 2)
+Dim Shared YN$(5)

@@ -12,12 +12,10 @@ Sub CompileCollege ()
 
     Shared mergeT%()
 
-    Shared BRC!(), DL!()
-    Shared LD!(), OL!()
-    Shared compS!(), TRC!(), TRC1!()
-    Shared statsW0!(), statsW1!()
-    Shared DT!(), OT!()
+    Shared BRC!(), defLeaders!(), offLeaders!()
+    Shared compS!(), defTotals!(), offTotals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
+    Shared statsW0!(), statsW1!(), TRC!(), TRC1!()
 
     Shared BRC$(), DL$(), statPlyrNames$(), statO$()
     Shared H1$(), OL$()
@@ -39,10 +37,10 @@ Sub CompileCollege ()
     For I = 19 To 20: TRC1!(I) = 19999: Next
 
     Erase Z1$
-    Erase DL!
+    Erase defLeaders!
 
     For X = 1 To 40
-        DL!(X, 19) = 9999
+        defLeaders!(X, 19) = 9999
     Next
 
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
@@ -178,7 +176,7 @@ End Sub
 'single team in the conference
 Sub ReadStatsCon (statFile$, TN$)
 
-    Shared compS!(), DT!(), OT!()
+    Shared compS!(), defTotals!(), offTotals!()
     Shared statsW0!(), statsW1!()
 
     Shared statPlyrNames$()
@@ -202,11 +200,11 @@ Sub ReadStatsCon (statFile$, TN$)
     Next
 
     For L = 1 To 16:
-        Input #1, OT!(L)
+        Input #1, offTotals!(L)
     Next
 
     For L = 1 To 16:
-        Input #1, DT!(L)
+        Input #1, defTotals!(L)
     Next
 
     Close #1
@@ -221,8 +219,8 @@ End Sub
 'to existing leaders and updates as needed
 Sub CheckStatsCon (TN$)
 
-    Shared compS!(), DL!(), DT!()
-    Shared LD!(), OL!(), OT!()
+    Shared compS!(), defLeaders!(), defTotals!()
+    Shared leaderVals!(), offLeaders!(), offTotals!()
     Shared statsW0!(), statsW1!()
 
     Shared statPlyrNames$(), DL$(), OL$()
@@ -235,20 +233,20 @@ Sub CheckStatsCon (TN$)
         Color 15: Print statPlyrNames$(X)
 
         'Division 1, 2 Record
-        If compS!(X, 22) > LD!(20, 1) Then
+        If compS!(X, 22) > leaderVals!(20, 1) Then
 
-            LD!(20, 1) = compS!(X, 22)
-            LD!(20, 2) = 0
+            leaderVals!(20, 1) = compS!(X, 22)
+            leaderVals!(20, 2) = 0
             Z0$(20) = statPlyrNames$(X)
             Z3$(20) = TN$
 
             For Z = 1 To 19:
                 For Z1 = Z + 1 To 20:
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -257,20 +255,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Division 3, 4 Record
-        If compS!(X, 12) > LD!(40, 1) Then
+        If compS!(X, 12) > leaderVals!(40, 1) Then
 
-            LD!(40, 1) = compS!(X, 12)
-            LD!(40, 2) = 0
+            leaderVals!(40, 1) = compS!(X, 12)
+            leaderVals!(40, 2) = 0
             Z0$(40) = statPlyrNames$(X)
             Z3$(40) = TN$
 
             For Z = 21 To 39
                 For Z1 = Z + 1 To 40
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -279,20 +277,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Field Goal %
-        If compS!(X, 19) > LD!(60, 1) Then
+        If compS!(X, 19) > leaderVals!(60, 1) Then
 
-            LD!(60, 1) = compS!(X, 19)
-            LD!(60, 2) = compS!(X, 1)
+            leaderVals!(60, 1) = compS!(X, 19)
+            leaderVals!(60, 2) = compS!(X, 1)
             Z0$(60) = statPlyrNames$(X)
             Z3$(60) = TN$
 
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -301,20 +299,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Free Throw %
-        If compS!(X, 20) > LD!(80, 1) Then
+        If compS!(X, 20) > leaderVals!(80, 1) Then
 
-            LD!(80, 1) = compS!(X, 20)
-            LD!(80, 2) = compS!(X, 3)
+            leaderVals!(80, 1) = compS!(X, 20)
+            leaderVals!(80, 2) = compS!(X, 3)
             Z0$(80) = statPlyrNames$(X)
             Z3$(80) = TN$
 
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -323,20 +321,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Steals Per Game
-        If compS!(X, 15) > LD!(90, 1) Then
+        If compS!(X, 15) > leaderVals!(90, 1) Then
 
-            LD!(90, 1) = compS!(X, 15)
-            LD!(90, 2) = compS!(X, 7)
+            leaderVals!(90, 1) = compS!(X, 15)
+            leaderVals!(90, 2) = compS!(X, 7)
             Z0$(90) = statPlyrNames$(X)
             Z3$(90) = TN$
 
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -345,20 +343,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Steals
-        If compS!(X, 7) > LD!(100, 1) Then
+        If compS!(X, 7) > leaderVals!(100, 1) Then
 
-            LD!(100, 1) = compS!(X, 7)
-            LD!(100, 2) = 0
+            leaderVals!(100, 1) = compS!(X, 7)
+            leaderVals!(100, 2) = 0
             Z0$(100) = statPlyrNames$(X)
             Z3$(100) = TN$
 
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -367,20 +365,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Assist Per Game
-        If compS!(X, 16) > LD!(110, 1) Then
+        If compS!(X, 16) > leaderVals!(110, 1) Then
 
-            LD!(110, 1) = compS!(X, 16)
-            LD!(110, 2) = compS!(X, 8)
+            leaderVals!(110, 1) = compS!(X, 16)
+            leaderVals!(110, 2) = compS!(X, 8)
             Z0$(110) = statPlyrNames$(X)
             Z3$(110) = TN$
 
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -389,20 +387,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Assists
-        If compS!(X, 8) > LD!(120, 1) Then
+        If compS!(X, 8) > leaderVals!(120, 1) Then
 
-            LD!(120, 1) = compS!(X, 8)
-            LD!(120, 2) = compS!(X, 8)
+            leaderVals!(120, 1) = compS!(X, 8)
+            leaderVals!(120, 2) = compS!(X, 8)
             Z0$(120) = statPlyrNames$(X)
             Z3$(120) = TN$
 
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -411,20 +409,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         '3 FG %
-        If compS!(X, 21) > LD!(130, 1) Then
+        If compS!(X, 21) > leaderVals!(130, 1) Then
 
-            LD!(130, 1) = compS!(X, 21)
-            LD!(130, 2) = statsW1!(X)
+            leaderVals!(130, 1) = compS!(X, 21)
+            leaderVals!(130, 2) = statsW1!(X)
             Z0$(130) = statPlyrNames$(X)
             Z3$(130) = TN$
 
             For Z = 121 To 129
                 For Z1 = Z + 1 To 130
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -433,20 +431,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         '3 FG MADE
-        If statsW0!(X) > LD!(140, 1) Then
+        If statsW0!(X) > leaderVals!(140, 1) Then
 
-            LD!(140, 1) = statsW0!(X)
-            LD!(140, 2) = 0
+            leaderVals!(140, 1) = statsW0!(X)
+            leaderVals!(140, 2) = 0
             Z0$(140) = statPlyrNames$(X)
             Z3$(140) = TN$
 
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -455,20 +453,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Minutes Per Game
-        If compS!(X, 18) > LD!(150, 1) Then
+        If compS!(X, 18) > leaderVals!(150, 1) Then
 
-            LD!(150, 1) = compS!(X, 18)
-            LD!(150, 2) = 0
+            leaderVals!(150, 1) = compS!(X, 18)
+            leaderVals!(150, 2) = 0
             Z0$(150) = statPlyrNames$(X)
             Z3$(150) = TN$
 
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -477,20 +475,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Total Minutes
-        If compS!(X, 10) / 60 > LD!(160, 1) Then
+        If compS!(X, 10) / 60 > leaderVals!(160, 1) Then
 
-            LD!(160, 1) = compS!(X, 10) / 60
-            LD!(160, 2) = 0
+            leaderVals!(160, 1) = compS!(X, 10) / 60
+            leaderVals!(160, 2) = 0
             Z0$(160) = statPlyrNames$(X)
             Z3$(160) = TN$
 
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -499,20 +497,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Rebounds Per Game
-        If compS!(X, 13) > LD!(170, 1) Then
+        If compS!(X, 13) > leaderVals!(170, 1) Then
 
-            LD!(170, 1) = compS!(X, 13)
-            LD!(170, 2) = compS!(X, 5)
+            leaderVals!(170, 1) = compS!(X, 13)
+            leaderVals!(170, 2) = compS!(X, 5)
             Z0$(170) = statPlyrNames$(X)
             Z3$(170) = TN$
 
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -521,20 +519,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Rebounds
-        If compS!(X, 5) > LD!(180, 1) Then
+        If compS!(X, 5) > leaderVals!(180, 1) Then
 
-            LD!(180, 1) = compS!(X, 5)
-            LD!(18, 2) = 0
+            leaderVals!(180, 1) = compS!(X, 5)
+            leaderVals!(18, 2) = 0
             Z0$(180) = statPlyrNames$(X)
             Z3$(180) = TN$
 
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -543,20 +541,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Blocks Per Game
-        If compS!(X, 17) > LD!(190, 1) Then
+        If compS!(X, 17) > leaderVals!(190, 1) Then
 
-            LD!(190, 1) = compS!(X, 17)
-            LD!(190, 2) = 0
+            leaderVals!(190, 1) = compS!(X, 17)
+            leaderVals!(190, 2) = 0
             Z0$(190) = statPlyrNames$(X)
             Z3$(190) = TN$
 
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -565,20 +563,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Blocks
-        If compS!(X, 9) > LD!(200, 1) Then
+        If compS!(X, 9) > leaderVals!(200, 1) Then
 
-            LD!(200, 1) = compS!(X, 9)
-            LD!(200, 2) = 0
+            leaderVals!(200, 1) = compS!(X, 9)
+            leaderVals!(200, 2) = 0
             Z0$(200) = statPlyrNames$(X)
             Z3$(200) = TN$
 
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -587,20 +585,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'FG Made
-        If compS!(X, 2) > LD!(210, 1) Then
+        If compS!(X, 2) > leaderVals!(210, 1) Then
 
-            LD!(210, 1) = compS!(X, 2)
-            LD!(210, 2) = 0
+            leaderVals!(210, 1) = compS!(X, 2)
+            leaderVals!(210, 2) = 0
             Z0$(210) = statPlyrNames$(X)
             Z3$(210) = TN$
 
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -609,20 +607,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'FT Made
-        If compS!(X, 4) > LD!(220, 1) Then
+        If compS!(X, 4) > leaderVals!(220, 1) Then
 
-            LD!(220, 1) = compS!(X, 4)
-            LD!(220, 2) = 0
+            leaderVals!(220, 1) = compS!(X, 4)
+            leaderVals!(220, 2) = 0
             Z0$(220) = statPlyrNames$(X)
             Z3$(220) = TN$
 
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -631,20 +629,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Fouls Per Game
-        If compS!(X, 14) > LD!(230, 1) Then
+        If compS!(X, 14) > leaderVals!(230, 1) Then
 
-            LD!(230, 1) = compS!(X, 14)
-            LD!(230, 2) = 0
+            leaderVals!(230, 1) = compS!(X, 14)
+            leaderVals!(230, 2) = 0
             Z0$(230) = statPlyrNames$(X)
             Z3$(230) = TN$
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -653,20 +651,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'Fouls
-        If compS!(X, 6) > LD!(240, 1) Then
+        If compS!(X, 6) > leaderVals!(240, 1) Then
 
-            LD!(240, 1) = compS!(X, 6)
-            LD!(240, 2) = 0
+            leaderVals!(240, 1) = compS!(X, 6)
+            leaderVals!(240, 2) = 0
             Z0$(240) = statPlyrNames$(X)
             Z3$(240) = TN$
 
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -675,20 +673,20 @@ Sub CheckStatsCon (TN$)
         End If
 
         'MVP Points
-        If compS!(X, 24) > LD!(250, 1) Then
+        If compS!(X, 24) > leaderVals!(250, 1) Then
 
-            LD!(250, 1) = compS!(X, 24)
-            LD!(250, 2) = 0
+            leaderVals!(250, 1) = compS!(X, 24)
+            leaderVals!(250, 2) = 0
             Z0$(250) = statPlyrNames$(X)
             Z3$(250) = TN$
 
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
-                    If LD!(Z, 1) < LD!(Z1, 1) Then
+                    If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
-                            Swap LD!(Z1, M), LD!(Z, M)
+                            Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
                 Next Z1
@@ -699,20 +697,20 @@ Sub CheckStatsCon (TN$)
     Next X
 
     'FOR X=1 TO 40
-    If OT!(19) > OL!(40, 19) Then
+    If offTotals!(19) > offLeaders!(40, 19) Then
 
         For M = 1 To 20:
-            OL!(40, M) = OT!(M)
+            offLeaders!(40, M) = offTotals!(M)
         Next
 
         OL$(40) = TN$
 
         For X = 1 To 39
             For X1 = 1 + X To 40:
-                If OL!(X, 19) < OL!(X1, 19) Then
+                If offLeaders!(X, 19) < offLeaders!(X1, 19) Then
                     Swap OL$(X1), OL$(X)
                     For M = 1 To 20:
-                        Swap OL!(X1, M), OL!(X, M)
+                        Swap offLeaders!(X1, M), offLeaders!(X, M)
                     Next
                 End If
             Next X1
@@ -721,20 +719,20 @@ Sub CheckStatsCon (TN$)
     End If
 
     'FOR X=1 TO 15
-    If DT!(19) < DL!(40, 19) Then
+    If defTotals!(19) < defLeaders!(40, 19) Then
 
         For M = 1 To 20:
-            DL!(40, M) = DT!(M)
+            defLeaders!(40, M) = defTotals!(M)
         Next
 
         DL$(40) = TN$
 
         For X = 1 To 39
             For X1 = 1 + X To 40
-                If DL!(X, 19) > DL!(X1, 19) Then
+                If defLeaders!(X, 19) > defLeaders!(X1, 19) Then
                     Swap DL$(X1), DL$(X)
                     For M = 1 To 20:
-                        Swap DL!(X1, M), DL!(X, M)
+                        Swap defLeaders!(X1, M), defLeaders!(X, M)
                     Next
                 End If
             Next X1
@@ -753,7 +751,7 @@ End Sub
 'see if any should be updated
 Sub StatsByCategoryCon (numberGames%, TN$, finalUpdate$)
 
-    Shared BRC!(), compS!(), DT!(), OT!()
+    Shared BRC!(), compS!(), defTotals!(), offTotals!()
     Shared TRC!(), TRC1!()
     Shared statsW0!(), statsW1!()
 
@@ -821,62 +819,62 @@ Sub StatsByCategoryCon (numberGames%, TN$, finalUpdate$)
 
     Next
 
-    OT!(16) = numberGames%
-    DT!(16) = numberGames%
-    OT!(17) = OT!(3) / OT!(2)
-    DT!(17) = DT!(3) / DT!(2)
-    OT!(18) = OT!(5) / OT!(4)
-    DT!(18) = DT!(5) / DT!(4)
-    OT!(20) = OT!(11)
-    DT!(20) = DT!(11)
+    offTotals!(16) = numberGames%
+    defTotals!(16) = numberGames%
+    offTotals!(17) = offTotals!(3) / offTotals!(2)
+    defTotals!(17) = defTotals!(3) / defTotals!(2)
+    offTotals!(18) = offTotals!(5) / offTotals!(4)
+    defTotals!(18) = defTotals!(5) / defTotals!(4)
+    offTotals!(20) = offTotals!(11)
+    defTotals!(20) = defTotals!(11)
 
-    If OT!(15) <> 0 Then OT!(21) = OT!(14) / OT!(15) Else OT!(21) = 0
-    If DT!(15) <> 0 Then DT!(21) = DT!(14) / DT!(15) Else DT!(21) = 999
+    If offTotals!(15) <> 0 Then offTotals!(21) = offTotals!(14) / offTotals!(15) Else offTotals!(21) = 0
+    If defTotals!(15) <> 0 Then defTotals!(21) = defTotals!(14) / defTotals!(15) Else defTotals!(21) = 999
 
-    OT!(19) = OT!(20) / numberGames%
-    DT!(19) = DT!(20) / numberGames%
+    offTotals!(19) = offTotals!(20) / numberGames%
+    defTotals!(19) = defTotals!(20) / numberGames%
 
-    If OT!(2) > TRC!(1) Then TRC!(1) = OT!(2): recconTRC$(1) = TN$
-    If OT!(3) > TRC!(2) Then TRC!(2) = OT!(3): recconTRC$(2) = TN$
-    If OT!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = OT!(17): recconTRC$(3) = TN$
-    If OT!(15) > TRC!(4) Then TRC!(4) = OT!(15): recconTRC$(4) = TN$
-    If OT!(14) > TRC!(5) Then TRC!(5) = OT!(14): recconTRC$(5) = TN$
-    If OT!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = OT!(21): recconTRC$(6) = TN$
-    If OT!(4) > TRC!(7) Then TRC!(7) = OT!(4): recconTRC$(7) = TN$
-    If OT!(5) > TRC!(8) Then TRC!(8) = OT!(5): recconTRC$(8) = TN$
-    If OT!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = OT!(18): recconTRC$(9) = TN$
-    If OT!(13) > TRC!(10) Then TRC!(10) = OT!(13): recconTRC$(10) = TN$
-    If OT!(6) - OT!(13) > TRC!(11) Then TRC!(11) = OT!(6) - OT!(13): recconTRC$(11) = TN$
-    If OT!(6) > TRC!(12) Then TRC!(12) = OT!(6): recconTRC$(12) = TN$
-    If OT!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = OT!(6) / numberGames%: recconTRC$(13) = TN$
-    If OT!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = OT!(7): recconTRC$(14) = TN$
-    If OT!(8) > TRC!(15) Then TRC!(15) = OT!(8): recconTRC$(15) = TN$
-    If OT!(9) > TRC!(16) Then TRC!(16) = OT!(9): recconTRC$(16) = TN$
-    If OT!(10) > TRC!(17) Then TRC!(17) = OT!(10): recconTRC$(17) = TN$
-    If OT!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = OT!(12): recconTRC$(18) = TN$
-    If OT!(11) > TRC!(19) Then TRC!(19) = OT!(11): recconTRC$(19) = TN$
-    If OT!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = OT!(11) / numberGames%: recconTRC$(20) = TN$
+    If offTotals!(2) > TRC!(1) Then TRC!(1) = offTotals!(2): recconTRC$(1) = TN$
+    If offTotals!(3) > TRC!(2) Then TRC!(2) = offTotals!(3): recconTRC$(2) = TN$
+    If offTotals!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = offTotals!(17): recconTRC$(3) = TN$
+    If offTotals!(15) > TRC!(4) Then TRC!(4) = offTotals!(15): recconTRC$(4) = TN$
+    If offTotals!(14) > TRC!(5) Then TRC!(5) = offTotals!(14): recconTRC$(5) = TN$
+    If offTotals!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = offTotals!(21): recconTRC$(6) = TN$
+    If offTotals!(4) > TRC!(7) Then TRC!(7) = offTotals!(4): recconTRC$(7) = TN$
+    If offTotals!(5) > TRC!(8) Then TRC!(8) = offTotals!(5): recconTRC$(8) = TN$
+    If offTotals!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = offTotals!(18): recconTRC$(9) = TN$
+    If offTotals!(13) > TRC!(10) Then TRC!(10) = offTotals!(13): recconTRC$(10) = TN$
+    If offTotals!(6) - offTotals!(13) > TRC!(11) Then TRC!(11) = offTotals!(6) - offTotals!(13): recconTRC$(11) = TN$
+    If offTotals!(6) > TRC!(12) Then TRC!(12) = offTotals!(6): recconTRC$(12) = TN$
+    If offTotals!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = offTotals!(6) / numberGames%: recconTRC$(13) = TN$
+    If offTotals!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = offTotals!(7): recconTRC$(14) = TN$
+    If offTotals!(8) > TRC!(15) Then TRC!(15) = offTotals!(8): recconTRC$(15) = TN$
+    If offTotals!(9) > TRC!(16) Then TRC!(16) = offTotals!(9): recconTRC$(16) = TN$
+    If offTotals!(10) > TRC!(17) Then TRC!(17) = offTotals!(10): recconTRC$(17) = TN$
+    If offTotals!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = offTotals!(12): recconTRC$(18) = TN$
+    If offTotals!(11) > TRC!(19) Then TRC!(19) = offTotals!(11): recconTRC$(19) = TN$
+    If offTotals!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = offTotals!(11) / numberGames%: recconTRC$(20) = TN$
     If fullWins > TRC!(21) Then TRC!(21) = fullWins: recconTRC$(21) = TN$
-    If DT!(2) < TRC1!(1) Then TRC1!(1) = DT!(2): recconTRC1$(1) = TN$
-    If DT!(3) < TRC1!(2) Then TRC1!(2) = DT!(3): recconTRC1$(2) = TN$
-    If DT!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = DT!(17): recconTRC1$(3) = TN$
-    If DT!(15) < TRC1!(4) Then TRC1!(4) = DT!(15): recconTRC1$(4) = TN$
-    If DT!(14) < TRC1!(5) Then TRC1!(5) = DT!(14): recconTRC1$(5) = TN$
-    If DT!(21) < TRC1!(6) And DT!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = DT!(21): recconTRC1$(6) = TN$
-    If DT!(4) < TRC1!(7) Then TRC1!(7) = DT!(4): recconTRC1$(7) = TN$
-    If DT!(5) < TRC1!(8) Then TRC1!(8) = DT!(5): recconTRC1$(8) = TN$
-    If DT!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = DT!(18): recconTRC1$(9) = TN$
-    If DT!(13) < TRC1!(10) Then TRC1!(10) = DT!(13): recconTRC1$(10) = TN$
-    If DT!(6) - DT!(13) < TRC1!(11) Then TRC1!(11) = DT!(6) - DT!(13): recconTRC1$(11) = TN$
-    If DT!(6) < TRC1!(12) Then TRC1!(12) = DT!(6): recconTRC1$(12) = TN$
-    If DT!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = DT!(6) / numberGames%: recconTRC1$(13) = TN$
-    If DT!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = DT!(7): recconTRC1$(14) = TN$
-    If DT!(8) < TRC1!(15) Then TRC1!(15) = DT!(8): recconTRC1$(15) = TN$
-    If DT!(9) < TRC1!(16) Then TRC1!(16) = DT!(9): recconTRC1$(16) = TN$
-    If DT!(10) < TRC1!(17) Then TRC1!(17) = DT!(10): recconTRC1$(17) = TN$
-    If DT!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = DT!(12): recconTRC1$(18) = TN$
-    If DT!(11) < TRC1!(19) Then TRC1!(19) = DT!(11): recconTRC1$(19) = TN$
-    If DT!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = DT!(11) / numberGames%: recconTRC1$(20) = TN$
+    If defTotals!(2) < TRC1!(1) Then TRC1!(1) = defTotals!(2): recconTRC1$(1) = TN$
+    If defTotals!(3) < TRC1!(2) Then TRC1!(2) = defTotals!(3): recconTRC1$(2) = TN$
+    If defTotals!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = defTotals!(17): recconTRC1$(3) = TN$
+    If defTotals!(15) < TRC1!(4) Then TRC1!(4) = defTotals!(15): recconTRC1$(4) = TN$
+    If defTotals!(14) < TRC1!(5) Then TRC1!(5) = defTotals!(14): recconTRC1$(5) = TN$
+    If defTotals!(21) < TRC1!(6) And defTotals!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = defTotals!(21): recconTRC1$(6) = TN$
+    If defTotals!(4) < TRC1!(7) Then TRC1!(7) = defTotals!(4): recconTRC1$(7) = TN$
+    If defTotals!(5) < TRC1!(8) Then TRC1!(8) = defTotals!(5): recconTRC1$(8) = TN$
+    If defTotals!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = defTotals!(18): recconTRC1$(9) = TN$
+    If defTotals!(13) < TRC1!(10) Then TRC1!(10) = defTotals!(13): recconTRC1$(10) = TN$
+    If defTotals!(6) - defTotals!(13) < TRC1!(11) Then TRC1!(11) = defTotals!(6) - defTotals!(13): recconTRC1$(11) = TN$
+    If defTotals!(6) < TRC1!(12) Then TRC1!(12) = defTotals!(6): recconTRC1$(12) = TN$
+    If defTotals!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = defTotals!(6) / numberGames%: recconTRC1$(13) = TN$
+    If defTotals!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = defTotals!(7): recconTRC1$(14) = TN$
+    If defTotals!(8) < TRC1!(15) Then TRC1!(15) = defTotals!(8): recconTRC1$(15) = TN$
+    If defTotals!(9) < TRC1!(16) Then TRC1!(16) = defTotals!(9): recconTRC1$(16) = TN$
+    If defTotals!(10) < TRC1!(17) Then TRC1!(17) = defTotals!(10): recconTRC1$(17) = TN$
+    If defTotals!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = defTotals!(12): recconTRC1$(18) = TN$
+    If defTotals!(11) < TRC1!(19) Then TRC1!(19) = defTotals!(11): recconTRC1$(19) = TN$
+    If defTotals!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = defTotals!(11) / numberGames%: recconTRC1$(20) = TN$
     If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: recconTRC1$(21) = TN$
 
 End Sub
@@ -938,9 +936,9 @@ Sub PostLeadersConf (leaderFile$)
 
     Shared DL$(), OL$()
 
-    Shared BRC!(), DL!(), LD!()
+    Shared BRC!(), defLeaders!(), leaderVals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared BRC!(), OL!(), TRC!(), TRC1!()
+    Shared BRC!(), offLeaders!(), TRC!(), TRC1!()
 
     Shared BRC$(), recconTRC$(), recconTRC1$()
     Shared Z0$(), Z1$(), Z3$()
@@ -958,20 +956,20 @@ Sub PostLeadersConf (leaderFile$)
     Next
 
     For X = 1 To 250
-        Write #1, Z0$(X), Z3$(X), LD!(X, 1), LD!(X, 2)
+        Write #1, Z0$(X), Z3$(X), leaderVals!(X, 1), leaderVals!(X, 2)
     Next X
 
     For X = 1 To 40:
         Write #1, OL$(X)
         For Y = 1 To 20:
-            Write #1, OL!(X, Y)
+            Write #1, offLeaders!(X, Y)
         Next
     Next
 
     For X = 1 To 40:
         Write #1, DL$(X):
         For Y = 1 To 20:
-            Write #1, DL!(X, Y)
+            Write #1, defLeaders!(X, Y)
         Next
     Next
 

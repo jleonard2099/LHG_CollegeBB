@@ -42,10 +42,10 @@ Sub ADDTOURN ()
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 10
-    	menuWidth% = Len(menuChoices$(1))
-    	Column% = (80 - menuWidth% - 2) / 2
+        menuWidth% = Len(menuChoices$(1))
+        Column% = (80 - menuWidth% - 2) / 2
 
-    	Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -73,9 +73,11 @@ Sub ADDTOURN ()
 
                     Call LoadTourney(NR%, Selection%, tn$)
 
-                Case 3: Call BRACKET
-                Case 5: Call TOURNEY
-                Case 6: Cls
+                Case 3:
+                    Call BRACKET
+
+                Case 5:
+                    Call TOURNEY
 
             End Select
 
@@ -299,9 +301,9 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
             Else
 
-                For NR = 1 To numberRegions
+                For currRegion = 1 To numberRegions
 
-                    Call SeedBrackets(NR, NT$, sourceFile$, numberRegions, tourneyName$)
+                    Call SeedBrackets(currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
                 Next
 
@@ -323,7 +325,7 @@ End Sub
 'make changes to the Tournament Regions 
 'and their corresponding seedings and
 'brackets.
-Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
+Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%(), teamRatings%()
@@ -343,20 +345,20 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Color , 0
     Locate , 1
-    X$ = "NAME OF REGION" + Str$(NR) + " "
+    X$ = "NAME OF REGION" + Str$(currRegion) + " "
 
     Locate 7, 1: QPrint X$, 14, 1, -1
-    Locate , 26: QPrint PadRight$(regionNames$(NR), 16), FG, BG, -1
+    Locate , 26: QPrint PadRight$(regionNames$(currRegion), 16), FG, BG, -1
     Locate 9, 1: QPrint "NUMBER OF TEAMS IN REGION (4-16) ", 14, 1, -1
     Locate , 34: QPrint PadRight$(NT$, 2), FG, BG, -1
 
     NameRegion:
     Locate 7, 26 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 16 'specify field parameters
-    Call TextIn(regionNames$(NR), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(regionNames$(currRegion), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo REGIONSIZE: 'can't back up any more, stay here
     If XCode = 2 GoTo Done1 'all done entering data
-    regionNames$(NR) = _Trim$(regionNames$(NR))
+    regionNames$(currRegion) = _Trim$(regionNames$(currRegion))
 
     REGIONSIZE:
     Locate 9, 34 'location of beginning of field
@@ -381,8 +383,8 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
         If X$ = "N" GoTo NameRegion
         If X$ <> "Y" GoTo Done1 'insist on either Y or N or up-arrow
 
-        NN%(NR) = Val(NT$)
-        If NN%(NR) < 4 Or NN%(NR) > 16 Then GoTo REGIONSIZE
+        NN%(currRegion) = Val(NT$)
+        If NN%(currRegion) < 4 Or NN%(currRegion) > 16 Then GoTo REGIONSIZE
 
         Do
             Color , 0
@@ -393,25 +395,25 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
             Locate 1, 1: Print Tab(80);
             Color 15: Locate , 26
 
-            Xcoord = Len(regionNames$(NR) + " REGIONAL/CONFERENCE SEEDING")
+            Xcoord = Len(regionNames$(currRegion) + " REGIONAL/CONFERENCE SEEDING")
             Xcoord = (80 - Xcoord) / 2
             Locate , Xcoord
-            Print regionNames$(NR) + " REGIONAL/CONFERENCE SEEDING"
+            Print regionNames$(currRegion) + " REGIONAL/CONFERENCE SEEDING"
 
             Locate 25, 1: Print Tab(80);
             Locate , 1
             Color 12, 0
 
-            MAXSEED = NN%(NR) + 1 + 4
+            MAXSEED = NN%(currRegion) + 1 + 4
             Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
 
             Locate 4, 25: Print "SEED  TEAM"
 
-            For I1 = 1 To NN%(NR)
+            For I1 = 1 To NN%(currRegion)
                 Color 2
                 Locate , 25
                 Print Using "##    "; I1;
-                Color 15: Print slotName$(NR, I1, 0)
+                Color 15: Print slotName$(currRegion, I1, 0)
             Next I1
 
             Locate 25, 1
@@ -434,9 +436,9 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                     'Save Seeding
                     If Val(I$) = 3 Then
 
-                        For I = 1 To NN%(NR)
+                        For I = 1 To NN%(currRegion)
 
-                            If slotName$(NR, I, 0) = "" Then
+                            If slotName$(currRegion, I, 0) = "" Then
 
                                 MsgText$ = "ALL SEEDS HAVE NOT BEEN FILLED PRESS ANY KEY TO CONTINUE SELECTING"
                                 BoxWidth = 18
@@ -473,9 +475,9 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
                     'Add / Remove Teams from Seeding
                     Do
                         Locate 22, 30
-                        Print "SEED # (1-"; Str$(NN%(NR)); ") ";
-                        Input B
-                    Loop Until B >= 1 And B <= NN%(NR)
+                        Print "SEED # (1-"; Str$(NN%(currRegion)); ") ";
+                        Input seed
+                    Loop Until seed >= 1 And seed <= NN%(currRegion)
 
                     If Val(I$) = 1 Then
 
@@ -483,19 +485,19 @@ Sub SeedBrackets (NR, NT$, sourceFile$, numberRegions, tourneyName$)
 
                         If teamNbr <> 0 Then
 
-                            slotName$(NR, B, 0) = team$
-                            slotName$(NR, B, 1) = YN$
-                            tourneyN%(NR, B, 0) = teamNbr
-                            tourneyN%(NR, B, 1) = 3
-                            tourneyN%(NR, B, 2) = teamRatings%(0)
-                            tourneyN%(NR, B, 3) = teamRatings%(1)
-                            tourneyN%(NR, B, 1) = 1
+                            slotName$(currRegion, seed, 0) = team$
+                            slotName$(currRegion, seed, 1) = YN$
+                            tourneyN%(currRegion, seed, 0) = teamNbr
+                            tourneyN%(currRegion, seed, 1) = 3
+                            tourneyN%(currRegion, seed, 2) = teamRatings%(0)
+                            tourneyN%(currRegion, seed, 3) = teamRatings%(1)
+                            tourneyN%(currRegion, seed, 1) = 1
                                                         
                         End If
 
                     Else
                         'Clear a slot
-                        slotName$(NR, B, 0) = ""
+                        slotName$(currRegion, seed, 0) = ""
 
                     End If
 
@@ -601,10 +603,10 @@ Sub ScheduleAndSaveTourney (saveFile$, numberRegions, tourneyName$)
     If _FileExists(diskPaths$(1) + saveFile$ + ".TCX") Then Kill diskPaths$(1) + saveFile$ + ".TCX"
     If _FileExists(diskPaths$(1) + saveFile$ + ".TOU") Then Kill diskPaths$(1) + saveFile$ + ".TOU"
 
-    For NR = 1 To numberRegions
-        If NN%(NR) >= 4 Then
-            var% = NN%(NR) - 3
-            Call PickIt(var%, NR, saveFile$)
+    For currRegion = 1 To numberRegions
+        If NN%(currRegion) >= 4 Then
+            var% = NN%(currRegion) - 3
+            Call PickIt(var%, currRegion, saveFile$)
         End If
     Next
 
@@ -5904,9 +5906,9 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
             Locate 22, 25: Print "SCHEDULING GAMES FOR BRACKET"; numberRegions
 
-            For NR = 1 To 16
+            For currRegion = 1 To 16
 
-                If NR <= numberRegions Then
+                If currRegion <= numberRegions Then
 
                     For AP = 1 To TC!
 
@@ -5938,7 +5940,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                         Close #1
 
                         'Create matches in .TOU file
-                        If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = NR Then
+                        If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = currRegion Then
 
                             MATCH = MATCH + 1
 
@@ -5974,12 +5976,12 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                 End If 'Done checking if we're still within a valid region
 
-            Next NR 'Done processing all regions
+            Next currRegion 'Done processing all regions
 
         End If
     Next RD
 
-    NR = 17
+    currRegion = 17
 
     tempFile$ = diskPaths$(1) + tourneyFile$ + ".TMP"
 
@@ -6013,7 +6015,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                 Close #1
 
-                If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = NR Then
+                If scheduleNG%(0, 16) = RD And scheduleNG%(0, 15) = currRegion Then
 
                     MATCH = MATCH + 1
 

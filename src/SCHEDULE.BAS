@@ -158,7 +158,6 @@ End Sub
 Sub NewSchedule (scheduleFile$)
 
     Shared BS%, NS%
-    Shared N$
 
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
@@ -212,13 +211,13 @@ Sub NewSchedule (scheduleFile$)
 
                 T1 = scheduleNG%(X + NS% * 20, 0)
                 YN$ = scheduleYN$(X + NS% * 20, 0)
-                Call ReadTeam (YN$, N$, T1)
-                scheduleV$(X) = N$
+                Call ReadTeam (YN$, team$, T1)
+                scheduleV$(X) = team$
 
                 T1 = scheduleNG%(X + NS% * 20, 1)
                 YN$ = scheduleYN$(X + NS% * 20, 1)
-                Call ReadTeam (YN$, N$, T1)
-                scheduleH$(X) = N$
+                Call ReadTeam (YN$, team$, T1)
+                scheduleH$(X) = team$
 
                 'Game number
                 Print Using "####  "; X + NS% * 20;
@@ -516,8 +515,6 @@ End Sub
 'specified game in the schedule
 Sub NewGame (visitor$, home$, YN$, NTMS, gameIndex%)
 
-    Shared N$
-    
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
@@ -705,8 +702,6 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
     'scheduleAction% = 6: MAKE GLOBAL CHANGES TO A SCHEDULE
 
     Dim displayPause!
-
-    Shared N$
 
     Shared homeScores(), visitorScores()
 
@@ -952,7 +947,6 @@ Sub EditParameters ()
     Color 14
     Print "PARAMETERS FOR SAVING SPECIAL EVENTS BOXSCORES"
 
-    X% = 2
     Color 15
 
     Print " 1. OVERTIME PERIODS ARE OVER "; eventSettings(1)

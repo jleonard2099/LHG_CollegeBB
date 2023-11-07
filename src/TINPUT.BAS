@@ -46,14 +46,14 @@ Sub TINPUT ()
         I$ = GetKeyPress$
 
         If I$ <> Chr$(27) Then
-            H = Val(I$)
+            choice = Val(I$)
         End If
 
-    Loop Until I$ = Chr$(27) Or H = 0 Or H = 1
+    Loop Until I$ = Chr$(27) Or choice = 0 Or choice = 1
 
     If I$ <> Chr$(27) Then
 
-        If H = 0 Then
+        If choice = 0 Then
             'College BB
             L7 = 6
             tmFouls = 20
@@ -71,7 +71,7 @@ Sub TINPUT ()
         Cls
 
         Color 14
-        Print inputX$(H); Tab(31); "LEAGUE INFORMATION"
+        Print inputX$(choice); Tab(31); "LEAGUE INFORMATION"
         Color 15
 
         Locate 3: Input "1. SEASON FGA/G "; leagFGAPerGm
@@ -224,7 +224,7 @@ Sub TINPUT ()
 
         Locate 1
         Color 14
-        Print inputX$(H); Tab(32); "TEAM INFORMATION"
+        Print inputX$(choice); Tab(32); "TEAM INFORMATION"
         Color 15
 
         Locate 2
@@ -435,7 +435,7 @@ Sub TINPUT ()
         teamRatings%(4) = leagFGAPerGm
         teamRatings%(5) = nbrGmsPlayed
 
-        If H = 1 Then
+        If choice = 1 Then
             F3 = 32
         Else
             F3 = 40
@@ -445,7 +445,7 @@ Sub TINPUT ()
 
             Cls
             Color 14
-            Print inputX$(H); Tab(35); "PLAYER - "; I + 1
+            Print inputX$(choice); Tab(35); "PLAYER - "; I + 1
             Print "ENTER PLAYER STATS"
             Color 15
 
@@ -623,7 +623,7 @@ Sub TINPUT ()
         RD = (tmReb - X1 + X2 - oppReb) / (nbrGmsPlayed * 2): HS = tmReb - X1 + X2 - oppReb
         M7 = ((35 + RD) / leagRebPerGm)
 
-        If H = 2 Then M7 = ((44 + RD) / leagRebPerGm)
+        If choice = 2 Then M7 = ((44 + RD) / leagRebPerGm)
 
         For I = 0 To 13
 
@@ -637,8 +637,8 @@ Sub TINPUT ()
 
             If playerNames$(I) <> "XXX" Then
 
-                If playerOff!(I, 8) <> 0 And H = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
-                If playerOff!(I, 8) <> 0 And H = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
+                If playerOff!(I, 8) <> 0 And choice = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
+                If playerOff!(I, 8) <> 0 And choice = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
                 If playerOff!(I, 8) = 0 Then M = (X9 / 5) / (playerOff!(I, 9) + playerOff!(I, 10)): MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9 / 5)
                 If playerOff!(I, 8) = 0 And M < 1.1 Then M = 1.1
                 playerOff!(I, 2) = Int((((playerOff!(I, 10) / playerOff!(I, 7)) * M) * M7) + .5)
@@ -712,8 +712,10 @@ Sub TINPUT ()
             If playerNames$(I) <> "XXX" Then
 
                 If playerOff!(I, 9) <> 0 Then playerRatings!(I, 3) = Int(playerOff!(I, 17) / playerOff!(I, 9) * 100 + .5)
-                If playerOff!(I, 8) <> 0 And H = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
-                If playerOff!(I, 8) <> 0 And H = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
+
+                If playerOff!(I, 8) <> 0 And choice = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
+                If playerOff!(I, 8) <> 0 And choice = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
+
                 If playerOff!(I, 8) = 0 Then M = (X9 / 5) / (playerOff!(I, 9) + playerOff!(I, 10))
                 If playerOff!(I, 8) = 0 And M < 1 Then M = 1
 
@@ -1188,8 +1190,6 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
     arenaName$ = ""
     coach$ = ""
     teamAttendance& = 0
-
-    Erase N$
 
 End Sub
 
