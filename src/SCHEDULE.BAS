@@ -836,7 +836,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                     Case 3, 5:
 
-                        Call ChooseTeam (YN$, numberTeams, T1, N$)
+                        Call ChooseTeam (YN$, numberTeams, T1, teamName$)
 
                         If T1 <> 0 Then
 
@@ -846,7 +846,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                             'Change mode of play
                             If scheduleAction% = 5 Then
 
-                                Color teamRatings%(0), teamRatings%(1): Print N$;
+                                Color teamRatings%(0), teamRatings%(1): Print teamName$;
                                 Color 15, 0
                                 Print " IS TO BE:"
                                 Print

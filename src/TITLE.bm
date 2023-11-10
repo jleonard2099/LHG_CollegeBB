@@ -7,14 +7,14 @@ Sub TITLE_CAREER ()
     Color 12, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , 19
     Print "COURTSIDE COLLEGE BASKETBALL: CAREER STATS"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -34,7 +34,7 @@ Sub TITLE_EDITSTATS ()
     Color 12, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , 28
@@ -49,7 +49,7 @@ Sub TITLE_EDITSTATS ()
     'End If
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -71,7 +71,7 @@ Sub TITLE_HEADER ()
     Color 12, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 25
     Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
@@ -90,14 +90,14 @@ Sub TITLE_LEADERS
     Color 12, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , 22
     Print "COURTSIDE COLLEGE BASKETBALL LEADERS"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    ROD DAHLBERG/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -116,14 +116,14 @@ Sub TITLE_MERGE ()
     Color 12, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , 22
     Print "COURTSIDE COLLEGE BASKETBALL: MERGE"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -145,14 +145,14 @@ Sub TITLE_SCHEDULER ()
     Color 12, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , 33
     Print "AUTO SCHEDULER"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1987-1997"; Tab(70); Left$(Time$, 5);
@@ -171,13 +171,13 @@ Sub TITLE_STATS ()
     Color 14, 1
 
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 26
     Print "COURTSIDE COLLEGE BASKETBALL STATISTICS"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -197,14 +197,14 @@ Sub TITLE_STAT_HEADER (header$)
     Color 12, 1
     
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , Int(80 - Len(header$)) / 2
     Print header$
     
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -226,14 +226,14 @@ Sub TITLE_TOURN ()
     Color 12, 1
     
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 12
     Locate , 25
     Print "COURTSIDE COLLEGE BASKETBALL TOURNAMENT SCHEDULER"
     
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1987-1994";
@@ -256,14 +256,14 @@ Sub TITLE_UTILS ()
     Color 12, 1
     
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 14
     Locate , 22
     Print "COURTSIDE COLLEGE BASKETBALL UTILITIES"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
@@ -287,7 +287,7 @@ Sub TITLE ()
     'Header
     Color , 1
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 12
     Locate , 25
@@ -295,7 +295,7 @@ Sub TITLE ()
 
     'Footer
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Color 12, 1
     Locate , 1

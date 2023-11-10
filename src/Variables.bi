@@ -88,8 +88,6 @@ Dim W0L!(600), W1L!(600)
 '----------------------------------------
 Dim HP%(NUM_STATRECORDS), OP%(NUM_STATRECORDS)
 
-Dim X1!(13, 6)
-
 Dim H1$(40), HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
 
 
@@ -267,7 +265,7 @@ Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
 Dim Shared offStrat(1), PC%(1), PR%(1, 1)
 Dim Shared rosterStatus(1, 13), ST%(32), SX%(32, 1, 14)
 Dim Shared T2%(1, 20), TM%(1, 13), TP%(1)
-Dim Shared VG%(8), VH%(8), YR%(1)
+Dim Shared pbpFG(8), pbpBG(8)
 
 Dim Shared B1(0 To 1, 0 To 4)
 Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defType(1), D8(4, 3), DP(2, 4), DF(1, 13)

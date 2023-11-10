@@ -154,8 +154,8 @@ Sub InitVar ()
 
     Erase B1
     Erase dFGPA, DF, d3FG_Adj, d3FGA_Adj
-    Erase defStrat, defType
-    Erase eventSettings, F1, G4, G5
+    Erase defStrat, defType, eventSettings
+    Erase F1, G4, G5
     Erase leagRat_GAME, offStrat
     Erase P2, P4, P5, P7, plyrRat_GAME, plyrStamina
     Erase QQ, QR, RB, RS
@@ -163,15 +163,14 @@ Sub InitVar ()
     Erase turnovers, statTotals
     Erase W2, W3, Z5, Z6, timePlayed
 
-    Erase APT%, CZ%, F5%, FY%
+    Erase APT%, CZ%, F5%, ft3PtFoul, FY%
     Erase G9%, HT%, tourneySettings, NG%, NG1%
-    Erase PR%, rosterStatus, statO%, ST%, SX%
-    Erase T2%, ft3PtFoul, TM%, TP%, teamIndex%
-    Erase VG%, VH%
+    Erase pbpFG, pbpBG, PR%
+    Erase rosterStatus, statO%, ST%, SX%
+    Erase T2%, TM%, TP%, teamIndex%
 
     Erase gameArena$, gameCoaches$, gameMascots$, gameTeams$
-    Erase HO$, N$
-    Erase players$, PO$, PS$, Q$
+    Erase HO$, players$, PO$, PS$, Q$
     Erase statH$, SITE$, SX$
     Erase teamNames$, YN$, teamYrTourn$
 
@@ -556,14 +555,14 @@ Sub PBP ()
 
         Locate 8, 1
 
-        If nbrLines = 1 Then A1$ = pbpString$: VG%(1) = teamRat_GAME(P, 0): VH%(1) = teamRat_GAME(P, 1)
-        If nbrLines = 2 Then B1$ = pbpString$: VG%(2) = teamRat_GAME(P, 0): VH%(2) = teamRat_GAME(P, 1)
-        If nbrLines = 3 Then C1$ = pbpString$: VG%(3) = teamRat_GAME(P, 0): VH%(3) = teamRat_GAME(P, 1)
-        If nbrLines = 4 Then D1$ = pbpString$: VG%(4) = teamRat_GAME(P, 0): VH%(4) = teamRat_GAME(P, 1)
-        If nbrLines = 5 Then E1$ = pbpString$: VG%(5) = teamRat_GAME(P, 0): VH%(5) = teamRat_GAME(P, 1)
-        If nbrLines = 6 Then F1$ = pbpString$: VG%(6) = teamRat_GAME(P, 0): VH%(6) = teamRat_GAME(P, 1)
-        If nbrLines = 7 Then G1$ = pbpString$: VG%(7) = teamRat_GAME(P, 0): VH%(7) = teamRat_GAME(P, 1)
-        If nbrLines = 8 Then H1$ = pbpString$: VG%(8) = teamRat_GAME(P, 0): VH%(8) = teamRat_GAME(P, 1)
+        If nbrLines = 1 Then A1$ = pbpString$: pbpFG(1) = teamRat_GAME(P, 0): pbpBG(1) = teamRat_GAME(P, 1)
+        If nbrLines = 2 Then B1$ = pbpString$: pbpFG(2) = teamRat_GAME(P, 0): pbpBG(2) = teamRat_GAME(P, 1)
+        If nbrLines = 3 Then C1$ = pbpString$: pbpFG(3) = teamRat_GAME(P, 0): pbpBG(3) = teamRat_GAME(P, 1)
+        If nbrLines = 4 Then D1$ = pbpString$: pbpFG(4) = teamRat_GAME(P, 0): pbpBG(4) = teamRat_GAME(P, 1)
+        If nbrLines = 5 Then E1$ = pbpString$: pbpFG(5) = teamRat_GAME(P, 0): pbpBG(5) = teamRat_GAME(P, 1)
+        If nbrLines = 6 Then F1$ = pbpString$: pbpFG(6) = teamRat_GAME(P, 0): pbpBG(6) = teamRat_GAME(P, 1)
+        If nbrLines = 7 Then G1$ = pbpString$: pbpFG(7) = teamRat_GAME(P, 0): pbpBG(7) = teamRat_GAME(P, 1)
+        If nbrLines = 8 Then H1$ = pbpString$: pbpFG(8) = teamRat_GAME(P, 0): pbpBG(8) = teamRat_GAME(P, 1)
 
         If nbrLines > 8 Then
 
@@ -577,25 +576,25 @@ Sub PBP ()
             H1$ = pbpString$
 
             For I = 1 To 7
-                VG%(I) = VG%(I + 1)
-                VH%(I) = VH%(I + 1)
+                pbpFG(I) = pbpFG(I + 1)
+                pbpBG(I) = pbpBG(I + 1)
             Next
 
-            VG%(8) = teamRat_GAME(P, 0)
-            VH%(8) = teamRat_GAME(P, 1)
+            pbpFG(8) = teamRat_GAME(P, 0)
+            pbpBG(8) = teamRat_GAME(P, 1)
 
         End If
 
         nbrLines = nbrLines + 1
 
-        Color VG%(1), VH%(1): Print Left$(A1$, 38)
-        Color VG%(2), VH%(2): Print Left$(B1$, 38)
-        Color VG%(3), VH%(3): Print Left$(C1$, 38)
-        Color VG%(4), VH%(4): Print Left$(D1$, 38)
-        Color VG%(5), VH%(5): Print Left$(E1$, 38)
-        Color VG%(6), VH%(6): Print Left$(F1$, 38)
-        Color VG%(7), VH%(7): Print Left$(G1$, 38)
-        Color VG%(8), VH%(8): Print Left$(H1$, 38)
+        Color pbpFG(1), pbpBG(1): Print Left$(A1$, 38)
+        Color pbpFG(2), pbpBG(2): Print Left$(B1$, 38)
+        Color pbpFG(3), pbpBG(3): Print Left$(C1$, 38)
+        Color pbpFG(4), pbpBG(4): Print Left$(D1$, 38)
+        Color pbpFG(5), pbpBG(5): Print Left$(E1$, 38)
+        Color pbpFG(6), pbpBG(6): Print Left$(F1$, 38)
+        Color pbpFG(7), pbpBG(7): Print Left$(G1$, 38)
+        Color pbpFG(8), pbpBG(8): Print Left$(H1$, 38)
 
         Color 15, 0
         Call DELAY
@@ -3016,7 +3015,7 @@ Sub FoulCalled (randomCalcs%)
             Call FOULSAFE
             Call DEADBALLOPTIONS
             For I = 0 To 1
-                If P7(I) = 0 Then 
+                If P7(I) = 0 Then
                     PR%(I, 0) = 1
                     PR%(I, 1) = 7
                     PC%(I) = 0
@@ -4033,7 +4032,7 @@ End Sub
 Sub OFFREBOUND ()
     RB = 0
 
-    For I = 0 To 4: 
+    For I = 0 To 4:
         RB(I) = 0
         XZ = plyrOff_GAME!(P, B1(P, I), 21)
 
@@ -5364,7 +5363,7 @@ Sub DEADBALLOPTIONS ()
             End If
 
             If pbpDelay! <> 0 Then
-                For I = 8 To 15: 
+                For I = 8 To 15:
                     Locate I, 1
                     Call BLANKLINE
                 Next I
@@ -9559,4 +9558,5 @@ Sub CheckRecords ()
     Close #2
 
 End Sub
+
 
