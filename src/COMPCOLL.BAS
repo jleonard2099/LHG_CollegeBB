@@ -10,19 +10,19 @@ Sub CompileCollege ()
 
     _Title "Courtside College Basketball - Update Conference Stats"
 
-    Shared mergeT%()
+    Shared oppScore()
 
     Shared BRC!(), defLeaders!(), offLeaders!()
     Shared compS!(), defTotals!(), offTotals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared statsW0!(), statsW1!(), TRC!(), TRC1!()
 
-    Shared BRC$(), DL$(), statPlyrNames$(), statO$()
+    Shared BRC$(), DL$(), statPlyrNames$(), oppName$()
     Shared H1$(), OL$()
     Shared recconTRC1$(), recconTRC$()
     Shared Z0$(), Z1$(), Z3$()
 
-    Shared mergeO%()
+    Shared teamScore()
 
     Shared fullWins, fullLosses
 
@@ -1006,9 +1006,9 @@ End Sub
 'found, notifying the user
 Function FindStatsCon% (teamName$, numberGames%)
 
-    Shared mergeT%(), mergeO%()
+    Shared teamScore(), oppScore()
 
-    Shared statO$(), H1$()
+    Shared H1$(), locIndicator$(), oppName$()
 
     Shared fullWins, fullLosses
 
@@ -1023,9 +1023,21 @@ Function FindStatsCon% (teamName$, numberGames%)
 
         Input #1, numberGames%
 
-        For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #1, statO$(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #1, mergeT%(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, teamScore(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, oppName$(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, oppScore(I)
+        Next I
+
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, locIndicator$(I)
+        Next I
 
         Close #1
 
@@ -1037,31 +1049,31 @@ Function FindStatsCon% (teamName$, numberGames%)
         For I = 1 To numberGames%
 
             For P = 4 To 11
-                If Mid$(statO$(I), P, 1) = " " Or Mid$(statO$(I), P, 1) = "." Then Mid$(statO$(I), P, 1) = "_"
+                If Mid$(oppName$(I), P, 1) = " " Or Mid$(oppName$(I), P, 1) = "." Then Mid$(oppName$(I), P, 1) = "_"
             Next P
 
             For P = 12 To 14
-                If Mid$(statO$(I), P, 2) = "ST" Then Mid$(statO$(I), 9, 1) = "_": Mid$(statO$(I), 10, 2) = "ST"
+                If Mid$(oppName$(I), P, 2) = "ST" Then Mid$(oppName$(I), 9, 1) = "_": Mid$(oppName$(I), 10, 2) = "ST"
             Next P
 
             QQ = 8
             For P = 11 To 4 Step -1
-                If Mid$(statO$(I), P, 1) = "_" Then
+                If Mid$(oppName$(I), P, 1) = "_" Then
                     QQ = P - 4
                 Else
                     Exit For '5605 GoTo 5608
                 End If
             Next P
 
-            targetFile$ = Mid$(statO$(I), 4, QQ)
-            R$ = targetFile$ + "." + Left$(statO$(I), 2)
-            statO$(I) = R$
+            targetFile$ = Mid$(oppName$(I), 4, QQ)
+            R$ = targetFile$ + "." + Left$(oppName$(I), 2)
+            oppName$(I) = R$
 
             confGame = 0
 
             For EC = 1 To 30
                 'If team stat file = opponent of a conference game?
-                If statO$(I) = H1$(EC) Then
+                If oppName$(I) = H1$(EC) Then
                     confGame = 1
                     Exit For
                 End If
@@ -1069,11 +1081,20 @@ Function FindStatsCon% (teamName$, numberGames%)
             Next EC
 
             If confGame <> 1 Then
-                If mergeO%(I) > mergeT%(I) Then fullWins = fullWins + 1
-                If mergeO%(I) < mergeT%(I) Then fullLosses = fullLosses + 1
+
+                If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
+                If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
+
             Else
-                If mergeO%(I) > mergeT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                If mergeO%(I) < mergeT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+
+                If teamScore(I) > oppScore(I) Then 
+                    confWins = confWins + 1: fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then 
+                    confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                End If
+
             End If
 
             EC = 0

@@ -21,13 +21,13 @@ Sub CompileNatlOrg ()
     Shared TRC!(), TRC1!()
 
 
-    Shared BRC$(), statH$(), statO$(), DL$()
+    Shared BRC$(), locIndicator$(), oppName$(), DL$()
     Shared H1$(), OL$()
     Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
     Shared recconTRC$(), recconTRC1$()
     Shared Z0$(), Z1$(), Z3$()
 
-    Shared mergeO%()
+    Shared teamScore()
 
     Shared fullWins, fullLosses
 
@@ -1414,16 +1414,12 @@ End Sub
 '...explanation...
 Function FindStatsNat% (statFile$, numberGames%, NRT)
 
-    Dim compAP%(100, 1), compT%(1 To NUM_STATRECORDS)
-    Dim CRD(100)
-
-    Dim gameSite$(100)
-
-    Shared mergeO%()
+    Shared powerRating(), teamScore(), oppScore()
 
     Shared PT#()
 
-    Shared statO$(), statH$(), H1$(), PT$()
+    Shared H1$(), PT$()
+    Shared locIndicator$(), oppName$()
 
     Shared confWins, confLosses
     Shared fullWins, fullLosses
@@ -1439,22 +1435,35 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
 
         Input #1, numberGames%
 
-        For I = 1 To NUM_STATRECORDS: Input #1, mergeO%(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, teamScore(I)
+        Next I
 
-        For I = 1 To NUM_STATRECORDS: Input #1, statO$(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, oppName$(I)
+        Next I
 
-        For I = 1 To NUM_STATRECORDS: Input #1, compT%(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, oppScore(I)
+        Next I
 
-        For I = 1 To NUM_STATRECORDS: Input #1, statH$(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, locIndicator$(I)
+        Next I
 
-        For I = 1 To NUM_STATRECORDS
+        For I = 1 To MAX_SCHED_STATS
             For I1 = 0 To 1
-                Input #1, compAP%(I, I1)
+                Input #1, powerRating(I, I1)
             Next
         Next
 
-        For I = 1 To NUM_STATRECORDS: Input #1, CRD(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #1, gameSite$(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, gameAttendance&(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #1, gameSite$(I)
+        Next I
 
         Close #1
 
@@ -1466,31 +1475,31 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
         For I = 1 To numberGames%
 
             For P = 4 To 11
-                If Mid$(statO$(I), P, 1) = " " Or Mid$(statO$(I), P, 1) = "." Then Mid$(statO$(I), P, 1) = "_"
+                If Mid$(oppName$(I), P, 1) = " " Or Mid$(oppName$(I), P, 1) = "." Then Mid$(oppName$(I), P, 1) = "_"
             Next P
 
             For P = 12 To 14
-                If Mid$(statO$(I), P, 2) = "ST" Then Mid$(statO$(I), 9, 1) = "_": Mid$(statO$(I), 10, 2) = "ST"
+                If Mid$(oppName$(I), P, 2) = "ST" Then Mid$(oppName$(I), 9, 1) = "_": Mid$(oppName$(I), 10, 2) = "ST"
             Next P
 
             QQ = 8
             For P = 11 To 4 Step -1:
-                If Mid$(statO$(I), P, 1) = "_" Then
+                If Mid$(oppName$(I), P, 1) = "_" Then
                     QQ = P - 4
                 Else
                     Exit For
                 End If
             Next P
 
-            f$ = Mid$(statO$(I), 4, QQ)
-            R$ = f$ + "." + Left$(statO$(I), 2)
-            statO$(I) = R$
+            f$ = Mid$(oppName$(I), 4, QQ)
+            R$ = f$ + "." + Left$(oppName$(I), 2)
+            oppName$(I) = R$
 
             confGame = 0
 
             For EC = 1 To 30
 
-                If statO$(I) = H1$(EC) Then
+                If oppName$(I) = H1$(EC) Then
                     confGame = 1
                     Exit For
                 End If
@@ -1498,11 +1507,19 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
             Next EC
 
             If confGame <> 1 Then
-                If mergeO%(I) > compT%(I) Then fullWins = fullWins + 1
-                If mergeO%(I) < compT%(I) Then fullLosses = fullLosses + 1
+                If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
+                If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
             Else
-                If mergeO%(I) > compT%(I) Then confWins = confWins + 1: fullWins = fullWins + 1
-                If mergeO%(I) < compT%(I) Then confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                If teamScore(I) > oppScore(I) Then 
+                    confWins = confWins + 1
+                    fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then 
+                    confLosses = confLosses + 1
+                    fullLosses = fullLosses + 1
+                End If
+
             End If
 
             EC = 0
@@ -1514,7 +1531,7 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
         SS = 0
 
         For I = 1 To numberGames%
-            SS = compAP%(I, 1) + SS
+            SS = powerRating(I, 1) + SS
         Next
 
         SS = SS / numberGames%
@@ -1524,15 +1541,15 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
         PW = 0
 
         For I = 1 To numberGames%
-            RAT = mergeO%(I) - compT%(I) + compAP%(I, 1)
-            If Left$(statH$(I), 1) = "H" Then RAT = RAT - 4.5
-            If Left$(statH$(I), 1) = "A" Then RAT = RAT + 4.5
+            RAT = teamScore(I) - oppScore(I) + powerRating(I, 1)
+            If Left$(locIndicator$(I), 1) = "H" Then RAT = RAT - 4.5
+            If Left$(locIndicator$(I), 1) = "A" Then RAT = RAT + 4.5
             PW = PW + RAT
         Next
 
         If numberGames% <= 4 Then
             GL = 5 - numberGames%
-            PW = PW + GL * compAP%(1, 0)
+            PW = PW + GL * powerRating(1, 0)
         End If
 
         PW = PW / (numberGames% + GL)

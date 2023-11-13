@@ -642,6 +642,7 @@ Sub ViewRoster (teamName$)
         End If
     Next I
 
+    Print
     Print " B- BLOCK SHOT RATING           FC- FOUL COMMIT RATING"
     Print "RB- REBOUNDING RATING           FD- FOUL DRAWING RATING"
     Print "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"

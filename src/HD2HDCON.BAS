@@ -9,20 +9,16 @@ Sub HD2HDCON ()
 
     _Title "Courtside College Basketball - Head-to-Head Stats"
 
-    Shared mergeO%()
+    Shared teamScore(), oppScore()
 
     Shared AL!(), AW!(), HL!(), HW!()
     Shared R1!(), R2!(), hd2hdR3!(), R4!()
     Shared TAL!(), TAW!(), THL!(), THW!()
     Shared TR1!(), TR2!(), TR3!(), TR4!()
 
-    Shared statO$(), homeTeam$(), Z1$()
+    Shared locIndicator$(), oppName$(), Z1$()
 
-    Dim teamRat_HD2HD(NUM_STATRECORDS), Z1_HD2HD(40)
-
-    'xxDim A_HD2HD$(14, 1), DV$(4)
-    'xxDim OPP$(NUM_STATRECORDS), TM1$(40), ZA$(40)
-    Dim Z2_HD2HD$(40)
+    Dim Z1_HD2HD(40), Z2_HD2HD$(40)
 
     Shared D1$, D2$
 
@@ -45,13 +41,21 @@ Sub HD2HDCON ()
 
         Input #1, Y
 
-        For J = 1 To NUM_STATRECORDS: Input #1, mergeO%(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #1, teamScore(J)
+        Next
 
-        For J = 1 To NUM_STATRECORDS: Input #1, statO$(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #1, oppName$(J)
+        Next
 
-        For J = 1 To NUM_STATRECORDS: Input #1, teamRat_HD2HD(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #1, oppScore(J)
+        Next
 
-        For J = 1 To NUM_STATRECORDS: Input #1, homeTeam$(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #1, locIndicator$(J)
+        Next
 
         Close #1
 
@@ -119,14 +123,14 @@ Sub HD2HDCON ()
                 If Z1$(K) <> "XXX" Then
 
                     For I = 1 To Y
-                        If mergeO%(I) > teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And statO$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
-                        If mergeO%(I) > teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And statO$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
-                        If mergeO%(I) < teamRat_HD2HD(I) And Left$(homeTeam$(I), 1) = "V" And statO$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
-                        If mergeO%(I) < teamRat_HD2HD(I) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") And statO$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
-                        If statO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R2!(K) = R2!(K) + teamRat_HD2HD(I)
-                        If statO$(I) = Z1$(K) And (Left$(homeTeam$(I), 1) = "H" Or Left$(homeTeam$(I), 1) = "N") Then R1!(K) = R1!(K) + mergeO%(I)
-                        If statO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then R4!(K) = R4!(K) + teamRat_HD2HD(I)
-                        If statO$(I) = Z1$(K) And Left$(homeTeam$(I), 1) = "V" Then hd2hdR3!(K) = hd2hdR3!(K) + mergeO%(I)
+                        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" And oppName$(I) = Z1$(K) Then AW!(K) = AW!(K) + 1
+                        If teamScore(I) > oppScore(I) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = Z1$(K) Then HW!(K) = HW!(K) + 1
+                        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" And oppName$(I) = Z1$(K) Then AL!(K) = AL!(K) + 1
+                        If teamScore(I) < oppScore(I) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = Z1$(K) Then HL!(K) = HL!(K) + 1
+                        If oppName$(I) = Z1$(K) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") Then R2!(K) = R2!(K) + oppScore(I)
+                        If oppName$(I) = Z1$(K) And (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") Then R1!(K) = R1!(K) + teamScore(I)
+                        If oppName$(I) = Z1$(K) And Left$(locIndicator$(I), 1) = "V" Then R4!(K) = R4!(K) + oppScore(I)
+                        If oppName$(I) = Z1$(K) And Left$(locIndicator$(I), 1) = "V" Then hd2hdR3!(K) = hd2hdR3!(K) + teamScore(I)
                     Next I
 
                 End If

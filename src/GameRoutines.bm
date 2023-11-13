@@ -11,7 +11,8 @@ Sub INFO ()
     Locate 1, 1
     Print Tab(80);
 
-    Locate , 33: Color 14
+    Locate , 33
+    Color 14
     Print "GAME OPTIONS MENU"
 
     Locate 24, 1
@@ -32,23 +33,22 @@ End Sub
 ' in from file or assigned elsewhere
 Sub InitVar ()
 
-    Shared scheduleFile$, tourneyFile$
     Shared actualAttendance&
 
-    Shared alpha$()
+    Shared scheduleFile$, tourneyFile$
 
-    Shared avgAttendance&(), CRD&()
+    Shared avgAttendance&(), gameAttendance&()
 
-    Shared d3FG_Adj(), d3FGA_Adj()
-    Shared rosterStatus(), tourneySettings()
-
-    Shared statO%()
+    Shared powerRating(), d3FG_Adj(), d3FGA_Adj()
+    Shared oppScore(), rosterStatus()
+    Shared teamScore(), tourneySettings()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
 
-    Shared HO$(), statH$(), teamIndicator$()
-    Shared teamYrTourn$()
+    Shared alpha$()
+    Shared gameSite$(), locIndicator$(), oppName$()
+    Shared teamIndicator$(), teamYrTourn$()
 
     For I = 0 To 1
         For I1 = 0 To 4
@@ -92,13 +92,13 @@ Sub InitVar ()
     autoPlay = 0
     ballCarrier = 0
     C1 = 0
-    DY = 0
     compTeam = 0
     D = 0
-    endGame = 0
+    DY = 0
     endAllGames = 0
-    FO = 0
+    endGame = 0
     F3 = 0
+    FO = 0
     G9 = 0
     halfTime = 0
     IN = 0
@@ -106,10 +106,10 @@ Sub InitVar ()
     MJ = 0
     P = 0
     P9 = 0
-    shotClock = 0
-    statSpecial = 0
     S2 = 0
     S9 = 0
+    shotClock = 0
+    statSpecial = 0
     timeElapsed! = 0
     TMT = 0
     TOU = 0
@@ -163,22 +163,23 @@ Sub InitVar ()
     Erase turnovers, statTotals
     Erase W2, W3, Z5, Z6, timePlayed
 
-    Erase APT%, CZ%, F5%, ft3PtFoul, FY%
-    Erase G9%, HT%, tourneySettings, NG%, NG1%
+    Erase powerRating, CZ%, F5%, ft3PtFoul, FY%
+    Erase G9%, oppScore, NG%, NG1%
     Erase pbpFG, pbpBG, PR%
-    Erase rosterStatus, statO%, ST%, SX%
-    Erase T2%, TM%, TP%, teamIndex%
+    Erase rosterStatus, ST%, SX%
+    Erase teamIndex%, teamScore, tourneySettings
+    Erase T2%, TM%, TP%
 
-    Erase gameArena$, gameCoaches$, gameMascots$, gameTeams$
-    Erase HO$, players$, PO$, PS$, Q$
-    Erase statH$, SITE$, SX$
-    Erase teamNames$, YN$, teamYrTourn$
+    Erase diskIDs$
+    Erase gameArena$, gameCoaches$, gameMascots$, gameSite$, gameTeams$
+    Erase locIndicator$, oppName$, players$, PO$, PS$
+    Erase Q$, SX$, teamNames$, teamYrTourn$
 
-    Erase plyrOff_GAME!, gameR3!, gameW0!, gameW1!
+    Erase gameR3!, gameW0!, gameW1!, plyrOff_GAME!
     Erase statsZ!, statsZ1!, statsZ2!
 
     actualAttendance& = 0
-    Erase avgAttendance&, CRD&
+    Erase avgAttendance&, gameAttendance&
 
 End Sub
 
@@ -212,7 +213,7 @@ Sub AUTOSETUP ()
 
         I1 = NG%(P9)
 
-        Call ReadGameTeam(YN$(P9), gameTeams$(P9), I1, P9)
+        Call ReadGameTeam(diskIDs$(P9), gameTeams$(P9), I1, P9)
 
         If I1 <> 0 Then
             Call TEAMSETUP
@@ -240,7 +241,7 @@ Sub AUTOSETUP ()
         For I = 1 To 16
             For I1 = 1 To 16
                 For I2 = 1 To 4
-                    Input #1, N$(I, I1, I2) ' SEED SLOT NAME
+                    Input #1, seedSlotName$(I, I1, I2) ' SEED SLOT NAME
                     Input #1, tourneySettings(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                 Next
             Next
@@ -255,13 +256,13 @@ Sub AUTOSETUP ()
 
             For I1 = 1 To 16
 
-                If NG%(0) = tourneySettings(I, I1, 0) And YN$(0) = N$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
+                If NG%(0) = tourneySettings(I, I1, 0) And diskIDs$(0) = seedSlotName$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
                     TOU = 1
                     exitAll% = 1
                     Exit For
                 End If
 
-                If NG%(1) = tourneySettings(I, I1, 0) And YN$(1) = N$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
+                If NG%(1) = tourneySettings(I, I1, 0) And diskIDs$(1) = seedSlotName$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
                     TOU = 1
                     exitAll% = 1
                     Exit For
@@ -2845,7 +2846,7 @@ Sub TickerSchedule
     Next
 
     For X = 0 To 1
-        LSet Q$(20 + X) = YN$(X)
+        LSet Q$(20 + X) = diskIDs$(X)
     Next
 
     LSet Q$(22) = MKI$(score(0, 0))
@@ -3310,56 +3311,56 @@ Sub TOURNEY_Game ()
 
             If score(0, 0) > score(1, 0) And NG1%(0) - 900 = NG%(17) Then
                 NG1%(0) = NG%(0)
-                teamYrTourn$(0) = YN$(0)
+                teamYrTourn$(0) = diskIDs$(0)
                 loseTeam$ = schedVisTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(1, 0) > score(0, 0) And NG1%(0) - 900 = NG%(17) Then
                 NG1%(0) = NG%(1)
-                teamYrTourn$(0) = YN$(1)
+                teamYrTourn$(0) = diskIDs$(1)
                 loseTeam$ = schedHomeTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(0, 0) > score(1, 0) And NG1%(1) - 900 = NG%(17) Then
                 NG1%(1) = NG%(0)
-                teamYrTourn$(1) = YN$(0)
+                teamYrTourn$(1) = diskIDs$(0)
                 winTeam$ = schedVisTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(1, 0) > score(0, 0) And NG1%(1) - 900 = NG%(17) Then
                 NG1%(1) = NG%(1)
-                teamYrTourn$(1) = YN$(1)
+                teamYrTourn$(1) = diskIDs$(1)
                 winTeam$ = schedHomeTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(0, 0) < score(1, 0) And NG1%(0) - 800 = NG%(17) Then
                 NG1%(0) = NG%(0)
-                teamYrTourn$(0) = YN$(0)
+                teamYrTourn$(0) = diskIDs$(0)
                 loseTeam$ = schedVisTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(1, 0) < score(0, 0) And NG1%(0) - 800 = NG%(17) Then
                 NG1%(0) = NG%(1)
-                teamYrTourn$(0) = YN$(1)
+                teamYrTourn$(0) = diskIDs$(1)
                 loseTeam$ = schedHomeTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(0, 0) < score(1, 0) And NG1%(1) - 800 = NG%(17) Then
                 NG1%(1) = NG%(0)
-                teamYrTourn$(1) = YN$(0)
+                teamYrTourn$(1) = diskIDs$(0)
                 winTeam$ = schedVisTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(1, 0) < score(0, 0) And NG1%(1) - 800 = NG%(17) Then
                 NG1%(1) = NG%(1)
-                teamYrTourn$(1) = YN$(1)
+                teamYrTourn$(1) = diskIDs$(1)
                 winTeam$ = schedHomeTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
@@ -3370,28 +3371,28 @@ Sub TOURNEY_Game ()
 
             If score(0, 0) > score(1, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(0) - 900 = NG%(15) Then
                 NG1%(0) = NG%(0)
-                teamYrTourn$(0) = YN$(0)
+                teamYrTourn$(0) = diskIDs$(0)
                 loseTeam$ = schedVisTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(1, 0) > score(0, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(0) - 900 = NG%(15) Then
                 NG1%(0) = NG%(1)
-                teamYrTourn$(0) = YN$(1)
+                teamYrTourn$(0) = diskIDs$(1)
                 loseTeam$ = schedHomeTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(0, 0) > score(1, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(1) - 900 = NG%(15) Then
                 NG1%(1) = NG%(0)
-                teamYrTourn$(1) = YN$(0)
+                teamYrTourn$(1) = diskIDs$(0)
                 winTeam$ = schedVisTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
 
             If score(1, 0) > score(0, 0) And NG%(16) = 89 And NG1%(15) = 17 And NG1%(1) - 900 = NG%(15) Then
                 NG1%(1) = NG%(1)
-                teamYrTourn$(1) = YN$(1)
+                teamYrTourn$(1) = diskIDs$(1)
                 winTeam$ = schedHomeTm$
                 Call UpdateTourneyFile(I, loseTeam$, winTeam$)
             End If
@@ -3400,28 +3401,28 @@ Sub TOURNEY_Game ()
 
         If score(0, 0) > score(1, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then
             NG1%(0) = NG%(0)
-            teamYrTourn$(0) = YN$(0)
+            teamYrTourn$(0) = diskIDs$(0)
             loseTeam$ = schedVisTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(1, 0) > score(0, 0) And NG%(15) = 17 And NG1%(0) - 1100 = NG%(17) Then
             NG1%(0) = NG%(1)
-            teamYrTourn$(0) = YN$(1)
+            teamYrTourn$(0) = diskIDs$(1)
             loseTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(0, 0) > score(1, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then
             NG1%(1) = NG%(0)
-            teamYrTourn$(1) = YN$(0)
+            teamYrTourn$(1) = diskIDs$(0)
             winTeam$ = schedVisTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(1, 0) > score(0, 0) And NG%(15) = 17 And NG1%(1) - 1100 = NG%(17) Then
             NG1%(1) = NG%(1)
-            teamYrTourn$(1) = YN$(1)
+            teamYrTourn$(1) = diskIDs$(1)
             winTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
@@ -3429,56 +3430,56 @@ Sub TOURNEY_Game ()
 
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then
             NG1%(0) = NG%(0)
-            teamYrTourn$(0) = YN$(0)
+            teamYrTourn$(0) = diskIDs$(0)
             loseTeam$ = schedVisTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(0) - 1000 = NG%(17) Then
             NG1%(0) = NG%(1)
-            teamYrTourn$(0) = YN$(1)
+            teamYrTourn$(0) = diskIDs$(1)
             loseTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then
             NG1%(1) = NG%(0)
-            teamYrTourn$(1) = YN$(0)
+            teamYrTourn$(1) = diskIDs$(0)
             winTeam$ = schedVisTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(1) - 1000 = NG%(17) Then
             NG1%(1) = NG%(1)
-            teamYrTourn$(1) = YN$(1)
+            teamYrTourn$(1) = diskIDs$(1)
             winTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then
             NG1%(0) = NG%(0)
-            teamYrTourn$(0) = YN$(0)
+            teamYrTourn$(0) = diskIDs$(0)
             loseTeam$ = schedVisTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(0) - 900 = NG%(17) Then
             NG1%(0) = NG%(1)
-            teamYrTourn$(0) = YN$(1)
+            teamYrTourn$(0) = diskIDs$(1)
             loseTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(0, 0) < score(1, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then
             NG1%(1) = NG%(0)
-            teamYrTourn$(1) = YN$(0)
+            teamYrTourn$(1) = diskIDs$(0)
             winTeam$ = schedVisTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
 
         If score(1, 0) < score(0, 0) And NG%(15) = 17 And NG1%(1) - 900 = NG%(17) Then
             NG1%(1) = NG%(1)
-            teamYrTourn$(1) = YN$(1)
+            teamYrTourn$(1) = diskIDs$(1)
             winTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
@@ -3977,9 +3978,11 @@ End Sub
 'corresponding stat file.
 Sub LOADSTATS ()
 
-    Shared CRD&()
-    Shared statH$(), HO$()
-    Shared statO%()
+    Shared powerRating(), teamScore(), oppScore()
+
+    Shared gameAttendance&()
+
+    Shared gameSite$(), locIndicator$(), oppName$()
 
     If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then Call ColorChange
 
@@ -3996,25 +3999,41 @@ Sub LOADSTATS ()
 
             Input #1, numberGames
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, statO%(I1): Next
-            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
-            For I1 = 1 To NUM_STATRECORDS: Input #1, HT%(I1): Next
-            For I1 = 1 To NUM_STATRECORDS: Input #1, HO$(I1): Next
+            For I1 = 1 To MAX_SCHED_STATS: 
+                Input #1, teamScore(I1)
+            Next
+            
+            For I1 = 1 To MAX_SCHED_STATS: 
+                Input #1, oppName$(I1)
+            Next
+            
+            For I1 = 1 To MAX_SCHED_STATS: 
+                Input #1, oppScore(I1)
+            Next
+            
+            For I1 = 1 To MAX_SCHED_STATS: 
+                Input #1, locIndicator$(I1)
+            Next
 
-            For I1 = 1 To NUM_STATRECORDS
+            For I1 = 1 To MAX_SCHED_STATS
                 For I2 = 0 To 1
-                    Input #1, APT%(I1, I2)
+                    Input #1, powerRating(I1, I2)
                 Next
             Next
 
-            For I1 = 1 To NUM_STATRECORDS: Input #1, CRD&(I1): Next I1
-            For I1 = 1 To NUM_STATRECORDS: Input #1, SITE$(I1): Next I1
+            For I1 = 1 To MAX_SCHED_STATS:
+                Input #1, gameAttendance&(I1)
+            Next I1
+            
+            For I1 = 1 To MAX_SCHED_STATS: 
+                Input #1, gameSite$(I1)
+            Next I1
 
             Close #1
 
             For I1 = 1 To numberGames
-                If statO%(I1) > HT%(I1) Then Z5(I) = Z5(I) + 1
-                If statO%(I1) < HT%(I1) Then Z6(I) = Z6(I) + 1
+                If teamScore(I1) > oppScore(I1) Then Z5(I) = Z5(I) + 1
+                If teamScore(I1) < oppScore(I1) Then Z6(I) = Z6(I) + 1
             Next
 
         End If
@@ -7059,7 +7078,7 @@ Sub SAVESTATS ()
                 Next
 
                 For X = 0 To 3:
-                    LSet Q$(20 + X) = YN$(X)
+                    LSet Q$(20 + X) = diskIDs$(X)
                 Next
 
                 For X = 1 To 3:
@@ -7172,14 +7191,15 @@ End Sub
 Sub COMPILESTATFILES (teamIdx)
 
     Shared actualAttendance&
-    Shared CRD&()
+
+    Shared gameAttendance&()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
 
-    Shared statO%()
+    Shared powerRating(), teamScore(), oppScore()
 
-    Shared statH$(), HO$()
+    Shared gameSite$(), locIndicator$(), oppName$()
 
     statFile$ = nameStatFile$(gameTeams$(teamIdx))
 
@@ -7313,87 +7333,121 @@ Sub COMPILESTATFILES (teamIdx)
 
         Input #3, numberGames
 
-        For I = 1 To NUM_STATRECORDS: Input #3, statO%(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #3, HO$(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #3, HT%(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #3, statH$(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #3, teamScore(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #3, oppName$(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #3, oppScore(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #3, locIndicator$(I)
+        Next I
 
-        For I = 1 To NUM_STATRECORDS
+        For I = 1 To MAX_SCHED_STATS
             For I1 = 0 To 1
-                Input #3, APT%(I, I1)
+                Input #3, powerRating(I, I1)
             Next
         Next
 
-        For I = 1 To NUM_STATRECORDS: Input #3, CRD&(I): Next I
-        For I = 1 To NUM_STATRECORDS: Input #3, SITE$(I): Next I
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #3, gameAttendance&(I)
+        Next I
+        
+        For I = 1 To MAX_SCHED_STATS: 
+            Input #3, gameSite$(I)
+        Next I
 
         Close #3
 
     End If
 
-    If numberGames < NUM_STATRECORDS Then numberGames = numberGames + 1
-    If gameLoc = 2 And TG < 12100 Then statH$(numberGames) = "N": GoTo 6540
+    If numberGames < MAX_SCHED_STATS Then numberGames = numberGames + 1
+    If gameLoc = 2 And TG < 12100 Then locIndicator$(numberGames) = "N": GoTo 6540
 
-    If gameLoc <> teamIdx And TG < 12100 Then statH$(numberGames) = "V": GoTo 6540
-    If gameLoc = teamIdx And TG < 12100 Then statH$(numberGames) = "H": GoTo 6540
+    If gameLoc <> teamIdx And TG < 12100 Then locIndicator$(numberGames) = "V": GoTo 6540
+    If gameLoc = teamIdx And TG < 12100 Then locIndicator$(numberGames) = "H": GoTo 6540
 
-    If gameLoc = teamIdx And TG < 13600 Then statH$(numberGames) = "H1": GoTo 6540
-    If gameLoc = teamIdx And TG < 15100 Then statH$(numberGames) = "H2": GoTo 6540
-    If gameLoc = teamIdx And TG < 16600 Then statH$(numberGames) = "H3": GoTo 6540
-    If gameLoc = teamIdx And TG < 18100 Then statH$(numberGames) = "H4": GoTo 6540
+    If gameLoc = teamIdx And TG < 13600 Then locIndicator$(numberGames) = "H1": GoTo 6540
+    If gameLoc = teamIdx And TG < 15100 Then locIndicator$(numberGames) = "H2": GoTo 6540
+    If gameLoc = teamIdx And TG < 16600 Then locIndicator$(numberGames) = "H3": GoTo 6540
+    If gameLoc = teamIdx And TG < 18100 Then locIndicator$(numberGames) = "H4": GoTo 6540
 
-    If gameLoc = 2 And TG < 13600 Then statH$(numberGames) = "N1": GoTo 6540
-    If gameLoc = 2 And TG < 15100 Then statH$(numberGames) = "N2": GoTo 6540
-    If gameLoc = 2 And TG < 16600 Then statH$(numberGames) = "N3": GoTo 6540
-    If gameLoc = 2 And TG < 18100 Then statH$(numberGames) = "N4": GoTo 6540
+    If gameLoc = 2 And TG < 13600 Then locIndicator$(numberGames) = "N1": GoTo 6540
+    If gameLoc = 2 And TG < 15100 Then locIndicator$(numberGames) = "N2": GoTo 6540
+    If gameLoc = 2 And TG < 16600 Then locIndicator$(numberGames) = "N3": GoTo 6540
+    If gameLoc = 2 And TG < 18100 Then locIndicator$(numberGames) = "N4": GoTo 6540
 
-    If gameLoc <> teamIdx And TG < 13600 Then statH$(numberGames) = "V1": GoTo 6540
-    If gameLoc <> teamIdx And TG < 15100 Then statH$(numberGames) = "V2": GoTo 6540
-    If gameLoc <> teamIdx And TG < 16600 Then statH$(numberGames) = "V3": GoTo 6540
-    If gameLoc <> teamIdx And TG < 18100 Then statH$(numberGames) = "V4": GoTo 6540
+    If gameLoc <> teamIdx And TG < 13600 Then locIndicator$(numberGames) = "V1": GoTo 6540
+    If gameLoc <> teamIdx And TG < 15100 Then locIndicator$(numberGames) = "V2": GoTo 6540
+    If gameLoc <> teamIdx And TG < 16600 Then locIndicator$(numberGames) = "V3": GoTo 6540
+    If gameLoc <> teamIdx And TG < 18100 Then locIndicator$(numberGames) = "V4": GoTo 6540
 
     6540 '
-    statO%(numberGames) = score(teamIdx, 0)
-    HO$(numberGames) = gameTeams$(1 - teamIdx)
-    HT%(numberGames) = score(1 - teamIdx, 0)
-    CRD&(numberGames) = actualAttendance&
+    teamScore(numberGames) = score(teamIdx, 0)
+    oppName$(numberGames) = gameTeams$(1 - teamIdx)
+    oppScore(numberGames) = score(1 - teamIdx, 0)
+    gameAttendance&(numberGames) = actualAttendance&
 
     If teamRat_GAME(0, 9) = 0 Then teamRat_GAME(0, 9) = 78
     If teamRat_GAME(1, 9) = 0 Then teamRat_GAME(1, 9) = 78
 
-    APT%(numberGames, 0) = teamRat_GAME(teamIdx, 9)
-    APT%(numberGames, 1) = teamRat_GAME(1 - teamIdx, 9)
+    powerRating(numberGames, 0) = teamRat_GAME(teamIdx, 9)
+    powerRating(numberGames, 1) = teamRat_GAME(1 - teamIdx, 9)
 
     If gameArena$(1) = "" Then gameArena$(1) = "MEMORIAL COLISEUM"
 
     If gameLoc = 2 Then
-        SITE$(numberGames) = "NEUTRAL SITE"
+        gameSite$(numberGames) = "NEUTRAL SITE"
     Else
-        SITE$(numberGames) = gameArena$(1)
+        gameSite$(numberGames) = gameArena$(1)
     End If
 
     Open diskPaths$(1) + statFile$ + "S" For Output As #4
 
     Print #4, numberGames
 
-    For I = 1 To NUM_STATRECORDS: Print #4, statO%(I): Next I
-    For I = 1 To NUM_STATRECORDS: Print #4, HO$(I): Next I
-    For I = 1 To NUM_STATRECORDS: Print #4, HT%(I): Next I
-    For I = 1 To NUM_STATRECORDS: Print #4, statH$(I): Next I
+    For I = 1 To MAX_SCHED_STATS: 
+        Print #4, teamScore(I)
+    Next I
+    
+    For I = 1 To MAX_SCHED_STATS: 
+        Print #4, oppName$(I)
+    Next I
+    
+    For I = 1 To MAX_SCHED_STATS: 
+        Print #4, oppScore(I)
+    Next I
+    
+    For I = 1 To MAX_SCHED_STATS: 
+        Print #4, locIndicator$(I)
+    Next I
 
-    For I = 1 To NUM_STATRECORDS
+    For I = 1 To MAX_SCHED_STATS
         For I1 = 0 To 1
-            Print #4, APT%(I, I1)
+            Print #4, powerRating(I, I1)
         Next
     Next
 
-    For I = 1 To NUM_STATRECORDS: Print #4, CRD&(I): Next I
-    For I = 1 To NUM_STATRECORDS: Print #4, SITE$(I): Next I
+    For I = 1 To MAX_SCHED_STATS: 
+        Print #4, gameAttendance&(I)
+    Next I
+    
+    For I = 1 To MAX_SCHED_STATS: 
+        Print #4, gameSite$(I)
+    Next I
 
     Close #4
 
-    Erase APT%, statO%, HT%, CRD&
+    Erase powerRating, oppScore, teamScore
+    Erase gameAttendance&
     Erase statsZ!, statsZ1!, statsZ2!
+    Erase gameSite$
 
 End Sub
 

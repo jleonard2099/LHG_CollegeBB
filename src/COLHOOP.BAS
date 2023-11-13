@@ -149,7 +149,7 @@ Sub COLHOOP ()
         Next
 
         For X = 0 To 1:
-            YN$(X) = Q$(20 + X)
+            diskIDs$(X) = Q$(20 + X)
         Next
 
         VS% = CVI(Q$(22))
@@ -215,7 +215,7 @@ Sub COLHOOP ()
             Next
 
             For X = 0 To 3:
-                YN$(X) = Q$(20 + X)
+                diskIDs$(X) = Q$(20 + X)
             Next
 
             For X = 1 To 3:

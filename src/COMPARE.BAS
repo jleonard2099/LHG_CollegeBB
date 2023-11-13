@@ -8,13 +8,13 @@ Sub COMPARE ()
 
     _Title "Courtside College Basketball - Stats Comparison"
 
-    Shared teamRatings%(), HP%(), OP%()
+    Shared teamScore(), oppScore(), teamRatings%()
 
     Shared statsA!(), statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
 
-    Shared statPlyrNames$(), HP$(), OP$()
     Shared position$()
+    Shared statPlyrNames$(), locIndicator$(), oppName$()
 
     Dim posn$(0 To 13)
 
@@ -67,24 +67,32 @@ Sub COMPARE ()
 
         Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
-        Input #2, Y
+        Input #2, numberGames
 
-        For J = 1 To NUM_STATRECORDS: Input #2, OP%(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #2, teamScore(J)
+        Next
 
-        For J = 1 To NUM_STATRECORDS: Input #2, OP$(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #2, oppName$(J)
+        Next
 
-        For J = 1 To NUM_STATRECORDS: Input #2, HP%(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #2, oppScore(J)
+        Next
 
-        For J = 1 To NUM_STATRECORDS: Input #2, HP$(J): Next
+        For J = 1 To MAX_SCHED_STATS: 
+            Input #2, locIndicator$(J)
+        Next
 
         Close #2
 
         replayLosses% = 0
         replayWins% = 0
 
-        For I = 1 To Y
-            If OP%(I) < HP%(I) Then replayLosses% = replayLosses% + 1
-            If OP%(I) > HP%(I) Then replayWins% = replayWins% + 1
+        For I = 1 To numberGames
+            If teamScore(I) < oppScore(I) Then replayLosses% = replayLosses% + 1
+            If teamScore(I) > oppScore(I) Then replayWins% = replayWins% + 1
         Next
 
         Color 15, 0

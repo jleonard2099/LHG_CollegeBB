@@ -14,18 +14,24 @@ Dim statsW0!(15), statsW1!(15)
 Dim statsZ!(15), statsZ1!(15)
 Dim statsZ2!(13, 13)
 
-Dim gameSite$(NUM_STATRECORDS), SITERP$(NUM_STATRECORDS)
-Dim HO$(NUM_STATRECORDS)
-Dim HRP$(NUM_STATRECORDS), ORP$(NUM_STATRECORDS)
-Dim statH$(NUM_STATRECORDS), statO$(NUM_STATRECORDS)
+Dim gameAttendance&(MAX_SCHED_STATS), oppScore(MAX_SCHED_STATS)
+Dim powerRating(MAX_SCHED_STATS, 1), teamScore(MAX_SCHED_STATS)
 
-Dim statO%(NUM_STATRECORDS)
+Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
+
+'-- For Road Data
+Dim APRD%(MAX_SCHED_STATS, 1)
+Dim ORD%(MAX_SCHED_STATS), TRD%(MAX_SCHED_STATS)
+
+Dim gameAttRoad&(MAX_SCHED_STATS)
+
+Dim HRP$(MAX_SCHED_STATS), ORP$(MAX_SCHED_STATS), SITERP$(MAX_SCHED_STATS)
 
 
 ' *** Schedule Data ***
 ' -------------------------
-Dim homeTeam$(MAX_GAMES), visitingTeam$(MAX_GAMES)
-Dim homeScores(MAX_GAMES), visitorScores(MAX_GAMES)
+Dim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
+Dim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ' *** Game Options ***
 ' -------------------------
@@ -45,15 +51,11 @@ Dim replayLosses%, replayWins%
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-Dim Ycurr%, Yroad%
+Dim nbrGamesCurr, nbrGamesRoad
 
 Dim alignAR$(15), AN$(15)
 
-Dim APRD%(NUM_STATRECORDS, 1), ARD(14, 14)
-Dim CRD(NUM_STATRECORDS), CRDRD(NUM_STATRECORDS)
-Dim mergeA%(14, 14), mergeAP%(NUM_STATRECORDS, 1)
-Dim mergeO%(NUM_STATRECORDS), mergeT%(NUM_STATRECORDS)
-Dim ORD%(NUM_STATRECORDS), TRD%(NUM_STATRECORDS)
+Dim ARD(14, 14), mergeA%(14, 14)
 
 Dim AN!(15, 14), AR!(15, 14)
 Dim W0N!(15), WN1!(15)
@@ -86,9 +88,7 @@ Dim W0L!(600), W1L!(600)
 '----------------------------------------
 ' Used in COMPARE routines
 '----------------------------------------
-Dim HP%(NUM_STATRECORDS), OP%(NUM_STATRECORDS)
-
-Dim H1$(40), HP$(NUM_STATRECORDS), OP$(NUM_STATRECORDS)
+Dim H1$(40)
 
 
 '----------------------------------------
@@ -185,10 +185,10 @@ Dim PT#(1200, 5)
 Dim BS%, NS%
 
 Dim scheduleAP%(1), scheduleZ1%(1 To 30)
-Dim scheduleNG%(MAX_GAMES, 18) 'number of Games
+Dim scheduleNG%(MAX_SCHEDULE_GAMES, 18) 'number of Games
 
 Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
-Dim scheduleYN$(MAX_GAMES, 1)
+Dim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 
 Dim Z1$(1 To 30), Z2$(1 To 30)
 
@@ -237,28 +237,27 @@ Dim alpha$(3), tickerPeriod$(14), teamYrTourn$(0 To 3)
 
 Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
 
-'CRD stores attendance for stat files
-'  I think this is because files are operated on
-'   linearly, so 100 records is the most supported?
-Dim avgAttendance&(1), CRD&(NUM_STATRECORDS)
+Dim avgAttendance&(1)
 
-Dim Shared autoPlay, ballCarrier, C1, currHalf, DY, compTeam, D, endGame, endAllGames, FO, F3
-Dim Shared G9, gameLoc, halfTime, JY, IN, M5, MJ, nbrLines
-Dim Shared P, P9, playerMode, playerOpt, S2, S9, sClockVal, shotClock
+Dim Shared autoPlay, ballCarrier, C1, currHalf
+Dim Shared DY, compTeam, D, endGame, endAllGames, FO, F3
+Dim Shared G9, gameLoc, halfTime, JY, IN, M5, MJ
+Dim Shared nbrLines, P, P9, playerMode, playerOpt
+Dim Shared S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 
-Dim Shared BO%, BU%, coachOpt, DK%, F3S%, FB%, FT%, J8%, LC%, ft6FloorFouls, foulsToDQ
-Dim Shared PA%, PASS%, pbpOpt, PT%, PZ%, ST%, ft10thFoul, ft3PtFoul, threePtOpt, X0%, X1%, XX%
+Dim Shared BO%, BU%, coachOpt, DK%
+Dim Shared ft10thFoul, ft3PtFoul, ft6FloorFouls, foulsToDQ
+Dim Shared F3S%, FB%, FT%, J8%, LC%
+Dim Shared PA%, PASS%, pbpOpt, PT%, PZ%, ST%
+Dim Shared threePtOpt, X0%, X1%, XX%
 
 Dim Shared F!
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$, prevBall$
-Dim Shared pbpString$, schedVisTm$, schedHomeTm$, YN$
-
-Dim Shared APT%(NUM_STATRECORDS, 1)
-Dim Shared HT%(NUM_STATRECORDS)
+Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
+Dim Shared prevBall$, pbpString$, schedVisTm$, schedHomeTm$, YN$
 
 Dim Shared CZ%(1), F5%(0 To 1, 0 To 8), FY%(0 To 1)
 Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
@@ -282,9 +281,8 @@ Dim Shared gameR3!(1)
 Dim Shared plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim gameW0!(1, 13), gameW1!(1, 13)
 
-Dim Shared defStyles$(15), defStyles_brief$(14)
+Dim Shared defStyles$(15), defStyles_brief$(14), diskIDs$(5)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
-Dim Shared N$(1 To 16, 1 To 16, 0 To 4), offStyles$(9), offStyles_brief$(9)
+Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13), PO$(1, 13), PS$(4)
-Dim Shared SITE$(NUM_STATRECORDS), SX$(32, 2)
-Dim Shared YN$(5)
+Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
