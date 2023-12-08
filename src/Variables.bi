@@ -240,9 +240,11 @@ Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
 Dim avgAttendance&(1)
 
 Dim Shared autoPlay, ballCarrier, C1, currHalf
-Dim Shared DY, compTeam, D, endGame, endAllGames, FO, F3
-Dim Shared G9, gameLoc, halfTime, JY, IN, M5, MJ
-Dim Shared nbrLines, P, P9, playerMode, playerOpt
+Dim Shared DY, compTeam, D, endGame, endAllGames
+'Dim Shared fouler, desigFouler
+Dim Shared FO, F3, G9, gameLoc, halfTime
+Dim Shared JY, IN, M5, MJ, nbrLines
+Dim Shared P, P9, playerMode, playerOpt
 Dim Shared S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 
@@ -263,15 +265,17 @@ Dim Shared CZ%(1), F5%(0 To 1, 0 To 8), FY%(0 To 1)
 Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
 Dim Shared offStrat(1), PC%(1), PR%(1, 1)
 Dim Shared rosterStatus(1, 13), ST%(32), SX%(32, 1, 14)
-Dim Shared T2%(1, 20), TM%(1, 13), TP%(1)
+Dim Shared teamStats_GAME(1, 20), TM%(1, 13), TP%(1)
 Dim Shared pbpFG(8), pbpBG(8)
 
 Dim Shared B1(0 To 1, 0 To 4)
-Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defType(1), D8(4, 3), DP(2, 4), DF(1, 13)
-Dim Shared eventSettings(13), ft3PtFoul(1), F1(13), G4(13), G5(13)
-Dim Shared leagRat_GAME(1, 4), plyrRat_GAME(1, 13, 6), plyrStamina(13)
+Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defType(1)
+Dim Shared D8(4, 3), DP(2, 4), playerDef_GAME(1, 13)
+Dim Shared eventSettings(13), ft3PtFoul(1), F1(13)
+Dim Shared G4(13), G5(13), leagRat_GAME(1, 4)
+Dim Shared plyrRat_GAME(1, 13, 6), plyrStamina(13)
 Dim Shared P2(1), P4(14), P5(14), P7(1)
-Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9), RS(1, 13, 13)
+Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9), playerStat_GAME(1, 13, 13)
 Dim Shared schedGame(2), score(1, 9), scSettings(0 To 3), statTotals(14)
 Dim Shared teamRat_GAME(1, 9), teamStamina(1), threeFG(1, 13, 1)
 Dim Shared timeouts(1), timePlayed(1, 13), tmFatigue(1, 13), turnovers(1)
@@ -284,5 +288,8 @@ Dim gameW0!(1, 13), gameW1!(1, 13)
 Dim Shared defStyles$(15), defStyles_brief$(14), diskIDs$(5)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
 Dim Shared offStyles$(9), offStyles_brief$(9)
-Dim Shared pbpType$(1), players$(1, 13), PO$(1, 13), PS$(4)
+Dim Shared pbpType$(1), players$(1, 13)
+Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
+
+

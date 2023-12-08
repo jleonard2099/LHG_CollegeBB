@@ -39,7 +39,8 @@ Sub InitVar ()
 
     Shared avgAttendance&(), gameAttendance&()
 
-    Shared powerRating(), d3FG_Adj(), d3FGA_Adj()
+    'Shared d3FG_Adj(), d3FGA_Adj()
+    Shared powerRating()
     Shared oppScore(), rosterStatus()
     Shared teamScore(), tourneySettings()
 
@@ -66,6 +67,12 @@ Sub InitVar ()
 
     pbpType$(0) = "VERBOSE        "
     pbpType$(1) = "HAFFNER CLASSIC"
+
+    posnName$(0) = "G"
+    posnName$(1) = "G"
+    posnName$(2) = "F"
+    posnName$(3) = "F"
+    posnName$(4) = "C"
 
     scSettings(0) = 0
     scSettings(1) = 45
@@ -152,30 +159,36 @@ Sub InitVar ()
     schedHomeTm$ = ""
     YN$ = ""
 
+    'These are read in from teams
+    'Erase dFGPA, d3FG_Adj, d3FGA_Adj
+    'Erase leagRat_GAME, plyrOff_GAME!, plyrRat_GAME
+    'Erase rosterStatus, teamStamina
+    'Erase gameArena$, gameCoaches$, gameMascots$
+    'Erase players$, posnName$
+
     Erase B1
-    Erase dFGPA, DF, d3FG_Adj, d3FGA_Adj
     Erase defStrat, defType, eventSettings
     Erase F1, G4, G5
-    Erase leagRat_GAME, offStrat
-    Erase P2, P4, P5, P7, plyrRat_GAME, plyrStamina
-    Erase QQ, QR, RB, RS
-    Erase schedGame, score, teamStamina, threeFG, tmFatigue
+    Erase offStrat
+    Erase P2, P4, P5, P7, plyrStamina
+    Erase QQ, QR, RB
+    Erase schedGame, score, threeFG, tmFatigue
     Erase turnovers, statTotals
     Erase W2, W3, Z5, Z6, timePlayed
 
     Erase powerRating, CZ%, F5%, ft3PtFoul, FY%
     Erase G9%, oppScore, NG%, NG1%
     Erase pbpFG, pbpBG, PR%
-    Erase rosterStatus, ST%, SX%
+    Erase ST%, SX%
     Erase teamIndex%, teamScore, tourneySettings
-    Erase T2%, TM%, TP%
+    Erase TM%, TP%
 
     Erase diskIDs$
-    Erase gameArena$, gameCoaches$, gameMascots$, gameSite$, gameTeams$
-    Erase locIndicator$, oppName$, players$, PO$, PS$
+    Erase gameSite$, gameTeams$
+    Erase locIndicator$, oppName$
     Erase Q$, SX$, teamNames$, teamYrTourn$
 
-    Erase gameR3!, gameW0!, gameW1!, plyrOff_GAME!
+    Erase gameR3!, gameW0!, gameW1!
     Erase statsZ!, statsZ1!, statsZ2!
 
     actualAttendance& = 0
@@ -463,7 +476,7 @@ Sub DISABLEPLAYERS (P9)
 
             If I <= 9 Then Print Using "#"; I;
             If I = 10 Then Print "A";
-            If I = 11 Then Print "ballCarrier";
+            If I = 11 Then Print "B";
             If I = 12 Then Print "C";
             If I = 13 Then Print "D";
             If I = 14 Then Print "E";
@@ -481,7 +494,7 @@ Sub DISABLEPLAYERS (P9)
             Color 15, 0
 
             'Print player position, GP
-            Print Tab(20); PO$(P9, I); Tab(22); plyrRat_GAME(P9, I, 0)
+            Print Tab(20); positions_GAME$(P9, I); Tab(22); plyrRat_GAME(P9, I, 0)
 
         Next
 
@@ -640,7 +653,7 @@ Sub MAKEPBP ()
 
     If pbpDelay! <> 0 Then
 
-        Call d100(RN)
+        Call d100(RN0)
 
         'PT% = pbpType
         Select Case PT%
@@ -649,12 +662,16 @@ Sub MAKEPBP ()
                 'TURNOVER
                 pbpString$ = players$(P, B1(P, ballCarrier))
 
-                If RN > 35 And RN <= 68 And P7(D) > 1 And PASS% = 1 Then
+                If RN0 > 35 And RN0 <= 68 And P7(D) > 1 And PASS% = 1 Then
+
                     pbpString$ = gameTeams$(P) + " CALLED FOR 10 SEC VIOLATION"
+
                 Else
 
-                    RN = Int(Rnd(1) * 14) + 1
-                    Select Case RN
+                    RN1 = Int(Rnd(1) * 14) + 1
+
+                    Select Case RN1
+
                         Case 1
                             pbpString$ = pbpString$ + " TURNS THE BALL OVER"
                         Case 2
@@ -683,14 +700,17 @@ Sub MAKEPBP ()
                             pbpString$ = pbpString$ + " DOUBLE DRIBBLES"
                         Case 14
                             pbpString$ = pbpString$ + " LOSES CONTROL"
+
                     End Select
 
                 End If
 
             Case 2
                 'DUNK
-                RN = Int(Rnd(1) * 39) + 1
-                Select Case RN
+                RN1 = Int(Rnd(1) * 39) + 1
+
+                Select Case RN1
+
                     Case 1
                         pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 2
@@ -746,7 +766,11 @@ Sub MAKEPBP ()
                     Case 27
                         pbpString$ = players$(P, B1(P, ballCarrier)) + "...IN YOUR FACE SLAM!!!"
                     Case 28
-                        pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP": Call PBP: pbpString$ = "HE SPINS": Call PBP: pbpString$ = "BEHIND THE BACK SLAM!!!"
+                        pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
+                        Call PBP
+                        pbpString$ = "HE SPINS"
+                        Call PBP
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 29
                         pbpString$ = "HE SLAMS IT HOME!!"
                     Case 30
@@ -764,11 +788,16 @@ Sub MAKEPBP ()
                     Case 36
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED SLAM!!!"
                     Case 37
-                        pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP": Call PBP: pbpString$ = "HE SPINS": Call PBP: pbpString$ = "BEHIND THE BACK SLAM!!!"
+                        pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
+                        Call PBP
+                        pbpString$ = "HE SPINS"
+                        Call PBP
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 38
                         pbpString$ = "HE JAMS IT HOME!!!"
                     Case 39
                         pbpString$ = "HE HAMMERS IT HOME!"
+
                 End Select
 
             Case 3
@@ -779,7 +808,8 @@ Sub MAKEPBP ()
 
                     Case 1
                         'BAD
-                        Select Case RN
+                        Select Case RN0
+
                             Case 1 To 40
                                 pbpString$ = pbpString$ + " TAKES A TOUGH SHOT"
                             Case 40 To 45
@@ -800,13 +830,17 @@ Sub MAKEPBP ()
                                 pbpString$ = pbpString$ + " FORCES THE INSIDE SHOT"
                             Case 86 To 100
                                 pbpString$ = pbpString$ + " TURNS AND SHOOTS"
+
                         End Select
 
                     Case 2
                         'INSIDE W/ASSIST
-                        Select Case RN
+                        Select Case RN0
+
                             Case 1 To 10
-                                pbpString$ = "HE CUTS TO THE BASKET": Call PBP: pbpString$ = "TAKES IT UP"
+                                pbpString$ = "HE CUTS TO THE BASKET"
+                                Call PBP
+                                pbpString$ = "TAKES IT UP"
 
                                 If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
                                 If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
@@ -867,8 +901,11 @@ Sub MAKEPBP ()
                     Case 3
                         'PENETRATE
                         Select Case ballCarrier
+
                             Case 0, 1
-                                Select Case RN
+
+                                Select Case RN0
+
                                     Case 1 To 25
                                         pbpString$ = "HE SPINS FREE"
                                         Call PBP
@@ -914,10 +951,13 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE PUTS IT UP"
                                     Case 92 To 100
                                         pbpString$ = "HE TAKES THE SHOT"
+
                                 End Select
 
                             Case 2, 3
-                                Select Case RN
+
+                                Select Case RN0
+
                                     Case 1 To 16
                                         pbpString$ = "HE TAKES IT UP"
                                         If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
@@ -964,11 +1004,13 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE SHOOTS"
                                     Case 81 To 100
                                         pbpString$ = "HE TAKES THE SHOT"
+
                                 End Select
 
                             Case 4
 
-                                Select Case RN
+                                Select Case RN0
+
                                     Case 1 To 15
                                         pbpString$ = "HE PUTS IT OFF THE GLASS"
                                     Case 16 To 25
@@ -993,19 +1035,26 @@ Sub MAKEPBP ()
                                     Case 75 To 100
                                         pbpString$ = "HE TAKES IT UP STRONG"
                                         If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+
                                 End Select
 
                         End Select
 
                     Case 4
                         'THREE!
-                        If FT% = 1 And RN <= 50 Then pbpString$ = pbpString$ + " THROWS UP A PRAYER"
-                        If FT% = 1 And RN > 50 Then pbpString$ = pbpString$ + " LAUNCHES A THREE"
+                        If FT% = 1 then
+                            If RN0 <= 50 Then 
+                                pbpString$ = pbpString$ + " THROWS UP A PRAYER"
+                            Else
+                                pbpString$ = pbpString$ + " LAUNCHES A THREE"
+                            End If
+                        End If
 
                         If FT% = 1 Then
                             FT% = 0
                         Else
-                            Select Case RN
+                            Select Case RN0
+
                                 Case 1 To 10
                                     pbpString$ = pbpString$ + " TRIES FOR THREE!"
                                 Case 11 To 20
@@ -1026,6 +1075,7 @@ Sub MAKEPBP ()
                                     pbpString$ = pbpString$ + " PUTS UP THE TREY!"
                                 Case 91 To 100
                                     pbpString$ = pbpString$ + " TAKES THE 3-POINTER!"
+
                             End Select
 
                         End If
@@ -1034,8 +1084,10 @@ Sub MAKEPBP ()
                         'SHORT JUMP
                         DK% = 0
 
-                        RN = Int(Rnd(1) * 59) + 1
-                        Select Case RN
+                        RN1 = Int(Rnd(1) * 59) + 1
+
+                        Select Case RN1
+
                             Case 1
                                 pbpString$ = pbpString$ + " WITH A TWISTING JUMPER"
                             Case 2
@@ -1177,14 +1229,16 @@ Sub MAKEPBP ()
                                 pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
                             Case 59
                                 pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
+
                         End Select
 
                     Case 6
                         DK% = 0
 
-                        RN = Int(Rnd(1) * 59) + 1
+                        RN1 = Int(Rnd(1) * 59) + 1
 
-                        Select Case RN
+                        Select Case RN1
+
                             Case 1
                                 pbpString$ = pbpString$ + " POPS FROM OUTSIDE"
                             Case 2
@@ -1303,11 +1357,14 @@ Sub MAKEPBP ()
                                 pbpString$ = pbpString$ + " WITH THE SCOOP SHOT"
                             Case 59
                                 pbpString$ = pbpString$ + " WITH THE FINGER ROLL"
+
                         End Select
 
                     Case 7
                         DK% = 0
-                        Select Case RN
+
+                        Select Case RN0
+
                             Case 1 To 10
                                 pbpString$ = pbpString$ + " FIRES FROM THE PERIMETER"
                             Case 11 To 20
@@ -1327,15 +1384,28 @@ Sub MAKEPBP ()
                             Case 71 To 80
                                 pbpString$ = pbpString$ + " FIRES THE FADE-AWAY"
                             Case 81 To 90
-                                If threePtOpt = 1 Then pbpString$ = pbpString$ + " FROM INSIDE THE 3-POINT LINE"
+                                If threePtOpt = 1 Then
+                                    pbpString$ = pbpString$ + " FROM INSIDE THE 3-POINT LINE"
+                                End If
                             Case 91
-                                If threePtOpt = 1 Then pbpString$ = pbpString$ + " FOR THREE!": Call PBP: pbpString$ = "NO!": Call PBP: pbpString$ = "HIS FOOT IS ON THE 3-POINT LINE"
+                                If threePtOpt = 1 Then
+                                    pbpString$ = pbpString$ + " FOR THREE!"
+                                    Call PBP
+
+                                    pbpString$ = "NO!"
+                                    Call PBP
+
+                                    pbpString$ = "HIS FOOT IS ON THE 3-POINT LINE"
+                                End If
                             Case 92 To 100
                                 pbpString$ = pbpString$ + " SHOOTS FROM THE WING"
+
                         End Select
 
                     Case 8
-                        Select Case RN
+
+                        Select Case RN0
+
                             Case 1 To 20
                                 pbpString$ = "HE SAILS TO THE HOOP"
                             Case 21 To 23
@@ -1360,14 +1430,17 @@ Sub MAKEPBP ()
                                 pbpString$ = "HE TAKES A DEFENDER WITH HIM"
                             Case 91 To 100
                                 pbpString$ = "HE GOES UP WITH IT"
+
                         End Select
 
                     Case 9
                         'BACK AFTER REB
                         pbpString$ = "HE "
 
-                        RN = Int(Rnd(1) * 11) + 1
-                        Select Case RN
+                        RN1 = Int(Rnd(1) * 11) + 1
+
+                        Select Case RN1
+
                             Case 1
                                 pbpString$ = pbpString$ + "TAKES IT BACK UP"
                             Case 2
@@ -1390,6 +1463,7 @@ Sub MAKEPBP ()
                                 pbpString$ = pbpString$ + "CLAWS HIS WAY UP"
                             Case 11
                                 pbpString$ = pbpString$ + "SHOOTS IN TRAFFIC"
+
                         End Select
 
                         If ballCarrier = 2 Or ballCarrier = 3 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
@@ -1398,8 +1472,10 @@ Sub MAKEPBP ()
                     Case 10
                         DK% = 0
 
-                        Call d100(RN)
-                        Select Case RN
+                        Call d100(RN1)
+
+                        Select Case RN1
+
                             Case 1 To 20
                                 pbpString$ = pbpString$ + " SHOOTS FROM 15"
                             Case 21 To 40
@@ -1410,6 +1486,7 @@ Sub MAKEPBP ()
                                 pbpString$ = pbpString$ + " PUTS IT UP FROM 16"
                             Case 81 To 100
                                 pbpString$ = pbpString$ + " FAKES AND SHOOTS"
+
                         End Select
 
                 End Select
@@ -1418,7 +1495,8 @@ Sub MAKEPBP ()
                 'THREE GOOD
                 pbpString$ = "HE "
 
-                Select Case RN
+                Select Case RN0
+
                     Case 1 To 6
                         pbpString$ = pbpString$ + " DRAINS THE THREE!"
                         Call PBP
@@ -1448,13 +1526,15 @@ Sub MAKEPBP ()
                         pbpString$ = "HE BURIES IT!!!"
                     Case 91 To 100
                         pbpString$ = "IT'S ALL NET!!!"
+
                 End Select
 
             Case 5
                 'THREE BAD
                 pbpString$ = "HE "
 
-                Select Case RN
+                Select Case RN0
+
                     Case 1 To 20
                         pbpString$ = pbpString$ + "GETS NONE"
                     Case 21 To 25
@@ -1469,14 +1549,17 @@ Sub MAKEPBP ()
                         pbpString$ = "IT'S SHORT"
                     Case 81 To 100
                         pbpString$ = pbpString$ + "MISSES"
+
                 End Select
 
             Case 6
                 'FAST BREAK
                 pbpString$ = players$(P, B1(P, ballCarrier))
 
-                RN = Int(Rnd(1) * 38) + 1
-                Select Case RN
+                RN1 = Int(Rnd(1) * 38) + 1
+
+                Select Case RN1
+
                     Case 1
                         pbpString$ = pbpString$ + " HAS IT ON THE FAST BREAK!"
                     Case 2
@@ -1553,6 +1636,7 @@ Sub MAKEPBP ()
                         pbpString$ = pbpString$ + " FLIES OVER THE TIME LINE!"
                     Case 38
                         pbpString$ = pbpString$ + " RUSHES IT UP THE FLOOR!"
+
                 End Select
 
                 Call SHOTSTRING
@@ -1561,8 +1645,10 @@ Sub MAKEPBP ()
                 'FAST BREAK SCORE
                 FB% = 0
 
-                RN = Int(Rnd(1) * 39) + 1
-                Select Case RN
+                RN1 = Int(Rnd(1) * 39) + 1
+
+                Select Case RN1
+
                     Case 1
                         pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 2
@@ -1640,11 +1726,16 @@ Sub MAKEPBP ()
                     Case 36
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED SLAM!!!"
                     Case 37
-                        pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP": Call PBP: pbpString$ = "HE SPINS": Call PBP: pbpString$ = "BEHIND THE BACK SLAM!!!"
+                        pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
+                        Call PBP
+                        pbpString$ = "HE SPINS"
+                        Call PBP
+                        pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 38
                         pbpString$ = "HE JAMS IT HOME!!!"
                     Case 39
                         pbpString$ = "HE HAMMERS IT HOME!"
+
                 End Select
 
             Case 8
@@ -1655,7 +1746,7 @@ Sub MAKEPBP ()
                     FB% = 0
                     pbpString$ = "HE "
 
-                    Select Case RN
+                    Select Case RN0
 
                         Case 1 To 20
                             pbpString$ = pbpString$ + "MISSES THE EASY BASKET!"
@@ -1667,13 +1758,15 @@ Sub MAKEPBP ()
                             pbpString$ = pbpString$ + "CAN'T GET IT DOWN!"
                         Case 81 To 100
                             pbpString$ = pbpString$ + "BLOWS THE EASY BASKET!!"
+
                     End Select
 
                 Else
 
-                    RN = Int(Rnd(1) * 50) + 1
+                    RN1 = Int(Rnd(1) * 50) + 1
 
-                    Select Case RN
+                    Select Case RN1
+
                         Case 1
                             pbpString$ = "IT RATTLES IN AND OUT...NO GOOD"
                         Case 2
@@ -1774,6 +1867,7 @@ Sub MAKEPBP ()
                             pbpString$ = "TOO SHORT"
                         Case 50
                             pbpString$ = "TOO STRONG"
+
                     End Select
 
                 End If
@@ -1782,8 +1876,10 @@ Sub MAKEPBP ()
                 'NOPASS
                 pbpString$ = players$(P, B1(P, ballCarrier)) + " "
 
-                RN = Int(Rnd(1) * 56) + 1
-                Select Case RN
+                RN1 = Int(Rnd(1) * 56) + 1
+
+                Select Case RN1
+
                     Case 1
                         pbpString$ = pbpString$ + "LOOKS INSIDE"
                     Case 2
@@ -1873,15 +1969,25 @@ Sub MAKEPBP ()
                     Case 44
                         pbpString$ = pbpString$ + "CUTS RIGHT"
                     Case 45
-                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE": Call PBP: pbpString$ = "HE SPINS LEFT"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        pbpString$ = "HE SPINS LEFT"
                     Case 46
-                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE": Call PBP: pbpString$ = "HE SPINS RIGHT"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        pbpString$ = "HE SPINS RIGHT"
                     Case 47
-                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE": Call PBP: pbpString$ = "HE CUTS LEFT"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        pbpString$ = "HE CUTS LEFT"
                     Case 48
-                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE": Call PBP: pbpString$ = "HE CUTS RIGHT"
+                        pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
+                        Call PBP
+                        pbpString$ = "HE CUTS RIGHT"
                     Case 49
-                        pbpString$ = pbpString$ + "STUTTER STEPS": Call PBP: pbpString$ = "HE MOVES LEFT"
+                        pbpString$ = pbpString$ + "STUTTER STEPS"
+                        Call PBP
+                        pbpString$ = "HE MOVES LEFT"
                     Case 50
                         pbpString$ = pbpString$ + "MAINTAINS HIS DRIBBLE"
                     Case 51
@@ -1889,25 +1995,32 @@ Sub MAKEPBP ()
                     Case 52
                         pbpString$ = pbpString$ + "FAKE SPINS RIGHT...GOES LEFT"
                     Case 53
-                        pbpString$ = pbpString$ + "PALMS THE BALL": Call PBP: pbpString$ = "HE TAKES IT AND SPINS"
+                        pbpString$ = pbpString$ + "PALMS THE BALL"
+                        Call PBP
+                        pbpString$ = "HE TAKES IT AND SPINS"
                     Case 54
                         pbpString$ = pbpString$ + "SHAKES AND BAKES"
                     Case 55
                         pbpString$ = pbpString$ + "DRIBBLES WITH THE LEFT HAND"
                     Case 56
                         pbpString$ = pbpString$ + "DRIBBLES WITH THE RIGHT HAND"
+
                 End Select
 
             Case 10
                 'PASS prevBall$=PREV HANDLER
                 V$ = players$(P, B1(P, ballCarrier))
 
-                RN = Int(Rnd(1) * 60) + 1
-                Select Case RN
+                RN1 = Int(Rnd(1) * 60) + 1
+
+                Select Case RN1
+
                     Case 1
                         pbpString$ = prevBall$ + " TO " + V$
                     Case 2
-                        pbpString$ = prevBall$ + " KICKS IT OUT": Call PBP: pbpString$ = V$ + " TAKES THE PASS"
+                        pbpString$ = prevBall$ + " KICKS IT OUT"
+                        Call PBP
+                        pbpString$ = V$ + " TAKES THE PASS"
                     Case 3
                         pbpString$ = prevBall$ + " FEEDS " + V$
                     Case 4
@@ -1919,7 +2032,9 @@ Sub MAKEPBP ()
                     Case 6
                         pbpString$ = prevBall$ + " WITH A NICE GIVE TO " + V$
                     Case 7
-                        pbpString$ = prevBall$ + " LOOKS": Call PBP: pbpString$ = "HE GETS IT TO " + V$
+                        pbpString$ = prevBall$ + " LOOKS"
+                        Call PBP
+                        pbpString$ = "HE GETS IT TO " + V$
                     Case 8
                         pbpString$ = prevBall$ + " SENDS IT TO " + V$
                     Case 9
@@ -2042,6 +2157,7 @@ Sub MAKEPBP ()
                         pbpString$ = prevBall$ + " HEAD FAKES"
                         Call PBP
                         pbpString$ = "HE PUSHES IT TO " + V$
+
                 End Select
 
             Case Else
@@ -2144,18 +2260,18 @@ Sub TICKER ()
         Color 14, 0
         Cls
 
-        Call d100(RN)
+        Call d100(RN0)
 
         If halfTime = 1 Then
 
             If G9 = 0 Then
-                If RN <= 50 Then
+                If RN0 <= 50 Then
                     Locate , 23: Print "PRUDENTIAL AT THE HALF SCOREBOARD"
                 Else
                     Locate , 28: Print "RED MAN HALFTIME REPORT"
                 End If
             Else
-                If RN <= 50 Then
+                If RN0 <= 50 Then
                     Locate , 29: Print "TOYOTA HALFTIME REPORT"
                 Else
                     Locate , 29: Print "HONDA HALFTIME REPORT"
@@ -2169,7 +2285,7 @@ Sub TICKER ()
                 If G9 = 0 Then
                     Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
                 Else
-                    Select Case RN
+                    Select Case RN0
                         Case 1 To 33: Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
                         Case 34 To 67: Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
                         Case 67 To 100: Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
@@ -2902,9 +3018,9 @@ End Sub
 'the person performing a layup
 Sub WHOLAY ()
 
-    Call d100(RN)
+    Call d100(RN0)
 
-    Select Case RN
+    Select Case RN0
 
         Case 1 To 38: ballCarrier = 0
         Case 39 To 75: ballCarrier = 1
@@ -2931,40 +3047,40 @@ Sub FoulCalled (randomCalcs%)
 
     If randomCalcs% = 1 Then
 
-        W5 = 0
+        fouler = 0
         M9 = Int(Rnd(1) * F5%(D, 0)) + 1
 
         For M8 = 0 To 4:
 
-            W5 = W5 + plyrOff_GAME!(D, B1(D, M8), 17)
+            fouler = fouler + plyrOff_GAME!(D, B1(D, M8), 17)
 
-            If M9 <= W5 Then Exit For
+            If M9 <= fouler Then Exit For
 
         Next M8
 
         If M8 < 0 Or M8 > 4 Then M8 = Int(Rnd(1) * 5)
 
-        W5 = M8
+        fouler = M8
 
     End If
 
-    plyrOff_GAME!(D, B1(D, W5), 12) = plyrOff_GAME!(D, B1(D, W5), 12) + 1
+    plyrOff_GAME!(D, B1(D, fouler), 12) = plyrOff_GAME!(D, B1(D, fouler), 12) + 1
     P2(D) = P2(D) + 1
     Call UPDATESCREEN
 
-    If plyrOff_GAME!(D, B1(D, W5), 3) - plyrOff_GAME!(D, B1(D, W5), 7) - plyrOff_GAME!(D, B1(D, W5), 11) - plyrOff_GAME!(D, B1(D, W5), 12) = 0 Then plyrOff_GAME!(D, B1(D, W5), 3) = plyrOff_GAME!(D, B1(D, W5), 3) + 1
+    If plyrOff_GAME!(D, B1(D, fouler), 3) - plyrOff_GAME!(D, B1(D, fouler), 7) - plyrOff_GAME!(D, B1(D, fouler), 11) - plyrOff_GAME!(D, B1(D, fouler), 12) = 0 Then plyrOff_GAME!(D, B1(D, fouler), 3) = plyrOff_GAME!(D, B1(D, fouler), 3) + 1
 
-    If plyrOff_GAME!(D, B1(D, W5), 12) < foulsToDQ Then
+    If plyrOff_GAME!(D, B1(D, fouler), 12) < foulsToDQ Then
 
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Call WINDEX
-            Print "FOUL ON "; players$(D, B1(D, W5))
+            Print "FOUL ON "; players$(D, B1(D, fouler))
             Call DELAY
-            Print "HE HAS "; plyrOff_GAME!(D, B1(D, W5), 12)
+            Print "HE HAS "; plyrOff_GAME!(D, B1(D, fouler), 12)
             Call DELAY
         End If
 
-        If pbpOpt = 0 Then pbpString$ = "FOUL NUMBER" + Str$(plyrOff_GAME!(D, B1(D, W5), 12)) + " CALLED ON " + players$(D, B1(D, W5)): Call PBP
+        If pbpOpt = 0 Then pbpString$ = "FOUL NUMBER" + Str$(plyrOff_GAME!(D, B1(D, fouler), 12)) + " CALLED ON " + players$(D, B1(D, fouler)): Call PBP
 
         Call DELAY
 
@@ -2973,14 +3089,14 @@ Sub FoulCalled (randomCalcs%)
         M9 = 0
 
         For I3 = 0 To 13
-            If Not (I3 = B1(D, W5) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
+            If Not (I3 = B1(D, fouler) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
                 M9 = M9 + 1
             End If
         Next
 
         For I3 = 0 To 13
-            If Not (I3 = B1(D, W5) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
-                If plyrOff_GAME!(D, I3, 0) <= plyrOff_GAME!(D, B1(D, W5), 0) Then plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + Int((plyrOff_GAME!(D, B1(D, W5), 3) / M9) + .5)
+            If Not (I3 = B1(D, fouler) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
+                If plyrOff_GAME!(D, I3, 0) <= plyrOff_GAME!(D, B1(D, fouler), 0) Then plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + Int((plyrOff_GAME!(D, B1(D, fouler), 3) / M9) + .5)
             End If
         Next I3
 
@@ -2988,11 +3104,11 @@ Sub FoulCalled (randomCalcs%)
         635 '
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Call WINDEX
-            Print "FOUL ON "; players$(D, B1(D, W5))
+            Print "FOUL ON "; players$(D, B1(D, fouler))
             Call DELAY
         End If
 
-        If pbpOpt = 0 Then pbpString$ = "FOUL CALLED ON " + players$(D, B1(D, W5)): Call PBP
+        If pbpOpt = 0 Then pbpString$ = "FOUL CALLED ON " + players$(D, B1(D, fouler)): Call PBP
 
         If IN% = 1 Then
             pbpString$ = "FOUL IS RULED INTENTIONAL!"
@@ -3036,36 +3152,35 @@ End Sub
 '----------------------------------------
 '         GoodBasket Subroutine
 '----------------------------------------
-'This subroutine appears perform calcu-
-'lations on W5 depending on the value of
-'some random numbers.
-'I don't know what it's doing exactly,
-'but it only gets called after a good basket.
-'It doesn't look like it's adjusting the
-'score though
+'This subroutine appears to be crediting
+'assists, per it's similarity to the code
+'from Pro BB to do the same
 Sub GoodBasket ()
 
     RN0 = Int(Rnd(1) * 3) + 1
+
     I2 = Int(Rnd(1) * 5)
 
     If (RN0 <= plyrOff_GAME!(P, B1(P, I2), 4) And players$(P, B1(P, ballCarrier)) <> players$(P, B1(P, I2))) Or (plyrOff_GAME!(P, B1(P, I2), 4) > 3 And RN0 < plyrOff_GAME!(P, B1(P, I2), 4) - 3 And players$(P, B1(P, ballCarrier)) <> players$(P, B1(P, I2))) Then
 
         Do
-            W5 = 0
+
+            totalAssisst = 0
 
             For M8 = 0 To 4
-                W5 = W5 + plyrOff_GAME!(P, B1(P, M8), 4)
+                totalAssisst = totalAssisst + plyrOff_GAME!(P, B1(P, M8), 4)
             Next
 
-            RN0 = Int(Rnd(1) * W5) + 1
-            W5 = 0
+            RN0 = Int(Rnd(1) * totalAssisst) + 1
+            totalAssisst = 0
 
             For M8 = 0 To 4
-                W5 = W5 + plyrOff_GAME!(P, B1(P, M8), 4)
-                If RN0 <= W5 Then Exit For
+                totalAssisst = totalAssisst + plyrOff_GAME!(P, B1(P, M8), 4)
+                If RN0 <= totalAssisst Then Exit For
             Next
 
             I2 = M8
+
         Loop Until players$(P, B1(P, ballCarrier)) <> players$(P, B1(P, I2))
 
         plyrOff_GAME!(P, B1(P, I2), 14) = plyrOff_GAME!(P, B1(P, I2), 14) + 1
@@ -3999,19 +4114,19 @@ Sub LOADSTATS ()
 
             Input #1, numberGames
 
-            For I1 = 1 To MAX_SCHED_STATS: 
+            For I1 = 1 To MAX_SCHED_STATS:
                 Input #1, teamScore(I1)
             Next
-            
-            For I1 = 1 To MAX_SCHED_STATS: 
+
+            For I1 = 1 To MAX_SCHED_STATS:
                 Input #1, oppName$(I1)
             Next
-            
-            For I1 = 1 To MAX_SCHED_STATS: 
+
+            For I1 = 1 To MAX_SCHED_STATS:
                 Input #1, oppScore(I1)
             Next
-            
-            For I1 = 1 To MAX_SCHED_STATS: 
+
+            For I1 = 1 To MAX_SCHED_STATS:
                 Input #1, locIndicator$(I1)
             Next
 
@@ -4024,8 +4139,8 @@ Sub LOADSTATS ()
             For I1 = 1 To MAX_SCHED_STATS:
                 Input #1, gameAttendance&(I1)
             Next I1
-            
-            For I1 = 1 To MAX_SCHED_STATS: 
+
+            For I1 = 1 To MAX_SCHED_STATS:
                 Input #1, gameSite$(I1)
             Next I1
 
@@ -4049,6 +4164,7 @@ End Sub
 'This subroutine clearly does something
 'related to offensive rebounds
 Sub OFFREBOUND ()
+
     RB = 0
 
     For I = 0 To 4:
@@ -4064,12 +4180,12 @@ Sub OFFREBOUND ()
         RB = RB + XZ
     Next
 
-    RN = Rnd(1) * RB
+    rndReb = Rnd(1) * RB
 
     skipRandom% = 0
 
     For ballCarrier = 0 To 4
-        If RN <= RB(ballCarrier) Then skipRandom% = 1: Exit For
+        If rndReb <= RB(ballCarrier) Then skipRandom% = 1: Exit For
         RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
     Next
 
@@ -4084,6 +4200,7 @@ End Sub
 'This subroutine clearly does something
 'related to defensive rebounds
 Sub DEFREBOUND ()
+
     RB = 0
 
     For I = 0 To 4
@@ -4099,12 +4216,12 @@ Sub DEFREBOUND ()
         RB = RB + XZ
     Next
 
-    RN = Rnd(1) * RB
+    rndReb = Rnd(1) * RB
 
     skipRandom% = 0
 
     For ballCarrier = 0 To 4
-        If RN <= RB(ballCarrier) Then skipRandom% = 1: Exit For
+        If rndReb <= RB(ballCarrier) Then skipRandom% = 1: Exit For
         RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
     Next
 
@@ -4532,7 +4649,7 @@ Sub LINEUPS ()
 
             Color 15
             Print Left$(players$(P9, R1), 12);
-            Locate , 16: Print PO$(P9, R1);
+            Locate , 16: Print positions_GAME$(P9, R1);
             Locate , 20
 
             L = 0
@@ -4559,10 +4676,10 @@ Sub LINEUPS ()
             Color 15
             Print Using "###   "; plyrOff_GAME!(P9, R1, 17);
 
-            If RS(P9, R1, 0) = 0 Then
+            If playerStat_GAME(P9, R1, 0) = 0 Then
                 Print "--.-"
             Else
-                Print Using "##.#"; (RS(P9, R1, 3) * 2 + RS(P9, R1, 5) + RS(P9, R1, 13)) / RS(P9, R1, 0)
+                Print Using "##.#"; (playerStat_GAME(P9, R1, 3) * 2 + playerStat_GAME(P9, R1, 5) + playerStat_GAME(P9, R1, 13)) / playerStat_GAME(P9, R1, 0)
             End If
 
         End If
@@ -4588,7 +4705,7 @@ Sub LINEUPS ()
             Color 2, 0
             Print Using "# "; M;
             Color 15, 0
-            Print "ENTER "; PS$(M); " # ";
+            Print "ENTER "; posnName$(M); " # ";
 
             Z = B1(P9, M)
             CV% = 0
@@ -4615,7 +4732,7 @@ Sub LINEUPS ()
                 Color 2, 0
                 Print Using "# "; I;
                 Color 15
-                Print "ENTER "; PS$(I); " # ";
+                Print "ENTER "; posnName$(I); " # ";
 
                 I$ = GetKeyPress$
                 Call LetterToNumber(I$, posn)
@@ -4654,7 +4771,7 @@ Sub LINEUPS ()
             I$ = GetKeyPress$
             K = Val(I$)
 
-        Loop Until K >= 0 And K <= 6
+        Loop Until K >= 0 And K <= 4 Or K = 6
 
         If K = 6 Then
 
@@ -4712,8 +4829,10 @@ Sub LINEUPS ()
 
                 B1(P9, K) = -1
 
-                Locate , 1: Color 2: Print Using "# "; K;
-                Color 15: Print "ENTER "; PS$(K); " # ";
+                Locate , 1
+                Color 2: Print Using "# "; K;
+                Color 15
+                Print "ENTER "; posnName$(K); " # ";
 
 
                 Do
@@ -5024,11 +5143,17 @@ Sub SHOTPERCENT ()
 
             FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 20)
 
-            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .67 + .5)
+            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then 
+                FX% = Int(FX% * .67 + .5)
+            End If
 
-            F3S% = FX% + F5%(D, 2): J8% = 1
+            F3S% = FX% + F5%(D, 2)
+            J8% = 1
 
-            If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then F3S% = Int(Rnd(1) * 5) + 3: J8% = 0
+            If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then 
+                F3S% = Int(Rnd(1) * 5) + 3
+                J8% = 0
+            End If
 
         End If
 
@@ -5046,26 +5171,26 @@ Sub THREEFT ()
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
-    Call d100(RN)
+    Call d100(RN0)
 
     Select Case F3
 
         Case 1
-            If RN <= 50 Then
+            If RN0 <= 50 Then
                 pbpString$ = "FREE THROW IS GOOD"
             Else
                 pbpString$ = "HE HITS THE FIRST FREE THROW"
             End If
 
         Case 2
-            If RN <= 50 Then
+            If RN0 <= 50 Then
                 pbpString$ = "SECOND FREE THROW IS GOOD"
             Else
                 pbpString$ = "HE HITS THE SECOND ONE"
             End If
 
         Case 3
-            If RN <= 50 Then
+            If RN0 <= 50 Then
                 pbpString$ = "THIRD FREE THROW IS GOOD"
             Else
                 pbpString$ = "HE HITS THE LAST ONE"
@@ -5206,9 +5331,9 @@ Sub WHOGETSBALL ()
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            X = Int(Rnd(1) * 100) + 1
+            RN0 = Int(Rnd(1) * 100) + 1
 
-            If X > 25 Then
+            If RN0 > 25 Then
 
                 For I = 0 To 4
                     M8 = Int(plyrRat_GAME(P, B1(P, I), 1) / plyrRat_GAME(P, B1(P, I), 0) + .5) - plyrOff_GAME!(P, B1(P, I), 7)
@@ -5998,11 +6123,24 @@ Sub LASTSHOT ()
     M5 = 0
 
     If gameClock! <= 2 Or IN = 99 Then
+
         M5 = 1
+
     Else
-        If gameClock! > 2 And gameClock! <= 4 Then M5 = 2
-        If gameClock! > 4 And gameClock! <= 16 Then M5 = Int(Rnd(1) * 2) + 3
-        If gameClock! > 16 Then M5 = Int(Rnd(1) * 3) + 5
+
+        Select Case gameClock!
+
+            Case 2 to 4
+                M5 = 2
+
+            Case 5 to 16
+                M5 = Int(Rnd(1) * 2) + 3
+
+            Case Else
+                M5 = Int(Rnd(1) * 3) + 5
+
+        End Select
+
     End If
 
     timeElapsed! = M5
@@ -6355,7 +6493,8 @@ Sub POSTGAME ()
     'If we had special events
     If specialStat = 1 Then
 
-        boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
+        boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
+        'boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
 
         'Append special events
         Call BOX2SPC(boxName$)
@@ -6401,17 +6540,21 @@ Sub BOXOPTIONS (outputChoice)
         Case 1, 2:
             If outputChoice = 1 Then
                 'Printer = temporary file
-                boxFile$ = "TEMPBOX"
+                boxName$ = "TEMPBOX"
             Else
                 'File = prompt | auto-create
                 If autoPlay <> 1 Then
                     Cls
-                    Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";: Input boxFile$
-                    boxFile$ = boxFile$ + ".BSS"
+                    Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
+                    Input boxName$
+                    boxName$ = boxName$ + ".SPC"
+                    'boxName$ = boxName$ + ".BSS"
                 Else
                     'ScheduleName_GameXXX.BS
-                    boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
+                    'boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
                 End If
+
             End If
 
             'Includes a special option to send to printer when done
@@ -7333,19 +7476,19 @@ Sub COMPILESTATFILES (teamIdx)
 
         Input #3, numberGames
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #3, teamScore(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #3, oppName$(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #3, oppScore(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #3, locIndicator$(I)
         Next I
 
@@ -7355,11 +7498,11 @@ Sub COMPILESTATFILES (teamIdx)
             Next
         Next
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #3, gameAttendance&(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #3, gameSite$(I)
         Next I
 
@@ -7412,19 +7555,19 @@ Sub COMPILESTATFILES (teamIdx)
 
     Print #4, numberGames
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Print #4, teamScore(I)
     Next I
-    
-    For I = 1 To MAX_SCHED_STATS: 
+
+    For I = 1 To MAX_SCHED_STATS:
         Print #4, oppName$(I)
     Next I
-    
-    For I = 1 To MAX_SCHED_STATS: 
+
+    For I = 1 To MAX_SCHED_STATS:
         Print #4, oppScore(I)
     Next I
-    
-    For I = 1 To MAX_SCHED_STATS: 
+
+    For I = 1 To MAX_SCHED_STATS:
         Print #4, locIndicator$(I)
     Next I
 
@@ -7434,11 +7577,11 @@ Sub COMPILESTATFILES (teamIdx)
         Next
     Next
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Print #4, gameAttendance&(I)
     Next I
-    
-    For I = 1 To MAX_SCHED_STATS: 
+
+    For I = 1 To MAX_SCHED_STATS:
         Print #4, gameSite$(I)
     Next I
 
@@ -7737,10 +7880,19 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
         If teamRat_GAME(gameIdx, 5) <> 0 Then
 
             For I = 0 To 13
+
                 If rosterStatus(gameIdx, I) = -1 Then rosterStatus(gameIdx, I) = 0
-                Call d100(RN)
-                If UCase$(players$(gameIdx, I)) = "XXX" Then CNTX% = CNTX% + 1
-                If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And RN > Int(plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5) * 100 + .5)) Then rosterStatus(gameIdx, I) = -1
+
+                Call d100(RN0)
+
+                If UCase$(players$(gameIdx, I)) = "XXX" Then
+                    CNTX% = CNTX% + 1
+                End If
+
+                If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And RN0 > Int(plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5) * 100 + .5)) Then
+                    rosterStatus(gameIdx, I) = -1
+                End If
+
             Next
 
             For I = 0 To 13:
@@ -7769,17 +7921,17 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     For I = 0 To 13
 
-        DF(gameIdx, I) = CVI(Q$(I * 16 + 4))
-        PO$(gameIdx, I) = Q$(I * 16 + 5)
+        playerDef_GAME(gameIdx, I) = CVI(Q$(I * 16 + 4))
+        positions_GAME$(gameIdx, I) = Q$(I * 16 + 5)
 
         For I1 = 0 To 13
-            RS(gameIdx, I, I1) = CVI(Q$(I * 16 + I1 + 6))
+            playerStat_GAME(gameIdx, I, I1) = CVI(Q$(I * 16 + I1 + 6))
         Next
 
     Next
 
     For I = 0 To 20
-        T2%(gameIdx, I) = CVI(Q$(228 + I))
+        teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
     Next
 
     CK = CVI(Q$(249))
@@ -7794,16 +7946,16 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
         avgAttendance&(gameIdx) = 0
 
         For I = 0 To 13:
-            DF(gameIdx, I) = 5
-            PO$(gameIdx, I) = ""
+            playerDef_GAME(gameIdx, I) = 5
+            positions_GAME$(gameIdx, I) = ""
 
             For I1 = 0 To 13
-                RS(gameIdx, I, I1) = 0
+                playerStat_GAME(gameIdx, I, I1) = 0
             Next
         Next
 
         For I = 0 To 20:
-            T2%(gameIdx, I) = 0
+            teamStats_GAME(gameIdx, I) = 0
         Next
 
     End If
