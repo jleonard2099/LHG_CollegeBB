@@ -35,10 +35,10 @@ Sub BRACKET ()
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 10
-    	menuWidth% = Len(menuChoices$(1))
-    	Column% = (80 - menuWidth% - 2) / 2
+        menuWidth% = Len(menuChoices$(1))
+        Column% = (80 - menuWidth% - 2) / 2
 
-    	Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -122,7 +122,7 @@ Sub ViewTourneyInfo (ACTION%)
         NR$ = Str$(R%)
 
         Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #3 Len = 90
-        fileLength& = LOF(1)
+        fileLength& = LOF(3)
         Close #3
 
         scheduleAP%(0) = fileLength& / 90
@@ -174,7 +174,7 @@ End Sub
 '----------------------------------------
 '  PrintFourTeamBracket Subroutine
 '----------------------------------------
-'This subroutine uses special characters 
+'This subroutine uses special characters
 'to print a semi-bracket on the screen
 Sub PrintFourTeamBracket ()
 
@@ -1856,7 +1856,7 @@ End Sub
 '----------------------------------------
 '       BracketsNotUsed Subroutine
 '----------------------------------------
-' This code was in the original but is not 
+' This code was in the original but is not
 'referenced. It appears some thought was
 'given here to use this for printing 2-team
 'or 3-team brackets.
