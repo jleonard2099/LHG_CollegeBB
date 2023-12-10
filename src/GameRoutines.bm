@@ -161,22 +161,23 @@ Sub InitVar ()
 
     'These are read in from teams
     'Erase dFGPA, d3FG_Adj, d3FGA_Adj
-    'Erase leagRat_GAME, plyrOff_GAME!, plyrRat_GAME
+    Erase leagRat_GAME, plyrOff_GAME!, plyrRat_GAME
     'Erase rosterStatus, teamStamina
     'Erase gameArena$, gameCoaches$, gameMascots$
     'Erase players$, posnName$
 
     Erase B1
     Erase defStrat, defType, eventSettings
-    Erase F1, G4, G5
+    Erase F1, ft3PtFoul, G4, G5
     Erase offStrat
-    Erase P2, P4, P5, P7, plyrStamina
-    Erase QQ, QR, RB
-    Erase schedGame, score, threeFG, tmFatigue
+    Erase P2, P4, P5, P7
+    Erase plyrStamina, powerRating
+    Erase QQ, QR, RB, schedGame
+    Erase score, threeFG, timePlayed, tmFatigue
     Erase turnovers, statTotals
-    Erase W2, W3, Z5, Z6, timePlayed
+    Erase W2, W3, Z5, Z6
 
-    Erase powerRating, CZ%, F5%, ft3PtFoul, FY%
+    Erase CZ%, F5%, FY%
     Erase G9%, oppScore, NG%, NG1%
     Erase pbpFG, pbpBG, PR%
     Erase ST%, SX%
@@ -330,7 +331,12 @@ Sub TEAMSETUP ()
     If F5%(P9, 7) > 20 Then F5%(P9, 7) = F5%(P9, 7) - 100
 
     F5%(P9, 8) = leagRat_GAME(P9, 4)
-    If F5%(P9, 8) <> 99 Then F5%(P9, 4) = 0: F5%(P9, 5) = 4: F5%(P9, 6) = 0: F5%(P9, 7) = 0
+    If F5%(P9, 8) <> 99 Then
+        F5%(P9, 4) = 0
+        F5%(P9, 5) = 4
+        F5%(P9, 6) = 0
+        F5%(P9, 7) = 0
+    End If
 
     For I = 0 To 13
 
@@ -1042,8 +1048,8 @@ Sub MAKEPBP ()
 
                     Case 4
                         'THREE!
-                        If FT% = 1 then
-                            If RN0 <= 50 Then 
+                        If FT% = 1 Then
+                            If RN0 <= 50 Then
                                 pbpString$ = pbpString$ + " THROWS UP A PRAYER"
                             Else
                                 pbpString$ = pbpString$ + " LAUNCHES A THREE"
@@ -3979,9 +3985,11 @@ Sub SCOREBOARD ()
     For I1 = 0 To 4
 
         Color 2: Print Using "# "; I1;
-        Color 3
-        Color 15: Print Left$(players$(0, B1(0, I1)), 12);: Locate , 15
+        Color 15
+        'Player Name
+        Print Left$(players$(0, B1(0, I1)), 12);
 
+        Locate , 15
         If plyrOff_GAME!(0, B1(0, I1), 19) >= 7 Then Print "*";
 
         Locate , 16
@@ -3989,25 +3997,36 @@ Sub SCOREBOARD ()
         J = (plyrOff_GAME!(0, B1(0, I1), 3)) - plyrOff_GAME!(0, B1(0, I1), 7) - plyrOff_GAME!(0, B1(0, I1), 11) - plyrOff_GAME!(0, B1(0, I1), 12)
         If J <= 0 Then J = 0
 
+        'FG / FT
         Print Using "##"; plyrOff_GAME!(0, B1(0, I1), 0);
         Print Using "### "; plyrOff_GAME!(0, B1(0, I1), 1);
 
-        If P = 0 Then Print Using "##"; plyrOff_GAME!(0, B1(0, I1), 21) * 2 / 10; Else Print Using "##"; plyrOff_GAME!(0, B1(0, I1), 2) * 2 / 10;
+        'RB
+        If P = 0 Then
+            Print Using "##"; plyrOff_GAME!(0, B1(0, I1), 21) * 2 / 10;
+        Else
+            Print Using "##"; plyrOff_GAME!(0, B1(0, I1), 2) * 2 / 10;
+        End If
         If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
 
+        'CX
         Print Using "### "; J;
-        Color 15
 
+        Color 15
         If tmFatigue(0, B1(0, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-
+        'EF
         Print Using "## "; tmFatigue(0, B1(0, I1)) * -1;
+
         Color 15
+        'PA
         Print Using "##"; plyrOff_GAME!(0, B1(0, I1), 4);
+        'PT
         Print Using "###  "; plyrOff_GAME!(0, B1(0, I1), 8) * 2 + plyrOff_GAME!(0, B1(0, I1), 10) + threeFG(0, B1(0, I1), 0);
 
         If plyrOff_GAME!(0, B1(0, I1), 12) >= 4 Then Color 12
-
+        'F
         Print Using "#"; plyrOff_GAME!(0, B1(0, I1), 12)
+
         Color 15
 
     Next I1
@@ -4027,7 +4046,9 @@ Sub SCOREBOARD ()
 
         Locate , 40
         Color 2: Print Using "# "; I1;
-        Color 15: Print Left$(players$(1, B1(1, I1)), 12);: Locate , 55
+        Color 15
+        'Player Name
+        Print Left$(players$(1, B1(1, I1)), 12);: Locate , 55
 
         If plyrOff_GAME!(1, B1(1, I1), 19) >= 7 Then Print "*";
 
@@ -4035,24 +4056,33 @@ Sub SCOREBOARD ()
 
         J = (plyrOff_GAME!(1, B1(1, I1), 3)) - plyrOff_GAME!(1, B1(1, I1), 7) - plyrOff_GAME!(1, B1(1, I1), 11) - plyrOff_GAME!(1, B1(1, I1), 12): If J <= 0 Then J = 0
 
+        'FG / FT
         Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 0);
         Print Using "### "; plyrOff_GAME!(1, B1(1, I1), 1);
 
-        If P = 1 Then Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 21) * 2 / 10; Else Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 2) * 2 / 10;
+        'RB
+        If P = 1 Then
+            Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 21) * 2 / 10;
+        Else
+            Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 2) * 2 / 10;
+        End If
         If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
 
+        'CX
         Print Using "### "; J;
-        Color 15
 
+        Color 15
         If tmFatigue(1, B1(1, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-
+        'EF
         Print Using "## "; tmFatigue(1, B1(1, I1)) * -1;
+
         Color 15
+        'PA / PT
         Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 4);
         Print Using "###  "; plyrOff_GAME!(1, B1(1, I1), 8) * 2 + plyrOff_GAME!(1, B1(1, I1), 10) + threeFG(1, B1(1, I1), 0);
 
         If plyrOff_GAME!(1, B1(1, I1), 12) >= 4 Then Color 12
-
+        'F
         Print Using "#"; plyrOff_GAME!(1, B1(1, I1), 12)
         Color 15
 
@@ -5143,14 +5173,14 @@ Sub SHOTPERCENT ()
 
             FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 20)
 
-            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then 
+            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
                 FX% = Int(FX% * .67 + .5)
             End If
 
             F3S% = FX% + F5%(D, 2)
             J8% = 1
 
-            If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then 
+            If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then
                 F3S% = Int(Rnd(1) * 5) + 3
                 J8% = 0
             End If
@@ -6130,10 +6160,10 @@ Sub LASTSHOT ()
 
         Select Case gameClock!
 
-            Case 2 to 4
+            Case 2 To 4
                 M5 = 2
 
-            Case 5 to 16
+            Case 5 To 16
                 M5 = Int(Rnd(1) * 2) + 3
 
             Case Else

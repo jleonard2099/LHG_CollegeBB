@@ -292,4 +292,3 @@ Dim Shared pbpType$(1), players$(1, 13)
 Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
 
-

@@ -1146,7 +1146,7 @@ Sub COLHOOP ()
                 Call AdjustShotClock
                 Call WHOLAY
 
-                If PASS% = 1 Then 
+                If PASS% = 1 Then
                     pbpString$ = players$(P, B1(P, ballCarrier)) + " GETS THE INBOUND PASS"
                 Else
                     pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE BALL"
@@ -1306,14 +1306,14 @@ Sub COLHOOP ()
 
         End If
 
-        If P7(D) = 1 Then 
+        If P7(D) = 1 Then
             X0% = 25
             X1% = -1
             tmFatigue(P, B1(P, BU%)) = tmFatigue(P, B1(P, BU%)) - 1
             Call PRPFAT
         End If
 
-        If P7(D) > 1 Then 
+        If P7(D) > 1 Then
             X0% = 25
             X1% = -1
             Call PRPFAT
@@ -1700,15 +1700,15 @@ Sub COLHOOP ()
 
         Call d100(RN0)
         Select Case RN0
-            Case Is <= 38 
+            Case Is <= 38
                 ballCarrier = 0
-            Case 39 to 75 
+            Case 39 To 75
                 ballCarrier = 1
-            Case 76 to 83 
+            Case 76 To 83
                 ballCarrier = 2
-            Case 84 to 91 
+            Case 84 To 91
                 ballCarrier = 3
-            Case 92 to 100
+            Case 92 To 100
                 ballCarrier = 4
         End Select
 
