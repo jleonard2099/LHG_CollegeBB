@@ -244,7 +244,7 @@ Dim Shared DY, compTeam, D, endGame, endAllGames
 'Dim Shared fouler, desigFouler
 Dim Shared FO, F3, G9, gameLoc, halfTime
 Dim Shared JY, IN, M5, MJ, nbrLines
-Dim Shared P, P9, playerMode, playerOpt
+Dim Shared P, P9, playerMode, playerOpt, RN0
 Dim Shared S2, S9, sClockVal, shotClock
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 
@@ -254,6 +254,8 @@ Dim Shared F3S%, FB%, FT%, J8%, LC%
 Dim Shared PA%, PASS%, pbpOpt, PT%, PZ%, ST%
 Dim Shared threePtOpt, X0%, X1%, XX%
 
+Dim Shared P6
+
 Dim Shared F!
 
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
@@ -261,7 +263,7 @@ Dim Shared gameClock!, pbpDelay!, timeElapsed!
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared prevBall$, pbpString$, schedVisTm$, schedHomeTm$, YN$
 
-Dim Shared CZ%(1), F5%(0 To 1, 0 To 8), FY%(0 To 1)
+Dim Shared CZ%(1), teamAdj(0 To 1, 0 To 8), FY%(0 To 1)
 Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
 Dim Shared offStrat(1), PC%(1), PR%(1, 1)
 Dim Shared rosterStatus(1, 13), ST%(32), SX%(32, 1, 14)
@@ -291,4 +293,5 @@ Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13)
 Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
+
 

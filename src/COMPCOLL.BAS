@@ -12,8 +12,9 @@ Sub CompileCollege ()
 
     Shared oppScore()
 
-    Shared BRC!(), defLeaders!(), offLeaders!()
-    Shared compS!(), defTotals!(), offTotals!()
+    Shared BRC!(), compS!(), leaderVals!()
+    Shared defLeaders!(), defTotals!()
+    Shared offLeaders!(), offTotals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared statsW0!(), statsW1!(), TRC!(), TRC1!()
 
@@ -26,23 +27,7 @@ Sub CompileCollege ()
 
     Shared fullWins, fullLosses
 
-    'Initialize values first
-    TRC!(14) = 19999
-    TRC!(18) = 19999
-
-    For I = 1 To 13: TRC1!(I) = 19999: Next
-
-    For I = 15 To 17: TRC1!(I) = 19999: Next
-
-    For I = 19 To 20: TRC1!(I) = 19999: Next
-
-    Erase Z1$
-    Erase defLeaders!
-
-    For X = 1 To 40
-        defLeaders!(X, 19) = 9999
-    Next
-
+    'Read in any existing records first
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
         Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
@@ -63,9 +48,26 @@ Sub CompileCollege ()
             Input #1, recconTRC1$(I)
         Next
 
-        Close #1
+    Else
+
+        Erase BRC!, TRC!, TRC1!
+        Erase BRC$, recconTRC$, recconTRC1$
 
     End If
+
+    'Initialize values first
+    'These are defensive record values, so they should be really high
+    'To determine if a "record" was broken, the stat values will be
+    'compared to see if they are lower than this.
+    'If we initialized to 0, the "record" would always be 0
+    For X = 1 To 40
+        defLeaders!(X, 19) = 9999
+    Next
+
+    Erase leaderVals!
+    Erase Z0$, Z1$, Z3$
+
+    C$ = ","
 
     conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
 
@@ -148,6 +150,8 @@ Sub CompileCollege ()
                     If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
                         Erase compS!
+                        Erase defTotals!, offTotals!, statsW0!, statsW1!
+                        Erase statPlyrNames$
 
                         Call ReadStatsCon(H1$(XW), TN$)
                         Call StatsByCategoryCon(numberGames%, TN$, finalUpdate$)
