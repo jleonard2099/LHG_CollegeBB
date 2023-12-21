@@ -39,7 +39,7 @@ Sub InitVar ()
 
     Shared avgAttendance&(), gameAttendance&()
 
-    'Shared d3FG_Adj(), d3FGA_Adj()
+    Shared d3FG_Adj(), d3FGA_Adj()
     Shared powerRating()
     Shared oppScore(), rosterStatus()
     Shared teamScore(), tourneySettings()
@@ -104,13 +104,11 @@ Sub InitVar ()
     DY = 0
     endAllGames = 0
     endGame = 0
-    FO = 0
     F3 = 0
+    FO = 0
     G9 = 0
     halfTime = 0
     IN = 0
-    'I = 0
-    'J = 0
     M5 = 0
     MJ = 0
     P = 0
@@ -153,20 +151,29 @@ Sub InitVar ()
     G1$ = ""
     H1$ = ""
 
+    pbpString$ = ""
     prevBall$ = ""
     scheduleFile$ = ""
     tourneyFile$ = ""
-    pbpString$ = ""
     schedVisTm$ = ""
     schedHomeTm$ = ""
     YN$ = ""
 
+    '---- these have changed -----
+    Erase oppScore, teamScore
+    Erase locIndicator$, oppName$
+    '---- these have changed -----
+
     'These are read in from teams
     'Erase dFGPA, d3FG_Adj, d3FGA_Adj
     Erase leagRat_GAME, plyrOff_GAME!, plyrRat_GAME
+    'Erase playerDef_GAME, playerStat_GAME, teamStats_GAME
     'Erase rosterStatus, teamStamina
     'Erase gameArena$, gameCoaches$, gameMascots$
-    'Erase players$, posnName$
+    'Erase players$, positions_GAME$, posnName$
+
+    'Erase tourneySettings
+    'Erase seedSlotName$
 
     Erase B1
     Erase defStrat, defType, eventSettings
@@ -174,21 +181,23 @@ Sub InitVar ()
     Erase offStrat
     Erase P2, P4, P5, P7
     Erase plyrStamina, powerRating
+    Erase pbpFG, pbpBG
     Erase QQ, QR, RB, schedGame
-    Erase score, threeFG, timePlayed, tmFatigue
+    Erase score
+
+    Erase teamAdj, threeFG, timePlayed, tmFatigue
     Erase turnovers, statTotals
     Erase W2, W3, Z5, Z6
 
-    Erase CZ%, teamAdj, FY%
-    Erase G9%, oppScore, NG%, NG1%
-    Erase pbpFG, pbpBG, PR%
+    Erase CZ%, FY%
+    Erase G9%, NG%, NG1%
+    Erase PR%
     Erase ST%, SX%
-    Erase teamIndex%, teamScore, tourneySettings
+    Erase teamIndex%
     Erase TM%, TP%
 
     Erase diskIDs$
     Erase gameSite$, gameTeams$
-    Erase locIndicator$, oppName$
     Erase Q$, SX$, teamNames$, teamYrTourn$
 
     Erase gameR3!, gameW0!, gameW1!
@@ -232,7 +241,7 @@ Sub AUTOSETUP ()
         Call ReadGameTeam(diskIDs$(P9), gameTeams$(P9), I1, P9)
 
         If I1 <> 0 Then
-            Call TEAMSETUP
+            Call TEAMSETUP(P9)
             'Else
             '   -- throw an error message
         End If
@@ -316,54 +325,55 @@ End Sub
 'This subroutine initializes team data,
 'sets up player data and configures any
 'league adjustments
-Sub TEAMSETUP ()
+Sub TEAMSETUP (teamIdx)
 
     Shared d3FG_Adj(), d3FGA_Adj()
 
     'This is where we "adjust" values that were in the 90's
-    teamAdj(P9, 4) = leagRat_GAME(P9, 0)
-    If teamAdj(P9, 4) > 20 Then teamAdj(P9, 4) = teamAdj(P9, 4) - 100
+    teamAdj(teamIdx, 4) = leagRat_GAME(teamIdx, 0)
+    If teamAdj(teamIdx, 4) > 20 Then teamAdj(teamIdx, 4) = teamAdj(teamIdx, 4) - 100
 
-    teamAdj(P9, 6) = leagRat_GAME(P9, 2)
-    If teamAdj(P9, 6) > 20 Then teamAdj(P9, 6) = teamAdj(P9, 6) - 100
+    teamAdj(teamIdx, 6) = leagRat_GAME(teamIdx, 2)
+    If teamAdj(teamIdx, 6) > 20 Then teamAdj(teamIdx, 6) = teamAdj(teamIdx, 6) - 100
 
-    teamAdj(P9, 7) = leagRat_GAME(P9, 3)
-    If teamAdj(P9, 7) > 20 Then teamAdj(P9, 7) = teamAdj(P9, 7) - 100
+    teamAdj(teamIdx, 7) = leagRat_GAME(teamIdx, 3)
+    If teamAdj(teamIdx, 7) > 20 Then teamAdj(teamIdx, 7) = teamAdj(teamIdx, 7) - 100
 
     'Off T/O Rating
-    teamAdj(P9, 5) = leagRat_GAME(P9, 1)
+    teamAdj(teamIdx, 5) = leagRat_GAME(teamIdx, 1)
+
     'Default to 4 if not provided
-    If teamAdj(P9, 5) = 0 Then teamAdj(P9, 5) = 4
+    If teamAdj(teamIdx, 5) = 0 Then teamAdj(teamIdx, 5) = 4
 
     '"99" Value
-    teamAdj(P9, 8) = leagRat_GAME(P9, 4)
-    If teamAdj(P9, 8) <> 99 Then
-        teamAdj(P9, 4) = 0
-        teamAdj(P9, 5) = 4
-        teamAdj(P9, 6) = 0
-        teamAdj(P9, 7) = 0
+    teamAdj(teamIdx, 8) = leagRat_GAME(teamIdx, 4)
+    If teamAdj(teamIdx, 8) <> 99 Then
+        teamAdj(teamIdx, 4) = 0
+        teamAdj(teamIdx, 5) = 4
+        teamAdj(teamIdx, 6) = 0
+        teamAdj(teamIdx, 7) = 0
     End If
 
     For I = 0 To 13
 
-        plyrOff_GAME!(P9, I, 16) = plyrRat_GAME(P9, I, 6)
-        If plyrOff_GAME!(P9, I, 16) = 0 Then plyrOff_GAME!(P9, I, 16) = 6
+        plyrOff_GAME!(teamIdx, I, 16) = plyrRat_GAME(teamIdx, I, 6)
+        If plyrOff_GAME!(teamIdx, I, 16) = 0 Then plyrOff_GAME!(teamIdx, I, 16) = 6
 
-        plyrOff_GAME!(P9, I, 17) = plyrRat_GAME(P9, I, 5)
-        If plyrOff_GAME!(P9, I, 17) = 0 Then plyrOff_GAME!(P9, I, 17) = 40
+        plyrOff_GAME!(teamIdx, I, 17) = plyrRat_GAME(teamIdx, I, 5)
+        If plyrOff_GAME!(teamIdx, I, 17) = 0 Then plyrOff_GAME!(teamIdx, I, 17) = 40
 
-        plyrOff_GAME!(P9, I, 19) = plyrRat_GAME(P9, I, 3)
-        plyrOff_GAME!(P9, I, 20) = plyrRat_GAME(P9, I, 2)
-        plyrOff_GAME!(P9, I, 21) = plyrRat_GAME(P9, I, 4)
-        plyrOff_GAME!(P9, I, 2) = plyrOff_GAME!(P9, I, 2)
+        plyrOff_GAME!(teamIdx, I, 19) = plyrRat_GAME(teamIdx, I, 3)
+        plyrOff_GAME!(teamIdx, I, 20) = plyrRat_GAME(teamIdx, I, 2)
+        plyrOff_GAME!(teamIdx, I, 21) = plyrRat_GAME(teamIdx, I, 4)
+        plyrOff_GAME!(teamIdx, I, 2) = plyrOff_GAME!(teamIdx, I, 2)
 
     Next I
 
-    teamAdj(P9, 2) = d3FG_Adj(P9)
-    If teamAdj(P9, 2) > 20 Then teamAdj(P9, 2) = teamAdj(P9, 2) - 100
+    teamAdj(teamIdx, 2) = d3FG_Adj(teamIdx)
+    If teamAdj(teamIdx, 2) > 20 Then teamAdj(teamIdx, 2) = teamAdj(teamIdx, 2) - 100
 
-    teamAdj(P9, 3) = d3FGA_Adj(P9)
-    If teamAdj(P9, 3) > 20 Then teamAdj(P9, 3) = teamAdj(P9, 3) - 100
+    teamAdj(teamIdx, 3) = d3FGA_Adj(teamIdx)
+    If teamAdj(teamIdx, 3) > 20 Then teamAdj(teamIdx, 3) = teamAdj(teamIdx, 3) - 100
 
 End Sub
 
@@ -450,16 +460,16 @@ End Sub
 'face for disabling team players. It will
 'then take care of updating the associated
 'arrays for the available roster.
-Sub DISABLEPLAYERS (P9)
+Sub DISABLEPLAYERS (teamIdx)
 
     Do
 
         Color 15, 0
         Cls
 
-        Call TEAMBOX(1, P9)
+        Call TEAMBOX(1, teamIdx)
 
-        U$ = "DISABLE PLAYERS FOR " + gameTeams$(P9) + "? (Y/N)"
+        U$ = "DISABLE PLAYERS FOR " + gameTeams$(teamIdx) + "? (Y/N)"
         Locate , (80 - Len(U$)) / 2
         Print U$
         Color 15, 0
@@ -480,7 +490,7 @@ Sub DISABLEPLAYERS (P9)
 
         Cls
         Print "TEAM ROSTER FOR ";
-        Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1): Print gameTeams$(P9)
+        Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1): Print gameTeams$(teamIdx)
         Color 15, 0
         Print "# NAME            POS   GP"
 
@@ -496,17 +506,17 @@ Sub DISABLEPLAYERS (P9)
             Print " ";
 
             'Automatically disable "non-existent" players
-            If players$(P9, I) = "XXX" Then rosterStatus(P9, I) = -1: Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1)
+            If players$(teamIdx, I) = "XXX" Then rosterStatus(teamIdx, I) = -1: Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
 
             'Color players who have been disabled
-            If rosterStatus(P9, I) = 1 Or rosterStatus(P9, I) = -1 Then Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1)
+            If rosterStatus(teamIdx, I) = 1 Or rosterStatus(teamIdx, I) = -1 Then Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
 
             'Print player name
-            Print players$(P9, I);
+            Print players$(teamIdx, I);
             Color 15, 0
 
             'Print player position, GP
-            Print Tab(20); positions_GAME$(P9, I); Tab(22); plyrRat_GAME(P9, I, 0)
+            Print Tab(20); positions_GAME$(teamIdx, I); Tab(22); plyrRat_GAME(teamIdx, I, 0)
 
         Next
 
@@ -522,19 +532,19 @@ Sub DISABLEPLAYERS (P9)
                 I1 = Val(I$)
                 Call LetterToNumber(I$, I1)
 
-                If rosterStatus(P9, I1) = 0 And DX% < 4 Then
-                    rosterStatus(P9, I1) = -1
+                If rosterStatus(teamIdx, I1) = 0 And DX% < 4 Then
+                    rosterStatus(teamIdx, I1) = -1
                     DX% = DX% + 1
                     Locate 3 + I1, 3
-                    Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1): Print players$(P9, I1)
+                    Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1): Print players$(teamIdx, I1)
                     Color 15, 0
                 Else
-                    If rosterStatus(P9, I1) = -1 Then
-                        rosterStatus(P9, I1) = 0
+                    If rosterStatus(teamIdx, I1) = -1 Then
+                        rosterStatus(teamIdx, I1) = 0
                         DX% = DX% - 1
                         Locate 3 + I1, 2
                         Color 15, 0
-                        Print " "; players$(P9, I1)
+                        Print " "; players$(teamIdx, I1)
                     End If
                 End If
             End If
@@ -3080,7 +3090,9 @@ Sub FoulCalled (randomCalcs%)
     P2(D) = P2(D) + 1
     Call UPDATESCREEN
 
-    If plyrOff_GAME!(D, B1(D, fouler), 3) - plyrOff_GAME!(D, B1(D, fouler), 7) - plyrOff_GAME!(D, B1(D, fouler), 11) - plyrOff_GAME!(D, B1(D, fouler), 12) = 0 Then plyrOff_GAME!(D, B1(D, fouler), 3) = plyrOff_GAME!(D, B1(D, fouler), 3) + 1
+    If plyrOff_GAME!(D, B1(D, fouler), 3) - plyrOff_GAME!(D, B1(D, fouler), 7) - plyrOff_GAME!(D, B1(D, fouler), 11) - plyrOff_GAME!(D, B1(D, fouler), 12) = 0 Then
+        plyrOff_GAME!(D, B1(D, fouler), 3) = plyrOff_GAME!(D, B1(D, fouler), 3) + 1
+    End If
 
     If plyrOff_GAME!(D, B1(D, fouler), 12) < foulsToDQ Then
 
@@ -3138,7 +3150,7 @@ Sub FoulCalled (randomCalcs%)
         If P2(D) > 6 Then X = 50
 
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
-            P9 = D
+            teamIdx = D
             C1 = 1
             Call LINEUPS
             Call FOULSAFE
@@ -3612,7 +3624,6 @@ Sub TOURNEY_Game ()
             winTeam$ = schedHomeTm$
             Call UpdateTourneyFile(I, loseTeam$, winTeam$)
         End If
-
 
     Next
 
@@ -4346,10 +4357,12 @@ Sub ChangeContributions ()
                     I1 = I1 - 1
 
                     If I1 <= 13 And I1 >= 0 Then
+
                         Locate 22, 1
                         Print "ENTER NEW CX RATING FOR "; players$(teamChoice, I1); " ";
                         Input plyrOff_GAME!(teamChoice, I1, 3)
                         Locate 22, 1: Print Space$(52)
+
                     Else
 
                         If TY% <> 100 Then
@@ -4871,7 +4884,6 @@ Sub LINEUPS ()
                 Color 15
                 Print "ENTER "; posnName$(K); " # ";
 
-
                 Do
                     I$ = GetKeyPress$
                     Call LetterToNumber(I$, posn)
@@ -5167,8 +5179,8 @@ End Sub
 '----------------------------------------
 '         SHOTPERCENT Subroutine
 '----------------------------------------
-'This subroutine calculates the chance
-'of a shot being made based on the active
+'This subroutine calculates the chance of
+'a shot being made based on the active
 'defense / offense / players.
 Sub SHOTPERCENT ()
 
@@ -5181,8 +5193,8 @@ Sub SHOTPERCENT ()
     F! = FX% + dFGPA(D) + D8(0, defType(D))
     J8% = 0
 
+    'Improve chance for homefield advantage
     If gameLoc = P Then
-        'Check if homefield advantage
         F! = F! + HF%(0, teamRat_GAME(P, 6))
     Else
         If gameLoc <> 2 Then F! = F! + HF%(1, teamRat_GAME(P, 6))
@@ -5206,6 +5218,7 @@ Sub SHOTPERCENT ()
     'plyOff(.., 19) = ORBs
     'teamAdj(D, 3) = d3FGA_Adj for DEFENSE
     If offStrat(P) = 9 Then
+
         'Strategy = Shoot only 3's
         If (F3S% > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0) Then
             F3S% = Int(Rnd(1) * 5) + 11
@@ -5218,6 +5231,7 @@ Sub SHOTPERCENT ()
 
             'Odd that it calculates a % here when a shot won't be taken
             F3S% = Int(Rnd(1) * 5) + 3
+            J8% = 0
 
         Else
 
@@ -5227,7 +5241,8 @@ Sub SHOTPERCENT ()
                 FX% = Int(FX% * .67 + .5)
             End If
 
-            If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then
+            'If more than 2 minutes in half and (ContribPct - FGA - Rebounds - Fouls) <= 0
+            If (currHalf < 3 And gameClock! > 120) And (plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0) Then
                 F3S% = Int(Rnd(1) * 5) + 3
                 J8% = 0
             Else
@@ -5634,21 +5649,17 @@ Sub DEADBALLOPTIONS ()
                         P9 = P
                         LC% = 1
 
-                        'GoTo 220
-
                     Case 3
                         'Strategy - Offense
                         P9 = P
                         Call PlayStyle
                         Call SCOREBOARD
-                        'GoTo 220
 
                     Case 4
                         'Strategy - Defense
                         P9 = D
                         Call PlayStyle
                         Call SCOREBOARD
-                        'GoTo 220
 
                     Case 5
                         'Timeouts - Offense
@@ -5666,7 +5677,6 @@ Sub DEADBALLOPTIONS ()
                         timeouts(D) = timeouts(D) - 1
                         Call RESETFATIGUE
                         Call SCOREBOARD
-                        'GoTo 220
 
                 End Select
 
@@ -7422,6 +7432,8 @@ Sub SAVESTATS ()
 
         Cls
 
+        'H% = gameLoc
+
         For PX = 0 To 1
             For J = 0 To 13
                 plyrOff_GAME!(PX, J, 16) = timePlayed(PX, J)
@@ -7995,8 +8007,9 @@ End Sub
 'needed by the game.
 Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
-    Shared d3FG_Adj(), d3FGA_Adj()
     Shared avgAttendance&()
+
+    Shared d3FG_Adj(), d3FGA_Adj()
 
     teamYear$ = RTrim$(YN$)
 

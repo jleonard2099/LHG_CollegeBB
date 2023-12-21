@@ -239,20 +239,23 @@ Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
 
 Dim avgAttendance&(1)
 
+'-- I doubt these is needed, but that's TBD
+Dim Shared Q, I, J, RN0
+
 Dim Shared autoPlay, ballCarrier, C1, currHalf
 Dim Shared DY, compTeam, D, endGame, endAllGames
 'Dim Shared fouler, desigFouler
 Dim Shared FO, F3, G9, gameLoc, halfTime
+Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul, foulsToDQ
 Dim Shared JY, IN, M5, MJ, nbrLines
-Dim Shared P, P9, playerMode, playerOpt, RN0
+Dim Shared P, P9, playerMode, playerOpt
 Dim Shared S2, S9, sClockVal, shotClock
-Dim Shared tickerIdx, TMT, TOU, XM, XS
+Dim Shared threePtOpt, tickerIdx, TMT, TOU, XM, XS
 
 Dim Shared BO%, BU%, coachOpt, DK%
-Dim Shared ft10thFoul, ft3PtFoul, ft6FloorFouls, foulsToDQ
 Dim Shared F3S%, FB%, FT%, J8%, LC%
 Dim Shared PA%, PASS%, pbpOpt, PT%, PZ%, ST%
-Dim Shared threePtOpt, X0%, X1%, XX%
+Dim Shared X0%, X1%, XX%
 
 Dim Shared P6
 
@@ -261,7 +264,9 @@ Dim Shared F!
 Dim Shared gameClock!, pbpDelay!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared prevBall$, pbpString$, schedVisTm$, schedHomeTm$, YN$
+Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$, YN$
+
+'--- RESUME COMPARISON HERE
 
 Dim Shared CZ%(1), teamAdj(0 To 1, 0 To 8), FY%(0 To 1)
 Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
@@ -293,5 +298,4 @@ Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13)
 Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
-
 
