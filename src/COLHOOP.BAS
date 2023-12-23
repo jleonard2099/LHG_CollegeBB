@@ -129,9 +129,9 @@ Sub COLHOOP ()
 
         Close #6
 
-        currGame = schedGame(0) + schedGame(2)
+        'currGame = schedGame(0) + schedGame(2)
 
-        Open "pbplog" + Str$(currGame) For Append As #11
+        'Open "pbplog" + Str$(currGame) For Append As #11
 
         Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
 
@@ -160,7 +160,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -464,8 +464,6 @@ Sub COLHOOP ()
 
     End If
 
-    Call ChangeContributions
-
     '----------------------------------------
     '    AUTO-DETERMINE OTHER OPTIONS
     '----------------------------------------
@@ -474,8 +472,8 @@ Sub COLHOOP ()
     Select Case playerOpt
 
         'Case 0:
-            'playerMode = 0
-            'compTeam = 0
+        'playerMode = 0
+        'compTeam = 0
 
         Case 1:
             playerMode = 1
@@ -495,6 +493,8 @@ Sub COLHOOP ()
     '   0 = Human
     '   1 = Computer Team
     '   2 = PC vs. PC
+
+    Call ChangeContributions
 
     Call LOADSTATS
 
@@ -617,7 +617,7 @@ Sub COLHOOP ()
                 pbpString$ = gameTeams$(P) + " INBOUNDS THE BALL"
                 Call PBP
             Else
-            'pbpOpt = 1
+                'pbpOpt = 1
                 Call WINDEX
                 Print gameTeams$(P) + " INBOUNDS THE BALL"
                 Call DELAY
@@ -813,7 +813,7 @@ Sub COLHOOP ()
     End If
 
     '--Start "EndOfGame" routine
-    Close #11
+    'Close #11
 
     Call POSTGAME
 
@@ -1182,7 +1182,7 @@ Sub COLHOOP ()
         End If
 
     End If
-    
+
     GoTo 400
 
     '----- NOODLE -----
@@ -2064,7 +2064,7 @@ Sub COLHOOP ()
                             RN0 = Int(Rnd(1) * 12) + 1
 
                             Select Case RN0
-                            
+
                                 Case 1
                                     pbpString$ = YY$ + "'S HEAVILY GUARDED"
                                 Case 2
@@ -3399,7 +3399,7 @@ Sub COLHOOP ()
         timeouts(P) = timeouts(P) - 1
         Call SCOREBOARD
 
-'--- RESUME ANALYSIS
+        '--- RESUME ANALYSIS
 
         'Offense
         RN0 = Int(Rnd(1) * 100)
@@ -3693,7 +3693,7 @@ Sub COLHOOP ()
     TP% = 0
     RB = 0
 
-    For I = 0 To 9: 
+    For I = 0 To 9:
         RB(I) = 0
     Next
 

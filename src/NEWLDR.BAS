@@ -34,7 +34,7 @@ Sub NEWLDR ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -49,7 +49,7 @@ Sub NEWLDR ()
             Select Case Selection%
 
                 Case 1:
-                    confStatFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "CONFERENCE STATS", FileExit%)
+                    confStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "CONFERENCE STATS", FileExit%)
 
                     If FileExit% <> 27 And FileExit% <> 0 Then
 
@@ -73,11 +73,11 @@ Sub NEWLDR ()
                     End If
 
                 Case 2:
-                    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                    leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
                     If FileExit% <> 27 And FileExit% <> 0 Then
                         Call READLEADER(leaderFile$, JB, TS, TTS)
-                        Call ExpandedLeaders_Menu (JB, TS, TTS)
+                        Call ExpandedLeaders_Menu(JB, TS, TTS)
                     End If
 
             End Select
@@ -94,7 +94,7 @@ End Sub
 '----------------------------------------
 'This subroutine reads in the league stats
 'from the .TMS file. It then relies on other
-'routines to calculate the expanded stats, 
+'routines to calculate the expanded stats,
 'write them to a file and present a categ-
 'orized menu to use for reviewing them
 ' XXXX NO LONGER USED WITH NEW STRUCTURE XXXX
@@ -109,7 +109,7 @@ Sub ViewExpandedStats ()
         expanZ1$(X) = "XXX"
     Next
 
-    conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.TMS", "CONFERENCE STATS", ExitCode%)
+    conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "CONFERENCE STATS", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -125,7 +125,7 @@ Sub ViewExpandedStats ()
 
         Call READLEADER(conferenceFile$, JB, plyrTotalStats, teamTotalStats)
 
-        Call ExpandedLeaders_Menu (JB, plyrTotalStats, teamTotalStats)
+        Call ExpandedLeaders_Menu(JB, plyrTotalStats, teamTotalStats)
 
     End If 'Done checking for ESC
 
@@ -136,7 +136,7 @@ End Sub
 '----------------------------------------
 '    UpdateExpandedLeaders Subroutine
 '----------------------------------------
-'This subroutine calculates the expanded 
+'This subroutine calculates the expanded
 'stats from those previously read in to
 'a variety of arrays.
 
@@ -153,6 +153,8 @@ Sub UpdateExpandedLeaders (Z1$(), JB, plyrTotalStats, teamTotalStats)
 
     Color 15, 0
     Cls
+
+    JB = 0
 
     For KK = 1 To 30
 
@@ -248,8 +250,8 @@ End Sub
 '----------------------------------------
 '        SAVELEADER Subroutine
 '----------------------------------------
-'This subroutine compiles the leader files 
-'(.LDS) for the expanded standings modules 
+'This subroutine compiles the leader files
+'(.LDS) for the expanded standings modules
 Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared statPlyrNames$(), AL$(), expanTT$()
@@ -327,8 +329,8 @@ End Sub
 '----------------------------------------
 '        READLEADER Subroutine
 '----------------------------------------
-'This subroutine reads in the leader files 
-'(.LDS) for the expanded standings modules 
+'This subroutine reads in the leader files
+'(.LDS) for the expanded standings modules
 Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared statPlyrNames$(), AL$(), expanTT$()
@@ -343,15 +345,15 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
-    If Not _FileExists (diskPaths$(1) + statFile$ + ".LDS") Then
-    
+    If Not _FileExists(diskPaths$(1) + statFile$ + ".LDS") Then
+
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -413,7 +415,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
         Close #1
 
     End If
-    
+
 End Sub
 
 
@@ -446,7 +448,7 @@ Sub ExpandedLeaders_Menu (JB, plyrTotalStats, teamTotalStats)
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -459,7 +461,7 @@ Sub ExpandedLeaders_Menu (JB, plyrTotalStats, teamTotalStats)
             Select Case Selection%
 
                 Case 1:
-                    Call ViewIndividualLeaders (printOrView%, JB)
+                    Call ViewIndividualLeaders(printOrView%, JB)
 
                 Case 2:
                     Call ViewTeamLeaders(printOrView%, plyrTotalStats, teamTotalStats)
@@ -477,8 +479,8 @@ End Sub
 '    ViewIndividualLeaders Subroutine
 '----------------------------------------
 'This subroutine lets the user choose a
-'individual player stat categories and 
-'relies on other routines to sort and 
+'individual player stat categories and
+'relies on other routines to sort and
 'display the results.
 Sub ViewIndividualLeaders (printOrView%, JB)
 
@@ -799,8 +801,8 @@ End Sub
 '----------------------------------------
 '       ViewTeamLeaders Subroutine
 '----------------------------------------
-'This subroutine lets the user choose team 
-'player stat categories and relies on other 
+'This subroutine lets the user choose team
+'player stat categories and relies on other
 'routines to sort and display the results.
 Sub ViewTeamLeaders (printOrView%, plyrTotalStats, teamTotalStats)
 
@@ -1340,13 +1342,13 @@ Sub PrintLeaders (TVN, maxRecords, categoryID)
 
         Select Case TVN
 
-            Case 1: 
+            Case 1:
                 LPrint Tab(58); Using "#####"; TYP!(W)
 
-            Case 2: 
+            Case 2:
                 LPrint Tab(58); Using ".###"; TYP!(W)
 
-            Case 3: 
+            Case 3:
                 LPrint Tab(58); Using "###.#"; TYP!(W)
 
         End Select
@@ -1457,13 +1459,13 @@ Sub DisplayTeamView (printOrView%, TVN, maxRecords, categoryID)
 
                 Select Case TVN
 
-                    Case 1: 
+                    Case 1:
                         LPrint Tab(32); Using "#####"; TYP!(W)
 
-                    Case 2: 
+                    Case 2:
                         LPrint Tab(33); Using ".###"; TYP!(W)
-                    
-                    Case 3: 
+
+                    Case 3:
                         LPrint Tab(33); Using "###.#"; TYP!(W)
 
                 End Select
@@ -1523,3 +1525,4 @@ Sub GetListLength (printOrView%, listLength, maxItems)
     End If
 
 End Sub
+

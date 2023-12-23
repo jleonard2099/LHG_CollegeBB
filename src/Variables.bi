@@ -1,6 +1,8 @@
 '----------------------------------------
 ' Used in more than one source file
 '----------------------------------------
+Dim Shared findFile$
+
 Dim opSysType$
 
 Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
@@ -79,7 +81,7 @@ Dim careerAR$(62)
 Dim TMM$(600), TPP$(600)
 
 Dim GM!(1 To 40), GM1!(1 To 40), GMA!(600)
-Dim leadersAL!(1 To 600, 0 To 14)
+Dim leadersAL!(0 To 600, 0 To 14)
 Dim TT!(40, 15), TT1!(40, 15)
 Dim TYP!(600)
 Dim W0L!(600), W1L!(600)
@@ -146,13 +148,12 @@ Dim TR1!(40), TR2!(40), TR3!(40), TR4!(40)
 '----------------------------------------
 ' Used in RECORDS routines
 '----------------------------------------
-Dim BRC!(32), TRC!(1 To 21), TRC1!(1 To 21)
-Dim indRec!(50, 2), teamRec!(0 To 125, 0 To 2)
+Dim plyrRecords!(32), offRecords!(1 To 21), defRecords!(1 To 21)
+Dim plyrRecDesc$(32, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
 
-Dim BRC$(32, 1), recconTRC$(1 To 21), recconTRC1$(1 To 21)
-Dim indRecDesc$(50, 4), teamRecDesc$(0 To 125, 0 To 3)
-
-Dim recconTB$(25), recconTT$(20)
+Dim indRecords!(50, 2), teamRecords!(125, 2)
+Dim indRecords$(25), teamRecords$(20)
+Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 
 
 '----------------------------------------

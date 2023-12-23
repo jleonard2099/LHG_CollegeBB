@@ -12,15 +12,15 @@ Sub CompileCollege ()
 
     Shared oppScore()
 
-    Shared BRC!(), compS!(), leaderVals!()
+    Shared plyrRecords!(), compS!(), leaderVals!()
     Shared defLeaders!(), defTotals!()
     Shared offLeaders!(), offTotals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared statsW0!(), statsW1!(), TRC!(), TRC1!()
+    Shared statsW0!(), statsW1!(), offRecords!(), defRecords!()
 
-    Shared BRC$(), DL$(), statPlyrNames$(), oppName$()
+    Shared plyrRecDesc$(), DL$(), statPlyrNames$(), oppName$()
     Shared H1$(), OL$()
-    Shared recconTRC1$(), recconTRC$()
+    Shared defRecDesc$(), offRecDesc$()
     Shared Z0$(), Z1$(), Z3$()
 
     Shared teamScore()
@@ -33,25 +33,25 @@ Sub CompileCollege ()
         Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
 
         For I = 1 To 25
-            Input #1, BRC!(I)
-            Input #1, BRC$(I, 0)
-            Input #1, BRC$(I, 1)
+            Input #1, plyrRecords!(I)
+            Input #1, plyrRecDesc$(I, 0)
+            Input #1, plyrRecDesc$(I, 1)
         Next
 
         For I = 1 To 21
-            Input #1, TRC!(I)
-            Input #1, recconTRC$(I)
+            Input #1, offRecords!(I)
+            Input #1, offRecDesc$(I)
         Next
 
         For I = 1 To 21
-            Input #1, TRC1!(I)
-            Input #1, recconTRC1$(I)
+            Input #1, defRecords!(I)
+            Input #1, defRecDesc$(I)
         Next
 
     Else
 
-        Erase BRC!, TRC!, TRC1!
-        Erase BRC$, recconTRC$, recconTRC1$
+        Erase plyrRecords!, offRecords!, defRecords!
+        Erase plyrRecDesc$, offRecDesc$, defRecDesc$
 
     End If
 
@@ -176,7 +176,7 @@ End Sub
 '----------------------------------------
 '       ReadStatsCon Subroutine
 '----------------------------------------
-'This subroutine reads stats in for a 
+'This subroutine reads stats in for a
 'single team in the conference
 Sub ReadStatsCon (statFile$, TN$)
 
@@ -750,17 +750,17 @@ End Sub
 '----------------------------------------
 '     StatsByCategoryCon Subroutine
 '----------------------------------------
-'This subroutine compares all pre-loaded 
-'stats to each of the record categories to 
+'This subroutine compares all pre-loaded
+'stats to each of the record categories to
 'see if any should be updated
 Sub StatsByCategoryCon (numberGames%, TN$, finalUpdate$)
 
-    Shared BRC!(), compS!(), defTotals!(), offTotals!()
-    Shared TRC!(), TRC1!()
+    Shared plyrRecords!(), compS!(), defTotals!(), offTotals!()
+    Shared offRecords!(), defRecords!()
     Shared statsW0!(), statsW1!()
 
-    Shared BRC$(), statPlyrNames$()
-    Shared recconTRC$(), recconTRC1$()
+    Shared plyrRecDesc$(), statPlyrNames$()
+    Shared offRecDesc$(), defRecDesc$()
 
     Shared fullWins, fullLosses
 
@@ -793,31 +793,31 @@ Sub StatsByCategoryCon (numberGames%, TN$, finalUpdate$)
 
             compS!(I, 22) = compS!(I, 12) / compS!(I, 0) ' *** PTS/G ***
 
-            If compS!(I, 0) > BRC!(1) Then BRC!(1) = compS!(I, 0): BRC$(1, 0) = statPlyrNames$(I): BRC$(1, 1) = TN$
-            If compS!(I, 1) > BRC!(2) Then BRC!(2) = compS!(I, 1): BRC$(2, 0) = statPlyrNames$(I): BRC$(2, 1) = TN$
-            If compS!(I, 2) > BRC!(3) Then BRC!(3) = compS!(I, 2): BRC$(3, 0) = statPlyrNames$(I): BRC$(3, 1) = TN$
-            If compS!(I, 19) > BRC!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames% >= 5 Then BRC!(4) = compS!(I, 19): BRC$(4, 0) = statPlyrNames$(I): BRC$(4, 1) = TN$
-            If statsW1!(I) > BRC!(5) Then BRC!(5) = statsW1!(I): BRC$(5, 0) = statPlyrNames$(I): BRC$(5, 1) = TN$
-            If statsW0!(I) > BRC!(6) Then BRC!(6) = statsW0!(I): BRC$(6, 0) = statPlyrNames$(I): BRC$(6, 1) = TN$
-            If compS!(I, 21) > BRC!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames% >= 1.5 Then BRC!(7) = compS!(I, 21): BRC$(7, 0) = statPlyrNames$(I): BRC$(7, 1) = TN$
-            If compS!(I, 3) > BRC!(8) Then BRC!(8) = compS!(I, 3): BRC$(8, 0) = statPlyrNames$(I): BRC$(8, 1) = TN$
-            If compS!(I, 4) > BRC!(9) Then BRC!(9) = compS!(I, 4): BRC$(9, 0) = statPlyrNames$(I): BRC$(9, 1) = TN$
-            If compS!(I, 20) > BRC!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames% >= 2.5 Then BRC!(10) = compS!(I, 20): BRC$(10, 0) = statPlyrNames$(I): BRC$(10, 1) = TN$
-            If compS!(I, 10) / 60 > BRC!(11) Then BRC!(11) = compS!(I, 10) / 60: BRC$(11, 0) = statPlyrNames$(I): BRC$(11, 1) = TN$
-            If compS!(I, 12) > BRC!(12) Then BRC!(12) = compS!(I, 12): BRC$(12, 0) = statPlyrNames$(I): BRC$(12, 1) = TN$
-            If compS!(I, 22) > BRC!(13) And UCase$(finalUpdate$) = "Y" Then BRC!(13) = compS!(I, 22): BRC$(13, 0) = statPlyrNames$(I): BRC$(13, 1) = TN$
-            If compS!(I, 25) > BRC!(14) Then BRC!(14) = compS!(I, 25): BRC$(14, 0) = statPlyrNames$(I): BRC$(14, 1) = TN$
-            If compS!(I, 26) > BRC!(15) Then BRC!(15) = compS!(I, 26): BRC$(15, 0) = statPlyrNames$(I): BRC$(15, 1) = TN$
-            If compS!(I, 5) - compS!(I, 26) > BRC!(16) Then BRC!(16) = compS!(I, 5) - compS!(I, 26): BRC$(16, 0) = statPlyrNames$(I): BRC$(16, 1) = TN$
-            If compS!(I, 5) > BRC!(17) Then BRC!(17) = compS!(I, 5): BRC$(17, 0) = statPlyrNames$(I): BRC$(17, 1) = TN$
-            If compS!(I, 13) > BRC!(18) And UCase$(finalUpdate$) = "Y" Then BRC!(18) = compS!(I, 13): BRC$(18, 0) = statPlyrNames$(I): BRC$(18, 1) = TN$
-            If compS!(I, 6) > BRC!(19) Then BRC!(19) = compS!(I, 6): BRC$(19, 0) = statPlyrNames$(I): BRC$(19, 1) = TN$
-            If compS!(I, 7) > BRC!(20) Then BRC!(20) = compS!(I, 7): BRC$(20, 0) = statPlyrNames$(I): BRC$(20, 1) = TN$
-            If compS!(I, 8) > BRC!(21) Then BRC!(21) = compS!(I, 8): BRC$(21, 0) = statPlyrNames$(I): BRC$(21, 1) = TN$
-            If compS!(I, 9) > BRC!(22) Then BRC!(22) = compS!(I, 9): BRC$(22, 0) = statPlyrNames$(I): BRC$(22, 1) = TN$
-            If compS!(I, 11) > BRC!(23) Then BRC!(23) = compS!(I, 11): BRC$(23, 0) = statPlyrNames$(I): BRC$(23, 1) = TN$
-            If compS!(I, 18) > BRC!(24) And UCase$(finalUpdate$) = "Y" Then BRC!(24) = compS!(I, 18): BRC$(24, 0) = statPlyrNames$(I): BRC$(24, 1) = TN$
-            If compS!(I, 24) > BRC!(25) Then BRC!(25) = compS!(I, 24): BRC$(25, 0) = statPlyrNames$(I): BRC$(25, 1) = TN$
+            If compS!(I, 0) > plyrRecords!(1) Then plyrRecords!(1) = compS!(I, 0): plyrRecDesc$(1, 0) = statPlyrNames$(I): plyrRecDesc$(1, 1) = TN$
+            If compS!(I, 1) > plyrRecords!(2) Then plyrRecords!(2) = compS!(I, 1): plyrRecDesc$(2, 0) = statPlyrNames$(I): plyrRecDesc$(2, 1) = TN$
+            If compS!(I, 2) > plyrRecords!(3) Then plyrRecords!(3) = compS!(I, 2): plyrRecDesc$(3, 0) = statPlyrNames$(I): plyrRecDesc$(3, 1) = TN$
+            If compS!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames% >= 5 Then plyrRecords!(4) = compS!(I, 19): plyrRecDesc$(4, 0) = statPlyrNames$(I): plyrRecDesc$(4, 1) = TN$
+            If statsW1!(I) > plyrRecords!(5) Then plyrRecords!(5) = statsW1!(I): plyrRecDesc$(5, 0) = statPlyrNames$(I): plyrRecDesc$(5, 1) = TN$
+            If statsW0!(I) > plyrRecords!(6) Then plyrRecords!(6) = statsW0!(I): plyrRecDesc$(6, 0) = statPlyrNames$(I): plyrRecDesc$(6, 1) = TN$
+            If compS!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames% >= 1.5 Then plyrRecords!(7) = compS!(I, 21): plyrRecDesc$(7, 0) = statPlyrNames$(I): plyrRecDesc$(7, 1) = TN$
+            If compS!(I, 3) > plyrRecords!(8) Then plyrRecords!(8) = compS!(I, 3): plyrRecDesc$(8, 0) = statPlyrNames$(I): plyrRecDesc$(8, 1) = TN$
+            If compS!(I, 4) > plyrRecords!(9) Then plyrRecords!(9) = compS!(I, 4): plyrRecDesc$(9, 0) = statPlyrNames$(I): plyrRecDesc$(9, 1) = TN$
+            If compS!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames% >= 2.5 Then plyrRecords!(10) = compS!(I, 20): plyrRecDesc$(10, 0) = statPlyrNames$(I): plyrRecDesc$(10, 1) = TN$
+            If compS!(I, 10) / 60 > plyrRecords!(11) Then plyrRecords!(11) = compS!(I, 10) / 60: plyrRecDesc$(11, 0) = statPlyrNames$(I): plyrRecDesc$(11, 1) = TN$
+            If compS!(I, 12) > plyrRecords!(12) Then plyrRecords!(12) = compS!(I, 12): plyrRecDesc$(12, 0) = statPlyrNames$(I): plyrRecDesc$(12, 1) = TN$
+            If compS!(I, 22) > plyrRecords!(13) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(13) = compS!(I, 22): plyrRecDesc$(13, 0) = statPlyrNames$(I): plyrRecDesc$(13, 1) = TN$
+            If compS!(I, 25) > plyrRecords!(14) Then plyrRecords!(14) = compS!(I, 25): plyrRecDesc$(14, 0) = statPlyrNames$(I): plyrRecDesc$(14, 1) = TN$
+            If compS!(I, 26) > plyrRecords!(15) Then plyrRecords!(15) = compS!(I, 26): plyrRecDesc$(15, 0) = statPlyrNames$(I): plyrRecDesc$(15, 1) = TN$
+            If compS!(I, 5) - compS!(I, 26) > plyrRecords!(16) Then plyrRecords!(16) = compS!(I, 5) - compS!(I, 26): plyrRecDesc$(16, 0) = statPlyrNames$(I): plyrRecDesc$(16, 1) = TN$
+            If compS!(I, 5) > plyrRecords!(17) Then plyrRecords!(17) = compS!(I, 5): plyrRecDesc$(17, 0) = statPlyrNames$(I): plyrRecDesc$(17, 1) = TN$
+            If compS!(I, 13) > plyrRecords!(18) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(18) = compS!(I, 13): plyrRecDesc$(18, 0) = statPlyrNames$(I): plyrRecDesc$(18, 1) = TN$
+            If compS!(I, 6) > plyrRecords!(19) Then plyrRecords!(19) = compS!(I, 6): plyrRecDesc$(19, 0) = statPlyrNames$(I): plyrRecDesc$(19, 1) = TN$
+            If compS!(I, 7) > plyrRecords!(20) Then plyrRecords!(20) = compS!(I, 7): plyrRecDesc$(20, 0) = statPlyrNames$(I): plyrRecDesc$(20, 1) = TN$
+            If compS!(I, 8) > plyrRecords!(21) Then plyrRecords!(21) = compS!(I, 8): plyrRecDesc$(21, 0) = statPlyrNames$(I): plyrRecDesc$(21, 1) = TN$
+            If compS!(I, 9) > plyrRecords!(22) Then plyrRecords!(22) = compS!(I, 9): plyrRecDesc$(22, 0) = statPlyrNames$(I): plyrRecDesc$(22, 1) = TN$
+            If compS!(I, 11) > plyrRecords!(23) Then plyrRecords!(23) = compS!(I, 11): plyrRecDesc$(23, 0) = statPlyrNames$(I): plyrRecDesc$(23, 1) = TN$
+            If compS!(I, 18) > plyrRecords!(24) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(24) = compS!(I, 18): plyrRecDesc$(24, 0) = statPlyrNames$(I): plyrRecDesc$(24, 1) = TN$
+            If compS!(I, 24) > plyrRecords!(25) Then plyrRecords!(25) = compS!(I, 24): plyrRecDesc$(25, 0) = statPlyrNames$(I): plyrRecDesc$(25, 1) = TN$
 
         End If
 
@@ -838,48 +838,48 @@ Sub StatsByCategoryCon (numberGames%, TN$, finalUpdate$)
     offTotals!(19) = offTotals!(20) / numberGames%
     defTotals!(19) = defTotals!(20) / numberGames%
 
-    If offTotals!(2) > TRC!(1) Then TRC!(1) = offTotals!(2): recconTRC$(1) = TN$
-    If offTotals!(3) > TRC!(2) Then TRC!(2) = offTotals!(3): recconTRC$(2) = TN$
-    If offTotals!(17) > TRC!(3) And UCase$(finalUpdate$) = "Y" Then TRC!(3) = offTotals!(17): recconTRC$(3) = TN$
-    If offTotals!(15) > TRC!(4) Then TRC!(4) = offTotals!(15): recconTRC$(4) = TN$
-    If offTotals!(14) > TRC!(5) Then TRC!(5) = offTotals!(14): recconTRC$(5) = TN$
-    If offTotals!(21) > TRC!(6) And UCase$(finalUpdate$) = "Y" Then TRC!(6) = offTotals!(21): recconTRC$(6) = TN$
-    If offTotals!(4) > TRC!(7) Then TRC!(7) = offTotals!(4): recconTRC$(7) = TN$
-    If offTotals!(5) > TRC!(8) Then TRC!(8) = offTotals!(5): recconTRC$(8) = TN$
-    If offTotals!(18) > TRC!(9) And UCase$(finalUpdate$) = "Y" Then TRC!(9) = offTotals!(18): recconTRC$(9) = TN$
-    If offTotals!(13) > TRC!(10) Then TRC!(10) = offTotals!(13): recconTRC$(10) = TN$
-    If offTotals!(6) - offTotals!(13) > TRC!(11) Then TRC!(11) = offTotals!(6) - offTotals!(13): recconTRC$(11) = TN$
-    If offTotals!(6) > TRC!(12) Then TRC!(12) = offTotals!(6): recconTRC$(12) = TN$
-    If offTotals!(6) / numberGames% > TRC!(13) And UCase$(finalUpdate$) = "Y" Then TRC!(13) = offTotals!(6) / numberGames%: recconTRC$(13) = TN$
-    If offTotals!(7) < TRC!(14) And UCase$(finalUpdate$) = "Y" Then TRC!(14) = offTotals!(7): recconTRC$(14) = TN$
-    If offTotals!(8) > TRC!(15) Then TRC!(15) = offTotals!(8): recconTRC$(15) = TN$
-    If offTotals!(9) > TRC!(16) Then TRC!(16) = offTotals!(9): recconTRC$(16) = TN$
-    If offTotals!(10) > TRC!(17) Then TRC!(17) = offTotals!(10): recconTRC$(17) = TN$
-    If offTotals!(12) < TRC!(18) And UCase$(finalUpdate$) = "Y" Then TRC!(18) = offTotals!(12): recconTRC$(18) = TN$
-    If offTotals!(11) > TRC!(19) Then TRC!(19) = offTotals!(11): recconTRC$(19) = TN$
-    If offTotals!(11) / numberGames% > TRC!(20) And UCase$(finalUpdate$) = "Y" Then TRC!(20) = offTotals!(11) / numberGames%: recconTRC$(20) = TN$
-    If fullWins > TRC!(21) Then TRC!(21) = fullWins: recconTRC$(21) = TN$
-    If defTotals!(2) < TRC1!(1) Then TRC1!(1) = defTotals!(2): recconTRC1$(1) = TN$
-    If defTotals!(3) < TRC1!(2) Then TRC1!(2) = defTotals!(3): recconTRC1$(2) = TN$
-    If defTotals!(17) < TRC1!(3) And UCase$(finalUpdate$) = "Y" Then TRC1!(3) = defTotals!(17): recconTRC1$(3) = TN$
-    If defTotals!(15) < TRC1!(4) Then TRC1!(4) = defTotals!(15): recconTRC1$(4) = TN$
-    If defTotals!(14) < TRC1!(5) Then TRC1!(5) = defTotals!(14): recconTRC1$(5) = TN$
-    If defTotals!(21) < TRC1!(6) And defTotals!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then TRC1!(6) = defTotals!(21): recconTRC1$(6) = TN$
-    If defTotals!(4) < TRC1!(7) Then TRC1!(7) = defTotals!(4): recconTRC1$(7) = TN$
-    If defTotals!(5) < TRC1!(8) Then TRC1!(8) = defTotals!(5): recconTRC1$(8) = TN$
-    If defTotals!(18) < TRC1!(9) And UCase$(finalUpdate$) = "Y" Then TRC1!(9) = defTotals!(18): recconTRC1$(9) = TN$
-    If defTotals!(13) < TRC1!(10) Then TRC1!(10) = defTotals!(13): recconTRC1$(10) = TN$
-    If defTotals!(6) - defTotals!(13) < TRC1!(11) Then TRC1!(11) = defTotals!(6) - defTotals!(13): recconTRC1$(11) = TN$
-    If defTotals!(6) < TRC1!(12) Then TRC1!(12) = defTotals!(6): recconTRC1$(12) = TN$
-    If defTotals!(6) / numberGames% < TRC1!(13) And UCase$(finalUpdate$) = "Y" Then TRC1!(13) = defTotals!(6) / numberGames%: recconTRC1$(13) = TN$
-    If defTotals!(7) > TRC1!(14) And UCase$(finalUpdate$) = "Y" Then TRC1!(14) = defTotals!(7): recconTRC1$(14) = TN$
-    If defTotals!(8) < TRC1!(15) Then TRC1!(15) = defTotals!(8): recconTRC1$(15) = TN$
-    If defTotals!(9) < TRC1!(16) Then TRC1!(16) = defTotals!(9): recconTRC1$(16) = TN$
-    If defTotals!(10) < TRC1!(17) Then TRC1!(17) = defTotals!(10): recconTRC1$(17) = TN$
-    If defTotals!(12) > TRC1!(18) And UCase$(finalUpdate$) = "Y" Then TRC1!(18) = defTotals!(12): recconTRC1$(18) = TN$
-    If defTotals!(11) < TRC1!(19) Then TRC1!(19) = defTotals!(11): recconTRC1$(19) = TN$
-    If defTotals!(11) / numberGames% < TRC1!(20) And UCase$(finalUpdate$) = "Y" Then TRC1!(20) = defTotals!(11) / numberGames%: recconTRC1$(20) = TN$
-    If fullLosses > TRC1!(21) Then TRC1!(21) = fullLosses: recconTRC1$(21) = TN$
+    If offTotals!(2) > offRecords!(1) Then offRecords!(1) = offTotals!(2): offRecDesc$(1) = TN$
+    If offTotals!(3) > offRecords!(2) Then offRecords!(2) = offTotals!(3): offRecDesc$(2) = TN$
+    If offTotals!(17) > offRecords!(3) And UCase$(finalUpdate$) = "Y" Then offRecords!(3) = offTotals!(17): offRecDesc$(3) = TN$
+    If offTotals!(15) > offRecords!(4) Then offRecords!(4) = offTotals!(15): offRecDesc$(4) = TN$
+    If offTotals!(14) > offRecords!(5) Then offRecords!(5) = offTotals!(14): offRecDesc$(5) = TN$
+    If offTotals!(21) > offRecords!(6) And UCase$(finalUpdate$) = "Y" Then offRecords!(6) = offTotals!(21): offRecDesc$(6) = TN$
+    If offTotals!(4) > offRecords!(7) Then offRecords!(7) = offTotals!(4): offRecDesc$(7) = TN$
+    If offTotals!(5) > offRecords!(8) Then offRecords!(8) = offTotals!(5): offRecDesc$(8) = TN$
+    If offTotals!(18) > offRecords!(9) And UCase$(finalUpdate$) = "Y" Then offRecords!(9) = offTotals!(18): offRecDesc$(9) = TN$
+    If offTotals!(13) > offRecords!(10) Then offRecords!(10) = offTotals!(13): offRecDesc$(10) = TN$
+    If offTotals!(6) - offTotals!(13) > offRecords!(11) Then offRecords!(11) = offTotals!(6) - offTotals!(13): offRecDesc$(11) = TN$
+    If offTotals!(6) > offRecords!(12) Then offRecords!(12) = offTotals!(6): offRecDesc$(12) = TN$
+    If offTotals!(6) / numberGames% > offRecords!(13) And UCase$(finalUpdate$) = "Y" Then offRecords!(13) = offTotals!(6) / numberGames%: offRecDesc$(13) = TN$
+    If offTotals!(7) < offRecords!(14) And UCase$(finalUpdate$) = "Y" Then offRecords!(14) = offTotals!(7): offRecDesc$(14) = TN$
+    If offTotals!(8) > offRecords!(15) Then offRecords!(15) = offTotals!(8): offRecDesc$(15) = TN$
+    If offTotals!(9) > offRecords!(16) Then offRecords!(16) = offTotals!(9): offRecDesc$(16) = TN$
+    If offTotals!(10) > offRecords!(17) Then offRecords!(17) = offTotals!(10): offRecDesc$(17) = TN$
+    If offTotals!(12) < offRecords!(18) And UCase$(finalUpdate$) = "Y" Then offRecords!(18) = offTotals!(12): offRecDesc$(18) = TN$
+    If offTotals!(11) > offRecords!(19) Then offRecords!(19) = offTotals!(11): offRecDesc$(19) = TN$
+    If offTotals!(11) / numberGames% > offRecords!(20) And UCase$(finalUpdate$) = "Y" Then offRecords!(20) = offTotals!(11) / numberGames%: offRecDesc$(20) = TN$
+    If fullWins > offRecords!(21) Then offRecords!(21) = fullWins: offRecDesc$(21) = TN$
+    If defTotals!(2) < defRecords!(1) Then defRecords!(1) = defTotals!(2): defRecDesc$(1) = TN$
+    If defTotals!(3) < defRecords!(2) Then defRecords!(2) = defTotals!(3): defRecDesc$(2) = TN$
+    If defTotals!(17) < defRecords!(3) And UCase$(finalUpdate$) = "Y" Then defRecords!(3) = defTotals!(17): defRecDesc$(3) = TN$
+    If defTotals!(15) < defRecords!(4) Then defRecords!(4) = defTotals!(15): defRecDesc$(4) = TN$
+    If defTotals!(14) < defRecords!(5) Then defRecords!(5) = defTotals!(14): defRecDesc$(5) = TN$
+    If defTotals!(21) < defRecords!(6) And defTotals!(15) <> 0 And UCase$(finalUpdate$) = "Y" Then defRecords!(6) = defTotals!(21): defRecDesc$(6) = TN$
+    If defTotals!(4) < defRecords!(7) Then defRecords!(7) = defTotals!(4): defRecDesc$(7) = TN$
+    If defTotals!(5) < defRecords!(8) Then defRecords!(8) = defTotals!(5): defRecDesc$(8) = TN$
+    If defTotals!(18) < defRecords!(9) And UCase$(finalUpdate$) = "Y" Then defRecords!(9) = defTotals!(18): defRecDesc$(9) = TN$
+    If defTotals!(13) < defRecords!(10) Then defRecords!(10) = defTotals!(13): defRecDesc$(10) = TN$
+    If defTotals!(6) - defTotals!(13) < defRecords!(11) Then defRecords!(11) = defTotals!(6) - defTotals!(13): defRecDesc$(11) = TN$
+    If defTotals!(6) < defRecords!(12) Then defRecords!(12) = defTotals!(6): defRecDesc$(12) = TN$
+    If defTotals!(6) / numberGames% < defRecords!(13) And UCase$(finalUpdate$) = "Y" Then defRecords!(13) = defTotals!(6) / numberGames%: defRecDesc$(13) = TN$
+    If defTotals!(7) > defRecords!(14) And UCase$(finalUpdate$) = "Y" Then defRecords!(14) = defTotals!(7): defRecDesc$(14) = TN$
+    If defTotals!(8) < defRecords!(15) Then defRecords!(15) = defTotals!(8): defRecDesc$(15) = TN$
+    If defTotals!(9) < defRecords!(16) Then defRecords!(16) = defTotals!(9): defRecDesc$(16) = TN$
+    If defTotals!(10) < defRecords!(17) Then defRecords!(17) = defTotals!(10): defRecDesc$(17) = TN$
+    If defTotals!(12) > defRecords!(18) And UCase$(finalUpdate$) = "Y" Then defRecords!(18) = defTotals!(12): defRecDesc$(18) = TN$
+    If defTotals!(11) < defRecords!(19) Then defRecords!(19) = defTotals!(11): defRecDesc$(19) = TN$
+    If defTotals!(11) / numberGames% < defRecords!(20) And UCase$(finalUpdate$) = "Y" Then defRecords!(20) = defTotals!(11) / numberGames%: defRecDesc$(20) = TN$
+    If fullLosses > defRecords!(21) Then defRecords!(21) = fullLosses: defRecDesc$(21) = TN$
 
 End Sub
 
@@ -934,17 +934,17 @@ End Sub
 '        PostLeadersNat Subroutine
 '----------------------------------------
 'This subroutine opens the existing leader
-'and record files and writes the updated 
+'and record files and writes the updated
 'stats to the file
 Sub PostLeadersConf (leaderFile$)
 
     Shared DL$(), OL$()
 
-    Shared BRC!(), defLeaders!(), leaderVals!()
+    Shared plyrRecords!(), defLeaders!(), leaderVals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared BRC!(), offLeaders!(), TRC!(), TRC1!()
+    Shared plyrRecords!(), offLeaders!(), offRecords!(), defRecords!()
 
-    Shared BRC$(), recconTRC$(), recconTRC1$()
+    Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared Z0$(), Z1$(), Z3$()
 
     Cls
@@ -982,19 +982,19 @@ Sub PostLeadersConf (leaderFile$)
     Open diskPaths$(1) + "RECORDS.CBB" For Output As #2
 
     For I = 1 To 25
-        Print #2, BRC!(I)
-        Print #2, BRC$(I, 0)
-        Print #2, BRC$(I, 1)
+        Print #2, plyrRecords!(I)
+        Print #2, plyrRecDesc$(I, 0)
+        Print #2, plyrRecDesc$(I, 1)
     Next
 
     For I = 1 To 21
-        Print #2, TRC!(I)
-        Print #2, recconTRC$(I)
+        Print #2, offRecords!(I)
+        Print #2, offRecDesc$(I)
     Next
 
     For I = 1 To 21
-        Print #2, TRC1!(I)
-        Print #2, recconTRC1$(I)
+        Print #2, defRecords!(I)
+        Print #2, defRecDesc$(I)
     Next
 
     Close #2
@@ -1008,7 +1008,7 @@ End Sub
 'Looks for schedule stats for a specified
 'team in the conference and loads them if
 'found, notifying the user
-Function FindStatsCon% (teamName$, numberGames%)
+Function FindStatsCon% (statFile$, numberGames%)
 
     Shared teamScore(), oppScore()
 
@@ -1016,30 +1016,31 @@ Function FindStatsCon% (teamName$, numberGames%)
 
     Shared fullWins, fullLosses
 
-    If Not _FileExists(diskPaths$(1) + teamName$ + "S") Then
+    findFile$ = diskPaths$(1) + statFile$ + "S"
+    If Not _FileExists(findFile$) Then
 
         Print "NO STATS FOUND FOR "; statFile$
         FindStatsCon% = 0
 
     Else
 
-        Open diskPaths$(1) + teamName$ + "S" For Input As #1
+        Open findFile$ For Input As #1
 
         Input #1, numberGames%
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, teamScore(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, oppName$(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, oppScore(I)
         Next I
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, locIndicator$(I)
         Next I
 
@@ -1052,32 +1053,13 @@ Function FindStatsCon% (teamName$, numberGames%)
 
         For I = 1 To numberGames%
 
-            For P = 4 To 11
-                If Mid$(oppName$(I), P, 1) = " " Or Mid$(oppName$(I), P, 1) = "." Then Mid$(oppName$(I), P, 1) = "_"
-            Next P
-
-            For P = 12 To 14
-                If Mid$(oppName$(I), P, 2) = "ST" Then Mid$(oppName$(I), 9, 1) = "_": Mid$(oppName$(I), 10, 2) = "ST"
-            Next P
-
-            QQ = 8
-            For P = 11 To 4 Step -1
-                If Mid$(oppName$(I), P, 1) = "_" Then
-                    QQ = P - 4
-                Else
-                    Exit For '5605 GoTo 5608
-                End If
-            Next P
-
-            targetFile$ = Mid$(oppName$(I), 4, QQ)
-            R$ = targetFile$ + "." + Left$(oppName$(I), 2)
-            oppName$(I) = R$
+            statName$ = nameStatFile$(oppName$(I))
 
             confGame = 0
 
             For EC = 1 To 30
                 'If team stat file = opponent of a conference game?
-                If oppName$(I) = H1$(EC) Then
+                If statName$ = H1$(EC) Then
                     confGame = 1
                     Exit For
                 End If
@@ -1091,11 +1073,11 @@ Function FindStatsCon% (teamName$, numberGames%)
 
             Else
 
-                If teamScore(I) > oppScore(I) Then 
+                If teamScore(I) > oppScore(I) Then
                     confWins = confWins + 1: fullWins = fullWins + 1
                 End If
 
-                If teamScore(I) < oppScore(I) Then 
+                If teamScore(I) < oppScore(I) Then
                     confLosses = confLosses + 1: fullLosses = fullLosses + 1
                 End If
 
@@ -1121,3 +1103,4 @@ Function FindStatsCon% (teamName$, numberGames%)
     End If
 
 End Function
+
