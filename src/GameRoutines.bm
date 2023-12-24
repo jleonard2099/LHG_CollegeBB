@@ -46,6 +46,7 @@ Sub InitVar ()
 
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
     Shared gameSite$(), locIndicator$(), oppName$()
@@ -198,6 +199,7 @@ Sub InitVar ()
 
     Erase gameR3!, gameW0!, gameW1!
     Erase statsZ!, statsZ1!, statsZ2!
+    Erase indRecords!, teamRecords!
 
     actualAttendance& = 0
     Erase avgAttendance&, gameAttendance&
