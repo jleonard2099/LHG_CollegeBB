@@ -579,8 +579,14 @@ Sub PBP ()
 
     M$ = InKey$
 
-    If UCase$(M$) = "Q" Then Cls: End
-    If UCase$(M$) = "O" Then Call OPTIONS
+    If UCase$(M$) = "Q" Then 
+        Cls
+        End
+    End If
+
+    If UCase$(M$) = "O" Then 
+        Call OPTIONS
+    End If
 
     'Positive delay or Verbose PBP
     If pbpDelay! > 0 And pbpOpt <> 1 Then

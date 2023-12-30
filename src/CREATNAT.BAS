@@ -72,7 +72,7 @@ End Sub
 'This subroutine assists the user with the
 'input of paramters related to the org's
 'general naming and setup
-Sub DefineNatOrg (org$)
+Sub DefineNatOrg (organization$)
 
     Do
 
@@ -90,9 +90,9 @@ Sub DefineNatOrg (org$)
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
             Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
 
-            Locate 7, 40: Input org$
+            Locate 7, 40: Input organization$
 
-            If org$ <> "" Then
+            If organization$ <> "" Then
 
                 Do
                     Locate 13, 12: Print "ANY CHANGE? (Y/N) "
