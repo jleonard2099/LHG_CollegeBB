@@ -579,12 +579,12 @@ Sub PBP ()
 
     M$ = InKey$
 
-    If UCase$(M$) = "Q" Then 
+    If UCase$(M$) = "Q" Then
         Cls
         End
     End If
 
-    If UCase$(M$) = "O" Then 
+    If UCase$(M$) = "O" Then
         Call OPTIONS
     End If
 
@@ -5593,7 +5593,9 @@ Sub DEADBALLOPTIONS ()
 
             Locate 9, 1
             Color 14, 0
-            Print "<ENTER>-CONTINUE"
+            Print "<ENTER>";
+            Color 15,0
+            Print "-CONTINUE"
             Print "1-SUB "; gameTeams$(P)
             Print "2-SUB "; gameTeams$(D)
             Print "3-CHANGE STRATEGY "; gameTeams$(P)
@@ -5760,8 +5762,11 @@ Sub STOPPAGE ()
 
         If pbpOpt = 0 Then Call CLEARPBPBOX
         If pbpOpt = 1 And pbpDelay! <> 0 Then Locate 11, 1
+
         Color 14, 0
-        Print "<ENTER>-CONTINUE"
+        Print "<ENTER>";
+        Color 15,0
+        Print "-CONTINUE"
         Print "1-TIME OUT "; gameTeams$(P)
         Print "2-TIME OUT "; gameTeams$(D)
         Print "3-CHANGE STRATEGY "; gameTeams$(P)
