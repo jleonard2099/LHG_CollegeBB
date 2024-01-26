@@ -41,7 +41,7 @@ Dim Shared DT$, TM$
 
 Dim coachMode$(0 To 1), foulShotOpt$(0 To 2)
 Dim location$(0 To 2), modeAbbrev$(0 To 3)
-Dim playMode$(0 To 3), sclockOpt$(0 To 3)
+Dim playMode$(0 To 3), sClockOpt$(0 To 3)
 Dim teamIndicator$(1)
 Dim yesNo$(0 To 1)
 

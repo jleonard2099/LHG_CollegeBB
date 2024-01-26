@@ -177,10 +177,10 @@ playMode$(1) = "COMPUTER IS VISITING TEAM"
 playMode$(2) = "COMPUTER IS HOME TEAM    "
 playMode$(3) = "COMPUTER VS COMPUTER     "
 
-sclockOpt$(0) = "NO SHOT CLOCK       "
-sclockOpt$(1) = "45 SECOND SHOT CLOCK"
-sclockOpt$(2) = "35 SECOND SHOT CLOCK"
-sclockOpt$(3) = "30 SECOND SHOT CLOCK"
+sClockOpt$(0) = "NO SHOT CLOCK       "
+sClockOpt$(1) = "45 SECOND SHOT CLOCK"
+sClockOpt$(2) = "35 SECOND SHOT CLOCK"
+sClockOpt$(3) = "30 SECOND SHOT CLOCK"
 
 yesNoText$(0) = "NO "
 yesNoText$(1) = "YES"
@@ -677,3 +677,4 @@ End Sub
 ' For Game
 '$INCLUDE: 'COLHOOP.BAS'
 '$INCLUDE: 'GameRoutines.bm'
+

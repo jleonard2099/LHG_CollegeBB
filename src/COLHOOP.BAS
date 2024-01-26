@@ -20,7 +20,7 @@ Sub COLHOOP ()
     Shared coachMode$(), foulShotOpt$()
     Shared location$()
     Shared playMode$()
-    Shared sclockOpt$(), yesNoText$()
+    Shared sClockOpt$(), yesNoText$()
 
     Color 7, 0
     Cls
@@ -264,7 +264,7 @@ Sub COLHOOP ()
             Color 15: Print "GAME LOCATION: "; location$(gameLoc)
             Locate 6, 2: Color 14
             Print "(5) ";
-            Color 15: Print "SHOT CLOCK: "; sclockOpt$(sClockVal)
+            Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
             Locate 7, 2: Color 14
             Print "(6) ";
             Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)

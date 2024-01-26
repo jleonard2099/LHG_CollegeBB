@@ -7014,7 +7014,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
                 'Player Time
                 If timePlayed(I, I1) = 0 Then
-                    Print #1, ; Tab(15); "DNP";
+                    Print #1, Tab(15); "DNP";
                 Else
                     Print #1, Using "##"; Int(timePlayed(I, I1) / 60);: Print #1, ":";
 
@@ -7042,7 +7042,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
                 Print #1, "-";
                 Print #1, Using "##"; plyrOff_GAME!(I, I1, 9);
 
-                'Rebounds / PT / F / A /  B / S / TO
+                'ORB / RB / Points / Fouls / Assists / Blocks / Steals / Turnovers
                 Print #1, Using "  ##  ## ###  #  ##  ##  ##  ##  ##  ##"; plyrOff_GAME!(I, I1, 24), plyrOff_GAME!(I, I1, 11), plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0), plyrOff_GAME!(I, I1, 12), plyrOff_GAME!(I, I1, 14), plyrOff_GAME!(I, I1, 15), plyrOff_GAME!(I, I1, 13), plyrOff_GAME!(I, I1, 23)
 
                 statTotals(0) = statTotals(0) + plyrOff_GAME!(I, I1, 8)
@@ -7070,21 +7070,25 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
         Print #1,
         Print #1, "TOTALS"; Tab(14); Int(statTotals(10) / 60); Tab(21);
 
+        'FGM - FGA
         Print #1, Using "##"; statTotals(0);
         Print #1, "-";
         Print #1, Using "###"; statTotals(1);
 
+        '3FGM - 3FGA
         Print #1, ; Tab(28);
         Print #1, Using "##"; statTotals(13);
         Print #1, "-";
         Print #1, Using "##"; statTotals(14);
 
+        'FTM - FTA
         Print #1, ; Tab(35);
         Print #1, Using "##"; statTotals(2);
         Print #1, "-";
         Print #1, Using "##"; statTotals(3);
 
         Print #1, ; Tab(42);
+        'ORB / RB / Points / Fouls / Assists / Blocks / Steals / Turnovers
         Print #1, Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11), statTotals(4), statTotals(5), statTotals(6), statTotals(7), statTotals(8), statTotals(9), statTotals(12)
 
         Print #1, ; Tab(22); Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; Tab(35); Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"

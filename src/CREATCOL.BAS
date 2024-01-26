@@ -33,7 +33,7 @@ Sub CREATCOL ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -57,11 +57,14 @@ Sub CREATCOL ()
                     Call ReviewEditConference(conference$, D1$, D2$)
 
                 Case 2:
-                    conference$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", FileExit%)
 
-                    If FileExit% <> 27 And FileExit% <> 0 Then
-                        Call ReviewEditConference(conference$, D1$, D2$)
-                    End If
+                    Do
+                        conference$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", FileExit%)
+
+                        If FileExit% <> 27 And FileExit% <> 0 Then
+                            Call ReviewEditConference(conference$, D1$, D2$)
+                        End If
+                    Loop Until FileExit% = 27
 
             End Select
 
@@ -87,7 +90,7 @@ Sub DefineConference (conference$, div1$, div2$)
         Color 15, 0
         Cls
 
-        Call MenuBox (6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 7, 15, 1)
 
         Do
 
@@ -233,7 +236,7 @@ Sub ReviewEditConference (conference$, div1$, div2$)
 
             If choice = 1 Then
                 'Add team
-                Call ChooseTeam (Z2$(teamIndex), NTMS, scheduleZ1%(teamIndex), Z1$(teamIndex))
+                Call ChooseTeam(Z2$(teamIndex), NTMS, scheduleZ1%(teamIndex), Z1$(teamIndex))
             Else
                 'Remove team
                 Z1$(teamIndex) = "XXX"
@@ -252,7 +255,7 @@ End Sub
 '       SaveConferences Subroutine
 '----------------------------------------
 'This subroutine writes the conference's
-'team memberships and definition to 
+'team memberships and definition to
 'each of the corresponding files (.LIB, .TMS)
 Sub SaveConferences (conference$, div1$, div2$)
 

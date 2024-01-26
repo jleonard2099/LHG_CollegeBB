@@ -21,7 +21,7 @@ Sub TOURNEY ()
     Dim gameDay(MAX_TEAMS), gameMonth(MAX_TEAMS), gameYear(MAX_TEAMS)
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared playMode$(), sclockOpt$(), yesNo$()
+    Shared playMode$(), sClockOpt$(), yesNo$()
 
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
@@ -109,7 +109,7 @@ Sub TOURNEY ()
                     End If
 
                     Locate , 71: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
-                    Locate , 74: Print Left$(sclockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
+                    Locate , 74: Print Left$(sClockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
 
                 End If
 
@@ -331,7 +331,7 @@ Sub EditGame_TOURNEY ()
     Shared scheduleNG%(), scheduleAP%()
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared playMode$(), sclockOpt$(), yesNoText$()
+    Shared playMode$(), sClockOpt$(), yesNoText$()
 
     Dim displayPause!
 
@@ -369,7 +369,7 @@ Sub EditGame_TOURNEY ()
             Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(NG%, 3))
 
             Color 14: Print " (3) ";:
-            Color 15: Print "SHOT CLOCK "; sclockOpt$(scheduleNG%(NG%, 7))
+            Color 15: Print "SHOT CLOCK "; sClockOpt$(scheduleNG%(NG%, 7))
 
             Color 14: Print " (4) ";:
             Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
