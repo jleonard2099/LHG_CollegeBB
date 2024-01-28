@@ -1,10 +1,10 @@
 '----------------------------------------
-'          CREATNAT Subroutine
+'          CREATENATL Subroutine
 '----------------------------------------
 'This subroutine provides a menu for the
 'user to choose options related to the
 'creation and editing of national orgs
-Sub CREATNAT ()
+Sub CREATENATL ()
 
     _Title "Courtside College Basketball - Manage Organizations"
 

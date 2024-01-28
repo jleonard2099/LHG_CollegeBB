@@ -159,8 +159,8 @@ Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 '----------------------------------------
 ' Used in STAT / INPUT routines
 '----------------------------------------
-Dim HL%, HW%, NL%, NW%, VL%, VW%
-Dim losses, wins
+Dim homeLosses, homeWins, neutralLosses, neutralWins
+Dim roadLosses, roadWins, totalLosses, totalWins
 
 Dim values!(0 To 14, 24)
 
@@ -299,5 +299,6 @@ Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13)
 Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
+
 
 

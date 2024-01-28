@@ -1,11 +1,11 @@
 '----------------------------------------
-'            SEECON Subroutine
+'            SEECOLL Subroutine
 '----------------------------------------
 'This subroutine lets the user choose a
 'conference stat file to view, then calls
 'other routines to both load the Stats
 'and then provide options for display
-Sub SEECON ()
+Sub SEECOLL ()
 
     _Title "Courtside College Basketball - View Conference Stats"
 
@@ -221,6 +221,8 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
         If seeT$(P) <> "" And seeT$(P) <> "*" Then
 
             Print seeT$(P); Tab(16);
+
+            'Conference Record
             Print Using "##   ##   "; O4!(P); O5!(P);
 
             If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
@@ -228,6 +230,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
             If O6!(P) = 1 Then Print "1.000";
             If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
 
+            'Season Record
             Locate , 41
             Print seeT$(P); Tab(56);
             Print Using "##   ##   "; O1!(P); O2!(P);

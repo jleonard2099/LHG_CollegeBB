@@ -1,10 +1,10 @@
 '----------------------------------------
-'          CREATCOL Subroutine
+'          CREATECOLL Subroutine
 '----------------------------------------
 'This subroutine provides a menu for the
 'user to choose options related to the
 'creation and editing of conferences
-Sub CREATCOL ()
+Sub CREATECOLL ()
 
     _Title "Courtside College Basketball - Manage Conferences"
 

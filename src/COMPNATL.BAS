@@ -15,11 +15,10 @@ Sub CompileNatlOrg ()
     Shared PT#()
 
     Shared plyrRecords!(), compS!()
-    Shared defLeaders!(), defTotals!(), offTotals!()
+    Shared defLeaders!(), defTotals!(), offLeaders!(), offTotals!()
     Shared leaderVals!(), natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared offRecords!(), defRecords!()
-
 
     Shared plyrRecDesc$(), locIndicator$(), oppName$(), DL$()
     Shared H1$(), OL$()
@@ -29,25 +28,26 @@ Sub CompileNatlOrg ()
 
     Shared teamScore()
 
-    Shared fullWins, fullLosses
+    Shared confWins, confLosses, fullWins, fullLosses
 
-    'Initialize values first
     offRecords!(14) = 19999
     offRecords!(18) = 19999
 
-    For I = 1 To 13: 
+    For I = 1 To 13:
         defRecords!(I) = 19999
     Next
 
-    For I = 15 To 17: 
+    For I = 15 To 17:
         defRecords!(I) = 19999
     Next
 
-    For I = 19 To 20: 
+    For I = 19 To 20:
         defRecords!(I) = 19999
     Next
 
+    'Initialize values first
     Erase natLeaderVals!
+    Erase NZ0$, NZ1$, NZ3$
 
     For X = 1 To 40
         natDefLeaders!(X, 19) = 9999
@@ -75,9 +75,16 @@ Sub CompileNatlOrg ()
 
         Close #1
 
+    Else
+
+        Erase plyrRecords!, offRecords!, defRecords!
+        Erase plyrRecDesc$, offRecDesc$, defRecDesc$
+
     End If
 
-    organizationFile$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
+    C$ = ","
+
+    organizationFile$ = ChooseFile$(diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -107,27 +114,21 @@ Sub CompileNatlOrg ()
 
                 Cls
 
-                Erase Z1$
-                Erase defLeaders!, O1!, O2!, O3!, O4!, O5!, O6!
-
+                Erase defLeaders!
                 For X = 1 To 40
                     defLeaders!(X, 19) = 9999
                 Next
 
-                For X = 1 To 30
-                    O1!(X) = 0
-                    O2!(X) = 0
-                    O3!(X) = 0
-                    O4!(X) = 0
-                    O5!(X) = 0
-                    O6!(X) = 0
-                Next
+                Erase leaderVals!, offLeaders!
+                Erase O1!, O2!, O3!, O4!, O5!, O6!
+                Erase DL$, OL$
+                Erase Z0$, Z1$, Z3$
 
                 Open diskPaths$(1) + CN$(NC) + ".TMS" For Input As #3
 
                 Input #3, LG$
-                Input #3, D1$
-                Input #3, D2$
+                Input #3, div1$
+                Input #3, div2$
 
                 For XW = 1 To 30
                     Input #3, H1$(XW)
@@ -138,15 +139,10 @@ Sub CompileNatlOrg ()
 
                 For XW = 1 To 30
 
-                    fullWins = 0
-                    fullLosses = 0
-                    confWins = 0
-                    confLosses = 0
-
                     'Look for * as terminating char
                     If H1$(XW) <> Chr$(42) Then
 
-                        haveStats = FindStatsNat%(H1$(XW), numberGames%, NRT)
+                        haveStats = FindStatsNat%(H1$(XW), numberGames, NRT)
 
                         If (haveStats) Then
 
@@ -158,17 +154,22 @@ Sub CompileNatlOrg ()
                                 WT$ = WT$ + Chr$(A)
                             Next X
 
-                            confGame = 0
+                            nonConfGame = 0
 
                             For X = 1 To 30
 
                                 If Z1$(X) = WT$ Then
 
                                     If O1!(X) = fullWins And O2!(X) = fullLosses Then
-                                        confGame = 1
+
+                                        nonConfGame = 1
+                                        Exit For
+
                                     Else
+
                                         O1!(X) = fullWins
                                         O2!(X) = fullLosses
+
                                         O4!(X) = confWins
                                         O5!(X) = confLosses
 
@@ -177,6 +178,7 @@ Sub CompileNatlOrg ()
                                         Else
                                             O3!(X) = O1!(X) / (O1!(X) + O2!(X))
                                         End If
+
                                         If O4!(X) + O5!(X) = 0 Then
                                             O6!(X) = 0
                                         Else
@@ -187,16 +189,15 @@ Sub CompileNatlOrg ()
 
                                 End If
 
-                                If (confGame) Then Exit For
-
                             Next X
 
-                            Erase compS!
 
-                            If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
-                                Call ReadStatsNat(H1$(XW), numberGames%, TN$)
+                            If nonConfGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
+
+                                Call ReadStatsNat(H1$(XW), numberGames, TN$)
                                 Call StatsByCategoryTeam(TN$)
                                 Call CheckStatsLeaders(H1$(XW), TN$)
+
                             End If
 
                         End If
@@ -206,13 +207,14 @@ Sub CompileNatlOrg ()
                 Next XW
 
                 Call SortLeadersNat
-                Call PostConLeaders_Nat(CN$(NC))
+                Call PostLeadersConf(CN$(NC))
+                Call PostRecords
 
             End If
 
         Next NC
 
-        Call PostOrgLeaders_Nat(organizationFile$, NRT)
+        Call PostLeadersOrg(organizationFile$, NRT)
 
     End If
 
@@ -222,9 +224,9 @@ End Sub
 '----------------------------------------
 '       ReadStatsNat Subroutine
 '----------------------------------------
-'This subroutine reads stats in for a 
+'This subroutine reads stats in for a
 'single team in the organization
-Sub ReadStatsNat (statFile$, numberGames%, TN$)
+Sub ReadStatsNat (statFile$, numberGames, TN$)
 
     Shared plyrRecDesc$()
     Shared statPlyrNames$(), OL$(), offRecDesc$(), defRecDesc$()
@@ -270,15 +272,15 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
                 compS!(I, 24) = compS!(I, 5) + compS!(I, 12) - compS!(I, 6) + compS!(I, 8) + compS!(I, 9) + compS!(I, 7) - 2 * compS!(I, 11)
                 compS!(I, 18) = compS!(I, 10) / 60 / compS!(I, 0): ' *** MIN/G ***
 
-                If compS!(I, 1) <> 0 And (compS!(I, 2) / numberGames% >= 5) Then
+                If compS!(I, 1) <> 0 And (compS!(I, 2) / numberGames >= 5) Then
                     compS!(I, 19) = compS!(I, 2) / compS!(I, 1): ' *** FG% ***
                 End If
 
-                If compS!(I, 3) <> 0 And (compS!(I, 4) / numberGames%) >= 2.5 Then
+                If compS!(I, 3) <> 0 And (compS!(I, 4) / numberGames) >= 2.5 Then
                     compS!(I, 20) = compS!(I, 4) / compS!(I, 3): ' *** FT% ***
                 End If
 
-                If statsW1!(I) <> 0 And statsW0!(I) / numberGames% >= 1.5 Then
+                If statsW1!(I) <> 0 And statsW0!(I) / numberGames >= 1.5 Then
                     compS!(I, 21) = statsW0!(I) / statsW1!(I): ' *** 3FG% ***
                 End If
 
@@ -287,15 +289,15 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
                 If compS!(I, 0) > plyrRecords!(1) Then plyrRecords!(1) = compS!(I, 0): plyrRecDesc$(1, 0) = statPlyrNames$(I): plyrRecDesc$(1, 1) = TN$
                 If compS!(I, 1) > plyrRecords!(2) Then plyrRecords!(2) = compS!(I, 1): plyrRecDesc$(2, 0) = statPlyrNames$(I): plyrRecDesc$(2, 1) = TN$
                 If compS!(I, 2) > plyrRecords!(3) Then plyrRecords!(3) = compS!(I, 2): plyrRecDesc$(3, 0) = statPlyrNames$(I): plyrRecDesc$(3, 1) = TN$
-                If compS!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames% >= 5 Then plyrRecords!(4) = compS!(I, 19): plyrRecDesc$(4, 0) = statPlyrNames$(I): plyrRecDesc$(4, 1) = TN$
+                If compS!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And compS!(I, 2) / numberGames >= 5 Then plyrRecords!(4) = compS!(I, 19): plyrRecDesc$(4, 0) = statPlyrNames$(I): plyrRecDesc$(4, 1) = TN$
 
                 If statsW1!(I) > plyrRecords!(5) Then plyrRecords!(5) = statsW1!(I): plyrRecDesc$(5, 0) = statPlyrNames$(I): plyrRecDesc$(5, 1) = TN$
                 If statsW0!(I) > plyrRecords!(6) Then plyrRecords!(6) = statsW0!(I): plyrRecDesc$(6, 0) = statPlyrNames$(I): plyrRecDesc$(6, 1) = TN$
 
-                If compS!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames% >= 1.5 Then plyrRecords!(7) = compS!(I, 21): plyrRecDesc$(7, 0) = statPlyrNames$(I): plyrRecDesc$(7, 1) = TN$
+                If compS!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And statsW0!(I) / numberGames >= 1.5 Then plyrRecords!(7) = compS!(I, 21): plyrRecDesc$(7, 0) = statPlyrNames$(I): plyrRecDesc$(7, 1) = TN$
                 If compS!(I, 3) > plyrRecords!(8) Then plyrRecords!(8) = compS!(I, 3): plyrRecDesc$(8, 0) = statPlyrNames$(I): plyrRecDesc$(8, 1) = TN$
                 If compS!(I, 4) > plyrRecords!(9) Then plyrRecords!(9) = compS!(I, 4): plyrRecDesc$(9, 0) = statPlyrNames$(I): plyrRecDesc$(9, 1) = TN$
-                If compS!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames% >= 2.5 Then plyrRecords!(10) = compS!(I, 20): plyrRecDesc$(10, 0) = statPlyrNames$(I): plyrRecDesc$(10, 1) = TN$
+                If compS!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And compS!(I, 4) / numberGames >= 2.5 Then plyrRecords!(10) = compS!(I, 20): plyrRecDesc$(10, 0) = statPlyrNames$(I): plyrRecDesc$(10, 1) = TN$
                 If compS!(I, 10) / 60 > plyrRecords!(11) Then plyrRecords!(11) = compS!(I, 10) / 60: plyrRecDesc$(11, 0) = statPlyrNames$(I): plyrRecDesc$(11, 1) = TN$
                 If compS!(I, 12) > plyrRecords!(12) Then plyrRecords!(12) = compS!(I, 12): plyrRecDesc$(12, 0) = statPlyrNames$(I): plyrRecDesc$(12, 1) = TN$
                 If compS!(I, 22) > plyrRecords!(13) And UCase$(finalUpdate$) = "Y" Then plyrRecords!(13) = compS!(I, 22): plyrRecDesc$(13, 0) = statPlyrNames$(I): plyrRecDesc$(13, 1) = TN$
@@ -316,8 +318,8 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
 
         Next
 
-        offTotals!(16) = numberGames%
-        defTotals!(16) = numberGames%
+        offTotals!(16) = numberGames
+        defTotals!(16) = numberGames
         offTotals!(17) = offTotals!(3) / offTotals!(2)
         defTotals!(17) = defTotals!(3) / defTotals!(2)
         offTotals!(18) = offTotals!(5) / offTotals!(4)
@@ -327,8 +329,8 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
         If offTotals!(15) <> 0 Then offTotals!(21) = offTotals!(14) / offTotals!(15) Else offTotals!(21) = 0
         If defTotals!(15) <> 0 Then defTotals!(21) = defTotals!(14) / defTotals!(15) Else defTotals!(21) = 999
 
-        offTotals!(19) = offTotals!(20) / numberGames%
-        defTotals!(19) = defTotals!(20) / numberGames%
+        offTotals!(19) = offTotals!(20) / numberGames
+        defTotals!(19) = defTotals!(20) / numberGames
 
         If offTotals!(2) > offRecords!(1) Then offRecords!(1) = offTotals!(2): offRecDesc$(1) = TN$
         If offTotals!(3) > offRecords!(2) Then offRecords!(2) = offTotals!(3): offRecDesc$(2) = TN$
@@ -342,14 +344,14 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
         If offTotals!(13) > offRecords!(10) Then offRecords!(10) = offTotals!(13): offRecDesc$(10) = TN$
         If offTotals!(6) - offTotals!(13) > offRecords!(11) Then offRecords!(11) = offTotals!(6) - offTotals!(13): offRecDesc$(11) = TN$
         If offTotals!(6) > offRecords!(12) Then offRecords!(12) = offTotals!(6): offRecDesc$(12) = TN$
-        If offTotals!(6) / numberGames% > offRecords!(13) And UCase$(finalUpdate$) = "Y" Then offRecords!(13) = offTotals!(6) / numberGames%: offRecDesc$(13) = TN$
+        If offTotals!(6) / numberGames > offRecords!(13) And UCase$(finalUpdate$) = "Y" Then offRecords!(13) = offTotals!(6) / numberGames: offRecDesc$(13) = TN$
         If offTotals!(7) < offRecords!(14) And UCase$(finalUpdate$) = "Y" Then offRecords!(14) = offTotals!(7): offRecDesc$(14) = TN$
         If offTotals!(8) > offRecords!(15) Then offRecords!(15) = offTotals!(8): offRecDesc$(15) = TN$
         If offTotals!(9) > offRecords!(16) Then offRecords!(16) = offTotals!(9): offRecDesc$(16) = TN$
         If offTotals!(10) > offRecords!(17) Then offRecords!(17) = offTotals!(10): offRecDesc$(17) = TN$
         If offTotals!(12) < offRecords!(18) And UCase$(finalUpdate$) = "Y" Then offRecords!(18) = offTotals!(12): offRecDesc$(18) = TN$
         If offTotals!(11) > offRecords!(19) Then offRecords!(19) = offTotals!(11): offRecDesc$(19) = TN$
-        If offTotals!(11) / numberGames% > offRecords!(20) And UCase$(finalUpdate$) = "Y" Then offRecords!(20) = offTotals!(11) / numberGames%: offRecDesc$(20) = TN$
+        If offTotals!(11) / numberGames > offRecords!(20) And UCase$(finalUpdate$) = "Y" Then offRecords!(20) = offTotals!(11) / numberGames: offRecDesc$(20) = TN$
         If fullWins > offRecords!(21) Then offRecords!(21) = fullWins%: offRecDesc$(21) = TN$
         If defTotals!(2) < defRecords!(1) Then defRecords!(1) = defTotals!(2): defRecDesc$(1) = TN$
         If defTotals!(3) < defRecords!(2) Then defRecords!(2) = defTotals!(3): defRecDesc$(2) = TN$
@@ -363,14 +365,14 @@ Sub ReadStatsNat (statFile$, numberGames%, TN$)
         If defTotals!(13) < defRecords!(10) Then defRecords!(10) = defTotals!(13): defRecDesc$(10) = TN$
         If defTotals!(6) - defTotals!(13) < defRecords!(11) Then defRecords!(11) = defTotals!(6) - defTotals!(13): defRecDesc$(11) = TN$
         If defTotals!(6) < defRecords!(12) Then defRecords!(12) = defTotals!(6): defRecDesc$(12) = TN$
-        If defTotals!(6) / numberGames% < defRecords!(13) And UCase$(finalUpdate$) = "Y" Then defRecords!(13) = defTotals!(6) / numberGames%: defRecDesc$(13) = TN$
+        If defTotals!(6) / numberGames < defRecords!(13) And UCase$(finalUpdate$) = "Y" Then defRecords!(13) = defTotals!(6) / numberGames: defRecDesc$(13) = TN$
         If defTotals!(7) > defRecords!(14) And UCase$(finalUpdate$) = "Y" Then defRecords!(14) = defTotals!(7): defRecDesc$(14) = TN$
         If defTotals!(8) < defRecords!(15) Then defRecords!(15) = defTotals!(8): defRecDesc$(15) = TN$
         If defTotals!(9) < defRecords!(16) Then defRecords!(16) = defTotals!(9): defRecDesc$(16) = TN$
         If defTotals!(10) < defRecords!(17) Then defRecords!(17) = defTotals!(10): defRecDesc$(17) = TN$
         If defTotals!(12) > defRecords!(18) And UCase$(finalUpdate$) = "Y" Then defRecords!(18) = defTotals!(12): defRecDesc$(18) = TN$
         If defTotals!(11) < defRecords!(19) Then defRecords!(19) = defTotals!(11): defRecDesc$(19) = TN$
-        If defTotals!(11) / numberGames% < defRecords!(20) And UCase$(finalUpdate$) = "Y" Then defRecords!(20) = defTotals!(11) / numberGames%: defRecDesc$(20) = TN$
+        If defTotals!(11) / numberGames < defRecords!(20) And UCase$(finalUpdate$) = "Y" Then defRecords!(20) = defTotals!(11) / numberGames: defRecDesc$(20) = TN$
 
         If fullLosses > defRecords!(21) Then defRecords!(21) = fullLosses: defRecDesc$(21) = TN$
 
@@ -399,7 +401,7 @@ Sub CheckStatsLeaders (statFile$, TN$)
 
     For X = 0 To 14
 
-        Color 14
+        'Color 14
         Print "CHECKING STATS OF ";
         Color 15
         Print statPlyrNames$(X)
@@ -876,8 +878,8 @@ End Sub
 '----------------------------------------
 '     StatsByCategoryTeam Subroutine
 '----------------------------------------
-'This subroutine compares all pre-loaded 
-'stats to each of the record categories to 
+'This subroutine compares all pre-loaded
+'stats to each of the record categories to
 'see if any should be updated
 Sub StatsByCategoryTeam (TN$)
 
@@ -1412,42 +1414,45 @@ End Sub
 '         FindStatsNat Function
 '----------------------------------------
 '...explanation...
-Function FindStatsNat% (statFile$, numberGames%, NRT)
+Function FindStatsNat% (statFile$, numberGames, NRT)
 
     Shared powerRating(), teamScore(), oppScore()
 
     Shared PT#()
+    Shared gameAttendance&()
 
-    Shared H1$(), PT$()
+    Shared gameSite$(), H1$(), PT$()
     Shared locIndicator$(), oppName$()
 
-    Shared confWins, confLosses
-    Shared fullWins, fullLosses
+    Shared confWins, confLosses, fullWins, fullLosses
 
-    If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
+    findFile$ = diskPaths$(1) + statFile$ + "S"
 
+    If Not _FileExists(findFile$) Then
+
+        Locate , 1
         Print "NO STATS FOUND FOR "; statFile$
         FindStatsNat% = 0
 
     Else
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #1
+        Open findFile$ For Input As #1
 
-        Input #1, numberGames%
+        Input #1, numberGames
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, teamScore(I)
         Next I
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, oppName$(I)
         Next I
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, oppScore(I)
         Next I
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, locIndicator$(I)
         Next I
 
@@ -1457,46 +1462,55 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
             Next
         Next
 
-        For I = 1 To MAX_SCHED_STATS: 
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, gameAttendance&(I)
         Next I
-        
-        For I = 1 To MAX_SCHED_STATS: 
+
+        For I = 1 To MAX_SCHED_STATS:
             Input #1, gameSite$(I)
         Next I
 
         Close #1
 
-        fullWins = 0
-        fullLosses = 0
         confWins = 0
         confLosses = 0
 
-        For I = 1 To numberGames%
+        fullWins = 0
+        fullLosses = 0
+
+        'RATINGS
+        For I = 1 To numberGames
 
             statName$ = nameStatFile$(oppName$(I))
-
-            confGame = 0
+            nonConfGame = 0
 
             For EC = 1 To 30
-
+                'If team stat file = opponent of a conference game?
                 If statName$ = H1$(EC) Then
-                    confGame = 1
+                    nonConfGame = 1
                     Exit For
                 End If
 
             Next EC
 
-            If confGame <> 1 Then
-                If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
-                If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
+            If nonConfGame <> 1 Then
+
+                If teamScore(I) > oppScore(I) Then
+                    fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then
+                    fullLosses = fullLosses + 1
+                End If
+
             Else
-                If teamScore(I) > oppScore(I) Then 
+
+                If teamScore(I) > oppScore(I) Then
                     confWins = confWins + 1
                     fullWins = fullWins + 1
                 End If
 
-                If teamScore(I) < oppScore(I) Then 
+                If teamScore(I) < oppScore(I) Then
                     confLosses = confLosses + 1
                     fullLosses = fullLosses + 1
                 End If
@@ -1508,35 +1522,35 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
         Next I
 
         'STRENGTH OF SCHEDULE
-        PW = 0
+        teamPower = 0
         SS = 0
 
-        For I = 1 To numberGames%
+        For I = 1 To numberGames
             SS = powerRating(I, 1) + SS
         Next
 
-        SS = SS / numberGames%
+        SS = SS / numberGames
 
         'INDIVIDUAL GAME POWER RATINGS
         GL = 0
-        PW = 0
+        teamPower = 0
 
-        For I = 1 To numberGames%
+        For I = 1 To numberGames
             RAT = teamScore(I) - oppScore(I) + powerRating(I, 1)
             If Left$(locIndicator$(I), 1) = "H" Then RAT = RAT - 4.5
             If Left$(locIndicator$(I), 1) = "A" Then RAT = RAT + 4.5
-            PW = PW + RAT
+            teamPower = teamPower + RAT
         Next
 
-        If numberGames% <= 4 Then
-            GL = 5 - numberGames%
-            PW = PW + GL * powerRating(1, 0)
+        If numberGames <= 4 Then
+            GL = 5 - numberGames
+            teamPower = teamPower + GL * powerRating(1, 0)
         End If
 
-        PW = PW / (numberGames% + GL)
+        teamPower = teamPower / (numberGames + GL)
         NRT = NRT + 1
         PT$(NRT) = statFile$
-        PT#(NRT, 1) = PW
+        PT#(NRT, 1) = teamPower
         PT#(NRT, 2) = fullWins
         PT#(NRT, 3) = fullLosses
         PT#(NRT, 4) = SS
@@ -1555,7 +1569,6 @@ Function FindStatsNat% (statFile$, numberGames%, NRT)
         FindStatsNat% = 1
 
     End If
-
 
 End Function
 
@@ -1605,62 +1618,15 @@ Sub SortLeadersNat
 End Sub
 
 
-'----------------------------------------
-'     PostConLeaders_Nat Subroutine
-'----------------------------------------
-'This subroutine opens the existing leader
-'and record files for the conferences,
-'and writes the updated stats to the file
-Sub PostConLeaders_Nat (conferenceName$)
-
-    Shared defLeaders!(), leaderVals!(), offLeaders!()
-    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-
-    Shared DL$(), OL$()
-    Shared Z0$(), Z1$(), Z3$()
-
-    Cls
-    Print
-
-    Open diskPaths$(1) + conferenceName$ + ".LDR" For Output As #1
-
-    Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
-
-    For X = 1 To 30:
-        Write #1, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
-    Next
-
-    For X = 1 To 250
-        Write #1, Z0$(X), Z3$(X), leaderVals!(X, 1), leaderVals!(X, 2)
-    Next X
-
-    For X = 1 To 40:
-        Write #1, OL$(X)
-        For Y = 1 To 20:
-            Write #1, offLeaders!(X, Y)
-        Next
-    Next
-
-    For X = 1 To 40:
-        Write #1, DL$(X)
-        For Y = 1 To 20:
-            Write #1, defLeaders!(X, Y)
-        Next
-    Next
-
-    Close #1
-
-End Sub
-
 
 '----------------------------------------
-'     PostOrgLeaders_Nat Subroutine
+'     PostLeadersOrg Subroutine
 '----------------------------------------
 'This subroutine opens the existing leader
 'and record files for the organization,
 'and writes the updated stats to the file
 'This includes the national poll.
-Sub PostOrgLeaders_Nat (organization$, NRT)
+Sub PostLeadersOrg (organization$, NRT)
 
     Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
 
@@ -1748,4 +1714,3 @@ Sub PostOrgLeaders_Nat (organization$, NRT)
     Close #3
 
 End Sub
-

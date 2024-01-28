@@ -25,7 +25,7 @@ Sub CompileCollege ()
 
     Shared teamScore()
 
-    Shared fullWins, fullLosses
+    Shared confWins, confLosses, fullWins, fullLosses
 
     'Read in any existing records first
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
@@ -48,6 +48,8 @@ Sub CompileCollege ()
             Input #1, defRecDesc$(I)
         Next
 
+        Close #1
+
     Else
 
         Erase plyrRecords!, offRecords!, defRecords!
@@ -56,30 +58,32 @@ Sub CompileCollege ()
     End If
 
     'Initialize values first
+    offRecords!(14) = 19999
+    offRecords!(18) = 19999
+
+    For I = 1 To 13:
+        defRecords!(I) = 19999
+    Next
+
+    For I = 15 To 17:
+        defRecords!(I) = 19999
+    Next
+
+    For I = 19 To 20:
+        defRecords!(I) = 19999
+    Next
+
     'These are defensive record values, so they should be really high
     'To determine if a "record" was broken, the stat values will be
     'compared to see if they are lower than this.
     'If we initialized to 0, the "record" would always be 0
+    Erase defLeaders!
     For X = 1 To 40
         defLeaders!(X, 19) = 9999
     Next
 
-    offRecords!(14) = 19999
-    offRecords!(18) = 19999
-
-    For I = 1 to 13: 
-        defRecords!(I) = 19999
-    Next
-    
-    For I = 15 to 17: 
-        defRecords!(I) = 19999
-    Next
-    
-    For I = 19 to 20: 
-        defRecords!(I) = 19999
-    Next
-
     Erase leaderVals!
+    Erase O1!, O2!, O3!, O4!, O5!, O6!
     Erase Z0$, Z1$, Z3$
 
     C$ = ","
@@ -128,17 +132,22 @@ Sub CompileCollege ()
                         WT$ = WT$ + Chr$(A)
                     Next X
 
-                    confGame = 0
+                    nonConfGame = 0
 
                     For X = 1 To TEAMS_PER_CONFERENCE
 
                         If Z1$(X) = WT$ Then
 
                             If O1!(X) = fullWins And O2!(X) = fullLosses Then
-                                confGame = 1
+
+                                nonConfGame = 1
+                                Exit For
+
                             Else
+
                                 O1!(X) = fullWins
                                 O2!(X) = fullLosses
+
                                 O4!(X) = confWins
                                 O5!(X) = confLosses
 
@@ -158,15 +167,9 @@ Sub CompileCollege ()
 
                         End If
 
-                        If (confGame) Then Exit For
-
                     Next X
 
-                    If confGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
-
-                        Erase compS!
-                        Erase defTotals!, offTotals!, statsW0!, statsW1!
-                        Erase statPlyrNames$
+                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
 
                         Call ReadStatsCon(H1$(XW), TN$)
                         Call StatsByCategoryCon(numberGames, TN$, finalUpdate$)
@@ -182,6 +185,7 @@ Sub CompileCollege ()
 
         Call SortLeadersConf
         Call PostLeadersConf(conferenceFile$)
+        Call PostRecords
 
     End If
 
@@ -245,11 +249,12 @@ Sub CheckStatsCon (teamName$)
     Shared statPlyrNames$(), DL$(), OL$()
     Shared Z0$(), Z3$()
 
-
     For X = 0 To 14:
 
-        Color 14: Print "CHECKING STATS OF ";
-        Color 15: Print statPlyrNames$(X)
+        'Color 14
+        Print "CHECKING STATS OF ";
+        Color 15
+        Print statPlyrNames$(X)
 
         'Division 1, 2 Record
         If compS!(X, 22) > leaderVals!(20, 1) Then
@@ -947,29 +952,27 @@ End Sub
 
 
 '----------------------------------------
-'        PostLeadersNat Subroutine
+'        PostLeadersConf Subroutine
 '----------------------------------------
 'This subroutine opens the existing leader
 'and record files and writes the updated
 'stats to the file
-Sub PostLeadersConf (leaderFile$)
+Sub PostLeadersConf (conferenceName$)
 
     Shared DL$(), OL$()
 
-    Shared plyrRecords!(), defLeaders!(), leaderVals!()
+    Shared defLeaders!(), leaderVals!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared plyrRecords!(), offLeaders!(), offRecords!(), defRecords!()
 
-    Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared Z0$(), Z1$(), Z3$()
 
     Cls
 
     Print
 
-    Open diskPaths$(1) + leaderFile$ + ".LDR" For Output As #1
+    Open diskPaths$(1) + conferenceName$ + ".LDR" For Output As #1
 
-    Print "    POSTING NEW "; leaderFile$; " CONFERENCE LEADERS"
+    Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
     For X = 1 To 30
         Write #1, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
@@ -994,6 +997,20 @@ Sub PostLeadersConf (leaderFile$)
     Next
 
     Close #1
+
+End Sub
+
+
+'----------------------------------------
+'         PostRecords Subroutine
+'----------------------------------------
+'This subroutine writes the calculated
+'records to the records file
+Sub PostRecords
+
+    Shared defRecords!(), offRecords!(), plyrRecords!()
+
+    Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
 
     Open diskPaths$(1) + "RECORDS.CBB" For Output As #2
 
@@ -1030,7 +1047,7 @@ Function FindStatsCon% (statFile$, numberGames)
 
     Shared H1$(), locIndicator$(), oppName$()
 
-    Shared fullWins, fullLosses
+    Shared confWins, confLosses, fullWins, fullLosses
 
     findFile$ = diskPaths$(1) + statFile$ + "S"
     If Not _FileExists(findFile$) Then
@@ -1062,39 +1079,47 @@ Function FindStatsCon% (statFile$, numberGames)
 
         Close #1
 
-        fullWins = 0
-        fullLosses = 0
         confWins = 0
         confLosses = 0
 
+        fullWins = 0
+        fullLosses = 0
+
+        'RATINGS
         For I = 1 To numberGames
 
             statName$ = nameStatFile$(oppName$(I))
-
-            confGame = 0
+            nonConfGame = 0
 
             For EC = 1 To 30
                 'If team stat file = opponent of a conference game?
                 If statName$ = H1$(EC) Then
-                    confGame = 1
+                    nonConfGame = 1
                     Exit For
                 End If
 
             Next EC
 
-            If confGame <> 1 Then
+            If nonConfGame <> 1 Then
 
-                If teamScore(I) > oppScore(I) Then fullWins = fullWins + 1
-                If teamScore(I) < oppScore(I) Then fullLosses = fullLosses + 1
+                If teamScore(I) > oppScore(I) Then
+                    fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then
+                    fullLosses = fullLosses + 1
+                End If
 
             Else
 
                 If teamScore(I) > oppScore(I) Then
-                    confWins = confWins + 1: fullWins = fullWins + 1
+                    confWins = confWins + 1
+                    fullWins = fullWins + 1
                 End If
 
                 If teamScore(I) < oppScore(I) Then
-                    confLosses = confLosses + 1: fullLosses = fullLosses + 1
+                    confLosses = confLosses + 1
+                    fullLosses = fullLosses + 1
                 End If
 
             End If
@@ -1119,4 +1144,3 @@ Function FindStatsCon% (statFile$, numberGames)
     End If
 
 End Function
-

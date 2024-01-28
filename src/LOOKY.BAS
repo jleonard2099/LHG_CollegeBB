@@ -55,8 +55,8 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     'Do these need shared based on the below???
     'All are assigned 0s and read in from file
-    Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared losses, wins
+    Shared homeLosses, homeWins, neutralLosses, neutralWins
+    Shared roadLosses, roadWins, totalLosses, totalWins
 
     Shared gameAttendance&()
 
@@ -74,17 +74,17 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     P%(0) = 0
     P%(1) = 0
 
-    losses = 0
-    wins = 0
+    totalLosses = 0
+    totalWins = 0
     tiedGames = 0
 
-    HW% = 0
-    VW% = 0
-    NW% = 0
+    homeWins = 0
+    roadWins = 0
+    neutralWins = 0
 
-    HL% = 0
-    VL% = 0
-    NL% = 0
+    homeLosses = 0
+    roadLosses = 0
+    neutralLosses = 0
 
     Open diskPaths$(1) + statFile$ + "S" For Input As #1
 
@@ -123,15 +123,15 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
     Close #1
 
     For I = 1 To totalGames%
-        If teamScore(I) > oppScore(I) Then wins = wins + 1
-        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HW% = HW% + 1
-        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then VW% = VW% + 1
-        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then NW% = NW% + 1
+        If teamScore(I) > oppScore(I) Then totalWins = totalWins + 1
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then homeWins = homeWins + 1
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then roadWins = roadWins + 1
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then neutralWins = neutralWins + 1
 
-        If teamScore(I) < oppScore(I) Then losses = losses + 1
-        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then HL% = HL% + 1
-        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then VL% = VL% + 1
-        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then NL% = NL% + 1
+        If teamScore(I) < oppScore(I) Then totalLosses = totalLosses + 1
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then homeLosses = homeLosses + 1
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then roadLosses = roadLosses + 1
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then neutralLosses = neutralLosses + 1
 
         If teamScore(I) = oppScore(I) Then tiedGames = tiedGames + 1
         P%(0) = P%(0) + teamScore(I)
@@ -186,8 +186,8 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     'Do these need shared based on the below???
     'All are assigned 0s and read in from file
-    Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, wins
+    Shared homeLosses, homeWins, neutralLosses, neutralWins
+    Shared roadLosses, roadWins, totalLosses, totalWins
 
     Shared teamScore(), oppScore()
 
@@ -248,16 +248,16 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
     Locate 21, 27
     Color 14: Print "OVERALL RECORD ";
-    Color 15: Print "("; W%; "-"; L%; ")"
+    Color 15: Print "("; totalWins; "-"; totalLosses; ")"
     Locate , 27
     Color 14: Print "HOME RECORD    ";
-    Color 15: Print "("; HW%; "-"; HL%; ")"
+    Color 15: Print "("; homeWins; "-"; homeLosses; ")"
     Locate , 27
     Color 14: Print "ROAD RECORD    ";
-    Color 15: Print "("; VW%; "-"; VL%; ")"
+    Color 15: Print "("; roadWins; "-"; roadLosses; ")"
     Locate , 27
     Color 14: Print "NEUTRAL RECORD ";
-    Color 15: Print "("; NW%; "-"; NL%; ")";
+    Color 15: Print "("; neutralWins; "-"; neutralLosses; ")";
 
     Color 3
     Locate 25, 1
@@ -695,8 +695,8 @@ End Sub
 'team's schedule stats to the  user's display
 Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
-    Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, wins
+    Shared homeLosses, homeWins, neutralLosses, neutralWins
+    Shared roadLosses, roadWins, totalLosses, totalWins
 
     Shared teamScore(), oppScore()
 
@@ -754,13 +754,13 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Print
     Locate 21, 27
     Color 14: Print "OVERALL RECORD ";
-    Color 15: Print "("; W%; "-"; L%; ")"
+    Color 15: Print "("; totalWins; "-"; totalLosses; ")"
     Locate , 27: Color 14: Print "HOME RECORD    ";
-    Color 15: Print "("; HW%; "-"; HL%; ")"
+    Color 15: Print "("; homeWins; "-"; homeLosses; ")"
     Locate , 27: Color 14: Print "ROAD RECORD    ";
-    Color 15: Print "("; VW%; "-"; VL%; ")"
+    Color 15: Print "("; roadWins; "-"; roadLosses; ")"
     Locate , 27: Color 14: Print "NEUTRAL RECORD ";
-    Color 15: Print "("; NW%; "-"; NL%; ")";
+    Color 15: Print "("; neutralWins; "-"; neutralLosses; ")";
     Color 3
     Locate 25, 1
     Color 15, 1: Print "INDIVIDUAL STATS ";
@@ -814,8 +814,8 @@ End Sub
 'team's schedule results to the default printer
 Sub PrintStatsSchedule (teamName$, totalGames%)
 
-    Shared HL%, HW%, NL%, NW%, VL%, VW%
-    Shared L%, wins
+    Shared homeLosses, homeWins, neutralLosses, neutralWins
+    Shared roadLosses, roadWins, totalLosses, totalWins
 
     Shared teamScore(), oppScore()
 
@@ -857,10 +857,10 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
     LPrint Chr$(12)
 
     LPrint
-    LPrint Tab(27); "OVERALL RECORD ("; W%; "-"; L%; ")"
-    LPrint Tab(27); "HOME RECORD    ("; HW%; "-"; HL%; ")"
-    LPrint Tab(27); "ROAD RECORD    ("; VW%; "-"; VL%; ")"
-    LPrint Tab(27); "NEUTRAL RECORD ("; NW%; "-"; NL%; ")"
+    LPrint Tab(27); "OVERALL RECORD ("; totalWins; "-"; totalLosses; ")"
+    LPrint Tab(27); "HOME RECORD    ("; homeWins; "-"; homeLosses; ")"
+    LPrint Tab(27); "ROAD RECORD    ("; roadWins; "-"; roadLosses; ")"
+    LPrint Tab(27); "NEUTRAL RECORD ("; neutralWins; "-"; neutralLosses; ")"
 
     LPrint Chr$(12)
 
