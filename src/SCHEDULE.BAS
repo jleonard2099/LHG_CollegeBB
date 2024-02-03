@@ -699,10 +699,6 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
             hourString$ = Left$(fullTime$, Len(fullTime$) - 3)
             HR% = Val(hourString$)
 
-            If HR% < 10 Then
-                TM$ = " " + TM$
-            End If
-
             If UCase$(meridian$) = "P" And HR% < 12 Then
                 'If user typed in PM, we are storing as military time
                 'We don't check that military time may have been used
@@ -755,8 +751,8 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
         Case 6
             Call ChangeGlobalSettings
-            Call SaveScheduleFile(scheduleFile$)
-            Call NewSchedule(scheduleFile$)
+            Call SaveScheduleFile(subSchedFile$)
+            Call NewSchedule(subSchedFile$)
 
         Case 3, 4, 5
 

@@ -187,7 +187,7 @@ End Sub
 
 
 '----------------------------------------
-'     LeaderStatsNat_Screen Subroutine
+'    LeaderStatsNat_Screen Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to the end

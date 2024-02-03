@@ -10,20 +10,15 @@ Sub CompileCollege ()
 
     _Title "Courtside College Basketball - Update Conference Stats"
 
-    Shared oppScore()
-
-    Shared plyrRecords!(), compS!(), leaderVals!()
-    Shared defLeaders!(), defTotals!()
-    Shared offLeaders!(), offTotals!()
+    Shared leaderVals!(), plyrRecords!()
+    Shared defLeaders!(), defRecords!()
+    Shared offLeaders!(), offRecords!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared statsW0!(), statsW1!(), offRecords!(), defRecords!()
 
-    Shared plyrRecDesc$(), DL$(), statPlyrNames$(), oppName$()
-    Shared H1$(), OL$()
+    Shared DL$(), OL$(), statFiles$()
     Shared defRecDesc$(), offRecDesc$()
+    Shared plyrRecDesc$()
     Shared Z0$(), Z1$(), Z3$()
-
-    Shared teamScore()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -58,6 +53,11 @@ Sub CompileCollege ()
     End If
 
     'Initialize values first
+
+    'These are defensive record values, so they should be really high
+    'To determine if a "record" was broken, the stat values will be
+    'compared to see if they are lower than this.
+    'If we initialized to 0, the "record" would always be 0
     offRecords!(14) = 19999
     offRecords!(18) = 19999
 
@@ -77,13 +77,15 @@ Sub CompileCollege ()
     'To determine if a "record" was broken, the stat values will be
     'compared to see if they are lower than this.
     'If we initialized to 0, the "record" would always be 0
-    Erase defLeaders!
+    Erase defLeaders!, offLeaders!
+
     For X = 1 To 40
         defLeaders!(X, 19) = 9999
     Next
 
     Erase leaderVals!
     Erase O1!, O2!, O3!, O4!, O5!, O6!
+    Erase DL$, OL$
     Erase Z0$, Z1$, Z3$
 
     C$ = ","
@@ -100,8 +102,6 @@ Sub CompileCollege ()
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
-
         Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #2
 
         Input #2, LG$
@@ -109,8 +109,8 @@ Sub CompileCollege ()
         Input #2, div2$
 
         For XW = 1 To 30
-            Input #2, H1$(XW)
-            Z1$(XW) = H1$(XW)
+            Input #2, statFiles$(XW)
+            Z1$(XW) = statFiles$(XW)
         Next
 
         Close #2
@@ -118,17 +118,17 @@ Sub CompileCollege ()
         For XW = 1 To 30
 
             'Look for * as terminating char
-            If H1$(XW) <> Chr$(42) Then
+            If statFiles$(XW) <> Chr$(42) Then
 
-                haveStats = FindStatsCon%(H1$(XW), numberGames)
+                haveStats = FindStatsCon%(statFiles$(XW), numberGames)
 
                 If (haveStats) Then
 
-                    L = Len(H1$(XW))
+                    L = Len(statFiles$(XW))
                     WT$ = ""
 
                     For X = 1 To L
-                        A = Asc(Mid$(H1$(XW), X, 1))
+                        A = Asc(Mid$(statFiles$(XW), X, 1))
                         WT$ = WT$ + Chr$(A)
                     Next X
 
@@ -169,11 +169,11 @@ Sub CompileCollege ()
 
                     Next X
 
-                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + H1$(XW)) Then
+                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
 
-                        Call ReadStatsCon(H1$(XW), TN$)
-                        Call StatsByCategoryCon(numberGames, TN$, finalUpdate$)
-                        Call CheckStatsCon(TN$)
+                        Call ReadStatsConf(statFiles$(XW), TN$)
+                        Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
+                        Call CalcStatLeadersConf(TN$)
 
                     End If
 
@@ -183,9 +183,9 @@ Sub CompileCollege ()
 
         Next XW 'Done "checking stats"
 
-        Call SortLeadersConf
+        Call SortStandings
         Call PostLeadersConf(conferenceFile$)
-        Call PostRecords
+        Call PostRecordsColl
 
     End If
 
@@ -193,16 +193,20 @@ End Sub
 
 
 '----------------------------------------
-'       ReadStatsCon Subroutine
+'       ReadStatsConf Subroutine
 '----------------------------------------
 'This subroutine reads stats in for a
 'single team in the conference
-Sub ReadStatsCon (statFile$, teamName$)
+Sub ReadStatsConf (statFile$, teamName$)
 
     Shared compS!(), defTotals!(), offTotals!()
     Shared statsW0!(), statsW1!()
 
     Shared statPlyrNames$()
+
+    Erase compS!, defTotals!, offTotals!
+    Erase statsW0!, statsW1!
+    Erase statPlyrNames$
 
     Open diskPaths$(1) + statFile$ For Input As #1
 
@@ -236,17 +240,19 @@ End Sub
 
 
 '----------------------------------------
-'        CheckStatsCon Subroutine
+'        CalcStatLeadersConf Subroutine
 '----------------------------------------
 'This subroutine compares pre-loaded stats
 'to existing leaders and updates as needed
-Sub CheckStatsCon (teamName$)
+Sub CalcStatLeadersConf (teamName$)
 
-    Shared compS!(), defLeaders!(), defTotals!()
-    Shared leaderVals!(), offLeaders!(), offTotals!()
+    Shared defTotals!(), offTotals!()
+    Shared defLeaders!(), offLeaders!()
+    Shared leaderVals!(), compS!()
     Shared statsW0!(), statsW1!()
 
-    Shared statPlyrNames$(), DL$(), OL$()
+    Shared DL$(), OL$()
+    Shared statPlyrNames$()
     Shared Z0$(), Z3$()
 
     For X = 0 To 14:
@@ -266,6 +272,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 1 To 19:
                 For Z1 = Z + 1 To 20:
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -273,6 +280,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -288,6 +296,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 21 To 39
                 For Z1 = Z + 1 To 40
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -295,6 +304,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -310,6 +320,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -317,6 +328,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -332,6 +344,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -339,6 +352,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -354,6 +368,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -361,6 +376,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -376,6 +392,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -383,6 +400,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -398,6 +416,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -405,6 +424,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -420,6 +440,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -427,12 +448,13 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
         End If
 
-        '3 FG %
+        '3 Field Goal %
         If compS!(X, 21) > leaderVals!(130, 1) Then
 
             leaderVals!(130, 1) = compS!(X, 21)
@@ -442,6 +464,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 121 To 129
                 For Z1 = Z + 1 To 130
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -449,12 +472,13 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
         End If
 
-        '3 FG MADE
+        '3 Field Goals Made
         If statsW0!(X) > leaderVals!(140, 1) Then
 
             leaderVals!(140, 1) = statsW0!(X)
@@ -464,6 +488,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -471,6 +496,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -486,6 +512,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -493,6 +520,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -508,6 +536,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -515,6 +544,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -530,6 +560,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -537,6 +568,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -552,6 +584,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -559,6 +592,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -574,6 +608,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -581,6 +616,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -596,6 +632,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -603,12 +640,13 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
         End If
 
-        'FG Made
+        'Field Goals Made
         If compS!(X, 2) > leaderVals!(210, 1) Then
 
             leaderVals!(210, 1) = compS!(X, 2)
@@ -618,6 +656,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -625,12 +664,13 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
         End If
 
-        'FT Made
+        'Free Throws Made
         If compS!(X, 4) > leaderVals!(220, 1) Then
 
             leaderVals!(220, 1) = compS!(X, 4)
@@ -640,6 +680,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -647,6 +688,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -662,6 +704,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -669,6 +712,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -684,6 +728,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -691,6 +736,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -706,6 +752,7 @@ Sub CheckStatsCon (teamName$)
 
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
+
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
                         Swap Z0$(Z1), Z0$(Z)
                         Swap Z3$(Z1), Z3$(Z)
@@ -713,6 +760,7 @@ Sub CheckStatsCon (teamName$)
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
                         Next
                     End If
+
                 Next Z1
             Next Z
 
@@ -720,7 +768,7 @@ Sub CheckStatsCon (teamName$)
 
     Next X
 
-    'FOR X=1 TO 40
+    'Offensive Totals
     If offTotals!(19) > offLeaders!(40, 19) Then
 
         For M = 1 To 20:
@@ -731,18 +779,20 @@ Sub CheckStatsCon (teamName$)
 
         For X = 1 To 39
             For X1 = 1 + X To 40:
+
                 If offLeaders!(X, 19) < offLeaders!(X1, 19) Then
                     Swap OL$(X1), OL$(X)
                     For M = 1 To 20:
                         Swap offLeaders!(X1, M), offLeaders!(X, M)
                     Next
                 End If
+
             Next X1
         Next X
 
     End If
 
-    'FOR X=1 TO 15
+    'Defensive Totals
     If defTotals!(19) < defLeaders!(40, 19) Then
 
         For M = 1 To 20:
@@ -753,12 +803,14 @@ Sub CheckStatsCon (teamName$)
 
         For X = 1 To 39
             For X1 = 1 + X To 40
+
                 If defLeaders!(X, 19) > defLeaders!(X1, 19) Then
                     Swap DL$(X1), DL$(X)
                     For M = 1 To 20:
                         Swap defLeaders!(X1, M), defLeaders!(X, M)
                     Next
                 End If
+
             Next X1
         Next X
 
@@ -768,12 +820,12 @@ End Sub
 
 
 '----------------------------------------
-'     StatsByCategoryCon Subroutine
+'     CalcStatTotalsConf Subroutine
 '----------------------------------------
 'This subroutine compares all pre-loaded
 'stats to each of the record categories to
 'see if any should be updated
-Sub StatsByCategoryCon (numberGames, teamName$, finalUpdate$)
+Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
 
     Shared plyrRecords!(), compS!(), defTotals!(), offTotals!()
     Shared offRecords!(), defRecords!()
@@ -906,11 +958,11 @@ End Sub
 
 
 '----------------------------------------
-'       SortLeadersConf Subroutine
+'       SortStandings Subroutine
 '----------------------------------------
 'This subroutine sorts the leaders in the
 'target conference
-Sub SortLeadersConf
+Sub SortStandings
 
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
@@ -919,7 +971,7 @@ Sub SortLeadersConf
     For Z = 0 To 1
 
         AA = (Z * 15) + 1
-        ZZ = (Z * 15) + 10
+        ZZ = (Z * 15) + 15
 
         For X = AA To ZZ - 1
 
@@ -1002,11 +1054,11 @@ End Sub
 
 
 '----------------------------------------
-'         PostRecords Subroutine
+'         PostRecordsColl Subroutine
 '----------------------------------------
 'This subroutine writes the calculated
 'records to the records file
-Sub PostRecords
+Sub PostRecordsColl
 
     Shared defRecords!(), offRecords!(), plyrRecords!()
 
@@ -1043,9 +1095,9 @@ End Sub
 'found, notifying the user
 Function FindStatsCon% (statFile$, numberGames)
 
-    Shared teamScore(), oppScore()
+    Shared oppScore(), teamScore()
 
-    Shared H1$(), locIndicator$(), oppName$()
+    Shared locIndicator$(), oppName$(), statFiles$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -1093,7 +1145,7 @@ Function FindStatsCon% (statFile$, numberGames)
 
             For EC = 1 To 30
                 'If team stat file = opponent of a conference game?
-                If statName$ = H1$(EC) Then
+                If statName$ = statFiles$(EC) Then
                     nonConfGame = 1
                     Exit For
                 End If

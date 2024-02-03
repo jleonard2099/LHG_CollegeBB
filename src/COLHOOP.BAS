@@ -887,19 +887,46 @@ Sub COLHOOP ()
     If gameClock! <= 5 And (threePtOpt = 1 And score(D, 0) - score(P, 0) <= 3 Or threePtOpt = 0 And score(D, 0) - score(P, 0) <= 2) And score(D, 0) - score(P, 0) >= 0 And currHalf >= 2 Then
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
+
             ' Computer handle last 5 seconds
             Call d100(RN0)
 
             scoreDiff = score(P, 0) - score(D, 0)
 
-            If gameClock! >= 3 And gameClock! <= 5 And threePtOpt = 0 And scoreDiff < 3 Then I1% = 5
-            If gameClock! >= 3 And gameClock! <= 5 And threePtOpt = 1 And scoreDiff = 3 Then I1% = 4
-            If gameClock! >= 3 And gameClock! <= 5 And threePtOpt = 1 And scoreDiff = 2 And RN0 <= 50 Then I1% = 5
-            If gameClock! >= 3 And gameClock! <= 5 And threePtOpt = 1 And scoreDiff = 2 And RN0 > 50 Then I1% = 4
-            If gameClock! < 3 And threePtOpt = 0 And scoreDiff < 3 Then I1% = 0
-            If gameClock! < 3 And threePtOpt = 1 And scoreDiff = 3 Then I1% = 1
-            If gameClock! < 3 And threePtOpt = 1 And scoreDiff = 2 And RN0 <= 50 Then I1% = 0
-            If gameClock! < 3 And threePtOpt = 1 And scoreDiff = 2 And RN0 > 50 Then I1% = 1
+            If gameClock! >= 3 And gameClock! <= 5 Then
+
+                If threePtOpt = 0 Then
+                    If scoreDiff < 3 Then I1% = 5
+                Else
+                    'threePtOpt = 1
+                    If scoreDiff = 3 Then I1% = 4
+                    If scoreDiff = 2 Then
+                        If RN0 <= 50 Then
+                            I1% = 5
+                        Else
+                            I1% = 4
+                        End If
+                    End If
+
+                End If
+
+                If gameClock! < 3 Then
+                    If threePtOpt = 0 Then
+                        If scoreDiff < 3 Then I1% = 0
+                    Else
+                        'threePtOpt = 1
+                        If scoreDiff = 3 Then I1% = 1
+                        If scoreDiff = 2 Then
+                            If RN0 <= 50 Then
+                                I1% = 0
+                            Else
+                                I1% = 1
+                            End If
+                        End If
+                    End If
+                End If
+
+            End If
 
         Else
 
@@ -909,7 +936,7 @@ Sub COLHOOP ()
             Do
                 I$ = GetKeyPress$
                 I1% = Val(I$)
-            Loop Until I1% >= 0 And I1% <= 5 And Not (I1% = 3 And timeouts(P9) <= 0) And Not ((I1% = 1 Or I1% = 4) And threePtOpt = 0)
+            Loop Until I1% >= 0 And I1% <= 5 And Not (I1% = 3 And timeouts(P9) <= 0) And ((I1% = 1 Or I1% = 4) And threePtOpt = 1)
 
             Color 15, 0
             Call SCOREBOARD
@@ -920,13 +947,20 @@ Sub COLHOOP ()
 
         Call d100(RN0)
 
+        ' 0 | 1 = Full Court Pass [Shoot 2 | Shoot 3]
+        '2 = Shoot from Back Court
+        '3 = TO from Half Court
+        '4 | 5 = Work the Floor [Shoot 2 | Shoot 3]
+
         If I1% = 0 And RN0 <= 50 Or I1% = 1 And RN0 <= 33 Then
+
             pbpString$ = "LONG PASS DOWN COURT"
             Call PBP
             Call DELAY
             pbpString$ = "IT'S INTERCEPTED...GAME OVER!!"
             Call PBP
             GoTo TIMEEXP
+
         End If
 
         If I1% = 2 Then
@@ -970,36 +1004,78 @@ Sub COLHOOP ()
 
                 GoTo TIMEEXP
 
+            Else
+
+                pbpString$ = "SHOT MISSES...GAME OVER"
+                Call PBP
+
+                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+
+                If threePtOpt = 1 Then
+                    threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
+                End If
+
+                GoTo TIMEEXP
+
             End If
 
         End If
 
-        If I1% = 2 Then
+        If I1% >= 3 Then
 
-            pbpString$ = "SHOT MISSES...GAME OVER"
-            Call PBP
+            Select Case RN0
 
-            plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
-            If threePtOpt = 1 Then
-                threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
+                Case Is <= 8
+                    pbpString$ = "BALL LOST O.B.  GAME OVER"
+                    Call PBP
+                    GoTo TIMEEXP
+
+                Case 9 To 18
+                    pbpString$ = "PASS INTERCEPTED"
+                    Call PBP
+                    GoTo TIMEEXP
+
+            End Select
+
+        End If
+
+        If I1% = 3 Then
+
+            If gameClock! < 1.5 Then
+
+                pbpString$ = "INBOUND PASS TO " + players$(P, B1(P, ballCarrier))
+                Call PBP
+
+                pbpString$ = "TIME EXPIRES"
+                Call PBP
+
+                GoTo TIMEEXP
+
+            Else
+
+                timeElapsed! = (Rnd(1) + 1.5)
+                gameClock! = gameClock! - timeElapsed!
+
+                Call AdjustPlayTime
+                Call AdjustShotClock
+
+                pbpString$ = gameTeams$(P) + " GETS THE BALL TO HALF COURT"
+                Call PBP
+
+                pbpString$ = "THEY QUICKLY CALL FOR A TIMEOUT"
+                Call PBP
+
+                timeouts(P) = timeouts(P) - 1
+
+                Call DEADBALLOPTIONS
+                Call SCOREBOARD
+                Call HalfCourt(I2%)
             End If
 
-            GoTo TIMEEXP
         End If
 
-        If I1% >= 3 And RN0 <= 8 Then
-            pbpString$ = "BALL LOST O.B.  GAME OVER"
-            Call PBP
-            GoTo TIMEEXP
-        End If
 
-        If I1% >= 3 And RN0 > 8 And RN0 <= 18 Then
-            pbpString$ = "PASS INTERCEPTED"
-            Call PBP
-            GoTo TIMEEXP
-        End If
-
-        If I1% = 3 And gameClock! < 1.5 Or I1% >= 4 And gameClock! < 3 Then
+        If I1% >= 4 And gameClock! < 3 Then
 
             pbpString$ = "INBOUND PASS TO " + players$(P, B1(P, ballCarrier))
             Call PBP
@@ -1010,31 +1086,17 @@ Sub COLHOOP ()
             GoTo TIMEEXP
         End If
 
-        If I1% = 3 Then
 
-            timeElapsed! = (Rnd(1) + 1.5)
-            gameClock! = gameClock! - timeElapsed!
-
-            Call AdjustPlayTime
-            Call AdjustShotClock
-
-            pbpString$ = gameTeams$(P) + " GETS THE BALL TO HALF COURT"
-            Call PBP
-
-            pbpString$ = "THEY QUICKLY CALL FOR A TIMEOUT"
-            Call PBP
-
-            timeouts(P) = timeouts(P) - 1
-
-            Call DEADBALLOPTIONS
-            Call SCOREBOARD
-            Call HalfCourt
-
+        '-- Previously If I1% = 0 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
+        If I1% = 1 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
+            shootFor3 = 1
+        Else
+            shootFor3 = 0
         End If
 
-        If I1% = 0 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
+        If shootFor3 = 1 And threePtOpt = 1 Then
 
-            ' TAKE3
+            ' Shoot for 3!!!
             Call d100(RN0)
             If gameClock! <= .5 Then XX% = 2
             If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 12
@@ -1068,28 +1130,37 @@ Sub COLHOOP ()
 
             End If
 
-            GoTo TIMEEXP
-
-        End If
-
-        Call d100(RN0)
-        If gameClock! <= .5 Then XX% = 3
-        If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 16
-        If gameClock! > 1.8 Then XX% = 29
-
-        If RN0 > XX% Then
-            pbpString$ = players$(P, B1(P, ballCarrier)) + " MISSES"
-            Call PBP
-            plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
         Else
-            pbpString$ = "BASKET BY " + players$(P, B1(P, ballCarrier)) + "!!"
-            Call PBP
-            plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
-            plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
-            score(P, currHalf) = score(P, currHalf) + 2
-            score(P, 0) = score(P, 0) + 2
-            Call GoodBasket
-            Call UPDATESCREEN
+
+            'Go for 2!!!
+            Call d100(RN0)
+
+            If gameClock! <= .5 Then XX% = 3
+            If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 16
+            If gameClock! > 1.8 Then XX% = 29
+
+            If RN0 > XX% Then
+
+                pbpString$ = players$(P, B1(P, ballCarrier)) + " MISSES"
+                Call PBP
+                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+
+            Else
+
+                pbpString$ = "BASKET BY " + players$(P, B1(P, ballCarrier)) + "!!"
+                Call PBP
+
+                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+                plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
+
+                score(P, currHalf) = score(P, currHalf) + 2
+                score(P, 0) = score(P, 0) + 2
+
+                Call GoodBasket
+                Call UPDATESCREEN
+
+            End If
+
         End If
 
         GoTo TIMEEXP
@@ -4281,3 +4352,4 @@ Sub COLHOOP ()
     End If
 
 End Sub
+

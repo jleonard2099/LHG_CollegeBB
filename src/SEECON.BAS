@@ -1,11 +1,11 @@
 '----------------------------------------
-'            SEECOLL Subroutine
+'            SEECON Subroutine
 '----------------------------------------
 'This subroutine lets the user choose a
 'conference stat file to view, then calls
 'other routines to both load the Stats
 'and then provide options for display
-Sub SEECOLL ()
+Sub SEECON ()
 
     _Title "Courtside College Basketball - View Conference Stats"
 
@@ -79,7 +79,7 @@ End Sub
 
 
 '----------------------------------------
-'          StatOptions_Con Subroutine
+'       StatOptions_Con Subroutine
 '----------------------------------------
 'This subroutine gives the user various
 'options for viewing the previously loaded

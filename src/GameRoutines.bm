@@ -3012,7 +3012,7 @@ End Sub
 'for handling a strategy at half court
 'when time is low on the clock.
 'I2% = user choice for shot
-Sub HalfCourt ()
+Sub HalfCourt (shotType)
 
     Call FRAMEOPTION(8, P)
     Locate 10, 15
@@ -3026,10 +3026,10 @@ Sub HalfCourt ()
 
     Do
         I$ = GetKeyPress$
-        I2% = Val(I$)
-    Loop Until I2% >= 0 And I2% <= 1
+        shotType = Val(I$)
+    Loop Until shotType >= 0 And shotType <= 1
 
-    If I2% = 1 And threePtOpt = 0 Then I2% = 0
+    If shotType = 1 And threePtOpt = 0 Then shotType = 0
 
     Color 15, 0
 
@@ -7091,7 +7091,17 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
         'ORB / RB / Points / Fouls / Assists / Blocks / Steals / Turnovers
         Print #1, Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11), statTotals(4), statTotals(5), statTotals(6), statTotals(7), statTotals(8), statTotals(9), statTotals(12)
 
-        Print #1, ; Tab(22); Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; Tab(35); Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        'FG %
+        Print #1, ; Tab(22); 
+        If statTotals(1) > 0 Then Print #1, ; Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; 
+
+        '3FG %
+        Print #1, ; Tab(28); 
+        If statTotals(14) > 0 Then Print #1, ; Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+
+        'FT %
+        Print #1, ; Tab(35); 
+        If statTotals(3) > 0 Then Print #1, ; Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
 
         Print #1,
         Print #1, "TOTAL TURNOVERS -"; turnovers(I)
@@ -7292,13 +7302,17 @@ Sub STATS2SCREEN
         'ORB / RB / PT / F / A / B / S / TO
         Locate , 42: Print Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11), statTotals(4), statTotals(5), statTotals(6), statTotals(7), statTotals(8), statTotals(9), statTotals(12)
 
-        'FG    %
+        'FG %
         Print Tab(22);
-        If statTotals(1) <> 0 Then Print Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
+        If statTotals(1) > 0 Then Print Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
 
-        'FT    %
+        '3FG %
+        Print Tab(28); 
+        If statTotals(14) > 0 Then Print Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+
+        'FT %
         Print Tab(35);
-        If statTotals(3) <> 0 Then Print Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        If statTotals(3) > 0 Then Print Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
 
         Print
         Color 14: Print "TOTAL TURNOVERS -";

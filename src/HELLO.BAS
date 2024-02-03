@@ -621,13 +621,13 @@ Sub Leaders_Menu ()
             Color , 0
 
             Select Case Selection%
-                Case 1: Call CREATECOLL
+                Case 1: Call CREATCON
                 Case 2: Call CompileCollege
-                Case 3: Call SEECOLL
+                Case 3: Call SEECON
                 Case 4: Call HD2HDCON
                 Case 5: Call SeasonRecords
                 Case 6: Call NEWLDR
-                Case 7: Call BLANK
+                Case 7: Call BLANKCON
                 Case 8: Call CREATENATL
                 Case 9: Call CompileNatlOrg
                 Case 10: Call SEENATL
@@ -661,16 +661,16 @@ End Sub
 '$INCLUDE: 'TITLE.bm'
 '$INCLUDE: 'ADDTOURN.BAS'
 '$INCLUDE: 'ALIGN.BAS'
-'$INCLUDE: 'BLANK.BAS'
+'$INCLUDE: 'BLANKCON.BAS'
 '$INCLUDE: 'BLANKORG.BAS'
 '$INCLUDE: 'BRACKET.BAS'
 '$INCLUDE: 'CAREER.BAS'
 '$INCLUDE: 'CARVIEW.BAS'
 '$INCLUDE: 'CNGTM.BAS'
 '$INCLUDE: 'COMPARE.BAS'
-'$INCLUDE: 'COMPCOLL.BAS'
+'$INCLUDE: 'COMPCON.BAS'
 '$INCLUDE: 'COMPNATL.BAS'
-'$INCLUDE: 'CREATCOLL.BAS'
+'$INCLUDE: 'CREATCON.BAS'
 '$INCLUDE: 'CREATNATL.BAS'
 '$INCLUDE: 'DRAFT.BAS'
 '$INCLUDE: 'HD2HDCON.BAS'
@@ -680,7 +680,7 @@ End Sub
 '$INCLUDE: 'REC.BAS'
 '$INCLUDE: 'RECORDS.BAS'
 '$INCLUDE: 'SCHEDULE.BAS'
-'$INCLUDE: 'SEECOLL.BAS'
+'$INCLUDE: 'SEECON.BAS'
 '$INCLUDE: 'SEENATL.BAS'
 '$INCLUDE: 'SINPUT.BAS'
 '$INCLUDE: 'TINPUT.BAS'

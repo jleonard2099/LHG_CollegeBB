@@ -5,11 +5,11 @@
 'a college conference, and then proceeds to 
 'delete all stats files for all associated 
 'teams in the conference
-Sub BLANK ()
+Sub BLANKCON ()
 
     _Title "Courtside College Basketball - Erase Conference Stats"
 
-    Dim H1$(MAX_CONFERENCES)
+    Dim statFiles$(MAX_CONFERENCES)
 
     conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
 
@@ -30,16 +30,16 @@ Sub BLANK ()
             Input #1, conf$, D1$, D2$ ', D3$, D4$
 
             For XW = 1 To TEAMS_PER_CONFERENCE
-                Input #1, H1$(XW)
+                Input #1, statFiles$(XW)
             Next
 
             Close #1
 
             For XW = 1 To TEAMS_PER_CONFERENCE
 
-                If H1$(XW) <> Chr$(42) Then
-                    statFileName$ = diskPaths$(1) + H1$(XW)
-                    Print "DELETING "; H1$(XW); " STATS"
+                If statFiles$(XW) <> Chr$(42) Then
+                    statFileName$ = diskPaths$(1) + statFiles$(XW)
+                    Print "DELETING "; statFiles$(XW); " STATS"
                     If _FileExists(statFileName$) Then Kill statFileName$
                     If _FileExists(statFileName$ + "D") Then Kill statFileName$ + "D"
                     If _FileExists(statFileName$ + "R") Then Kill statFileName$ + "R"

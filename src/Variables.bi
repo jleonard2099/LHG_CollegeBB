@@ -90,7 +90,7 @@ Dim W0L!(600), W1L!(600)
 '----------------------------------------
 ' Used in COMPARE routines
 '----------------------------------------
-Dim H1$(40)
+Dim statFiles$(40)
 
 
 '----------------------------------------
@@ -299,6 +299,3 @@ Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13)
 Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
-
-
-

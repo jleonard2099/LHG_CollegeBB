@@ -8,7 +8,7 @@ Sub BLANKORG ()
 
     _Title "Courtside College Basketball - Erase Org Stats"
 
-    Dim H1$(40), Z4$(40)
+    Dim statFiles$(40), Z4$(40)
 
     organizationFile$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
 
@@ -43,15 +43,15 @@ Sub BLANKORG ()
                     Input #2, org$, D1$, D2$
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, H1$(XW)
+                        Input #2, statFiles$(XW)
                     Next
 
                     Close #2
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
-                        If H1$(XW) <> Chr$(42) Then
-                            Print "DELETING "; H1$(XW); " STATS"
-                            statFile$ = diskPaths$(1) + H1$(XW)
+                        If statFiles$(XW) <> Chr$(42) Then
+                            Print "DELETING "; statFiles$(XW); " STATS"
+                            statFile$ = diskPaths$(1) + statFiles$(XW)
                             If _FileExists(statFile$) Then Kill statFile$
                             If _FileExists(statFile$ + "S") Then Kill statFile$ + "S"
                         End If
