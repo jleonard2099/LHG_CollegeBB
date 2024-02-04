@@ -129,7 +129,7 @@ Sub InitVar ()
     BU% = 0
     DK% = 0
     F3S% = 0
-    FB% = 0
+    fastBreak = 0
     FT% = 0
     J8% = 0
     LC% = 0
@@ -1670,7 +1670,7 @@ Sub MAKEPBP ()
 
             Case 7
                 'FAST BREAK SCORE
-                FB% = 0
+                fastBreak = 0
 
                 RN1 = Int(Rnd(1) * 39) + 1
 
@@ -1770,7 +1770,7 @@ Sub MAKEPBP ()
                 If PZ% = 8 Then
 
                     PZ% = 0
-                    FB% = 0
+                    fastBreak = 0
                     pbpString$ = "HE "
 
                     Select Case RN0
@@ -3164,7 +3164,7 @@ Sub FoulCalled (randomCalcs%)
                 If P7(I) = 0 Then
                     PR%(I, 0) = 1
                     PR%(I, 1) = 7
-                    PC%(I) = 0
+                    pctContrib(I) = 0
                 End If
             Next
             Call SCOREBOARD
@@ -5200,9 +5200,9 @@ Sub SHOTPERCENT ()
 
     'Improve chance for homefield advantage
     If gameLoc = P Then
-        F! = F! + HF%(0, teamRat_GAME(P, 6))
+        F! = F! + homeCtFactor(0, teamRat_GAME(P, 6))
     Else
-        If gameLoc <> 2 Then F! = F! + HF%(1, teamRat_GAME(P, 6))
+        If gameLoc <> 2 Then F! = F! + homeCtFactor(1, teamRat_GAME(P, 6))
     End If
 
     F3S% = Int(Rnd(1) * 100) + 1

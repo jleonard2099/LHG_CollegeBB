@@ -73,7 +73,7 @@ Dim ARS!(15, 62, 15)
 Dim W0S!(15, 62), W1S!(15, 62)
 
 Dim AL$(600), expanTT$(40, 15)
-Dim TMA$(600), TP$(31), TP1$(39), TT1$(40, 15)
+Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), TT1$(40, 15)
 
 '-- does the "R" refer to "Replay"?
 '-- for instance, A$ is player Names; AR$ is player names in the replay stats?
@@ -104,7 +104,7 @@ Dim leaderVals!(1 To 250, 0 To 2), natLeaderVals!(1 To 250, 1 To 2)
 Dim natDefLeaders!(1 To 40, 1 To 20), natOffLeaders!(1 To 40, 1 To 20)
 Dim compS!(0 To 14, 0 To 26)
 
-Dim categories$(25)
+Dim statCategoryAbbr$(25)
 Dim NDL$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
 Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
@@ -152,7 +152,7 @@ Dim plyrRecords!(32), offRecords!(1 To 21), defRecords!(1 To 21)
 Dim plyrRecDesc$(32, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
 
 Dim indRecords!(50, 2), teamRecords!(125, 2)
-Dim indRecords$(25), teamRecords$(20)
+Dim indRecordDesc$(25), teamRecordDesc$(20)
 Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
 
 
@@ -254,7 +254,7 @@ Dim Shared S2, S9, sClockVal, shotClock
 Dim Shared threePtOpt, tickerIdx, TMT, TOU, XM, XS
 
 Dim Shared BO%, BU%, coachOpt, DK%
-Dim Shared F3S%, FB%, FT%, J8%, LC%
+Dim Shared F3S%, fastBreak, FT%, J8%, LC%
 Dim Shared PA%, PASS%, pbpOpt, PT%, PZ%, ST%
 Dim Shared X0%, X1%, XX%
 
@@ -270,8 +270,8 @@ Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$, YN$
 '--- RESUME COMPARISON HERE
 
 Dim Shared CZ%(1), teamAdj(0 To 1, 0 To 8), FY%(0 To 1)
-Dim Shared G9%(1), HF%(1, 6), NG%(18), NG1%(18)
-Dim Shared offStrat(1), PC%(1), PR%(1, 1)
+Dim Shared G9%(1), homeCtFactor(1, 6), NG%(18), NG1%(18)
+Dim Shared offStrat(1), pctContrib(1), PR%(1, 1)
 Dim Shared rosterStatus(1, 13), ST%(32), SX%(32, 1, 14)
 Dim Shared teamStats_GAME(1, 20), TM%(1, 13), TP%(1)
 Dim Shared pbpFG(8), pbpBG(8)

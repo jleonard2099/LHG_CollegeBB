@@ -120,7 +120,7 @@ Declare Sub SortLeadersNat
 Declare Sub SortOptions (JB, ZZ, printOrView%, sortType%)
 Declare Sub SortPlayer (PPP, stpl, sortType%)
 Declare Sub SortSchedule ()
-Declare Sub SortStandings
+Declare Sub SortStandingsConference ()
 Declare Sub SortStats (categoryPick)
 Declare Sub SortTeam (sortMax, stpl, sortType%)
 Declare Sub StatOptions_Con (FF$, D1$, D2$)

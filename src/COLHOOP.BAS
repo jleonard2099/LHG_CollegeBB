@@ -1313,7 +1313,7 @@ Sub COLHOOP ()
                 Call PBP
 
                 LAYUP:
-                FB% = 1
+                fastBreak = 1
                 F! = 98
                 P6 = 1
 
@@ -1541,9 +1541,9 @@ Sub COLHOOP ()
         End If
 
         CY = CY + teamAdj(P, 4) + DP(1, P7(D)) - PR%(D, 1)
-        PC%(D) = PC%(D) + 1
+        pctContrib(D) = pctContrib(D) + 1
 
-        If PC%(D) > 3 Then
+        If pctContrib(D) > 3 Then
             PR%(D, 0) = 0
             PR%(D, 1) = 0
         End If
@@ -1847,7 +1847,7 @@ Sub COLHOOP ()
             C1 = 2
         End If
 
-        FB% = 1
+        fastBreak = 1
 
         Call d100(RN0)
 
@@ -2007,7 +2007,7 @@ Sub COLHOOP ()
             If P7(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
-                PC%(I) = 0
+                pctContrib(I) = 0
             End If
         Next
 
@@ -2092,7 +2092,7 @@ Sub COLHOOP ()
 
         Else
 
-            If F! > 70 And FB% = 1 And PASS% = 1 Then
+            If F! > 70 And fastBreak = 1 And PASS% = 1 Then
 
                 PT% = 6
                 PZ% = 8
@@ -2561,7 +2561,7 @@ Sub COLHOOP ()
                         If P7(I) = 0 Then
                             PR%(I, 0) = 1
                             PR%(I, 1) = 7
-                            PC%(I) = 0
+                            pctContrib(I) = 0
                         End If
                     Next
 
@@ -2716,7 +2716,7 @@ Sub COLHOOP ()
                         If P7(I) = 0 Then
                             PR%(I, 0) = 1
                             PR%(I, 1) = 7
-                            PC%(I) = 0
+                            pctContrib(I) = 0
                         End If
                     Next
 
@@ -3130,7 +3130,7 @@ Sub COLHOOP ()
                         If P7(I) = 0 Then
                             PR%(I, 0) = 1
                             PR%(I, 1) = 7
-                            PC%(I) = 0
+                            pctContrib(I) = 0
                         End If
                     Next
 
@@ -3320,7 +3320,7 @@ Sub COLHOOP ()
         If P7(I) = 0 Then
             PR%(I, 0) = 1
             PR%(I, 1) = 7
-            PC%(I) = 0
+            pctContrib(I) = 0
         End If
     Next
 
@@ -3452,7 +3452,7 @@ Sub COLHOOP ()
         If P7(I) = 0 Then
             PR%(I, 0) = 1
             PR%(I, 1) = 7
-            PC%(I) = 0
+            pctContrib(I) = 0
         End If
     Next
 
@@ -3610,7 +3610,7 @@ Sub COLHOOP ()
                 If P7(I) = 0 Then
                     PR%(I, 0) = 1
                     PR%(I, 1) = 7
-                    PC%(I) = 0
+                    pctContrib(I) = 0
                 End If
             Next
 
@@ -3636,7 +3636,7 @@ Sub COLHOOP ()
                     If P7(I) = 0 Then
                         PR%(I, 0) = 1
                         PR%(I, 1) = 7
-                        PC%(I) = 0
+                        pctContrib(I) = 0
                     End If
                 Next
 
@@ -3672,7 +3672,7 @@ Sub COLHOOP ()
                     If P7(I) = 0 Then
                         PR%(I, 0) = 1
                         PR%(I, 1) = 7
-                        PC%(I) = 0
+                        pctContrib(I) = 0
                     End If
                 Next
 
@@ -3908,12 +3908,12 @@ Sub COLHOOP ()
         C1 = 2
     End If
 
-    FB% = 1
+    fastBreak = 1
     prevBall$ = players$(P, B1(P, ballCarrier))
 
     RN0 = Int(Rnd(1) * 130) + 1
 
-    If RN0 = 15 Then FB% = 0: GoTo RBTIEUP
+    If RN0 = 15 Then fastBreak = 0: GoTo RBTIEUP
 
     Call d100(RN0)
     If CZ%(D) = 1 And RN0 <= 50 Then
@@ -4069,7 +4069,7 @@ Sub COLHOOP ()
             If P7(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
-                PC%(I) = 0
+                pctContrib(I) = 0
             End If
         Next
 
@@ -4101,7 +4101,7 @@ Sub COLHOOP ()
             If P7(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
-                PC%(I) = 0
+                pctContrib(I) = 0
             End If
         Next
         LT = 4
@@ -4135,7 +4135,7 @@ Sub COLHOOP ()
             If P7(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
-                PC%(I) = 0
+                pctContrib(I) = 0
             End If
         Next
 
@@ -4244,7 +4244,7 @@ Sub COLHOOP ()
             If P7(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
-                PC%(I) = 0
+                pctContrib(I) = 0
             End If
         Next
 
@@ -4273,7 +4273,7 @@ Sub COLHOOP ()
             If P7(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
-                PC%(I) = 0
+                pctContrib(I) = 0
             End If
         Next
 

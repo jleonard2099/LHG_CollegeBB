@@ -183,7 +183,7 @@ Sub CompileCollege ()
 
         Next XW 'Done "checking stats"
 
-        Call SortStandings
+        Call SortStandingsConference
         Call PostLeadersConf(conferenceFile$)
         Call PostRecordsColl
 
@@ -958,15 +958,20 @@ End Sub
 
 
 '----------------------------------------
-'       SortStandings Subroutine
+'   SortStandingsConference Subroutine
 '----------------------------------------
 'This subroutine sorts the leaders in the
-'target conference
-Sub SortStandings
+'target conference. Currently setup using
+'a bubble sort algorithm.
+Sub SortStandingsConference
 
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
     Shared Z1$()
+
+    'Currently sorts by Conference Record
+    '   To sort by Season Record, change O4 / O5 to O1 / O2
+    '   (not in the Swap statements!)
 
     For Z = 0 To 1
 
@@ -977,12 +982,12 @@ Sub SortStandings
 
             For Y = X + 1 To ZZ
 
-                diffX = O1!(X) - O2!(X)
-                diffY = O1!(Y) - O2!(Y)
+                diffX = O4!(X) - O5!(X)
+                diffY = O4!(Y) - O5!(Y)
 
                 If diffX <= diffY Then
                     If diffX <> diffY Then
-                        If Not (O1!(X) <= O1!(Y) And O1!(X) > O2!(X)) Or Not (O1!(X) >= O1!(Y) And O1!(X) < O2!(X)) Then
+                        If Not (O4!(X) <= O4!(Y) And O4!(X) > O5!(X)) Or Not (O4!(X) >= O4!(Y) And O4!(X) < O5!(X)) Then
                             Swap Z1$(X), Z1$(Y)
                             Swap O1!(X), O1!(Y)
                             Swap O2!(X), O2!(Y)
@@ -1196,3 +1201,4 @@ Function FindStatsCon% (statFile$, numberGames)
     End If
 
 End Function
+

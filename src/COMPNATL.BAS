@@ -204,7 +204,7 @@ Sub CompileNatlOrg ()
 
                 Next XW
 
-                Call SortStandings
+                Call SortStandingsConference
                 Call PostLeadersConf(confNames$(currConf))
                 Call PostRecordsColl
 

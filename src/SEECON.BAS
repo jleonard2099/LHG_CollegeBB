@@ -9,12 +9,12 @@ Sub SEECON ()
 
     _Title "Courtside College Basketball - View Conference Stats"
 
-    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
+    leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Call LoadLeaderFiles_Coll(leaderFile$, FF$, D1$, D2$)
-        Call StatOptions_Con (FF$, D1$, D2$)
+        Call StatOptions_Con(FF$, D1$, D2$)
 
     End If
 
@@ -41,24 +41,24 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
 
     Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #1
 
-    For X = 1 To 30: 
+    For X = 1 To 30:
         Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
-    For X = 1 To 250: 
+    For X = 1 To 250:
         Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1!(X)
     Next
 
-    For X = 1 To 40: 
+    For X = 1 To 40:
         Input #1, OL$(X)
-        For M = 1 To 20: 
+        For M = 1 To 20:
             Input #1, offLeaders!(X, M)
         Next
     Next
 
-    For X = 1 To 40: 
+    For X = 1 To 40:
         Input #1, DL$(X)
-        For M = 1 To 20: 
+        For M = 1 To 20:
             Input #1, defLeaders!(X, M)
         Next
     Next
@@ -91,13 +91,13 @@ Sub StatOptions_Con (FF$, D1$, D2$)
         Cls
         Call TITLE_STATS
 
-        Call MenuBox (8, 8, 61, 5, 15, 1)
+        Call MenuBox(8, 8, 61, 5, 15, 1)
 
         Do
 
             Locate 10, 15
             Color 7, 1
-            
+
             Locate , 30: Print "STATS TO ";
             Color 15: Print "S";: Color 7: Print "CREEN"
             Locate , 30: Print "STATS TO ";
@@ -116,10 +116,10 @@ Sub StatOptions_Con (FF$, D1$, D2$)
 
                 Case "F"
                     Call ReportFilePrompt_Con(SF$)
-                    Call SavePrintConLeaders(SF$, 1)
+                    Call SavePrintConLeaders(FF$, D1$, D2$, SF$, 1)
 
                 Case "P"
-                    Call SavePrintConLeaders(SF$, 0)
+                    Call SavePrintConLeaders(FF$, D1$, D2$, SF$, 0)
 
                 Case "S"
                     Call LeaderStatsCon_Screen(FF$, D1$, D2$)
@@ -129,7 +129,7 @@ Sub StatOptions_Con (FF$, D1$, D2$)
             Color 15, 0
             Cls
 
-            Call box0 (6, 8, 11, 70, 2, 15, 1)
+            Call box0(6, 8, 11, 70, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -160,7 +160,7 @@ Sub ReportFilePrompt_Con (reportFile$)
         Color 15, 0
         Cls
 
-        Call MenuBox (6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 7, 15, 1)
 
         Locate 7, 32
 
@@ -433,7 +433,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     '-----
 
     Cls
-    
+
     Color 14
     Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
     Color 15
@@ -494,7 +494,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     '-----
 
     Cls
-    
+
     Color 14
     Print "REBOUNDS PER GAME   "
     Color 15
@@ -554,7 +554,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     '-----
 
     Cls
-    
+
     Color 14
     Print "FIELD GOALS MADE "
     Color 15
@@ -617,7 +617,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     '-----
 
     Cls
-    
+
     Color 14
     Print "MOST VALUABLE PLAYER POINTS"
     Color 15
@@ -672,7 +672,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     '-----
 
     Cls
-    
+
     Color 12
     Print "                         DEFENSIVE TOTALS"
     Color 14
@@ -725,7 +725,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Color 15
     QK$ = GetKeyPress$
     '-----
-    
+
 End Sub
 
 
@@ -734,13 +734,13 @@ End Sub
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
-'This file can then be looped through to 
+'This file can then be looped through to
 'send to the default printer
 
 'Destination
 '   1 = File
 '   !1 = Printer (creates file and prints it)
-Sub SavePrintConLeaders (reportFile$, destination)
+Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
 
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
@@ -1159,3 +1159,4 @@ Sub SavePrintConLeaders (reportFile$, destination)
     End If
 
 End Sub
+
