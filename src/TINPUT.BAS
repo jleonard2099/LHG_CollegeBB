@@ -1,3 +1,4 @@
+
 '----------------------------------------
 '           TINPUT Subroutine
 '----------------------------------------
@@ -16,9 +17,9 @@ Sub TINPUT ()
     Shared teamAttendance&, defFGPctAdj%, staminaRating%
     Shared mascot$, coach$, arenaName$
 
-    Dim E0(16)
+    Dim inputRatings(16)
     Dim inputQQ(3), inputX$(3)
-        
+
     Shared teamRatings%()
 
     Shared playerOff!(), playerDef!(), leagueRatings%()
@@ -148,8 +149,12 @@ Sub TINPUT ()
 
                 Print UCase$(I$)
 
-                If UCase$(I$) = "Y" Then inputQQ(0) = 0
-                If UCase$(I$) = "N" Then inputQQ(0) = 1
+                If UCase$(I$) = "Y" Then
+                    inputQQ(0) = 1
+                End If
+                If UCase$(I$) = "N" Then
+                    inputQQ(0) = 0
+                End If
 
                 Print
                 Color 14: Print "(2) ";
@@ -163,8 +168,12 @@ Sub TINPUT ()
 
                     Print UCase$(I$)
 
-                    If UCase$(I$) = "Y" Then inputQQ(1) = 0
-                    If UCase$(I$) = "N" Then inputQQ(1) = 1
+                    If UCase$(I$) = "Y" Then
+                        inputQQ(1) = 1
+                    End If
+                    If UCase$(I$) = "N" Then
+                        inputQQ(1) = 0
+                    End If
 
                     Print
                     Color 14: Print "(3) ";
@@ -178,8 +187,12 @@ Sub TINPUT ()
 
                         Print UCase$(I$)
 
-                        If UCase$(I$) = "Y" Then inputQQ(2) = 0
-                        If UCase$(I$) = "N" Then inputQQ(2) = 1
+                        If UCase$(I$) = "Y" Then
+                            inputQQ(2) = 1
+                        End If
+                        If UCase$(I$) = "N" Then
+                            inputQQ(2) = 0
+                        End If
 
                         Print
                         Color 14: Print "(4) ";
@@ -193,8 +206,12 @@ Sub TINPUT ()
 
                             Print UCase$(I$)
 
-                            If UCase$(I$) = "Y" Then inputQQ(3) = 0
-                            If UCase$(I$) = "N" Then inputQQ(3) = 1
+                            If UCase$(I$) = "Y" Then
+                                inputQQ(3) = 1
+                            End If
+                            If UCase$(I$) = "N" Then
+                                inputQQ(3) = 1
+                            End If
 
                             Print
 
@@ -237,20 +254,20 @@ Sub TINPUT ()
         Locate 7: Input " 5. HOMECOURT FACTOR (0-6)"; teamRatings%(6)
         Locate 8: Input " 6. TEXT COLOR (0-15) "; teamRatings%(0)
         Locate 9: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings%(1)
-        'Locate 8, 37
+        'Locate 8, 40
         'Print "TEAM APPEARANCE: ";
-        Locate 9, 37
+        Locate 9, 40
         Color teamRatings%(0), teamRatings%(1)
         Print A$ + " " + mascot$
         Color 15, 0
 
-        Locate 2, 37: Input "20. GAMES PLAYED "; nbrGmsPlayed
-        Locate 3, 37: Input "21. WINS "; teamRatings%(7)
-        Locate 4, 37: Input "22. LOSSES "; teamRatings%(8)
-        Locate 5, 37: Input "23. POWER RATING "; teamRatings%(9)
-        Locate 6, 37: Input "24. COACH "; coach$
-        Locate 7, 37: Input "25. ARENA "; arenaName$
-        Locate 8, 37: Input "26. AVG ATT "; teamAttendance&
+        Locate 2, 40: Input "20. GAMES PLAYED "; nbrGmsPlayed
+        Locate 3, 40: Input "21. WINS "; teamRatings%(7)
+        Locate 4, 40: Input "22. LOSSES "; teamRatings%(8)
+        Locate 5, 40: Input "23. POWER RATING "; teamRatings%(9)
+        Locate 6, 40: Input "24. COACH "; coach$
+        Locate 7, 40: Input "25. ARENA "; arenaName$
+        Locate 8, 40: Input "26. AVG ATT "; teamAttendance&
 
         Color 14
         Locate 11, 16: Print "TEAM"
@@ -324,9 +341,9 @@ Sub TINPUT ()
                 Case 6
                     Locate 8: Input " 6. TEXT COLOR (0-15) "; teamRatings%(0)
                     If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
-                        'Locate 8, 37
+                        'Locate 8, 40
                         'Print "TEAM APPEARANCE: ";
-                        Locate 9, 37
+                        Locate 9, 40
                         Color teamRatings%(0), teamRatings%(1)
                         Print A$ + " " + mascot$
                         Color 15, 0
@@ -337,7 +354,7 @@ Sub TINPUT ()
                     If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
                         'Locate 8, 37
                         'Print "TEAM APPEARANCE: ";
-                        Locate 9, 37
+                        Locate 9, 40
                         Color teamRatings%(0), teamRatings%(1)
                         Print A$ + " " + mascot$
                         Color 15, 0
@@ -401,25 +418,25 @@ Sub TINPUT ()
                     Locate 23, 1: Input "OPP 2FG% "; opp2FGPct
 
                 Case 20
-                    Locate 2, 37: Input " 3. GAMES PLAYED "; nbrGmsPlayed
+                    Locate 2, 40: Input " 3. GAMES PLAYED "; nbrGmsPlayed
 
                 Case 21
-                    Locate 3, 37: Input "20. WINS "; teamRatings%(7)
+                    Locate 3, 40: Input "20. WINS "; teamRatings%(7)
 
                 Case 22
-                    Locate 4, 37: Input "21. LOSSES "; teamRatings%(8)
+                    Locate 4, 40: Input "21. LOSSES "; teamRatings%(8)
 
                 Case 23
-                    Locate 5, 37: Input "22. POWER RATING "; teamRatings%(9)
+                    Locate 5, 40: Input "22. POWER RATING "; teamRatings%(9)
 
                 Case 24
-                    Locate 6, 37: Input "23. COACH "; coach$
+                    Locate 6, 40: Input "23. COACH "; coach$
 
                 Case 25
-                    Locate 7, 37: Input "24. ARENA "; arenaName$
+                    Locate 7, 40: Input "24. ARENA "; arenaName$
 
                 Case 26
-                    Locate 8, 37: Input "25. AVG ATT "; teamAttendance&
+                    Locate 8, 40: Input "25. AVG ATT "; teamAttendance&
 
             End Select
 
@@ -431,7 +448,7 @@ Sub TINPUT ()
         ' Players
         '---------------
         'Average FGA/G for this team (Off + Def)
-        teamRatings%(3) = Int( ((tmFGA + oppFGA) / (nbrGmsPlayed * 2)) + .5)
+        teamRatings%(3) = Int(((tmFGA + oppFGA) / (nbrGmsPlayed * 2)) + .5)
         teamRatings%(4) = leagFGAPerGm
         teamRatings%(5) = nbrGmsPlayed
 
@@ -539,40 +556,40 @@ Sub TINPUT ()
 
                         End Select
 
-                        playerStats!(I, 0) = playerOff!(I, 7)
-                        playerStats!(I, 1) = playerOff!(I, 8)
-                        playerStats!(I, 2) = playerOff!(I, 9)
+                    End If
 
-                        If playerStats!(I, 2) = 0 Then
-                            playerOff!(I, 0) = 0
-                        Else
-                            playerOff!(I, 0) = Int(playerStats!(I, 3) / playerStats!(I, 2) * 100 + .5)
-                        End If
+                    playerStats!(I, 0) = playerOff!(I, 7)
+                    playerStats!(I, 1) = playerOff!(I, 8)
+                    playerStats!(I, 2) = playerOff!(I, 9)
 
-                        playerStats!(I, 4) = playerOff!(I, 16)
+                    If playerStats!(I, 2) = 0 Then
+                        playerOff!(I, 0) = 0
+                    Else
+                        playerOff!(I, 0) = Int(playerStats!(I, 3) / playerStats!(I, 2) * 100 + .5)
+                    End If
 
-                        If playerStats!(I, 4) = 0 Then
-                            playerOff!(I, 1) = 0
-                        Else
-                            playerOff!(I, 1) = Int(playerStats!(I, 5) / playerStats!(I, 4) * 100 + .5)
-                        End If
+                    playerStats!(I, 4) = playerOff!(I, 16)
 
-                        playerStats!(I, 6) = playerOff!(I, 19)
-                        playerStats!(I, 7) = playerOff!(I, 10)
-                        playerStats!(I, 8) = playerOff!(I, 12)
-                        playerStats!(I, 9) = playerOff!(I, 11)
-                        playerStats!(I, 10) = playerOff!(I, 14)
-                        playerStats!(I, 11) = playerOff!(I, 13)
-                        playerStats!(I, 12) = playerOff!(I, 17)
+                    If playerStats!(I, 4) = 0 Then
+                        playerOff!(I, 1) = 0
+                    Else
+                        playerOff!(I, 1) = Int(playerStats!(I, 5) / playerStats!(I, 4) * 100 + .5)
+                    End If
 
-                        If playerStats!(I, 12) = 0 Then
-                            playerOff!(I, 18) = 0
-                            playerRatings!(I, 2) = 0
-                        Else
-                            playerOff!(I, 18) = Int(playerStats!(I, 13) / playerStats!(I, 12) * 100 + .5)
-                            playerRatings!(I, 2) = playerOff!(I, 18)
-                        End If
+                    playerStats!(I, 6) = playerOff!(I, 19)
+                    playerStats!(I, 7) = playerOff!(I, 10)
+                    playerStats!(I, 8) = playerOff!(I, 12)
+                    playerStats!(I, 9) = playerOff!(I, 11)
+                    playerStats!(I, 10) = playerOff!(I, 14)
+                    playerStats!(I, 11) = playerOff!(I, 13)
+                    playerStats!(I, 12) = playerOff!(I, 17)
 
+                    If playerStats!(I, 12) = 0 Then
+                        playerOff!(I, 18) = 0
+                        playerRatings!(I, 2) = 0
+                    Else
+                        playerOff!(I, 18) = Int(playerStats!(I, 13) / playerStats!(I, 12) * 100 + .5)
+                        playerRatings!(I, 2) = playerOff!(I, 18)
                     End If
 
                 Loop Until B9 = 0
@@ -590,6 +607,7 @@ Sub TINPUT ()
         Next I
 
         X1 = Val(Mid$(A$, 1, 2))
+
         'Adjusts team and player FTA
         'based on FT rules changes
         '-- original code was between 1 and 72
@@ -653,11 +671,19 @@ Sub TINPUT ()
                 playerOff!(I, 2) = X - playerRatings!(I, 4)
 
                 'Assists / Game
-                If inputQQ(0) = 0 Then playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * M) * (L6 / (tmAsst / nbrGmsPlayed)) + .5)
+                If inputQQ(0) = 0 Then
+                    playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * M) * (L6 / (tmAsst / nbrGmsPlayed)) + .5)
+                End If
+
                 'Steals / Game
-                If inputQQ(2) = 0 Then playerOff!(I, 5) = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * M) + .5)
+                If inputQQ(2) = 0 Then
+                    playerOff!(I, 5) = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * M) + .5)
+                End If
+
                 'Blocks / Game
-                If inputQQ(3) = 0 Then playerOff!(I, 6) = Int(((playerOff!(I, 14) / playerOff!(I, 7)) * M) + .5)
+                If inputQQ(3) = 0 Then
+                    playerOff!(I, 6) = Int(((playerOff!(I, 14) / playerOff!(I, 7)) * M) + .5)
+                End If
 
             End If
 
@@ -675,8 +701,13 @@ Sub TINPUT ()
         BY = Int(X3 / 2)
         X4 = Int(Rnd(1) * 2)
 
-        If X3 - BC - BY > 0 And X4 = 0 Then BC = BC + 1
-        If X3 - BC - BY > 0 And X4 = 1 Then BY = BY + 1
+        If X3 - BC - BY > 0 And X4 = 0 Then
+            BC = BC + 1
+        End If
+
+        If X3 - BC - BY > 0 And X4 = 1 Then
+            BY = BY + 1
+        End If
 
         U7 = Int((46 - leagFGPct) / 2)
         defFGPctAdj% = opp2FGPct - leagFGPct + BY - U7
@@ -793,7 +824,7 @@ Sub TINPUT ()
         '---------------
         ' Assists
         '---------------
-        If inputQQ(0) = 1 Then
+        If inputQQ(0) = 0 Then
 
             Cls
             Color 14
@@ -808,13 +839,13 @@ Sub TINPUT ()
                 Locate I + 6, 1
                 Print I; " "; playerNames$(I);
                 Locate I + 6, 20
-                Input E0(I)
+                Input inputRatings(I)
             Next I
 
             AA = 0
 
             For I1 = 0 To 13
-                AA = AA + E0(I1) * Int(playerOff!(I1, 3))
+                AA = AA + inputRatings(I1) * Int(playerOff!(I1, 3))
             Next I1
 
             Locate 20, 1
@@ -831,13 +862,13 @@ Sub TINPUT ()
                 If UCase$(I$) <> "N" Then
                     I = Val(I$)
                     Locate I + 6, 20
-                    Input E0(I)
+                    Input inputRatings(I)
                 End If
 
             Loop Until UCase$(I$) = "N"
 
             For I = 0 To 13
-                playerOff!(I, 4) = playerOff!(I, 4) + E0(I)
+                playerOff!(I, 4) = playerOff!(I, 4) + inputRatings(I)
             Next I
 
         End If
@@ -845,7 +876,7 @@ Sub TINPUT ()
         '---------------
         ' Foul Commit
         '---------------
-        If inputQQ(1) = 1 Then
+        If inputQQ(1) = 0 Then
 
             Cls
             Color 14
@@ -860,7 +891,7 @@ Sub TINPUT ()
                 Locate I + 6, 1
                 Print I; " "; playerNames$(I);
                 Locate I + 6, 20
-                Input E0(I)
+                Input inputRatings(I)
             Next I
 
             PF = 0
@@ -869,7 +900,7 @@ Sub TINPUT ()
             For I1 = 0 To 13
                 If playerNames$(I1) <> "XXX" Then
                     TP = TP + 1
-                    PF = PF + E0(I1)
+                    PF = PF + inputRatings(I1)
                 End If
             Next I1
 
@@ -887,13 +918,13 @@ Sub TINPUT ()
                 If UCase$(I$) <> "N" Then
                     I = Val(I$)
                     Locate I + 6, 20
-                    Input E0(I)
+                    Input inputRatings(I)
                 End If
 
             Loop Until UCase$(I$) = "N"
 
             For I = 0 To 13
-                playerRatings!(I, 5) = E0(I)
+                playerRatings!(I, 5) = inputRatings(I)
             Next I
 
         End If
@@ -901,7 +932,7 @@ Sub TINPUT ()
         '---------------
         ' Steals & TOs
         '---------------
-        If inputQQ(2) = 1 Then
+        If inputQQ(2) = 0 Then
 
             HQ = tmFGA - oppFGA
             HR = tmFTA - oppFTA
@@ -930,23 +961,23 @@ Sub TINPUT ()
                 Locate I + 7, 1
                 Print I; " "; playerNames$(I);
                 Locate I + 7, 20
-                Input E0(I)
+                Input inputRatings(I)
             Next I
 
-            Locate 20, 1: Input "X-TM OFF STL ADJ   "; E0(14)
-            Locate 21, 1: Input "Y-TM TURNOVER ADJ  "; E0(15)
-            Locate 22, 1: Input "Z-TM DEF TURNOVR ADJ"; E0(16)
+            Locate 21, 1: Input "X-TM OFF STL ADJ   "; inputRatings(14)
+            Locate 22, 1: Input "Y-TM TURNOVER ADJ  "; inputRatings(15)
+            Locate 23, 1: Input "Z-TM DEF TURNOVR ADJ"; inputRatings(16)
 
             ST = 0
 
             For I = 0 To 13:
-                ST = ST + E0(I) * Int(playerOff!(I, 3))
+                ST = ST + inputRatings(I) * Int(playerOff!(I, 3))
             Next I
 
             ST = ST / 20
-            SY = 7 + E0(14) * .4
-            SV = (R * E0(15)) / 100
-            SW = ((4 + E0(16)) * R) / 100
+            SY = 7 + inputRatings(14) * .4
+            SV = (R * inputRatings(15)) / 100
+            SW = ((4 + inputRatings(16)) * R) / 100
             ST = ST - SY - SV + SW
 
             Locate 10, 26
@@ -969,20 +1000,20 @@ Sub TINPUT ()
                     If I <= 13 Then
 
                         Locate I + 7, 20
-                        Input E0(I)
+                        Input inputRatings(I)
 
                     Else
 
                         Select Case UCase$(I$)
 
                             Case "X":
-                                Locate 20, 1: Input "X-TM OFF STL ADJ   "; E0(14)
+                                Locate 20, 1: Input "X-TM OFF STL ADJ   "; inputRatings(14)
 
                             Case "Y":
-                                Locate 21, 1: Input "Y-TM TURNOVER ADJ  "; E0(15)
+                                Locate 21, 1: Input "Y-TM TURNOVER ADJ  "; inputRatings(15)
 
                             Case "Z":
-                                Locate 22, 1: Input "Z-TM DEF TURNOVR ADJ"; E0(16)
+                                Locate 22, 1: Input "Z-TM DEF TURNOVR ADJ"; inputRatings(16)
 
                         End Select
 
@@ -993,14 +1024,14 @@ Sub TINPUT ()
             Loop Until UCase$(I$) = "N"
 
             For I = 0 To 13
-                playerOff!(I, 5) = playerOff!(I, 5) + E0(I)
+                playerOff!(I, 5) = playerOff!(I, 5) + inputRatings(I)
             Next I
 
-            If E0(14) < 0 Then E0(14) = 100 + E0(14)
-            If E0(16) < 0 Then E0(16) = 100 + E0(16)
+            If inputRatings(14) < 0 Then inputRatings(14) = 100 + inputRatings(14)
+            If inputRatings(16) < 0 Then inputRatings(16) = 100 + inputRatings(16)
 
             For I = 0 To 2
-                leagueRatings%(I) = E0(I + 14)
+                leagueRatings%(I) = inputRatings(I + 14)
             Next
 
             I$ = GetKeyPress$
@@ -1010,7 +1041,7 @@ Sub TINPUT ()
         '---------------
         ' Block Ratings
         '---------------
-        If inputQQ(3) = 1 Then
+        If inputQQ(3) = 0 Then
 
             Cls
             Color 14
@@ -1024,7 +1055,7 @@ Sub TINPUT ()
                 Locate I + 6, 1
                 Print I; " "; playerNames$(I);
                 Locate I + 6, 20
-                Input E0(I)
+                Input inputRatings(I)
             Next I
 
             Do
@@ -1037,7 +1068,7 @@ Sub TINPUT ()
                 If UCase$(I$) <> "N" Then
                     I = Val(I$)
                     Locate I + 6, 20
-                    Input E0(I)
+                    Input inputRatings(I)
                 End If
 
             Loop Until UCase$(I$) = "N"
@@ -1045,7 +1076,7 @@ Sub TINPUT ()
         End If
 
         For I = 0 To 13:
-            playerOff!(I, 6) = playerOff!(I, 6) + E0(I)
+            playerOff!(I, 6) = playerOff!(I, 6) + inputRatings(I)
         Next I
 
         Call SaveTeam(1, A$, yearNumber$, teamNumber)
@@ -1079,7 +1110,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Shared playerNames$(), position$()
 
-    Call CSMsgBox("SAVING TEAM FILES", 20, Pass)
+    Call CSMsgBox("SAVING TEAM FILES", 20, PASS)
 
     teamYear$ = RTrim$(yearNumber$)
 
@@ -1179,7 +1210,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     Close #2
 
-    Call CSMsgBox("", 0, Pass)
+    Call CSMsgBox("", 0, PASS)
 
     tmSteal = 0
 

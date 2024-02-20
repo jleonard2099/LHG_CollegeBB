@@ -626,6 +626,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
                 Case 2, 3:
 
+                    teamNbr = 0
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
                     If teamNbr <> 0 Then
@@ -867,6 +868,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                     Case 3, 5:
 
+                        T1 = 0
                         Call ChooseTeam(YN$, numberTeams, T1, teamName$)
 
                         If T1 <> 0 Then

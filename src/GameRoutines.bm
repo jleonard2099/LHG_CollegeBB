@@ -4123,17 +4123,42 @@ Sub SCOREBOARD ()
 
 End Sub
 
-'------------------------------
-'    ColorChange Subroutine
-'------------------------------
-' ...explanation...
+
+'----------------------------------------
+'         ColorChange Subroutine
+'----------------------------------------
+'This routine checks to see if both teams
+'have conflicting primary colors. 
+'If so, it will substitute the secondary 
+'color with white/grey and reverse them.
+'In essence, it's the digital equivalent 
+'of assigning an alternate jersey color.
 Sub ColorChange ()
 
-    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 4 Then teamRat_GAME(1, 0) = 4: teamRat_GAME(1, 1) = 7
-    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 1 Then teamRat_GAME(1, 0) = 1: teamRat_GAME(1, 1) = 7
-    If teamRat_GAME(1, 0) = 0 And teamRat_GAME(1, 1) = 4 Then teamRat_GAME(1, 0) = 12: teamRat_GAME(1, 1) = 0
-    If teamRat_GAME(1, 0) = 1 And teamRat_GAME(1, 1) = 7 Then teamRat_GAME(1, 0) = 15: teamRat_GAME(1, 1) = 1
-    If teamRat_GAME(1, 0) = 4 And teamRat_GAME(1, 1) = 7 Then teamRat_GAME(1, 0) = 15: teamRat_GAME(1, 1) = 4
+    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 4 Then 
+        teamRat_GAME(1, 0) = 4
+        teamRat_GAME(1, 1) = 7
+    End If
+
+    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 1 Then 
+        teamRat_GAME(1, 0) = 1
+        teamRat_GAME(1, 1) = 7
+    End If
+
+    If teamRat_GAME(1, 0) = 0 And teamRat_GAME(1, 1) = 4 Then 
+        teamRat_GAME(1, 0) = 12
+        teamRat_GAME(1, 1) = 0
+    End If
+
+    If teamRat_GAME(1, 0) = 1 And teamRat_GAME(1, 1) = 7 Then 
+        teamRat_GAME(1, 0) = 15
+        teamRat_GAME(1, 1) = 1
+    End If
+
+    If teamRat_GAME(1, 0) = 4 And teamRat_GAME(1, 1) = 7 Then 
+        teamRat_GAME(1, 0) = 15
+        teamRat_GAME(1, 1) = 4
+    End If
 
 End Sub
 

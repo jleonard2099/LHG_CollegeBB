@@ -35,7 +35,7 @@ Sub CNGTM (userChoice)
             Selection% = userChoice
         Else
 
-            Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+            Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
             _MouseShow "DEFAULT"
             MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -99,12 +99,12 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
     Print Tab(29); "CHANGE TEAM INFORMATION"
     Color 15
 
-    Print " 1. TEAM NUMBER "; teamIdx; Tab(37); "20. NICKNAME "; mascot$
-    Print " 2. DISK ID "; yearNumber$; Tab(37); "21. COACH "; coach$
-    Print " 3. TEAM NAME "; teamName$; Tab(37); "22. AVG ATTENDANCE "; teamAttendance&
-    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(37); "23. WINS "; teamRatings%(7)
-    Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(37); "24. LOSSES "; teamRatings%(8)
-    Print " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj; Tab(37); "25. POWER RATING "; teamRatings%(9)
+    Print " 1. TEAM NUMBER "; teamIdx; Tab(40); "20. NICKNAME "; mascot$
+    Print " 2. DISK ID "; yearNumber$; Tab(40); "21. COACH "; coach$
+    Print " 3. TEAM NAME "; teamName$; Tab(40); "22. AVG ATTENDANCE "; teamAttendance&
+    Print " 4. TEAM STAMINA RATING "; staminaRating%; Tab(40); "23. WINS "; teamRatings%(7)
+    Print " 5. DEF FG% ADJ "; defFGPctAdj%; Tab(40); "24. LOSSES "; teamRatings%(8)
+    Print " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj; Tab(40); "25. POWER RATING "; teamRatings%(9)
     Print " 7. DEF 3FG% ADJ "; def3FG_Adj
     Print " 8. OFF STEAL RATING "; leagueRatings%(0)
     Print " 9. OFF TURNOVER RATING "; leagueRatings%(1)
@@ -225,26 +225,26 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
                 Locate 20: Input "19. ARENA NAME "; arenaName$
 
             Case 20
-                Locate 2, 37: Input "20. NICKNAME "; mascot$
+                Locate 2, 40: Input "20. NICKNAME "; mascot$
 
             Case 21
-                Locate 3, 37: Input "21. COACH "; coach$
+                Locate 3, 40: Input "21. COACH "; coach$
 
             Case 22
                 Locate 2, 20: Print Space$(5)
-                Locate 4, 37: Input "22. AVG ATTENDANCE "; teamAttendance&
+                Locate 4, 40: Input "22. AVG ATTENDANCE "; teamAttendance&
 
             Case 23
                 Locate 2, 10: Print Space$(5)
-                Locate 5, 37: Input "23. WINS "; teamRatings%(7)
+                Locate 5, 40: Input "23. WINS "; teamRatings%(7)
 
             Case 24
                 Locate 2, 12: Print Space$(5)
-                Locate 6, 37: Input "24. LOSSES "; teamRatings%(8)
+                Locate 6, 40: Input "24. LOSSES "; teamRatings%(8)
 
             Case 25
                 Locate 2, 18: Print Space$(5)
-                Locate 7, 37: Input "25. POWER RATING "; teamRatings%(9)
+                Locate 7, 40: Input "25. POWER RATING "; teamRatings%(9)
 
         End Select
 
@@ -500,7 +500,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
             Else
                 'We need to warn the user that
                 'our total doesn't add up!!
-                Call box0 (6, 8, 11, 70, 2, 15, 1)
+                Call box0(6, 8, 11, 70, 2, 15, 1)
 
                 Locate 7
 
@@ -637,7 +637,9 @@ Sub ViewRoster (teamName$)
     For I = 0 To 13
         If playerNames$(I) <> "XXX" Then
             Print playerNames$(I); Tab(16);
+            'FG% --> CX
             Print Using "### ### ### ### ### "; playerOff!(I, 0); playerOff!(I, 1); playerRatings!(I, 4); playerOff!(I, 2); playerOff!(I, 3);
+            'PS --> FD
             Print Using "## ## ## ### ##  ###  ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
         End If
     Next I
@@ -668,7 +670,7 @@ Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
     Shared playerNames$(), position$()
     Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
-    Call CSMsgBox("SAVING TEAM FILES", 20, Pass)
+    Call CSMsgBox("SAVING TEAM FILES", 20, PASS)
 
     teamYear$ = RTrim$(yearNumber$)
 
@@ -741,7 +743,8 @@ Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
 
     Close #2
 
-    Call CSMsgBox("", 0, Pass)
+    Call CSMsgBox("", 0, PASS)
 
 End Sub
+
 
