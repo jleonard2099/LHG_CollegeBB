@@ -20,7 +20,7 @@ Sub LOOKY ()
 
             statFile$ = nameStatFile$(team$)
 
-            If Not _FileExists(diskPaths$(1) + statFile$) Then
+            If Not _FileExists(diskPaths$(1) + statFile$) And teamNbr > 0 Then
 
                 MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
                 BoxWidth = 24
