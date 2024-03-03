@@ -14,13 +14,16 @@ Sub LOOKY ()
 
         menuExit = 0
 
+        teamNbr = 0
         Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
         If teamNbr > 0 Then
 
+            Color 15, 0
+
             statFile$ = nameStatFile$(team$)
 
-            If Not _FileExists(diskPaths$(1) + statFile$) And teamNbr > 0 Then
+            If Not _FileExists(diskPaths$(1) + statFile$) Then
 
                 MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
                 BoxWidth = 24
@@ -276,8 +279,8 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
         Select Case UCase$(I$)
 
-            'Page Down
-            Case Chr$(0) + "Q":
+            Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(73)
+                'Page Down / RIGHT Arrow
                 Color , 0
                 Cls
                 Call ExtendedStatSummary(statFile$, teamName$, totalGames%, menuExit)
@@ -482,42 +485,42 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         Do
             I$ = GetKeyPress$
 
-            Select Case I$
+            Select Case UCase$(I$)
 
-                'Pg Down
                 Case Chr$(0) + "Q"
+                    'Pg Down
                     Call ViewTeamStats(statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-                    'Pg Up
                 Case Chr$(0) + "I"
+                    'Pg Up
                     Cls
                     Call ExtendedStatSummary(statFile$, teamName$, totalGames%, menuExit)
 
-                    'Right Arrow
                 Case Chr$(0) + "M"
+                    'Right Arrow
                     categoryPick = categoryPick + 1
                     If categoryPick > 13 Then categoryPick = 1
                     Color 12
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
-                    'Left Arrow
                 Case Chr$(0) + "K"
+                    'Left Arrow
                     categoryPick = categoryPick - 1
                     If categoryPick < 1 Then categoryPick = 13
                     Color 12
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
-                    'Enter
                 Case Chr$(13)
+                    'Enter
                     Call SortStats(categoryPick)
 
+                Case "D"
                     'Delete
-                Case "d", "D"
                     Kill diskPaths$(1) + statFile$
                     Kill diskPaths$(1) + statFile$ + "S"
 
+                Case "P"
                     'Print
-                Case "p", "P"
                     Call PrintStatsSchedule(teamName$, totalGames%)
                     Call PrintStatsSummary(teamName$, totalGames%)
 
@@ -644,35 +647,36 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
             I$ = GetKeyPress$
 
-            Select Case I$
+            Select Case UCase$(I$)
 
-                'Page Up
                 Case Chr$(0) + "I"
+                    ' Page Up
                     Cls
                     Call ViewPlayerStats(statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-                    'Right Arrow
                 Case Chr$(0) + "M"
+                    'Right Arrow
                     categoryPick = categoryPick + 1
                     If categoryPick > 25 Then categoryPick = 14
                     Color 3
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
-                    'Left Arrow
                 Case Chr$(0) + "K"
+                    'Left Arrow
                     categoryPick = categoryPick - 1
                     If categoryPick < 14 Then categoryPick = 25
                     Color 3
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                 Case Chr$(13)
+                    'Enter
                     Call SortStats(categoryPick)
 
-                Case "d", "D"
+                Case "D"
                     Kill diskPaths$(1) + statFile$
                     Kill diskPaths$(1) + statFile$ + "S"
 
-                Case "p", "P"
+                Case "P"
                     Call PrintStatsSchedule(teamName$, totalGames%)
                     Call PrintStatsSummary(teamName$, totalGames%)
 
@@ -774,27 +778,27 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
     Do
         I$ = GetKeyPress$
 
-        Select Case I$
+        Select Case UCase$(I$)
 
-            'Page Down
-            Case Chr$(0) + "Q"
+            Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(73)
+                'Page Down / RIGHT Arrow
                 Color , 0
                 Cls
                 Call ViewPlayerStats(statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-                'Page Up
-            Case Chr$(0) + "I"
+            Case Chr$(0) + Chr$(73), Chr$(0) + Chr$(75)
+                ' Page Up / LEFT Arrow
                 Color , 0
                 Cls
                 Call ViewStatSummary(statFile$, teamName$, totalGames%, menuExit)
 
+            Case "D":
                 'Delete
-            Case "d", "D":
                 Kill diskPaths$(1) + statFile$
                 Kill diskPaths$(1) + statFile$ + "S"
 
+            Case "P":
                 'Print
-            Case "p", "P":
                 Call PrintStatsSchedule(teamName$, totalGames%)
                 Call PrintStatsSummary(teamName$, totalGames%)
 

@@ -234,16 +234,16 @@ Sub TOURNEY ()
                 Case "Q":
                     'Exit Sub
 
-                Case Chr$(0) + "Q":
-                    ' *** PAGE DOWN ***
+                Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(73)
+                    ' *** PAGE DOWN | RIGHT ARROW ***
                     If NS% >= BS% Then
                         NS% = BS%
                     Else
                         NS% = NS% + 1
                     End If
 
-                Case Chr$(0) + "I":
-                    ' *** PAGE UP ***
+                Case Chr$(0) + Chr$(73), Chr$(0) + Chr$(75)
+                    ' *** PAGE UP | LEFT ARROW ***
                     If NS% <> 0 Then
                         NS% = NS% - 1
                     End If

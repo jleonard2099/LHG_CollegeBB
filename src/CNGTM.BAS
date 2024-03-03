@@ -49,14 +49,17 @@ Sub CNGTM (userChoice)
             Select Case Selection%
 
                 Case 1:
+                    teamNbr = 0
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
                     If teamNbr > 0 Then Call EditTeam(team$, teamNbr, YN$)
 
                 Case 2:
+                    teamNbr = 0
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
                     If teamNbr > 0 Then Call PrintRoster(team$)
 
                 Case 3:
+                    teamNbr = 0
                     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
                     If teamNbr > 0 Then Call ViewRoster(team$)
 

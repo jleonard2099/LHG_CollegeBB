@@ -3792,15 +3792,23 @@ Sub UPDATESCREEN ()
 
         Color 15, 0
         Locate 11, 41
-        Color 14: Print "ENTER ";: Color 15: Print "PASS"
+        Color 14: Print "(1) ";
+        Color 15: Print "SHOOT        ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-PASS"
         Locate , 41
-        Color 14: Print "(1)  ";: Color 15: Print "SHOOT"
+        Color 14: Print "(2)  ";
+        Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
         Locate , 41
-        Color 14: Print "(2)  ";: Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
+        Color 14: Print "(T)  ";
+        Color 15: Print "10 MIN TICKER"
         Locate , 41
-        Color 14: Print "(T)  ";: Color 15: Print "10 MIN TICKER"
+        Color 14: Print "(D)  ";
+        Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
         Locate , 41
-        Color 14: Print "(D)  ";: Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
+        Color 14: Print "(B)  ";
+        Color 15: Print "BOXSCORE"
+
         Color 15, 0
 
         Locate 19, 1
@@ -3976,16 +3984,30 @@ Sub SCOREBOARD ()
 
     'Team strategies / decisions
     Locate 9, 41
-    Color teamRat_GAME(D, 0), teamRat_GAME(D, 1): Print "DEF-"; defStyles_brief$(defStrat(D))
+    Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
+    Print "DEF-"; defStyles_brief$(defStrat(D))
     Locate , 41
-    Color teamRat_GAME(P, 0), teamRat_GAME(P, 1): Print "OFF-"; offStyles_brief$(offStrat(P))
+    Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
+    Print "OFF-"; offStyles_brief$(offStrat(P))
 
     Color 15, 0
-    Locate 11, 41: Color 14: Print "ENTER";: Color 14: Print "-PASS"
-    Locate , 41: Color 14: Print "(1)  ";: Color 15: Print "SHOOT"
-    Locate , 41: Color 14: Print "(2)  ";: Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
-    Locate , 41: Color 14: Print "(T)  ";: Color 15: Print "10 MIN TICKER"
-    Locate , 41: Color 14: Print "(D)  ";: Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
+    Locate 11, 41
+    Color 14: Print "(1) ";
+    Color 15: Print "SHOOT        ";
+    Color 14: Print "ENTER";
+    Color 15: Print "-PASS"
+    Locate , 41
+    Color 14: Print "(2)  ";
+    Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
+    Locate , 41
+    Color 14: Print "(T)  ";
+    Color 15: Print "10 MIN TICKER"
+    Locate , 41
+    Color 14: Print "(D)  ";
+    Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
+    Locate , 41
+    Color 14: Print "(B)  ";
+    Color 15: Print "BOXSCORE"
 
     Color 9, 0
     Locate 7, 1
@@ -5381,9 +5403,15 @@ End Sub
 'missed FT's when there are 3 attempts.
 Sub BADFT ()
 
-    If F3 = 1 Then pbpString$ = "FIRST FREE THROW IS MISSED"
-    If F3 = 2 Then pbpString$ = "SECOND FREE THROW IS MISSED"
-    If F3 = 3 Then pbpString$ = "THIRD FREE THROW IS MISSED"
+    Select Case F3
+        Case 1 
+            pbpString$ = "FIRST FREE THROW IS MISSED"
+        Case 2
+            pbpString$ = "SECOND FREE THROW IS MISSED"
+        Case 3
+            pbpString$ = "THIRD FREE THROW IS MISSED"
+    End Select
+
     Call PBP
 
 End Sub
@@ -6617,8 +6645,8 @@ Sub FoundSpecial (specialCount, specialStat)
 
     'Get count of SPC files to determine
     'number to assign next one
-    'Spec$ = diskPaths$(1) + "*.BSS"
-    Spec$ = diskPaths$(1) + "*.SPC"
+    'Spec$ = diskPaths$(1) + "*.SPC"
+    Spec$ = diskPaths$(1) + "*.BSS"
     specialCount = FileCount%(Spec$)
     specialCount = specialCount + 1
     specialStat = 1
@@ -6694,8 +6722,8 @@ Sub POSTGAME ()
     'If we had special events
     If specialStat = 1 Then
 
-        boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
-        'boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
+        boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
+        'boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
 
         'Append special events
         Call BOX2SPC(boxName$)
@@ -6745,14 +6773,14 @@ Sub BOXOPTIONS (outputChoice)
                 'File = prompt | auto-create
                 If autoPlay <> 1 Then
                     Cls
-                    Print "ENTER 8-CHARACTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
+                    Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
                     Input boxName$
-                    boxName$ = boxName$ + ".SPC"
-                    'boxName$ = boxName$ + ".BSS"
+                    boxName$ = boxName$ + ".BSS"
+                    'boxName$ = boxName$ + ".SPC"
                 Else
                     'ScheduleName_GameXXX.BS
-                    boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
-                    'boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    'boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
                 End If
 
             End If
@@ -7909,14 +7937,32 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
             If I$ <> Chr$(13) Then
 
-                Locate 8, 27: Print I$
-                Locate 8, 28: Line Input NY$
-                NY$ = I$ + NY$
-                Color 15, 0
+                Locate 7, 27: Print I$;
 
-                If Not (NY$ = "" And yearNumber$ <> "") Then
+                NY$ = ""
 
-                    yearNumber$ = RTrim$(NY$)
+                Do Until NY$ = Chr$(13)
+
+                    NY$ = GetKeyPress$
+
+                    If NY$ = Chr$(8) And Len(I$) >= 1 Then
+                        col% = Pos(0)
+                        I$ = Left$(I$, (Len(I$) - 1))
+                        Locate , col% - 1
+                        Print " ";
+                        Locate , col% - 1
+                    Else
+                        I$ = I$ + NY$
+                        Print NY$;
+                    End If
+
+                Loop
+
+                I$ = Left$(I$, (Len(I$) - 1))
+
+                If Not (I$ = "" And yearNumber$ <> "") Then
+
+                    yearNumber$ = RTrim$(I$)
                     Erase teamNames$
                     numberTeams = 0
 
@@ -8023,8 +8069,10 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
         Color 14
         Locate , 33: Print "TEAM SELECTION"
         Locate 25, 1
-        Color 14: Print "ESC";: Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";: Color 15: Print "-SELECTS TEAM";
+        Color 14: Print "ESC";
+        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-SELECTS TEAM";
 
         _MouseShow "DEFAULT"
         MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%

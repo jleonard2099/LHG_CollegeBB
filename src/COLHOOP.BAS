@@ -2435,22 +2435,30 @@ Sub COLHOOP ()
         530 '
         I$ = GetKeyPress$
 
-        If UCase$(I$) = "T" Then
-            Call TICKER
-            Call SCOREBOARD
-            GoTo 529
-        End If
+        Select Case UCase$(I$)
 
-        If UCase$(I$) = "D" Then
-            Call ZONECHANGE
-            Call SCOREBOARD
-            GoTo 529
-        End If
+            Case "B"
+                Call BOXOPTIONS(0)
+                Call SCOREBOARD
 
-        If UCase$(I$) = "O" Then
-            Call OPTIONS
-            GoTo 529
-        End If
+            Case "D"
+                Call ZONECHANGE
+                Call SCOREBOARD
+                GoTo 529
+
+            Case "O"
+                Call OPTIONS
+                GoTo 529
+
+            Case "T"
+                Call TICKER
+                Call SCOREBOARD
+                GoTo 529
+
+            Case "Q"
+                Exit Sub
+
+        End Select
 
         P6 = Val(I$)
 

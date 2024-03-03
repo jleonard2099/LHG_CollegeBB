@@ -481,6 +481,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
                     If Val(I$) = 1 Then
 
+                        teamNbr = 0
                         Call ChooseTeam (YN$, NTMS, teamNbr, team$)
 
                         If teamNbr <> 0 Then

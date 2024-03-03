@@ -236,6 +236,7 @@ Sub ReviewEditConference (conference$, div1$, div2$)
 
             If choice = 1 Then
                 'Add team
+                teamNbr = 0
                 Call ChooseTeam(Z2$(teamIndex), NTMS, scheduleZ1%(teamIndex), Z1$(teamIndex))
             Else
                 'Remove team

@@ -142,6 +142,7 @@ Sub MergeFirstYear ()
         Locate 15, 5
         Input "ENTER NAME OF CAREER STAT FILE "; careerFile$
 
+        teamNbr = 0
         Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
         If teamNbr <> 0 Then
@@ -458,6 +459,7 @@ Sub MergeCareerFiles ()
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
+            teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
             statFile$ = nameStatFile$(team$)
 

@@ -18,6 +18,7 @@ Sub COMPARE ()
 
     Dim posn$(0 To 13)
 
+    teamNbr = 0
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 

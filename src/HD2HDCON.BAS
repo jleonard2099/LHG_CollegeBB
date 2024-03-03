@@ -22,6 +22,7 @@ Sub HD2HDCON ()
 
     Shared D1$, D2$
 
+    teamNbr = 0
     Call ChooseTeam (YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 
