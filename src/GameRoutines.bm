@@ -3805,9 +3805,9 @@ Sub UPDATESCREEN ()
         Locate , 41
         Color 14: Print "(D)  ";
         Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-        Locate , 41
-        Color 14: Print "(B)  ";
-        Color 15: Print "BOXSCORE"
+        'Locate , 41
+        'Color 14: Print "(B)  ";
+        'Color 15: Print "BOXSCORE"
 
         Color 15, 0
 
@@ -4005,9 +4005,9 @@ Sub SCOREBOARD ()
     Locate , 41
     Color 14: Print "(D)  ";
     Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-    Locate , 41
-    Color 14: Print "(B)  ";
-    Color 15: Print "BOXSCORE"
+    'Locate , 41
+    'Color 14: Print "(B)  ";
+    'Color 15: Print "BOXSCORE"
 
     Color 9, 0
     Locate 7, 1
@@ -6645,8 +6645,8 @@ Sub FoundSpecial (specialCount, specialStat)
 
     'Get count of SPC files to determine
     'number to assign next one
-    'Spec$ = diskPaths$(1) + "*.SPC"
-    Spec$ = diskPaths$(1) + "*.BSS"
+    Spec$ = diskPaths$(1) + "*.SPC"
+    'Spec$ = diskPaths$(1) + "*.BSS"
     specialCount = FileCount%(Spec$)
     specialCount = specialCount + 1
     specialStat = 1
@@ -6722,8 +6722,8 @@ Sub POSTGAME ()
     'If we had special events
     If specialStat = 1 Then
 
-        boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
-        'boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
+        'boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
+        boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
 
         'Append special events
         Call BOX2SPC(boxName$)
@@ -6775,12 +6775,12 @@ Sub BOXOPTIONS (outputChoice)
                     Cls
                     Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
                     Input boxName$
-                    boxName$ = boxName$ + ".BSS"
-                    'boxName$ = boxName$ + ".SPC"
+                    'boxName$ = boxName$ + ".BSS"
+                    boxName$ = boxName$ + ".SPC"
                 Else
                     'ScheduleName_GameXXX.BS
-                    boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
-                    'boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
+                    'boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
                 End If
 
             End If
