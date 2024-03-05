@@ -7937,7 +7937,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
             If I$ <> Chr$(13) Then
 
-                Locate 7, 27: Print I$;
+                Locate 8, 27: Print I$;
 
                 NY$ = ""
 
