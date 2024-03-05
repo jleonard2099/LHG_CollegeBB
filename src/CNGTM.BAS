@@ -150,43 +150,43 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
                 Locate 4: Input " 3. TEAM NAME "; teamName$
 
             Case 4
-                Locate 2, 25: Print Space$(5)
+                Locate 5, 25: Print Space$(5)
                 Locate 5: Input " 4. TEAM STAMINA RATING "; staminaRating%
 
             Case 5
-                Locate 2, 17: Print Space$(5)
+                Locate 6, 17: Print Space$(5)
                 Locate 6: Input " 5. DEF FG% ADJ "; defFGPctAdj%
 
             Case 6
-                Locate 2, 22: Print Space$(5)
+                Locate 7, 22: Print Space$(5)
                 Locate 7: Input " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj
 
             Case 7
-                Locate 2, 18: Print Space$(5)
+                Locate 8, 18: Print Space$(5)
                 Locate 8: Input " 7. DEF 3FG% ADJ "; def3FG_Adj
 
             Case 8
-                Locate 2, 22: Print Space$(5)
+                Locate 9, 22: Print Space$(5)
                 Locate 9: Input " 8. OFF STEAL RATING "; leagueRatings%(0)
 
             Case 9
-                Locate 2, 25: Print Space$(5)
+                Locate 10, 25: Print Space$(5)
                 Locate 10: Input " 9. OFF TURNOVER RATING "; leagueRatings%(1)
 
             Case 10
-                Locate 2, 22: Print Space$(5)
+                Locate 11, 22: Print Space$(5)
                 Locate 11: Input "10. DEF TURNOVER ADJ "; leagueRatings%(2)
 
             Case 11
-                Locate 2, 18: Print Space$(5)
+                Locate 12, 18: Print Space$(5)
                 Locate 12: Input "11. DEF FOUL ADJ "; leagueRatings%(3)
 
             Case 12
-                Locate 2, 27: Print Space$(5)
+                Locate 13, 27: Print Space$(5)
                 Locate 13: Input "12. ENTER 99 IF USING 6-9 "; leagueRatings%(4)
 
             Case 13
-                Locate 2, 23: Print Space$(5)
+                Locate 14, 23: Print Space$(5)
                 Locate 14: Input "13. TEXT COLOR (0-15) "; teamRatings%(0)
 
                 If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
@@ -196,7 +196,7 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
                 End If
 
             Case 14
-                Locate 2, 28: Print Space$(5)
+                Locate 15, 28: Print Space$(5)
                 Locate 15: Input "14. BACKGROUND COLOR (0-7) "; teamRatings%(1)
 
                 If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
@@ -209,44 +209,47 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
                 End If
 
             Case 15
-                Locate 2, 16: Print Space$(5)
+                Locate 16, 16: Print Space$(5)
                 Locate 16: Input "15. TEAM FGA/G "; teamRatings%(3)
 
             Case 16
-                Locate 2, 18: Print Space$(5)
+                Locate 17, 18: Print Space$(5)
                 Locate 17: Input "16. LEAGUE FGA/G "; teamRatings%(4)
 
             Case 17
-                Locate 2, 23: Print Space$(5)
+                Locate 18, 23: Print Space$(5)
                 Locate 18: Input "17. TEAM GAMES PLAYED "; teamRatings%(5)
 
             Case 18
-                Locate 2, 22: Print Space$(5)
+                Locate 19, 22: Print Space$(5)
                 Locate 19: Input "18. HOMECOURT FACTOR "; teamRatings%(6)
 
             Case 19
+                Locate 20, 36: Print Space$(5)
                 Locate 20: Input "19. ARENA NAME "; arenaName$
 
             Case 20
+                Locate 2, 53: Print Space$(5)
                 Locate 2, 40: Input "20. NICKNAME "; mascot$
 
             Case 21
+                Locate 3, 51: Print Space$(5)
                 Locate 3, 40: Input "21. COACH "; coach$
 
             Case 22
-                Locate 2, 20: Print Space$(5)
+                Locate 4, 60: Print Space$(5)
                 Locate 4, 40: Input "22. AVG ATTENDANCE "; teamAttendance&
 
             Case 23
-                Locate 2, 10: Print Space$(5)
+                Locate 5, 50: Print Space$(5)
                 Locate 5, 40: Input "23. WINS "; teamRatings%(7)
 
             Case 24
-                Locate 2, 12: Print Space$(5)
+                Locate 6, 52: Print Space$(5)
                 Locate 6, 40: Input "24. LOSSES "; teamRatings%(8)
 
             Case 25
-                Locate 2, 18: Print Space$(5)
+                Locate 7, 58: Print Space$(5)
                 Locate 7, 40: Input "25. POWER RATING "; teamRatings%(9)
 
         End Select
@@ -319,122 +322,122 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
                 Select Case B9
 
                     Case 1
-                        Locate 2: Input " 1. NAME "; playerNames$(I)
+                        Locate 3: Input " 1. NAME "; playerNames$(I)
 
                     Case 2
-                        Locate 3: Input " 2. POSITION "; position$(I)
+                        Locate 4: Input " 2. POSITION "; position$(I)
 
                     Case 3
-                        Locate 4, 18: Print Space$(5)
-                        Locate 4: Input " 3. GAMES PLAYED "; playerRatings!(I, 0)
+                        Locate 5, 18: Print Space$(5)
+                        Locate 5: Input " 3. GAMES PLAYED "; playerRatings!(I, 0)
 
                     Case 4
-                        Locate 5, 13: Print Space$(5)
-                        Locate 5: Input " 4. ADJ FG% "; playerOff!(I, 0)
+                        Locate 6, 13: Print Space$(5)
+                        Locate 6: Input " 4. ADJ FG% "; playerOff!(I, 0)
 
                     Case 5
-                        Locate 6, 9: Print Space$(5)
-                        Locate 6: Input " 5. FT% "; playerOff!(I, 1)
+                        Locate 7, 9: Print Space$(5)
+                        Locate 7: Input " 5. FT% "; playerOff!(I, 1)
 
                     Case 6
-                        Locate 7, 24: Print Space$(5)
-                        Locate 7: Input " 6. OFF RB/40 MIN X 10 "; playerRatings!(I, 4)
+                        Locate 8, 24: Print Space$(5)
+                        Locate 8: Input " 6. OFF RB/40 MIN X 10 "; playerRatings!(I, 4)
 
                     Case 7
-                        Locate 8, 24: Print Space$(5)
-                        Locate 8: Input " 7. DEF RB/40 MIN X 10 "; playerOff!(I, 2)
+                        Locate 9, 24: Print Space$(5)
+                        Locate 9: Input " 7. DEF RB/40 MIN X 10 "; playerOff!(I, 2)
 
                     Case 8
-                        Locate 9, 19: Print Space$(5)
-                        Locate 9: Input " 8. ASSIST RATING "; playerOff!(I, 4)
+                        Locate 10, 19: Print Space$(5)
+                        Locate 10: Input " 8. ASSIST RATING "; playerOff!(I, 4)
 
                     Case 9
-                        Locate 10, 18: Print Space$(5)
-                        Locate 10: Input " 9. STEAL RATING "; playerOff!(I, 5)
+                        Locate 11, 18: Print Space$(5)
+                        Locate 11: Input " 9. STEAL RATING "; playerOff!(I, 5)
 
                     Case 10
-                        Locate 11, 18: Print Space$(5)
-                        Locate 11: Input "10. BLOCK RATING "; playerOff!(I, 6)
+                        Locate 12, 18: Print Space$(5)
+                        Locate 12: Input "10. BLOCK RATING "; playerOff!(I, 6)
 
                     Case 11
-                        Locate 12, 9: Print Space$(5)
-                        Locate 12: Input "11. FGA "; playerRatings!(I, 1)
+                        Locate 13, 9: Print Space$(5)
+                        Locate 13: Input "11. FGA "; playerRatings!(I, 1)
 
                     Case 12
-                        Locate 13, 25: Print Space$(5)
-                        Locate 13: Input "12. FOUL COMMIT RATING "; playerRatings!(I, 5)
+                        Locate 14, 25: Print Space$(5)
+                        Locate 14: Input "12. FOUL COMMIT RATING "; playerRatings!(I, 5)
 
                     Case 13
-                        Locate 14, 25: Print Space$(5)
-                        Locate 14: Input "13. FOUL DRAWING RATING "; playerRatings!(I, 6)
+                        Locate 15, 25: Print Space$(5)
+                        Locate 15: Input "13. FOUL DRAWING RATING "; playerRatings!(I, 6)
 
                     Case 14
-                        Locate 15, 10: Print Space$(5)
-                        Locate 15: Input "14. 3FG% "; playerRatings!(I, 2)
+                        Locate 16, 10: Print Space$(5)
+                        Locate 16: Input "14. 3FG% "; playerRatings!(I, 2)
 
                     Case 15
-                        Locate 16, 18: Print Space$(5)
-                        Locate 16: Input "15. 3FGA/TOT FGA "; playerRatings!(I, 3)
+                        Locate 17, 18: Print Space$(5)
+                        Locate 17: Input "15. 3FGA/TOT FGA "; playerRatings!(I, 3)
 
                     Case 16
-                        Locate 17, 28: Print Space$(5)
-                        Locate 17: Input "16. DEFENSIVE RATING (1-9) "; playerDef!(I)
+                        Locate 18, 28: Print Space$(5)
+                        Locate 18: Input "16. DEFENSIVE RATING (1-9) "; playerDef!(I)
 
                     Case 17
-                        Locate 2, 48: Print Space$(5)
-                        Locate 2, 37: Input "17. GAMES "; playerStats!(I, 0)
+                        Locate 3, 48: Print Space$(5)
+                        Locate 3, 37: Input "17. GAMES "; playerStats!(I, 0)
 
                     Case 18
-                        Locate 3, 50: Print Space$(5)
-                        Locate 3, 37: Input "18. MINUTES "; playerStats!(I, 1)
+                        Locate 4, 50: Print Space$(5)
+                        Locate 4, 37: Input "18. MINUTES "; playerStats!(I, 1)
 
                     Case 19
-                        Locate 4, 46: Print Space$(5)
-                        Locate 4, 37: Input "19. FGM "; playerStats!(I, 3)
+                        Locate 5, 46: Print Space$(5)
+                        Locate 5, 37: Input "19. FGM "; playerStats!(I, 3)
 
                     Case 20
-                        Locate 5, 46: Print Space$(5)
-                        Locate 5, 37: Input "20. FGA "; playerStats!(I, 2)
+                        Locate 6, 46: Print Space$(5)
+                        Locate 6, 37: Input "20. FGA "; playerStats!(I, 2)
 
                     Case 21
-                        Locate 6, 46: Print Space$(5)
-                        Locate 6, 37: Input "21. FTM "; playerStats!(I, 5)
+                        Locate 7, 46: Print Space$(5)
+                        Locate 7, 37: Input "21. FTM "; playerStats!(I, 5)
 
                     Case 22
-                        Locate 7, 46: Print Space$(5)
-                        Locate 7, 37: Input "22. FTA "; playerStats!(I, 4)
+                        Locate 8, 46: Print Space$(5)
+                        Locate 8, 37: Input "22. FTA "; playerStats!(I, 4)
 
                     Case 23
-                        Locate 8, 50: Print Space$(5)
-                        Locate 8, 37: Input "23. OFF REB "; playerStats!(I, 6)
+                        Locate 9, 50: Print Space$(5)
+                        Locate 9, 37: Input "23. OFF REB "; playerStats!(I, 6)
 
                     Case 24
-                        Locate 9, 52: Print Space$(5)
-                        Locate 9, 37: Input "24. TOTAL REB "; playerStats!(I, 7)
+                        Locate 10, 52: Print Space$(5)
+                        Locate 10, 37: Input "24. TOTAL REB "; playerStats!(I, 7)
 
                     Case 25
-                        Locate 10, 52: Print Space$(5)
-                        Locate 10, 37: Input "25. PER FOULS "; playerStats!(I, 8)
+                        Locate 11, 52: Print Space$(5)
+                        Locate 11, 37: Input "25. PER FOULS "; playerStats!(I, 8)
 
                     Case 26
-                        Locate 11, 50: Print Space$(5)
-                        Locate 11, 37: Input "26. ASSISTS "; playerStats!(I, 9)
+                        Locate 12, 50: Print Space$(5)
+                        Locate 12, 37: Input "26. ASSISTS "; playerStats!(I, 9)
 
                     Case 27
-                        Locate 12, 49: Print Space$(5)
-                        Locate 12, 37: Input "27. BLOCKS "; playerStats!(I, 10)
+                        Locate 13, 49: Print Space$(5)
+                        Locate 13, 37: Input "27. BLOCKS "; playerStats!(I, 10)
 
                     Case 28
-                        Locate 13, 49: Print Space$(5)
-                        Locate 13, 37: Input "28. STEALS "; playerStats!(I, 11)
+                        Locate 14, 49: Print Space$(5)
+                        Locate 14, 37: Input "28. STEALS "; playerStats!(I, 11)
 
                     Case 29
-                        Locate 14, 48: Print Space$(5)
-                        Locate 14, 37: Input "29. 3 FGM "; playerStats!(I, 13)
+                        Locate 15, 48: Print Space$(5)
+                        Locate 15, 37: Input "29. 3 FGM "; playerStats!(I, 13)
 
                     Case 30
-                        Locate 15, 48: Print Space$(5)
-                        Locate 15, 37: Input "30. 3 FGA "; playerStats!(I, 12)
+                        Locate 16, 48: Print Space$(5)
+                        Locate 16, 37: Input "30. 3 FGA "; playerStats!(I, 12)
 
                 End Select
 
@@ -663,7 +666,7 @@ End Sub
 '----------------------------------------
 'This routine saves the modified data back
 'to the original team file
-Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
+Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance&, defFGPctAdj%, staminaRating%
@@ -681,7 +684,7 @@ Sub SaveChangedTeam (newID%, yearNumber$, teamName$, teamIdx)
 
     fileLength& = LOF(1)
 
-    If newID% = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_FILE_BYTES + 1
+    If newID = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_FILE_BYTES + 1
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 

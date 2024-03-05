@@ -671,17 +671,17 @@ Sub TINPUT ()
                 playerOff!(I, 2) = X - playerRatings!(I, 4)
 
                 'Assists / Game
-                If inputQQ(0) = 0 Then
+                If inputQQ(0) = 1 Then
                     playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * M) * (L6 / (tmAsst / nbrGmsPlayed)) + .5)
                 End If
 
                 'Steals / Game
-                If inputQQ(2) = 0 Then
+                If inputQQ(2) = 1 Then
                     playerOff!(I, 5) = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * M) + .5)
                 End If
 
                 'Blocks / Game
-                If inputQQ(3) = 0 Then
+                If inputQQ(3) = 1 Then
                     playerOff!(I, 6) = Int(((playerOff!(I, 14) / playerOff!(I, 7)) * M) + .5)
                 End If
 
@@ -1092,7 +1092,7 @@ End Sub
 'This subroutine saves the modifed team
 'data (from corresponding arrays) to an
 'appropriate spot in the select team file
-Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
+Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
 
     Shared nbrGmsPlayed, oppAsst, opp3FGA, opp3FGAPct, oppFGPct
     Shared oppFouls, oppFTA, oppFTPct, oppReb, oppSteal, oppTO
@@ -1118,7 +1118,7 @@ Sub SaveTeam (newID%, teamName$, yearNumber$, teamIdx)
 
     fileLength& = LOF(1)
 
-    If newID% = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_SIZE_BYTES + 1
+    If newID = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_SIZE_BYTES + 1
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
