@@ -1055,7 +1055,8 @@ Sub BoxscoreMaintenance ()
     HiLiteFGColor% = 0: HiLiteBGColor% = 7
     Spacing% = 1
     Row% = 8
-    Column% = 16
+    menuWidth% = Len(menuChoices$(1))
+    Column% = (80 - menuWidth% - 2) / 2
 
     Do
 

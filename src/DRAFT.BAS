@@ -99,22 +99,25 @@ Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
     Print "TEAM INFORMATION"
     Color 15
 
-    Locate 3: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx
-    Locate 4: Input " 2. DISK ID "; draftYear$
-    Locate 5: Input " 3. TEAM NAME "; teamName$
-    Locate 6: Input " 4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
-    Locate 7: Input " 5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
-    Locate 8: Input " 6. BACKGROUND (0-7) "; teamRat_DRAFT(0, 1)
-    Locate 10, 1
-    Print "TEAM APPEARANCE";
-    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
-    Print teamName$
-    Color 15, 0
+    Locate 3: Input "1. TEAM NUMBER (0 = AUTO) "; teamIdx
+    Locate 4: Input "2. DISK ID "; draftYear$
+    Locate 5: Input "3. TEAM NAME "; teamName$
+    Locate 6: Input "4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+    Locate 7: Input "5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
+    Locate 8: Input "6. BACKGROUND COLOR (0-7) "; teamRat_DRAFT(0, 1)
+
+    If teamRat_DRAFT(0, 0) >= 0 And teamRat_DRAFT(0, 1) >= 0 Then
+        Locate 10, 1
+        Print "TEAM APPEARANCE"
+        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+        Print teamName$
+        Color 15, 0
+    End If
 
     Do
 
         Do
-            Locate 20
+            Locate 20, 25
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 6
 
@@ -123,32 +126,53 @@ Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
             Select Case B9
 
                 Case 1
-                    Locate 3: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx
+                    Locate 3, 27: Print Space$(10)
+                    Locate 3, 1: Input "1. TEAM NUMBER (0 = AUTO) "; teamIdx
+                    Locate 3, 27: Print " "
 
                 Case 2
-                    Locate 4: Input " 2. DISK ID "; draftYear$
+                    Locate 4, 1: Input "2. DISK ID "; draftYear$
+                    Locate 4, 12: Print " "
 
                 Case 3
-                    Locate 5: Input " 3. TEAM NAME "; teamName$
+                    Locate 5, 1: Input "3. TEAM NAME "; teamName$
+                    Locate 5, 14: Print " "
 
                 Case 4
-                    Locate 6: Input " 4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+                    Locate 6, 27: Print Space$(10)
+                    Locate 6, 1: Input "4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+                    Locate 6, 27: Print " "
 
                 Case 5
-                    Locate 7: Input " 5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
-                    Print "TEAM APPEARANCE";
-                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
-                    Print teamName$
-                    Color 15, 0
+                    Locate 7, 22: Print Space$(10)
+                    Locate 7, 1: Input "5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
+                    Locate 7, 22: Print " "
+
+                    If teamRat_DRAFT(0, 0) >= 0 And teamRat_DRAFT(0, 1) >= 0 Then
+                        Locate 10, 1
+                        Print "TEAM APPEARANCE"
+                        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+                        Print RTrim$(teamName$)
+                        Color 15, 0
+                    End If
 
                 Case 6
-                    Locate 8: Input " 6. BACKGROUND (0-7) "; teamRat_DRAFT(0, 1)
-                    Print "TEAM APPEARANCE";
-                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
-                    Print teamName$
-                    Color 15, 0
+                    Locate 8, 27: Print Space$(10)
+                    Locate 8, 1: Input "6. BACKGROUND COLOR (0-7) "; teamRat_DRAFT(0, 1)
+                    Locate 8, 27: Print " "
+
+                    If teamRat_DRAFT(0, 0) >= 0 And teamRat_DRAFT(0, 1) >= 0 Then
+                        Locate 10, 1
+                        Print "TEAM APPEARANCE"
+                        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+                        Print RTrim$(teamName$)
+                        Color 15, 0
+                    End If
 
             End Select
+
+            Locate 20, 53
+            Print Space$(10)
 
         End If
 
@@ -284,8 +308,8 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                     Do
 
-                        Locate 21: Print "SELECT PLAYER TO CHANGE 1-14 (0 - NO MORE CHANGE) ";
-                        Input X9
+                        Locate 21, 1
+                        Input "SELECT PLAYER # TO CHANGE (0-NO MORE CHANGE) "; X9
 
                         If X9 = 0 Then
 
@@ -316,6 +340,9 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                             Input "ENTER CP: "; plyrOff_DRAFT!(0, X9 - 1, 3)
 
                         End If 'End checking X9
+
+                        Locate 21, 46
+                        Print Space$(10);
 
                     Loop Until X9 >= 0 And X9 <= 14
 
