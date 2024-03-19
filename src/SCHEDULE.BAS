@@ -668,8 +668,8 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
                 Case 8:
                     scheduleNG%(gameIndex%, 7) = 1 + scheduleNG%(gameIndex%, 7)
-                    If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
-                    'If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
+                    'If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
+                    If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
 
                 Case 9:
                     scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
