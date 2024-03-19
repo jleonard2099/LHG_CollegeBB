@@ -633,7 +633,7 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         'Opponents
 
         'Points
-        If totalGames% > 0 Then statVal = statsZ!(10) / totalGames% Else statVal! = 0
+        If totalGames% > 0 Then statVal = statsZ1!(10) / totalGames% Else statVal! = 0
         Locate , 14: Print Using "##### ###.#"; statsZ1!(10); statVal;
 
         'Rebounds
