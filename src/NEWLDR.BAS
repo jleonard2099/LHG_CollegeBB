@@ -50,7 +50,7 @@ Sub NEWLDR ()
 
                 Case 1:
                     Do
-                        confStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", FileExit%)
+                        confStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "CONFERENCE STATS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
@@ -58,7 +58,7 @@ Sub NEWLDR ()
                                 expanZ1$(X) = "XXX"
                             Next
 
-                            Open diskPaths$(2) + confStatFile$ + ".TMS" For Input As #1
+                            Open diskPaths$(1) + confStatFile$ + ".TMS" For Input As #1
 
                             Input #1, conf$, D1$, D2$
 
@@ -77,7 +77,7 @@ Sub NEWLDR ()
 
                 Case 2:
                     Do
-                        leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                        leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Call READLEADER(leaderFile$, JB, TS, TTS)
@@ -115,11 +115,11 @@ Sub ViewExpandedStats ()
         expanZ1$(X) = "XXX"
     Next
 
-    conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", ExitCode%)
+    conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "CONFERENCE STATS", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #1
+        Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #1
 
         Input #1, conf$, D1$, D2$
 
@@ -272,7 +272,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
-    Open diskPaths$(2) + statFile$ + ".LDS" For Output As #1
+    Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
 
     Write #1, JB, plyrTotalStats, teamTotalStats
 
@@ -351,7 +351,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
-    If Not _FileExists(diskPaths$(2) + statFile$ + ".LDS") Then
+    If Not _FileExists(diskPaths$(1) + statFile$ + ".LDS") Then
 
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
@@ -363,7 +363,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Else
 
-        Open diskPaths$(2) + statFile$ + ".LDS" For Input As #1
+        Open diskPaths$(1) + statFile$ + ".LDS" For Input As #1
 
         Input #1, JB, plyrTotalStats, teamTotalStats
 
