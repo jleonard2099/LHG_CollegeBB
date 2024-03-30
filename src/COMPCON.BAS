@@ -15,7 +15,7 @@ Sub CompileCollege ()
     Shared offLeaders!(), offRecords!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
-    Shared DL$(), OL$(), statFiles$()
+    Shared deffLeaderNames$(), offLeaderNames$(), statFiles$()
     Shared defRecDesc$(), offRecDesc$()
     Shared plyrRecDesc$()
     Shared Z0$(), Z1$(), Z3$()
@@ -79,18 +79,18 @@ Sub CompileCollege ()
     'If we initialized to 0, the "record" would always be 0
     Erase defLeaders!, offLeaders!
 
-    For X = 1 To 40
+    For X = 1 To MAX_CONFERENCES
         defLeaders!(X, 19) = 9999
     Next
 
     Erase leaderVals!
     Erase O1!, O2!, O3!, O4!, O5!, O6!
-    Erase DL$, OL$
+    Erase deffLeaderNames$, offLeaderNames$
     Erase Z0$, Z1$, Z3$
 
     C$ = ","
 
-    conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+    conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -102,20 +102,20 @@ Sub CompileCollege ()
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #2
+        Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #2
 
         Input #2, LG$
         Input #2, div1$
         Input #2, div2$
 
-        For XW = 1 To 30
+        For XW = 1 To TEAMS_PER_CONFERENCE
             Input #2, statFiles$(XW)
             Z1$(XW) = statFiles$(XW)
         Next
 
         Close #2
 
-        For XW = 1 To 30
+        For XW = 1 To TEAMS_PER_CONFERENCE
 
             'Look for * as terminating char
             If statFiles$(XW) <> Chr$(42) Then
@@ -251,7 +251,7 @@ Sub CalcStatLeadersConf (teamName$)
     Shared leaderVals!(), compS!()
     Shared statsW0!(), statsW1!()
 
-    Shared DL$(), OL$()
+    Shared deffLeaderNames$(), offLeaderNames$()
     Shared statPlyrNames$()
     Shared Z0$(), Z3$()
 
@@ -775,13 +775,13 @@ Sub CalcStatLeadersConf (teamName$)
             offLeaders!(40, M) = offTotals!(M)
         Next
 
-        OL$(40) = teamName$
+        offLeaderNames$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To 40:
 
                 If offLeaders!(X, 19) < offLeaders!(X1, 19) Then
-                    Swap OL$(X1), OL$(X)
+                    Swap offLeaderNames$(X1), offLeaderNames$(X)
                     For M = 1 To 20:
                         Swap offLeaders!(X1, M), offLeaders!(X, M)
                     Next
@@ -799,13 +799,13 @@ Sub CalcStatLeadersConf (teamName$)
             defLeaders!(40, M) = defTotals!(M)
         Next
 
-        DL$(40) = teamName$
+        deffLeaderNames$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To 40
 
                 If defLeaders!(X, 19) > defLeaders!(X1, 19) Then
-                    Swap DL$(X1), DL$(X)
+                    Swap deffLeaderNames$(X1), deffLeaderNames$(X)
                     For M = 1 To 20:
                         Swap defLeaders!(X1, M), defLeaders!(X, M)
                     Next
@@ -1016,9 +1016,9 @@ End Sub
 'stats to the file
 Sub PostLeadersConf (conferenceName$)
 
-    Shared DL$(), OL$()
-
-    Shared defLeaders!(), leaderVals!(), offLeaders!()
+    Shared deffLeaderNames$(), offLeaderNames$()
+    Shared defLeaders!(), offLeaders!()
+    Shared leaderVals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
     Shared Z0$(), Z1$(), Z3$()
@@ -1027,11 +1027,11 @@ Sub PostLeadersConf (conferenceName$)
 
     Print
 
-    Open diskPaths$(1) + conferenceName$ + ".LDR" For Output As #1
+    Open diskPaths$(2) + conferenceName$ + ".LDR" For Output As #1
 
     Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
-    For X = 1 To 30
+    For X = 1 To TEAMS_PER_CONFERENCE
         Write #1, Z1$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
@@ -1039,15 +1039,15 @@ Sub PostLeadersConf (conferenceName$)
         Write #1, Z0$(X), Z3$(X), leaderVals!(X, 1), leaderVals!(X, 2)
     Next X
 
-    For X = 1 To 40:
-        Write #1, OL$(X)
+    For X = 1 To MAX_CONFERENCES:
+        Write #1, offLeaderNames$(X)
         For Y = 1 To 20:
             Write #1, offLeaders!(X, Y)
         Next
     Next
 
-    For X = 1 To 40:
-        Write #1, DL$(X):
+    For X = 1 To MAX_CONFERENCES:
+        Write #1, deffLeaderNames$(X):
         For Y = 1 To 20:
             Write #1, defLeaders!(X, Y)
         Next
@@ -1148,7 +1148,7 @@ Function FindStatsCon% (statFile$, numberGames)
             statName$ = nameStatFile$(oppName$(I))
             nonConfGame = 0
 
-            For EC = 1 To 30
+            For EC = 1 To TEAMS_PER_CONFERENCE
                 'If team stat file = opponent of a conference game?
                 If statName$ = statFiles$(EC) Then
                     nonConfGame = 1

@@ -9,7 +9,7 @@ Sub NEWLDR ()
     _Title "Courtside College Basketball - Expanded Leaders"
 
     Dim printOrView
-    Dim expanZ1$(40)
+    Dim expanZ1$(MAX_CONFERENCES)
 
     ReDim menuChoices$(1 To 3)
 
@@ -49,36 +49,42 @@ Sub NEWLDR ()
             Select Case Selection%
 
                 Case 1:
-                    confStatFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "CONFERENCE STATS", FileExit%)
+                    Do
+                        confStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", FileExit%)
 
-                    If FileExit% <> 27 And FileExit% <> 0 Then
+                        If FileExit% <> 27 And FileExit% <> 0 Then
 
-                        For X = 1 To 40
-                            expanZ1$(X) = "XXX"
-                        Next
+                            For X = 1 To MAX_CONFERENCES
+                                expanZ1$(X) = "XXX"
+                            Next
 
-                        Open diskPaths$(1) + confStatFile$ + ".TMS" For Input As #1
+                            Open diskPaths$(2) + confStatFile$ + ".TMS" For Input As #1
 
-                        Input #1, conf$, D1$, D2$
+                            Input #1, conf$, D1$, D2$
 
-                        For X = 1 To 30
-                            Input #1, expanZ1$(X)
-                        Next
+                            For X = 1 To TEAMS_PER_CONFERENCE
+                                Input #1, expanZ1$(X)
+                            Next
 
-                        Close #1
+                            Close #1
 
-                        Call UpdateExpandedLeaders(expanZ1$(), JB, TS, TTS)
-                        Call SAVELEADER(confStatFile$, JB, TS, TTS)
+                            Call UpdateExpandedLeaders(expanZ1$(), JB, TS, TTS)
+                            Call SAVELEADER(confStatFile$, JB, TS, TTS)
 
-                    End If
+                        End If
+
+                    Loop Until FileExit% = 27 Or FileExit% = 0
 
                 Case 2:
-                    leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                    Do
+                        leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
-                    If FileExit% <> 27 And FileExit% <> 0 Then
-                        Call READLEADER(leaderFile$, JB, TS, TTS)
-                        Call ExpandedLeaders_Menu(JB, TS, TTS)
-                    End If
+                        If FileExit% <> 27 And FileExit% <> 0 Then
+                            Call READLEADER(leaderFile$, JB, TS, TTS)
+                            Call ExpandedLeaders_Menu(JB, TS, TTS)
+                        End If
+
+                    Loop Until FileExit% = 27 Or FileExit% = 0
 
             End Select
 
@@ -101,23 +107,23 @@ End Sub
 Sub ViewExpandedStats ()
 
     Dim printOrView
-    Dim expanZ1$(40)
+    Dim expanZ1$(MAX_CONFERENCES)
 
     printOrView = 0
 
-    For X = 1 To 40
+    For X = 1 To MAX_CONFERENCES
         expanZ1$(X) = "XXX"
     Next
 
-    conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.TMS", "CONFERENCE STATS", ExitCode%)
+    conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(1) + conferenceFile$ + ".TMS" For Input As #1
+        Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #1
 
         Input #1, conf$, D1$, D2$
 
-        For X = 1 To 30
+        For X = 1 To TEAMS_PER_CONFERENCE
             Input #1, expanZ1$(X)
         Next
 
@@ -156,7 +162,7 @@ Sub UpdateExpandedLeaders (Z1$(), JB, plyrTotalStats, teamTotalStats)
 
     JB = 0
 
-    For KK = 1 To 30
+    For KK = 1 To TEAMS_PER_CONFERENCE
 
         YY = YY + 1
 
@@ -266,7 +272,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
-    Open diskPaths$(1) + statFile$ + ".LDS" For Output As #1
+    Open diskPaths$(2) + statFile$ + ".LDS" For Output As #1
 
     Write #1, JB, plyrTotalStats, teamTotalStats
 
@@ -293,7 +299,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Next I
 
-    For I = 1 To 40
+    For I = 1 To MAX_CONFERENCES
 
         For I1 = 0 To 14
             Write #1, TT!(I, I1), expanTT$(I, I1)
@@ -307,7 +313,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Next
 
-    For I = 1 To 40
+    For I = 1 To MAX_CONFERENCES
 
         For I1 = 0 To 14
             Write #1, TT1!(I, I1), TT1$(I, I1)
@@ -345,7 +351,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
-    If Not _FileExists(diskPaths$(1) + statFile$ + ".LDS") Then
+    If Not _FileExists(diskPaths$(2) + statFile$ + ".LDS") Then
 
         MsgText$ = "NO COMPILED LEADER FILES WERE FOUND. PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 20
@@ -357,7 +363,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Else
 
-        Open diskPaths$(1) + statFile$ + ".LDS" For Input As #1
+        Open diskPaths$(2) + statFile$ + ".LDS" For Input As #1
 
         Input #1, JB, plyrTotalStats, teamTotalStats
 
@@ -384,7 +390,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Next I
 
-        For I = 1 To 40
+        For I = 1 To MAX_CONFERENCES
 
             For I1 = 0 To 14
                 Input #1, TT!(I, I1), expanTT$(I, I1)
@@ -398,7 +404,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Next
 
-        For I = 1 To 40
+        For I = 1 To MAX_CONFERENCES
 
             For I1 = 0 To 14
                 Input #1, TT1!(I, I1), TT1$(I, I1)
@@ -528,6 +534,7 @@ Sub ViewIndividualLeaders (printOrView, JB)
             Next
 
             Print
+            Locate , 44: Print Space$(10);
             Locate , 23: Input "SELECT NUMBER TO VIEW"; B9
 
             stpl = 0
@@ -857,6 +864,7 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
         Do
             Color 14
+            Locate 22, 44: Print Space$(10)
             Locate 22, 23: Input "SELECT NUMBER TO VIEW"; B9
 
             PPP = 0

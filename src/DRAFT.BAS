@@ -99,22 +99,25 @@ Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
     Print "TEAM INFORMATION"
     Color 15
 
-    Locate 3: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx
-    Locate 4: Input " 2. DISK ID "; draftYear$
-    Locate 5: Input " 3. TEAM NAME "; teamName$
-    Locate 6: Input " 4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
-    Locate 7: Input " 5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
-    Locate 8: Input " 6. BACKGROUND (0-7) "; teamRat_DRAFT(0, 1)
-    Locate 10, 1
-    Print "TEAM APPEARANCE";
-    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
-    Print teamName$
-    Color 15, 0
+    Locate 3: Input "1. TEAM NUMBER (0 = AUTO) "; teamIdx
+    Locate 4: Input "2. DISK ID "; draftYear$
+    Locate 5: Input "3. TEAM NAME "; teamName$
+    Locate 6: Input "4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+    Locate 7: Input "5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
+    Locate 8: Input "6. BACKGROUND COLOR (0-7) "; teamRat_DRAFT(0, 1)
+
+    If teamRat_DRAFT(0, 0) >= 0 And teamRat_DRAFT(0, 1) >= 0 Then
+        Locate 10, 1
+        Print "TEAM APPEARANCE"
+        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+        Print teamName$
+        Color 15, 0
+    End If
 
     Do
 
         Do
-            Locate 20
+            Locate 20, 25
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 6
 
@@ -123,32 +126,53 @@ Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
             Select Case B9
 
                 Case 1
-                    Locate 3: Input " 1. TEAM NUMBER (0 = AUTO)"; teamIdx
+                    Locate 3, 27: Print Space$(10)
+                    Locate 3, 1: Input "1. TEAM NUMBER (0 = AUTO) "; teamIdx
+                    Locate 3, 27: Print " "
 
                 Case 2
-                    Locate 4: Input " 2. DISK ID "; draftYear$
+                    Locate 4, 1: Input "2. DISK ID "; draftYear$
+                    Locate 4, 12: Print " "
 
                 Case 3
-                    Locate 5: Input " 3. TEAM NAME "; teamName$
+                    Locate 5, 1: Input "3. TEAM NAME "; teamName$
+                    Locate 5, 14: Print " "
 
                 Case 4
-                    Locate 6: Input " 4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+                    Locate 6, 27: Print Space$(10)
+                    Locate 6, 1: Input "4. HOMECOURT FACTOR (0-6) "; teamRat_DRAFT(0, 6)
+                    Locate 6, 27: Print " "
 
                 Case 5
-                    Locate 7: Input " 5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
-                    Print "TEAM APPEARANCE";
-                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
-                    Print teamName$
-                    Color 15, 0
+                    Locate 7, 22: Print Space$(10)
+                    Locate 7, 1: Input "5. TEXT COLOR (0-15) "; teamRat_DRAFT(0, 0)
+                    Locate 7, 22: Print " "
+
+                    If teamRat_DRAFT(0, 0) >= 0 And teamRat_DRAFT(0, 1) >= 0 Then
+                        Locate 10, 1
+                        Print "TEAM APPEARANCE"
+                        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+                        Print RTrim$(teamName$)
+                        Color 15, 0
+                    End If
 
                 Case 6
-                    Locate 8: Input " 6. BACKGROUND (0-7) "; teamRat_DRAFT(0, 1)
-                    Print "TEAM APPEARANCE";
-                    Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
-                    Print teamName$
-                    Color 15, 0
+                    Locate 8, 27: Print Space$(10)
+                    Locate 8, 1: Input "6. BACKGROUND COLOR (0-7) "; teamRat_DRAFT(0, 1)
+                    Locate 8, 27: Print " "
+
+                    If teamRat_DRAFT(0, 0) >= 0 And teamRat_DRAFT(0, 1) >= 0 Then
+                        Locate 10, 1
+                        Print "TEAM APPEARANCE"
+                        Color teamRat_DRAFT(0, 0), teamRat_DRAFT(0, 1)
+                        Print RTrim$(teamName$)
+                        Color 15, 0
+                    End If
 
             End Select
+
+            Locate 20, 53
+            Print Space$(10)
 
         End If
 
@@ -172,7 +196,7 @@ End Sub
 '  1 = New Team
 Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
-    Shared teamRat_DRAFT(), miscRat_DRAFT()
+    Shared teamRat_DRAFT(), avgRat_DRAFT()
 
     Shared plyrDef_DRAFT!(), plyrStat_DRAFT!()
     Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
@@ -249,7 +273,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                 Next
 
                 For I = 1 To 12
-                    miscRat_DRAFT(0, slot, I) = miscRat_DRAFT(1, player, I)
+                    avgRat_DRAFT(0, slot, I) = avgRat_DRAFT(1, player, I)
                 Next
 
                 For I = 0 To 6
@@ -284,8 +308,8 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                     Do
 
-                        Locate 21: Print "SELECT PLAYER TO CHANGE 1-14 (0 - NO MORE CHANGE) ";
-                        Input X9
+                        Locate 21, 1
+                        Input "SELECT PLAYER # TO CHANGE (0-NO MORE CHANGE) "; X9
 
                         If X9 = 0 Then
 
@@ -316,6 +340,9 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                             Input "ENTER CP: "; plyrOff_DRAFT!(0, X9 - 1, 3)
 
                         End If 'End checking X9
+
+                        Locate 21, 46
+                        Print Space$(10);
 
                     Loop Until X9 >= 0 And X9 <= 14
 
@@ -367,56 +394,56 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     Shared plyrStat_DRAFT!(), plyrRat_DRAFT!(), stamina_DRAFT!()
 
     Shared lgRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT()
-    Shared miscRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
+    Shared avgRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
 
     Cls
 
-    NP% = 0
+    numPlayers = 0
 
     For I = 0 To 13
 
         If plyrNames_DRAFT$(0, I) <> "XXX" Then
 
-            NP% = NP% + 1
-            stamina_DRAFT!(0) = stamina_DRAFT!(0) + miscRat_DRAFT(0, I, 1)
-            dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + miscRat_DRAFT(0, I, 2)
-            d3FGA_Adj(0) = d3FGA_Adj(0) + miscRat_DRAFT(0, I, 3)
-            d3FG_Adj(0) = d3FG_Adj(0) + miscRat_DRAFT(0, I, 4)
-            lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) + miscRat_DRAFT(0, I, 5)
-            lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) + miscRat_DRAFT(0, I, 6)
-            lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) + miscRat_DRAFT(0, I, 7)
-            teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) + miscRat_DRAFT(0, I, 9)
-            teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) + miscRat_DRAFT(0, I, 10)
-            teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) + miscRat_DRAFT(0, I, 11)
-            teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) + miscRat_DRAFT(0, I, 12)
+            numPlayers = numPlayers + 1
+            stamina_DRAFT!(0) = stamina_DRAFT!(0) + avgRat_DRAFT(0, I, 1)
+            dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + avgRat_DRAFT(0, I, 2)
+            d3FGA_Adj(0) = d3FGA_Adj(0) + avgRat_DRAFT(0, I, 3)
+            d3FG_Adj(0) = d3FG_Adj(0) + avgRat_DRAFT(0, I, 4)
+            lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) + avgRat_DRAFT(0, I, 5)
+            lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) + avgRat_DRAFT(0, I, 6)
+            lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 7)
+            teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 9)
+            teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) + avgRat_DRAFT(0, I, 10)
+            teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) + avgRat_DRAFT(0, I, 11)
+            teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) + avgRat_DRAFT(0, I, 12)
 
         End If
 
     Next
 
-    stamina_DRAFT!(0) = stamina_DRAFT!(0) / (NP% - 1)
-    dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) / (NP% - 1)
+    stamina_DRAFT!(0) = stamina_DRAFT!(0) / (numPlayers - 1)
+    dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) / (numPlayers - 1)
 
-    d3FGA_Adj(0) = d3FGA_Adj(0) / (NP% - 1)
+    d3FGA_Adj(0) = d3FGA_Adj(0) / (numPlayers - 1)
     If d3FGA_Adj(0) > 20 Then d3FGA_Adj(0) = 100 - d3FGA_Adj(0)
 
-    d3FG_Adj(0) = d3FG_Adj(0) / (NP% - 1)
+    d3FG_Adj(0) = d3FG_Adj(0) / (numPlayers - 1)
     If d3FG_Adj(0) > 20 Then d3FG_Adj(0) = 100 - d3FG_Adj(0)
 
-    lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) / (NP% - 1)
+    lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) / (numPlayers - 1)
     If lgRat_DRAFT(0, 0) > 20 Then lgRat_DRAFT(0, 0) = 100 - lgRat_DRAFT(0, 0)
 
-    lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) / (NP% - 1)
+    lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) / (numPlayers - 1)
     If lgRat_DRAFT(0, 2) > 20 Then lgRat_DRAFT(0, 2) = 100 - lgRat_DRAFT(0, 2)
 
-    lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) / (NP% - 1)
+    lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) / (numPlayers - 1)
     If lgRat_DRAFT(0, 3) > 20 Then lgRat_DRAFT(0, 3) = 100 - lgRat_DRAFT(0, 3)
 
     lgRat_DRAFT(0, 4) = 99
-    teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) / (NP% - 1)
-    teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) / (NP% - 1)
-    teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) / (NP% - 1)
-    teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) / (NP% - 1)
+    teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) / (numPlayers - 1)
+    teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) / (numPlayers - 1)
+    teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) / (numPlayers - 1)
+    teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) / (numPlayers - 1)
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
@@ -713,7 +740,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
 
     Shared att_DRAFT&(), CK!()
     Shared dFGPctAdj_DRAFT!(), d3FG_Adj(), d3FGA_Adj()
-    Shared lgRat_DRAFT(), miscRat_DRAFT()
+    Shared lgRat_DRAFT(), avgRat_DRAFT()
     Shared plyrOff_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrRat_DRAFT!(), plyrStat_DRAFT!(), stamina_DRAFT!()
 
@@ -811,18 +838,18 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
         Close #2
 
         For I = 0 To 13
-            miscRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
-            miscRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
-            miscRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
-            miscRat_DRAFT(draftIdx, I, 8) = 99
-            miscRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
-            miscRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
-            miscRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
-            miscRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
+            avgRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
+            avgRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
+            avgRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
+            avgRat_DRAFT(draftIdx, I, 8) = 99
+            avgRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
+            avgRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
+            avgRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
+            avgRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
         Next
 
         If CK!(draftIdx) <> 999 Then

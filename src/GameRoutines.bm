@@ -9,14 +9,14 @@ Sub INFO ()
 
     Color , 1
     Locate 1, 1
-    Print Tab(80);
+    Print Tab(80); " ";
 
     Locate , 33
     Color 14
     Print "GAME OPTIONS MENU"
 
     Locate 24, 1
-    Print Tab(80);
+    Print Tab(80); " ";
     Locate , 1
     Print "    LANCE HAFFNER 1986-2000"; Tab(70); Left$(Time$, 5);
     Locate 3, 1
@@ -133,7 +133,7 @@ Sub InitVar ()
     FT% = 0
     J8% = 0
     LC% = 0
-    PASS% = 0
+    PASS = 0
     PT% = 0
     PZ% = 0
     X0% = 0
@@ -197,7 +197,7 @@ Sub InitVar ()
     Erase Q$, SX$
     Erase teamNames$, teamRecDesc$, teamYrTourn$
 
-    Erase gameR3!, gameW0!, gameW1!
+    Erase totRebounds, gameW0!, gameW1!
     Erase statsZ!, statsZ1!, statsZ2!
     Erase indRecords!, teamRecords!
 
@@ -689,7 +689,7 @@ Sub MAKEPBP ()
                 'TURNOVER
                 pbpString$ = players$(P, B1(P, ballCarrier))
 
-                If RN0 > 35 And RN0 <= 68 And P7(D) > 1 And PASS% = 1 Then
+                If RN0 > 35 And RN0 <= 68 And P7(D) > 1 And PASS = 1 Then
 
                     pbpString$ = gameTeams$(P) + " CALLED FOR 10 SEC VIOLATION"
 
@@ -2974,7 +2974,7 @@ Sub TickerSchedule
 
     End If
 
-    Open diskPaths$(0) + scheduleFile$ For Random As #1 Len = 48
+    Open diskPaths$(3) + scheduleFile$ For Random As #1 Len = 48
 
     For X = 0 To 18
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -3179,12 +3179,12 @@ End Sub
 
 
 '----------------------------------------
-'         GoodBasket Subroutine
+'         CreditAssists Subroutine
 '----------------------------------------
 'This subroutine appears to be crediting
 'assists, per it's similarity to the code
 'from Pro BB to do the same
-Sub GoodBasket ()
+Sub CreditAssists ()
 
     RN0 = Int(Rnd(1) * 3) + 1
 
@@ -3745,9 +3745,9 @@ Sub UPDATESCREEN ()
     Color 12: Print "TO  ";
     Color 7: Print Using "##"; turnovers(1)
 
-    Locate , 35: Print Using "##  "; gameR3!(0);
+    Locate , 35: Print Using "##  "; totRebounds(0);
     Color 12: Print "RB  ";
-    Color 7: Print Using "##"; gameR3!(1)
+    Color 7: Print Using "##"; totRebounds(1)
 
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";
@@ -3805,9 +3805,9 @@ Sub UPDATESCREEN ()
         Locate , 41
         Color 14: Print "(D)  ";
         Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-        'Locate , 41
-        'Color 14: Print "(B)  ";
-        'Color 15: Print "BOXSCORE"
+        Locate , 41
+        Color 14: Print "(B)  ";
+        Color 15: Print "BOXSCORE"
 
         Color 15, 0
 
@@ -3957,9 +3957,9 @@ Sub SCOREBOARD ()
     Color 12: Print "TO  ";
     Color 7: Print Using "##"; turnovers(1)
 
-    Locate , 35: Print Using "##  "; gameR3!(0);
+    Locate , 35: Print Using "##  "; totRebounds(0);
     Color 12: Print "RB  ";
-    Color 7: Print Using "##"; gameR3!(1)
+    Color 7: Print Using "##"; totRebounds(1)
 
     Locate , 35: Print Using "##  "; P2(0);
     Color 12: Print "TF  ";
@@ -4005,9 +4005,9 @@ Sub SCOREBOARD ()
     Locate , 41
     Color 14: Print "(D)  ";
     Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-    'Locate , 41
-    'Color 14: Print "(B)  ";
-    'Color 15: Print "BOXSCORE"
+    Locate , 41
+    Color 14: Print "(B)  ";
+    Color 15: Print "BOXSCORE"
 
     Color 9, 0
     Locate 7, 1
@@ -4326,6 +4326,44 @@ Sub DEFREBOUND ()
     Next
 
     If skipRandom% = 0 Then ballCarrier = Int(Rnd(1) * 5)
+
+End Sub
+
+
+'----------------------------------------
+'        SETUPRATINGS Subroutine
+'----------------------------------------
+'This subroutine lets the user choose the
+'play style of teams (based on era) and
+'adjust contribution ratings for players
+'Everyting to do with pacing shots is
+'in this routine.
+Sub SETUPRATINGS ()
+
+    For I = 0 To 1
+
+        For I1 = 0 To 13
+
+            'Active Flag = YES
+            '-- don't ask me why 0 was chosen for YES
+            If rosterStatus(I, I1) = 0 Then
+            
+                ' 3FGA % (how often player shoots 3)
+                If plyrRat_GAME(I, I1, 2) > 0 Then 
+                    playerStat_GAME(I, I1, 14) = Int(plyrOff_GAME!(I, I1, 17) / plyrOff_GAME!(I, I1, 9) * 100 + .5)
+                End If
+
+                ' 3FGM %
+                If plyrRat_GAME(I, I1, 13) > 0 Then 
+                    playerStat_GAME(I, I1, 15) = Int(playerStat_GAME(I, I1, 13) / plyrOff_GAME!(I, I1, 17) * 100 + .5)
+                End If
+
+
+            End If
+
+        Next I1
+        
+    Next I
 
 End Sub
 
@@ -5426,7 +5464,7 @@ Sub PRDFAT ()
 
     For I = 0 To 4
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
 
         If RN0 <= X0% Then
             tmFatigue(D, B1(D, I)) = tmFatigue(D, B1(D, I)) + X1%
@@ -5451,7 +5489,7 @@ Sub PRPFAT ()
 
     For I = 0 To 4
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
 
         If RN0 <= X0% Then
             tmFatigue(P, B1(P, I)) = tmFatigue(P, B1(P, I)) + X1%
@@ -5484,7 +5522,7 @@ Sub WHOGETSBALL ()
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            RN0 = Int(Rnd(1) * 100) + 1
+            Call d100(RN0)
 
             If RN0 > 25 Then
 
@@ -5517,7 +5555,7 @@ End Sub
 ' ...explanation...
 Sub BALLDISTRIBUTE ()
 
-    RN0 = Int(Rnd(1) * 100) + 1
+    Call d100(RN0)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
         Call WHOGETSBALL
@@ -6118,20 +6156,20 @@ Sub COMPUTERCOACH ()
 
         I5 = score(I6, 0) - score(P9, 0)
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
         If currHalf = 1 And RN0 > 37 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
         If currHalf = 1 And RN0 > 10 And RN0 <= 36 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
         If currHalf = 1 And RN0 > 5 And RN0 <= 10 Then defType(P9) = 3: P7(P9) = 0: defStrat(P9) = 3
         If currHalf = 1 And RN0 <= 5 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
         If currHalf = 1 And RN0 <= 15 Then defType(P9) = 0: P7(P9) = 1: defStrat(P9) = 4
         If currHalf = 1 And RN0 > 9 And RN0 <= 12 Then defType(P9) = 0: P7(P9) = 3: defStrat(P9) = 8
         If currHalf = 1 And RN0 > 6 And RN0 <= 9 Then defType(P9) = 2: P7(P9) = 3: defStrat(P9) = 7
         If currHalf = 1 And RN0 > 3 And RN0 <= 6 Then defType(P9) = 1: P7(P9) = 3: defStrat(P9) = 9
         If currHalf = 1 And RN0 <= 3 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
         If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
         If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
         If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 1: P7(P9) = 2: defStrat(P9) = 6
@@ -6172,7 +6210,7 @@ Sub COMPUTERCOACH ()
 
     Else
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
         defStrat(P9) = 0
         defType(P9) = 0
         P7(P9) = 0
@@ -6196,7 +6234,7 @@ Sub COMPUTERCOACH ()
 
         End Select
 
-        RN0 = Int(Rnd(1) * 100) + 1
+        Call d100(RN0)
 
         Select Case RN0
 
@@ -6220,7 +6258,7 @@ Sub COMPUTERCOACH ()
 
     End If
 
-    RN0 = Int(Rnd(1) * 100) + 1
+    Call d100(RN0)
 
     If currHalf = 1 Then
 
@@ -6599,7 +6637,7 @@ Sub EVENTS (specialCount, specialStat)
         checkSpecial% = 0
 
         'Team / game conditions for special box score
-        If currHalf - 3 > eventSettings(1) Or score(1, 0) + score(0, 0) > eventSettings(2) Or gameR3!(0) + gameR3!(1) > eventSettings(3) Or score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Or gameR3!(1) > eventSettings(5) Or gameR3!(0) > eventSettings(5) Then
+        If currHalf - 3 > eventSettings(1) Or score(1, 0) + score(0, 0) > eventSettings(2) Or totRebounds(0) + totRebounds(1) > eventSettings(3) Or score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Or totRebounds(1) > eventSettings(5) Or totRebounds(0) > eventSettings(5) Then
 
             checkSpecial% = 1
 
@@ -6645,8 +6683,8 @@ Sub FoundSpecial (specialCount, specialStat)
 
     'Get count of SPC files to determine
     'number to assign next one
-    Spec$ = diskPaths$(1) + "*.SPC"
-    'Spec$ = diskPaths$(1) + "*.BSS"
+    'Spec$ = diskPaths$(1) + "*.SPC"
+    Spec$ = diskPaths$(1) + "*.BSS"
     specialCount = FileCount%(Spec$)
     specialCount = specialCount + 1
     specialStat = 1
@@ -6722,8 +6760,8 @@ Sub POSTGAME ()
     'If we had special events
     If specialStat = 1 Then
 
-        'boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
-        boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
+        boxName$ = "BOXSCORE" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".BSS"
+        'boxName$ = "BOX" + Mid$(Str$(specialCount), 2, Len(Str$(specialCount))) + ".SPC"
 
         'Append special events
         Call BOX2SPC(boxName$)
@@ -6775,12 +6813,12 @@ Sub BOXOPTIONS (outputChoice)
                     Cls
                     Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
                     Input boxName$
-                    'boxName$ = boxName$ + ".BSS"
-                    boxName$ = boxName$ + ".SPC"
+                    boxName$ = boxName$ + ".BSS"
+                    'boxName$ = boxName$ + ".SPC"
                 Else
                     'ScheduleName_GameXXX.BS
-                    'boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
-                    boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
+                    boxName$ = Mid$(scheduleFile$, 1, Len(scheduleFile$) - 4) + "_GAME" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2)))) + ".BS"
+                    'boxName$ = "BOX" + Mid$(Str$(schedGame(0) + schedGame(2)), 2, Len(Str$(schedGame(0) + schedGame(2))))
                 End If
 
             End If
@@ -7158,7 +7196,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
         Print #1,
         Print #1, "TOTAL TURNOVERS -"; turnovers(I)
-        Print #1, "TOTAL REBOUNDS  -"; gameR3!(I)
+        Print #1, "TOTAL REBOUNDS  -"; totRebounds(I)
 
     Next I
 
@@ -7219,11 +7257,11 @@ Sub BOX2SPC (boxName$)
     'Output any special events
     If currHalf - 3 > eventSettings(1) Then Print #1, Using "MORE THAN ## OVERTIMES"; eventSettings(1)
     If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
-    If gameR3!(0) + gameR3!(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    If totRebounds(0) + totRebounds(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
     If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
     If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If gameR3!(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
-    If gameR3!(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If totRebounds(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If totRebounds(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
 
     For I = 0 To 1
         For I1 = 0 To 13
@@ -7269,7 +7307,7 @@ Sub STATS2SCREEN
                 Color 15
 
                 'Name
-                Print players$(I, I1); Tab(14);
+                Print Left(players$(I, I1), 13); Tab(14);
 
                 'Minutes
                 If timePlayed(I, I1) <> 0 Then
@@ -7311,10 +7349,8 @@ Sub STATS2SCREEN
                 statTotals(3) = statTotals(3) + plyrOff_GAME!(I, I1, 9)
                 statTotals(4) = statTotals(4) + plyrOff_GAME!(I, I1, 11)
                 statTotals(5) = statTotals(5) + (plyrOff_GAME!(I, I1, 8) * 2) + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0)
-
                 statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
                 statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
-
                 statTotals(6) = statTotals(6) + plyrOff_GAME!(I, I1, 12)
                 statTotals(7) = statTotals(7) + plyrOff_GAME!(I, I1, 14)
                 statTotals(8) = statTotals(8) + plyrOff_GAME!(I, I1, 15)
@@ -7372,7 +7408,7 @@ Sub STATS2SCREEN
         Color 15: Print turnovers(I)
 
         Color 14: Print "TOTAL REBOUNDS  -";
-        Color 15: Print gameR3!(I)
+        Color 15: Print totRebounds(I)
 
         If Not (autoPlay = 1 And playerMode = 2) Then
             Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
@@ -7665,10 +7701,10 @@ Sub COMPILESTATFILES (teamIdx)
 
     Next
 
-    statsZ!(15) = statsZ!(15) + gameR3!(teamIdx) - statTotals(teamIdx)
-    statsZ1!(15) = statsZ1!(15) + gameR3!(1 - teamIdx) - statTotals(1 - teamIdx)
-    statsZ!(5) = statsZ!(5) + gameR3!(teamIdx)
-    statsZ1!(5) = statsZ1!(5) + gameR3!(1 - teamIdx)
+    statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+    statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
+    statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
+    statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
     statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
     statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
@@ -9611,8 +9647,8 @@ Sub CheckRecords ()
             teamRecDesc$(77, 3) = Date$
         End If
 
-        If gameR3!(I) > teamRecords!(80, 0) Then
-            teamRecords!(80, 0) = gameR3!(I)
+        If totRebounds(I) > teamRecords!(80, 0) Then
+            teamRecords!(80, 0) = totRebounds(I)
             teamRecords!(80, 1) = 0
             teamRecords!(80, 2) = 0
             teamRecDesc$(80, 0) = gameTeams$(I)
@@ -9621,8 +9657,8 @@ Sub CheckRecords ()
             teamRecDesc$(80, 3) = Date$
         End If
 
-        If gameR3!(I) < teamRecords!(81, 0) Then
-            teamRecords!(81, 0) = gameR3!(I)
+        If totRebounds(I) < teamRecords!(81, 0) Then
+            teamRecords!(81, 0) = totRebounds(I)
             teamRecords!(81, 1) = 0
             teamRecords!(81, 2) = 0
             teamRecDesc$(81, 0) = gameTeams$(I)
@@ -9631,20 +9667,20 @@ Sub CheckRecords ()
             teamRecDesc$(81, 3) = Date$
         End If
 
-        If gameR3!(I) + gameR3!(1 - I) > teamRecords!(82, 0) Then
-            teamRecords!(82, 0) = gameR3!(I) + gameR3!(1 - I)
-            teamRecords!(82, 1) = gameR3!(I)
-            teamRecords!(82, 2) = gameR3!(1 - I)
+        If totRebounds(I) + totRebounds(1 - I) > teamRecords!(82, 0) Then
+            teamRecords!(82, 0) = totRebounds(I) + totRebounds(1 - I)
+            teamRecords!(82, 1) = totRebounds(I)
+            teamRecords!(82, 2) = totRebounds(1 - I)
             teamRecDesc$(82, 0) = gameTeams$(I)
             teamRecDesc$(82, 1) = VERSUS$(I)
             teamRecDesc$(82, 2) = gameTeams$(1 - I)
             teamRecDesc$(82, 3) = Date$
         End If
 
-        If gameR3!(I) + gameR3!(1 - I) < teamRecords!(83, 0) Then
-            teamRecords!(83, 0) = gameR3!(I) + gameR3!(1 - I)
-            teamRecords!(83, 1) = gameR3!(I)
-            teamRecords!(83, 2) = gameR3!(1 - I)
+        If totRebounds(I) + totRebounds(1 - I) < teamRecords!(83, 0) Then
+            teamRecords!(83, 0) = totRebounds(I) + totRebounds(1 - I)
+            teamRecords!(83, 1) = totRebounds(I)
+            teamRecords!(83, 2) = totRebounds(1 - I)
             teamRecDesc$(83, 0) = gameTeams$(I)
             teamRecDesc$(83, 1) = VERSUS$(I)
             teamRecDesc$(83, 2) = gameTeams$(1 - I)

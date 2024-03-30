@@ -12,7 +12,7 @@ Sub ADDTOURN ()
 
     Shared consolationSetting%()
     Shared homeScores(), visitorScores()
-    Shared tourneyN%(), scheduleNG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
 
     Dim NR$
 
@@ -66,7 +66,7 @@ Sub ADDTOURN ()
                     Call SetupTourney(NR$, Selection%, newTourneyName$, tourneyFile$)
 
                 Case 2, 4:
-                    Erase NN%, tourneyN%
+                    Erase nbrRegionalTeams, tourneyN%
                     Erase regionNames$, slotName$
                     consolationSetting%(0) = 0
                     consolationSetting%(1) = 0
@@ -105,11 +105,11 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
     Shared tourneyDefaults%()
 
-    Dim U6!
+    Dim pbpDelayTourn!
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%(), teamRatings%()
-    Shared tourneyN%(), scheduleNG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
 
     tourneyDefaults%(3) = 1
     tourneyDefaults%(7) = 2
@@ -139,13 +139,14 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Cls
 
     Color , 4
-    Locate 1, 1: Print Tab(80);
+    Locate 1, 1: Print Tab(80); " ";
 
     Color 0
     Locate , 19: Print "SELECT GENERAL TOURNAMENT OPTIONS"
 
-    Locate 25, 1: Print Tab(80);
-    Locate , 1: Color , 0
+    Locate 25, 1: Print Tab(80); " ";
+    Locate , 1
+    Color , 0
 
     Do
         Locate 5, 
@@ -178,17 +179,34 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         If I$ = Chr$(27) Then Exit Sub
 
         Select Case I
-            Case 1: tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
-            Case 2: tourneyDefaults%(7) = tourneyDefaults%(7) + 1: If tourneyDefaults%(7) > 2 Then tourneyDefaults%(7) = 0
+
+            Case 1: 
+                tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
+
+            Case 2: 
+                tourneyDefaults%(7) = tourneyDefaults%(7) + 1
+                If tourneyDefaults%(7) > 2 Then tourneyDefaults%(7) = 0
+
             Case 3:
                 Locate 7, 32
-                Input U6!
-                tourneyDefaults%(4) = U6! * 10
-            Case 4: tourneyDefaults%(5) = tourneyDefaults%(5) + 1: If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
-            Case 5: tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
-            Case 6: tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
-            Case 7: tourneyDefaults%(14) = 1 - tourneyDefaults%(14)
+                Input pbpDelayTourn!
+                tourneyDefaults%(4) = pbpDelayTourn! * 10
+
+            Case 4: 
+                tourneyDefaults%(5) = tourneyDefaults%(5) + 1
+                If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
+
+            Case 5: 
+                tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
+
+            Case 6: 
+                tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
+
+            Case 7: 
+                tourneyDefaults%(14) = 1 - tourneyDefaults%(14)
+
             Case 8: '
+
         End Select
 
     Loop Until I = 8
@@ -200,11 +218,11 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     GetData:
     Cls
     Color , 6
-    Locate 1, 1: Print Tab(80);
+    Locate 1, 1: Print Tab(80); " ";
     Color 15
     Locate , 22: Print "TOURNAMENT  - GENERAL INFORMATION"
 
-    Locate 25, 1: Print Tab(80);
+    Locate 25, 1: Print Tab(80); " ";
     Locate , 1: Color , 0
 
     Locate 7, 1: QPrint "FILE NAME (48 CHARACTERS) ", 14, 1, -1
@@ -329,7 +347,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%(), teamRatings%()
-    Shared tourneyN%(), scheduleNG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
 
     Cls
     Color 15, 1
@@ -338,10 +356,10 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
     'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
     Cls
     Color , 6
-    Locate 1, 1: Print Tab(80);
+    Locate 1, 1: Print Tab(80); " ";
     Color 15
     Locate , 26: Print "REGIONAL/BRACKET INFORMATION"
-    Locate 25, 1: Print Tab(80);
+    Locate 25, 1: Print Tab(80); " ";
 
     Color , 0
     Locate , 1
@@ -383,8 +401,8 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
         If X$ = "N" GoTo NameRegion
         If X$ <> "Y" GoTo Done1 'insist on either Y or N or up-arrow
 
-        NN%(currRegion) = Val(NT$)
-        If NN%(currRegion) < 4 Or NN%(currRegion) > 16 Then GoTo REGIONSIZE
+        nbrRegionalTeams(currRegion) = Val(NT$)
+        If nbrRegionalTeams(currRegion) < 4 Or nbrRegionalTeams(currRegion) > 16 Then GoTo REGIONSIZE
 
         Do
             Color , 0
@@ -392,7 +410,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
             Cls
 
             Color , 6
-            Locate 1, 1: Print Tab(80);
+            Locate 1, 1: Print Tab(80); " ";
             Color 15: Locate , 26
 
             Xcoord = Len(regionNames$(currRegion) + " REGIONAL/CONFERENCE SEEDING")
@@ -400,16 +418,16 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
             Locate , Xcoord
             Print regionNames$(currRegion) + " REGIONAL/CONFERENCE SEEDING"
 
-            Locate 25, 1: Print Tab(80);
+            Locate 25, 1: Print Tab(80); " ";
             Locate , 1
             Color 12, 0
 
-            MAXSEED = NN%(currRegion) + 1 + 4
+            MAXSEED = nbrRegionalTeams(currRegion) + 1 + 4
             Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
 
             Locate 4, 25: Print "SEED  TEAM"
 
-            For I1 = 1 To NN%(currRegion)
+            For I1 = 1 To nbrRegionalTeams(currRegion)
                 Color 2
                 Locate , 25
                 Print Using "##    "; I1;
@@ -436,7 +454,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                     'Save Seeding
                     If Val(I$) = 3 Then
 
-                        For I = 1 To NN%(currRegion)
+                        For I = 1 To nbrRegionalTeams(currRegion)
 
                             If slotName$(currRegion, I, 0) = "" Then
 
@@ -475,9 +493,9 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                     'Add / Remove Teams from Seeding
                     Do
                         Locate 22, 30
-                        Print "SEED # (1-"; Str$(NN%(currRegion)); ") ";
+                        Print "SEED # (1-"; Str$(nbrRegionalTeams(currRegion)); ") ";
                         Input seed
-                    Loop Until seed >= 1 And seed <= NN%(currRegion)
+                    Loop Until seed >= 1 And seed <= nbrRegionalTeams(currRegion)
 
                     If Val(I$) = 1 Then
 
@@ -528,7 +546,7 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
     Shared TC!
 
     Shared regionNames$()
-    Shared NN%()
+    Shared nbrRegionalTeams()
 
     ReDim menuChoices$(1 To numberRegions + 1)
 
@@ -539,12 +557,12 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         Cls
 
         Color , 6
-        Locate 1, 1: Print Tab(80);
+        Locate 1, 1: Print Tab(80); " ";
 
         Locate , 23: Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 
-        Locate 25, 1: Print Tab(80);
+        Locate 25, 1: Print Tab(80); " ";
 
         Locate , 1
         Color , 0
@@ -576,7 +594,7 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
             'Save and Exit
             If Selection% < numberRegions + 1 Then
-                numberTeams$ = _Trim$(Str$(NN%(Selection%)))
+                numberTeams$ = _Trim$(Str$(nbrRegionalTeams(Selection%)))
                 Call SeedBrackets(Selection%, numberTeams$, saveFile$, numberRegions, tourneyName$)
 
             End If
@@ -598,15 +616,15 @@ End Sub
 'to generate the appropriate schedule.
 Sub ScheduleAndSaveTourney (saveFile$, numberRegions, tourneyName$)
 
-    Shared NN%()
+    Shared nbrRegionalTeams()
 
     If _FileExists(diskPaths$(1) + saveFile$ + ".TMP") Then Kill diskPaths$(1) + saveFile$ + ".TMP"
     If _FileExists(diskPaths$(1) + saveFile$ + ".TCX") Then Kill diskPaths$(1) + saveFile$ + ".TCX"
     If _FileExists(diskPaths$(1) + saveFile$ + ".TOU") Then Kill diskPaths$(1) + saveFile$ + ".TOU"
 
     For currRegion = 1 To numberRegions
-        If NN%(currRegion) >= 4 Then
-            var% = NN%(currRegion) - 3
+        If nbrRegionalTeams(currRegion) >= 4 Then
+            var% = nbrRegionalTeams(currRegion) - 3
             Call PickIt(var%, currRegion, saveFile$)
         End If
     Next
@@ -629,7 +647,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%()
-    Shared tourneyN%(), NN%()
+    Shared tourneyN%(), nbrRegionalTeams()
     Shared tourneyDefaults%()
     
     tourneyFile$ = ChooseFile$ (diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
@@ -661,7 +679,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             Input #1, numberRegions ' NUMBER OF REGIONS
 
             For I = 1 To 16
-                Input #1, NN%(I): ' NUMBER OF TEAMS IN REGION
+                Input #1, nbrRegionalTeams(I): ' NUMBER OF TEAMS IN REGION
                 Input #1, regionNames$(I) ' NAME OF REGION
             Next
 
@@ -712,7 +730,7 @@ Sub PickIt (var%, currRegion, saveFile$)
     Shared homeTeam$(), visitingTeam$()
     Shared regionNames$(), slotName$(), yearNumber$()
     Shared consolationSetting%()
-    Shared tourneyN%(), scheduleNG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
 
     Select Case var%
 
@@ -5843,7 +5861,7 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
 
     Shared TC!
 
-    Shared consolationSetting%(), tourneyN%(), NN%()
+    Shared consolationSetting%(), tourneyN%(), nbrRegionalTeams()
     Shared slotName$(), regionNames$()
 
     'SAVE TOURNAMENT INFO AND QUIT
@@ -5853,7 +5871,7 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
     Print #2, numberRegions ' NUMBER OF REGIONS
 
     For I = 1 To 16
-        Print #2, NN%(I) ' NUMBER OF TEAMS IN REGION
+        Print #2, nbrRegionalTeams(I) ' NUMBER OF TEAMS IN REGION
         Print #2, regionNames$(I) ' NAME OF REGION
     Next
 
@@ -6003,16 +6021,23 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                 Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                 Get #1, AP
-
-                For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
-                For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
+                
+                For X = 0 To 14: 
+                    scheduleNG%(0, X) = CVI(Q$(X + 1))
+                Next
+                
+                For X = 0 To 3: 
+                    yearNumber$(0, X) = Q$(20 + X)
+                Next
 
                 visitorScores(0) = CVI(Q$(16))
                 homeScores(0) = CVI(Q$(17))
                 visitingTeam$(0) = Q$(18)
                 homeTeam$(0) = Q$(19)
 
-                For X = 1 To 3: scheduleNG%(0, X + 14) = CVI(Q$(X + 23)): Next
+                For X = 1 To 3: 
+                    scheduleNG%(0, X + 14) = CVI(Q$(X + 23))
+                Next
 
                 Close #1
 
@@ -6030,13 +6055,22 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                     Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                     Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-                    For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
-                    For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
+                    For X = 0 To 14: 
+                        LSet Q$(X + 1) = MKI$(scheduleNG%(0, X))
+                    Next
+                    
+                    For X = 0 To 3: 
+                        LSet Q$(20 + X) = yearNumber$(0, X)
+                    Next
 
-                    LSet Q$(16) = MKI$(visitorScores(0)): LSet Q$(17) = MKI$(homeScores(0))
-                    LSet Q$(18) = visitingTeam$(0): LSet Q$(19) = homeTeam$(0)
+                    LSet Q$(16) = MKI$(visitorScores(0))
+                    LSet Q$(17) = MKI$(homeScores(0))
+                    LSet Q$(18) = visitingTeam$(0)
+                    LSet Q$(19) = homeTeam$(0)
 
-                    For X = 24 To 26: LSet Q$(X) = MKI$(scheduleNG%(0, X - 9)): Next
+                    For X = 24 To 26: 
+                        LSet Q$(X) = MKI$(scheduleNG%(0, X - 9))
+                    Next
 
                     Put #2, MATCH
 

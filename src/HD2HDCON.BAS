@@ -18,12 +18,12 @@ Sub HD2HDCON ()
 
     Shared locIndicator$(), oppName$(), Z1$()
 
-    Dim Z1_HD2HD(40), Z2_HD2HD$(40)
+    Dim Z1_HD2HD(MAX_CONFERENCES), Z2_HD2HD$(MAX_CONFERENCES)
 
     Shared D1$, D2$
 
     teamNbr = 0
-    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
+    Call ChooseTeam (YN$, nbrTeams, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
@@ -60,7 +60,7 @@ Sub HD2HDCON ()
 
         Close #1
 
-        conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+        conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -94,20 +94,20 @@ Sub HD2HDCON ()
                 VPP = 1
             End If
 
-            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #2
+            Open diskPaths$(2) + conferenceFile$ + ".LIB" For Input As #2
 
             Input #2, X
             Input #2, conf$
             Input #2, D1$
             Input #2, D2$
 
-            For X = 1 To 30
+            For X = 1 To TEAMS_PER_CONFERENCE
                 Input #2, Z1$(X)
                 Input #2, Z1_HD2HD(X)
                 Input #2, Z2_HD2HD$(X)
             Next
 
-            NTMS = 30
+            nbrTeams = TEAMS_PER_CONFERENCE
 
             Close #2
 
@@ -119,7 +119,7 @@ Sub HD2HDCON ()
             Erase R1!, R2!, hd2hdR3!, R4!
             Erase TAL!, TAW!, THL!, THW!, TR1!, TR2!, TR3!, TR4!
 
-            For K = 1 To 30
+            For K = 1 To TEAMS_PER_CONFERENCE
 
                 If Z1$(K) <> "XXX" Then
 

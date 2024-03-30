@@ -300,9 +300,9 @@ Sub ReadExtraData (teamYear$, teamIdx)
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -435,8 +435,8 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
             ReDim foundFiles$(0 To Count%)
 
             'For X = 1 To Count%
-                '8 char's filename + 4 char's (. + ext)
-                'foundFiles$(X) = Space$(12)
+            '8 char's filename + 4 char's (. + ext)
+            'foundFiles$(X) = Space$(12)
             'Next
 
             foundFiles$(0) = fileSpec$
@@ -505,4 +505,5 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
+
 

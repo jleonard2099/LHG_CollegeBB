@@ -9,6 +9,7 @@ Sub COMPARE ()
     _Title "Courtside College Basketball - Stats Comparison"
 
     Shared teamScore(), oppScore(), teamRatings%()
+    Shared replayLosses, replayWins
 
     Shared statsA!(), statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -50,9 +51,13 @@ Sub COMPARE ()
 
         Next
 
-        For L = 0 To 15: Input #1, statsZ!(L): Next
+        For L = 0 To 15:
+            Input #1, statsZ!(L)
+        Next
 
-        For L = 0 To 15: Input #1, statsZ1!(L): Next
+        For L = 0 To 15:
+            Input #1, statsZ1!(L)
+        Next
 
         Close #1
 
@@ -70,30 +75,34 @@ Sub COMPARE ()
 
         Input #2, numberGames
 
-        For J = 1 To MAX_SCHED_STATS: 
+        For J = 1 To MAX_SCHED_STATS:
             Input #2, teamScore(J)
         Next
 
-        For J = 1 To MAX_SCHED_STATS: 
+        For J = 1 To MAX_SCHED_STATS:
             Input #2, oppName$(J)
         Next
 
-        For J = 1 To MAX_SCHED_STATS: 
+        For J = 1 To MAX_SCHED_STATS:
             Input #2, oppScore(J)
         Next
 
-        For J = 1 To MAX_SCHED_STATS: 
+        For J = 1 To MAX_SCHED_STATS:
             Input #2, locIndicator$(J)
         Next
 
         Close #2
 
-        replayLosses% = 0
-        replayWins% = 0
+        replayLosses = 0
+        replayWins = 0
 
-        For I = 1 To numberGames
-            If teamScore(I) < oppScore(I) Then replayLosses% = replayLosses% + 1
-            If teamScore(I) > oppScore(I) Then replayWins% = replayWins% + 1
+        For currGame = 1 To numberGames
+            If teamScore(currGame) < oppScore(currGame) Then
+                replayLosses = replayLosses + 1
+            End If
+            If teamScore(currGame) > oppScore(currGame) Then
+                replayWins = replayWins + 1
+            End If
         Next
 
         Color 15, 0
@@ -153,7 +162,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared statPlyrNames$()
 
-    Shared replayLosses%, replayWins%
+    Shared replayLosses, replayWins
 
     Cls
 
@@ -198,9 +207,10 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
         Color 3: Print "Return To Main Menu"
 
         Do
+
             Color 15
             Locate 23, 15
-            Input "ENTER # TO VIEW "; B9
+            Input "ENTER # TO VIEW"; B9
 
             Select Case B9
 
@@ -258,6 +268,9 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
             End Select
 
+            Locate 23, 30
+            Print Space$(10)
+
         Loop Until B9 >= 1 And B9 <= 17 Or menuExit = 1
 
     Loop Until B9 = 17 Or backToMenu = 1
@@ -282,7 +295,7 @@ Sub TeamComparisons_Screen (T$)
     Shared teamRatings%(), teamStats()
     Shared statsZ!(), statsZ1!()
 
-    Shared replayLosses%, replayWins%
+    Shared replayLosses, replayWins
 
     Locate 11, 31: Print Space$(18)
 
@@ -362,8 +375,8 @@ Sub TeamComparisons_Screen (T$)
     Locate 6, 45: Print Using "####"; teamRatings%(8);: Print " ";
 
     Color 14, 0
-    Locate 7, 41: Print Using "####"; replayWins%;
-    Locate 7, 45: Print Using "####"; replayLosses%;: Print " ";
+    Locate 7, 41: Print Using "####"; replayWins;
+    Locate 7, 45: Print Using "####"; replayLosses;: Print " ";
 
     Color 3, 0
     Locate 4, 10: Print Using "######"; teamStats(1) / 100 * teamStats(3);
@@ -414,8 +427,13 @@ Sub TeamComparisons_Screen (T$)
     Locate 18, 62: Print Using "######"; teamStats(19) * teamStats(20) / 100;
     Locate 19, 62: Print Using "######"; teamStats(19);
 
-    If teamRatings%(9) = 0 Then Locate 20, 62: Print "  .000";
-    If teamRatings%(9) > 0 Then Locate 20, 62: statPCT! = teamStats(20) / 100: Print "  ";: Print Using ".###"; statPCT!;
+    If teamRatings%(9) = 0 Then
+        Locate 20, 62: Print "  .000";
+    End If
+    If teamRatings%(9) > 0 Then
+        Locate 20, 62: statPCT! = teamStats(20) / 100
+        Print "  ";: Print Using ".###"; statPCT!;
+    End If
 
     Locate 4, 16: Print Using "#########"; statsZ!(2);
     Locate 5, 16: Print Using "#########"; statsZ!(1);
@@ -439,6 +457,15 @@ Sub TeamComparisons_Screen (T$)
     Locate 17, 16: Print Using "#########"; statsZ!(9);
     Locate 18, 16: Print Using "#########"; statsZ!(13);
     Locate 19, 16: Print Using "#########"; statsZ!(14);
+
+    If statsZ!(13) = 0 Then
+        Locate 20, 16: Print "     .000";
+    End If
+    If statsZ!(13) > 0 Then
+        Locate 20, 16: statPCT! = (statsZ!(13) / statsZ!(14))
+        Print "     ";: Print Using ".###"; statPCT!;
+    End If
+
     Locate 4, 68: Print Using "########"; statsZ1!(2);
     Locate 5, 68: Print Using "########"; statsZ1!(1);
 
@@ -462,11 +489,13 @@ Sub TeamComparisons_Screen (T$)
     Locate 18, 68: Print Using "########"; statsZ1!(13);
     Locate 19, 68: Print Using "########"; statsZ1!(14);
 
-    If statsZ1!(13) = 0 Then Locate 20, 68: Print "    .000";
-    If statsZ1!(13) > 0 Then Locate 20, 68: statPCT! = (statsZ1!(13) / statsZ1!(14)): Print "    ";: Print Using ".###"; statPCT!;
-
-    If statsZ!(13) = 0 Then Locate 20, 16: Print "     .000";
-    If statsZ!(13) > 0 Then Locate 20, 16: statPCT! = (statsZ!(13) / statsZ!(14)): Print "     ";: Print Using ".###"; statPCT!;
+    If statsZ1!(13) = 0 Then
+        Locate 20, 68: Print "    .000";
+    End If
+    If statsZ1!(13) > 0 Then
+        Locate 20, 68: statPCT! = (statsZ1!(13) / statsZ1!(14))
+        Print "    ";: Print Using ".###"; statPCT!;
+    End If
 
 End Sub
 
@@ -748,7 +777,7 @@ End Sub
 'are output to the end user display
 Sub AllComparisons_Printer (teamName$, posn$())
 
-    Shared replayLosses%, replayWins%
+    Shared replayLosses, replayWins
 
     Shared teamRatings%(), teamStats()
 
@@ -836,8 +865,8 @@ Sub AllComparisons_Printer (teamName$, posn$())
     Print #1, Tab(16); Using "#########"; statsZ!(4);
 
     Print #1, Tab(30); "  REPLAY   ";
-    Print #1, Tab(41); Using "####"; replayWins%;
-    Print #1, Tab(45); Using "####"; replayLosses%;
+    Print #1, Tab(41); Using "####"; replayWins;
+    Print #1, Tab(45); Using "####"; replayLosses;
 
     Print #1, Tab(55); " FTM   ";
     Print #1, Tab(62); Using "######"; teamStats(6) / 100 * teamStats(8);
@@ -1297,4 +1326,5 @@ Sub AllComparisons_Printer (teamName$, posn$())
     Kill "REPORT"
 
 End Sub
+
 
