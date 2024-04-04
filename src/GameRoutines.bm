@@ -44,6 +44,8 @@ Sub InitVar ()
     Shared oppScore(), rosterStatus()
     Shared teamScore(), tourneySettings()
 
+    Shared FY%()
+
     Shared gameW0!(), gameW1!()
     Shared statsZ!(), statsZ1!(), statsZ2!()
     Shared indRecords!(), teamRecords!()
@@ -91,7 +93,7 @@ Sub InitVar ()
     timeouts(1) = 5
     timeouts(0) = 5
 
-    PA% = -1
+    possArrow = -1
 
     teamRat_GAME(0, 0) = 15
     teamRat_GAME(0, 1) = 1
@@ -107,6 +109,7 @@ Sub InitVar ()
     endAllGames = 0
     endGame = 0
     F3 = 0
+    fastBreak = 0
     FO = 0
     G9 = 0
     halfTime = 0
@@ -115,10 +118,12 @@ Sub InitVar ()
     MJ = 0
     P = 0
     P9 = 0
+    PASS = 0
     S2 = 0
-    S9 = 0
+    gameAvgTmStamina = 0
     shotClock = 0
     statSpecial = 0
+    threePtShotChance = 0
     timeElapsed! = 0
     TMT = 0
     TOU = 0
@@ -128,12 +133,9 @@ Sub InitVar ()
     BO% = 0
     BU% = 0
     DK% = 0
-    F3S% = 0
-    fastBreak = 0
     FT% = 0
     J8% = 0
     LC% = 0
-    PASS = 0
     PT% = 0
     PZ% = 0
     X0% = 0
@@ -142,7 +144,7 @@ Sub InitVar ()
 
     skipUserOpts% = 0
 
-    F! = 0
+    shotChance! = 0
 
     A1$ = ""
     B1$ = ""
@@ -172,19 +174,18 @@ Sub InitVar ()
     'Erase tourneySettings
     'Erase seedSlotName$
 
-    Erase B1
-    Erase defStrat, defType, eventSettings
+    Erase B1, defStrat, defCoverage, eventSettings
     Erase F1, ft3PtFoul, G4, G5
     Erase offStrat
     Erase oppScore, teamScore
-    Erase P2, P4, P5, P7
+    Erase P2, P4, P5, defCategory
     Erase plyrStamina, powerRating
     Erase pbpFG, pbpBG
     Erase QQ, QR, RB, schedGame
     Erase score
 
     Erase teamAdj, threeFG, timePlayed, tmFatigue
-    Erase turnovers, statTotals
+    Erase totRebounds, turnovers, statTotals
     Erase W2, W3, Z5, Z6
 
     Erase CZ%, FY%
@@ -197,7 +198,7 @@ Sub InitVar ()
     Erase Q$, SX$
     Erase teamNames$, teamRecDesc$, teamYrTourn$
 
-    Erase totRebounds, gameW0!, gameW1!
+    Erase gameW0!, gameW1!
     Erase statsZ!, statsZ1!, statsZ2!
     Erase indRecords!, teamRecords!
 
@@ -355,10 +356,14 @@ Sub TEAMSETUP (teamIdx)
     For I = 0 To 13
 
         plyrOff_GAME!(teamIdx, I, 16) = plyrRat_GAME(teamIdx, I, 6)
-        If plyrOff_GAME!(teamIdx, I, 16) = 0 Then plyrOff_GAME!(teamIdx, I, 16) = 6
+        If plyrOff_GAME!(teamIdx, I, 16) = 0 Then
+            plyrOff_GAME!(teamIdx, I, 16) = 6
+        End If
 
         plyrOff_GAME!(teamIdx, I, 17) = plyrRat_GAME(teamIdx, I, 5)
-        If plyrOff_GAME!(teamIdx, I, 17) = 0 Then plyrOff_GAME!(teamIdx, I, 17) = 40
+        If plyrOff_GAME!(teamIdx, I, 17) = 0 Then
+            plyrOff_GAME!(teamIdx, I, 17) = 40
+        End If
 
         plyrOff_GAME!(teamIdx, I, 19) = plyrRat_GAME(teamIdx, I, 3)
         plyrOff_GAME!(teamIdx, I, 20) = plyrRat_GAME(teamIdx, I, 2)
@@ -368,12 +373,97 @@ Sub TEAMSETUP (teamIdx)
     Next I
 
     teamAdj(teamIdx, 2) = d3FG_Adj(teamIdx)
-    If teamAdj(teamIdx, 2) > 20 Then teamAdj(teamIdx, 2) = teamAdj(teamIdx, 2) - 100
+    If teamAdj(teamIdx, 2) > 20 Then
+        teamAdj(teamIdx, 2) = teamAdj(teamIdx, 2) - 100
+    End If
 
     teamAdj(teamIdx, 3) = d3FGA_Adj(teamIdx)
-    If teamAdj(teamIdx, 3) > 20 Then teamAdj(teamIdx, 3) = teamAdj(teamIdx, 3) - 100
+    If teamAdj(teamIdx, 3) > 20 Then
+        teamAdj(teamIdx, 3) = teamAdj(teamIdx, 3) - 100
+    End If
 
 End Sub
+
+
+
+'----------------------------------------
+'       CalculatePacing Function
+'----------------------------------------
+' Use several factors for both team's FGA
+' to determine the pacing of the game
+
+Function ShotPacing%
+
+    Shared FY%()
+
+    Dim nbrPoss(0 To 1)
+
+    'JY = Average FGA/G Adjustment For Both Teams
+    '   FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA/G)
+    '   FY%(1) = 2 * (Home Tm Average FGA/G - League FGA/G)
+    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
+
+    'https://kenpom.com/blog/the-possession/
+    yFactor! = .44
+    For X = 0 To 1
+        'Average team possessions / game
+        nbrPoss(X) = ((teamStats_GAME(X, 1) - teamStats_GAME(X, 9)) + teamStats_GAME(X, 15) + (yFactor! * teamStats_GAME(X, 5))) / teamStats_GAME(X, 0)
+    Next X
+
+    'https://sports.icalculator.com/basketball-pace-factor-calculator.html
+    paceFactor! = 40 * ((nbrPoss(0) + nbrPoss(1)) / 2)
+
+    If paceFactor! = 0 Then
+
+        'This will most often come from teams before 1993
+        'Without team actual stats being entered, there
+        'is no way to determine a value above
+
+        Select Case sClockVal
+
+            Case 0
+                paceValue = 99
+
+            Case 1
+                'paceValue = 39 + Int(((JY - 52) * .8) + .5)
+                paceValue = 55
+
+            Case 2
+                paceValue = 39 + Int(((JY - 56) * .8) + .5)
+
+            Case 3
+                paceValue = 39 + Int(((JY - 58) * .8) + .5)
+
+        End Select
+
+    Else
+
+        'So far, it seems dividing by 80-(shot clock) is the sweet spot
+        Select Case sClockVal
+
+            Case 0
+                'There is currently no data that I can
+                'use to test this!!!
+                paceValue = Int((paceFactor! + 0.5) / 25)
+
+            Case 1
+                'There is currently no data that I can
+                'use to test this!!!
+                paceValue = Int((paceFactor! + 0.5) / 35)
+
+            Case 2
+                paceValue = Int((paceFactor! + 0.5) / 50)
+
+            Case 3
+                paceValue = Int((paceFactor! + 0.5) / 50)
+
+        End Select
+
+    End If
+
+    ShotPacing% = paceValue
+
+End Function
 
 
 '----------------------------------------
@@ -504,10 +594,15 @@ Sub DISABLEPLAYERS (teamIdx)
             Print " ";
 
             'Automatically disable "non-existent" players
-            If players$(teamIdx, I) = "XXX" Then rosterStatus(teamIdx, I) = -1: Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
+            If players$(teamIdx, I) = "XXX" Then
+                rosterStatus(teamIdx, I) = -1
+                Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
+            End If
 
             'Color players who have been disabled
-            If rosterStatus(teamIdx, I) = 1 Or rosterStatus(teamIdx, I) = -1 Then Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
+            If rosterStatus(teamIdx, I) = 1 Or rosterStatus(teamIdx, I) = -1 Then
+                Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
+            End If
 
             'Print player name
             Print players$(teamIdx, I);
@@ -689,7 +784,7 @@ Sub MAKEPBP ()
                 'TURNOVER
                 pbpString$ = players$(P, B1(P, ballCarrier))
 
-                If RN0 > 35 And RN0 <= 68 And P7(D) > 1 And PASS = 1 Then
+                If RN0 > 35 And RN0 <= 68 And defCategory(D) > 1 And PASS = 1 Then
 
                     pbpString$ = gameTeams$(P) + " CALLED FOR 10 SEC VIOLATION"
 
@@ -761,7 +856,7 @@ Sub MAKEPBP ()
                     Case 11
                         pbpString$ = players$(P, B1(P, ballCarrier)) + "POWER SLAMS IT!!!"
                     Case 12
-                        pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED STUFF!!!"
+                        pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED STUFshotChance!!!"
                     Case 13
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " BACKWARDS JAM!!!"
                     Case 14
@@ -869,21 +964,39 @@ Sub MAKEPBP ()
                                 Call PBP
                                 pbpString$ = "TAKES IT UP"
 
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 11 To 20
                                 pbpString$ = "HE TAKES IT TO THE HOLE"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 21 To 30
                                 pbpString$ = "HE TAKES IT TO THE HOOP"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 31 To 40
                                 pbpString$ = "HE LEANS IN AND SHOOTS"
@@ -893,9 +1006,15 @@ Sub MAKEPBP ()
 
                             Case 51 To 60
                                 pbpString$ = "HE TAKES IT TO THE BOARD"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 61 To 70
                                 pbpString$ = "HE PUTS IT OFF THE GLASS"
@@ -910,15 +1029,27 @@ Sub MAKEPBP ()
 
                             Case 81 To 90
                                 pbpString$ = "HE TAKES IT UP STRONG"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 91 To 95
                                 pbpString$ = "HE POWERS IT UP"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then DK% = 1
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then DK% = 1
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
+                                    DK% = 1
+                                End If
+                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
+                                    DK% = 1
+                                End If
+                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 96 To 100
                                 pbpString$ = "HE LAYS IT UP"
@@ -937,45 +1068,62 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE SPINS FREE"
                                         Call PBP
                                         pbpString$ = "SHOOTS"
+
                                     Case 26 To 50
                                         pbpString$ = "HE TAKES IT UP UNDER THE BASKET"
-                                        If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 2 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 51 To 52
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         pbpString$ = "AND SOARS TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 2 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 53 To 54
                                         pbpString$ = "HE BLOWS PAST TWO DEFENDERS"
+
                                     Case 55 To 56
                                         pbpString$ = "HE DRIVES THE BASELINE"
                                         Call PBP
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 2 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 2 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 57
                                         pbpString$ = "HE SLICES IN THE HOLE"
                                         Call PBP
                                         pbpString$ = "UNDERHAND SCOOP SHOT"
+
                                     Case 58
                                         pbpString$ = "STRONG CUT ALONG THE BASELINE"
                                         Call PBP
                                         pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
+
                                     Case 59
                                         pbpString$ = "HE PENETRATES"
                                         Call PBP
                                         pbpString$ = "GORGEOUS FINGER ROLL!"
+
                                     Case 60 To 75
                                         pbpString$ = "HE TAKES THE JUMPER"
+
                                     Case 76 To 90
                                         pbpString$ = "HE STOPS"
                                         Call PBP
                                         pbpString$ = "SHOOTS"
+
                                     Case 91
                                         pbpString$ = "HE LOOKS TO PASS"
                                         Call PBP
                                         pbpString$ = "NO ONE IS OPEN"
                                         Call PBP
                                         pbpString$ = "HE PUTS IT UP"
+
                                     Case 92 To 100
                                         pbpString$ = "HE TAKES THE SHOT"
 
@@ -987,48 +1135,71 @@ Sub MAKEPBP ()
 
                                     Case 1 To 16
                                         pbpString$ = "HE TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 17 To 32
                                         pbpString$ = "HE SPINS FREE"
                                         Call PBP
                                         pbpString$ = "SHOOTS"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 33 To 48
                                         pbpString$ = "HE GETS LOOSE IN THE PAINT"
                                         Call PBP
                                         pbpString$ = "TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 49 To 64
                                         pbpString$ = "HE PUTS IT UP"
+
                                     Case 65 To 67
                                         pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
                                         Call PBP
                                         pbpString$ = "TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 68, 69
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         pbpString$ = "AND SOARS TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 70, 71
                                         pbpString$ = "HE DRIVES THE BASELINE"
                                         Call PBP
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 72
                                         pbpString$ = "HE SLICES IN THE HOLE"
                                         Call PBP
                                         pbpString$ = "UNDERHAND SCOOP SHOT"
+
                                     Case 73
                                         pbpString$ = "STRONG CUT ALONG THE BASELINE"
                                         Call PBP
                                         pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
+
                                     Case 74
                                         pbpString$ = "HE PENETRATES"
                                         Call PBP
                                         pbpString$ = "GORGEOUS FINGER ROLL!"
+
                                     Case 75 To 80
                                         pbpString$ = "HE SHOOTS"
+
                                     Case 81 To 100
                                         pbpString$ = "HE TAKES THE SHOT"
 
@@ -1040,28 +1211,43 @@ Sub MAKEPBP ()
 
                                     Case 1 To 15
                                         pbpString$ = "HE PUTS IT OFF THE GLASS"
+
                                     Case 16 To 25
                                         pbpString$ = "HE PIVOTS TO THE BASKET"
+
                                     Case 26 To 40
                                         pbpString$ = "HE POWERS IT UP"
+
                                     Case 41 To 58
                                         pbpString$ = "HE TAKES IT TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 59 To 70
                                         pbpString$ = "HE TAKES THE SHOT"
+
                                     Case 71, 72
                                         pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
                                         Call PBP
                                         pbpString$ = "TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 73, 74
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         pbpString$ = "AND SOARS TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
+                                            DK% = 1
+                                        End If
+
                                     Case 75 To 100
                                         pbpString$ = "HE TAKES IT UP STRONG"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
+                                            DK% = 1
+                                        End If
 
                                 End Select
 
@@ -1070,16 +1256,17 @@ Sub MAKEPBP ()
                     Case 4
                         'THREE!
                         If FT% = 1 Then
+
                             If RN0 <= 50 Then
                                 pbpString$ = pbpString$ + " THROWS UP A PRAYER"
                             Else
                                 pbpString$ = pbpString$ + " LAUNCHES A THREE"
                             End If
-                        End If
 
-                        If FT% = 1 Then
                             FT% = 0
+
                         Else
+
                             Select Case RN0
 
                                 Case 1 To 10
@@ -1493,8 +1680,12 @@ Sub MAKEPBP ()
 
                         End Select
 
-                        If ballCarrier = 2 Or ballCarrier = 3 And Int(Rnd(1) * 100) + 1 <= 7 Then DK% = 1
-                        If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 15 Then DK% = 1
+                        If ballCarrier = 2 Or ballCarrier = 3 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                            DK% = 1
+                        End If
+                        If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 15 Then
+                            DK% = 1
+                        End If
 
                     Case 10
                         DK% = 0
@@ -1699,7 +1890,7 @@ Sub MAKEPBP ()
                     Case 11
                         pbpString$ = players$(P, B1(P, ballCarrier)) + "POWER SLAMS IT!!!"
                     Case 12
-                        pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED STUFF!!!"
+                        pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED STUFshotChance!!!"
                     Case 13
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " BACKWARDS JAM!!!"
                     Case 14
@@ -2329,30 +2520,75 @@ Sub TICKER ()
         If TMT = 0 Then
             Locate 10, 28: Print "NO OTHER GAMES SCHEDULED"
         Else
-            If currHalf = 1 And gameClock! <= 1200 And gameClock! >= 960 Then timeInterval = 1
-            If currHalf = 1 And gameClock! < 960 And gameClock! >= 720 Then timeInterval = 2
-            If currHalf = 1 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 3
-            If currHalf = 1 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 4
-            If currHalf = 1 And gameClock! < 240 And gameClock! >= 120 Then timeInterval = 5
-            If currHalf = 1 And gameClock! < 120 Then timeInterval = 6
+            If currHalf = 1 Then
+                Select Case gameClock!
+                    Case 960 To 1200
+                        timeInterval = 1
+                    
+                    Case 720 To 959
+                        timeInterval = 2
 
-            If halfTime = 1 Then timeInterval = 8
+                    Case 480 To 719
+                        timeInterval = 3
 
-            If currHalf = 2 And gameClock! < 1200 And gameClock! >= 960 Then timeInterval = 9
-            If currHalf = 2 And gameClock! < 960 And gameClock! >= 720 Then timeInterval = 10
-            If currHalf = 2 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 11
-            If currHalf = 2 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 12
-            If currHalf = 2 And gameClock! < 240 And gameClock! >= 120 Then timeInterval = 13
-            If currHalf = 2 And gameClock! < 120 Then timeInterval = 14
+                    Case 240 To 479
+                        timeInterval = 4
+                
+                    Case 120 To 238
+                        timeInterval = 5
+                    
+                    Case Is < 120
+                        timeInterval = 6
+                End Select
+            End If
+
+            If halfTime = 1 Then
+                timeInterval = 8
+            End If
+
+            If currHalf = 2 Then
+                Select Case gameClock!
+                    Case 960 To 1200
+                        timeInterval = 9
+
+                    Case 720 To 959
+                        timeInterval = 10
+
+                    Case 480 To 719
+                        timeInterval = 11
+
+                    Case 240 To 479
+                        timeInterval = 12
+                
+                    Case 120 To 238
+                        timeInterval = 13
+                    
+                    Case Is < 120
+                        timeInterval = 14
+                End Select
+            End If
+
 
             '-- Could we not got higher than 16?
             '-- In fact why do we strip things down to 14 anyway?
-            If currHalf = 3 And gameClock! <= 1200 And gameClock! >= 960 Then timeInterval = 14
-            If currHalf = 3 And gameClock! < 960 And gameClock! >= 720 Then timeInterval = 14
-            If currHalf = 3 And gameClock! < 720 And gameClock! >= 480 Then timeInterval = 15
-            If currHalf = 3 And gameClock! < 480 And gameClock! >= 240 Then timeInterval = 16
-            If currHalf = 3 And gameClock! < 240 Then timeInterval = 17
+            If currHalf = 3 Then
+                Select Case gameClock!
+                    Case 960 To 1200
+                        timeInterval = 14
 
+                    Case 720 To 959
+                        timeInterval = 14
+
+                    Case 480 To 719
+                        timeInterval = 15
+
+                    Case 240 To 479
+                        timeInterval = 16
+                    
+                    Case Is < 240
+                        timeInterval = 17
+                End Select
+            End If
 
             If Left$(SX$(1, 0), 3) <> "XXX" Then
 
@@ -2869,19 +3105,34 @@ Sub TICKERUPDATE ()
             Select Case gameClock!
 
                 Case 721 To 960
-                    If SX%(schedGame(2) + 1, 0, 1) = -1 Then SX%(schedGame(2) + 1, 0, 1) = score(0, 0): SX%(schedGame(2) + 1, 1, 1) = score(1, 0)
+                    If SX%(schedGame(2) + 1, 0, 1) = -1 Then
+                        SX%(schedGame(2) + 1, 0, 1) = score(0, 0)
+                        SX%(schedGame(2) + 1, 1, 1) = score(1, 0)
+                    End If
 
                 Case 481 To 720
-                    If SX%(schedGame(2) + 1, 0, 2) = -1 Then SX%(schedGame(2) + 1, 0, 2) = score(0, 0): SX%(schedGame(2) + 1, 1, 2) = score(1, 0)
+                    If SX%(schedGame(2) + 1, 0, 2) = -1 Then
+                        SX%(schedGame(2) + 1, 0, 2) = score(0, 0)
+                        SX%(schedGame(2) + 1, 1, 2) = score(1, 0)
+                    End If
 
                 Case 241 To 480
-                    If SX%(schedGame(2) + 1, 0, 3) = -1 Then SX%(schedGame(2) + 1, 0, 3) = score(0, 1): SX%(schedGame(2) + 1, 1, 3) = score(1, 1)
+                    If SX%(schedGame(2) + 1, 0, 3) = -1 Then
+                        SX%(schedGame(2) + 1, 0, 3) = score(0, 1)
+                        SX%(schedGame(2) + 1, 1, 3) = score(1, 1)
+                    End If
 
                 Case 121 To 240
-                    If SX%(schedGame(2) + 1, 0, 4) = -1 Then SX%(schedGame(2) + 1, 0, 4) = score(0, 0): SX%(schedGame(2) + 1, 1, 4) = score(1, 0)
+                    If SX%(schedGame(2) + 1, 0, 4) = -1 Then
+                        SX%(schedGame(2) + 1, 0, 4) = score(0, 0)
+                        SX%(schedGame(2) + 1, 1, 4) = score(1, 0)
+                    End If
 
                 Case 0 To 120
-                    If SX%(schedGame(2) + 1, 0, 5) = -1 Then SX%(schedGame(2) + 1, 0, 5) = score(0, 0): SX%(schedGame(2) + 1, 1, 5) = score(1, 0)
+                    If SX%(schedGame(2) + 1, 0, 5) = -1 Then
+                        SX%(schedGame(2) + 1, 0, 5) = score(0, 0)
+                        SX%(schedGame(2) + 1, 1, 5) = score(1, 0)
+                    End If
 
             End Select
 
@@ -2901,19 +3152,34 @@ Sub TICKERUPDATE ()
                     Select Case gameClock!
 
                         Case 721 To 960
-                            If SX%(schedGame(2) + 1, 0, 9) = -1 Then SX%(schedGame(2) + 1, 0, 9) = score(0, 0): SX%(schedGame(2) + 1, 1, 9) = score(1, 0)
+                            If SX%(schedGame(2) + 1, 0, 9) = -1 Then
+                                SX%(schedGame(2) + 1, 0, 9) = score(0, 0)
+                                SX%(schedGame(2) + 1, 1, 9) = score(1, 0)
+                            End If
 
                         Case 481 To 720
-                            If SX%(schedGame(2) + 1, 0, 10) = -1 Then SX%(schedGame(2) + 1, 0, 10) = score(0, 0): SX%(schedGame(2) + 1, 1, 10) = score(1, 0)
+                            If SX%(schedGame(2) + 1, 0, 10) = -1 Then
+                                SX%(schedGame(2) + 1, 0, 10) = score(0, 0)
+                                SX%(schedGame(2) + 1, 1, 10) = score(1, 0)
+                            End If
 
                         Case 241 To 480
-                            If SX%(schedGame(2) + 1, 0, 11) = -1 Then SX%(schedGame(2) + 1, 0, 11) = score(0, 3) + score(0, 2) + score(0, 1): SX%(schedGame(2) + 1, 1, 11) = score(1, 3) + score(1, 2) + score(1, 1)
+                            If SX%(schedGame(2) + 1, 0, 11) = -1 Then
+                                SX%(schedGame(2) + 1, 0, 11) = score(0, 3) + score(0, 2) + score(0, 1)
+                                SX%(schedGame(2) + 1, 1, 11) = score(1, 3) + score(1, 2) + score(1, 1)
+                            End If
 
                         Case 121 To 240
-                            If SX%(schedGame(2) + 1, 0, 12) = -1 Then SX%(schedGame(2) + 1, 0, 12) = score(0, 0): SX%(schedGame(2) + 1, 1, 12) = score(1, 0)
+                            If SX%(schedGame(2) + 1, 0, 12) = -1 Then
+                                SX%(schedGame(2) + 1, 0, 12) = score(0, 0)
+                                SX%(schedGame(2) + 1, 1, 12) = score(1, 0)
+                            End If
 
                         Case 0 To 120
-                            If SX%(schedGame(2) + 1, 0, 13) = -1 Then SX%(schedGame(2) + 1, 0, 13) = score(0, 0): SX%(schedGame(2) + 1, 1, 13) = score(1, 0)
+                            If SX%(schedGame(2) + 1, 0, 13) = -1 Then
+                                SX%(schedGame(2) + 1, 0, 13) = score(0, 0)
+                                SX%(schedGame(2) + 1, 1, 13) = score(1, 0)
+                            End If
 
                     End Select
 
@@ -3109,7 +3375,10 @@ Sub FoulCalled (randomCalcs%)
             Call DELAY
         End If
 
-        If pbpOpt = 0 Then pbpString$ = "FOUL NUMBER" + Str$(plyrOff_GAME!(D, B1(D, fouler), 12)) + " CALLED ON " + players$(D, B1(D, fouler)): Call PBP
+        If pbpOpt = 0 Then
+            pbpString$ = "FOUL NUMBER" + Str$(plyrOff_GAME!(D, B1(D, fouler), 12)) + " CALLED ON " + players$(D, B1(D, fouler))
+            Call PBP
+        End If
 
         Call DELAY
 
@@ -3125,7 +3394,9 @@ Sub FoulCalled (randomCalcs%)
 
         For I3 = 0 To 13
             If Not (I3 = B1(D, fouler) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
-                If plyrOff_GAME!(D, I3, 0) <= plyrOff_GAME!(D, B1(D, fouler), 0) Then plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + Int((plyrOff_GAME!(D, B1(D, fouler), 3) / M9) + .5)
+                If plyrOff_GAME!(D, I3, 0) <= plyrOff_GAME!(D, B1(D, fouler), 0) Then
+                    plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + Int((plyrOff_GAME!(D, B1(D, fouler), 3) / M9) + .5)
+                End If
             End If
         Next I3
 
@@ -3137,18 +3408,32 @@ Sub FoulCalled (randomCalcs%)
             Call DELAY
         End If
 
-        If pbpOpt = 0 Then pbpString$ = "FOUL CALLED ON " + players$(D, B1(D, fouler)): Call PBP
+        If pbpOpt = 0 Then
+            pbpString$ = "FOUL CALLED ON " + players$(D, B1(D, fouler))
+            Call PBP
+        End If
 
-        If IN% = 1 Then
+        If intentional = 1 Then
             pbpString$ = "FOUL IS RULED INTENTIONAL!"
-            If pbpOpt = 0 Then Call PBP
-            If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+            If pbpOpt = 0 Then
+                Call PBP
+            End If
+            If pbpOpt = 1 And pbpDelay! <> 0 Then
+                Print pbpString$
+                Call DELAY
+            End If
             Call DELAY
         End If
 
         pbpString$ = "AND HE HAS JUST FOULED OUT !!!"
-        If pbpOpt = 0 Then Call PBP
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+
+        If pbpOpt = 0 Then
+            Call PBP
+        End If
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Print pbpString$
+            Call DELAY
+        End If
 
         Call DELAY
 
@@ -3161,7 +3446,7 @@ Sub FoulCalled (randomCalcs%)
             Call FOULSAFE
             Call DEADBALLOPTIONS
             For I = 0 To 1
-                If P7(I) = 0 Then
+                If defCategory(I) = 0 Then
                     PR%(I, 0) = 1
                     PR%(I, 1) = 7
                     pctContrib(I) = 0
@@ -3247,7 +3532,7 @@ End Sub
 'the current shot (rounding up)
 Sub SHOTSTRING ()
 
-    pbpString$ = pbpString$ + Str$(Int(F! + .5)) + "*"
+    pbpString$ = pbpString$ + Str$(Int(shotChance! + .5)) + "*"
 
 End Sub
 
@@ -3306,11 +3591,22 @@ Sub COMCOACH ()
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
     For I = 0 To 13
+
         F1(I) = I
         plyrStamina(I) = plyrOff_GAME!(P9, I, 3) - plyrOff_GAME!(P9, I, 7) - plyrOff_GAME!(P9, I, 11) - plyrOff_GAME!(P9, I, 12)
-        If currHalf > 2 Then plyrStamina(I) = plyrOff_GAME!(P9, I, 3)
-        If currHalf = 2 And gameClock! <= 120 Then plyrStamina(I) = plyrOff_GAME!(P9, I, 3)
-        If plyrOff_GAME!(P9, I, 12) >= foulsToDQ Then plyrStamina(I) = 0
+
+        If currHalf > 2 Then
+            plyrStamina(I) = plyrOff_GAME!(P9, I, 3)
+        End If
+
+        If currHalf = 2 And gameClock! <= 120 Then
+            plyrStamina(I) = plyrOff_GAME!(P9, I, 3)
+        End If
+
+        If plyrOff_GAME!(P9, I, 12) >= foulsToDQ Then
+            plyrStamina(I) = 0
+        End If
+
     Next I
 
     Call STAMINASORT
@@ -3344,7 +3640,8 @@ Sub COMCOACH ()
                         Loop Until Not (rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX")
 
                         'These can throw errors in some situations
-                        'That may be why certain games slow down??
+                        test1 = I
+                        test2 = F1(I)
                         G4(I1) = F1(I)
                         G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
 
@@ -3371,14 +3668,33 @@ Sub COMCOACH ()
 
         Else
 
-            If rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX" Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 2 And currHalf = 1 Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720 Then 8794
+            If rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX" Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 2 And currHalf = 1 Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720 Then
+                GoTo 8794
+            End If
 
-            If currHalf = 1 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .5 Then 8794
-            If currHalf = 1 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .75 Then 8794
-            If currHalf = 2 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .25 Then 8794
-            If currHalf = 2 And gameClock! >= 300 And gameClock! < 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .13 Then 8794
-            If currHalf = 2 And gameClock! < 300 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < gameClock! / 2400 Then 8794
-            If plyrStamina(I) <= 0 And currHalf < 2 Or plyrStamina(I) <= 0 And currHalf = 2 And gameClock! > 120 Then 8794
+            If currHalf = 1 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .5 Then
+                GoTo 8794
+            End If
+
+            If currHalf = 1 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .75 Then
+                GoTo 8794
+            End If
+
+            If currHalf = 2 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .25 Then
+                GoTo 8794
+            End If
+
+            If currHalf = 2 And gameClock! >= 300 And gameClock! < 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .13 Then
+                GoTo 8794
+            End If
+
+            If currHalf = 2 And gameClock! < 300 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < gameClock! / 2400 Then
+                GoTo 8794
+            End If
+
+            If plyrStamina(I) <= 0 And currHalf < 2 Or plyrStamina(I) <= 0 And currHalf = 2 And gameClock! > 120 Then
+                GoTo 8794
+            End If
 
             G4(I1) = F1(I)
             G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
@@ -3722,17 +4038,17 @@ Sub UPDATESCREEN ()
     'Score Team 1
     Locate 4, 13: Print Using "###"; score(0, 0);
     Locate 2, 33: Print " ";
-    If PA% = 0 Then Locate , 33: Print Chr$(17);
+    If possArrow = 0 Then Locate , 33: Print Chr$(17);
 
     'Period Designation
     Locate 2, 35: Print Using "  HALF #"; currHalf;: Locate , 44: Print " ";
-    If PA% = 1 Then Locate , 44: Print Chr$(16);
+    If possArrow = 1 Then Locate , 44: Print Chr$(16);
 
     'Overtime
     If currHalf > 2 Then
         Locate , 35: Print Using "OVERTIME #"; currHalf - 2;
         Locate , 46: Print " ";
-        If PA% = 1 Then Locate , 46: Print Chr$(16)
+        If possArrow = 1 Then Locate , 46: Print Chr$(16)
     End If
 
     'Score Team 2
@@ -4150,34 +4466,34 @@ End Sub
 '         ColorChange Subroutine
 '----------------------------------------
 'This routine checks to see if both teams
-'have conflicting primary colors. 
-'If so, it will substitute the secondary 
+'have conflicting primary colors.
+'If so, it will substitute the secondary
 'color with white/grey and reverse them.
-'In essence, it's the digital equivalent 
+'In essence, it's the digital equivalent
 'of assigning an alternate jersey color.
 Sub ColorChange ()
 
-    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 4 Then 
+    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 4 Then
         teamRat_GAME(1, 0) = 4
         teamRat_GAME(1, 1) = 7
     End If
 
-    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 1 Then 
+    If teamRat_GAME(1, 0) = 15 And teamRat_GAME(1, 1) = 1 Then
         teamRat_GAME(1, 0) = 1
         teamRat_GAME(1, 1) = 7
     End If
 
-    If teamRat_GAME(1, 0) = 0 And teamRat_GAME(1, 1) = 4 Then 
+    If teamRat_GAME(1, 0) = 0 And teamRat_GAME(1, 1) = 4 Then
         teamRat_GAME(1, 0) = 12
         teamRat_GAME(1, 1) = 0
     End If
 
-    If teamRat_GAME(1, 0) = 1 And teamRat_GAME(1, 1) = 7 Then 
+    If teamRat_GAME(1, 0) = 1 And teamRat_GAME(1, 1) = 7 Then
         teamRat_GAME(1, 0) = 15
         teamRat_GAME(1, 1) = 1
     End If
 
-    If teamRat_GAME(1, 0) = 4 And teamRat_GAME(1, 1) = 7 Then 
+    If teamRat_GAME(1, 0) = 4 And teamRat_GAME(1, 1) = 7 Then
         teamRat_GAME(1, 0) = 15
         teamRat_GAME(1, 1) = 4
     End If
@@ -4272,7 +4588,9 @@ Sub OFFREBOUND ()
         XZ = plyrOff_GAME!(P, B1(P, I), 21)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-            If plyrOff_GAME!(P, B1(P, I), 3) - plyrOff_GAME!(P, B1(P, I), 7) - plyrOff_GAME!(P, B1(P, I), 11) - plyrOff_GAME!(P, B1(P, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
+            If plyrOff_GAME!(P, B1(P, I), 3) - plyrOff_GAME!(P, B1(P, I), 7) - plyrOff_GAME!(P, B1(P, I), 11) - plyrOff_GAME!(P, B1(P, I), 12) <= 0 Then
+                XZ = Int(XZ * .5 + .5)
+            End If
         End If
 
         If tmFatigue(P, B1(P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
@@ -4285,11 +4603,16 @@ Sub OFFREBOUND ()
     skipRandom% = 0
 
     For ballCarrier = 0 To 4
-        If rndReb <= RB(ballCarrier) Then skipRandom% = 1: Exit For
+        If rndReb <= RB(ballCarrier) Then
+            skipRandom% = 1
+            Exit For
+        End If
         RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
     Next
 
-    If skipRandom% = 0 Then ballCarrier = Int(Rnd(1) * 5)
+    If skipRandom% = 0 Then
+        ballCarrier = Int(Rnd(1) * 5)
+    End If
 
 End Sub
 
@@ -4308,10 +4631,14 @@ Sub DEFREBOUND ()
         XZ = plyrOff_GAME!(1 - P, B1(1 - P, I), 2)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-            If plyrOff_GAME!(1 - P, B1(1 - P, I), 3) - plyrOff_GAME!(1 - P, B1(1 - P, I), 7) - plyrOff_GAME!(1 - P, B1(1 - P, I), 11) - plyrOff_GAME!(1 - P, B1(1 - P, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
+            If plyrOff_GAME!(1 - P, B1(1 - P, I), 3) - plyrOff_GAME!(1 - P, B1(1 - P, I), 7) - plyrOff_GAME!(1 - P, B1(1 - P, I), 11) - plyrOff_GAME!(1 - P, B1(1 - P, I), 12) <= 0 Then
+                XZ = Int(XZ * .5 + .5)
+            End If
         End If
 
-        If tmFatigue(1 - P, B1(1 - P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
+        If tmFatigue(1 - P, B1(1 - P, I)) <= -5 Then
+            XZ = Int(XZ * .9 + .5)
+        End If
         RB(I) = RB(I) + XZ
         RB = RB + XZ
     Next
@@ -4321,49 +4648,16 @@ Sub DEFREBOUND ()
     skipRandom% = 0
 
     For ballCarrier = 0 To 4
-        If rndReb <= RB(ballCarrier) Then skipRandom% = 1: Exit For
+        If rndReb <= RB(ballCarrier) Then
+            skipRandom% = 1
+            Exit For
+        End If
         RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
     Next
 
-    If skipRandom% = 0 Then ballCarrier = Int(Rnd(1) * 5)
-
-End Sub
-
-
-'----------------------------------------
-'        SETUPRATINGS Subroutine
-'----------------------------------------
-'This subroutine lets the user choose the
-'play style of teams (based on era) and
-'adjust contribution ratings for players
-'Everyting to do with pacing shots is
-'in this routine.
-Sub SETUPRATINGS ()
-
-    For I = 0 To 1
-
-        For I1 = 0 To 13
-
-            'Active Flag = YES
-            '-- don't ask me why 0 was chosen for YES
-            If rosterStatus(I, I1) = 0 Then
-            
-                ' 3FGA % (how often player shoots 3)
-                If plyrRat_GAME(I, I1, 2) > 0 Then 
-                    playerStat_GAME(I, I1, 14) = Int(plyrOff_GAME!(I, I1, 17) / plyrOff_GAME!(I, I1, 9) * 100 + .5)
-                End If
-
-                ' 3FGM %
-                If plyrRat_GAME(I, I1, 13) > 0 Then 
-                    playerStat_GAME(I, I1, 15) = Int(playerStat_GAME(I, I1, 13) / plyrOff_GAME!(I, I1, 17) * 100 + .5)
-                End If
-
-
-            End If
-
-        Next I1
-        
-    Next I
+    If skipRandom% = 0 Then
+        ballCarrier = Int(Rnd(1) * 5)
+    End If
 
 End Sub
 
@@ -4504,27 +4798,67 @@ Sub ZONECHANGE ()
         Loop Until I1 >= 0 And I1 <= 2
 
         If I1 = 2 Then I1 = 3
-        If defStrat(D) <= 3 Then defStrat(D) = I1
+
+        If defStrat(D) <= 3 Then
+            defStrat(D) = I1
+        End If
+
         'what is I supposed to be here???
         If defStrat(D) = 7 Then defStrat(D) = I + 8
         If defStrat(D) = 10 Then defStrat(D) = 3
-
-        'what is I supposed to be here???
         If defStrat(D) = 12 Then defStrat(D) = I + 10
         If defStrat(D) = 12 Then defStrat(D) = 13
 
         P9 = D
 
-        If defStrat(P9) <= 3 Then P7(P9) = 0
-        If defStrat(P9) = 4 Then P7(P9) = 1
-        If defStrat(P9) = 5 Or defStrat(P9) = 6 Then P7(P9) = 2
-        If defStrat(P9) > 6 And defStrat(P9) <= 10 Then P7(P9) = 3
-        If defStrat(P9) > 9 And defStrat(P9) < 14 Then P7(P9) = 4
-        If defStrat(P9) = 14 Then P7(P9) = 5
-        If defStrat(P9) = 0 Or defStrat(P9) = 4 Or defStrat(P9) = 5 Or defStrat(P9) = 8 Or defStrat(P9) = 10 Then defType(P9) = 0
-        If defStrat(P9) = 1 Or defStrat(P9) = 6 Or defStrat(P9) = 9 Or defStrat(P9) = 11 Then defType(P9) = 1
-        If defStrat(P9) = 2 Or defStrat(P9) = 7 Or defStrat(P9) = 12 Then defType(P9) = 2
-        If defStrat(P9) = 3 Or defStrat(P9) = 13 Then defType(P9) = 3
+        Select Case defStrat(P9)
+
+            Case 0 To 3
+                'Man-Man / Zone
+                defCategory(P9) = 0
+
+            Case 4
+                'Full Court Press
+                defCategory(P9) = 1
+
+            Case 5, 6
+                'Run & Jump
+                defCategory(P9) = 2
+
+            Case 7 To 9
+                'Passive 2-2-1
+                defCategory(P9) = 3
+
+            Case 10 To 13
+                'Trap 1-2-1-1
+                defCategory(P9) = 4
+
+            Case 14
+                'Denial / Foul
+                defCategory(P9) = 5
+
+        End Select
+
+        Select Case defStrat(P9)
+
+            Case 0, 4, 5, 8, 10
+                'Solid Man-Man
+                defCoverage(P9) = 0
+
+            Case 1, 6, 9, 11
+                'Pressure Man-Man
+                defCoverage(P9) = 1
+
+            Case 2, 7, 12
+                '2-3 Zone
+                defCoverage(P9) = 2
+
+            Case 3, 13
+                'Trapping Zone
+                defCoverage(P9) = 3
+
+        End Select
+
         Color 15, 0
 
     End If
@@ -4576,19 +4910,24 @@ Sub DEFENSEMENU ()
         Select Case defStrat(P9)
 
             Case 0 To 3
-                P7(P9) = 0
+                'Man-Man / Zone
+                defCategory(P9) = 0
 
             Case 4
-                P7(P9) = 1
+                'Full Court Press
+                defCategory(P9) = 1
 
             Case 5, 6
-                P7(P9) = 2
+                'Run & Jump
+                defCategory(P9) = 2
 
             Case 7 To 9
-                P7(P9) = 3
+                'Passive 2-2-1
+                defCategory(P9) = 3
 
             Case 10 To 13
-                P7(P9) = 4
+                'Trap 1-2-1-1
+                defCategory(P9) = 4
 
             Case 14
                 If (currHalf < 2 Or currHalf >= 2 And gameClock! > 180) Then
@@ -4597,7 +4936,7 @@ Sub DEFENSEMENU ()
                     I$ = GetKeyPress$
                     wrongChoice% = 1
                 Else
-                    P7(P9) = 5
+                    defCategory(P9) = 5
                 End If
 
         End Select
@@ -4608,19 +4947,19 @@ Sub DEFENSEMENU ()
 
         Case 0, 4, 5, 8, 10
             'Solid Man-to-Man
-            defType(P9) = 0
+            defCoverage(P9) = 0
 
         Case 1, 6, 9, 11
             'Pressure Man-to-Man
-            defType(P9) = 1
+            defCoverage(P9) = 1
 
         Case 2, 7, 12
             '2-3 Zone
-            defType(P9) = 2
+            defCoverage(P9) = 2
 
         Case 3, 13
             'Trapping Zone
-            defType(P9) = 3
+            defCoverage(P9) = 3
 
     End Select
 
@@ -4639,15 +4978,26 @@ Sub SETSTAMINA ()
     SQ% = 0
 
     For I = 0 To 13
-        If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then SQ% = SQ% + plyrOff_GAME!(P9, I, 3)
-        If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then SQ% = SQ% + plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0): plyrOff_GAME!(P9, I, 3) = plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
+        If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then
+            SQ% = SQ% + plyrOff_GAME!(P9, I, 3)
+        End If
+        If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then
+            SQ% = SQ% + plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
+            plyrOff_GAME!(P9, I, 3) = plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
+        End If
     Next
 
     'So SQ% is a sum of plyrOff_GAME!(P9, X, 3) values...
     For I = 0 To 13
-        If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then plyrOff_GAME!(P9, I, 3) = Int(plyrOff_GAME!(P9, I, 3) / SQ% * S9 + .5)
-        If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then plyrOff_GAME!(P9, I, 3) = Int(plyrOff_GAME!(P9, I, 3) / SQ% * S9 + .5)
-        If plyrOff_GAME!(P9, I, 3) < 1 Then plyrOff_GAME!(P9, I, 3) = 1
+        If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then
+            plyrOff_GAME!(P9, I, 3) = Int(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina + .5)
+        End If
+        If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then
+            plyrOff_GAME!(P9, I, 3) = Int(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina + .5)
+        End If
+        If plyrOff_GAME!(P9, I, 3) < 1 Then
+            plyrOff_GAME!(P9, I, 3) = 1
+        End If
     Next I
 
     SQ% = 0
@@ -4657,12 +5007,18 @@ Sub SETSTAMINA ()
     Next
 
     For I = 0 To 13
-        If S9 > 120 And teamAdj(P9, 8) <> 99 Then plyrOff_GAME!(P9, I, 16) = plyrOff_GAME!(P9, I, 16) * (120 / S9): plyrOff_GAME!(P9, I, 16) = Int(plyrOff_GAME!(P9, I, 16) + .5)
+        If gameAvgTmStamina > 120 And teamAdj(P9, 8) <> 99 Then
+            plyrOff_GAME!(P9, I, 16) = plyrOff_GAME!(P9, I, 16) * (120 / gameAvgTmStamina)
+            plyrOff_GAME!(P9, I, 16) = Int(plyrOff_GAME!(P9, I, 16) + .5)
+        End If
     Next I
 
     DY = 7
 
-    If S9 > 114 Then DY = (114 / S9) * DY: DY = Int(DY + .5)
+    If gameAvgTmStamina > 114 Then
+        DY = (114 / gameAvgTmStamina) * DY
+        DY = Int(DY + .5)
+    End If
 
 End Sub
 
@@ -4744,8 +5100,8 @@ Sub FATIGUE ()
     Next
 
     If FD% < -15 Or FQ% = 1 Then
-        defType(P9) = 2
-        P7(P9) = 0
+        defCoverage(P9) = 2
+        defCategory(P9) = 0
         defStrat(P9) = 2
     End If
 
@@ -5049,7 +5405,7 @@ Sub PlayStyle ()
         GoTo 109
     End If
 
-    If I1 = 8 And defType(1 - P9) <> 2 Then
+    If I1 = 8 And defCoverage(1 - P9) <> 2 Then
         Beep
         Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE"
         I$ = GetKeyPress$
@@ -5116,8 +5472,24 @@ Sub FOULSAFE ()
     SW = 0
 
     For ZZ = 0 To 4
-        If plyrOff_GAME!(P9, B1(P9, ZZ), 22) = 50 Then A = A + 1: If SW = 0 Then Print: Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH": SW = 1
-        If plyrOff_GAME!(P9, B1(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then Locate S2 + 3, 1: Print S2; "-"; players$(P9, B1(P9, ZZ)): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
+
+        If plyrOff_GAME!(P9, B1(P9, ZZ), 22) = 50 Then
+            A = A + 1
+            If SW = 0 Then
+                Print
+                Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH"
+                SW = 1
+            End If
+        End If
+
+        If plyrOff_GAME!(P9, B1(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
+            Locate S2 + 3, 1: Print S2; "-"; players$(P9, B1(P9, ZZ))
+            P5(A) = S2
+            P4(A) = ZZ
+            S2 = S2 + 1
+            S3 = S3 + 1
+        End If
+
     Next ZZ
 
     skipChangeToSafe% = 0
@@ -5132,11 +5504,11 @@ Sub FOULSAFE ()
             I$ = GetKeyPress$
             If UCase$(I$) = "Z" And MJ = 0 Then Exit Do
             If UCase$(I$) = "Z" And MJ = 25 Then skipChangeToSafe% = 1: Exit Do
-            P6 = Val(I$)
+            playChoice = Val(I$)
 
-            A = P6
+            A = playChoice
 
-            If P6 = P5(P6) Then
+            If playChoice = P5(playChoice) Then
 
                 plyrOff_GAME!(P9, B1(P9, P4(A)), 17) = plyrOff_GAME!(P9, B1(P9, P4(A)), 17) * 3
                 plyrOff_GAME!(P9, B1(P9, P4(A)), 22) = 0
@@ -5151,7 +5523,7 @@ Sub FOULSAFE ()
 
             End If
 
-        Loop Until P6 >= 1 And P6 <= (S2 + 1) And P6 <> P5(P6)
+        Loop Until playChoice >= 1 And playChoice <= (S2 + 1) And playChoice <> P5(playChoice)
 
     End If
 
@@ -5179,14 +5551,14 @@ Sub FOULSAFE ()
         1220 '
         Do
             I$ = GetKeyPress$
-            P6 = Val(I$)
-        Loop Until P6 >= 1 And P6 <= (S2 + 1) Or UCase$(I$) = "Z"
+            playChoice = Val(I$)
+        Loop Until playChoice >= 1 And playChoice <= (S2 + 1) Or UCase$(I$) = "Z"
 
         If UCase$(I$) <> "Z" Then
 
-            A = P6
+            A = playChoice
 
-            If P6 = P5(P6) Then
+            If playChoice = P5(playChoice) Then
 
                 plyrOff_GAME!(P9, B1(P9, P4(A)), 17) = Int((plyrOff_GAME!(P9, B1(P9, P4(A)), 17) + 1) / 3)
                 plyrOff_GAME!(P9, B1(P9, P4(A)), 22) = 50
@@ -5278,27 +5650,31 @@ Sub SHOTPERCENT ()
     TP%(D) = 0
     TP%(P) = 0
 
-    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = FX% - 10
+    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
+        FX% = FX% - 10
+    End If
 
-    F! = FX% + dFGPA(D) + D8(0, defType(D))
+    shotChance! = FX% + dFGPA(D) + D8(0, defCoverage(D))
     J8% = 0
 
     'Improve chance for homefield advantage
     If gameLoc = P Then
-        F! = F! + homeCtFactor(0, teamRat_GAME(P, 6))
+        shotChance! = shotChance! + homeCtFactor(0, teamRat_GAME(P, 6))
     Else
-        If gameLoc <> 2 Then F! = F! + homeCtFactor(1, teamRat_GAME(P, 6))
+        If gameLoc <> 2 Then shotChance! = shotChance! + homeCtFactor(1, teamRat_GAME(P, 6))
     End If
 
-    F3S% = Int(Rnd(1) * 100) + 1
+    threePtShotChance = Int(Rnd(1) * 100) + 1
     TPA% = 0
 
     Select Case defStrat(D)
 
         Case 1, 6, 9, 11
+            'Pressure Man-Man
             TPA% = -5
 
         Case 2, 7, 12
+            '2-3 Zone
             TPA% = 3
 
     End Select
@@ -5310,17 +5686,17 @@ Sub SHOTPERCENT ()
     If offStrat(P) = 9 Then
 
         'Strategy = Shoot only 3's
-        If (F3S% > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0) Then
-            F3S% = Int(Rnd(1) * 5) + 11
+        If (threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0) Then
+            threePtShotChance = Int(Rnd(1) * 5) + 11
             J8% = 1
         End If
 
     Else
 
-        If F3S% > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0 Then
+        If threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0 Then
 
             'Odd that it calculates a % here when a shot won't be taken
-            F3S% = Int(Rnd(1) * 5) + 3
+            threePtShotChance = Int(Rnd(1) * 5) + 3
             J8% = 0
 
         Else
@@ -5333,10 +5709,10 @@ Sub SHOTPERCENT ()
 
             'If more than 2 minutes in half and (ContribPct - FGA - Rebounds - Fouls) <= 0
             If (currHalf < 3 And gameClock! > 120) And (plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0) Then
-                F3S% = Int(Rnd(1) * 5) + 3
+                threePtShotChance = Int(Rnd(1) * 5) + 3
                 J8% = 0
             Else
-                F3S% = FX% + teamAdj(D, 2)
+                threePtShotChance = FX% + teamAdj(D, 2)
                 J8% = 1
             End If
 
@@ -5442,7 +5818,7 @@ End Sub
 Sub BADFT ()
 
     Select Case F3
-        Case 1 
+        Case 1
             pbpString$ = "FIRST FREE THROW IS MISSED"
         Case 2
             pbpString$ = "SECOND FREE THROW IS MISSED"
@@ -5529,7 +5905,10 @@ Sub WHOGETSBALL ()
                 For I = 0 To 4
                     M8 = Int(plyrRat_GAME(P, B1(P, I), 1) / plyrRat_GAME(P, B1(P, I), 0) + .5) - plyrOff_GAME!(P, B1(P, I), 7)
                     If M8 <= 0 Then M8 = 0
-                    If M8 >= M9 Then ballCarrier = I: M9 = M8
+                    If M8 >= M9 Then
+                        ballCarrier = I
+                        M9 = M8
+                    End If
                 Next I
 
             End If
@@ -5561,29 +5940,29 @@ Sub BALLDISTRIBUTE ()
         Call WHOGETSBALL
     Else
         'Select / Case statement
-        If defType(D) = 2 Or defType(D) = 3 Then 415
-        If S9 <= 90 And RN0 <= 15 Then 424
-        If S9 <= 100 And RN0 <= 20 Then 424
-        If S9 <= 110 And RN0 <= 25 Then 424
-        If S9 <= 120 And RN0 <= 30 Then 424
-        If S9 <= 130 And RN0 <= 38 Then 424
-        If S9 <= 140 And RN0 <= 53 Then 424
-        If S9 <= 150 And RN0 <= 60 Then 424
-        If S9 > 150 And RN0 <= 67 Then 424
+        If defCoverage(D) = 2 Or defCoverage(D) = 3 Then 415
+        If gameAvgTmStamina <= 90 And RN0 <= 15 Then 424
+        If gameAvgTmStamina <= 100 And RN0 <= 20 Then 424
+        If gameAvgTmStamina <= 110 And RN0 <= 25 Then 424
+        If gameAvgTmStamina <= 120 And RN0 <= 30 Then 424
+        If gameAvgTmStamina <= 130 And RN0 <= 38 Then 424
+        If gameAvgTmStamina <= 140 And RN0 <= 53 Then 424
+        If gameAvgTmStamina <= 150 And RN0 <= 60 Then 424
+        If gameAvgTmStamina > 150 And RN0 <= 67 Then 424
         GoTo 423
 
         '----------
 
         'Select / Case statement
         415 '
-        If S9 <= 90 And RN0 <= 8 Then 424
-        If S9 <= 100 And RN0 <= 10 Then 424
-        If S9 <= 110 And RN0 <= 13 Then 424
-        If S9 <= 120 And RN0 <= 15 Then 424
-        If S9 <= 130 And RN0 <= 18 Then 424
-        If S9 <= 140 And RN0 <= 53 Then 424
-        If S9 <= 150 And RN0 <= 60 Then 424
-        If S9 > 150 And RN0 <= 67 Then 424
+        If gameAvgTmStamina <= 90 And RN0 <= 8 Then 424
+        If gameAvgTmStamina <= 100 And RN0 <= 10 Then 424
+        If gameAvgTmStamina <= 110 And RN0 <= 13 Then 424
+        If gameAvgTmStamina <= 120 And RN0 <= 15 Then 424
+        If gameAvgTmStamina <= 130 And RN0 <= 18 Then 424
+        If gameAvgTmStamina <= 140 And RN0 <= 53 Then 424
+        If gameAvgTmStamina <= 150 And RN0 <= 60 Then 424
+        If gameAvgTmStamina > 150 And RN0 <= 67 Then 424
 
         423 '
         ballCarrier = Int(Rnd(1) * 5)
@@ -5685,7 +6064,7 @@ Sub DEADBALLOPTIONS ()
             Locate 9, 1
             Color 14, 0
             Print "<ENTER>";
-            Color 15,0
+            Color 15, 0
             Print "-CONTINUE"
             Print "1-SUB "; gameTeams$(P)
             Print "2-SUB "; gameTeams$(D)
@@ -5851,12 +6230,14 @@ Sub STOPPAGE ()
         Call CheckGameClock
     Else
 
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Locate 11, 1
+        End If
         If pbpOpt = 0 Then Call CLEARPBPBOX
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Locate 11, 1
 
         Color 14, 0
         Print "<ENTER>";
-        Color 15,0
+        Color 15, 0
         Print "-CONTINUE"
         Print "1-TIME OUT "; gameTeams$(P)
         Print "2-TIME OUT "; gameTeams$(D)
@@ -5934,13 +6315,13 @@ Sub PRESSGUARD ()
     Call WINDEX
 
     If pbpDelay! <> 0 Then
-        If P7(D) > 0 Then
+        If defCategory(D) > 0 Then
             pbpString$ = gameTeams$(D) + " IS PRESSING"
             Call SELECTPBP
         End If
     End If
 
-    If P7(D) <> 0 And P7(D) <= 2 Then
+    If defCategory(D) <> 0 And defCategory(D) <= 2 Then
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' COMPUTER GUARD FOR PRESS
@@ -5987,11 +6368,11 @@ Sub QUARTERTOTAL ()
         Erase statTotals
 
         For I1 = 0 To 13
-            statTotals(0) = statTotals(0) + plyrOff_GAME!(I, I1, 8)
-            statTotals(1) = statTotals(1) + plyrOff_GAME!(I, I1, 7)
-            statTotals(2) = statTotals(2) + plyrOff_GAME!(I, I1, 10)
-            statTotals(3) = statTotals(3) + plyrOff_GAME!(I, I1, 9)
-            statTotals(4) = statTotals(4) + plyrOff_GAME!(I, I1, 11)
+            statTotals(0) = statTotals(0) + plyrOff_GAME!(I, I1, 8) 'Minutes played
+            statTotals(1) = statTotals(1) + plyrOff_GAME!(I, I1, 7) 'Games
+            statTotals(2) = statTotals(2) + plyrOff_GAME!(I, I1, 10) 'Reb
+            statTotals(3) = statTotals(3) + plyrOff_GAME!(I, I1, 9) 'FGA
+            statTotals(4) = statTotals(4) + plyrOff_GAME!(I, I1, 11) 'Ast
             statTotals(5) = statTotals(5) + (plyrOff_GAME!(I, I1, 8) * 2) + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0)
             statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
             statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
@@ -6156,81 +6537,131 @@ Sub COMPUTERCOACH ()
 
         I5 = score(I6, 0) - score(P9, 0)
 
-        Call d100(RN0)
-        If currHalf = 1 And RN0 > 37 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 1 And RN0 > 10 And RN0 <= 36 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
-        If currHalf = 1 And RN0 > 5 And RN0 <= 10 Then defType(P9) = 3: P7(P9) = 0: defStrat(P9) = 3
-        If currHalf = 1 And RN0 <= 5 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
+        If currHalf = 1 Then
+
+            Call d100(RN0)
+            Select Case RN0
+            
+                Case 0 To 5
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 0
+                    defStrat(P9) = 1
+                    
+                Case 6 To 10
+                    defCoverage(P9) = 3
+                    defCategory(P9) = 0
+                    defStrat(P9) = 3
+                    
+                Case 11 To 36
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+                    defStrat(P9) = 2
+                    
+                Case 37 To 100
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 0
+                    defStrat(P9) = 0
+
+            End Select
+
+            Call d100(RN0)
+
+            Select Case RN0
+            
+                Case 0 To 3
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 4
+                    defStrat(P9) = 10
+                    
+                Case 4 To 6
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 3
+                    defStrat(P9) = 9
+                
+                Case 7 To 9
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 3
+                    defStrat(P9) = 7
+                
+                Case 10 To 12
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 3
+                    defStrat(P9) = 8
+                
+                Case 13 To 15
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 1
+                    defStrat(P9) = 4
+
+            End Select
+
+        End If
 
         Call d100(RN0)
-        If currHalf = 1 And RN0 <= 15 Then defType(P9) = 0: P7(P9) = 1: defStrat(P9) = 4
-        If currHalf = 1 And RN0 > 9 And RN0 <= 12 Then defType(P9) = 0: P7(P9) = 3: defStrat(P9) = 8
-        If currHalf = 1 And RN0 > 6 And RN0 <= 9 Then defType(P9) = 2: P7(P9) = 3: defStrat(P9) = 7
-        If currHalf = 1 And RN0 > 3 And RN0 <= 6 Then defType(P9) = 1: P7(P9) = 3: defStrat(P9) = 9
-        If currHalf = 1 And RN0 <= 3 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
+        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
+        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 1: defCategory(P9) = 2: defStrat(P9) = 6
+        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 90 And RN0 <= 95 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
+        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 95 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
+        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 <= 75 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 75 And RN0 <= 83 Then defCoverage(P9) = 0: defCategory(P9) = 1: defStrat(P9) = 4
+        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 83 And RN0 <= 91 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
+        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 91 And RN0 <= 96 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
+        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 96 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
+        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 70 And RN0 <= 75 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
+        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 76 And RN0 <= 85 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
+        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 85 And RN0 <= 93 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
+        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 93 And RN0 <= 97 Then defCoverage(P9) = 3: defCategory(P9) = 0: defStrat(P9) = 3
+        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 97 Then defCoverage(P9) = 2: defCategory(P9) = 4: defStrat(P9) = 12
 
-        Call d100(RN0)
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 1: P7(P9) = 2: defStrat(P9) = 6
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 90 And RN0 <= 95 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 95 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 <= 75 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 75 And RN0 <= 83 Then defType(P9) = 0: P7(P9) = 1: defStrat(P9) = 4
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 83 And RN0 <= 91 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 91 And RN0 <= 96 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 96 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 70 And RN0 <= 75 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 76 And RN0 <= 85 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 85 And RN0 <= 93 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 93 And RN0 <= 97 Then defType(P9) = 3: P7(P9) = 0: defStrat(P9) = 3
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 97 Then defType(P9) = 2: P7(P9) = 4: defStrat(P9) = 12
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 70 And RN0 <= 80 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 90 Then defType(P9) = 3: P7(P9) = 4: defStrat(P9) = 13
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 70 And RN0 <= 80 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 80 And RN0 <= 90 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 12
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 90 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 <= 70 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 70 And RN0 <= 90 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 90 And RN0 <= 96 Then defType(P9) = 1: P7(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 96 Then defType(P9) = 0: P7(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 <= 50 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 > 50 Then defType(P9) = 3: P7(P9) = 4: defStrat(P9) = 13
-        If currHalf = 2 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defType(P9) = 3: P7(P9) = 5: defStrat(P9) = 14
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 <= 25 Then defType(P9) = 0: P7(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 25 And RN0 <= 50 Then defType(P9) = 1: P7(P9) = 2: defStrat(P9) = 6
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 50 And RN0 <= 75 Then defType(P9) = 1: P7(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 75 Then defType(P9) = 3: P7(P9) = 4: defStrat(P9) = 13
-        If currHalf > 2 And RN0 <= 50 Then defType(P9) = 0: P7(P9) = 0: defStrat(P9) = 0
-        If currHalf > 2 And RN0 > 50 Then defType(P9) = 2: P7(P9) = 0: defStrat(P9) = 2
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 70 And RN0 <= 80 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 90 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 70 And RN0 <= 80 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 12
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 90 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 70 And RN0 <= 90 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 90 And RN0 <= 96 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
+        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 96 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
+
+        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 <= 50 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
+        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 > 50 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
+        If currHalf = 2 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defCoverage(P9) = 3: defCategory(P9) = 5: defStrat(P9) = 14
+        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 <= 25 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
+        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 25 And RN0 <= 50 Then defCoverage(P9) = 1: defCategory(P9) = 2: defStrat(P9) = 6
+        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 50 And RN0 <= 75 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
+        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 75 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
+
+        If currHalf > 2 And RN0 <= 50 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
+        If currHalf > 2 And RN0 > 50 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
 
     Else
 
         Call d100(RN0)
         defStrat(P9) = 0
-        defType(P9) = 0
-        P7(P9) = 0
+        defCoverage(P9) = 0
+        defCategory(P9) = 0
 
         Select Case RN0
 
             Case 1 To 10
-                defType(P9) = 1
+                defCoverage(P9) = 1
                 defStrat(P9) = 1
-                P7(P9) = 0
+                defCategory(P9) = 0
 
             Case 11 To 36
-                defType(P9) = 2
+                defCoverage(P9) = 2
                 defStrat(P9) = 2
-                P7(P9) = 0
+                defCategory(P9) = 0
 
             Case 37 To 100
                 defStrat(P9) = 0
-                defType(P9) = 0
-                P7(P9) = 0
+                defCoverage(P9) = 0
+                defCategory(P9) = 0
 
         End Select
 
@@ -6239,19 +6670,19 @@ Sub COMPUTERCOACH ()
         Select Case RN0
 
             Case 1 To 5
-                P7(P9) = 1
+                defCategory(P9) = 1
                 defStrat(P9) = 4
-                defType(P9) = 0
+                defCoverage(P9) = 0
 
             Case 6 To 9
-                P7(P9) = 3
+                defCategory(P9) = 3
                 defStrat(P9) = 8
-                defType(P9) = 0
+                defCoverage(P9) = 0
 
             Case 10
-                P7(P9) = 3
+                defCategory(P9) = 3
                 defStrat(P9) = 7
-                defType(P9) = 2
+                defCoverage(P9) = 2
                 'Nothing for 11 to 100
 
         End Select
@@ -6306,7 +6737,9 @@ Sub COMPUTERCOACH ()
 
     End If
 
-    If currHalf >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then offStrat(P9) = 9
+    If currHalf >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then
+        offStrat(P9) = 9
+    End If
 
 End Sub
 
@@ -6415,7 +6848,9 @@ Sub LASTSHOT ()
     gameClock! = gameClock! - M5
     IN = 0
 
-    If sClockVal >= 1 Then shotClock = shotClock - M5
+    If sClockVal >= 1 Then
+        shotClock = shotClock - M5
+    End If
 
     Call CheckGameShotClock
 
@@ -6508,9 +6943,13 @@ Sub ResetShotClock ()
 
         LS = 4
 
-        If gameClock! < 46 And shotClock >= gameClock! Or currHalf > 2 And gameClock! = 300 Then Locate 5, 5: Print "     "
+        If gameClock! < 46 And shotClock >= gameClock! Or currHalf > 2 And gameClock! = 300 Then
+            Locate 5, 5: Print "     "
+        End If
 
-        If gameClock! < 6 And LS = 4 And LT <> 4 Then F! = 5
+        If gameClock! < 6 And LS = 4 And LT <> 4 Then
+            shotChance! = 5
+        End If
 
     End If
 
@@ -7183,15 +7622,15 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
         Print #1, Using "##  ## ### ##  ##  ##  ##  ##"; statTotals(11), statTotals(4), statTotals(5), statTotals(6), statTotals(7), statTotals(8), statTotals(9), statTotals(12)
 
         'FG %
-        Print #1, ; Tab(22); 
-        If statTotals(1) > 0 Then Print #1, ; Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%"; 
+        Print #1, ; Tab(22);
+        If statTotals(1) > 0 Then Print #1, ; Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
 
         '3FG %
-        Print #1, ; Tab(28); 
+        Print #1, ; Tab(28);
         If statTotals(14) > 0 Then Print #1, ; Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
 
         'FT %
-        Print #1, ; Tab(35); 
+        Print #1, ; Tab(35);
         If statTotals(3) > 0 Then Print #1, ; Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
 
         Print #1,
@@ -7307,7 +7746,7 @@ Sub STATS2SCREEN
                 Color 15
 
                 'Name
-                Print Left(players$(I, I1), 13); Tab(14);
+                Print players$(I, I1); Tab(14);
 
                 'Minutes
                 If timePlayed(I, I1) <> 0 Then
@@ -7349,8 +7788,10 @@ Sub STATS2SCREEN
                 statTotals(3) = statTotals(3) + plyrOff_GAME!(I, I1, 9)
                 statTotals(4) = statTotals(4) + plyrOff_GAME!(I, I1, 11)
                 statTotals(5) = statTotals(5) + (plyrOff_GAME!(I, I1, 8) * 2) + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0)
+
                 statTotals(13) = statTotals(13) + threeFG(I, I1, 0)
                 statTotals(14) = statTotals(14) + threeFG(I, I1, 1)
+
                 statTotals(6) = statTotals(6) + plyrOff_GAME!(I, I1, 12)
                 statTotals(7) = statTotals(7) + plyrOff_GAME!(I, I1, 14)
                 statTotals(8) = statTotals(8) + plyrOff_GAME!(I, I1, 15)
@@ -7396,7 +7837,7 @@ Sub STATS2SCREEN
         If statTotals(1) > 0 Then Print Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
 
         '3FG %
-        Print Tab(28); 
+        Print Tab(28);
         If statTotals(14) > 0 Then Print Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
 
         'FT %
@@ -7693,6 +8134,7 @@ Sub COMPILESTATFILES (teamIdx)
 
     For I = 0 To 1
 
+        'Total Steals
         statTotals(I) = 0
 
         For I1 = 0 To 13
@@ -7701,10 +8143,13 @@ Sub COMPILESTATFILES (teamIdx)
 
     Next
 
+    'Total Steals
     statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
     statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
+
     statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
     statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
+
     statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
     statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
@@ -7919,7 +8364,7 @@ Sub pbplog (lineNumber)
 
     Print #11, "Calling from "; lineNumber
     Print #11, gameTeams$(0); " vs "; gameTeams$(1)
-    Print #11, pbpString$
+    'Print #11, pbpString$
     Print #11,
 
 End Sub
@@ -8137,6 +8582,8 @@ End Sub
 'selected tema into each of the data arrays
 'needed by the game.
 Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
+
+    Shared FY%()
 
     Shared avgAttendance&()
 

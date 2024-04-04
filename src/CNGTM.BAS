@@ -243,6 +243,9 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
                 Locate 19, 1: Input "18. HOMECOURT FACTOR "; teamRatings%(6)
                 Locate 19, 22: Print " "
 
+                If teamRatings%(6) < 0 Then teamRatings%(6) = 0
+                If teamRatings%(6) > 6 Then teamRatings%(6) = 6
+
             Case 19
                 Locate 20, 1: Input "19. ARENA NAME "; arenaName$
                 Locate 20, 16: Print " "
@@ -283,11 +286,191 @@ Sub EditTeam (teamName$, teamIdx, yearNumber$)
     Loop Until B9 = 0
 
 
+    Color 15, 0
+    Cls
+
+    Color 14
+    Print Tab(30); "CHANGE ACTUAL STATS"
+    Color 15
+
+    teamStats(0) = teamRatings%(5)
+
+    Color 14
+    Locate 3, 15: Print "TEAM"
+    Locate 3, 30: Print "OPPONENTS"
+    Color 15
+    Locate 4, 1: Print " 1. FGA ";
+    Locate 4, 14: Print teamStats(1)
+    Locate 4, 29: Print teamStats(2)
+    Locate 5, 1: Print " 2. FG % ";
+    Locate 5, 14: Print teamStats(3)
+    Locate 5, 29: Print teamStats(4)
+    Locate 6, 1: Print " 3. FTA";
+    Locate 6, 14: Print teamStats(5)
+    Locate 6, 29: Print teamStats(6)
+    Locate 7, 1: Print " 4. FT %";
+    Locate 7, 14: Print teamStats(7)
+    Locate 7, 29: Print teamStats(8)
+    Locate 8, 1: Print " 5. RB";
+    Locate 8, 14: Print teamStats(9)
+    Locate 8, 29: Print teamStats(10)
+    Locate 9, 1: Print " 6. AST";
+    Locate 9, 14: Print teamStats(11)
+    Locate 9, 29: Print teamStats(12)
+    Locate 10, 1: Print " 7. FOULS";
+    Locate 10, 14: Print teamStats(13)
+    Locate 10, 29: Print teamStats(14)
+    Locate 11, 1: Print " 8. TO";
+    Locate 11, 14: Print teamStats(15)
+    Locate 11, 29: Print teamStats(16)
+    Locate 12, 1: Print " 9. STLS";
+    Locate 12, 14: Print teamStats(17)
+    Locate 12, 29: Print teamStats(18)
+    Locate 13, 1: Print "10. 3 FGA ";
+    Locate 13, 15: Print "---";
+    Locate 13, 29: Print teamStats(19)
+    Locate 14, 1: Print "11. 3 FGA % ";
+    Locate 14, 15: Print "---";
+    Locate 14, 29: Print teamStats(20)
+
+    Do
+
+        Do
+            Locate 23, 40
+            Input "# TO CHANGE (0 TO CONTINUE)"; B9
+        Loop Until B9 >= 0 And B9 <= 11
+
+        Select Case B9
+
+            Case 1
+                Locate 4, 1: Print " 1. FGA";
+
+                Locate 4, 15: Print Space$(10)
+                Locate 4, 14: Input tmFGA
+                Locate 4, 15: Print " "
+
+                Locate 4, 30: Print Space$(10)
+                Locate 4, 29: Input oppFGA
+                Locate 4, 30: Print " "
+
+            Case 2
+                Locate 5, 1: Print " 2. FG %";
+
+                Locate 5, 15: Print Space$(10)
+                Locate 5, 14: Input tmFGPct
+                Locate 5, 15: Print " "
+
+                Locate 5, 30: Print Space$(10)
+                Locate 5, 29: Input oppFGPct
+                Locate 5, 30: Print " "
+
+            Case 3
+                Locate 6, 1: Print " 3. FTA";
+
+                Locate 6, 15: Print Space$(10)
+                Locate 6, 14: Input tmFTA
+                Locate 6, 15: Print " "
+
+                Locate 6, 30: Print Space$(10)
+                Locate 6, 29: Input oppFTA
+                Locate 6, 30: Print " "
+
+            Case 4
+                Locate 7, 1: Print " 4. FT %"
+
+                Locate 7, 15: Print Space$(10)
+                Locate 7, 14: Input tmFTPct
+                Locate 7, 15: Print " "
+
+                Locate 7, 30: Print Space$(10)
+                Locate 7, 29: Input oppFTPct
+                Locate 7, 30: Print " "
+
+            Case 5
+                Locate 8, 1: Print " 5. RB";
+
+                Locate 8, 15: Print Space$(10)
+                Locate 8, 14: Input tmReb
+                Locate 8, 15: Print " "
+
+                Locate 8, 30: Print Space$(10)
+                Locate 8, 29: Input oppReb
+                Locate 8, 30: Print " "
+
+            Case 6
+                Locate 9, 1: Print " 6. AST";
+
+                Locate 9, 15: Print Space$(10)
+                Locate 9, 14: Input tmAsst
+                Locate 9, 15: Print " "
+
+                Locate 9, 30: Print Space$(10)
+                Locate 9, 29: Input oppAsst
+                Locate 9, 30: Print " "
+
+            Case 7
+                Locate 10, 1: Print " 7. FOULS";
+
+                Locate 10, 15: Print Space$(10)
+                Locate 10, 14: Input tmFouls
+                Locate 10, 15: Print " "
+
+                Locate 10, 30: Print Space$(10)
+                Locate 10, 29: Input oppFouls
+                Locate 10, 30: Print " "
+
+                'FOULS
+                'Average 20 / game if none entered
+                If oppFouls = 0 Then oppFouls = 20 * teamStats(0)
+                If tmFouls = 0 Then tmFouls = 20 * teamStats(0)
+
+            Case 8
+                Locate 11, 1: Print " 8. TO";
+
+                Locate 11, 15: Print Space$(10)
+                Locate 11, 14: Input tmTO
+                Locate 11, 15: Print " "
+
+                Locate 11, 30: Print Space$(10)
+                Locate 11, 29: Input oppTO
+                Locate 11, 30: Print " "
+
+            Case 9
+                Locate 12, 1: Print " 9. STLS";
+
+                Locate 12, 15: Print Space$(10)
+                Locate 12, 14: Input tmSteal
+                Locate 12, 15: Print " "
+
+                Locate 12, 30: Print Space$(10)
+                Locate 12, 29: Input oppSteal
+                Locate 12, 30: Print " "
+
+            Case 10
+                Locate 13, 1: Print "10. 3 FGA";
+
+                Locate 13, 14: Print "---";
+
+                Locate 13, 30: Print Space$(10)
+                Locate 13, 29: Input opp3FGA
+                Locate 13, 30: Print " "
+
+            Case 11
+                Locate 14, 1: Print "11. 3 FGA %";
+                Locate 14, 14: Print "---";
+                Locate 14, 29: Input opp3FGAPct
+
+        End Select
+
+        Locate 23, 40
+        Print Space$(10)
+
+    Loop Until B9 = 0
+
+
     '---------------
     'Change Players
     '---------------
-    If teamRatings%(6) < 0 Then teamRatings%(6) = 0
-    If teamRatings%(6) > 6 Then teamRatings%(6) = 6
 
     Do
 
@@ -717,7 +900,7 @@ Sub ViewRoster (teamName$)
     Print " B- BLOCK SHOT RATING           FC- FOUL COMMIT RATING"
     Print "RB- REBOUNDING RATING           FD- FOUL DRAWING RATING"
     Print "CX- CONTRIBUTION FACTOR        3FG- 3FGA/TOTAL FGA"
-    Print "PS- PASSING RATING               D- DEFENSIVE RATING"
+    Print "PS- PASSING RATING               D- DEFENSIVE RATING";
 
     I$ = GetKeyPress$
 
@@ -761,11 +944,15 @@ Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
     LSet Q$(3) = MKI$(def3FG_Adj)
     LSet Q$(4) = MKI$(def3FGA_Adj)
 
-    For I = 0 To 4: LSet Q$(I + 5) = MKI$(leagueRatings%(I)): Next
+    For I = 0 To 4: 
+        LSet Q$(I + 5) = MKI$(leagueRatings%(I))
+    Next
 
     teamRatings%(2) = 999
 
-    For I = 0 To 9: LSet Q$(I + 10) = MKI$(teamRatings%(I)): Next
+    For I = 0 To 9: 
+        LSet Q$(I + 10) = MKI$(teamRatings%(I))
+    Next
 
     'Players
     For I = 0 To 13

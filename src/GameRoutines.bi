@@ -90,4 +90,6 @@ Declare Sub CheckGameShotClock ()
 Declare Sub ZONECHANGE ()
     
 Declare Function GetTeamYear% (yearFromName$)
+Declare Function ShotPacing%
 Declare Function TickerTime% (timeInterval, X)
+

@@ -496,7 +496,7 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         Color 12
         Print
-        Print "TOTALS";
+        Print "TEAM TOTALS";
         Locate , 15: Print Using "##"; totalGames%;
 
         'FGM / FGA
@@ -520,10 +520,23 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
             Locate , 70: Print Using ".###"; statPCT!
         End If
 
+        Color 6: Print "PER GAME";
+
+        'FGM / FGA
+        Locate , 28: Print Using "##.# ##.#"; statsZ!(2) / totalGames%; statsZ!(1) / totalGames%;
+
+        '3FGM / 3FGA
+        Locate , 44: Print Using "##.# ##.#"; statsZ!(13) / totalGames%; statsZ!(14) / totalGames%;
+
+        'FTM / FTA
+        Locate , 60: Print Using "##.# ##.#"; statsZ!(4) / totalGames%; statsZ!(3) / totalGames%
+
+
         'Opponents
 
         'Games
         Color 12
+        Print "OPP TOTALS";
         Locate , 15: Print Using "##"; totalGames%;
 
         'FGM / FGA
@@ -546,6 +559,18 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
             statPCT! = statsZ1!(4) / statsZ1!(3)
             Locate , 70: Print Using ".###"; statPCT!
         End If
+
+        Locate , 1
+        Color 6: Print "PER GAME";
+
+        'FGM / FGA
+        Locate , 28: Print Using "##.# ##.#"; statsZ1!(2) / totalGames%; statsZ1!(1) / totalGames%;
+
+        '3FGM / 3FGA
+        Locate , 44: Print Using "##.# ##.#"; statsZ1!(13) / totalGames%; statsZ1!(14) / totalGames%;
+
+        'FTM / FTA
+        Locate , 60: Print Using "##.# ##.#"; statsZ1!(4) / totalGames%; statsZ1!(3) / totalGames%
 
         Do
             I$ = GetKeyPress$
@@ -681,9 +706,8 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         Print "TEAM";: Locate , 39: Print Using "####"; statsZ!(15)
 
-        Color 12: Print "TOTALS";
-
         'Team
+        Color 12: Print "TEAM TOTALS";
 
         'Points / Average
         If totalGames% > 0 Then statVal! = statsZ!(10) / totalGames% Else statVal! = 0
@@ -696,7 +720,13 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
         'Fouls  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; statsZ!(6); statsZ!(8); statsZ!(9); statsZ!(7); statsZ!(11)
 
+        Color 6: Print "PER GAME";
+
+        'Fouls  AST  BLK  STL  TO
+        Locate , 49: Print Using " ##.# ##.# ##.# ##.# ##.#"; statsZ!(6) / totalGames%; statsZ!(8) / totalGames%; statsZ!(9) / totalGames%; statsZ!(7) / totalGames%; statsZ!(11) / totalGames%
+
         'Opponents
+        Color 12: Print "OPP TOTALS";
 
         'Points / Average
         If totalGames% > 0 Then statVal! = statsZ1!(10) / totalGames% Else statVal! = 0
@@ -708,6 +738,11 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
         'Fouls  AST  BLK  STL  TO
         Print Using " #### #### #### #### ####"; statsZ1!(6); statsZ1!(8); statsZ1!(9); statsZ1!(7); statsZ1!(11)
+
+        Color 6: Print "PER GAME";
+
+        'Fouls  AST  BLK  STL  TO
+        Locate , 49: Print Using " ##.# ##.# ##.# ##.# ##.#"; statsZ1!(6) / totalGames%; statsZ1!(8) / totalGames%; statsZ1!(9) / totalGames%; statsZ1!(7) / totalGames%; statsZ1!(11) / totalGames%
 
         Do
 

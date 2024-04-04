@@ -1627,8 +1627,13 @@ Sub CreateConferenceSchedule ()
 
                 Get #2, I
 
-                For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
+                For X = 0 To 18: 
+                    scheduleNG%(I, X) = CVI(Q$(X + 1))
+                Next
+                
+                For X = 0 To 1: 
+                    scheduleYN$(I, X) = Q$(20 + X)
+                Next
 
                 visitorScores(I) = CVI(Q$(22))
                 homeScores(I) = CVI(Q$(23))

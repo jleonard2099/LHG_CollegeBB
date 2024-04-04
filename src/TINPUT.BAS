@@ -349,7 +349,6 @@ Sub TINPUT ()
         Do
 
             Do
-                'Locate 24, 1
                 Locate 23, 40
                 Input "# TO CHANGE (0 TO CONTINUE)"; B9
             Loop Until B9 >= 0 And B9 <= 26
@@ -517,6 +516,7 @@ Sub TINPUT ()
                 Case 18
                     Locate 22, 1: Print "18. 3 FGA %";
                     Locate 22, 14: Print "---";
+                    Locate 22, 29: Input opp3FGAPct
 
                 Case 19
                     Locate 23, 9: Print Space$(10)
