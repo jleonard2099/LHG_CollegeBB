@@ -248,9 +248,10 @@ Do
 
 Loop Until Selection% = 8
 
+System
+
 End
 
-System
 
 
 '----------------------------------------
@@ -626,6 +627,7 @@ Sub COLHOOP ()
     Shared scheduleFile$, tourneyFile$
 
     Shared tickerStart
+    Shared FY%()
 
     Shared coachMode$(), foulShotOpt$()
     Shared location$()
@@ -742,6 +744,7 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
+        Open "pbplog" For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
 
@@ -770,7 +773,7 @@ Sub COLHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -1136,6 +1139,11 @@ Sub COLHOOP ()
 
     gameAvgTmStamina = (teamStamina(0) + teamStamina(1)) / 2
 
+
+
+    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
+    Call pbplog(1143)
+
     For P9 = 0 To 1
 
         Call SETSTAMINA
@@ -1326,8 +1334,8 @@ Sub COLHOOP ()
 
     If currHalf < 3 Then
 
-        P2(0) = 0
-        P2(1) = 0
+        teamFouls(0) = 0
+        teamFouls(1) = 0
 
         Call CheckGameClock
         Call SCOREBOARD
@@ -1423,7 +1431,7 @@ Sub COLHOOP ()
     End If
 
     '--Start "EndOfGame" routine
-    'Close #11
+    Close #11
 
     Call POSTGAME
 
@@ -2153,6 +2161,7 @@ Sub COLHOOP ()
             X = 88
 
             Call FoulCalled(1)
+
             LT = 4
 
             GoTo 9065
@@ -2283,8 +2292,6 @@ Sub COLHOOP ()
         GS% = GS% - 21
     End If
 
-    'Call pbplog(2636)
-
     'Total Stall / Hold Ball / Milk Clock and More than 15 Secs on Shot Clock
     If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1) Or (RN0 > GS%) Then
         'If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1) Or (RN0 > 99) Then
@@ -2375,9 +2382,7 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    '--------------------
-    'Check for steals
-    '--------------------
+    ' ***** CHECK FOR STEALS *****
     435 '
     'Random player
     P9 = Int(Rnd(1) * 5)
@@ -3266,6 +3271,9 @@ Sub COLHOOP ()
 
                     Call FoulCalled(1)
 
+
+                    '--- BEGINNING OF SUBROUTINE
+
                     If pbpOpt = 0 Then
                         pbpString$ = "2 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
                         Call PBP
@@ -3304,38 +3312,44 @@ Sub COLHOOP ()
                     End If
 
                     'Two FT Attempts
-                    For F3 = 1 To 2:
+                    For freethrow = 1 To 2:
 
                         Call d100(shotRoll)
 
                         'FT Success Chance
                         baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
 
-                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
+                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then 
+                            baseShotChance = Int(baseShotChance * .9 + .5)
+                        End If
 
                         If shotRoll <= baseShotChance Then
 
                             If pbpOpt = 0 Then
-                                Call THREEFT
+                                Call THREEFT(freethrow)
                             Else
                                 'pbpOpt = 1
-                                Call MADEFT
+                                Call MADEFT(freethrow)
                             End If
+
                         Else
-                            'shotRoll > baseShotChance And
+
                             If pbpOpt = 0 Then
-                                Call BADFT
+                                Call BADFT(freethrow)
                             Else
                                 'pbpOpt = 1
-                                Call MISSFT
+                                Call MISSFT(freethrow)
 
                             End If
                         End If
 
-                    Next F3
+                    Next freethrow
 
                     'Increase FT ATT
                     plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 2
+
+                    '--- END OF SUBROUTINE
+
                     LT = 0
 
                     If gameClock! <= 0 Then
@@ -3345,6 +3359,7 @@ Sub COLHOOP ()
                     End If
 
                     If shotRoll > baseShotChance Then
+                        'Missed shot
                         GoTo 650
                     Else
                         598 '
@@ -3382,6 +3397,8 @@ Sub COLHOOP ()
             End If
 
             Call d100(shotRoll)
+
+            'So, foul chance is up to 1/10 of the shot chance
             foulChance = shotChance! * ((DY / 100) + (.03 * threePtOpt))
 
             If Not (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! < 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! < 30 And scoreDiff = -2) Then
@@ -3428,7 +3445,6 @@ Sub COLHOOP ()
                         GoTo 617
                     End If
 
-                    F3 = 1
                     If pbpOpt = 0 Then
                         pbpString$ = "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
                         Call PBP
@@ -3452,11 +3468,13 @@ Sub COLHOOP ()
 
                     Call DELAY
 
-                    F3 = 1
+                    'Update score and FGA
                     score(P, currHalf) = score(P, currHalf) + 2
                     score(P, 0) = score(P, 0) + 2
                     plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
+
                     Call UPDATESCREEN
+
                     Call FoulCalled(1)
 
                     619 '
@@ -3465,7 +3483,10 @@ Sub COLHOOP ()
                         Print gameTeams$(P)
                         Print "1 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
                     End If
-                    If pbpOpt = 0 Then pbpString$ = players$(P, B1(P, ballCarrier)) + " WILL SHOOT 1": Call PBP
+                    If pbpOpt = 0 Then 
+                        pbpString$ = players$(P, B1(P, ballCarrier)) + " WILL SHOOT 1"
+                        Call PBP
+                    End If
 
                     X = 50
                     Call DEADBALLOPTIONS
@@ -3489,13 +3510,19 @@ Sub COLHOOP ()
                     End If
 
                     baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
+                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then 
+                        baseShotChance = Int(baseShotChance * .9 + .5)
+                    End If
 
                     If shotRoll <= baseShotChance And pbpOpt = 0 Then
+
                         'Increase FTM
                         plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
-                        If pbpDelay! <> 0 Then pbpString$ = "FREE THROW IS GOOD": Call PBP
+                        If pbpDelay! <> 0 Then 
+                            pbpString$ = "FREE THROW IS GOOD"
+                            Call PBP
+                        End If
 
                         score(P, currHalf) = score(P, currHalf) + 1
                         score(P, 0) = score(P, 0) + 1
@@ -3505,13 +3532,16 @@ Sub COLHOOP ()
                     End If
 
                     If shotRoll <= baseShotChance Then
-                        If pbpOpt = 1 Then Call MADEFT
+                        If pbpOpt = 1 Then 
+                            Call MADEFT(1)
+                        End If
                     Else
                         If pbpOpt = 0 And pbpDelay! <> 0 Then
                             pbpString$ = "FREE THROW IS MISSED"
                             Call PBP
+                        Else
+                            Call MISSFT(1)
                         End If
-                        If pbpOpt = 1 Then Call MISSFT
                     End If
 
                     'Increase FT ATT
@@ -3714,7 +3744,9 @@ Sub COLHOOP ()
             Else
 
                 Call d100(RN0)
+
                 LT = 0
+
                 I2 = Int(Rnd(1) * 5) + 1
                 rndPlayer = Int(Rnd(1) * 5)
 
@@ -3864,8 +3896,6 @@ Sub COLHOOP ()
 
                 Call d100(foulChance)
 
-                'Much of this logic could be condensed in the shotRoll > F3S and shotRoll <= F3S logic
-
                 'Essentialy a 2% chance of being fouled on 3-pointer
                 If foulChance <= 2 And ft3PtFoul = 1 Then
                 
@@ -3928,7 +3958,7 @@ Sub COLHOOP ()
                         plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 3
 
                         '3 FT Attempts
-                        For F3 = 1 To 3:
+                        For freethrow = 1 To 3:
 
                             Call d100(shotRoll)
 
@@ -3938,21 +3968,21 @@ Sub COLHOOP ()
 
                             If shotRoll <= baseShotChance Then
                                 If pbpOpt = 0 Then
-                                    Call THREEFT
+                                    Call THREEFT(freethrow)
                                 Else
                                     'pbpOpt = 1
-                                    Call MADEFT
+                                    Call MADEFT(freethrow)
                                 End If
                             Else
                                 'shotRoll > baseShotChance
                                 If pbpOpt = 0 Then
-                                    Call BADFT
+                                    Call BADFT(freethrow)
                                 Else
-                                    Call MISSFT
+                                    Call MISSFT(freethrow)
                                 End If
                             End If
 
-                        Next F3
+                        Next freethrow
 
                         LT = 0
 
@@ -3962,9 +3992,8 @@ Sub COLHOOP ()
                             GoTo 170
                         End If
 
-                        'We already have this exact logic
-                        'worked out above !!!
                         If shotRoll > baseShotChance Then
+                            'Missed shot
                             GoTo 650
                         Else
                             GoTo 598
@@ -3993,7 +4022,6 @@ Sub COLHOOP ()
                             Call PBP
                         End If
 
-                        F3 = 1
 
                         score(P, currHalf) = score(P, currHalf) + 3
                         score(P, 0) = score(P, 0) + 3
@@ -4002,6 +4030,7 @@ Sub COLHOOP ()
                         threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
 
                         Call UPDATESCREEN
+
                         Call FoulCalled(1)
 
                         GoTo 619
@@ -4085,6 +4114,11 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
+    ' BONUS!!!
+    ' 1 + 1 Free Throw
+
+    '--- BEGINNING OF SUBROUTINE
+
     570 '
     If pbpDelay! <> 0 Then
         If pbpOpt = 0 Then
@@ -4125,7 +4159,7 @@ Sub COLHOOP ()
     End If
 
     '2 FT Attempts
-    For F3 = 1 To 2
+    For freethrow = 1 To 2
 
         'Increase FT ATT
         plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
@@ -4139,54 +4173,63 @@ Sub COLHOOP ()
         If shotRoll <= baseShotChance Then
 
             If pbpOpt = 0 Then
-                Call THREEFT
+                Call THREEFT(freethrow)
             Else
                 'pbpOpt = 1 Then
-                Call MADEFT
+                Call MADEFT(freethrow)
             End If
         Else
             'shotRoll > baseShotChance And
             If pbpOpt = 0 Then
-                Call BADFT
+                Call BADFT(freethrow)
             Else
                 'pbpOpt = 1
-                Call MISSFT
+                Call MISSFT(freethrow)
             End If
 
         End If
 
-        If F3 = 1 And shotRoll > plyrOff_GAME!(P, B1(P, ballCarrier), 1) Then Exit For
+        If freethrow = 1 And shotRoll > plyrOff_GAME!(P, B1(P, ballCarrier), 1) Then 
+            Exit For
+        End If
 
-    Next F3
+    Next freethrow
+
+    '--- END OF SUBROUTINE
 
     575 '
     If gameClock! <= 0 Then 170
 
-    If shotRoll > baseShotChance Then 650
-
-    prevBall$ = ""
-    If P = 1 Then
-        P = 0
-        D = 1
-        P9 = 0
-        C1 = 2
+    If shotRoll > baseShotChance Then 
+        'Missed Shot
+        GoTo 650
     Else
-        'P = 0
-        P = 1
-        D = 0
-        P9 = 1
-        C1 = 2
+        prevBall$ = ""
+        If P = 1 Then
+            P = 0
+            D = 1
+            P9 = 0
+            C1 = 2
+        Else
+            'P = 0
+            P = 1
+            D = 0
+            P9 = 1
+            C1 = 2
+        End If
+
+        X = 0
+        pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
+        Call SELECTPBP
+
+        Locate 8, 41: Print Space$(12)
+        Call DELAY
+        Call STOPPAGE
+        Call PRESSGUARD
+
+        GoTo 300
+
     End If
-
-    X = 0
-    pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-    Call SELECTPBP
-    Locate 8, 41: Print Space$(12)
-    Call DELAY
-    Call STOPPAGE
-    Call PRESSGUARD
-
-    GoTo 300
 
     '----- NOODLE -----
 
@@ -4213,42 +4256,49 @@ Sub COLHOOP ()
 
     ballCarrier = fouler
 
-    If P2(D) > 6 Then 570
+    'Check if in BONUS
+    If teamFouls(D) > 6 Then 
 
-    If gameClock! <= 0 Then 170
-    pbpString$ = "OFFENSIVE FOUL"
-    Call SELECTPBP
+        GoTo 570
 
-    pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
-    If pbpOpt = 1 And pbpDelay! <> 0 Then
-        Print pbpString$
-        Call DELAY
-    End If
-    If pbpOpt = 0 Then
-        Call PBP
-    End If
+    Else
 
-    Locate 8, 41: Print Space$(12)
+        If gameClock! <= 0 Then 170
+        pbpString$ = "OFFENSIVE FOUL"
+        Call SELECTPBP
 
-    ballCarrier = 6
-    Call DELAY
-
-    turnovers(D) = turnovers(D) + 1
-
-    Call UPDATESCREEN
-    Call DEADBALLOPTIONS
-
-    For I = 0 To 1
-        If defCategory(I) = 0 Then
-            PR%(I, 0) = 1
-            PR%(I, 1) = 7
-            pctContrib(I) = 0
+        pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Print pbpString$
+            Call DELAY
         End If
-    Next
+        If pbpOpt = 0 Then
+            Call PBP
+        End If
 
-    Call PRESSGUARD
+        Locate 8, 41: Print Space$(12)
 
-    GoTo 300
+        ballCarrier = 6
+        Call DELAY
+
+        turnovers(D) = turnovers(D) + 1
+
+        Call UPDATESCREEN
+        Call DEADBALLOPTIONS
+
+        For I = 0 To 1
+            If defCategory(I) = 0 Then
+                PR%(I, 0) = 1
+                PR%(I, 1) = 7
+                pctContrib(I) = 0
+            End If
+        Next
+
+        Call PRESSGUARD
+
+        GoTo 300
+
+    End If
 
     '----- NOODLE -----
 
@@ -4310,6 +4360,8 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
+    ' ***** CHECK FOR REBOUNDS *****
+
     650 '
     A6 = 1
     playChoice = 0
@@ -4344,6 +4396,7 @@ Sub COLHOOP ()
             GoTo 800
 
     End Select
+
 
     '----- NOODLE -----
 
@@ -4422,6 +4475,7 @@ Sub COLHOOP ()
 
         Case 2 To DY
             foulOnReb = 1
+            'GoTo 707
 
         Case DY + 1 To 17
 
@@ -4705,6 +4759,7 @@ Sub COLHOOP ()
         End If
 
         Call FoulCalled(1)
+
         LT = 4
 
         GoTo 9065
@@ -4811,6 +4866,7 @@ Sub COLHOOP ()
         Call UPDATESCREEN
 
         Call FoulCalled(1)
+
         LT = 4
 
         GoTo 9065
@@ -4961,6 +5017,7 @@ Sub COLHOOP ()
 
         possArrow = 1 - possArrow
         Call DEADBALLOPTIONS
+
         For I = 0 To 1
             If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
@@ -4968,6 +5025,7 @@ Sub COLHOOP ()
                 pctContrib(I) = 0
             End If
         Next
+
         LT = 4
 
         GoTo 350
@@ -4977,7 +5035,9 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     9065 '
-    If intentional = 1 Or (ft10thFoul = 1 And P2(D) >= 10) Then
+    If intentional = 1 Or (ft10thFoul = 1 And teamFouls(D) >= 10) Then
+
+        'BONUS +
 
         If pbpDelay! <> 0 Then
             If pbpOpt = 0 Then
@@ -5016,7 +5076,7 @@ Sub COLHOOP ()
         End If
 
         '2 FT Attempts
-        For F3 = 1 To 2:
+        For freethrow = 1 To 2:
 
             'Increase FT ATT
             plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
@@ -5032,30 +5092,30 @@ Sub COLHOOP ()
             If shotRoll <= baseShotChance Then
 
                 If pbpOpt = 0 Then
-                    Call THREEFT
+                    Call THREEFT(freethrow)
                 Else
                     'pbpOpt = 1
-                    Call MADEFT
+                    Call MADEFT(freethrow)
                 End If
             Else
                 'shotRoll > baseShotChance And
                 If pbpOpt = 0 Then
-                    Call BADFT
+                    Call BADFT(freethrow)
                 Else
                     'pbpOpt = 1
-                    Call MISSFT
+                    Call MISSFT(freethrow)
                 End If
 
             End If
 
-        Next F3
+        Next freethrow
 
         If gameClock! <= 0 Then 170
 
         Call CLEARPBPBOX
 
         If shotRoll > baseShotChance And intentional = 0 Then
-            'missed, no intentional foul
+            'Missed shot (no intentional foul)
             GoTo 650
         End If
 
@@ -5102,129 +5162,139 @@ Sub COLHOOP ()
 
     Else
 
-        If P2(D) > 6 Then 570
-
-        If gameClock! <= 0 Then 170
-
-        Call DEADBALLOPTIONS
-
-        For I = 0 To 1
-            If defCategory(I) = 0 Then
-                PR%(I, 0) = 1
-                PR%(I, 1) = 7
-                pctContrib(I) = 0
-            End If
-        Next
-
-        If ft6FloorFouls = 0 Then
+        'Check if in BONUS
+        If teamFouls(D) > 6 Then 
         
-            If pbpOpt = 0 Or pbpDelay! = 0 Then
-                Call WINDEX
-                pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
+            GoTo 570
+
+        Else
+
+            If gameClock! <= 0 Then 170
+
+            Call DEADBALLOPTIONS
+
+            For I = 0 To 1
+                If defCategory(I) = 0 Then
+                    PR%(I, 0) = 1
+                    PR%(I, 1) = 7
+                    pctContrib(I) = 0
+                End If
+            Next
+
+            If ft6FloorFouls = 0 Then
+            
+                If pbpOpt = 0 Or pbpDelay! = 0 Then
+                    Call WINDEX
+                    pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
+                    Call PBP
+                    Locate 8, 41: Print Space$(12)
+
+                Else
+                    'pbpOpt = 1
+                    Call WINDEX
+                    Print gameTeams$(P) + " BALL O.B. AFTER FOUL"
+                    Call DELAY
+                    Locate 8, 41: Print Space$(12)
+                End If
+
+                GoTo 350
+
+            End If
+
+            Call UPDATESCREEN
+
+            pbpString$ = "1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
+            Call PBP
+
+            X = 50
+
+            Call DEADBALLOPTIONS
+
+            For I = 0 To 1
+                If defCategory(I) = 0 Then
+                    PR%(I, 0) = 1
+                    PR%(I, 1) = 7
+                    pctContrib(I) = 0
+                End If
+            Next
+
+            X = 0
+
+            pbpString$ = "1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
+
+            Call PBP
+
+            'Increase FT ATT
+            plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
+
+            baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
+                baseShotChance = Int(baseShotChance * .9 + .5)
+            End If
+
+            Call d100(shotRoll)
+
+            If shotRoll <= baseShotChance Then
+                If pbpOpt = 0 Then
+                    Call THREEFT(1)
+                Else
+                    'pbpOpt = 1
+                    Call MADEFT(1)
+                End If
+            Else
+                'shotRoll > baseShotChance
+                If pbpOpt = 0 Then
+                    Call BADFT(1)
+                Else
+                    'pbpOpt = 1
+                    Call MISSFT(1)
+                End If
+            End If
+
+            LT = 0
+
+            If gameClock! <= 0 Then
+                timeElapsed! = gameClock!
+                Call AdjustPlayTime
+                GoTo 170
+            End If
+
+            If shotRoll > baseShotChance Then 
+                'Missed shot
+                GoTo 650
+            Else
+
+                prevBall$ = ""
+                If P = 1 Then
+                    P = 0
+                    D = 1
+                    P9 = 0
+                    C1 = 2
+                Else
+                    'P = 0
+                    P = 1
+                    D = 0
+                    P9 = 1
+                    C1 = 2
+                End If
+
+                pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
+                Locate 8, 41: Print Space$(12)
+
                 Call PBP
-                Locate 8, 41: Print Space$(12)
-
-            Else
-                'pbpOpt = 1
-                Call WINDEX
-                Print gameTeams$(P) + " BALL O.B. AFTER FOUL"
                 Call DELAY
-                Locate 8, 41: Print Space$(12)
+                Call STOPPAGE
+
+                ballCarrier = 6
+                X = 0
+
+                Call PRESSGUARD
+
+                GoTo 300
+                
             End If
 
-            GoTo 350
-
         End If
-
-        Call UPDATESCREEN
-
-        pbpString$ = "1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-        Call PBP
-
-        X = 50
-
-        Call DEADBALLOPTIONS
-
-        For I = 0 To 1
-            If defCategory(I) = 0 Then
-                PR%(I, 0) = 1
-                PR%(I, 1) = 7
-                pctContrib(I) = 0
-            End If
-        Next
-
-        X = 0
-
-        pbpString$ = "1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-
-        Call PBP
-
-        F3 = 1
-
-        'Increase FT ATT
-        plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
-
-        baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
-            baseShotChance = Int(baseShotChance * .9 + .5)
-        End If
-
-        Call d100(shotRoll)
-
-        If shotRoll <= baseShotChance Then
-            If pbpOpt = 0 Then
-                Call THREEFT
-            Else
-                'pbpOpt = 1
-                Call MADEFT
-            End If
-        Else
-            'shotRoll > baseShotChance
-            If pbpOpt = 0 Then
-                Call BADFT
-            Else
-                'pbpOpt = 1
-                Call MISSFT
-            End If
-        End If
-
-        LT = 0
-
-        If gameClock! <= 0 Then
-            timeElapsed! = gameClock!
-            Call AdjustPlayTime
-            GoTo 170
-        End If
-
-        If shotRoll > baseShotChance Then 650
-
-        prevBall$ = ""
-        If P = 1 Then
-            P = 0
-            D = 1
-            P9 = 0
-            C1 = 2
-        Else
-            'P = 0
-            P = 1
-            D = 0
-            P9 = 1
-            C1 = 2
-        End If
-
-        pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-        Locate 8, 41: Print Space$(12)
-
-        Call PBP
-        Call DELAY
-        Call STOPPAGE
-
-        ballCarrier = 6
-        X = 0
-
-        Call PRESSGUARD
-
-        GoTo 300
 
     End If
 
@@ -5345,7 +5415,6 @@ Sub InitVar ()
     DY = 0
     endAllGames = 0
     endGame = 0
-    F3 = 0
     fastBreak = 0
     FO = 0
     G9 = 0
@@ -5415,7 +5484,7 @@ Sub InitVar ()
     Erase F1, ft3PtFoul, G4, G5
     Erase offStrat
     Erase oppScore, teamScore
-    Erase P2, P4, P5, defCategory
+    Erase teamFouls, P4, P5, defCategory
     Erase plyrStamina, powerRating
     Erase pbpFG, pbpBG
     Erase QQ, QR, RB, schedGame
@@ -5638,7 +5707,7 @@ Function ShotPacing%
     'JY = Average FGA/G Adjustment For Both Teams
     '   FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA/G)
     '   FY%(1) = 2 * (Home Tm Average FGA/G - League FGA/G)
-    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
+    'JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
 
     'https://kenpom.com/blog/the-possession/
     yFactor! = .44
@@ -5659,6 +5728,8 @@ Function ShotPacing%
         Select Case sClockVal
 
             Case 0
+                'No shot clock = teams can stall as long as they want
+                'Value 99 = stall 1% of possessions
                 paceValue = 99
 
             Case 1
@@ -5666,10 +5737,10 @@ Function ShotPacing%
                 paceValue = 55
 
             Case 2
-                paceValue = 39 + Int(((JY - 56) * .8) + .5)
+                paceValue = 39 + Int(((JY - 58) * .8) + .5)
 
             Case 3
-                paceValue = 39 + Int(((JY - 58) * .8) + .5)
+                paceValue = 39 + Int(((JY - 61) * .8) + .5)
 
         End Select
 
@@ -5679,13 +5750,12 @@ Function ShotPacing%
         Select Case sClockVal
 
             Case 0
-                'There is currently no data that I can
-                'use to test this!!!
-                paceValue = Int((paceFactor! + 0.5) / 25)
+                'No shot clock = teams can stall as long as they want
+                'Value 99 = stall 1% of possessions
+                paceValue = 99
 
             Case 1
-                'There is currently no data that I can
-                'use to test this!!!
+                'There is currently no data I can use to test this!!!
                 paceValue = Int((paceFactor! + 0.5) / 35)
 
             Case 2
@@ -8595,7 +8665,7 @@ Sub FoulCalled (randomCalcs%)
     End If
 
     plyrOff_GAME!(D, B1(D, fouler), 12) = plyrOff_GAME!(D, B1(D, fouler), 12) + 1
-    P2(D) = P2(D) + 1
+    teamFouls(D) = teamFouls(D) + 1
     Call UPDATESCREEN
 
     If plyrOff_GAME!(D, B1(D, fouler), 3) - plyrOff_GAME!(D, B1(D, fouler), 7) - plyrOff_GAME!(D, B1(D, fouler), 11) - plyrOff_GAME!(D, B1(D, fouler), 12) = 0 Then
@@ -8674,7 +8744,7 @@ Sub FoulCalled (randomCalcs%)
 
         Call DELAY
 
-        If P2(D) > 6 Then X = 50
+        If teamFouls(D) > 6 Then X = 50
 
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
             teamIdx = D
@@ -9302,18 +9372,18 @@ Sub UPDATESCREEN ()
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; totRebounds(1)
 
-    Locate , 35: Print Using "##  "; P2(0);
+    Locate , 35: Print Using "##  "; teamFouls(0);
     Color 12: Print "TF  ";
-    Color 7: Print Using "##"; P2(1);
+    Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If P2(0) > 5 Then
+    If teamFouls(0) > 5 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > 5 Then
+    If teamFouls(1) > 5 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -9514,18 +9584,18 @@ Sub SCOREBOARD ()
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; totRebounds(1)
 
-    Locate , 35: Print Using "##  "; P2(0);
+    Locate , 35: Print Using "##  "; teamFouls(0);
     Color 12: Print "TF  ";
-    Color 7: Print Using "##"; P2(1);
+    Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If P2(0) > 5 Then
+    If teamFouls(0) > 5 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > 5 Then
+    If teamFouls(1) > 5 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -10036,22 +10106,28 @@ Sub ZONECHANGE ()
 
         If I1 = 2 Then I1 = 3
 
-        If defStrat(D) <= 3 Then
-            defStrat(D) = I1
-        End If
+        Select Case defStrat
+        
+            Case Is <= 3
+                defStrat(D) = I1
+            
+            Case 7
+                defStrat(D) = I1 + 8    '8, 9, 111
 
-        'what is I supposed to be here???
-        If defStrat(D) = 7 Then defStrat(D) = I + 8
-        If defStrat(D) = 10 Then defStrat(D) = 3
-        If defStrat(D) = 12 Then defStrat(D) = I + 10
-        If defStrat(D) = 12 Then defStrat(D) = 13
+            Case 10
+                defStrat(D) = 3
+
+            Case 12 
+                defStrat(D) = I1 + 10   '10, 11, 13
+ 
+        End Select
 
         P9 = D
 
         Select Case defStrat(P9)
 
             Case 0 To 3
-                'Man-Man / Zone
+                'Man-Man / Zone (No Combo)
                 defCategory(P9) = 0
 
             Case 4
@@ -10063,15 +10139,15 @@ Sub ZONECHANGE ()
                 defCategory(P9) = 2
 
             Case 7 To 9
-                'Passive 2-2-1
+                'Passive 2-2-1 Zone
                 defCategory(P9) = 3
 
             Case 10 To 13
-                'Trap 1-2-1-1
+                'Trap 1-2-1-1 Zone
                 defCategory(P9) = 4
 
             Case 14
-                'Denial / Foul
+                'Fulll Court Man-to-Man Denial / Foul
                 defCategory(P9) = 5
 
         End Select
@@ -10965,13 +11041,13 @@ End Sub
 '----------------------------------------
 'This subroutine walks the user through
 'taking 3 free throw attempts.
-Sub THREEFT ()
+Sub THREEFT (ftNumber)
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
     Call d100(RN0)
 
-    Select Case F3
+    Select Case ftNumber
 
         Case 1
             If RN0 <= 50 Then
@@ -11011,14 +11087,14 @@ End Sub
 '----------------------------------------
 'This subroutine handles score, stats and
 'Play-by-Play for a successful free throw
-Sub MADEFT ()
+Sub MADEFT (ftNumber)
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
     If pbpDelay! <> 0 Then
-        Locate F3 + 9, 1
+        Locate ftNumber + 9, 1
         Call DELAY
-        Print F3; " GOOD"
+        Print ftNumber; " GOOD"
     End If
 
     score(P, currHalf) = score(P, currHalf) + 1
@@ -11035,12 +11111,12 @@ End Sub
 '----------------------------------------
 'This subroutine handles Play-by-Play
 'for a missed free throw
-Sub MISSFT ()
+Sub MISSFT (ftNumber)
 
     If pbpDelay! <> 0 Then
         Call DELAY
-        Locate F3 + 9, 1
-        Print F3; " MISSED"
+        Locate ftNumber + 9, 1
+        Print ftNumber; " MISSED"
         Call DELAY
     End If
 
@@ -11052,9 +11128,9 @@ End Sub
 '----------------------------------------
 'This subroutine handles Play-by-Play for
 'missed FT's when there are 3 attempts.
-Sub BADFT ()
+Sub BADFT (ftNumber)
 
-    Select Case F3
+    Select Case ftNumber
         Case 1
             pbpString$ = "FIRST FREE THROW IS MISSED"
         Case 2
@@ -11767,12 +11843,18 @@ End Sub
 'in how to handle it's strategy.
 Sub COMPUTERCOACH ()
 
-    If P9 = 0 Then I6 = 1
-    If P9 = 1 Then I6 = 0
+    I6 = 1 - P9
 
+    ' *** Defensive Strategy ***
+    defStrat(P9) = 0
+    defCoverage(P9) = 0
+    defCategory(P9) = 0
+
+    'Offense is behind
     If score(P9, 0) - score(I6, 0) < 0 Then
 
-        I5 = score(I6, 0) - score(P9, 0)
+        'How far behind is the offense?
+        scoreDiff = score(I6, 0) - score(P9, 0)
 
         If currHalf = 1 Then
 
@@ -11835,53 +11917,245 @@ Sub COMPUTERCOACH ()
         End If
 
         Call d100(RN0)
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 1: defCategory(P9) = 2: defStrat(P9) = 6
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 90 And RN0 <= 95 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 95 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 <= 75 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 75 And RN0 <= 83 Then defCoverage(P9) = 0: defCategory(P9) = 1: defStrat(P9) = 4
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 83 And RN0 <= 91 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 91 And RN0 <= 96 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 96 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 70 And RN0 <= 75 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 76 And RN0 <= 85 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 85 And RN0 <= 93 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 93 And RN0 <= 97 Then defCoverage(P9) = 3: defCategory(P9) = 0: defStrat(P9) = 3
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 97 Then defCoverage(P9) = 2: defCategory(P9) = 4: defStrat(P9) = 12
 
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 70 And RN0 <= 80 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 90 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 70 And RN0 <= 80 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 12
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 90 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 70 And RN0 <= 90 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 90 And RN0 <= 96 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 96 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
+        If currHalf = 2 Then
 
-        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 <= 50 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 > 50 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
-        If currHalf = 2 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defCoverage(P9) = 3: defCategory(P9) = 5: defStrat(P9) = 14
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 <= 25 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 25 And RN0 <= 50 Then defCoverage(P9) = 1: defCategory(P9) = 2: defStrat(P9) = 6
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 50 And RN0 <= 75 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 75 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
+            Select Case gameClock!
 
-        If currHalf > 2 And RN0 <= 50 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf > 2 And RN0 > 50 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
+                Case Is >= 600
+                
+                    Select Case scoreDiff
+
+                        Case Is > 20
+                        
+                            Select Case RN0
+                            
+                                Case 1 to 60
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 61 to 80
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 81 to 90
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 6
+                                Case 91 to 95 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                Case 96 to 100
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 11
+                            
+                            End Select
+                        
+                        Case 10 to 19
+
+                            Select Case RN0
+
+                                Case 1 to 75
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 76 to 83 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 1
+                                    defStrat(P9) = 4
+                                Case 84 to 91
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 92 to 96 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                Case 97 to 100
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 11
+
+                            End Select
+                        
+                        Case Is < 10
+
+                            Select Case RN0
+
+                                Case 1 to 70
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 to 75 
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 76 to 85 
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 2
+                                Case 86 to 93 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+                                Case 94 to 97
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 3
+                                Case 98 to 100
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 12
+                            
+                            End Select
+
+                    End Select
+
+                Case 120 to 599
+
+                    Select Case scoreDiff
+                    
+                        Case Is > 20
+
+                            Select Case RN0
+
+                                Case 1 to 70 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 to 80
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+                                Case 81 to 90 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                Case 91 to 100
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 13
+
+                            End Select
+                        
+                        Case 11 to 19
+
+                            Select Case RN0
+
+                                Case 1 to 70 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 to 80 
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+                                Case 81 to 90 
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 12
+                                Case 91 to 100
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                            
+                            End Select
+
+                        Case Is <= 10
+
+                            Select Case RN0
+
+                                Case 1 to 70
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 to 90 
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 2
+                                Case 91 to 96 
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 97 to 100
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                
+                            End Select
+
+                    End Select
+
+                Case 0 to 119
+
+                    Select Case scoreDiff
+
+                        Case Is >= 11
+
+                            If RN0 <= 50 Then 
+                                defCoverage(P9) = 1
+                                defCategory(P9) = 4
+                                defStrat(P9) = 11
+                            Else
+                                defCoverage(P9) = 3
+                                defCategory(P9) = 4
+                                defStrat(P9) = 13
+                            End If
+                        
+                        Case 5 to 10
+                            defCoverage(P9) = 3
+                            defCategory(P9) = 5
+                            defStrat(P9) = 14
+
+                        Case Is <= 4
+                        
+                            Select Case RN0
+
+                                Case 1 to 15
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+
+                                Case 26 to 50
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 6
+
+                                Case 51 to 75
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 11
+
+                                Case 76 to 100
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 13
+
+                            End Select
+
+                    End Select
+
+            End Select
+
+        End If
+
+        If currHalf > 2 Then
+            If RN0 <= 50 Then 
+                defCoverage(P9) = 0
+                defCategory(P9) = 0
+                defStrat(P9) = 0
+            Else
+                defCoverage(P9) = 2
+                defCategory(P9) = 0
+                defStrat(P9) = 2
+            End IF
+        End If
 
     Else
-
+    
         Call d100(RN0)
-        defStrat(P9) = 0
-        defCoverage(P9) = 0
-        defCategory(P9) = 0
 
         Select Case RN0
 
@@ -11920,62 +12194,70 @@ Sub COMPUTERCOACH ()
                 defCategory(P9) = 3
                 defStrat(P9) = 7
                 defCoverage(P9) = 2
+
                 'Nothing for 11 to 100
 
         End Select
 
     End If
 
+
+    ' *** Offensive Strategy ***
     Call d100(RN0)
 
     If currHalf = 1 Then
 
         Select Case RN0
+
             Case 1 To 80
                 offStrat(P9) = 0
+
             Case 81 To 90
                 offStrat(P9) = 1
+
             Case 91 To 100
                 offStrat(P9) = 2
+
         End Select
 
     End If
 
-    If currHalf >= 2 And score(P9, 0) - score(I6, 0) < 0 Then
+    If currHalf >= 2 Then
+    
+        If score(P9, 0) - score(I6, 0) < 0 Then
 
-        If RN0 <= 80 Then
-            offStrat(P9) = 0
+            If gameClock! <= 180 Then
+
+                If RN0 <= 30 Then
+                    offStrat(P9) = 3
+                Else
+                    offStrat(P9) = 4
+                End If
+
+            Else
+
+                If RN0 <= 80 Then
+                    offStrat(P9) = 0
+                Else
+                    offStrat(P9) = 1
+                End If
+                
+            End If
+
         Else
-            'R0 > 80
-            offStrat(P9) = 1
+
+            If RN0 <= 80 Then
+                offStrat(P9) = 0
+            Else
+                offStrat(P9) = 2
+            End If
+            
+        End If
+        
+        If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) = -3 Or score(P9, 0) - score(I6, 0) = -6) Then
+            offStrat(P9) = 9
         End If
 
-    End If
-
-    If currHalf >= 2 And score(P9, 0) - score(I6, 0) >= 0 Then
-
-        If RN0 <= 80 Then
-            offStrat(P9) = 0
-        Else
-            'RN0 > 80
-            offStrat(P9) = 2
-        End If
-
-    End If
-
-    If currHalf >= 2 And gameClock! <= 180 And score(P9, 0) - score(I6, 0) < 0 Then
-
-        If RN0 <= 30 Then
-            offStrat(P9) = 3
-        Else
-            'RN0 <= 30
-            offStrat(P9) = 4
-        End If
-
-    End If
-
-    If currHalf >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then
-        offStrat(P9) = 9
     End If
 
 End Sub
@@ -13602,6 +13884,7 @@ Sub pbplog (lineNumber)
     Print #11, "Calling from "; lineNumber
     Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, pbpString$
+    Print #11, "Pacing factor = "; JY
     Print #11,
 
 End Sub

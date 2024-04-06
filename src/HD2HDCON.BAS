@@ -60,7 +60,7 @@ Sub HD2HDCON ()
 
         Close #1
 
-        conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
+        conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -94,7 +94,7 @@ Sub HD2HDCON ()
                 VPP = 1
             End If
 
-            Open diskPaths$(2) + conferenceFile$ + ".LIB" For Input As #2
+            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #2
 
             Input #2, X
             Input #2, conf$

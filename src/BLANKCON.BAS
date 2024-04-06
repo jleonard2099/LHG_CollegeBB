@@ -11,7 +11,7 @@ Sub BLANKCON ()
 
     Dim statFiles$(MAX_CONFERENCES)
 
-    conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
+    conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 

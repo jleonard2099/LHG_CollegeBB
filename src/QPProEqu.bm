@@ -646,7 +646,9 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     itemLength% = 0
     numberItems% = UBound(menuChoices$)
     For x = Start% To UBound(menuChoices$)
-        If Len(menuChoices$(x)) > itemLength% Then itemLength% = Len(menuChoices$(x))
+        If Len(menuChoices$(x)) > itemLength% Then
+            itemLength% = Len(menuChoices$(x))
+        End If
         If menuChoices$(x) = "" Then
             numberItems% = x - 1
             Exit For
@@ -654,9 +656,15 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     Next x
     ColWidth% = itemLength% + Spacing%
 
+    If ColWidth% > Int(80 / NumCols%) Then
+        ColWidth% = Int(80 / NumCols%)
+        itemLength% = ColWidth%
+        Spacing% = 0
+    End If
+
     Do
-        GoSub DrawMenu '*** Draw the menu ***
-        GoSub UserInput '*** Get the user input ***
+        GoSub DrawMenu ' *** Draw the menu ***
+        GoSub UserInput ' *** Get the user input ***
 
     Loop Until UserIn$ = Chr$(27) Or UserIn$ = Chr$(13)
 
@@ -666,7 +674,7 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
 
     Exit Sub
 
-    '*** Draw the menu - obviously ***
+    ' *** Draw the menu - obviously ***
     DrawMenu:
 
     XItemPosn = Column%
@@ -700,7 +708,7 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     For currentItem = Start% To Start% + maxItemsPerScreen% - 1
         If (currentItem <= numberItems%) Then
             Color ItemFGColor%, ItemBGColor%
-            Print menuChoices$(currentItem);
+            Print Left$(menuChoices$(currentItem), ColWidth%);
             Locate CsrLin + 1, XItemPosn
             If currentItem Mod NumRows% = 0 Then
                 'Move to a new column
@@ -716,14 +724,14 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     If Selected% > 1 Then Locate Row% + ((Selected% - Start%) Mod NumRows%), XItemPosn + (Fix((Selected% - Start%) / NumRows%) * ColWidth%)
     If Selected% = 1 Then Locate Row%, XItemPosn
     Color HighlightFGColor%, HighlightBGColor%
-    Print menuChoices$(Selected%);
+    Print Left$(menuChoices$(Selected%), ColWidth%);
 
     Return
 
-    '*** Get and process the user input ***
+    ' *** Get and process the user input ***
     UserInput:
 
-    UserIn$ = "" '*** Reset UserIn$ ***
+    UserIn$ = "" ' *** Reset UserIn$ ***
 
     Do
         UserIn$ = InKey$
@@ -732,38 +740,38 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     Select Case UserIn$
 
         Case Chr$(0) + Chr$(80)
-            '*** Down arrow pressed ***
+            ' *** Down arrow pressed ***
 
             If Selected% < numberItems% Then Selected% = Selected% + 1
 
         Case Chr$(0) + Chr$(72)
-            '*** Up arrow pressed ***
+            ' *** Up arrow pressed ***
 
             If Selected% - 1 <> 0 Then Selected% = Selected% - 1
 
         Case Chr$(0) + Chr$(75)
-            '*** Left arrow pressed ***
+            ' *** Left arrow pressed ***
 
             If Selected% > NumRows% Then Selected% = Selected% - NumRows%
 
         Case Chr$(0) + Chr$(77)
-            '*** Right arrow pressed ***
+            ' *** Right arrow pressed ***
 
             If Selected% < (TotalColsData% - 1) * NumRows% + 1 Then Selected% = Selected% + NumRows%
             If Selected% > Count% Then Selected% = Count%
 
         Case Chr$(0) + Chr$(71)
-            '*** Home pressed ***
+            ' *** Home pressed ***
 
             Selected% = 1
 
         Case Chr$(0) + Chr$(79)
-            '*** End pressed ***
+            ' *** End pressed ***
 
             Selected% = Count%
 
         Case Chr$(0) + Chr$(73)
-            '*** Page Up pressed ***
+            ' *** Page Up pressed ***
 
             If Selected% > maxItemsPerScreen% Then
                 Selected% = Selected% - maxItemsPerScreen%
@@ -772,7 +780,7 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
             End If
 
         Case Chr$(0) + Chr$(81)
-            '*** Page Down pressed ***
+            ' *** Page Down pressed ***
 
             If Selected% < Count% - maxItemsPerScreen% Then
                 Selected% = Selected% + maxItemsPerScreen%
@@ -782,8 +790,8 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
 
         Case Else
 
-            '*** For any other key press find the first menu item ***
-            '*** starting with that key ***
+            ' *** For any other key press find the first menu item ***
+            ' *** starting with that key ***
 
             For currentItem = 1 To numberItems%
                 If Left$(menuChoices$(Count), 1) = UserIn$ Then
@@ -1685,4 +1693,5 @@ Sub Lts2Menu (Item$(), Prompt$(), Choice%, FGColor%, BGColor%)
     Erase Break%, ScrBuf%
 
 End Sub
+
 

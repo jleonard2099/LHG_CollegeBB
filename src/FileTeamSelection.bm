@@ -457,8 +457,8 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
                 FileFGColor% = 15: FileBGColor% = 1
                 HiLiteFGColor% = 0: HiLiteBGColor% = 7
                 Rows% = 20
-                Columns% = 4
-                Spacing% = 6
+                Columns% = 3
+                Spacing% = 5
                 Row% = 4
                 Column% = 1
                 Locate 25, 1

@@ -251,7 +251,7 @@ Dim Shared test1, test2
 Dim Shared autoPlay, ballCarrier, C1, currHalf
 Dim Shared DY, compTeam, D, endGame, endAllGames
 'Dim Shared fouler, desigFouler
-Dim Shared FO, F3, G9, gameLoc, halfTime
+Dim Shared FO, ftNumber, G9, gameLoc, halfTime
 Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul, foulsToDQ
 Dim Shared JY, IN, M5, MJ, nbrLines
 Dim Shared P, P9, playerMode, playerOpt
@@ -286,7 +286,7 @@ Dim Shared D8(4, 3), DP(2, 4)
 Dim Shared eventSettings(13), ft3PtFoul(1), F1(13)
 Dim Shared G4(13), G5(13), leagRat_GAME(1, 4)
 Dim Shared offStrat(1)
-Dim Shared P2(1), P4(14), P5(14), defCategory(1)
+Dim Shared teamFouls(1), P4(14), P5(14), defCategory(1)
 Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
 Dim Shared playerDef_GAME(1, 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24), plyrRat_GAME(0 To 1, 0 To 13, 0 To 6)
 Dim Shared playerStat_GAME(0 To 1, 0 To 13, 0 To 15), plyrStamina(13)

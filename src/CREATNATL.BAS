@@ -191,7 +191,7 @@ Sub ReviewEditNatOrg (organization$)
 
             If choice = 1 Then
                 'Add conference
-                creatZ1$(conferenceIndex) = ChooseFile$ (diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
+                creatZ1$(conferenceIndex) = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
                 creatZ1$(conferenceIndex) = "XXX"

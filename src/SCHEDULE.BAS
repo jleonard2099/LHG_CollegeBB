@@ -801,11 +801,11 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 Select Case scheduleAction%
 
                     Case 4:
-                        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
+                        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
                         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-                            Open diskPaths$(2) + conferenceFile$ + ".LIB" For Input As #1
+                            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
                             Input #1, X%
                             Input #1, LG$
@@ -1566,11 +1566,11 @@ Sub CreateConferenceSchedule ()
 
     If D3% <> 0 Then
 
-        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.LIB", "CONFERENCE", ExitCode%)
+        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-            Open diskPaths$(2) + conferenceFile$ + ".LIB" For Input As #1
+            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
             X1 = 0
 
