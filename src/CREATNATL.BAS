@@ -51,11 +51,15 @@ Sub CREATENATL ()
                     Call ReviewEditNatOrg(league$)
 
                 Case 2:
-                    league$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", FileExit%)
+                    Do
 
-                    If FileExit% <> 27 And FileExit% <> 0 Then
-                        Call ReviewEditNatOrg(league$)
-                    End If
+                        league$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
+
+                        If FileExit% <> 27 And FileExit% <> 0 Then
+                            Call ReviewEditNatOrg(league$)
+                        End If
+
+                    Loop Until FileExit% = 27 Or FileExit% = 0
 
             End Select
 
@@ -118,9 +122,9 @@ Sub ReviewEditNatOrg (organization$)
 
     Shared creatZ1$()
 
-    If _FileExists(diskPaths$(1) + organization$ + ".CON") Then
+    If _FileExists(diskPaths$(2) + organization$ + ".CON") Then
 
-        Open diskPaths$(1) + organization$ + ".CON" For Input As #1
+        Open diskPaths$(2) + organization$ + ".CON" For Input As #1
 
         Input #1, organization$
 
@@ -187,7 +191,7 @@ Sub ReviewEditNatOrg (organization$)
 
             If choice = 1 Then
                 'Add conference
-                creatZ1$(conferenceIndex) = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+                creatZ1$(conferenceIndex) = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
                 creatZ1$(conferenceIndex) = "XXX"
@@ -212,7 +216,7 @@ Sub SaveNatOrg (leagueFile$)
 
     Shared creatZ1$()
 
-    Open diskPaths$(1) + leagueFile$ + ".CON" For Output As #1
+    Open diskPaths$(2) + leagueFile$ + ".CON" For Output As #1
 
     Print #1, leagueFile$
 

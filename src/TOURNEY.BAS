@@ -54,7 +54,7 @@ Sub TOURNEY ()
             Cls
 
             Locate 23, 1
-            Color , 1: Print Tab(80);
+            Color , 1: Print Tab(80); " ";
 
             Locate 23, 1
             Color 13: Print "SC";
@@ -63,7 +63,10 @@ Sub TOURNEY ()
             Color 14: Print "-HOME COURT ADVANTAGE  ";
             Color 13: Print "3";
             Color 14: Print "-USE 3-POINT SHOT  ";
-            Locate 24, 1: Color , 1: Print Tab(80);: Locate 24, 1
+
+            Locate 24, 1
+            Color , 1: Print Tab(80); " ";
+            Locate 24, 1
             Color 11: Print "PGUP  PGDN  ";
             Color 13: Print "REG";
             Color 14: Print "-REGION  ";
@@ -71,15 +74,21 @@ Sub TOURNEY ()
             Color 14: Print "-ROUND  ";
             Color 13: Print "GM";
             Color 14: Print "-GAME  ";
-            Locate 25, 1: Color , 1: Print Tab(80);: Locate 25, 1
+
+            Locate 25, 1
+            Color , 1: Print Tab(80); " ";
+            Locate 25, 1
             Color 11: Print "P";
             Color 14: Print "-PLAY TOURNAMENT   ";
             Color 11: Print "Q";
             Color 14: Print "-QUIT  ";
             Color 11: Print "E";
             Color 14: Print "-EDIT A GAME  ";
-            Locate 1, 1: Print Tab(80);: Locate 1, 1: Print tourneyFile$
+
+            Locate 1, 1: Print Tab(80); " ";
+            Locate 1, 1: Print tourneyFile$
             Locate 1, 33
+
             Color 14: Print "AUTO SCHEDULER"
             Color , 0
 
@@ -87,6 +96,7 @@ Sub TOURNEY ()
             Color 14
             Print "GM ID#  REG  RND  GM    VISITING TEAM        HOME TEAM            HC  3  SC": Color 15
 
+            'Show 20 schedule entries on the screen at once
             For X = 1 To 20
 
                 Locate X + 2, 1
@@ -94,7 +104,8 @@ Sub TOURNEY ()
                 If X + NS% * 20 <= scheduleAP%(0) Then
 
                     Print Using "###      ##   ##   ##"; X + NS% * 20; scheduleNG%(X + NS% * 20, 15); scheduleNG%(X + NS% * 20, 16); scheduleNG%(X + NS% * 20, 17);
-                    'LOCATE , 17: PRINT yearNumber$(X + NS% * 20, 2);
+
+                    'Locate , 17: Print yearNumber$(X + NS% * 20, 2);
                     Locate , 25: Print visitingTeam$(X + NS% * 20); " ";
                     If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * 20);
 
@@ -109,6 +120,7 @@ Sub TOURNEY ()
                     End If
 
                     Locate , 71: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
+
                     Locate , 74: Print Left$(sClockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
 
                 End If
@@ -123,7 +135,7 @@ Sub TOURNEY ()
                     Call EditGame_TOURNEY
 
                 Case "P":
-                    ' *** SAVE SCHEDULE FILE ***
+                    ' *** SAVE TOURNAMENT SCHEDULE ***                    
                     Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
 
                     For X = 0 To 14
@@ -180,6 +192,7 @@ Sub TOURNEY ()
                     If SG% <= 0 Then SG% = 1
                     If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
 
+                    'Create the Tournament file (equivalent to GAME82)
                     Open "TOURNEY" For Output As #2
                     Print #2, tourneyFile$ + ".TOU" '".TNY"
                     Print #2, SG%
@@ -234,7 +247,7 @@ Sub TOURNEY ()
                 Case "Q":
                     'Exit Sub
 
-                Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(73)
+                Case Chr$(0) + Chr$(81), Chr$(0) + Chr$(77)
                     ' *** PAGE DOWN | RIGHT ARROW ***
                     If NS% >= BS% Then
                         NS% = BS%
@@ -335,7 +348,7 @@ Sub EditGame_TOURNEY ()
 
     Dim displayPause!
 
-    yearNumber$(0, 3) = "10-01-91"
+    yearNumber$(0, 3) = "03-01-23"
     yearNumber$(0, 2) = "07:30P"
 
     Do
@@ -344,8 +357,8 @@ Sub EditGame_TOURNEY ()
         Locate 23, 1: Input "ENTER GAME # TO EDIT "; NG%
     Loop Until NG% >= 1 And NG% <= scheduleAP%(0)
 
-    V$ = visitingTeam$(NG%)
-    H$ = homeTeam$(NG%)
+    visitor$ = visitingTeam$(NG%)
+    home$ = homeTeam$(NG%)
 
     Do
 
@@ -357,78 +370,78 @@ Sub EditGame_TOURNEY ()
 
             Locate 2, 2
             Color 14: Print "     ";
-            Color 15: Print "VISITING TEAM: "; V$
+            Color 15: Print "VISITING TEAM: "; visitor$
 
             Color 14: Print "     ";
-            Color 15: Print "HOME TEAM: "; H$
+            Color 15: Print "HOME TEAM: "; home$
 
             Color 14: Print " (1) ";:
             Color 15: Print playMode$(scheduleNG%(NG%, 8))
 
             Color 14: Print " (2) ";:
-            Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(NG%, 3))
-
-            Color 14: Print " (3) ";:
-            Color 15: Print "SHOT CLOCK "; sClockOpt$(scheduleNG%(NG%, 7))
-
-            Color 14: Print " (4) ";:
             Color 15: Print "HOME COURT ADVANTAGE: "; location$(scheduleNG%(NG%, 2))
 
-            Color 14: Print " (5) ";:
+            Color 14: Print " (3) ";:
             Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; scheduleNG%(NG%, 4) / 10
+
+            Color 14: Print " (4) ";:
+            Color 15: Print "SHOT CLOCK "; sClockOpt$(scheduleNG%(NG%, 7))
+
+            Color 14: Print " (5) ";:
+            Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(NG%, 3))
 
             Color 14: Print " (6) ";:
             Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(NG%, 5)
 
             Color 14: Print " (7) ";:
-            Color 15: Print "HUMAN COACHES WILL: "; coachMode$(scheduleNG%(NG%, 9))
+            Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
 
             Color 14: Print " (8) ";:
-            Color 15: Print "FREE THROWS ON 10TH FOUL "; foulShotOpt$(scheduleNG%(NG%, 6))
+            Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(NG%, 9))
 
             Color 14: Print " (9) ";:
             Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNoText$(scheduleNG%(NG%, 10))
 
             Color 14: Print " (A) ";:
-            Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNoText$(scheduleNG%(NG%, 14))
+            Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS: "; yesNoText$(scheduleNG%(NG%, 14))
 
             Color 14: Print " (0) ";:
             Color 15: Print "ACCEPT SETTINGS"
 
             I$ = GetKeyPress$
             If UCase$(I$) = "A" Then I$ = "10"
-            I8% = Val(I$)
+            userKey = Val(I$)
 
-            Select Case I8%
+            Select Case userKey
 
                 Case 1:
                     scheduleNG%(NG%, 8) = scheduleNG%(NG%, 8) + 1
                     If scheduleNG%(NG%, 8) > 3 Then scheduleNG%(NG%, 8) = 0
 
                 Case 2:
-                    scheduleNG%(NG%, 3) = 1 - scheduleNG%(NG%, 3)
-
-                Case 3:
-                    scheduleNG%(NG%, 7) = 1 + scheduleNG%(NG%, 7)
-                    If scheduleNG%(NG%, 7) > 2 Then scheduleNG%(NG%, 7) = 0
-
-                Case 4:
                     N = 1 - (scheduleNG%(NG%, 2) - 1)
                     scheduleNG%(NG%, 2) = N + 1
 
-                Case 5:
+                Case 3:
                     Locate 8, 32: Input displayPause!
                     scheduleNG%(NG%, 4) = displayPause! * 10
+
+                Case 4:
+                    scheduleNG%(NG%, 7) = 1 + scheduleNG%(NG%, 7)
+                    If scheduleNG%(NG%, 7) > 2 Then scheduleNG%(NG%, 7) = 0
+
+                Case 5:
+                    scheduleNG%(NG%, 3) = 1 - scheduleNG%(NG%, 3)
 
                 Case 6:
                     scheduleNG%(NG%, 5) = 1 + scheduleNG%(NG%, 5)
                     If scheduleNG%(NG%, 5) > 6 Then scheduleNG%(NG%, 5) = 5
 
                 Case 7:
-                    scheduleNG%(NG%, 9) = 1 - scheduleNG%(NG%, 9)
+                    scheduleNG%(NG%, 6) = 1 - scheduleNG%(NG%, 6)
 
                 Case 8:
-                    scheduleNG%(NG%, 6) = 1 - scheduleNG%(NG%, 6)
+                    scheduleNG%(NG%, 9) = 1 - scheduleNG%(NG%, 9)
 
                 Case 9:
                     scheduleNG%(NG%, 10) = 1 - scheduleNG%(NG%, 10)
@@ -438,9 +451,9 @@ Sub EditGame_TOURNEY ()
 
             End Select
 
-        Loop Until I8% >= 0 And I8% <= 10
+        Loop Until userKey >= 0 And userKey <= 10
 
-    Loop Until I8% = 0
+    Loop Until userKey = 0
 
 End Sub
 

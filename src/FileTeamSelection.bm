@@ -222,8 +222,8 @@ End Sub
 ' been included for.
 Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
 
-    Shared defFGPctAdj%, def3FG_Adj, def3FGA_Adj
-    Shared staminaRating%
+    Shared defFGPctAdj!, def3FG_Adj, def3FGA_Adj
+    Shared staminaRating!
 
     Shared leagueRatings%(), teamRatings%()
 
@@ -242,8 +242,8 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
     Get #1, teamIdx
 
     targetTeam$ = RTrim$(Q$(0))
-    staminaRating% = CVI(Q$(1))
-    defFGPctAdj% = CVI(Q$(2))
+    staminaRating! = CVI(Q$(1))
+    defFGPctAdj! = CVI(Q$(2))
     def3FG_Adj = CVI(Q$(3))
     def3FGA_Adj = CVI(Q$(4))
 
@@ -290,7 +290,7 @@ Sub ReadExtraData (teamYear$, teamIdx)
 
     Shared coach$, arenaName$, mascot$
 
-    Shared playerDef!(), playerStats!(), teamStats()
+    Shared playerDef!(), playerStats!(), teamStats!()
 
     Shared position$()
 
@@ -312,8 +312,9 @@ Sub ReadExtraData (teamYear$, teamIdx)
 
         For I = 0 To 13
             Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-            Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
+
+        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
 
         Get #1, teamIdx
 
@@ -333,11 +334,12 @@ Sub ReadExtraData (teamYear$, teamIdx)
 
         Next
 
-        For I = 0 To 20
-            teamStats(I) = CVI(Q$(228 + I))
+        For I = 0 To 24
+        'For I = 0 To 20
+            teamStats!(I) = CVI(Q$(228 + I))
         Next
 
-        CK = CVI(Q$(249))
+        CK = CVI(Q$(253))
 
         Close #1
 
@@ -457,8 +459,8 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
                 FileFGColor% = 15: FileBGColor% = 1
                 HiLiteFGColor% = 0: HiLiteBGColor% = 7
                 Rows% = 20
-                Columns% = 4
-                Spacing% = 6
+                Columns% = 3
+                Spacing% = 5
                 Row% = 4
                 Column% = 1
                 Locate 25, 1
@@ -505,5 +507,3 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
-
-

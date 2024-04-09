@@ -9,7 +9,7 @@ Sub SEECON ()
 
     _Title "Courtside College Basketball - View Conference Stats"
 
-    leaderFile$ = ChooseFile$(diskPaths$(1) + "*.LDR", "LEADER", ExitCode%)
+    leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDR", "LEADER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -31,7 +31,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seeZ!(), seeZ1!()
-    Shared OL$(), DL$()
+    Shared offLeaderNames$(), deffLeaderNames$()
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
@@ -39,9 +39,9 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
 
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(1) + targetFile$ + ".LDR" For Input As #1
+    Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #1
 
-    For X = 1 To 30:
+    For X = 1 To TEAMS_PER_CONFERENCE:
         Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
@@ -49,15 +49,15 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
         Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1!(X)
     Next
 
-    For X = 1 To 40:
-        Input #1, OL$(X)
+    For X = 1 To MAX_CONFERENCES:
+        Input #1, offLeaderNames$(X)
         For M = 1 To 20:
             Input #1, offLeaders!(X, M)
         Next
     Next
 
-    For X = 1 To 40:
-        Input #1, DL$(X)
+    For X = 1 To MAX_CONFERENCES:
+        Input #1, deffLeaderNames$(X)
         For M = 1 To 20:
             Input #1, defLeaders!(X, M)
         Next
@@ -65,7 +65,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
 
     Close #1
 
-    Open diskPaths$(1) + targetFile$ + ".TMS" For Input As #2
+    Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #2
     Input #2, FF$, D1$, D2$
     Close #2
 
@@ -197,7 +197,7 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seeZ!(), seeZ1!()
-    Shared OL$(), DL$()
+    Shared offLeaderNames$(), deffLeaderNames$()
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
@@ -648,9 +648,9 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
 
     For X = 1 To 20
 
-        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
 
-            Print Left$(OL$(X), 11); Tab(13);: Print Using "##"; offLeaders!(X, 16);: Print Tab(16);: Print Using "####"; offLeaders!(X, 2);: Print Tab(21);: Print Using "####"; offLeaders!(X, 3);: Print Tab(26);
+            Print Left$(offLeaderNames$(X), 11); Tab(13);: Print Using "##"; offLeaders!(X, 16);: Print Tab(16);: Print Using "####"; offLeaders!(X, 2);: Print Tab(21);: Print Using "####"; offLeaders!(X, 3);: Print Tab(26);
 
             Print Using ".###"; offLeaders!(X, 17);: Print Tab(31);: Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
 
@@ -681,8 +681,8 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
 
     For X = 1 To 20
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print Left$(DL$(X), 11); Tab(13);
+        If deffLeaderNames$(X) <> "" And deffLeaderNames$(X) <> "*" And deffLeaderNames$(X) <> " " Then
+            Print Left$(deffLeaderNames$(X), 11); Tab(13);
             'G
             Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);
@@ -746,7 +746,7 @@ Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seeZ!(), seeZ1!()
 
-    Shared OL$(), DL$()
+    Shared offLeaderNames$(), deffLeaderNames$()
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
@@ -1079,8 +1079,8 @@ Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
 
     For X = 1 To 20
 
-        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
-            Print #1, Left$(OL$(X), 11); Tab(13);
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+            Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
             Print #1, Using "##"; offLeaders!(X, 16);
             Print #1, Tab(16);
             Print #1, Using "####"; offLeaders!(X, 2);
@@ -1114,8 +1114,8 @@ Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
 
     For X = 1 To 20
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print #1, Left$(DL$(X), 11); Tab(13);
+        If deffLeaderNames$(X) <> "" And deffLeaderNames$(X) <> "*" And deffLeaderNames$(X) <> " " Then
+            Print #1, Left$(deffLeaderNames$(X), 11); Tab(13);
             Print #1, Using "##"; defLeaders!(X, 16);
             Print #1, Tab(16);
             Print #1, Using "####"; defLeaders!(X, 2);

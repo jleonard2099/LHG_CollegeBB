@@ -8,7 +8,7 @@ Sub BRACKET ()
 
     _Title "Courtside College Basketball - View Brackets/Seeding"
 
-    Shared scheduleNG%(), NN%()
+    Shared scheduleNG%(), nbrRegionalTeams()
 
     Shared consolationSetting%(), tourneyDefaults%()
     Shared homeScores(), visitorScores()
@@ -73,7 +73,7 @@ Sub ViewTourneyInfo (ACTION%)
     Shared BS%, NS%
 
     Shared consolationSetting%(), tourneyDefaults%()
-    Shared tourneyN%(), scheduleNG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
     Shared homeScores(), visitorScores()
     Shared scheduleAP%()
 
@@ -92,7 +92,7 @@ Sub ViewTourneyInfo (ACTION%)
         Input #1, R% ' NUMBER OF REGIONS
 
         For I = 1 To 16
-            Input #1, NN%(I) ' NUMBER OF TEAMS IN REGION
+            Input #1, nbrRegionalTeams(I) ' NUMBER OF TEAMS IN REGION
             Input #1, regionNames$(I) ' NAME OF REGION
         Next
 
@@ -106,7 +106,7 @@ Sub ViewTourneyInfo (ACTION%)
         Next
 
         Input #1, consolationSetting%(0)
-        Input #1, consolationSetting%(1): ' CONSOLATION GAME
+        Input #1, consolationSetting%(1) ' CONSOLATION GAME
 
         Close #1
 
@@ -188,12 +188,19 @@ Sub PrintFourTeamBracket ()
         If I / 2 = Int(I / 2) Then Locate 6 * I + 4, 38: Print String$(17, Chr$(196)); Chr$(191)
         If I / 2 <> Int(I / 2) Then Locate 6 * I + 4, 38: Print String$(17, Chr$(196)); Chr$(217)
     Next
+
     For I = 0 To 1
         If I = 0 Then Locate 7, 56: Print String$(13, Chr$(196)); Chr$(191)
-        For I1 = 7 To 17: Locate I1 + 1, 69: Print Chr$(179): Next
+
+        For I1 = 7 To 17: 
+            Locate I1 + 1, 69: Print Chr$(179)
+        Next
+
         Locate 13, 69: Print Chr$(195); String$(9, Chr$(196))
+
         If I = 1 Then Locate 19, 56: Print String$(13, Chr$(196)); Chr$(217)
     Next
+
     Color 7
 
 End Sub
@@ -261,7 +268,7 @@ Sub EditBracket (numberRegions, ACTION%)
 
     Dim bracketA$(9)
 
-    Shared tourneyN%(), scheduleNG%(), NN%()
+    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
     Shared scheduleAP%()
     Shared consolationSetting%(), tourneyDefaults%()
     Shared regionNames$(), slotName$()
@@ -276,12 +283,12 @@ Sub EditBracket (numberRegions, ACTION%)
 
         Color , 6
 
-        Locate 1, 1: Print Tab(80);
+        Locate 1, 1: Print Tab(80); " ";
 
         Locate , 23
         Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
-        Locate 25, 1: Print Tab(80);
+        Locate 25, 1: Print Tab(80); " ";
         Locate , 1: Color , 0
 
         ReDim menuChoices$(1 To numberRegions + 2)
@@ -314,13 +321,12 @@ Sub EditBracket (numberRegions, ACTION%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-            'regionNbr = Selection%
             regionNbr = Selection%
+
             'Championship Bracket
-            'If regionNbr = numberRegions + 1 Then regionNbr = 17
             If regionNbr = numberRegions + 1 Then regionNbr = 17
+
             'Return to Menu
-            'If regionNbr = numberRegions + 2 Then Exit Sub
             If regionNbr = numberRegions + 2 Then Exit Sub
 
             If ACTION% = 2 Then
@@ -329,19 +335,19 @@ Sub EditBracket (numberRegions, ACTION%)
                 Cls
 
                 Color , 6
-                Locate 1, 1: Print Tab(80);
+                Locate 1, 1: Print Tab(80); " ";
                 Locate , 23
                 Color 15
                 Print "TOURNAMENT  - REGION/BRACKET EDITOR"
-                Locate 25, 1: Print Tab(80);
+                Locate 25, 1: Print Tab(80); " ";
                 Locate , 1: Color , 0
 
-                MAXSEED = NN%(regionNbr) + 1 + 4
+                MAXSEED = nbrRegionalTeams(regionNbr) + 1 + 4
                 Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
 
                 Locate 4, 25: Print "SEED  TEAM"
 
-                For I1 = 1 To NN%(regionNbr)
+                For I1 = 1 To nbrRegionalTeams(regionNbr)
                     Color 2
                     Locate , 25
                     Print Using "##    "; I1;
@@ -359,15 +365,15 @@ Sub EditBracket (numberRegions, ACTION%)
 
                 Cls
 
-                R$ = regionNames$(currRegion)
-                Xcoord = Int((80 - Len(R$)) / 2)
-                Locate 1, Xcoord: Print R$
+                currRegionName$ = regionNames$(currRegion)
+                Xcoord = Int((80 - Len(currRegionName$)) / 2)
+                Locate 1, Xcoord: Print currRegionName$
                 Locate 2
 
                 If currRegion = 17 Then
                     bracketType = 1
                 Else
-                    bracketType = NN%(regionNbr) - 3
+                    bracketType = nbrRegionalTeams(regionNbr) - 3
                 End If
 
                 Select Case bracketType

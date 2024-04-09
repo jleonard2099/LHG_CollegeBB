@@ -196,7 +196,7 @@ End Sub
 '  1 = New Team
 Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
-    Shared teamRat_DRAFT(), miscRat_DRAFT()
+    Shared teamRat_DRAFT(), avgRat_DRAFT()
 
     Shared plyrDef_DRAFT!(), plyrStat_DRAFT!()
     Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
@@ -273,7 +273,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                 Next
 
                 For I = 1 To 12
-                    miscRat_DRAFT(0, slot, I) = miscRat_DRAFT(1, player, I)
+                    avgRat_DRAFT(0, slot, I) = avgRat_DRAFT(1, player, I)
                 Next
 
                 For I = 0 To 6
@@ -394,56 +394,56 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     Shared plyrStat_DRAFT!(), plyrRat_DRAFT!(), stamina_DRAFT!()
 
     Shared lgRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT()
-    Shared miscRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
+    Shared avgRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
 
     Cls
 
-    NP% = 0
+    numPlayers = 0
 
     For I = 0 To 13
 
         If plyrNames_DRAFT$(0, I) <> "XXX" Then
 
-            NP% = NP% + 1
-            stamina_DRAFT!(0) = stamina_DRAFT!(0) + miscRat_DRAFT(0, I, 1)
-            dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + miscRat_DRAFT(0, I, 2)
-            d3FGA_Adj(0) = d3FGA_Adj(0) + miscRat_DRAFT(0, I, 3)
-            d3FG_Adj(0) = d3FG_Adj(0) + miscRat_DRAFT(0, I, 4)
-            lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) + miscRat_DRAFT(0, I, 5)
-            lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) + miscRat_DRAFT(0, I, 6)
-            lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) + miscRat_DRAFT(0, I, 7)
-            teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) + miscRat_DRAFT(0, I, 9)
-            teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) + miscRat_DRAFT(0, I, 10)
-            teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) + miscRat_DRAFT(0, I, 11)
-            teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) + miscRat_DRAFT(0, I, 12)
+            numPlayers = numPlayers + 1
+            stamina_DRAFT!(0) = stamina_DRAFT!(0) + avgRat_DRAFT(0, I, 1)
+            dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + avgRat_DRAFT(0, I, 2)
+            d3FGA_Adj(0) = d3FGA_Adj(0) + avgRat_DRAFT(0, I, 3)
+            d3FG_Adj(0) = d3FG_Adj(0) + avgRat_DRAFT(0, I, 4)
+            lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) + avgRat_DRAFT(0, I, 5)
+            lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) + avgRat_DRAFT(0, I, 6)
+            lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 7)
+            teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 9)
+            teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) + avgRat_DRAFT(0, I, 10)
+            teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) + avgRat_DRAFT(0, I, 11)
+            teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) + avgRat_DRAFT(0, I, 12)
 
         End If
 
     Next
 
-    stamina_DRAFT!(0) = stamina_DRAFT!(0) / (NP% - 1)
-    dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) / (NP% - 1)
+    stamina_DRAFT!(0) = stamina_DRAFT!(0) / (numPlayers - 1)
+    dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) / (numPlayers - 1)
 
-    d3FGA_Adj(0) = d3FGA_Adj(0) / (NP% - 1)
+    d3FGA_Adj(0) = d3FGA_Adj(0) / (numPlayers - 1)
     If d3FGA_Adj(0) > 20 Then d3FGA_Adj(0) = 100 - d3FGA_Adj(0)
 
-    d3FG_Adj(0) = d3FG_Adj(0) / (NP% - 1)
+    d3FG_Adj(0) = d3FG_Adj(0) / (numPlayers - 1)
     If d3FG_Adj(0) > 20 Then d3FG_Adj(0) = 100 - d3FG_Adj(0)
 
-    lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) / (NP% - 1)
+    lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) / (numPlayers - 1)
     If lgRat_DRAFT(0, 0) > 20 Then lgRat_DRAFT(0, 0) = 100 - lgRat_DRAFT(0, 0)
 
-    lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) / (NP% - 1)
+    lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) / (numPlayers - 1)
     If lgRat_DRAFT(0, 2) > 20 Then lgRat_DRAFT(0, 2) = 100 - lgRat_DRAFT(0, 2)
 
-    lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) / (NP% - 1)
+    lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) / (numPlayers - 1)
     If lgRat_DRAFT(0, 3) > 20 Then lgRat_DRAFT(0, 3) = 100 - lgRat_DRAFT(0, 3)
 
     lgRat_DRAFT(0, 4) = 99
-    teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) / (NP% - 1)
-    teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) / (NP% - 1)
-    teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) / (NP% - 1)
-    teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) / (NP% - 1)
+    teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) / (numPlayers - 1)
+    teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) / (numPlayers - 1)
+    teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) / (numPlayers - 1)
+    teamRat_DRAFT(0, 6) = teamRat_DRAFT(0, 6) / (numPlayers - 1)
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
@@ -505,8 +505,9 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
         For I = 0 To 13
             Field #2, (74 + I * 32) As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-            Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
+
+        Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
 
         LSet Q$(0) = coaches_DRAFT$(0)
         LSet Q$(1) = stadiums_DRAFT$(0)
@@ -524,11 +525,11 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
         Next
 
-        For I = 0 To 20
+        For I = 0 To 24
             LSet Q$(228 + I) = MKI$(teamStats_DRAFT(0, I))
         Next
 
-        LSet Q$(249) = MKI$(999)
+        LSet Q$(253) = MKI$(999)
 
         Put #2, teamPosn
 
@@ -740,7 +741,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
 
     Shared att_DRAFT&(), CK!()
     Shared dFGPctAdj_DRAFT!(), d3FG_Adj(), d3FGA_Adj()
-    Shared lgRat_DRAFT(), miscRat_DRAFT()
+    Shared lgRat_DRAFT(), avgRat_DRAFT()
     Shared plyrOff_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrRat_DRAFT!(), plyrStat_DRAFT!(), stamina_DRAFT!()
 
@@ -808,8 +809,9 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
 
         For I = 0 To 13
             Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-            Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
         Next
+
+        Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
 
         Get #2, teamIdx
 
@@ -838,18 +840,18 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
         Close #2
 
         For I = 0 To 13
-            miscRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
-            miscRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
-            miscRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
-            miscRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
-            miscRat_DRAFT(draftIdx, I, 8) = 99
-            miscRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
-            miscRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
-            miscRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
-            miscRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
+            avgRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
+            avgRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
+            avgRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
+            avgRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
+            avgRat_DRAFT(draftIdx, I, 8) = 99
+            avgRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
+            avgRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
+            avgRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
+            avgRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
         Next
 
         If CK!(draftIdx) <> 999 Then
@@ -870,7 +872,8 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
 
             Next
 
-            For I = 0 To 20:
+            'For I = 0 To 20:
+            For I = 0 To 24
                 teamStats_DRAFT(draftIdx, I) = 0
             Next
 
@@ -879,4 +882,3 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     End If
 
 End Sub
-

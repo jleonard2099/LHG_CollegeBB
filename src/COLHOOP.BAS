@@ -129,11 +129,11 @@ Sub COLHOOP ()
 
         Close #6
 
-        'currGame = schedGame(0) + schedGame(2)
+        currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
 
-        Open diskPaths$(0) + scheduleFile$ For Random As #7 Len = 48
+        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
 
         For X = 0 To 18
             Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -236,7 +236,6 @@ Sub COLHOOP ()
     If autoPlay <> 1 And TOU <> 1 Then
 
         ' USER SELECTION OF OPTIONS
-        'gameLoc = 0 is not used ("Visitor")
         'gameLoc = 1 is neutral site
         If gameLoc = 0 Then gameLoc = 1
 
@@ -376,8 +375,8 @@ Sub COLHOOP ()
 
                     Case 5:
                         sClockVal = sClockVal + 1
-                        If sClockVal > 2 Then sClockVal = 0
-                        'If sClockVal > 3 Then sClockVal = 0
+                        'If sClockVal > 2 Then sClockVal = 0
+                        If sClockVal > 3 Then sClockVal = 0
 
                     Case 6:
                         threePtOpt = 1 - threePtOpt
@@ -505,18 +504,13 @@ Sub COLHOOP ()
         'Neutral Site
         'Random # 2,000 - 14,000
         '-- Yes, some teams struggle to get 1,500
-        '-- but it's rare, or defType, or an outlier
+        '-- but it's rare, or defCoverage, or an outlier
         '-- Original game ranged 9,000 to 11,000
         actualAttendance& = Int(Rnd(1) * 12000) + 2000
     Else
         'Random # +/ 1,000 of team's average attendance
         actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 2000) - 1000
     End If
-
-    'FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA / GM)
-    'FY%(1) = 2 * (Home Tm Average FGA/G - League FGA / GM)
-    'JY = Average of the 2 Ratings
-    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
 
     For I = 0 To 1
         For I1 = 0 To 13
@@ -530,14 +524,14 @@ Sub COLHOOP ()
         Case 3: shotClock = 30
     End Select
 
-    S9 = (teamStamina(0) + teamStamina(1)) / 2
+    gameAvgTmStamina = (teamStamina(0) + teamStamina(1)) / 2
 
     For P9 = 0 To 1
 
         Call SETSTAMINA
 
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
-            Call COMCOACH
+            Call ComputerSubs
         Else
             Call LINEUPS
             Call FOULSAFE
@@ -595,13 +589,13 @@ Sub COLHOOP ()
 
             If pbpOpt = 0 Then
                 pbpString$ = gameTeams$(P) + " GETS THE JUMP"
-                PA% = D
+                possArrow = D
                 Call PBP
             Else
                 'pbpOpt = 1
                 Call WINDEX
                 Print gameTeams$(P) + " GETS THE JUMP"
-                PA% = D
+                possArrow = D
                 Call DELAY
             End If
 
@@ -609,9 +603,9 @@ Sub COLHOOP ()
 
         If (currHalf = 2 Or currHalf >= 4) Then
 
-            P = PA%
+            P = possArrow
             D = 1 - P
-            PA% = 1 - PA%
+            possArrow = 1 - possArrow
 
             If pbpOpt = 0 Then
                 pbpString$ = gameTeams$(P) + " INBOUNDS THE BALL"
@@ -628,11 +622,11 @@ Sub COLHOOP ()
     Else
 
         If (currHalf = 1 Or currHalf = 3) Then
-            PA% = D
+            possArrow = D
         Else
-            P = PA%
+            P = possArrow
             D = 1 - P
-            PA% = 1 - PA%
+            possArrow = 1 - possArrow
         End If
 
     End If
@@ -642,7 +636,7 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     170 '
-    Erase defStrat, defType, P7
+    Erase defStrat, defCoverage, defCategory
 
     gameClock! = 0
     Call QUARTERTOTAL
@@ -659,7 +653,10 @@ Sub COLHOOP ()
                 Call WINDEX
                 Print pbpString$
             Case 1:
-                If pbpDelay! > 0 Then Call WINDEX: Print pbpString$
+                If pbpDelay! > 0 Then
+                    Call WINDEX
+                    Print pbpString$
+                End If
         End Select
     End If
 
@@ -670,7 +667,10 @@ Sub COLHOOP ()
                 Color 7, 0
                 Print pbpString$
             Case 1:
-                If pbpDelay! > 0 Then Call WINDEX: Print pbpString$
+                If pbpDelay! > 0 Then
+                    Call WINDEX
+                    Print pbpString$
+                End If
         End Select
     End If
 
@@ -702,14 +702,14 @@ Sub COLHOOP ()
 
         If playerMode = 1 Then
             P9 = compTeam
-            Call COMCOACH
+            Call ComputerSubs
         End If
 
         If playerMode = 2 Then
             P9 = 0
-            Call COMCOACH
+            Call ComputerSubs
             P9 = 1
-            Call COMCOACH
+            Call ComputerSubs
         End If
 
     End If
@@ -884,7 +884,8 @@ Sub COLHOOP ()
     End If
 
     'Last 5 seconds, down by 1 score!!!
-    If gameClock! <= 5 And (threePtOpt = 1 And score(D, 0) - score(P, 0) <= 3 Or threePtOpt = 0 And score(D, 0) - score(P, 0) <= 2) And score(D, 0) - score(P, 0) >= 0 And currHalf >= 2 Then
+    scoreDiff = score(D, 0) - score(P, 0)
+    If (gameClock! <= 5 And threePtOpt = 1 And scoreDiff <= 3) Or (threePtOpt = 0 And scoreDiff <= 2 And scoreDiff >= 0 And currHalf >= 2) Then
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
@@ -892,14 +893,17 @@ Sub COLHOOP ()
             Call d100(RN0)
 
             scoreDiff = score(P, 0) - score(D, 0)
-
             If gameClock! >= 3 And gameClock! <= 5 Then
 
                 If threePtOpt = 0 Then
-                    If scoreDiff < 3 Then I1% = 5
+                    If scoreDiff < 3 Then
+                        I1% = 5
+                    End If
                 Else
                     'threePtOpt = 1
-                    If scoreDiff = 3 Then I1% = 4
+                    If scoreDiff = 3 Then
+                        I1% = 4
+                    End If
                     If scoreDiff = 2 Then
                         If RN0 <= 50 Then
                             I1% = 5
@@ -912,10 +916,14 @@ Sub COLHOOP ()
 
                 If gameClock! < 3 Then
                     If threePtOpt = 0 Then
-                        If scoreDiff < 3 Then I1% = 0
+                        If scoreDiff < 3 Then
+                            I1% = 0
+                        End If
                     Else
                         'threePtOpt = 1
-                        If scoreDiff = 3 Then I1% = 1
+                        If scoreDiff = 3 Then
+                            I1% = 1
+                        End If
                         If scoreDiff = 2 Then
                             If RN0 <= 50 Then
                                 I1% = 0
@@ -983,7 +991,7 @@ Sub COLHOOP ()
                 score(P, currHalf) = score(P, currHalf) + 2
                 score(P, 0) = score(P, 0) + 2
 
-                Call GoodBasket
+                Call CreditAssists
 
                 plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
                 plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
@@ -1098,9 +1106,14 @@ Sub COLHOOP ()
 
             ' Shoot for 3!!!
             Call d100(RN0)
-            If gameClock! <= .5 Then XX% = 2
-            If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 12
-            If gameClock! > 1.8 Then XX% = 20
+            Select Case gameClock!
+                Case Is <= .5
+                    XX% = 2
+                Case .5 To 1.8
+                    XX% = 12
+                Case Is > 1.8
+                    XX% = 20
+            End Select
 
             If RN0 > XX% Then
 
@@ -1125,7 +1138,7 @@ Sub COLHOOP ()
                 threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
                 threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
 
-                Call GoodBasket
+                Call CreditAssists
                 Call UPDATESCREEN
 
             End If
@@ -1135,9 +1148,14 @@ Sub COLHOOP ()
             'Go for 2!!!
             Call d100(RN0)
 
-            If gameClock! <= .5 Then XX% = 3
-            If gameClock! > .5 And gameClock! <= 1.8 Then XX% = 16
-            If gameClock! > 1.8 Then XX% = 29
+            Select Case gameClock!
+                Case Is <= .5
+                    XX% = 3
+                Case .5 To 1.8
+                    XX% = 16
+                Case Is > 1.8
+                    XX% = 29
+            End Select
 
             If RN0 > XX% Then
 
@@ -1156,7 +1174,7 @@ Sub COLHOOP ()
                 score(P, currHalf) = score(P, currHalf) + 2
                 score(P, 0) = score(P, 0) + 2
 
-                Call GoodBasket
+                Call CreditAssists
                 Call UPDATESCREEN
 
             End If
@@ -1188,29 +1206,29 @@ Sub COLHOOP ()
 
     If gameClock! < 6 And LT <> 4 Then LS = 4
 
-    P6 = 0
+    playChoice = 0
     D6 = 0
     A4 = 0
     A6 = 0
-    PASS% = 1
-    F! = 0
+    PASS = 1
+    shotChance! = 0
 
     If X <> 90 Then X = 0
 
-    If (defType(D) = 1 Or defType(D) = 3) And P7(D) = 0 Then
+    If (defCoverage(D) = 1 Or defCoverage(D) = 3) And defCategory(D) = 0 Then
         X0% = 50
         X1% = -1
         Call PRDFAT
     End If
 
-    If defType(D) = 2 And P7(D) = 0 Then
+    If defCoverage(D) = 2 And defCategory(D) = 0 Then
         X0% = 100
         X1% = 1
         Call PRDFAT
         Call PRPFAT
     End If
 
-    If defType(D) = 1 And P7(D) = 0 Then
+    If defCoverage(D) = 1 And defCategory(D) = 0 Then
         X0% = 25
         X1% = -1
         Call PRPFAT
@@ -1223,30 +1241,30 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     350 '
-    PASS% = PASS% + 1
-    P6 = 0
+    PASS = PASS + 1
+    playChoice = 0
     A4 = 0
     D6 = 0
     A6 = 1
-    F! = 0
+    shotChance! = 0
     X = 0
 
-    If PASS% = 2 And P7(D) > 0 Then
+    If PASS = 2 And defCategory(D) > 0 Then
 
-        If (defType(D) = 1 Or defType(D) = 3) Then
+        If (defCoverage(D) = 1 Or defCoverage(D) = 3) Then
             X0% = 50
             X1% = -1
             Call PRDFAT
         End If
 
-        If defType(D) = 2 Then
+        If defCoverage(D) = 2 Then
             X0% = 100
             X1% = 1
             Call PRDFAT
             Call PRPFAT
         End If
 
-        If defType(D) = 1 Then
+        If defCoverage(D) = 1 Then
             X0% = 25
             X1% = -1
             Call PRPFAT
@@ -1265,15 +1283,19 @@ Sub COLHOOP ()
     ballCarrier = Int(Rnd(1) * 5)
     Call BALLDISTRIBUTE
 
-    If P7(D) > 0 And PASS% = 1 Then
+    If defCategory(D) > 0 And PASS = 1 Then
 
         ' *** FULL COURT PRESS ***
 
         'Yes it's odd that Case 1, 2 and 4
         'have identical outcome.
         'That is the code as it was written.
+        'Leaving as is in case there would
+        'be a perceived need to adjust.
+        'My guess is they were Previously
+        'different in the past.
 
-        Select Case P7(D)
+        Select Case defCategory(D)
 
             Case 1:
                 X0% = 50
@@ -1289,9 +1311,9 @@ Sub COLHOOP ()
 
         Call PRDFAT
 
-        If currHalf >= 2 And gameClock! <= 180 And P7(D) = 5 Then
+        'Check for Denial / Foul
+        If currHalf >= 2 And gameClock! <= 180 And defCategory(D) = 5 Then
 
-            'DENIAL
             Call d100(RN0)
 
             If RN0 <= 10 Then
@@ -1302,7 +1324,7 @@ Sub COLHOOP ()
                 Call AdjustShotClock
                 Call WHOLAY
 
-                If PASS% = 1 Then
+                If PASS = 1 Then
                     pbpString$ = players$(P, B1(P, ballCarrier)) + " GETS THE INBOUND PASS"
                 Else
                     pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE BALL"
@@ -1314,8 +1336,8 @@ Sub COLHOOP ()
 
                 LAYUP:
                 fastBreak = 1
-                F! = 98
-                P6 = 1
+                shotChance! = 98
+                playChoice = 1
 
                 GoTo 520
 
@@ -1341,7 +1363,7 @@ Sub COLHOOP ()
                     desigFouler = Val(I$)
                 Loop Until desigFouler >= 0 And desigFouler <= 4
 
-                If PASS% > 1 Then skipInbound% = 1
+                If PASS > 1 Then skipInbound% = 1
 
             End If
 
@@ -1353,10 +1375,13 @@ Sub COLHOOP ()
 
                     pbpString$ = gameTeams$(P) + " CALLS A TIME OUT"
 
+                    If pbpOpt = 1 And pbpDelay! <> 0 Then
+                        Print pbpString$
+                        Call DELAY
+                    End If
                     If pbpOpt = 0 Then Call PBP
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
 
-                    PASS% = 0
+                    PASS = 0
                     GoTo 640
 
                 End If
@@ -1416,6 +1441,7 @@ Sub COLHOOP ()
 
                     End Select
 
+                    'Check for steal
                     GoTo 435
 
                 End If
@@ -1427,7 +1453,7 @@ Sub COLHOOP ()
             End If
 
             Call d100(RN0)
-            If RN0 <= 5 Then IN% = 1
+            If RN0 <= 5 Then intentional = 1
 
             Call d100(RN1)
 
@@ -1450,6 +1476,7 @@ Sub COLHOOP ()
 
             Call d100(RN2)
 
+            '80% chance of foul by designated person
             If RN2 <= 80 Then
                 fouler = desigFouler
                 Call FoulCalled(0)
@@ -1461,14 +1488,14 @@ Sub COLHOOP ()
 
         End If
 
-        If P7(D) = 1 Then
+        If defCategory(D) = 1 Then
             X0% = 25
             X1% = -1
             tmFatigue(P, B1(P, BU%)) = tmFatigue(P, B1(P, BU%)) - 1
             Call PRPFAT
         End If
 
-        If P7(D) > 1 Then
+        If defCategory(D) > 1 Then
             X0% = 25
             X1% = -1
             Call PRPFAT
@@ -1476,7 +1503,7 @@ Sub COLHOOP ()
 
         Call d100(RN0)
 
-        Select Case P7(D)
+        Select Case defCategory(D)
 
             Case 1, 3
                 gameClock! = gameClock! - 2
@@ -1507,12 +1534,10 @@ Sub COLHOOP ()
 
         Call d100(RN0)
 
-        If RN0 <= DP(2, P7(D)) Then
+        If RN0 <= DP(2, defCategory(D)) Then
 
             Call LASTSHOT
-
             Call ResetShotClock
-
             Call UPDATESCREEN
 
             X = 88
@@ -1528,19 +1553,19 @@ Sub COLHOOP ()
         'and these are some of the only places these
         'code branches "GoTo". But I don't think it
         'can be condensed at all.
-        If RN0 <= DP(2, P7(D)) + 1 Then
+        If RN0 <= DP(2, defCategory(D)) + 1 Then
             X = 0
             GoTo 580
         End If
 
-        CY = DP(2, P7(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + DP(0, P7(D)) - PR%(D, 0)
+        CY = DP(2, defCategory(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + DP(0, defCategory(D)) - PR%(D, 0)
 
         If RN0 <= CY Then
             Call LASTSHOT
             GoTo 517
         End If
 
-        CY = CY + teamAdj(P, 4) + DP(1, P7(D)) - PR%(D, 1)
+        CY = CY + teamAdj(P, 4) + DP(1, defCategory(D)) - PR%(D, 1)
         pctContrib(D) = pctContrib(D) + 1
 
         If pctContrib(D) > 3 Then
@@ -1548,47 +1573,69 @@ Sub COLHOOP ()
             PR%(D, 1) = 0
         End If
 
-        If RN0 <= CY Then 435
+        If RN0 <= CY Then
+            'Check for steal
+            GoTo 435
+        End If
 
     Else
 
         Call d100(RN0)
 
-        If (offStrat(P) <> 8 And offStrat(P) <> 7) Or defType(D) <> 2 Then
+        If (offStrat(P) <> 8 And offStrat(P) <> 7) Or defCoverage(D) <> 2 Then
+            'Offensive Stall or Defense is not 2-3 Zone
 
-            If RN0 <= D8(4, defType(D)) Then
+            If RN0 <= D8(4, defCoverage(D)) Then
 
                 Call LASTSHOT
-
                 Call ResetShotClock
-
                 Call UPDATESCREEN
 
                 X = 88
 
                 Call FoulCalled(1)
+
                 LT = 4
 
                 GoTo 9065
 
             End If
 
-            If RN0 <= D8(4, defType(D)) + 1 Then X = 0: GoTo 580
+            If RN0 <= D8(4, defCoverage(D)) + 1 Then
+                X = 0
+                GoTo 580
+            End If
 
             OY% = 0
-            If offStrat(P) = 4 Or offStrat(P) = 7 Then OY% = Int((D8(2, defType(D)) / 2) + .5) * -1
+            If offStrat(P) = 4 Or offStrat(P) = 7 Then
+                OY% = Int((D8(2, defCoverage(D)) / 2) + .5) * -1
+            End If
 
-            CY = D8(4, defType(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + D8(2, defType(D)) + OY% + 1
-            If RN0 <= CY Then Call LASTSHOT: GoTo 517
+            CY = D8(4, defCoverage(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + D8(2, defCoverage(D)) + OY% + 1
+            If RN0 <= CY Then
+                Call LASTSHOT
+                GoTo 517
+            End If
 
-            CY = CY + teamAdj(P, 4) + D8(3, defType(D))
+            CY = CY + teamAdj(P, 4) + D8(3, defCoverage(D))
             OY% = 0
 
-            If offStrat(P) = 4 Or offStrat(P) = 7 Then OY% = Int((D8(3, defType(D)) / 2) + .5) * -1
-            If offStrat(P) = 1 Then OY% = 7
-            If offStrat(P) = 2 Then OY% = -7
+            If offStrat(P) = 4 Or offStrat(P) = 7 Then
+                OY% = Int((D8(3, defCoverage(D)) / 2) + .5) * -1
+            End If
 
-            If RN0 <= CY + OY% Then 435
+            If offStrat(P) = 1 Then
+                OY% = 7
+            End If
+
+            If offStrat(P) = 2 Then
+                OY% = -7
+            End If
+
+            If RN0 <= CY + OY% Then
+                'Check for steal
+                GoTo 435
+            End If
 
         End If
 
@@ -1599,64 +1646,44 @@ Sub COLHOOP ()
     465 '
     Call d100(RN0)
 
-    'GS% = GoodShot% ???
-    'In other words, how does the player's accuracy line up with the shot difficulty ?
-
-    'JY = Average FGA/G Adjustment For Both Teams
-    '-- Most values fall in the range of -8 to 8 statistically
-
-    Select Case sClockVal
-
-        Case 0
-            'No Shot Clock
-            'Will range from -8 to 5 for most teams
-            GS% = 39 + Int(((JY - 52) * .8) + .5)
-
-        Case 1
-            '45 Sec Shot Clock
-            'Will range from -8 to 5 for most teams
-            GS% = 39 + Int(((JY - 52) * .8) + .5)
-
-        Case 2
-            '35 Sec Shot Clock
-            'Will range from -2 to 0 for most teams
-            GS% = 39 + Int(((JY - 58) * .8) + .5)
-
-        Case 3
-            '30 Sec Shot Clock
-            GS% = 39 + Int(((JY - 62) * .8) + .5)
-
-    End Select
+    'Adjust likelihood of taking a shot baed on defense
+    GS% = ShotPacing%
 
     'Pressure Man-to-Man | 2-3 Zone = Add 7
     '-1 to 12
-    If defType(D) = 1 Or defType(D) = 2 Then GS% = GS% + 7
+    If defCoverage(D) = 1 Or defCoverage(D) = 2 Then
+        GS% = GS% + 7
+    End If
 
     'Trapping Zone = Subtract 7
     '-15 to -2
-    If defType(D) = 3 Then GS% = GS% - 7
+    If defCoverage(D) = 3 Then
+        GS% = GS% - 7
+    End If
 
     'Quick Off
     '6 to 23
-    If offStrat(P) = 3 Then GS% = GS% + 21
+    If offStrat(P) = 3 Then
+        GS% = GS% + 21
+    End If
 
     'Delay Off
     '-36 to -23
-    If offStrat(P) = 4 Then GS% = GS% - 21
+    If offStrat(P) = 4 Then
+        GS% = GS% - 21
+    End If
+
+    'Call pbplog(2636)
 
     'Total Stall / Hold Ball / Milk Clock and More than 15 Secs on Shot Clock
-    If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1) Then 437
-
-    If RN0 > GS% Then
-        'This is the only place GS% is used
-        '(about 75-90% chance)
+    If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1) Or (RN0 > GS%) Then
+        'If offStrat(P) = 7 Or offStrat(P) = 8 Or (offStrat(P) = 5 And shotClock > 15 And sClockVal >= 1) Or (RN0 > 99) Then
+        'No Shot / Difficult Shot
         GoTo 437
     Else
-        'If our random # from 1-100 was above GS%...
-        '(about 10-25% chance)
         RN0 = Int(Rnd(1) * 100)
 
-        If RN0 <= D8(1, defType(D)) Then
+        If RN0 <= D8(1, defCoverage(D)) Then
 
             A4 = 0
 
@@ -1678,18 +1705,18 @@ Sub COLHOOP ()
 
                 If RN0 <= plyrOff_GAME!(P, B1(P, I2), 4) Then
 
-                    F! = plyrOff_GAME!(P, B1(P, ballCarrier), 0) + dFGPA(D) + A4 + ft3PtFoul(P) + ft3PtFoul(D)
+                    shotChance! = plyrOff_GAME!(P, B1(P, ballCarrier), 0) + dFGPA(D) + A4 + ft3PtFoul(P) + ft3PtFoul(D)
                     ft3PtFoul(P) = 0
                     ft3PtFoul(D) = 0
                     PZ% = 2
-                    P6 = 1
+                    playChoice = 1
                     X = 0
 
-                    Call d100(RN0)
+                    Call d100(RN1)
 
-                    If PZ% = 2 And RN0 <= 50 Then
+                    If PZ% = 2 And RN1 <= 50 Then
                         PZ% = 3
-                        P6 = 1
+                        playChoice = 1
                     End If
 
                     GoTo 520
@@ -1702,8 +1729,8 @@ Sub COLHOOP ()
 
     End If
 
+    'Delay Offense
     If offStrat(P) = 4 Then
-        'Delay Offense
         GoTo 437
 
     Else
@@ -1711,12 +1738,14 @@ Sub COLHOOP ()
         If currHalf <= 2 Then
 
             If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
-                If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 Then 437
+                If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 Then
+                    GoTo 437
+                End If
             End If
 
         End If
 
-        P6 = 1
+        playChoice = 1
         Call SHOTPERCENT
 
         PZ% = Int(Rnd(1) * 3) + 5
@@ -1726,7 +1755,7 @@ Sub COLHOOP ()
         Call d100(RN0)
         If PZ% = 2 And RN0 <= 50 Then
             PZ% = 3
-            P6 = 1
+            playChoice = 1
         End If
 
         GoTo 520
@@ -1736,14 +1765,23 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
+    '--------------------
+    'Check for steals
+    '--------------------
     435 '
+    'Random player
     P9 = Int(Rnd(1) * 5)
 
-    If Int(Rnd(1) * 5) + 1 <= plyrOff_GAME!(D, B1(D, P9), 5) Then
+    'Compare random # 1-5 against that player's steal rating
+    '(basically, average steals / game)
+    stealRating = plyrOff_GAME!(D, P9, 5)
+    RNX = Int(Rnd(1) * 4) + 1
+
+    If RNX <= (stealRating + 1) Then
 
         plyrOff_GAME!(D, B1(D, P9), 18) = plyrOff_GAME!(D, B1(D, P9), 18) + 1
 
-        If P7(D) <= 0 Or PASS% <> 1 Then Call LASTSHOT
+        If defCategory(D) <= 0 Or PASS <> 1 Then Call LASTSHOT
         Call ResetShotClock
 
         plyrOff_GAME!(P, B1(P, ballCarrier), 23) = plyrOff_GAME!(P, B1(P, ballCarrier), 23) + 1
@@ -1793,7 +1831,7 @@ Sub COLHOOP ()
                     Case 9
                         pbpString$ = players$(D, B1(D, P9)) + " STEALS THE BALL!"
                     Case 10
-                        pbpString$ = players$(D, B1(D, P9)) + " PICKS IT OFF!"
+                        pbpString$ = players$(D, B1(D, P9)) + " PICKS IT OFshotChance!"
                     Case 11
                         pbpString$ = players$(D, B1(D, P9)) + " SWIPES THE BALL!"
                     Case 12
@@ -1865,10 +1903,19 @@ Sub COLHOOP ()
         End Select
 
         Call d100(RN1)
-        If PASS% > 1 And (defType(P9) = 0 Or defType(P9) = 1 Or defType(P9) = 3) And RN1 <= 15 Then GoTo LAYUP
-        If PASS% > 1 And defType(P9) = 2 And RN1 <= 5 Then GoTo LAYUP
-        If PASS% = 1 And P7(P) > 0 And RN1 <= 33 Then GoTo LAYUP
-        If PASS% = 1 And P7(P) > 0 And P7(P) <> 3 And RN1 <= 40 Then GoTo LAYUP
+
+        If PASS > 1 Then
+            Select Case defCoverage(P9)
+                Case 0, 1, 3
+                    If RN1 <= 15 Then GoTo LAYUP
+                Case 2
+                    If RN1 <= 5 Then GoTo LAYUP
+            End Select
+        End If
+
+        If PASS = 1 And defCategory(P) > 0 Then
+            If RN1 <= 33 Or (defCategory(P) <> 3 And RN1 <= 40) Then GoTo LAYUP
+        End If
 
         GoTo 300
 
@@ -1876,23 +1923,40 @@ Sub COLHOOP ()
 
     Call d100(RN0)
 
-    Select Case P7(D)
+    Select Case defCategory(D)
 
         Case 1
-            If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then GoTo LAYUP
-            If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo GDSHOT
+            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then
+                GoTo LAYUP
+            End If
+
+            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then
+                GoTo GDSHOT
+            End If
 
         Case 2
-            If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo LAYUP
-            If PASS% = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then GoTo GDSHOT
+            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then
+                GoTo LAYUP
+            End If
+            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then
+                GoTo GDSHOT
+            End If
 
         Case 3
-            If PASS% = 1 And RN0 <= 7 Then GoTo LAYUP
-            If PASS% = 1 And RN0 <= 14 Then GoTo GDSHOT
+            If PASS = 1 And RN0 <= 7 Then
+                GoTo LAYUP
+            End If
+            If PASS = 1 And RN0 <= 14 Then
+                GoTo GDSHOT
+            End If
 
         Case 4
-            If PASS% = 1 And RN0 <= 15 Then GoTo LAYUP
-            If PASS% = 1 And RN0 <= 30 Then GoTo GDSHOT
+            If PASS = 1 And RN0 <= 15 Then
+                GoTo LAYUP
+            End If
+            If PASS = 1 And RN0 <= 30 Then
+                GoTo GDSHOT
+            End If
 
         Case 5
             GoTo 432
@@ -1903,34 +1967,34 @@ Sub COLHOOP ()
 
     ' ***BAD SHOT ***
     437 '
-    P6 = 0
+    playChoice = 0
     J8% = 0
     PZ% = 1
 
     RN0 = Int(Rnd(1) * 3) + 1
-    F3S% = Int(Rnd(1) * 7) + 3
+    threePtShotChance = Int(Rnd(1) * 7) + 3
 
     'Adjust shot % based on player's FG%
     If plyrOff_GAME!(P, B1(P, ballCarrier), 0) > 60 Then
 
         Select Case RN0
             Case 1
-                F! = 24
+                shotChance! = 24
             Case 2
-                F! = 30
+                shotChance! = 30
             Case 3
-                F! = 36
+                shotChance! = 36
         End Select
 
     Else
 
         Select Case RN0
             Case 1
-                F! = Int(plyrOff_GAME!(P, B1(P, ballCarrier), 0) * .4 + .5)
+                shotChance! = Int(plyrOff_GAME!(P, B1(P, ballCarrier), 0) * .4 + .5)
             Case 2
-                F! = Int(plyrOff_GAME!(P, B1(P, ballCarrier), 0) * .5 + .5)
+                shotChance! = Int(plyrOff_GAME!(P, B1(P, ballCarrier), 0) * .5 + .5)
             Case 3
-                F! = Int(plyrOff_GAME!(P, B1(P, ballCarrier), 0) * .6 + .5)
+                shotChance! = Int(plyrOff_GAME!(P, B1(P, ballCarrier), 0) * .6 + .5)
         End Select
 
     End If
@@ -1945,7 +2009,7 @@ Sub COLHOOP ()
 
         If PZ% = 2 And RN0 <= 50 Then
             PZ% = 3
-            P6 = 1
+            playChoice = 1
         End If
 
         GoTo 520
@@ -1969,16 +2033,26 @@ Sub COLHOOP ()
         plyrOff_GAME!(P, B1(P, ballCarrier), 23) = plyrOff_GAME!(P, B1(P, ballCarrier), 23) + 1
         turnovers(P) = turnovers(P) + 1
 
-        If SV% <> 1 Then PT% = 1: Call MAKEPBP
+        If SV% <> 1 Then
+            PT% = 1
+            Call MAKEPBP
+        End If
 
         SV% = 0
 
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "TURNOVER BY "; gameTeams$(P): Call DELAY
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Call WINDEX
+            Print "TURNOVER BY "; gameTeams$(P)
+            Call DELAY
+        End If
         If pbpOpt = 0 Then Call PBP
 
         pbpString$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Print pbpString$
+            Call DELAY
+        End If
         If pbpOpt = 0 Then Call PBP
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
 
         Call DELAY
         Call UPDATESCREEN
@@ -2004,7 +2078,7 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then
+            If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
                 pctContrib(I) = 0
@@ -2018,11 +2092,13 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     GDSHOT:
-    FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 0)
+    baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 0)
 
-    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = FX% - 10
+    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
+        baseShotChance = baseShotChance - 10
+    End If
 
-    F! = FX% + Int(Rnd(20)) + 11 + ft3PtFoul(D) + ft3PtFoul(P)
+    shotChance! = baseShotChance + Int(Rnd(20)) + 11 + ft3PtFoul(D) + ft3PtFoul(P)
     ft3PtFoul(P) = 0
     ft3PtFoul(D) = 0
     PZ% = Int(Rnd(1) * 3) + 5
@@ -2032,7 +2108,7 @@ Sub COLHOOP ()
 
     If PZ% = 2 And RN0 <= 50 Then
         PZ% = 3
-        P6 = 1
+        playChoice = 1
     End If
 
     520 '
@@ -2041,7 +2117,8 @@ Sub COLHOOP ()
     Call LASTSHOT
     If gameClock! <= 0 Then 170
 
-    If PZ% = 4 And F3S% <= 0 Then F3S% = 3
+    'Always give at least a 3% chance of making a 3
+    If PZ% = 4 And threePtShotChance <= 0 Then threePtShotChance = 3
 
     If pbpDelay! <> 0 Then
 
@@ -2092,7 +2169,7 @@ Sub COLHOOP ()
 
         Else
 
-            If F! > 70 And fastBreak = 1 And PASS% = 1 Then
+            If shotChance! > 70 And fastBreak = 1 And PASS = 1 Then
 
                 PT% = 6
                 PZ% = 8
@@ -2173,13 +2250,13 @@ Sub COLHOOP ()
                         Call SHOTSTRING
                         Call PBP
 
-                        P6 = 1
+                        playChoice = 1
 
                     Case 3:
 
                         If pbpDelay! <> 0 Then
 
-                            P6 = 1
+                            playChoice = 1
 
                             Call d100(RN0)
 
@@ -2274,31 +2351,31 @@ Sub COLHOOP ()
 
                     Case 4:
                         pbpString$ = "HE'S OPEN FROM 3-POINT RANGE!"
-                        pbpString$ = pbpString$ + Str$(F3S%) + "*"
+                        pbpString$ = pbpString$ + Str$(threePtShotChance) + "*"
                         Call PBP
 
-                        P6 = 1
+                        playChoice = 1
 
                     Case 5:
                         pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
                         Call SHOTSTRING
                         Call PBP
 
-                        P6 = 1
+                        playChoice = 1
 
                     Case 6:
                         pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
                         Call SHOTSTRING
                         Call PBP
 
-                        P6 = 1
+                        playChoice = 1
 
                     Case 7:
                         pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
                         Call SHOTSTRING
                         Call PBP
 
-                        P6 = 1
+                        playChoice = 1
 
                 End Select
 
@@ -2309,37 +2386,36 @@ Sub COLHOOP ()
     End If
 
     529 '
-    If F! <= 0 Then F! = 1
-    If F! >= 100 Then F! = 99
+    If shotChance! <= 0 Then shotChance! = 1
+    If shotChance! >= 100 Then shotChance! = 99
 
     skipShotPct% = 0
 
-    If pbpDelay! <> 0 And pbpOpt = 1 Then
+    If pbpDelay! > 0 Then
+    
+        If pbpOpt = 1 Then
 
-        Call WINDEX
-        Print "PASS TO "; players$(P, B1(P, ballCarrier)); " OF "; gameTeams$(P)
+            Call WINDEX
+            Print "PASS TO "; players$(P, B1(P, ballCarrier)); " OF "; gameTeams$(P)
 
-        If PZ% <> 4 Then
-            Locate 10: Print "SHOT % "; F!;
-            If PZ% >= 2 And PZ% <= 8 Then Print "*";
-        Else
             Locate 10
-            Print "3 PT SHOT % "; F3S%;: Print " *";
-            skipShotPct% = 1
-        End If
-
-    End If
-
-    If skipShotPct% = 0 Then
-
-        If pbpDelay! <> 0 And pbpOpt <> 1 Then
-
-            If PZ% <> 4 Then
-                Locate 8, 41: Print Using "SHOT % ###   "; F!;
-                If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
+            If PZ% = 4 Then
+                Print "3 PT SHOT % "; threePtShotChance;: Print " *";
             Else
-                Locate 8, 41
-                Print Using "SHOT % ###"; F3S%;: Print " *";
+                Print "SHOT % "; shotChance!;
+                If PZ% >= 2 And PZ% <= 8 Then Print "*";
+            End If
+            
+            Call DELAY
+
+        Else
+
+            Locate 8, 41
+            If PZ% = 4 Then
+                Print Using "SHOT % ###"; threePtShotChance;: Print " *";
+            Else
+                Print Using "SHOT % ###   "; shotChance!;
+                If PZ% >= 2 And PZ% <= 8 Then Locate , 52: Print "*";
             End If
 
         End If
@@ -2348,12 +2424,9 @@ Sub COLHOOP ()
 
     Print
 
-    If pbpOpt = 1 And pbpDelay! <> 0 Then Call DELAY
 
-    '--- This definitely can be done much better!!!
-
-    ' *** Determine value for P6 ***
-    'P6 = play type
+    ' *** Determine value for playChoice ***
+    'playChoice = play type
     '0 = Pass
     '1 = Shoot (2FGA)
     '2 = Timeout
@@ -2361,10 +2434,11 @@ Sub COLHOOP ()
     '4 = Shoot (3FGA)
 
     'Computer Opponent or "Let Computer Shoot"
+    scoreDiff = score(P, 0) - score(D, 0)
     If playerMode <> 0 Or coachOpt = 1 Then
 
         ' NOT (Overtime, 4 minutes left, Offense Ahead, Computer is Visitor / On Offense)
-        If Not (currHalf >= 2 And gameClock! <= 240 And score(P, 0) - score(D, 0) > 0 And playerMode = 1 And P = compTeam) Then
+        If Not (currHalf >= 2 And gameClock! <= 240 And scoreDiff > 0 And playerMode = 1 And P = compTeam) Then
 
             'PC vs PC, Computer on Defense
             If playerMode = 2 Or playerMode = 1 And D = compTeam Then
@@ -2379,39 +2453,39 @@ Sub COLHOOP ()
         End If
 
         If gameClock! <= 1 Or sClockVal >= 1 And shotClock <= 7 Then
-            P6 = 1
+            playChoice = 1
         Else
-            If gameClock! <= 8 And score(P, 0) - score(D, 0) <= -3 And currHalf >= 2 Then
-                P6 = 1
+            If gameClock! <= 8 And scoreDiff <= -3 And currHalf >= 2 Then
+                playChoice = 1
             Else
-                If gameClock! <= 20 And score(P, 0) - score(D, 0) <= -5 And currHalf >= 2 Then
-                    P6 = 1
+                If gameClock! <= 20 And scoreDiff <= -5 And currHalf >= 2 Then
+                    playChoice = 1
                 Else
 
-                    FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 0)
+                    baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 0)
 
-                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = FX% - 10
+                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = baseShotChance - 10
 
                     'Determine when to shoot
-                    If P6 <> 1 Then
+                    If playChoice <> 1 Then
 
                         'Human Opponent, Computer Shoots | Computer is Visitor AND on Defense, Computer Shoots | Computer is Visitor AND On Offense | Computer is Home Team
                         If (playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2) Then
 
                             If gameClock! <= 660 And gameClock! >= 540 And currHalf = 1 And timeouts(P) >= 5 Then
-                                P6 = 2
+                                playChoice = 2
                                 CTO% = 1
                             Else
                                 If gameClock! <= 240 And gameClock! >= 120 And currHalf = 1 And timeouts(P) >= 4 Then
-                                    P6 = 2
+                                    playChoice = 2
                                     CTO% = 1
                                 Else
                                     If gameClock! <= 840 And gameClock! >= 720 And currHalf = 2 And timeouts(P) >= 3 Then
-                                        P6 = 2
+                                        playChoice = 2
                                         CTO% = 1
                                     Else
                                         If gameClock! <= 300 And gameClock! >= 180 And currHalf = 2 And timeouts(P) >= 2 Then
-                                            P6 = 2
+                                            playChoice = 2
                                             CTO% = 1
                                         End If
                                     End If
@@ -2460,56 +2534,88 @@ Sub COLHOOP ()
 
         End Select
 
-        P6 = Val(I$)
+        playChoice = Val(I$)
 
-        If P6 < 1 Or P6 > 4 Then P6 = 0
-        If P6 = 4 Then FT% = 1
+        If playChoice < 1 Or playChoice > 4 Then playChoice = 0
+        If playChoice = 4 Then FT% = 1
 
     End If
 
     'Loop Until playerMode <> 0 Or coachOpt = 1 Or (UCase$(I$) <> "T" And UCase$(I$) <> "D" And UCase$(I$) <> "O")
 
-    'Foul
+    '----------------------------------------------------
+    '--- THIS IS CRITCAL FOR PBP MOVING AUTOMATICALLY ---
+    '----------------------------------------------------
+    ' essentially it allows the user to press a key
+    ' during game play to activate certain functions
+    ' or special menus, etc.
+    532 '
+    I$ = InKey$
+
+    Select Case UCase$(I$)
+
+        Case "B"
+            Call BOXOPTIONS(0)
+            Call SCOREBOARD
+
+        Case "D"
+            Call ZONECHANGE
+            Call SCOREBOARD
+            GoTo 529
+
+        Case "O"
+            Call OPTIONS
+            GoTo 529
+
+        Case "T"
+            Call TICKER
+            Call SCOREBOARD
+            GoTo 529
+
+        Case "Q"
+            Exit Sub
+
+    End Select
+
+    'Foul was chosen | Computer on offense and last 4 minutes of game
     If Val(I$) = 3 And (playerMode = 0 Or playerMode = 1 And P = compTeam) And currHalf >= 4 And gameClock! < 240 Then
-        P6 = 3
+        playChoice = 3
     End If
 
     'Timeout
     If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then
-        P6 = 2
+        playChoice = 2
     End If
 
-    P3 = P6
+    P3 = playChoice
 
-    If P6 = 2 And timeouts(P) = 0 Or P6 = 3 And currHalf = 1 Or P6 = 3 And playerMode = 1 And D = compTeam Or P6 = 3 And currHalf = 2 And gameClock! > 240 Then
+    If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And currHalf = 2 And gameClock! > 240) Or (playChoice = 3 And currHalf = 1) Or (playChoice = 3 And playerMode = 1 And D = compTeam) Then
+        'Take shot with no timeous | Timeout with more than 4 mins left | Timeout before Q4 | Timeout with PC on Defense
         GoTo 530
     End If
 
     ' *** Decide if 3FGA ***
-    If J8 = 1 Then
+    If J8% = 1 Then
         If (playerMode = 1 And P = compTeam) Or (playerMode = 2) Then
-            P6 = 4
+            playChoice = 4
         End If
     End If
 
     scoreDiff = score(D, 0) - score(P, 0)
     'Try for 3 near end of game when down by 3
     If currHalf >= 2 And gameClock! < 30 And scoreDiff = 3 And ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
-        If threePtOpt = 1 Then P6 = 4
+        If threePtOpt = 1 Then playChoice = 4
     End If
 
     'Shoot and in 3 pt range
-    If (P6 = 1 Or P6 = 4) And PZ% = 4 Then
-        P6 = 4
+    If (playChoice = 1 Or playChoice = 4) And PZ% = 4 Then
+        playChoice = 4
     End If
 
-    'If (P6 = 4 And J8% = 1) Then
-    'End If
+    ' *** Done determining value for playChoice ***
+    playType = playChoice + 1
 
-    ' *** Done determining value for P6 ***
-    caseVar% = P6 + 1
-
-    Select Case caseVar%
+    Select Case playType
 
         Case 1
             GoTo 350
@@ -2521,20 +2627,19 @@ Sub COLHOOP ()
             Call MAKEPBP
             Call PBP
 
-            S = 0
-            SS = 0
-
-            Call d100(RN0)
+            shotRoll = 0
+            Call d100(foulRoll)
 
             plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
-            GG = score(D, 0) - score(P, 0)
 
-            If Not (currHalf > 1 And gameClock! <= 30 And GG = 2 Or currHalf > 1 And gameClock! <= 30 And GG = 0 Or currHalf > 1 And gameClock! <= 30 And GG = -2) Then
+            scoreDiff = score(D, 0) - score(P, 0)
+
+            If Not (currHalf > 1 And gameClock! <= 30 And scoreDiff = 2) Or (currHalf > 1 And gameClock! <= 30 And scoreDiff = 0) Or (currHalf > 1 And gameClock! <= 30 And scoreDiff = -2) Then
 
                 blockRat_TMP = plyrOff_GAME!(P, B1(P, ballCarrier), 16)
                 fAdj_TMP = teamAdj(D, 7)
 
-                If RN0 <= plyrOff_GAME!(P, B1(P, ballCarrier), 16) + teamAdj(D, 7) Then
+                If foulRoll <= plyrOff_GAME!(P, B1(P, ballCarrier), 16) + teamAdj(D, 7) Then
 
                     'FOUL!!!
                     plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) - 1
@@ -2566,7 +2671,7 @@ Sub COLHOOP ()
                     Call DEADBALLOPTIONS
 
                     For I = 0 To 1
-                        If P7(I) = 0 Then
+                        If defCategory(I) = 0 Then
                             PR%(I, 0) = 1
                             PR%(I, 1) = 7
                             pctContrib(I) = 0
@@ -2591,14 +2696,14 @@ Sub COLHOOP ()
                     'Two FT Attempts
                     For F3 = 1 To 2:
 
-                        Call d100(S)
+                        Call d100(shotRoll)
 
                         'FT Success Chance
-                        FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+                        baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
 
-                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .9 + .5)
+                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
 
-                        If S <= FX% Then
+                        If shotRoll <= baseShotChance Then
 
                             If pbpOpt = 0 Then
                                 Call THREEFT
@@ -2607,7 +2712,7 @@ Sub COLHOOP ()
                                 Call MADEFT
                             End If
                         Else
-                            'S > FX% And
+                            'shotRoll > baseShotChance And
                             If pbpOpt = 0 Then
                                 Call BADFT
                             Else
@@ -2629,7 +2734,7 @@ Sub COLHOOP ()
                         GoTo 170
                     End If
 
-                    If S > FX% Then
+                    If shotRoll > baseShotChance Then
                         GoTo 650
                     Else
                         598 '
@@ -2666,12 +2771,12 @@ Sub COLHOOP ()
 
             End If
 
-            Call d100(S)
-            R0! = F! * ((DY / 100) + (.03 * threePtOpt))
+            Call d100(shotRoll)
+            foulChance = shotChance! * ((DY / 100) + (.03 * threePtOpt))
 
-            If Not (currHalf > 1 And gameClock! < 30 And GG = 2 Or currHalf > 1 And gameClock! < 30 And GG = 0 Or currHalf > 1 And gameClock! < 30 And GG = -2) Then
+            If Not (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! < 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! < 30 And scoreDiff = -2) Then
 
-                If S <= R0! Then
+                If shotRoll <= foulChance Then
 
                     'Foul + Stuff
                     Call ResetShotClock
@@ -2683,11 +2788,35 @@ Sub COLHOOP ()
                     LT = 0
 
                     Call UPDATESCREEN
-                    Call GoodBasket
+                    Call CreditAssists
 
-                    If DK% = 1 And pbpOpt = 0 Then PT% = 2: Call MAKEPBP: pbpString$ = "STUFF BY " + players$(P, B1(P, ballCarrier)): Call PBP: DK% = 0: GoTo 617
-                    If DK% = 1 And pbpOpt = 1 Then Call WINDEX: Print "STUFF BY " + players$(P, B1(P, ballCarrier)): Call DELAY: DK% = 0: GoTo 617
-                    If PZ% = 8 Then PT% = 7: Call MAKEPBP: PZ% = 0: Call PBP: GoTo 617
+                    If DK% = 1 Then
+
+                        If pbpOpt = 0 Then
+                            PT% = 2
+                            Call MAKEPBP
+                            pbpString$ = "STUFF BY " + players$(P, B1(P, ballCarrier))
+                            Call PBP
+                            DK% = 0
+                        End If
+                        If pbpOpt = 1 Then
+                            Call WINDEX
+                            Print "STUFF BY " + players$(P, B1(P, ballCarrier))
+                            Call DELAY
+                        End If
+
+                        DK% = 0
+                        GoTo 617
+
+                    End If
+
+                    If PZ% = 8 Then
+                        PT% = 7
+                        Call MAKEPBP
+                        PZ% = 0
+                        Call PBP
+                        GoTo 617
+                    End If
 
                     F3 = 1
                     If pbpOpt = 0 Then
@@ -2695,14 +2824,21 @@ Sub COLHOOP ()
                         Call PBP
                     Else
                         'pbpOpt = 1
-                        If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + players$(P, B1(P, ballCarrier)): Call DELAY
+                        If pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
+                            Call DELAY
+                        End If
                     End If
 
                     617 '
                     pbpString$ = "... AND HE'S FOULED !!!"
 
+                    If pbpOpt = 1 And pbpDelay! <> 0 Then
+                        Print pbpString$
+                        Call DELAY
+                    End If
                     If pbpOpt = 0 Then Call PBP
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
 
                     Call DELAY
 
@@ -2714,14 +2850,18 @@ Sub COLHOOP ()
                     Call FoulCalled(1)
 
                     619 '
+                    If pbpOpt = 1 And pbpDelay! <> 0 Then
+                        Call WINDEX
+                        Print gameTeams$(P)
+                        Print "1 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
+                    End If
                     If pbpOpt = 0 Then pbpString$ = players$(P, B1(P, ballCarrier)) + " WILL SHOOT 1": Call PBP
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print gameTeams$(P): Print "1 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
 
                     X = 50
                     Call DEADBALLOPTIONS
 
                     For I = 0 To 1
-                        If P7(I) = 0 Then
+                        If defCategory(I) = 0 Then
                             PR%(I, 0) = 1
                             PR%(I, 1) = 7
                             pctContrib(I) = 0
@@ -2730,7 +2870,7 @@ Sub COLHOOP ()
 
                     X = 0
 
-                    Call d100(S)
+                    Call d100(shotRoll)
 
                     If pbpOpt = 1 And pbpDelay! <> 0 Then
                         Call WINDEX
@@ -2738,10 +2878,10 @@ Sub COLHOOP ()
                         Print "1 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
                     End If
 
-                    FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .9 + .5)
+                    baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
 
-                    If S <= FX% And pbpOpt = 0 Then
+                    If shotRoll <= baseShotChance And pbpOpt = 0 Then
                         'Increase FTM
                         plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
@@ -2754,10 +2894,13 @@ Sub COLHOOP ()
 
                     End If
 
-                    If S <= FX% Then
+                    If shotRoll <= baseShotChance Then
                         If pbpOpt = 1 Then Call MADEFT
                     Else
-                        If pbpOpt = 0 Then If pbpDelay! <> 0 Then pbpString$ = "FREE THROW IS MISSED": Call PBP
+                        If pbpOpt = 0 And pbpDelay! <> 0 Then
+                            pbpString$ = "FREE THROW IS MISSED"
+                            Call PBP
+                        End If
                         If pbpOpt = 1 Then Call MISSFT
                     End If
 
@@ -2772,7 +2915,7 @@ Sub COLHOOP ()
 
                     X = 99
 
-                    If S > FX% Then 670
+                    If shotRoll > baseShotChance Then 670
 
                     prevBall$ = ""
                     If P = 1 Then
@@ -2806,7 +2949,7 @@ Sub COLHOOP ()
 
             End If
 
-            If S <= F! Then
+            If shotRoll <= shotChance! Then
 
                 LT = 0
 
@@ -2907,7 +3050,7 @@ Sub COLHOOP ()
                 score(P, currHalf) = score(P, currHalf) + 2
                 score(P, 0) = score(P, 0) + 2
 
-                Call GoodBasket
+                Call CreditAssists
 
                 Call UPDATESCREEN
 
@@ -2916,8 +3059,13 @@ Sub COLHOOP ()
                 562 '
                 pbpString$ = gameTeams$(D) + " BALL O.B. AFTER SCORE"
 
-                If pbpOpt = 0 Then Locate 8, 41: Print Space$(12): Call PBP
-                If pbpOpt = 1 And pbpDelay! <> 0 Then Locate 9, 1: Print pbpString$
+                If pbpOpt = 1 And pbpDelay! <> 0 Then
+                    Locate 9, 1: Print pbpString$
+                End If
+                If pbpOpt = 0 Then
+                    Locate 8, 41: Print Space$(12)
+                    Call PBP
+                End If
 
                 Call DELAY
                 Call ResetShotClock
@@ -2962,8 +3110,16 @@ Sub COLHOOP ()
 
                 If I2 > plyrOff_GAME!(D, B1(D, rndPlayer), 6) Then
 
-                    If pbpOpt = 0 Then PT% = 8: Call MAKEPBP: Call PBP
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "SHOT MISSED BY "; players$(P, B1(P, ballCarrier)): Call DELAY
+                    If pbpOpt = 1 And pbpDelay! <> 0 Then
+                        Call WINDEX
+                        Print "SHOT MISSED BY "; players$(P, B1(P, ballCarrier))
+                        Call DELAY
+                    End If
+                    If pbpOpt = 0 Then
+                        PT% = 8
+                        Call MAKEPBP
+                        Call PBP
+                    End If
 
                     Call ResetShotClock
                     gameClock! = gameClock! - 4
@@ -3082,12 +3238,12 @@ Sub COLHOOP ()
             If threePtOpt = 0 Then
 
                 P3 = 1
-                P6 = 1
+                playChoice = 1
                 GoTo 537
 
             Else
 
-                Call d100(S)
+                Call d100(shotRoll)
 
                 threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
                 plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
@@ -3096,209 +3252,220 @@ Sub COLHOOP ()
                 Call MAKEPBP
                 Call PBP
 
-                I2 = Int(Rnd(1) * 50) + 1
+                Call d100(foulChance)
 
-                'I2 = 43 is a random # chosen on which fouls are caused
-                'there is a 2% chance of it being reached
-                'Much of this logic could be condensed in the S > F3S and S <= F3S logic
+                'Much of this logic could be condensed in the shotRoll > F3S and shotRoll <= F3S logic
 
-                If I2 = 43 And ft3PtFoul = 1 And S > F3S% Then
-                    'FOUL!
+                'Essentialy a 2% chance of being fouled on 3-pointer
+                If foulChance <= 2 And ft3PtFoul = 1 Then
+                
+                    If shotRoll > threePtShotChance Then
+                        
+                        'FOUL!
 
-                    'Remove the attempt from the record
-                    plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) - 1
-                    threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) - 1
+                        'Remove the attempt from the record
+                        plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) - 1
+                        threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) - 1
 
-                    Call ResetShotClock
-                    gameClock! = gameClock! - 4
-                    timeElapsed! = 4
-                    Call AdjustPlayTime
-                    Call AdjustShotClock
-
-                    Call UPDATESCREEN
-
-                    Call FoulCalled(1)
-
-                    If pbpDelay! <> 0 Then
-                        If pbpOpt = 0 Then
-                            pbpString$ = "3 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                            Call PBP
-                            Call DELAY
-                        Else
-                            Call WINDEX
-                            Print gameTeams$(P)
-                            Print "3 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
-                        End If
-                    End If
-
-                    X = 50
-                    Call DEADBALLOPTIONS
-
-                    For I = 0 To 1
-                        If P7(I) = 0 Then
-                            PR%(I, 0) = 1
-                            PR%(I, 1) = 7
-                            pctContrib(I) = 0
-                        End If
-                    Next
-
-                    X = 0
-
-                    If pbpDelay! <> 0 Then
-                        If pbpOpt = 0 Then
-                            pbpString$ = "3 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                            Call PBP
-                        Else
-                            Call WINDEX
-                            Print gameTeams$(P)
-                            Print "3 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
-                        End If
-
-                    End If
-
-                    'Increase FT ATT
-                    plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 3
-
-                    '3 FT Attempts
-                    For F3 = 1 To 3:
-
-                        Call d100(S)
-
-                        'FT Success Chance
-                        FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .9 + .5)
-
-                        If S <= FX% Then
-                            If pbpOpt = 0 Then
-                                Call THREEFT
-                            Else
-                                'pbpOpt = 1
-                                Call MADEFT
-                            End If
-                        Else
-                            'S > FX%
-                            If pbpOpt = 0 Then
-                                Call BADFT
-                            Else
-                                Call MISSFT
-                            End If
-                        End If
-
-                    Next F3
-
-                    LT = 0
-
-                    If gameClock! <= 0 Then
-                        timeElapsed! = gameClock!
+                        Call ResetShotClock
+                        gameClock! = gameClock! - 4
+                        timeElapsed! = 4
                         Call AdjustPlayTime
-                        GoTo 170
-                    End If
+                        Call AdjustShotClock
 
-                    'We already have this exact logic
-                    'worked out above !!!
-                    If S > FX% Then
-                        GoTo 650
+                        Call UPDATESCREEN
+
+                        Call FoulCalled(1)
+
+                        If pbpDelay! <> 0 Then
+                            If pbpOpt = 0 Then
+                                pbpString$ = "3 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
+                                Call PBP
+                                Call DELAY
+                            Else
+                                Call WINDEX
+                                Print gameTeams$(P)
+                                Print "3 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
+                            End If
+                        End If
+
+                        X = 50
+                        Call DEADBALLOPTIONS
+
+                        For I = 0 To 1
+                            If defCategory(I) = 0 Then
+                                PR%(I, 0) = 1
+                                PR%(I, 1) = 7
+                                pctContrib(I) = 0
+                            End If
+                        Next
+
+                        X = 0
+
+                        If pbpDelay! <> 0 Then
+                            If pbpOpt = 0 Then
+                                pbpString$ = "3 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
+                                Call PBP
+                            Else
+                                Call WINDEX
+                                Print gameTeams$(P)
+                                Print "3 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
+                            End If
+
+                        End If
+
+                        'Increase FT ATT
+                        plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 3
+
+                        '3 FT Attempts
+                        For F3 = 1 To 3:
+
+                            Call d100(shotRoll)
+
+                            'FT Success Chance
+                            baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+                            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
+
+                            If shotRoll <= baseShotChance Then
+                                If pbpOpt = 0 Then
+                                    Call THREEFT
+                                Else
+                                    'pbpOpt = 1
+                                    Call MADEFT
+                                End If
+                            Else
+                                'shotRoll > baseShotChance
+                                If pbpOpt = 0 Then
+                                    Call BADFT
+                                Else
+                                    Call MISSFT
+                                End If
+                            End If
+
+                        Next F3
+
+                        LT = 0
+
+                        If gameClock! <= 0 Then
+                            timeElapsed! = gameClock!
+                            Call AdjustPlayTime
+                            GoTo 170
+                        End If
+
+                        'We already have this exact logic
+                        'worked out above !!!
+                        If shotRoll > baseShotChance Then
+                            GoTo 650
+                        Else
+                            GoTo 598
+                        End If
+
                     Else
-                        GoTo 598
-                    End If
+                        'shotRoll <= threePtShotChance Then
 
-                End If
-
-                If I2 = 43 And ft3PtFoul = 1 And S <= F3S% Then
-
-                    gameClock! = gameClock! - 4
-                    timeElapsed! = 4
-                    Call AdjustPlayTime
-                    Call AdjustShotClock
-                    Call UPDATESCREEN
-                    Call GoodBasket
-                    pbpString$ = "3 PT BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
-                    Call SELECTPBP
-
-                    Call GoodBasket
-
-                    pbpString$ = "AND HE WAS FOULED !!!"
-                    If pbpOpt = 0 Then Call PBP
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
-
-                    F3 = 1
-
-                    score(P, currHalf) = score(P, currHalf) + 3
-                    score(P, 0) = score(P, 0) + 3
-
-                    plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
-                    threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
-
-                    Call UPDATESCREEN
-                    Call FoulCalled(1)
-
-                    GoTo 619
-
-                End If
-
-                If S > F3S% Then
-
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then
-                        Call WINDEX
-                        Print "3 PT FG MISSED BY "; players$(P, B1(P, ballCarrier))
-                        Call DELAY
-                    End If
-
-                    If pbpOpt = 0 Then
-                        PT% = 5
-                        TP% = 1
-                        Call MAKEPBP
-                        Call PBP
-                    End If
-
-                    Call ResetShotClock
-                    gameClock! = gameClock! - 4
-                    timeElapsed! = 4
-                    Call AdjustPlayTime
-                    Call AdjustShotClock
-
-                    If gameClock! <= 0 Then
-                        timeElapsed! = gameClock!
+                        gameClock! = gameClock! - 4
+                        timeElapsed! = 4
                         Call AdjustPlayTime
-                        TP% = 0
-                        GoTo 170
+                        Call AdjustShotClock
+                        Call UPDATESCREEN
+                        Call CreditAssists
+                        pbpString$ = "3 PT BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
+                        Call SELECTPBP
+
+                        Call CreditAssists
+
+                        pbpString$ = "AND HE WAS FOULED !!!"
+                        If pbpOpt = 1 And pbpDelay! <> 0 Then
+                            Print pbpString$
+                            Call DELAY
+                        End If
+                        If pbpOpt = 0 Then
+                            Call PBP
+                        End If
+
+                        F3 = 1
+
+                        score(P, currHalf) = score(P, currHalf) + 3
+                        score(P, 0) = score(P, 0) + 3
+
+                        plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
+                        threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
+
+                        Call UPDATESCREEN
+                        Call FoulCalled(1)
+
+                        GoTo 619
+
                     End If
-
-                    Call UPDATESCREEN
-
-                    GoTo 670
 
                 Else
 
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then
-                        Call WINDEX
-                        Print "3 PT FG GOOD BY "; players$(P, B1(P, ballCarrier)); " !!!"
-                        Call DELAY
-                    End If
+                    'No foul - normal 3-pointer
+                    If shotRoll > threePtShotChance Then
 
-                    If pbpOpt = 0 Then
-                        PT% = 4
-                        Call MAKEPBP
-                        Call PBP
-                    End If
+                        If pbpOpt = 1 And pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print "3 PT FG MISSED BY "; players$(P, B1(P, ballCarrier))
+                            Call DELAY
+                        End If
 
-                    369 '
-                    If XX% = 1 Then
-                        XX% = 0
-                        score(P, currHalf) = score(P, currHalf) + 2
-                        score(P, 0) = score(P, 0) + 2
-                        threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) - 1
+                        If pbpOpt = 0 Then
+                            PT% = 5
+                            TP% = 1
+                            Call MAKEPBP
+                            Call PBP
+                        End If
+
+                        Call ResetShotClock
+                        gameClock! = gameClock! - 4
+                        timeElapsed! = 4
+                        Call AdjustPlayTime
+                        Call AdjustShotClock
+
+                        If gameClock! <= 0 Then
+                            timeElapsed! = gameClock!
+                            Call AdjustPlayTime
+                            TP% = 0
+                            GoTo 170
+                        End If
+
+                        Call UPDATESCREEN
+
+                        GoTo 670
+
                     Else
-                        score(P, currHalf) = score(P, currHalf) + 3
-                        score(P, 0) = score(P, 0) + 3
-                        threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
+
+                        If pbpOpt = 1 And pbpDelay! <> 0 Then
+                            Call WINDEX
+                            Print "3 PT FG GOOD BY "; players$(P, B1(P, ballCarrier)); " !!!"
+                            Call DELAY
+                        End If
+
+                        If pbpOpt = 0 Then
+                            PT% = 4
+                            Call MAKEPBP
+                            Call PBP
+                        End If
+
+                        369 '
+                        If XX% = 1 Then
+                            XX% = 0
+                            score(P, currHalf) = score(P, currHalf) + 2
+                            score(P, 0) = score(P, 0) + 2
+                            threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) - 1
+                        Else
+                            score(P, currHalf) = score(P, currHalf) + 3
+                            score(P, 0) = score(P, 0) + 3
+                            threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
+                        End If
+
+                        plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
+                        Call CreditAssists
+                        Call UPDATESCREEN
+
+                        GoTo 562
+
                     End If
-
-                    plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
-                    Call GoodBasket
-                    Call UPDATESCREEN
-
-                    GoTo 562
 
                 End If
 
@@ -3325,7 +3492,7 @@ Sub COLHOOP ()
     Call DEADBALLOPTIONS
 
     For I = 0 To 1
-        If P7(I) = 0 Then
+        If defCategory(I) = 0 Then
             PR%(I, 0) = 1
             PR%(I, 1) = 7
             pctContrib(I) = 0
@@ -3353,13 +3520,13 @@ Sub COLHOOP ()
         'Increase FT ATT
         plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
-        Call d100(S)
+        Call d100(shotRoll)
 
         'FT Success Chance
-        FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .9 + .5)
+        baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
 
-        If S <= FX% Then
+        If shotRoll <= baseShotChance Then
 
             If pbpOpt = 0 Then
                 Call THREEFT
@@ -3368,7 +3535,7 @@ Sub COLHOOP ()
                 Call MADEFT
             End If
         Else
-            'S > FX% And
+            'shotRoll > baseShotChance And
             If pbpOpt = 0 Then
                 Call BADFT
             Else
@@ -3378,14 +3545,14 @@ Sub COLHOOP ()
 
         End If
 
-        If F3 = 1 And S > plyrOff_GAME!(P, B1(P, ballCarrier), 1) Then Exit For
+        If F3 = 1 And shotRoll > plyrOff_GAME!(P, B1(P, ballCarrier), 1) Then Exit For
 
     Next F3
 
     575 '
     If gameClock! <= 0 Then 170
 
-    If S > FX% Then 650
+    If shotRoll > baseShotChance Then 650
 
     prevBall$ = ""
     If P = 1 Then
@@ -3443,8 +3610,13 @@ Sub COLHOOP ()
     Call SELECTPBP
 
     pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
-    If pbpOpt = 0 Then Call PBP
-    If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+    If pbpOpt = 1 And pbpDelay! <> 0 Then
+        Print pbpString$
+        Call DELAY
+    End If
+    If pbpOpt = 0 Then
+        Call PBP
+    End If
 
     Locate 8, 41: Print Space$(12)
 
@@ -3457,7 +3629,7 @@ Sub COLHOOP ()
     Call DEADBALLOPTIONS
 
     For I = 0 To 1
-        If P7(I) = 0 Then
+        If defCategory(I) = 0 Then
             PR%(I, 0) = 1
             PR%(I, 1) = 7
             pctContrib(I) = 0
@@ -3481,26 +3653,30 @@ Sub COLHOOP ()
         '--- RESUME ANALYSIS
 
         'Offense
-        RN0 = Int(Rnd(1) * 100)
+        Call d100(RN0)
         If RN0 <= 8 Then
             ft3PtFoul(P) = 10
-        Else
-            If RN0 <= 16 Then ft3PtFoul(P) = 5
+        End If
+        If RN0 > 8 And RN0 <= 16 Then
+            ft3PtFoul(P) = 5
         End If
 
         'Defense
-        RN1 = Int(Rnd(1) * 100)
+        Call d100(RN1)
         If RN1 <= 8 Then
             ft3PtFoul(D) = -10
-        Else
-            If RN1 <= 16 Then ft3PtFoul(D) = -5
+        End If
+        If RN1 > 8 And RN1 <= 16 Then
+            ft3PtFoul(D) = -5
         End If
 
         gameClock! = gameClock! + M5
         timeElapsed! = -M5
         Call AdjustPlayTime
 
-        If sClockVal >= 1 Then shotClock = shotClock + M5
+        If sClockVal >= 1 Then
+            shotClock = shotClock + M5
+        End If
 
         Erase PR%
 
@@ -3526,16 +3702,17 @@ Sub COLHOOP ()
 
     650 '
     A6 = 1
-    P6 = 0
+    playChoice = 0
     A4 = 0
     D6 = 0
-    S = 0
+    shotRoll = 0
 
     Call ResetShotClock
 
     Call d100(RN0)
 
-    If (currHalf > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And score(P, 0) - score(D, 0) = 0 And RN0 <= 12) Then
+    scoreDiff = score(D, 0) - score(P, 0)
+    If (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And scoreDiff = 0 And RN0 <= 12) Then
         Call OFFREBOUND
         GoTo 760
     End If
@@ -3545,7 +3722,7 @@ Sub COLHOOP ()
     Select Case RN0
 
         Case 1 To 11
-            FF% = 1
+            foulOnReb = 1
             GoTo 707
 
         Case 12 To 19
@@ -3562,7 +3739,7 @@ Sub COLHOOP ()
 
     670 '
     A6 = 1
-    P6 = 0
+    playChoice = 0
     A4 = 0
     D6 = 0
 
@@ -3570,17 +3747,21 @@ Sub COLHOOP ()
 
     '--- loop
     700 '
-    S = 0
+    shotRoll = 0
     A4 = 0
     D6 = 0
 
     Call d100(RN0)
-    GG = score(D, 0) - score(P, 0)
 
-    If currHalf > 1 And gameClock! < 30 And (GG = 2 Or GG = 0 Or GG = -2) And RN0 <= 12 Then 700
+    scoreDiff = score(D, 0) - score(P, 0)
+    If currHalf > 1 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0 Or scoreDiff = -2) And RN0 <= 12 Then
+        GoTo 700
+    End If
     '--- loop
 
-    If TP% = 1 And RN0 <= 19 Then TP% = 0
+    If TP% = 1 And RN0 <= 19 Then
+        TP% = 0
+    End If
 
     Select Case RN0
 
@@ -3593,8 +3774,13 @@ Sub COLHOOP ()
             Call SELECTPBP
 
             pbpString$ = "BALL O.B. TO " + gameTeams$(D)
-            If pbpOpt = 0 Then Call PBP
-            If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+            If pbpOpt = 1 And pbpDelay! <> 0 Then
+                Print pbpString$
+                Call DELAY
+            End If
+            If pbpOpt = 0 Then
+                Call PBP
+            End If
 
             Call DELAY
 
@@ -3615,7 +3801,7 @@ Sub COLHOOP ()
             Call DEADBALLOPTIONS
 
             For I = 0 To 1
-                If P7(I) = 0 Then
+                If defCategory(I) = 0 Then
                     PR%(I, 0) = 1
                     PR%(I, 1) = 7
                     pctContrib(I) = 0
@@ -3625,7 +3811,7 @@ Sub COLHOOP ()
             GoTo 300
 
         Case 2 To DY
-            FF% = 1
+            foulOnReb = 1
 
         Case DY + 1 To 17
 
@@ -3633,7 +3819,7 @@ Sub COLHOOP ()
 
             If RN0 > 35 Then
 
-                gameR3!(D) = gameR3!(D) + 1
+                totRebounds(D) = totRebounds(D) + 1
                 Call UPDATESCREEN
                 pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
                 Call SELECTPBP
@@ -3641,7 +3827,7 @@ Sub COLHOOP ()
                 Call DEADBALLOPTIONS
 
                 For I = 0 To 1
-                    If P7(I) = 0 Then
+                    If defCategory(I) = 0 Then
                         PR%(I, 0) = 1
                         PR%(I, 1) = 7
                         pctContrib(I) = 0
@@ -3670,14 +3856,15 @@ Sub COLHOOP ()
             Else
 
                 752 '
-                gameR3!(P) = gameR3!(P) + 1: Call UPDATESCREEN
+                totRebounds(P) = totRebounds(P) + 1
+                Call UPDATESCREEN
                 pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
                 Call SELECTPBP
                 Call DELAY
                 Call DEADBALLOPTIONS
 
                 For I = 0 To 1
-                    If P7(I) = 0 Then
+                    If defCategory(I) = 0 Then
                         PR%(I, 0) = 1
                         PR%(I, 1) = 7
                         pctContrib(I) = 0
@@ -3692,20 +3879,28 @@ Sub COLHOOP ()
 
         Case 18 To 19
 
-            If X = 99 Then 700
+            If X = 99 Then GoTo 700
 
             Call OFFREBOUND
 
             plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
             plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
             plyrOff_GAME!(P, B1(P, ballCarrier), 11) = plyrOff_GAME!(P, B1(P, ballCarrier), 11) + 1
-            gameR3!(P) = gameR3!(P) + 1
+            totRebounds(P) = totRebounds(P) + 1
             score(P, currHalf) = score(P, currHalf) + 2
             score(P, 0) = score(P, 0) + 2
             Call UPDATESCREEN
 
-            If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print "TIPPED IN BY "; players$(P, B1(P, ballCarrier)): Print "   BASKET GOOD !!!": Call DELAY
-            If pbpOpt = 0 Then pbpString$ = players$(P, B1(P, ballCarrier)) + " TIPS IT IN!!": Call PBP
+            If pbpOpt = 1 And pbpDelay! <> 0 Then
+                Call WINDEX
+                Print "TIPPED IN BY "; players$(P, B1(P, ballCarrier))
+                Print "   BASKET GOOD !!!"
+                Call DELAY
+            End If
+            If pbpOpt = 0 Then
+                pbpString$ = players$(P, B1(P, ballCarrier)) + " TIPS IT IN!!"
+                Call PBP
+            End If
 
             prevBall$ = ""
             If P = 1 Then
@@ -3724,8 +3919,13 @@ Sub COLHOOP ()
             pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
             Locate 8, 41: Print Space$(12)
 
-            If pbpOpt = 0 Then Call PBP
-            If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+            If pbpOpt = 1 And pbpDelay! <> 0 Then
+                Print pbpString$
+                Call DELAY
+            End If
+            If pbpOpt = 0 Then
+                Call PBP
+            End If
 
             Call DELAY
             Call STOPPAGE
@@ -3755,7 +3955,7 @@ Sub COLHOOP ()
                 End If
 
                 plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
-                Call GoodBasket
+                Call CreditAssists
                 Call UPDATESCREEN
 
                 GoTo 562
@@ -3780,12 +3980,17 @@ Sub COLHOOP ()
         XZ = plyrOff_GAME!(P, B1(P, I), 21)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-            If plyrOff_GAME!(P, B1(P, I), 3) - plyrOff_GAME!(P, B1(P, I), 7) - plyrOff_GAME!(P, B1(P, I), 11) - plyrOff_GAME!(P, B1(P, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
+            If plyrOff_GAME!(P, B1(P, I), 3) - plyrOff_GAME!(P, B1(P, I), 7) - plyrOff_GAME!(P, B1(P, I), 11) - plyrOff_GAME!(P, B1(P, I), 12) <= 0 Then
+                XZ = Int(XZ * .5 + .5)
+            End If
         End If
 
-        If tmFatigue(P, B1(P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
+        If tmFatigue(P, B1(P, I)) <= -5 Then
+            XZ = Int(XZ * .9 + .5)
+        End If
 
-        RB(I) = RB(I) + XZ: RB = RB + XZ
+        RB(I) = RB(I) + XZ
+        RB = RB + XZ
     Next
 
     ORB = RB
@@ -3795,20 +4000,26 @@ Sub COLHOOP ()
         XZ = plyrOff_GAME!(1 - P, B1(1 - P, I), 2)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-            If plyrOff_GAME!(1 - P, B1(1 - P, I), 3) - plyrOff_GAME!(1 - P, B1(1 - P, I), 7) - plyrOff_GAME!(1 - P, B1(1 - P, I), 11) - plyrOff_GAME!(1 - P, B1(1 - P, I), 12) <= 0 Then XZ = Int(XZ * .5 + .5)
+            If plyrOff_GAME!(1 - P, B1(1 - P, I), 3) - plyrOff_GAME!(1 - P, B1(1 - P, I), 7) - plyrOff_GAME!(1 - P, B1(1 - P, I), 11) - plyrOff_GAME!(1 - P, B1(1 - P, I), 12) <= 0 Then
+                XZ = Int(XZ * .5 + .5)
+            End If
         End If
 
-        If tmFatigue(1 - P, B1(1 - P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
-        RB(I + 5) = RB(I + 5) + XZ: RB = RB + XZ
+        If tmFatigue(1 - P, B1(1 - P, I)) <= -5 Then
+            XZ = Int(XZ * .9 + .5)
+        End If
+
+        RB(I + 5) = RB(I + 5) + XZ
+        RB = RB + XZ
 
     Next
 
     DRB = RB - ORB
 
-    If defType(D) = 0 Then XQ = Int((RB * .06) + .5)
-    If defType(D) = 1 Then XQ = Int((RB * .12) + .5)
-    If defType(D) = 2 Then XQ = Int((RB * .1) + .5)
-    If defType(D) = 3 Then XQ = Int((RB * .14) + .5)
+    If defCoverage(D) = 0 Then XQ = Int((RB * .06) + .5)
+    If defCoverage(D) = 1 Then XQ = Int((RB * .12) + .5)
+    If defCoverage(D) = 2 Then XQ = Int((RB * .1) + .5)
+    If defCoverage(D) = 3 Then XQ = Int((RB * .14) + .5)
     If CZ%(P) = 1 Then XQ = Int((RB * .17) + .5)
 
     rndReb = Rnd(1) * RB
@@ -3816,7 +4027,7 @@ Sub COLHOOP ()
 
         rndOReb = Rnd(1) * ORB
         For ballCarrier = 0 To 4
-            If rndOReb <= RB(ballCarrier) Then 760
+            If rndOReb <= RB(ballCarrier) Then GoTo 760
             RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
         Next
 
@@ -3846,9 +4057,9 @@ Sub COLHOOP ()
     End If
 
     800 '
-    If FF% = 1 Then
+    If foulOnReb = 1 Then
 
-        FF% = 0
+        foulOnReb = 0
 
         If pbpDelay! <> 0 Then
             If pbpOpt = 1 Then
@@ -3864,7 +4075,7 @@ Sub COLHOOP ()
             End If
         End If
 
-        gameR3!(D) = gameR3!(D) + 1
+        totRebounds(D) = totRebounds(D) + 1
         plyrOff_GAME!(D, B1(D, ballCarrier), 11) = plyrOff_GAME!(D, B1(D, ballCarrier), 11) + 1
 
         Call UPDATESCREEN
@@ -3891,12 +4102,24 @@ Sub COLHOOP ()
     End If
 
     plyrOff_GAME!(D, B1(D, ballCarrier), 11) = plyrOff_GAME!(D, B1(D, ballCarrier), 11) + 1
-    gameR3!(D) = gameR3!(D) + 1
+    totRebounds(D) = totRebounds(D) + 1
     Call UPDATESCREEN
     pbpString$ = players$(D, B1(D, ballCarrier)) + " HAS THE DEF RB"
 
-    If pbpOpt = 0 And pbpDelay! <> 0 Then Call PBP
-    If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print pbpString$: Print "FOR " + gameTeams$(D): Call DELAY
+    If pbpDelay! <> 0 Then
+
+        If pbpOpt = 0 Then
+            Call PBP
+        End If
+
+        If pbpOpt = 1 Then
+            Call WINDEX
+            Print pbpString$
+            Print "FOR " + gameTeams$(D)
+            Call DELAY
+        End If
+
+    End If
 
     prevBall$ = players$(D, B1(D, ballCarrier))
     C1 = 2
@@ -3921,7 +4144,10 @@ Sub COLHOOP ()
 
     RN0 = Int(Rnd(1) * 130) + 1
 
-    If RN0 = 15 Then fastBreak = 0: GoTo RBTIEUP
+    If RN0 = 15 Then
+        fastBreak = 0
+        GoTo RBTIEUP
+    End If
 
     Call d100(RN0)
     If CZ%(D) = 1 And RN0 <= 50 Then
@@ -3943,21 +4169,34 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     760 '
-    If FF% = 1 Then
+    If foulOnReb = 1 Then
 
-        FF% = 0
+        foulOnReb = 0
 
         pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE OFF RB"
-        If pbpOpt = 0 Then Call PBP
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Call WINDEX: Print pbpString$: Print "FOR "; gameTeams$(P): Call DELAY
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Call WINDEX
+            Print pbpString$
+            Print "FOR "; gameTeams$(P)
+            Call DELAY
+        End If
+        If pbpOpt = 0 Then
+            Call PBP
+        End If
 
         pbpString$ = "HE'S FOULED !!!"
-        If pbpOpt = 0 Then Call PBP
-        If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
+        If pbpOpt = 1 And pbpDelay! <> 0 Then
+            Call WINDEX
+            Print pbpString$
+            Call DELAY
+        End If
+        If pbpOpt = 0 Then
+            Call PBP
+        End If
 
         plyrOff_GAME!(P, B1(P, ballCarrier), 11) = plyrOff_GAME!(P, B1(P, ballCarrier), 11) + 1
         plyrOff_GAME!(P, B1(P, ballCarrier), 24) = plyrOff_GAME!(P, B1(P, ballCarrier), 24) + 1
-        gameR3!(P) = gameR3!(P) + 1
+        totRebounds(P) = totRebounds(P) + 1
 
         Call UPDATESCREEN
 
@@ -3970,7 +4209,7 @@ Sub COLHOOP ()
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 24) = plyrOff_GAME!(P, B1(P, ballCarrier), 24) + 1
     plyrOff_GAME!(P, B1(P, ballCarrier), 11) = plyrOff_GAME!(P, B1(P, ballCarrier), 11) + 1
-    gameR3!(P) = gameR3!(P) + 1
+    totRebounds(P) = totRebounds(P) + 1
     Call UPDATESCREEN
 
     pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE OFF RB"
@@ -4000,12 +4239,14 @@ Sub COLHOOP ()
             Call SHOTPERCENT
 
             If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 Then F! = Int(F! * .6 + .5)
+                If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 Then
+                    shotChance! = Int(shotChance! * .6 + .5)
+                End If
             End If
 
             If RN1 <= 8 Then
                 PZ% = 9
-                P6 = 1
+                playChoice = 1
                 GoTo 537
             Else
                 GoTo 520
@@ -4063,18 +4304,23 @@ Sub COLHOOP ()
 
     End If
 
-    pbpString$ = "POSSESSION ARROW TO " + gameTeams$(PA%)
+    pbpString$ = "POSSESSION ARROW TO " + gameTeams$(possArrow)
+
+    If pbpOpt = 1 And pbpDelay! <> 0 Then
+        Print pbpString$
+        Call DELAY
+    End If
     If pbpOpt = 0 Then Call PBP
-    If pbpOpt = 1 And pbpDelay! <> 0 Then Print pbpString$: Call DELAY
 
     Call DELAY
 
-    If PA% = D Then
+    If possArrow = D Then
+
         turnovers(P) = turnovers(P) + 1
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then
+            If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
                 pctContrib(I) = 0
@@ -4097,16 +4343,16 @@ Sub COLHOOP ()
 
         C1 = 2
         P9 = P
-        PA% = 1 - PA%
+        possArrow = 1 - possArrow
 
         GoTo 300
 
     Else
 
-        PA% = 1 - PA%
+        possArrow = 1 - possArrow
         Call DEADBALLOPTIONS
         For I = 0 To 1
-            If P7(I) = 0 Then
+            If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
                 pctContrib(I) = 0
@@ -4120,9 +4366,8 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    9065
-
-    If IN% = 1 Or (ft10thFoul = 1 And P2(D) >= 10) Then
+    9065 '
+    If intentional = 1 Or (ft10thFoul = 1 And P2(D) >= 10) Then
 
         If pbpDelay! <> 0 Then
             If pbpOpt = 0 Then
@@ -4140,7 +4385,7 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then
+            If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
                 pctContrib(I) = 0
@@ -4166,13 +4411,15 @@ Sub COLHOOP ()
             'Increase FT ATT
             plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
-            Call d100(S)
+            Call d100(shotRoll)
 
             'FT % Success Chance
-            FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .9 + .5)
+            baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
+                baseShotChance = Int(baseShotChance * .9 + .5)
+            End If
 
-            If S <= FX% Then
+            If shotRoll <= baseShotChance Then
 
                 If pbpOpt = 0 Then
                     Call THREEFT
@@ -4181,7 +4428,7 @@ Sub COLHOOP ()
                     Call MADEFT
                 End If
             Else
-                'S > FX% And
+                'shotRoll > baseShotChance And
                 If pbpOpt = 0 Then
                     Call BADFT
                 Else
@@ -4197,11 +4444,14 @@ Sub COLHOOP ()
 
         Call CLEARPBPBOX
 
-        If S > FX% And IN% <> 1 Then 650
+        If shotRoll > baseShotChance And intentional = 0 Then
+            'missed, no intentional foul
+            GoTo 650
+        End If
 
-        If IN% = 1 Then
-            PASS% = 1
-            IN% = 0
+        If intentional = 1 Then
+            PASS = 1
+            intentional = 0
             X = 0
             pbpString$ = gameTeams$(P) + " BALL AFTER INT. FOUL"
             Call SELECTPBP
@@ -4249,23 +4499,31 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then
+            If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
                 pctContrib(I) = 0
             End If
         Next
 
-        If ft6FloorFouls = 0 And pbpOpt = 0 Or ft6FloorFouls = 0 And pbpDelay! = 0 Then
-            Call WINDEX
-            pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL": Call PBP: Locate 8, 41: Print Space$(12)
-            GoTo 350
-        End If
+        If ft6FloorFouls = 0 Then
+        
+            If pbpOpt = 0 Or pbpDelay! = 0 Then
+                Call WINDEX
+                pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
+                Call PBP
+                Locate 8, 41: Print Space$(12)
 
-        If ft6FloorFouls = 0 And pbpOpt = 1 Then
-            Call WINDEX
-            Print gameTeams$(P) + " BALL O.B. AFTER FOUL": Call DELAY: Locate 8, 41: Print Space$(12)
+            Else
+                'pbpOpt = 1
+                Call WINDEX
+                Print gameTeams$(P) + " BALL O.B. AFTER FOUL"
+                Call DELAY
+                Locate 8, 41: Print Space$(12)
+            End If
+
             GoTo 350
+
         End If
 
         Call UPDATESCREEN
@@ -4278,7 +4536,7 @@ Sub COLHOOP ()
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
-            If P7(I) = 0 Then
+            If defCategory(I) = 0 Then
                 PR%(I, 0) = 1
                 PR%(I, 1) = 7
                 pctContrib(I) = 0
@@ -4296,13 +4554,14 @@ Sub COLHOOP ()
         'Increase FT ATT
         plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
+        baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
+        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
+            baseShotChance = Int(baseShotChance * .9 + .5)
+        End If
 
-        FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then FX% = Int(FX% * .9 + .5)
+        Call d100(shotRoll)
 
-        Call d100(S)
-
-        If S <= FX% Then
+        If shotRoll <= baseShotChance Then
             If pbpOpt = 0 Then
                 Call THREEFT
             Else
@@ -4310,7 +4569,7 @@ Sub COLHOOP ()
                 Call MADEFT
             End If
         Else
-            'S > FX%
+            'shotRoll > baseShotChance
             If pbpOpt = 0 Then
                 Call BADFT
             Else
@@ -4327,7 +4586,7 @@ Sub COLHOOP ()
             GoTo 170
         End If
 
-        If S > FX% Then 650
+        If shotRoll > baseShotChance Then 650
 
         prevBall$ = ""
         If P = 1 Then

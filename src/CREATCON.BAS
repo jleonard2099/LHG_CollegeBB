@@ -58,7 +58,7 @@ Sub CREATCON ()
 
                 Case 2:
                     Do
-                        conference$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", FileExit%)
+                        conference$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Call ReviewEditConference(conference$, D1$, D2$)
@@ -171,9 +171,9 @@ Sub ReviewEditConference (conference$, div1$, div2$)
 
     Shared Z1$(), Z2$()
 
-    If _FileExists(diskPaths$(1) + conference$ + ".LIB") Then
+    If _FileExists(diskPaths$(2) + conference$ + ".TMI") Then
 
-        Open diskPaths$(1) + conference$ + ".LIB" For Input As #1
+        Open diskPaths$(2) + conference$ + ".TMI" For Input As #1
 
         Input #1, LG%, conference$, div1$, div2$
 
@@ -257,14 +257,14 @@ End Sub
 '----------------------------------------
 'This subroutine writes the conference's
 'team memberships and definition to
-'each of the corresponding files (.LIB, .TMS)
+'each of the corresponding files (.TMI, .TMS)
 Sub SaveConferences (conference$, div1$, div2$)
 
     Shared scheduleZ1%()
 
     Shared Z1$(), Z2$()
 
-    Open diskPaths$(1) + conference$ + ".LIB" For Output As #1
+    Open diskPaths$(2) + conference$ + ".TMI" For Output As #1
 
     Print #1, 0
 
@@ -292,7 +292,7 @@ Sub SaveConferences (conference$, div1$, div2$)
 
     Next X
 
-    Open diskPaths$(1) + conference$ + ".TMS" For Output As #2
+    Open diskPaths$(2) + conference$ + ".TMS" For Output As #2
 
     Write #2, conference$
     Write #2, div1$
@@ -305,5 +305,4 @@ Sub SaveConferences (conference$, div1$, div2$)
     Close #2
 
 End Sub
-
-
+    

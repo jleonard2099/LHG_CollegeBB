@@ -18,12 +18,12 @@ Sub HD2HDCON ()
 
     Shared locIndicator$(), oppName$(), Z1$()
 
-    Dim Z1_HD2HD(40), Z2_HD2HD$(40)
+    Dim Z1_HD2HD(MAX_CONFERENCES), Z2_HD2HD$(MAX_CONFERENCES)
 
     Shared D1$, D2$
 
     teamNbr = 0
-    Call ChooseTeam (YN$, NTMS, teamNbr, team$)
+    Call ChooseTeam (YN$, nbrTeams, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
 
     If Not _FileExists(diskPaths$(1) + statFile$ + "S") Then
@@ -60,7 +60,7 @@ Sub HD2HDCON ()
 
         Close #1
 
-        conferenceFile$ = ChooseFile$ (diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+        conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -94,20 +94,20 @@ Sub HD2HDCON ()
                 VPP = 1
             End If
 
-            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #2
+            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #2
 
             Input #2, X
             Input #2, conf$
             Input #2, D1$
             Input #2, D2$
 
-            For X = 1 To 30
+            For X = 1 To TEAMS_PER_CONFERENCE
                 Input #2, Z1$(X)
                 Input #2, Z1_HD2HD(X)
                 Input #2, Z2_HD2HD$(X)
             Next
 
-            NTMS = 30
+            nbrTeams = TEAMS_PER_CONFERENCE
 
             Close #2
 
@@ -119,7 +119,7 @@ Sub HD2HDCON ()
             Erase R1!, R2!, hd2hdR3!, R4!
             Erase TAL!, TAW!, THL!, THW!, TR1!, TR2!, TR3!, TR4!
 
-            For K = 1 To 30
+            For K = 1 To TEAMS_PER_CONFERENCE
 
                 If Z1$(K) <> "XXX" Then
 
@@ -173,13 +173,10 @@ Sub Hd2HdColl_Printer (teamName$)
     DV$(2) = D2$
 
     LPrint Tab(55); teamName$
-    'LPrint Tab(35); teamName$
     LPrint
     LPrint Tab(22); "--------- HOME ----------"; Tab(54); "--------- AWAY ----------"; Tab(86); "---------- TOTALS ----------"
-    'LPrint Tab(15); "--------- HOME ----------"; Tab(36); "--------- AWAY ----------"; Tab(58); "---------- TOTALS ----------"
 
     LPrint Tab(22); "W"; Tab(26); "L"; Tab(30); "PCT."; Tab(36); "PF/G"; Tab(43); "PA/G"; Tab(54); "W"; Tab(58); "L"; Tab(62); "PCT."; Tab(68); "PF/G"; Tab(75); "PA/G"; Tab(86); "W"; Tab(91); "L"; Tab(97); "PCT."; Tab(103); "PF/G"; Tab(110); "PA/G"
-    'LPrint Tab(15); "W"; Tab(17); "L"; Tab(21); "PCT."; Tab(26); "PF/G"; Tab(32); "PA/G"; Tab(37); "W"; Tab(39); "L"; Tab(43); "PCT."; Tab(48); "PF/G"; Tab(54); "PA/G"; Tab(59); "W"; Tab(61); "L"; Tab(65); "PCT."; Tab(70); "PF/G"; Tab(76); "PA/G"
 
     Do
 

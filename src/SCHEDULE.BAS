@@ -110,7 +110,7 @@ Sub SCHEDULE ()
                 Case 2 To 6:
 
                     Do
-                        scheduleFile$ = ChooseFile$(diskPaths$(1) + "*.SCD", "SCHEDULE", FileExit%)
+                        scheduleFile$ = ChooseFile$(diskPaths$(3) + "*.SCD", "SCHEDULE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
@@ -177,7 +177,7 @@ Sub NewSchedule (scheduleFile$)
         Cls
 
         Locate 23, 1
-        Color , 1: Print Tab(80);
+        Color , 1: Print Tab(80); " ";
         Locate 23, 1
         Color 13: Print "SC";
         Color 14: Print "-SHOT CLOCK  ";
@@ -189,7 +189,7 @@ Sub NewSchedule (scheduleFile$)
         Color 14: Print "-BOXSCORE OPTIONS"
 
         Locate 24, 1
-        Color , 1: Print Tab(80);
+        Color , 1: Print Tab(80); " ";
         Locate 24, 1
         Color 11: Print "C";
         Color 14: Print "-SAVE AND CONTINUE  ";
@@ -202,7 +202,7 @@ Sub NewSchedule (scheduleFile$)
         Color 11: Print "PGUP  PGDN";
 
         Locate 25, 1
-        Color , 1: Print Tab(80);
+        Color , 1: Print Tab(80); " ";
         Locate 25, 1
         Color 11: Print "S";
         Color 14: Print "-SORT GAMES  ";
@@ -215,7 +215,7 @@ Sub NewSchedule (scheduleFile$)
         Color 11: Print "R";
         Color 14: Print "-RESET SCORES";
 
-        Locate 1, 1: Print Tab(80);
+        Locate 1, 1: Print Tab(80); " ";
         Locate 1, 1: Print scheduleFile$
         Locate 1, 33
 
@@ -265,7 +265,6 @@ Sub NewSchedule (scheduleFile$)
                 If MIN% < 10 Then TM$ = TM$ + "0" + Right$(Str$(MIN%), 1)
                 If MIN% >= 10 Then TM$ = TM$ + Right$(Str$(MIN%), 2)
 
-                'Time
                 TM$ = TM$ + I$
                 Print TM$;
 
@@ -331,8 +330,8 @@ Sub NewSchedule (scheduleFile$)
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
                 NS% = Int((targetGame% - 1) / 20)
 
-                'boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
-                boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
+                boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
+                'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
 
                 Call EditBoxscore(boxName$)
                 Color 15, 0
@@ -668,8 +667,8 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
                 Case 8:
                     scheduleNG%(gameIndex%, 7) = 1 + scheduleNG%(gameIndex%, 7)
-                    'If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
-                    If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
+                    If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
+                    'If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
 
                 Case 9:
                     scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
@@ -802,11 +801,11 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 Select Case scheduleAction%
 
                     Case 4:
-                        conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+                        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
                         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-                            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
+                            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
                             Input #1, X%
                             Input #1, LG$
@@ -837,7 +836,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                             Print
                                             Print "FOUND A MATCH"
 
-                                            Open diskPaths$(1) + subSchedFile$ + ".SCD" For Random As #2 Len = SCHEDULE_SIZE_BYTES
+                                            Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #2 Len = SCHEDULE_SIZE_BYTES
 
                                             fileLength& = LOF(1)
                                             targetGame% = fileLength& / SCHEDULE_SIZE_BYTES
@@ -919,7 +918,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                         'Write matching games
                                         Locate 1, 1: Print numberGames + 1; " MATCHES"
 
-                                        Open diskPaths$(1) + subSchedFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
+                                        Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
 
                                         fileLength& = LOF(3)
 
@@ -1125,32 +1124,32 @@ Sub BoxscoreMaintenance ()
                     Call EditParameters
 
                 Case 2:
-                    'boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
-                    boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
+                    boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
+                    'boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
 
                     If ExitCode% <> 27 And ExitCode% <> 0 And boxscoreFile$ <> "" Then
                         boxName$ = diskPaths$(1) + boxscoreFile$
-                        'Call EditBoxscore(boxName$ + ".BSS")
-                        Call EditBoxscore(boxName$ + ".SPC")
+                        Call EditBoxscore(boxName$ + ".BSS")
+                        'Call EditBoxscore(boxName$ + ".SPC")
                     End If
 
                 Case 3
-                    'Spec$ = diskPaths$(1) + "*.BS"
-                    Spec$ = diskPaths$(1) + "BOX*."
+                    Spec$ = diskPaths$(1) + "*.BS"
+                    'Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteBoxscores(Selection%, Spec$)
 
                 Case 4
-                    'Spec$ = diskPaths$(1) + "*.BSS"
-                    Spec$ = diskPaths$(1) + "*.SPC"
+                    Spec$ = diskPaths$(1) + "*.BSS"
+                    'Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteBoxscores(Selection%, Spec$)
 
                 Case 5:
-                    'Spec$ = diskPaths$(1) + "*.BS"
-                    Spec$ = diskPaths$(1) + "BOX*."
+                    Spec$ = diskPaths$(1) + "*.BS"
+                    'Spec$ = diskPaths$(1) + "BOX*."
                     Call DeleteBoxscores(Selection%, Spec$)
 
-                    'Spec$ = diskPaths$(1) + "*.BSS"
-                    Spec$ = diskPaths$(1) + "*.SPC"
+                    Spec$ = diskPaths$(1) + "*.BSS"
+                    'Spec$ = diskPaths$(1) + "*.SPC"
                     Call DeleteBoxscores(Selection%, Spec$)
 
             End Select
@@ -1174,9 +1173,9 @@ Sub SaveScheduleFile (saveFile$)
     Shared scheduleAP%(), scheduleNG%()
     Shared scheduleYN$()
 
-    If _FileExists(diskPaths$(1) + saveFile$ + ".SCD") Then Kill diskPaths$(1) + saveFile$ + ".SCD"
+    If _FileExists(diskPaths$(3) + saveFile$ + ".SCD") Then Kill diskPaths$(3) + saveFile$ + ".SCD"
 
-    Open diskPaths$(1) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+    Open diskPaths$(3) + saveFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
     For X = 0 To 18
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -1486,7 +1485,7 @@ Sub LoadScheduleInfo (targetFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleYN$()
 
-    Open diskPaths$(1) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
+    Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
     fileLength& = LOF(1)
 
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
@@ -1567,11 +1566,11 @@ Sub CreateConferenceSchedule ()
 
     If D3% <> 0 Then
 
-        conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
+            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
             X1 = 0
 
@@ -1628,8 +1627,13 @@ Sub CreateConferenceSchedule ()
 
                 Get #2, I
 
-                For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
+                For X = 0 To 18: 
+                    scheduleNG%(I, X) = CVI(Q$(X + 1))
+                Next
+                
+                For X = 0 To 1: 
+                    scheduleYN$(I, X) = Q$(20 + X)
+                Next
 
                 visitorScores(I) = CVI(Q$(22))
                 homeScores(I) = CVI(Q$(23))
@@ -1693,7 +1697,7 @@ Sub CreateConferenceSchedule ()
             Next
 
             '-- Save file -- reference the routine?????
-            Open diskPaths$(1) + scheduleFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
+            Open diskPaths$(3) + scheduleFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
 
             fileLength& = LOF(3) / SCHEDULE_SIZE_BYTES
 

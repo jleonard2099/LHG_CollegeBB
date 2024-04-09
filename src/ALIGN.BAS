@@ -57,9 +57,13 @@ Sub ALIGN ()
 
                 Next
 
-                For L = 0 To 15: Input #1, ZR!(L): Next
+                For L = 0 To 15: 
+                    Input #1, ZR!(L)
+                Next
 
-                For L = 0 To 15: Input #1, ZR1!(L): Next
+                For L = 0 To 15: 
+                    Input #1, ZR1!(L)
+                Next
 
                 Close #1
 
@@ -83,9 +87,13 @@ Sub ALIGN ()
 
                     Next
 
-                    For L = 0 To 15: Input #2, Z!(L): Next
+                    For L = 0 To 15: 
+                        Input #2, Z!(L)
+                    Next
 
-                    For L = 0 To 15: Input #2, Z1!(L): Next
+                    For L = 0 To 15: 
+                        Input #2, Z1!(L)
+                    Next
 
                     Close #2
 
@@ -282,9 +290,13 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Next
 
-    For L = 0 To 15: Write #1, ZR!(L): Next
+    For L = 0 To 15: 
+        Write #1, ZR!(L)
+    Next
 
-    For L = 0 To 15: Write #1, ZR1!(L): Next
+    For L = 0 To 15: 
+        Write #1, ZR1!(L)
+    Next
 
     Close #1
 

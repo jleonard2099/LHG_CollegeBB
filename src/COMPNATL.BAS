@@ -10,14 +10,14 @@ Sub CompileNatlOrg ()
 
     _Title "Courtside College Basketball - Update National Stats"
 
-    Dim confNames$(1 To 40)
+    Dim confNames$(MAX_CONFERENCES)
 
     Shared leaderVals!(), plyrRecords!()
     Shared defLeaders!(), defRecords!()
     Shared offLeaders!(), offRecords!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
-    Shared DL$(), OL$(), statFiles$()
+    Shared deffLeaderNames$(), offLeaderNames$(), statFiles$()
     Shared offRecDesc$(), defRecDesc$()
     Shared plyrRecDesc$()
     Shared Z0$(), Z1$(), Z3$()
@@ -25,7 +25,7 @@ Sub CompileNatlOrg ()
     Shared confWins, confLosses, fullWins, fullLosses
 
     Shared natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
-    Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
+    Shared natDefLdrNames$(), natOffLdrNames$(), NZ0$(), NZ1$(), NZ3$()
 
     offRecords!(14) = 19999
     offRecords!(18) = 19999
@@ -46,7 +46,7 @@ Sub CompileNatlOrg ()
     Erase natLeaderVals!
     Erase NZ0$, NZ1$, NZ3$
 
-    For X = 1 To 40
+    For X = 1 To MAX_CONFERENCES
         natDefLeaders!(X, 19) = 9999
     Next
 
@@ -81,7 +81,7 @@ Sub CompileNatlOrg ()
 
     C$ = ","
 
-    organizationFile$ = ChooseFile$(diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
+    organizationFile$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -95,46 +95,46 @@ Sub CompileNatlOrg ()
 
         If UCase$(I$) = "Y" Then finalUpdate$ = "Y"
 
-        Open diskPaths$(1) + organizationFile$ + ".CON" For Input As #2
+        Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #2
 
         Input #2, X$
 
-        For I = 1 To 40
+        For I = 1 To MAX_CONFERENCES
             Input #2, confNames$(I)
         Next
 
         Close #2
 
-        For currConf = 1 To 40
+        For currConf = 1 To MAX_CONFERENCES
 
             If confNames$(currConf) <> "XXX" Then
 
                 Cls
 
                 Erase defLeaders!, offLeaders!
-                For X = 1 To 40
+                For X = 1 To MAX_CONFERENCES
                     defLeaders!(X, 19) = 9999
                 Next
 
                 Erase leaderVals!
                 Erase O1!, O2!, O3!, O4!, O5!, O6!
-                Erase DL$, OL$
+                Erase deffLeaderNames$, offLeaderNames$
                 Erase Z0$, Z1$, Z3$
 
-                Open diskPaths$(1) + confNames$(currConf) + ".TMS" For Input As #3
+                Open diskPaths$(2) + confNames$(currConf) + ".TMS" For Input As #3
 
                 Input #3, LG$
                 Input #3, div1$
                 Input #3, div2$
 
-                For XW = 1 To 30
+                For XW = 1 To TEAMS_PER_CONFERENCE
                     Input #3, statFiles$(XW)
                     Z1$(XW) = statFiles$(XW)
                 Next
 
                 Close #3
 
-                For XW = 1 To 30
+                For XW = 1 To TEAMS_PER_CONFERENCE
 
                     'Look for * as terminating char
                     If statFiles$(XW) <> Chr$(42) Then
@@ -153,7 +153,7 @@ Sub CompileNatlOrg ()
 
                             nonConfGame = 0
 
-                            For X = 1 To 30
+                            For X = 1 To TEAMS_PER_CONFERENCE
 
                                 If Z1$(X) = WT$ Then
 
@@ -233,7 +233,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
     Shared defTotals!(), offTotals!()
 
     Shared statPlyrNames$()
-    Shared NDL$(), NOL$(), NZ0$(), NZ3$()
+    Shared natDefLdrNames$(), natOffLdrNames$(), NZ0$(), NZ3$()
 
     Cls
     Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
@@ -756,13 +756,13 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
             natOffLeaders!(40, M) = offTotals!(M)
         Next
 
-        NOL$(40) = teamName$
+        natOffLdrNames$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To 40
 
                 If natOffLeaders!(X, 19) < natOffLeaders!(X1, 19) Then
-                    Swap NOL$(X1), NOL$(X)
+                    Swap natOffLdrNames$(X1), natOffLdrNames$(X)
                     For M = 1 To 20
                         Swap natOffLeaders!(X1, M), natOffLeaders!(X, M)
                     Next
@@ -780,13 +780,13 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
             natDefLeaders!(40, M) = defTotals!(M)
         Next
 
-        NDL$(40) = teamName$
+        natDefLdrNames$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To 40:
 
                 If natDefLeaders!(X, 19) > natDefLeaders!(X1, 19) Then
-                    Swap NDL$(X1), NDL$(X)
+                    Swap natDefLdrNames$(X1), natDefLdrNames$(X)
                     For M = 1 To 20
                         Swap natDefLeaders!(X1, M), natDefLeaders!(X, M)
                     Next
@@ -874,7 +874,7 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
             statName$ = nameStatFile$(oppName$(I))
             nonConfGame = 0
 
-            For EC = 1 To 30
+            For EC = 1 To TEAMS_PER_CONFERENCE
                 'If team stat file = opponent of a conference game?
                 If statName$ = statFiles$(EC) Then
                     nonConfGame = 1
@@ -981,12 +981,12 @@ Sub PostLeadersOrg (organization$, NRT)
     Shared offRecords!(), defRecords!()
 
     Shared plyrRecDesc$()
-    Shared NDL$(), NOL$(), NZ0$(), NZ1$(), NZ3$()
+    Shared natDefLdrNames$(), natOffLdrNames$(), NZ0$(), NZ1$(), NZ3$()
     Shared PT$(), offRecDesc$(), defRecDesc$()
 
     Cls
 
-    Open diskPaths$(1) + organization$ + ".NLD" For Output As #1
+    Open diskPaths$(2) + organization$ + ".NLD" For Output As #1
 
     Print "    POSTING NEW "; organization$; " LEADERS"
 
@@ -998,15 +998,15 @@ Sub PostLeadersOrg (organization$, NRT)
         Write #1, NZ0$(X), NZ3$(X), natLeaderVals!(X, 1), natLeaderVals!(X, 2)
     Next X
 
-    For X = 1 To 40
-        Write #1, NOL$(X)
+    For X = 1 To MAX_CONFERENCES
+        Write #1, natOffLdrNames$(X)
         For Y = 1 To 20
             Write #1, natOffLeaders!(X, Y)
         Next
     Next
 
-    For X = 1 To 40
-        Write #1, NDL$(X)
+    For X = 1 To MAX_CONFERENCES
+        Write #1, natDefLdrNames$(X)
         For Y = 1 To 20
             Write #1, natDefLeaders!(X, Y)
         Next
@@ -1025,7 +1025,7 @@ Sub PostLeadersOrg (organization$, NRT)
         Next Z1
     Next Z
 
-    Open diskPaths$(1) + organization$ + ".POL" For Output As #2
+    Open diskPaths$(2) + organization$ + ".POL" For Output As #2
 
     Print "POSTING "; organization$; " POLL"
 

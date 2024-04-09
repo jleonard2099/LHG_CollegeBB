@@ -67,7 +67,7 @@ Sub EditStats ()
         Call TITLE_STAT_HEADER(X$)
 
         Locate 3, 1
-        Print "1. STAT FILE NAME "; statFile$
+        Print "1. STAT FILE NAME  "; statFile$
         Print "2. TM MINUTES ";
         Print Using "#####"; Int(statsZ!(0)/60)
         Print "3. TM FGA "; statsZ!(1)
@@ -89,61 +89,95 @@ Sub EditStats ()
 
             Do
                 Locate 22, 1
-                Input "# TO CHANGE (0 TO CONTINUE) "; B9
+                Input "# TO CHANGE (0 TO CONTINUE)"; B9
             Loop Until B9 >= 0 And B9 <= 16
 
             Select Case B9
 
                 Case 1
-                    Locate 3, 1: Input "1. STAT FILE NAME "; statFile$
+                    Locate 3, 1: Input " 1. STAT FILE NAME "; statFile$
+                    Locate 3, 20: Print " "
 
                 Case 2
-                    Locate 4, 1: Input "2. TM MINUTES "; statsZ!(0)
+                    Locate 4, 16: Print Space$(10)
+                    Locate 4, 1: Input " 2. TM MINUTES "; statsZ!(0)
+                    Locate 4, 16: Print " "
                     statsZ!(0) = statsZ!(0) * 60
 
                 Case 3
-                    Locate 5, 1: Input "3. TM FGA "; statsZ!(1)
+                    Locate 5, 12: Print Space$(10)
+                    Locate 5, 1: Input " 3. TM FGA "; statsZ!(1)
+                    Locate 5, 12: Print " "
 
                 Case 4
-                    Locate 6, 1: Input "4. TM FGM "; statsZ!(2)
+                    Locate 6, 12: Print Space$(10)
+                    Locate 6, 1: Input " 4. TM FGM "; statsZ!(2)
+                    Locate 6, 12: Print " "
 
                 Case 5
-                    Locate 7, 1: Input "5. TM 3FGA "; statsZ!(14)
+                    Locate 7, 13: Print Space$(10)
+                    Locate 7, 1: Input " 5. TM 3FGA "; statsZ!(14)
+                    Locate 7, 13: Print " "
 
                 Case 6
-                    Locate 8, 1: Input "6. TM 3FGM "; statsZ!(13)
+                    Locate 8, 13: Print Space$(10)
+                    Locate 8, 1: Input " 6. TM 3FGM "; statsZ!(13)
+                    Locate 8, 13: Print " "
 
                 Case 7
-                    Locate 9, 1: Input "7. TM FTA "; statsZ!(3)
+                    Locate 9, 12: Print Space$(10)
+                    Locate 9, 1: Input " 7. TM FTA "; statsZ!(3)
+                    Locate 9, 12: Print " "
 
                 Case 8
-                    Locate 10, 1: Input "8. TM FTM "; statsZ!(4)
+                    Locate 10, 12: Print Space$(10)
+                    Locate 10, 1: Input " 8. TM FTM "; statsZ!(4)
+                    Locate 10, 12: Print " "
 
                 Case 9
-                    Locate 11, 1: Input "9. TM OFF RB  "; statsZ!(12)
+                    Locate 11, 15: Print Space$(10)
+                    Locate 11, 1: Input " 9. TM OFF RB "; statsZ!(12)
+                    Locate 11, 15: Print " "
 
                 Case 10
+                    Locate 12, 14: Print Space$(10)
                     Locate 12, 1: Input "10. TM TOT RB "; statsZ!(5)
+                    Locate 12, 14: Print " "
 
                 Case 11
+                    Locate 13, 14: Print Space$(10)
                     Locate 13, 1: Input "11. TM FOULS "; statsZ!(6)
+                    Locate 13, 14: Print " "
 
                 Case 12
+                    Locate 14, 15: Print Space$(10)
                     Locate 14, 1: Input "12. TM STEALS "; statsZ!(7)
+                    Locate 14, 15: Print " "
 
                 Case 13
+                    Locate 15, 16: Print Space$(10)
                     Locate 15, 1: Input "13. TM ASSISTS "; statsZ!(8)
+                    Locate 15, 16: Print " "
 
                 Case 14
+                    Locate 16, 15: Print Space$(10)
                     Locate 16, 1: Input "14. TM BLOCKS "; statsZ!(9)
+                    Locate 16, 15: Print " "
 
                 Case 15
+                    Locate 17, 18: Print Space$(10)
                     Locate 17, 1: Input "15. TM TURNOVERS "; statsZ!(11)
+                    Locate 17, 18: Print " "
 
                 Case 16
-                    Locate 18, 1: Input "16. TM POINTS  "; statsZ!(10)
+                    Locate 18, 15: Print Space$(10)
+                    Locate 18, 1: Input "16. TM POINTS "; statsZ!(10)
+                    Locate 18, 15: Print " "
 
             End Select
+
+            Locate 22, 29
+            Print Space$(10)
 
         Loop Until B9 = 0
 
@@ -161,67 +195,98 @@ Sub EditStats ()
         Print "4. OPP 3FGM "; statsZ1!(13)
         Print "5. OPP FTA "; statsZ1!(3)
         Print "6. OPP FTM "; statsZ1!(4)
-        Print "7. OPP OFF RB  "; statsZ1!(12)
+        Print "7. OPP OFF RB "; statsZ1!(12)
         Print "8. OPP TOT RB "; statsZ1!(5)
         Print "9. OPP FOULS "; statsZ1!(6)
         Print "10. OPP STEALS "; statsZ1!(7)
         Print "11. OPP ASSISTS "; statsZ1!(8)
         Print "12. OPP BLOCKS "; statsZ1!(9)
         Print "13. OPP TURNOVERS "; statsZ1!(11)
-        Print "14. OPP POINTS  "; statsZ1!(10)
+        Print "14. OPP POINTS "; statsZ1!(10)
 
         Do
 
             Do
                 Locate 22, 1
-                Input "# TO CHANGE (0 TO CONTINUE) "; B9
+                Input "# TO CHANGE (0 TO CONTINUE)"; B9
             Loop Until B9 >= 0 And B9 <= 14
 
             Select Case B9
 
                 Case 1
+                    Locate 3, 12: Print Space$(10)
                     Locate 3, 1: Input "1. OPP FGA "; statsZ1!(1)
+                    Locate 3, 12: Print " "
 
                 Case 2
+                    Locate 4, 12: Print Space$(10)
                     Locate 4, 1: Input "2. OPP FGM "; statsZ1!(2)
+                    Locate 4, 12: Print " "
 
                 Case 3
+                    Locate 5, 13: Print Space$(10)
                     Locate 5, 1: Input "3. OPP 3FGA "; statsZ1!(14)
+                    Locate 5, 13: Print " "
 
                 Case 4
+                    Locate 6, 13: Print Space$(10)
                     Locate 6, 1: Input "4. OPP 3FGM "; statsZ1!(13)
+                    Locate 6, 13: Print " "
 
                 Case 5
+                    Locate 7, 12: Print Space$(10)
                     Locate 7, 1: Input "5. OPP FTA "; statsZ1!(3)
+                    Locate 7, 12: Print " "
 
                 Case 6
+                    Locate 8, 12: Print Space$(10)
                     Locate 8, 1: Input "6. OPP FTM "; statsZ1!(4)
+                    Locate 8, 12: Print " "
 
                 Case 7
-                    Locate 9, 1: Input "7. OPP OFF RB  "; statsZ1!(12)
+                    Locate 9, 15: Print Space$(10)
+                    Locate 9, 1: Input "7. OPP OFF RB "; statsZ1!(12)
+                    Locate 9, 15: Print " "
 
                 Case 8
+                    Locate 10, 15: Print Space$(10)
                     Locate 10, 1: Input "8. OPP TOT RB "; statsZ1!(5)
+                    Locate 10, 15: Print " "
 
                 Case 9
+                    Locate 11, 14: Print Space$(10)
                     Locate 11, 1: Input "9. OPP FOULS "; statsZ1!(6)
+                    Locate 11, 14: Print " "
 
                 Case 10
+                    Locate 12, 16: Print Space$(10)
                     Locate 12, 1: Input "10. OPP STEALS "; statsZ1!(7)
+                    Locate 12, 16: Print " "
 
                 Case 11
+                    Locate 13, 17: Print Space$(10)
                     Locate 13, 1: Input "11. OPP ASSISTS "; statsZ1!(8)
+                    Locate 13, 17: Print " "
 
                 Case 12
+                    Locate 14, 16: Print Space$(10)
                     Locate 14, 1: Input "12. OPP BLOCKS "; statsZ1!(9)
+                    Locate 14, 16: Print " "
 
                 Case 13
+                    Locate 15, 19: Print Space$(10)
                     Locate 15, 1: Input "13. OPP TURNOVERS "; statsZ1!(11)
+                    Locate 15, 19: Print " "
 
                 Case 14
-                    Locate 16, 1: Input "14. OPP POINTS  "; statsZ1!(10)
+                    Locate 16, 16: Print Space$(10)
+                    Locate 16, 1: Input "14. OPP POINTS "; statsZ1!(10)
+                    Locate 16, 16: Print " "
 
             End Select
+
+            Locate 22, 29
+            Print Space$(10)
 
         Loop Until B9 = 0
 
@@ -245,7 +310,7 @@ Sub EditStats ()
             Print
 
             Do
-                Input "# TO CHANGE (1-13) (0 TO CONTINUE) "; I
+                Input "# TO CHANGE (1-13) (0 TO CONTINUE)"; I
             Loop Until I >= 0 And I <= 13
 
             If I > 0 Then
@@ -257,7 +322,7 @@ Sub EditStats ()
 
                 Locate 2, 1: Print "PLAYER - " + Str$(I + 1)
                 Locate 3, 1
-                Print "1. NAME "; statPlyrNames$(I)
+                Print "1. NAME  "; statPlyrNames$(I)
                 Print "2. GAMES "; Z2(I, 0)
                 Print "3. MINUTES "; Int(Z2(I, 10) / 60 + .5)
                 Print "4. FGA "; Z2(I, 1)
@@ -265,7 +330,7 @@ Sub EditStats ()
                 Print "6. FTA "; Z2(I, 3)
                 Print "7. FTM "; Z2(I, 4)
                 Print "8. OFF REB "; Z2(I, 12)
-                Print "9. TOT REB  "; Z2(I, 5)
+                Print "9. TOT REB "; Z2(I, 5)
                 Print "10. FOULS "; Z2(I, 6)
                 Print "11. STEALS "; Z2(I, 7)
                 Print "12. ASSISTS "; Z2(I, 8)
@@ -286,57 +351,93 @@ Sub EditStats ()
 
                         Case 1
                             Locate 3, 1: Input "1. NAME "; statPlyrNames$(I)
+                            Locate 3, 9: Print " "
 
                         Case 2
+                            Locate 4, 10: Print Space$(10)
                             Locate 4, 1: Input "2. GAMES "; Z2(I, 0)
+                            Locate 4, 10: Print " "
 
                         Case 3
+                            Locate 5, 12: Print Space$(10)
                             Locate 5, 1: Input "3. MINUTES "; Z2(I, 10)
+                            Locate 5, 12: Print " "
                             Z2(I, 10) = Z2(I, 10) * 60
 
                         Case 4
+                            Locate 6, 8: Print Space$(10)
                             Locate 6, 1: Input "4. FGA "; Z2(I, 1)
+                            Locate 6, 8: Print " "
 
                         Case 5
+                            Locate 7, 8: Print Space$(10)
                             Locate 7, 1: Input "5. FGM "; Z2(I, 2)
+                            Locate 7, 8: Print " "
 
                         Case 6
+                            Locate 8, 8: Print Space$(10)
                             Locate 8, 1: Input "6. FTA "; Z2(I, 3)
+                            Locate 8, 8: Print " "
 
                         Case 7
+                            Locate 9, 8: Print Space$(10)
                             Locate 9, 1: Input "7. FTM "; Z2(I, 4)
+                            Locate 9, 8: Print " "
 
                         Case 8
+                            Locate 10, 12: Print Space$(10)
                             Locate 10, 1: Input "8. OFF REB "; Z2(I, 12)
+                            Locate 10, 12: Print " "
 
                         Case 9
-                            Locate 11, 1: Input "9. TOT REB  "; Z2(I, 5)
+                            Locate 11, 12: Print Space$(10)
+                            Locate 11, 1: Input "9. TOT REB "; Z2(I, 5)
+                            Locate 11, 12: Print " "
 
                         Case 10
+                            Locate 12, 11: Print Space$(10)
                             Locate 12, 1: Input "10. FOULS "; Z2(I, 6)
+                            Locate 12, 11: Print " "
 
                         Case 11
+                            Locate 13, 12: Print Space$(10)
                             Locate 13, 1: Input "11. STEALS "; Z2(I, 7)
+                            Locate 13, 12: Print " "
 
                         Case 12
+                            Locate 14, 13: Print Space$(10)
                             Locate 14, 1: Input "12. ASSISTS "; Z2(I, 8)
+                            Locate 14, 13: Print " "
 
                         Case 13
+                            Locate 15, 12: Print Space$(10)
                             Locate 15, 1: Input "13. BLOCKS "; Z2(I, 9)
+                            Locate 15, 12: Print " "
 
                         Case 14
+                            Locate 16, 15: Print Space$(10)
                             Locate 16, 1: Input "14. TURNOVERS "; Z2(I, 11)
+                            Locate 16, 15: Print " "
 
                         Case 15
+                            Locate 17, 10: Print Space$(10)
                             Locate 17, 1: Input "15. 3FGA "; statsW1!(I)
+                            Locate 17, 10: Print " "
 
                         Case 16
+                            Locate 18, 10: Print Space$(10)
                             Locate 18, 1: Input "16. 3FGM "; statsW0!(I)
+                            Locate 18, 10: Print " "
 
                         Case 17
+                            Locate 19, 19: Print Space$(10)
                             Locate 19, 1: Input "17. HI-GAME (PTS) "; Z2(I, 13)
+                            Locate 19, 19: Print " "
 
                     End Select
+
+                    Locate 22, 29
+                    Print Space$(10)
 
                 Loop Until B9 = 0
 
@@ -366,9 +467,13 @@ Sub EditStats ()
 
         Next I
 
-        For L = 0 To 15: Print #2, statsZ!(L): Next L
+        For L = 0 To 15: 
+            Print #2, statsZ!(L)
+        Next L
 
-        For L = 0 To 15: Print #2, statsZ1!(L): Next L
+        For L = 0 To 15: 
+            Print #2, statsZ1!(L)
+        Next L
 
         Close #2
 

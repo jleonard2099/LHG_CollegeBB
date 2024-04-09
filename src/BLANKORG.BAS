@@ -8,9 +8,9 @@ Sub BLANKORG ()
 
     _Title "Courtside College Basketball - Erase Org Stats"
 
-    Dim statFiles$(40), Z4$(40)
+    Dim statFiles$(MAX_CONFERENCES), Z4$(MAX_CONFERENCES)
 
-    organizationFile$ = ChooseFile$ (diskPaths$(1) + "*.CON", "ORGANIZATION", ExitCode%)
+    organizationFile$ = ChooseFile$ (diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -24,7 +24,7 @@ Sub BLANKORG ()
 
         If UCase$(I$) = "Y" Then
 
-            Open diskPaths$(1) + organizationFile$ + ".CON" For Input As #1
+            Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
 
             Input #1, org$
 
@@ -38,7 +38,7 @@ Sub BLANKORG ()
 
                 If Z4$(X) <> "XXX" Then
 
-                    Open diskPaths$(1) + Z4$(X) + ".TMS" For Input As #2
+                    Open diskPaths$(2) + Z4$(X) + ".TMS" For Input As #2
 
                     Input #2, org$, D1$, D2$
 

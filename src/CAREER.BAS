@@ -295,14 +295,14 @@ Sub ViewPrintCareerRecords ()
     Dim BL$(21)
     Dim BLYR(21), BL(21)
 
-    recordFile$ = ChooseFile$ (diskPaths$(1) + "*.CLD", "CAREER RECORD", ExitCode%)
+    recordFile$ = ChooseFile$ (diskPaths$(2) + "*.CLD", "CAREER RECORD", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Color 15, 0
         Cls
 
-        Open diskPaths$(1) + recordFile$ + ".CLD" For Input As #1
+        Open diskPaths$(2) + recordFile$ + ".CLD" For Input As #1
 
         For I = 0 To 20:
             Input #1, BLYR(I), BL$(I), BL(I)
@@ -704,9 +704,9 @@ Sub UpdateCareerLeaders (targetFile$)
     Shared careerAR$()
     Shared ARS!(), W0S!(), W1S!()
 
-    If _FileExists(diskPaths$(1) + targetFile$ + ".CLD") Then
+    If _FileExists(diskPaths$(2) + targetFile$ + ".CLD") Then
 
-        Open diskPaths$(1) + targetFile$ + ".CLD" For Input As #1
+        Open diskPaths$(2) + targetFile$ + ".CLD" For Input As #1
 
         For I = 0 To 20
             Input #1, BLYR(I), BL$(I), BL(I)
@@ -863,7 +863,7 @@ Sub UpdateCareerLeaders (targetFile$)
 
     Next I
 
-    Open diskPaths$(1) + targetFile$ + ".CLD" For Output As #2
+    Open diskPaths$(2) + targetFile$ + ".CLD" For Output As #2
 
     For I = 0 To 20
         Write #2, BLYR(I), BL$(I), BL(I)

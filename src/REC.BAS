@@ -454,7 +454,8 @@ Sub PrintSeasonRecords ()
 	Shared indRecordDesc$(), teamRecordDesc$(), plyrRecDesc$()
 	Shared offRecDesc$(), defRecDesc$()
 
-    Color 0, 15
+	Color 0, 15
+    Cls
 
 	LPrint Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
 	LPrint

@@ -9,7 +9,7 @@ Sub SEENATL ()
 
     _Title "Courtside College Basketball - View National Stats"
 
-    leaderFile$ = ChooseFile$ (diskPaths$(1) + "*.NLD", "LEADER", ExitCode%)
+    leaderFile$ = ChooseFile$ (diskPaths$(2) + "*.NLD", "LEADER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
@@ -28,7 +28,7 @@ End Sub
 'stats from the file into several arrays
 Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
-    Shared DL$(), OL$(), PR$()
+    Shared deffLeaderNames$(), offLeaderNames$(), PR$()
     Shared defLeaders!(), offLeaders!()
     Shared seeZ!()
     Shared seeZ1$(), seeZ2$(), seeZ3$(), seeT$()
@@ -40,7 +40,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(1) + leagueFile$ + ".NLD" For Input As #1
+    Open diskPaths$(2) + leagueFile$ + ".NLD" For Input As #1
 
     For X = 1 To 30: 
         Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
@@ -50,15 +50,15 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
         Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1$(X)
     Next
 
-    For X = 1 To 40: 
-        Input #1, OL$(X)
+    For X = 1 To MAX_CONFERENCES: 
+        Input #1, offLeaderNames$(X)
         For M = 1 To 20: 
             Input #1, offLeaders!(X, M)
         Next
     Next
 
-    For X = 1 To 40: 
-        Input #1, DL$(X)
+    For X = 1 To MAX_CONFERENCES: 
+        Input #1, deffLeaderNames$(X)
         For M = 1 To 20: 
             Input #1, defLeaders!(X, M)
         Next
@@ -66,7 +66,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
     Close #1
 
-    Open diskPaths$(1) + leagueFile$ + ".POL" For Input As #2
+    Open diskPaths$(2) + leagueFile$ + ".POL" For Input As #2
 
     Input #2, NRT
 
@@ -194,7 +194,7 @@ End Sub
 'user display.
 Sub LeaderStatsNat_Screen (orgName$, NRT)
 
-    Shared DL$(), OL$(), PR$()
+    Shared deffLeaderNames$(), offLeaderNames$(), PR$()
     Shared defLeaders!(), offLeaders!(), seeZ!()
     Shared seeZ1$(), seeZ2$(), seeZ3$()
 
@@ -591,8 +591,8 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     For X = 1 To 20
 
-        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
-            Print Left$(OL$(X), 11); Tab(13);
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+            Print Left$(offLeaderNames$(X), 11); Tab(13);
 			Print Using "##"; offLeaders!(X, 16);
 			Print Tab(16);
 			Print Using "####"; offLeaders!(X, 2);
@@ -637,8 +637,8 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     For X = 1 To 20
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print Left$(DL$(X), 11); Tab(13);
+        If deffLeaderNames$(X) <> "" And deffLeaderNames$(X) <> "*" And deffLeaderNames$(X) <> " " Then
+            Print Left$(deffLeaderNames$(X), 11); Tab(13);
 			Print Using "##"; defLeaders!(X, 16);
 			Print Tab(16);
 			Print Using "####"; defLeaders!(X, 2);
@@ -673,6 +673,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
 End Sub
 
+
 '----------------------------------------
 '     SavePrintNatLeaders Subroutine
 '----------------------------------------
@@ -686,7 +687,7 @@ End Sub
 '   !1 = Printer (creates file and prints it)
 Sub SavePrintNatLeaders (reportFile$, orgName$, NRT, destination)
 
-    Shared DL$(), OL$(), PR$()
+    Shared deffLeaderNames$(), offLeaderNames$(), PR$()
     Shared defLeaders!(), offLeaders!(), seeZ!()
     Shared seeZ1$(), seeZ2$(), seeZ3$()
     Shared PT#()
@@ -970,8 +971,8 @@ Sub SavePrintNatLeaders (reportFile$, orgName$, NRT, destination)
 
     For X = 1 To 20
 
-        If OL$(X) <> "" And OL$(X) <> "*" And OL$(X) <> " " Then
-            Print #1, Left$(OL$(X), 11); Tab(13);
+        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+            Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
 			Print #1, Using "##"; offLeaders!(X, 16);
 			Print #1, Tab(16);
 			Print #1, Using "####"; offLeaders!(X, 2);
@@ -1005,8 +1006,8 @@ Sub SavePrintNatLeaders (reportFile$, orgName$, NRT, destination)
 
     For X = 1 To 20
 
-        If DL$(X) <> "" And DL$(X) <> "*" And DL$(X) <> " " Then
-            Print #1, Left$(DL$(X), 11); Tab(13);
+        If deffLeaderNames$(X) <> "" And deffLeaderNames$(X) <> "*" And deffLeaderNames$(X) <> " " Then
+            Print #1, Left$(deffLeaderNames$(X), 11); Tab(13);
 			Print #1, Using "##"; defLeaders!(X, 16);
 			Print #1, Tab(16);
 			Print #1, Using "####"; defLeaders!(X, 2);

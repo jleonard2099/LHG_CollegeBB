@@ -324,7 +324,11 @@ Sub ViewPlayer (carviewA$(), careerFile$)
 
     Print
     Color 15
-    Locate 22, 48: Input "ENTER # OF PLAYER TO VIEW"; B9
+
+    Do
+        Locate 22, 48
+        Input "ENTER # OF PLAYER TO VIEW"; B9
+    Loop Until B9 >= 0 And B9 <= 61
 
     Cls
 
@@ -356,6 +360,7 @@ Sub ViewPlayer (carviewA$(), careerFile$)
     VV = ARS!(1, B9, 14) + ARS!(2, B9, 14) + ARS!(3, B9, 14) + ARS!(4, B9, 14) + ARS!(5, B9, 14) + ARS!(6, B9, 14) + ARS!(7, B9, 14) + ARS!(8, B9, 14) + ARS!(9, B9, 14) + ARS!(10, B9, 14) + ARS!(11, B9, 14) + ARS!(12, B9, 14) + ARS!(13, B9, 14) + ARS!(14, B9, 14) + ARS!(15, B9, 14)
 
     For V = 1 To VV
+
         Color 7
 
         'Year
