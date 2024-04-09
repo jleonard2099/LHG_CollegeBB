@@ -1220,7 +1220,9 @@ Sub SortStats (categoryPick)
 
             If values!(Z, SG%) < values!(Z1, SG%) Then
 
-                For I = 0 To 24: Swap values!(Z, I), values!(Z1, I): Next
+                For I = 0 To 24: 
+                    Swap values!(Z, I), values!(Z1, I)
+                Next
 
                 Swap statsW0!(Z), statsW0!(Z1)
                 Swap statsW1!(Z), statsW1!(Z1)

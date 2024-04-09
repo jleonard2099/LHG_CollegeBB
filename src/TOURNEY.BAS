@@ -348,7 +348,7 @@ Sub EditGame_TOURNEY ()
 
     Dim displayPause!
 
-    yearNumber$(0, 3) = "10-01-91"
+    yearNumber$(0, 3) = "03-01-23"
     yearNumber$(0, 2) = "07:30P"
 
     Do

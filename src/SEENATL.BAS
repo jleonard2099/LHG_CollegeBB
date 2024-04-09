@@ -673,6 +673,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
 End Sub
 
+
 '----------------------------------------
 '     SavePrintNatLeaders Subroutine
 '----------------------------------------

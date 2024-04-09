@@ -576,7 +576,521 @@ End Sub
 ' For Utils
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
-'$Include: 'FileTeamSelection.bm'
+'Include: 'FileTeamSelection.bm'
+
+
+'----------------------------------------
+'          ChooseTeam Subroutine
+'----------------------------------------
+'Provides dialog for user to select teams
+' from a previously populated team file.
+'The focus of this routine is to accept
+' a disk ID from the user. It then relies
+' on separate subroutines to assist with
+' actually choosing the team, and also
+' reading in data for the chosen team
+Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
+
+    Shared teamRatings%()
+
+    'Shared teamNames$()
+
+    Shared previousYear$
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        JJ = 7
+
+        Locate 6, 8
+        Color 15, 4
+
+        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
+
+        For II = 1 To JJ
+            Locate 6 + II, 8
+            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
+        Next
+
+        Locate 7 + JJ, 8
+        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER DISK ID: "
+        Print
+        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
+        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Print
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+
+        I$ = GetKeyPress$
+
+        If I$ <> Chr$(27) Then
+
+            If I$ <> Chr$(13) Then
+
+                Locate 7, 27: Print I$;
+
+                NY$ = ""
+
+                Do Until NY$ = Chr$(13)
+
+                    NY$ = GetKeyPress$
+
+                    If NY$ = Chr$(8) And Len(I$) >= 1 Then
+                        col% = Pos(0)
+                        I$ = Left$(I$, (Len(I$) - 1))
+                        Locate , col% - 1
+                        Print " ";
+                        Locate , col% - 1
+                    Else
+                        I$ = I$ + NY$
+                        Print NY$;
+                    End If
+
+                Loop
+
+                I$ = Left$(I$, (Len(I$) - 1))
+
+                If Not (I$ = "" And yearNumber$ <> "") Then
+
+                    yearNumber$ = RTrim$(I$)
+                    Erase teamNames$
+                    numberTeams = 0
+
+                    Cls
+
+                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
+
+                        Locate 10, 8
+                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, PASS)
+                        Exit Sub
+
+                    Else
+
+                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+                        fileLength& = LOF(1)
+
+                        Field #1, 15 As Q$(0)
+
+                        numberTeams = fileLength& / TEAM_SIZE_BYTES
+
+                        For teamIdx = 1 To numberTeams
+                            Get #1, teamIdx
+                            'numberTeams = numberTeams + 1
+                            teamNames$(teamIdx) = Q$(0)
+                            teamIndex%(teamIdx) = teamIdx
+                        Next teamIdx
+
+                        Close #1
+
+                        previousYear$ = yearNumber$
+
+                    End If 'Done checking if file exists
+
+                End If 'Done checking for blank year number
+
+            Else
+
+                yearNumber$ = previousYear$
+
+            End If 'Done checking for ENTER key
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Do
+
+                Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
+
+                If ExitCode% <> 27 And numberTeams <> 0 Then
+
+                    Do
+                        YCoord = Int((80 - Len(teamName$)) / 2)
+                        Locate 2, YCoord
+                        Color teamRatings%(0), teamRatings%(1): Print teamName$
+
+                        Color 15, 4
+                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
+
+                        J$ = GetKeyPress$
+
+                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+
+                End If
+
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+
+        End If 'Done checking for ESC
+
+    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
+
+    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+
+End Sub
+
+
+'----------------------------------------
+'          SelectTeam Subroutine
+'----------------------------------------
+'Presents selection menu of all teams
+' found in the target "disk" file.
+'The focus of this routine is confirming
+' a team choice. It then relies on
+' another subroutine to read in data
+' from the selected team.
+Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
+
+    'Shared teamNames$()
+
+    If numberTeams > 0 Then
+
+        SELECTION% = 1
+        Count% = numberTeams
+        Start% = 1
+        FileFGColor% = 15: FileBGColor% = 4
+        HiLiteFGColor% = 0: HiLiteBGColor% = 7
+        Rows% = 20
+        Columns% = 4
+        Spacing% = 6
+        Row% = 4
+        Column% = 1
+
+        Color , 4
+        Cls
+        Color 14
+        Locate , 33: Print "TEAM SELECTION"
+        Locate 25, 1
+        Color 14: Print "ESC";
+        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-SELECTS TEAM";
+
+        _MouseShow "DEFAULT"
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+        _MouseHide
+
+        If ExitCode% <> 27 Then
+
+            selectedIdx = teamIndex%(SELECTION%)
+
+            'Locate 2, 33
+            'Color 31: Print "LOADING..."
+
+            Call ReadTeam(yearNumber$, teamName$, selectedIdx)
+            Call ReadExtraData(yearNumber$, selectedIdx)
+
+        End If
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'           ReadTeam Subroutine
+'----------------------------------------
+'Reads in all data for the selected team,
+' given it's index in the team file.
+'This routine is highly customized TO
+' the specific game for which it has
+' been included for.
+Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
+
+    Shared defFGPctAdj!, def3FG_Adj, def3FGA_Adj
+    Shared staminaRating!
+
+    Shared leagueRatings%(), teamRatings%()
+
+    Shared playerOff!(), playerRatings!()
+
+    Shared playerNames$()
+
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
+    For I = 0 To 13
+        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
+    Next
+
+    Get #1, teamIdx
+
+    targetTeam$ = RTrim$(Q$(0))
+    staminaRating! = CVI(Q$(1))
+    defFGPctAdj! = CVI(Q$(2))
+    def3FG_Adj = CVI(Q$(3))
+    def3FGA_Adj = CVI(Q$(4))
+
+    'both of these are types of ratings
+    For I = 0 To 4:
+        leagueRatings%(I) = CVI(Q$(I + 5))
+    Next
+
+    For I = 0 To 9:
+        teamRatings%(I) = CVI(Q$(I + 10))
+    Next
+
+    For I = 0 To 13
+
+        'Player name
+        playerNames$(I) = RTrim$(Q$(I * 15 + 20))
+
+        'Player ratings
+        For I1 = 0 To 6
+            playerOff!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
+            playerRatings!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
+        Next
+    Next
+
+    'Close team file
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'        ReadExtraData Subroutine
+'----------------------------------------
+'Reads in extra data for the selected team,
+' given it's index in the team file.
+'This extra file usually includes info.
+' related to stadiums, coaches, etc.
+'This routine is highly customized TO
+' the specific game for which it has
+' been included for.
+Sub ReadExtraData (teamYear$, teamIdx)
+
+    Shared CK, teamAttendance&
+
+    Shared coach$, arenaName$, mascot$
+
+    Shared playerDef!(), playerStats!(), teamStats!()
+
+    Shared position$()
+
+    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
+
+        MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
+        BoxWidth = 20
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, PASS)
+
+    Else
+
+        Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = DATA_SIZE_BYTES
+
+        Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
+        For I = 0 To 13
+            Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
+        Next
+
+        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
+
+        Get #1, teamIdx
+
+        coach$ = RTrim$(Q$(0))
+        arenaName$ = RTrim$(Q$(1))
+        mascot$ = RTrim$(Q$(2))
+        teamAttendance& = CVL(Q$(3))
+
+        For I = 0 To 13
+
+            playerDef!(I) = CVI(Q$(I * 16 + 4))
+            position$(I) = Q$(I * 16 + 5)
+
+            For I1 = 0 To 13
+                playerStats!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
+            Next
+
+        Next
+
+        For I = 0 To 24
+            'For I = 0 To 20
+            teamStats!(I) = CVI(Q$(228 + I))
+        Next
+
+        CK = CVI(Q$(253))
+
+        Close #1
+
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'         nameStatFile$ Function
+'----------------------------------------
+'Helps create uniquely named file to
+' store a team's stats.
+'
+'There are 2 main changes done in order
+' to accomodate this:
+' 1) Replaces invalid characters with _
+' 2) If "ST" is the name, shortens the
+'    prefix. This helps with college
+'    teams (ARKANSAS vs ARKANSAS ST)
+Function nameStatFile$ (teamName$)
+
+    teamPrefix$ = teamName$
+
+    For XX = 4 To 11
+
+        If Mid$(teamPrefix$, XX, 1) = " " Or Mid$(teamPrefix$, XX, 1) = "." Or Mid$(teamPrefix$, XX, 1) = "/" Or Mid$(teamPrefix$, XX, 1) = "_" Then
+            Mid$(teamPrefix$, XX, 1) = "_"
+        End If
+
+    Next XX
+
+    For XX = 12 To 14
+
+        If Mid$(teamPrefix$, XX, 2) = "ST" Then
+            Mid$(teamPrefix$, 9, 1) = "_"
+            Mid$(teamPrefix$, 10, 2) = "ST"
+        End If
+
+    Next XX
+
+    'Length of 'converted' name for file
+    '-- update this if we want to support long files
+    QQ = 8
+
+    For XX = 11 To 4 Step -1
+        If Mid$(teamPrefix$, XX, 1) = "_" Then
+            QQ = XX - 4
+        Else
+            Exit For
+        End If
+    Next XX
+
+    nameStatFile$ = Mid$(teamPrefix$, 4, QQ) + "." + Left$(teamPrefix$, 2)
+
+End Function
+
+
+'----------------------------------------
+'        ChooseFile$ Function
+'----------------------------------------
+'Shows user a file selection menu, based
+' on the file spec parameter passed.
+'
+'fileSpec$ - file specification to load
+'            should include base path.
+'
+' EXAMPLE - C:\Temp\*.tmp
+'
+'fileDesc$ - brief description of the
+'            type of file
+'
+' RETURNS - base name of chosen file
+'            (that is, without extension)
+Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
+
+    descLength = Len(fileDesc$)
+
+    Do
+        'Display list of files...
+
+        Count% = FileCount%(fileSpec$)
+
+        If Count% = 0 Then
+
+            Locate 10, 8
+            zeroCountMsg$ = "NO " + fileDesc$ + " FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU"
+
+            Call CSMsgBox(zeroCountMsg$, 20, PASS)
+            I$ = GetKeyPress$
+            Call CSMsgBox("", 0, PASS)
+
+        Else
+
+            ReDim foundFiles$(0 To Count%)
+
+            'For X = 1 To Count%
+            '8 char's filename + 4 char's (. + ext)
+            'foundFiles$(X) = Space$(12)
+            'Next
+
+            foundFiles$(0) = fileSpec$
+            Call ReadFile(foundFiles$())
+
+            Do
+
+                XCoord = Int((80 - (descLength + 12)) / 2)
+
+                Color , 1
+                Cls
+                Locate , XCoord
+                Color 14
+                Print "SELECT "; fileDesc$; " FILE"
+                Color 15
+                Selection% = 1
+                START% = 1
+                FileFGColor% = 15: FileBGColor% = 1
+                HiLiteFGColor% = 0: HiLiteBGColor% = 7
+                Rows% = 20
+                Columns% = 3
+                Spacing% = 5
+                Row% = 4
+                Column% = 1
+                Locate 25, 1
+                Color 14
+                Print "ENTER";
+                Color 15
+                Print "-SELECTS "; fileDesc$;
+                Color 14
+                Locate , 55
+                Print "HIT ESCAPE KEY TO EXIT";
+                Color 15
+
+                _MouseShow "DEFAULT"
+                MAMenu foundFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+                _MouseHide
+
+                If ExitCode% <> 27 Then
+
+                    Color 15, 1
+                    targetFile$ = RTrim$(foundFiles$(Selection%))
+                    XCoord = Int((80 - Len(targetFile$)) / 2)
+                    Locate 2, XCoord
+                    Print targetFile$
+
+                    Do
+                        Locate , 31
+                        Print "ANY CHANGE? (Y/N)";
+                        I$ = GetKeyPress$
+                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+                    Color 15, 0
+
+                End If
+
+            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
+
+        End If 'Done checking file count
+
+        '...Until we press ESC
+    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
+
+    If ExitCode% <> 27 Then
+        ChooseFile$ = Left$(RTrim$(targetFile$), Len(targetFile$) - 4)
+    End If
+
+End Function
+
+
+
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
 '$Include: 'ALIGN.BAS'
@@ -2062,11 +2576,12 @@ Sub COLHOOP ()
                     'Check for steal
                     GoTo 435
 
+                Else
+                    432 '
+                    pbpString$ = "PASS TO " + players$(P, B1(P, ballCarrier))
+                    Call SELECTPBP
+                    
                 End If
-
-                432 '
-                pbpString$ = "PASS TO " + players$(P, B1(P, ballCarrier))
-                Call SELECTPBP
 
             End If
 
@@ -2384,16 +2899,16 @@ Sub COLHOOP ()
 
     ' ***** CHECK FOR STEALS *****
     435 '
-    'Random player
+    'Random player (0-4)
     P9 = Int(Rnd(1) * 5)
 
-    'Compare random # 1-5 against that player's steal rating
+    'Compare random # 1-4 against that player's steal rating
     '(basically, average steals / game)
     stealRating = plyrOff_GAME!(D, P9, 5)
     RNX = Int(Rnd(1) * 4) + 1
 
-    If RNX <= (stealRating + 1) Then
-
+    If RNX <= (stealRating) Then
+        'Successful steal!
         plyrOff_GAME!(D, B1(D, P9), 18) = plyrOff_GAME!(D, B1(D, P9), 18) + 1
 
         If defCategory(D) <= 0 Or PASS <> 1 Then Call LASTSHOT
@@ -2415,11 +2930,14 @@ Sub COLHOOP ()
 
                 Select Case RN0
                     Case 1 To 3
-                        pbpString$ = players$(D, B1(D, P9)) + " QUICKLY REACHES IN!": Call PBP
+                        pbpString$ = players$(D, B1(D, P9)) + " QUICKLY REACHES IN!"
+                        Call PBP
                     Case 4 To 6
-                        pbpString$ = players$(D, B1(D, P9)) + " SNEAKS IN FROM BEHIND!": Call PBP
+                        pbpString$ = players$(D, B1(D, P9)) + " SNEAKS IN FROM BEHIND!"
+                        Call PBP
                     Case 7 To 10
-                        pbpString$ = players$(D, B1(D, P9)) + " GETS A HAND ON THE BALL!": Call PBP
+                        pbpString$ = players$(D, B1(D, P9)) + " GETS A HAND ON THE BALL!"
+                        Call PBP
                         'No case for 11 to 100
                 End Select
 
@@ -2526,59 +3044,65 @@ Sub COLHOOP ()
                 Case 2
                     If RN1 <= 5 Then GoTo LAYUP
             End Select
-        End If
-
-        If PASS = 1 And defCategory(P) > 0 Then
-            If RN1 <= 33 Or (defCategory(P) <> 3 And RN1 <= 40) Then GoTo LAYUP
+        Else
+            'PASS = 1
+            If defCategory(P) > 0 Then
+                If RN1 <= 33 Or (defCategory(P) <> 3 And RN1 <= 40) Then
+                    GoTo LAYUP
+                End If
+            End If
         End If
 
         GoTo 300
 
+    Else
+
+        'No steal - layup or take a shot!
+        Call d100(RN0)
+
+        Select Case defCategory(D)
+
+            Case 1
+                If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then
+                    GoTo LAYUP
+                End If
+
+                If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then
+                    GoTo GDSHOT
+                End If
+
+            Case 2
+                If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then
+                    GoTo LAYUP
+                End If
+                If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then
+                    GoTo GDSHOT
+                End If
+
+            Case 3
+                If PASS = 1 And RN0 <= 7 Then
+                    GoTo LAYUP
+                End If
+                If PASS = 1 And RN0 <= 14 Then
+                    GoTo GDSHOT
+                End If
+
+            Case 4
+                If PASS = 1 And RN0 <= 15 Then
+                    GoTo LAYUP
+                End If
+                If PASS = 1 And RN0 <= 30 Then
+                    GoTo GDSHOT
+                End If
+
+            Case 5
+                GoTo 432
+
+        End Select
+
     End If
 
-    Call d100(RN0)
 
-    Select Case defCategory(D)
-
-        Case 1
-            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then
-                GoTo LAYUP
-            End If
-
-            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then
-                GoTo GDSHOT
-            End If
-
-        Case 2
-            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then
-                GoTo LAYUP
-            End If
-            If PASS = 1 And RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then
-                GoTo GDSHOT
-            End If
-
-        Case 3
-            If PASS = 1 And RN0 <= 7 Then
-                GoTo LAYUP
-            End If
-            If PASS = 1 And RN0 <= 14 Then
-                GoTo GDSHOT
-            End If
-
-        Case 4
-            If PASS = 1 And RN0 <= 15 Then
-                GoTo LAYUP
-            End If
-            If PASS = 1 And RN0 <= 30 Then
-                GoTo GDSHOT
-            End If
-
-        Case 5
-            GoTo 432
-
-    End Select
-
-    ' --- I think this is by itself and the above are separate??? ---
 
     ' ***BAD SHOT ***
     437 '
@@ -3319,7 +3843,7 @@ Sub COLHOOP ()
                         'FT Success Chance
                         baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
 
-                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then 
+                        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
                             baseShotChance = Int(baseShotChance * .9 + .5)
                         End If
 
@@ -3483,7 +4007,7 @@ Sub COLHOOP ()
                         Print gameTeams$(P)
                         Print "1 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
                     End If
-                    If pbpOpt = 0 Then 
+                    If pbpOpt = 0 Then
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " WILL SHOOT 1"
                         Call PBP
                     End If
@@ -3510,7 +4034,7 @@ Sub COLHOOP ()
                     End If
 
                     baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
-                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then 
+                    If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
                         baseShotChance = Int(baseShotChance * .9 + .5)
                     End If
 
@@ -3519,7 +4043,7 @@ Sub COLHOOP ()
                         'Increase FTM
                         plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
-                        If pbpDelay! <> 0 Then 
+                        If pbpDelay! <> 0 Then
                             pbpString$ = "FREE THROW IS GOOD"
                             Call PBP
                         End If
@@ -3532,7 +4056,7 @@ Sub COLHOOP ()
                     End If
 
                     If shotRoll <= baseShotChance Then
-                        If pbpOpt = 1 Then 
+                        If pbpOpt = 1 Then
                             Call MADEFT(1)
                         End If
                     Else
@@ -4189,7 +4713,7 @@ Sub COLHOOP ()
 
         End If
 
-        If freethrow = 1 And shotRoll > plyrOff_GAME!(P, B1(P, ballCarrier), 1) Then 
+        If freethrow = 1 And shotRoll > plyrOff_GAME!(P, B1(P, ballCarrier), 1) Then
             Exit For
         End If
 
@@ -4197,10 +4721,10 @@ Sub COLHOOP ()
 
     '--- END OF SUBROUTINE
 
-    575 '
+    '575
     If gameClock! <= 0 Then 170
 
-    If shotRoll > baseShotChance Then 
+    If shotRoll > baseShotChance Then
         'Missed Shot
         GoTo 650
     Else
@@ -4257,7 +4781,7 @@ Sub COLHOOP ()
     ballCarrier = fouler
 
     'Check if in BONUS
-    If teamFouls(D) > 6 Then 
+    If teamFouls(D) > 6 Then
 
         GoTo 570
 
@@ -5034,6 +5558,7 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
+    ' *** TEAM FOULS ***
     9065 '
     If intentional = 1 Or (ft10thFoul = 1 And teamFouls(D) >= 10) Then
 
@@ -5162,8 +5687,8 @@ Sub COLHOOP ()
 
     Else
 
-        'Check if in BONUS
-        If teamFouls(D) > 6 Then 
+        'Check if BONUS
+        If teamFouls(D) > 6 Then
         
             GoTo 570
 
@@ -5259,7 +5784,7 @@ Sub COLHOOP ()
                 GoTo 170
             End If
 
-            If shotRoll > baseShotChance Then 
+            If shotRoll > baseShotChance Then
                 'Missed shot
                 GoTo 650
             Else
@@ -5746,7 +6271,6 @@ Function ShotPacing%
 
     Else
 
-        'So far, it seems dividing by 80-(shot clock) is the sweet spot
         Select Case sClockVal
 
             Case 0
@@ -5756,13 +6280,16 @@ Function ShotPacing%
 
             Case 1
                 'There is currently no data I can use to test this!!!
-                paceValue = Int((paceFactor! + 0.5) / 35)
+                '58 = Avg FGA/G for 45-sec shot clock
+                paceValue = Int((paceFactor! + 0.5) / 48)
 
             Case 2
-                paceValue = Int((paceFactor! + 0.5) / 50)
+                '56 = Avg FGA/G for 35-sec shot clock
+                paceValue = Int((paceFactor! + 0.5) / 46)
 
             Case 3
-                paceValue = Int((paceFactor! + 0.5) / 50)
+                '58 = Avg FGA/G for 30-sec shot clock
+                paceValue = Int((paceFactor! + 0.5) / 48)
 
         End Select
 
@@ -10112,13 +10639,13 @@ Sub ZONECHANGE ()
                 defStrat(D) = I1
             
             Case 7
-                defStrat(D) = I1 + 8    '8, 9, 111
+                defStrat(D) = I1 + 8 '8, 9, 111
 
             Case 10
                 defStrat(D) = 3
 
-            Case 12 
-                defStrat(D) = I1 + 10   '10, 11, 13
+            Case 12
+                defStrat(D) = I1 + 10 '10, 11, 13
  
         End Select
 
@@ -10916,7 +11443,8 @@ Sub FOULHARD ()
             If plyrOff_GAME!(I, I1, 22) = 50 Then
                 plyrOff_GAME!(I, I1, 22) = 0
                 plyrOff_GAME!(I, I1, 17) = plyrOff_GAME!(I, I1, 17) * 3
-                dFGPA(I) = dFGPA(I) - 1: MJ = 50
+                dFGPA(I) = dFGPA(I) - 1
+                MJ = 50
             End If
         Next I1
 
@@ -11930,50 +12458,50 @@ Sub COMPUTERCOACH ()
                         
                             Select Case RN0
                             
-                                Case 1 to 60
+                                Case 1 To 60
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
                                     defStrat(P9) = 0
-                                Case 61 to 80
+                                Case 61 To 80
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
                                     defStrat(P9) = 1
-                                Case 81 to 90
+                                Case 81 To 90
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 2
                                     defStrat(P9) = 6
-                                Case 91 to 95 
+                                Case 91 To 95
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
                                     defStrat(P9) = 10
-                                Case 96 to 100
+                                Case 96 To 100
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
                                     defStrat(P9) = 11
                             
                             End Select
                         
-                        Case 10 to 19
+                        Case 10 To 19
 
                             Select Case RN0
 
-                                Case 1 to 75
+                                Case 1 To 75
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
                                     defStrat(P9) = 0
-                                Case 76 to 83 
+                                Case 76 To 83
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 1
                                     defStrat(P9) = 4
-                                Case 84 to 91
+                                Case 84 To 91
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
                                     defStrat(P9) = 1
-                                Case 92 to 96 
+                                Case 92 To 96
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
                                     defStrat(P9) = 10
-                                Case 97 to 100
+                                Case 97 To 100
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
                                     defStrat(P9) = 11
@@ -11984,27 +12512,27 @@ Sub COMPUTERCOACH ()
 
                             Select Case RN0
 
-                                Case 1 to 70
+                                Case 1 To 70
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
                                     defStrat(P9) = 0
-                                Case 71 to 75 
+                                Case 71 To 75
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
                                     defStrat(P9) = 1
-                                Case 76 to 85 
+                                Case 76 To 85
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 0
                                     defStrat(P9) = 2
-                                Case 86 to 93 
+                                Case 86 To 93
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
                                     defStrat(P9) = 5
-                                Case 94 to 97
+                                Case 94 To 97
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 0
                                     defStrat(P9) = 3
-                                Case 98 to 100
+                                Case 98 To 100
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 4
                                     defStrat(P9) = 12
@@ -12013,7 +12541,7 @@ Sub COMPUTERCOACH ()
 
                     End Select
 
-                Case 120 to 599
+                Case 120 To 599
 
                     Select Case scoreDiff
                     
@@ -12021,42 +12549,42 @@ Sub COMPUTERCOACH ()
 
                             Select Case RN0
 
-                                Case 1 to 70 
+                                Case 1 To 70
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
                                     defStrat(P9) = 0
-                                Case 71 to 80
+                                Case 71 To 80
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
                                     defStrat(P9) = 5
-                                Case 81 to 90 
+                                Case 81 To 90
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
                                     defStrat(P9) = 10
-                                Case 91 to 100
+                                Case 91 To 100
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 4
                                     defStrat(P9) = 13
 
                             End Select
                         
-                        Case 11 to 19
+                        Case 11 To 19
 
                             Select Case RN0
 
-                                Case 1 to 70 
+                                Case 1 To 70
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
                                     defStrat(P9) = 0
-                                Case 71 to 80 
+                                Case 71 To 80
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
                                     defStrat(P9) = 5
-                                Case 81 to 90 
+                                Case 81 To 90
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
                                     defStrat(P9) = 12
-                                Case 91 to 100
+                                Case 91 To 100
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
                                     defStrat(P9) = 1
@@ -12067,19 +12595,19 @@ Sub COMPUTERCOACH ()
 
                             Select Case RN0
 
-                                Case 1 to 70
+                                Case 1 To 70
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
                                     defStrat(P9) = 0
-                                Case 71 to 90 
+                                Case 71 To 90
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 0
                                     defStrat(P9) = 2
-                                Case 91 to 96 
+                                Case 91 To 96
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
                                     defStrat(P9) = 1
-                                Case 97 to 100
+                                Case 97 To 100
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
                                     defStrat(P9) = 10
@@ -12088,13 +12616,13 @@ Sub COMPUTERCOACH ()
 
                     End Select
 
-                Case 0 to 119
+                Case 0 To 119
 
                     Select Case scoreDiff
 
                         Case Is >= 11
 
-                            If RN0 <= 50 Then 
+                            If RN0 <= 50 Then
                                 defCoverage(P9) = 1
                                 defCategory(P9) = 4
                                 defStrat(P9) = 11
@@ -12104,7 +12632,7 @@ Sub COMPUTERCOACH ()
                                 defStrat(P9) = 13
                             End If
                         
-                        Case 5 to 10
+                        Case 5 To 10
                             defCoverage(P9) = 3
                             defCategory(P9) = 5
                             defStrat(P9) = 14
@@ -12113,22 +12641,22 @@ Sub COMPUTERCOACH ()
                         
                             Select Case RN0
 
-                                Case 1 to 15
+                                Case 1 To 15
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
                                     defStrat(P9) = 5
 
-                                Case 26 to 50
+                                Case 26 To 50
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 2
                                     defStrat(P9) = 6
 
-                                Case 51 to 75
+                                Case 51 To 75
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
                                     defStrat(P9) = 11
 
-                                Case 76 to 100
+                                Case 76 To 100
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 4
                                     defStrat(P9) = 13
@@ -12142,7 +12670,7 @@ Sub COMPUTERCOACH ()
         End If
 
         If currHalf > 2 Then
-            If RN0 <= 50 Then 
+            If RN0 <= 50 Then
                 defCoverage(P9) = 0
                 defCategory(P9) = 0
                 defStrat(P9) = 0
@@ -12150,7 +12678,7 @@ Sub COMPUTERCOACH ()
                 defCoverage(P9) = 2
                 defCategory(P9) = 0
                 defStrat(P9) = 2
-            End IF
+            End If
         End If
 
     Else
@@ -13666,9 +14194,11 @@ Sub COMPILESTATFILES (teamIdx)
     statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
     statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
+    'Total Rebounds
     statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
     statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
 
+    'Total Turnovers
     statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
     statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
@@ -14185,8 +14715,9 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     For I = 0 To 13
         Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
     Next
+
+    Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
 
     Get #2, I1
 
@@ -14206,11 +14737,12 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     Next
 
-    For I = 0 To 20
+    'For I = 0 To 20
+    For I = 0 To 24
         teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
     Next
 
-    CK = CVI(Q$(249))
+    CK = CVI(Q$(253))
 
     Close #2
 
@@ -14230,6 +14762,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
             Next
         Next
 
+        'For I = 0 To 24
         For I = 0 To 20:
             teamStats_GAME(gameIdx, I) = 0
         Next

@@ -531,7 +531,7 @@ Sub COLHOOP ()
         Call SETSTAMINA
 
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
-            Call COMCOACH
+            Call ComputerSubs
         Else
             Call LINEUPS
             Call FOULSAFE
@@ -702,14 +702,14 @@ Sub COLHOOP ()
 
         If playerMode = 1 Then
             P9 = compTeam
-            Call COMCOACH
+            Call ComputerSubs
         End If
 
         If playerMode = 2 Then
             P9 = 0
-            Call COMCOACH
+            Call ComputerSubs
             P9 = 1
-            Call COMCOACH
+            Call ComputerSubs
         End If
 
     End If

@@ -123,7 +123,7 @@ Dim CK!(1)
 Dim dFGPctAdj_DRAFT!(1)
 
 Dim lgRat_DRAFT(1, 4), avgRat_DRAFT(1, 13, 12)
-Dim teamRat_DRAFT(1, 9), teamStats_DRAFT(1, 20)
+Dim teamRat_DRAFT(1, 9), teamStats_DRAFT(1, 24)
 
 Dim plyrDef_DRAFT!(1, 13), plyrOff_DRAFT!(1, 13, 6)
 Dim plyrRat_DRAFT!(1, 13, 6), plyrStat_DRAFT!(1, 13, 13)
@@ -198,10 +198,13 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 '----------------------------------------
 ' Used in TINPUT routine
 '----------------------------------------
-Dim nbrGmsPlayed, oppAsst, opp3FGA, opp3FGAPct, oppFGPct
-Dim oppFouls, oppFTA, oppFTPct, oppReb, oppSteal, oppTO
-Dim tmFouls, tmFGA, oppFGA, tmFGPct, tmFTA
-Dim tmFTPct, tmReb, tmAsst, tmSteal, tmTO
+Dim nbrGmsPlayed!, opp3FGA!, opp3FGAPct!, oppAsst!, oppBlocks!
+Dim oppFGPct!, oppFouls!, oppFGA!, oppFTA!, oppFTPct!
+Dim oppReb!, oppSteal!, oppTO!
+Dim tm3FGA!, tm3FGAPct!, tmAsst!, tmBlocks!, tmFouls!
+Dim tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
+Dim tmReb!, tmSteal!, tmTO!
+
 
 '----------------------------------------
 ' Used in ADDTOURN / BRACKET routines
@@ -246,8 +249,6 @@ Dim avgAttendance&(1)
 '-- I doubt these is needed, but that's TBD
 Dim Shared Q, I, J, RN0
 
-Dim Shared test1, test2
-
 Dim Shared autoPlay, ballCarrier, C1, currHalf
 Dim Shared DY, compTeam, D, endGame, endAllGames
 'Dim Shared fouler, desigFouler
@@ -272,8 +273,6 @@ Dim Shared shotChance!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$, YN$
-
-'--- RESUME COMPARISON HERE
 
 Dim Shared CZ%(1), teamAdj(0 To 1, 0 To 8)
 Dim Shared G9%(1), homeCtFactor(1, 6), NG%(18), NG1%(18)
