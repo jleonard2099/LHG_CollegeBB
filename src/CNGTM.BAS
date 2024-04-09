@@ -1020,4 +1020,3 @@ Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
     Call CSMsgBox("", 0, PASS)
 
 End Sub
-

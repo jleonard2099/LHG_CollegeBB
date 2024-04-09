@@ -882,4 +882,3 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     End If
 
 End Sub
-

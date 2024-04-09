@@ -1547,5 +1547,3 @@ Sub GetListLength (printOrView, listLength, maxItems)
     End If
 
 End Sub
-
-

@@ -1438,4 +1438,3 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
     teamAttendance& = 0
 
 End Sub
-

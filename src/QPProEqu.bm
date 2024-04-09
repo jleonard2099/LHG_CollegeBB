@@ -1693,5 +1693,3 @@ Sub Lts2Menu (Item$(), Prompt$(), Choice%, FGColor%, BGColor%)
     Erase Break%, ScrBuf%
 
 End Sub
-
-
