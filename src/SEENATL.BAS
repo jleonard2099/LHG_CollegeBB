@@ -92,35 +92,39 @@ Sub StatOptions_Nat (NRT, leagueFile$)
         Cls
         Call TITLE_STATS
 
-        Call MenuBox (8, 8, 61, 5, 15, 1)
+        Call MenuBox(8, 20, 40, 5, 15, 1)
 
         Do
 
-            Locate 10, 15
+            Locate 10
             Color 7, 1
 
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "S";: Color 7: Print "CREEN"
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "P";: Color 7: Print "RINTER"
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "F";: Color 7: Print "ILE"
+            Locate , 30: Print "SEND TO ";
+            Color 15: Print "F";
+            Color 7: Print "ILE"
+            Locate , 30: Print "SEND TO ";
+            Color 15: Print "P";
+            Color 7: Print "RINTER"
+            Locate , 30: Print "SEND TO ";
+            Color 15: Print "S";
+            Color 7: Print "CREEN"
             I$ = GetKeyPress$
 
             Color 14, 0
 
-        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
+        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S" Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) Then
 
             Select Case UCase$(I$)
 
                 Case "F":
-                    Call ReportFilePrompt_Nat(SF$)
-                    Call SavePrintNatLeaders(reportFile$, leagueFile$, NRT, 1)
+                    If userFile$ <> "" Then
+                        Call LeaderStatsNat_Report(leagueFile$, NRT, 0, userFile$)
+                    End If
 
                 Case "P":
-                    Call SavePrintNatLeaders(reportFile$, leagueFile$, NRT, 0)
+                    Call LeaderStatsNat_Report(leagueFile$, NRT, 1, userFile$)
 
                 Case "S":
                     Call LeaderStatsNat_Screen(leagueFile$, NRT)
@@ -135,7 +139,7 @@ Sub StatOptions_Nat (NRT, leagueFile$)
             Do
                 Color 15, 1
                 Locate 8
-                U$ = "VIEW LEAGUE STATS AGAIN? (Y/N)"
+                U$ = "VIEW ORGANIZATION STATS AGAIN? (Y/N)"
                 Locate , (80 - Len(U$)) / 2
                 Print U$
                 Color 15, 0
@@ -149,41 +153,6 @@ Sub StatOptions_Nat (NRT, leagueFile$)
 
 End Sub
 
-
-'----------------------------------------
-'     ReportFilePrompt_Nat Subroutine
-'----------------------------------------
-'This subroutine prompts the user for
-'the name of the report file to be saved
-Sub ReportFilePrompt_Nat (reportFile$)
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Call MenuBox (6, 8, 61, 7, 15, 1)
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-        Locate 7, 37: Input reportFile$
-
-        If reportFile$ <> "" Then
-            Do
-                Locate 13, 12: Print "ANY CHANGE? (Y/N) "
-                F$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-        End If
-
-    Loop Until UCase$(F$) = "N" Or reportFile$ <> ""
-
-    Color 15, 0
-
-End Sub
 
 
 '----------------------------------------
@@ -675,31 +644,23 @@ End Sub
 
 
 '----------------------------------------
-'     SavePrintNatLeaders Subroutine
+'     LeaderStatsNat_Report Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
 'This file can then be looped through to 
 'send to the default printer
-
-'Destination
-'   1 = File
-'   !1 = Printer (creates file and prints it)
-Sub SavePrintNatLeaders (reportFile$, orgName$, NRT, destination)
+Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     Shared deffLeaderNames$(), offLeaderNames$(), PR$()
     Shared defLeaders!(), offLeaders!(), seeZ!()
     Shared seeZ1$(), seeZ2$(), seeZ3$()
     Shared PT#()
 
-    If destination <> 1 Then
-        Open "REPORT" For Output As #1
-    Else
-        Open reportFile$ + ".RPT" For Output As #1
-    End If
+	Color 15, 0
+	Cls
 
-    Color 0, 15
-    Cls
+	Open destFile$ For Output As #1
 
     Print #1, orgName$ + " OVERALL RANKINGS"
     Print #1, "                    RATING     W    L    STRENGTH OF SCHEDULE"
@@ -1035,19 +996,21 @@ Sub SavePrintNatLeaders (reportFile$, orgName$, NRT, destination)
 
     Close #1
 
-    If destination <> 1 Then
+ 	If printDest = 1 Then
 
-        Open "REPORT" For Input As #2
+		Open destFile$ For Input As #2
 
-        Do While Not EOF(2)
-            Line Input #2, X$
-            LPrint X$
-        Loop
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
 
-        LPrint Chr$(12)
+		Close #2
 
-        Close #2
+		LPrint Chr$(12)
 
-    End If
+		Kill destFile$
+
+	End If
 
 End Sub

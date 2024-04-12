@@ -73,10 +73,10 @@ Sub HD2HDCON ()
                 Locate 10
                 Color 7, 1
 
-                Locate , 30: Print "STATS TO ";
+                Locate , 30: Print "SEND TO ";
                 Color 15: Print "S";
                 Color 7: Print "CREEN"
-                Locate , 30: Print "STATS TO ";
+                Locate , 30: Print "SEND TO ";
                 Color 15: Print "P";
                 Color 7: Print "RINTER"
 

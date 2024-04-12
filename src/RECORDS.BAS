@@ -54,7 +54,45 @@ Sub GameRecords (menuChoice)
                 Call ViewGameRecords
 
             Case 2: 
-                Call PrintGameRecords
+                Color 15, 0
+                Cls
+
+                Call MenuBox(8, 20, 40, 4, 15, 1)
+
+                Do
+
+                    Locate 10
+                    Color 7, 1
+
+                    Locate , 30: Print "SEND TO ";
+                    Color 15: Print "F";
+                    Color 7: Print "ILE"
+                    Locate , 30: Print "SEND TO ";
+                    Color 15: Print "P";
+                    Color 7: Print "RINTER"
+
+                    I$ = GetKeyPress$
+
+                    Color 14, 0
+
+                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or I$ = Chr$(27)
+
+                If I$ <> Chr$(27) Then
+
+                    Select Case UCase$(I$)
+
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")			
+                            If userFile$ <> "" Then
+                                Call PrintGameRecords(0, userFile$)
+                            End If
+
+                        Case "P"
+                            Call PrintGameRecords(1, "RECORDS")
+
+                    End Select
+                    
+                End If
 
         End Select
 
@@ -1081,9 +1119,10 @@ End Sub
 '----------------------------------------
 '      PrintGameRecords Subroutine
 '----------------------------------------
-'This subroutine formats and prints the 
-'records on the default printer
-Sub PrintGameRecords ()
+'This subroutine facilitates formatting
+'of the record data to a file, that is
+'subsequently either saved, or printed.
+Sub PrintGameRecords (printDest, destFile$)
 
     Shared indRecords!(), teamRecords!()
     Shared indRecDesc$(), teamRecDesc$()
@@ -1097,8 +1136,11 @@ Sub PrintGameRecords ()
     QTR$(5) = " (3RD OT)"
     QTR$(6) = " (4TH OT)"
 
-    'PRINT ROUTINE
-    Open "RECORDS" For Output As #1
+	Color 15, 0
+	Cls
+
+	Open destFile$ For Output As #1
+
     Print #1, "                            INDIVIDUAL RECORDS"
     Print #1,
     
@@ -1277,7 +1319,6 @@ Sub PrintGameRecords ()
     Else
         Print #1, indRecords!(29, 0); "- "; indRecDesc$(29, 0); ", "; indRecDesc$(29, 1) + " " + indRecDesc$(29, 2) + " " + indRecDesc$(29, 3) + ", " + indRecDesc$(29, 4); HALF$(indRecords!(29, 2))
     End If
-    Print #1,
     Print #1,
     
     Print #1, "MOST REBOUNDS, GAME"
@@ -1488,17 +1529,25 @@ Sub PrintGameRecords ()
     Print #1,
 
     Print #1, "HIGHEST FIELD GOAL PERCENTAGE, GAME"
-    Print #1, Using ".### "; teamRecords!(30, 0);: Print #1, "- "; teamRecDesc$(30, 0) + " " + teamRecDesc$(30, 1) + " " + teamRecDesc$(30, 2) + ", " + teamRecDesc$(30, 3);: Print #1, Using "###/###"; teamRecords!(30, 1); teamRecords!(30, 2)
+    Print #1, Using ".### "; teamRecords!(30, 0);
+    Print #1, "- "; teamRecDesc$(30, 0) + " " + teamRecDesc$(30, 1) + " " + teamRecDesc$(30, 2) + ", " + teamRecDesc$(30, 3);
+    Print #1, Using "###/###"; teamRecords!(30, 1); teamRecords!(30, 2)
     Print #1,
 
     Print #1, "LOWEST FIELD GOAL PERCENTAGE, GAME"
-    Print #1, Using ".### "; teamRecords!(31, 0);: Print #1, "- "; teamRecDesc$(31, 0) + " " + teamRecDesc$(31, 1) + " " + teamRecDesc$(31, 2) + ", " + teamRecDesc$(31, 3);: Print #1, Using "###/###"; teamRecords!(31, 1); teamRecords!(31, 2)
+    Print #1, Using ".### "; teamRecords!(31, 0);
+    Print #1, "- "; teamRecDesc$(31, 0) + " " + teamRecDesc$(31, 1) + " " + teamRecDesc$(31, 2) + ", " + teamRecDesc$(31, 3);
+    Print #1, Using "###/###"; teamRecords!(31, 1); teamRecords!(31, 2)
     Print #1,
 
     Print #1, "HIGHEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
-    Print #1, Using ".### "; teamRecords!(32, 0);: Print #1, "- "; teamRecDesc$(32, 0);
-    Print #1, Using " (.###) "; teamRecords!(32, 1);: Print #1, teamRecDesc$(32, 1) + " ";
-    Print #1, teamRecDesc$(32, 2);: Print #1, Using " (.###)"; teamRecords!(32, 2);: Print #1, ", " + teamRecDesc$(32, 3)
+    Print #1, Using ".### "; teamRecords!(32, 0);
+    Print #1, "- "; teamRecDesc$(32, 0);
+    Print #1, Using " (.###) "; teamRecords!(32, 1);
+    Print #1, teamRecDesc$(32, 1) + " ";
+    Print #1, teamRecDesc$(32, 2);
+    Print #1, Using " (.###)"; teamRecords!(32, 2);
+    Print #1, ", " + teamRecDesc$(32, 3)
     Print #1,
 
     Print #1, "LOWEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
@@ -1626,7 +1675,8 @@ Sub PrintGameRecords ()
     Print #1,
 
     Print #1, "LOWEST FREE THROW PERCENTAGE, GAME"
-    Print #1, Using ".### "; teamRecords!(61, 0);: Print #1, "- "; teamRecDesc$(61, 0) + " " + teamRecDesc$(61, 1) + " " + teamRecDesc$(61, 2) + ", " + teamRecDesc$(61, 3);: Print #1, Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
+    Print #1, Using ".### "; teamRecords!(61, 0);: Print #1, "- "; teamRecDesc$(61, 0) + " " + teamRecDesc$(61, 1) + " " + teamRecDesc$(61, 2) + ", " + teamRecDesc$(61, 3);
+    Print #1, Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
     Print #1,
 
     Print #1, "HIGHEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
@@ -1844,15 +1894,21 @@ Sub PrintGameRecords ()
 
     Close #1
 
-    Open "RECORDS" For Input As #2
-    
-    Do While Not EOF(2)
-        Line Input #2, X$
-        LPrint X$
-    Loop
+	If printDest = 1 Then
 
-    LPrint Chr$(12)
-    
-    Close #2
+		Open destFile$ For Input As #2
+
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
+
+		Close #2
+
+		LPrint Chr$(12)
+
+        Kill destFile$
+	
+    End If
 
 END SUB

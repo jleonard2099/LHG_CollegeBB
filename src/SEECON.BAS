@@ -84,45 +84,50 @@ End Sub
 'This subroutine gives the user various
 'options for viewing the previously loaded
 'stats, and then calls routines for each
-Sub StatOptions_Con (FF$, D1$, D2$)
+Sub StatOptions_Con (confName$, D1$, D2$)
 
     Do
 
         Cls
         Call TITLE_STATS
 
-        Call MenuBox(8, 8, 61, 5, 15, 1)
+        Call MenuBox(8, 20, 40, 5, 15, 1)
 
         Do
 
-            Locate 10, 15
+            Locate 10
             Color 7, 1
 
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "S";: Color 7: Print "CREEN"
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "P";: Color 7: Print "RINTER"
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "F";: Color 7: Print "ILE"
+            Locate , 30: Print "SEND TO ";
+            Color 15: Print "F";
+            Color 7: Print "ILE"
+            Locate , 30: Print "SEND TO ";
+            Color 15: Print "P";
+            Color 7: Print "RINTER"
+            Locate , 30: Print "SEND TO ";
+            Color 15: Print "S";
+            Color 7: Print "CREEN"
             I$ = GetKeyPress$
 
             Color 14, 0
 
-        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
+        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S" Or I$ = Chr$(27)
 
         If I$ <> Chr$(27) Then
 
             Select Case UCase$(I$)
 
                 Case "F"
-                    Call ReportFilePrompt_Con(SF$)
-                    Call SavePrintConLeaders(FF$, D1$, D2$, SF$, 1)
+                    userFile$ = _SAVEFILEDIALOG$("Save Conference Report",_CWD$ + "\REPORT","*.txt","Text File")
+                    If userFile$ <> "" Then
+                        Call LeaderStatsCon_Report(confName$, D1$, D2$, 0, userFile$)
+                    End If
 
                 Case "P"
-                    Call SavePrintConLeaders(FF$, D1$, D2$, SF$, 0)
+                    Call LeaderStatsCon_Report(confName$, D1$, D2$, 1, userFile$)
 
                 Case "S"
-                    Call LeaderStatsCon_Screen(FF$, D1$, D2$)
+                    Call LeaderStatsCon_Screen(confName$, D1$, D2$)
 
             End Select
 
@@ -134,7 +139,7 @@ Sub StatOptions_Con (FF$, D1$, D2$)
             Do
                 Color 15, 1
                 Locate 8
-                U$ = "VIEW LEAGUE STATS AGAIN? (Y/N)"
+                U$ = "VIEW CONFERENCE STATS AGAIN? (Y/N)"
                 Locate , (80 - Len(U$)) / 2
                 Print U$
                 Color 15, 0
@@ -149,50 +154,12 @@ End Sub
 
 
 '----------------------------------------
-'     ReportFilePrompt_Con Subroutine
-'----------------------------------------
-'This subroutine prompts the user for
-'the name of the report file to be saved
-Sub ReportFilePrompt_Con (reportFile$)
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Call MenuBox(6, 8, 61, 7, 15, 1)
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
-        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
-        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
-        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
-        Locate 7, 37: Input reportFile$
-
-        If reportFile$ <> "" Then
-
-            Do
-                Locate 13, 12: Print "ANY CHANGE? (Y/N) "
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-        End If
-
-    Loop Until UCase$(I$) = "N" Or reportFile$ <> ""
-
-    Color 15, 0
-
-End Sub
-
-
-'----------------------------------------
 '       LeaderStatsCon_Screen Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to the end
 'user display.
-Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
+Sub LeaderStatsCon_Screen (confName$, D1$, D2$)
 
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
@@ -205,8 +172,8 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Cls
 
     Color 12
-    Locate , Int((80 - Len(FF$) - 11) / 2)
-    Print FF$ + " CONFERENCE"
+    Locate , Int((80 - Len(confName$) - 11) / 2)
+    Print confName$ + " CONFERENCE"
 
     Color 2
     If D1$ <> "" Then Print RTrim$(D1$); " DIVISION"
@@ -254,8 +221,8 @@ Sub LeaderStatsCon_Screen (FF$, D1$, D2$)
     Cls
 
     Color 12
-    Locate , Int((80 - Len(FF$) - 11) / 2)
-    Print FF$ + " CONFERENCE"
+    Locate , Int((80 - Len(confName$) - 11) / 2)
+    Print confName$ + " CONFERENCE"
 
     Color 2
     If D2$ <> "" Then Print RTrim$(D2$); " DIVISION"
@@ -730,17 +697,13 @@ End Sub
 
 
 '----------------------------------------
-'     SavePrintConLeaders Subroutine
+'     LeaderStatsCon_Report Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
 'This file can then be looped through to
 'send to the default printer
-
-'Destination
-'   1 = File
-'   !1 = Printer (creates file and prints it)
-Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
+Sub LeaderStatsCon_Report (confName$, D1$, D2$, printDest, destFile$)
 
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
@@ -750,16 +713,12 @@ Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
-    If destination <> 1 Then
-        Open "REPORT" For Output As #1
-    Else
-        Open reportFile$ + ".RPT" For Output As #1
-    End If
+	Color 15, 0
+	Cls
 
-    Color 0, 15
-    Cls
+	Open destFile$ For Output As #1
 
-    Print #1, FF$ + " CONFERENCE"
+    Print #1, confName$ + " CONFERENCE"
 
     If D1$ <> "" Then Print #1, D1$; " DIVISION"
     Print #1, "                 CONFERENCE                         FULL SEASON"
@@ -789,7 +748,7 @@ Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
     Next P
 
     Print #1,
-    Print #1, FF$ + " CONFERENCE"
+    Print #1, confName$ + " CONFERENCE"
 
     If D2$ <> "" Then Print #1, D2$; " DIVISION"
 
@@ -1143,20 +1102,22 @@ Sub SavePrintConLeaders (FF$, D1$, D2$, reportFile$, destination)
 
     Close #1
 
-    If destination <> 1 Then
+	If printDest = 1 Then
 
-        Open "REPORT" For Input As #2
+		Open destFile$ For Input As #2
 
-        Do While Not EOF(2)
-            Line Input #2, X$
-            LPrint X$
-        Loop
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
 
-        Close #2
+		Close #2
 
-        LPrint Chr$(12)
+		LPrint Chr$(12)
 
-    End If
+		Kill destFile$
+
+	End If
 
 End Sub
 

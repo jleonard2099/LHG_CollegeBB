@@ -529,14 +529,27 @@ End Sub
 
 
 '----------------------------------------
+'         Rolld100 Subroutine
+'----------------------------------------
+'This subroutine assigns a random number
+'between 1 and 100 to the variable that
+'it is called with
+Sub Rolld100 (randNumVar)
+
+    randNumVar = Int(Rnd(1) * 100) + 1
+
+End Sub
+
+
+'----------------------------------------
 '            d100 Subroutine
 '----------------------------------------
 'This subroutine assigns a random number
 'between 1 and 100 to the variable that
 'it is called with
-Sub d100 (randNumVar)
+Function d100% ()
 
-    randNumVar = Int(Rnd(1) * 100) + 1
+    d100% = Int(Rnd(1) * 100) + 1
 
 End Sub
 
@@ -775,7 +788,7 @@ Sub MAKEPBP ()
 
     If pbpDelay! <> 0 Then
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         'PT% = pbpType
         Select Case PT%
@@ -1690,7 +1703,7 @@ Sub MAKEPBP ()
                     Case 10
                         DK% = 0
 
-                        Call d100(RN1)
+                        Call Rolld100(RN1)
 
                         Select Case RN1
 
@@ -2478,7 +2491,7 @@ Sub TICKER ()
         Color 14, 0
         Cls
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If halfTime = 1 Then
 
@@ -3311,7 +3324,7 @@ End Sub
 'the person performing a layup
 Sub WHOLAY ()
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     Select Case RN0
 
@@ -5732,7 +5745,7 @@ Sub THREEFT ()
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     Select Case F3
 
@@ -8639,7 +8652,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
                 If rosterStatus(gameIdx, I) = -1 Then rosterStatus(gameIdx, I) = 0
 
-                Call d100(RN0)
+                Call Rolld100(RN0)
 
                 If UCase$(players$(gameIdx, I)) = "XXX" Then
                     CNTX% = CNTX% + 1

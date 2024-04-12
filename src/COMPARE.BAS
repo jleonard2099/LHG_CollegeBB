@@ -19,38 +19,42 @@ Sub COMPARE ()
 
     Dim posn$(0 To 13)
 
-    teamNbr = 0
-    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-    statFile$ = nameStatFile$(team$)
+    Do
 
-    If Not _FileExists(diskPaths$(1) + statFile$) Then
-        MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
-        BoxWidth = 24
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-    Else
+        teamNbr = 0
+        Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
-        Open diskPaths$(1) + statFile$ For Input As #1
+        If teamNbr <> 0 Then
+        
+            haveStats = 1
 
-        Input #1, statTeam$
+            statFile$ = nameStatFile$(team$)
+        
+            If Not _FileExists(diskPaths$(1) + statFile$) Then
+                MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+                BoxWidth = 24
+                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Call CSMsgBox(MsgText$, BoxWidth, PASS)
+                I$ = GetKeyPress$
+                Call CSMsgBox("", 0, PASS)
+            Else
 
-        For I = 0 To 13:
+                Open diskPaths$(1) + statFile$ For Input As #1
 
-            Input #1, statPlyrNames$(I)
+                Input #1, statTeam$
 
-            For J = 0 To 13
-                Input #1, statsA!(I, J)
-            Next
+                For I = 0 To 13:
 
-            Input #1, statsW0!(I)
+                    Input #1, statPlyrNames$(I)
 
-            Input #1, statsW1!(I)
+                    For J = 0 To 13
+                        Input #1, statsA!(I, J)
+                    Next
 
-        Next
+                    Input #1, statsW0!(I)
 
+<<<<<<< Updated upstream
         For L = 0 To 15:
             Input #1, statsZ!(L)
         Next
@@ -58,23 +62,29 @@ Sub COMPARE ()
         For L = 0 To 15:
             Input #1, statsZ1!(L)
         Next
+=======
+                    Input #1, statsW1!(I)
 
-        Close #1
+                Next
+>>>>>>> Stashed changes
 
-        For I = 0 To 13
-            If position$(I) = "F " Then posn$(I) = "FORWARD"
-            If position$(I) = "C " Then posn$(I) = "CENTER"
-            If position$(I) = "G " Then posn$(I) = "GUARD"
-            If position$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
-            If position$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
-            If position$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
-            If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
-        Next
+                For L = 0 To 15: Input #1, statsZ!(L): Next
 
-        Open diskPaths$(1) + statFile$ + "S" For Input As #2
+                For L = 0 To 15: Input #1, statsZ1!(L): Next
 
-        Input #2, numberGames
+                Close #1
 
+                For I = 0 To 13
+                    If position$(I) = "F " Then posn$(I) = "FORWARD"
+                    If position$(I) = "C " Then posn$(I) = "CENTER"
+                    If position$(I) = "G " Then posn$(I) = "GUARD"
+                    If position$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
+                    If position$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
+                    If position$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
+                    If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
+                Next
+
+<<<<<<< Updated upstream
         For J = 1 To MAX_SCHED_STATS:
             Input #2, teamScore(J)
         Next
@@ -90,9 +100,25 @@ Sub COMPARE ()
         For J = 1 To MAX_SCHED_STATS:
             Input #2, locIndicator$(J)
         Next
+=======
+                Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
-        Close #2
+                Input #2, numberGames
 
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, teamScore(J)
+                Next
+
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, oppName$(J)
+                Next
+>>>>>>> Stashed changes
+
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, oppScore(J)
+                Next
+
+<<<<<<< Updated upstream
         replayLosses = 0
         replayWins = 0
 
@@ -104,43 +130,77 @@ Sub COMPARE ()
                 replayWins = replayWins + 1
             End If
         Next
+=======
+                For J = 1 To MAX_SCHED_STATS: 
+                    Input #2, locIndicator$(J)
+                Next
 
-        Color 15, 0
-        Cls
+                Close #2
+>>>>>>> Stashed changes
 
-        Call box0(8, 8, 13, 70, 2, 15, 1)
+                replayLosses% = 0
+                replayWins% = 0
 
-        Do
-            Locate 10
-            Color 7, 1
+                For I = 1 To numberGames
+                    If teamScore(I) < oppScore(I) Then 
+                        replayLosses% = replayLosses% + 1
+                    End If
+                    If teamScore(I) > oppScore(I) Then 
+                        replayWins% = replayWins% + 1
+                    End If
+                Next
 
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "S";
-            Color 7: Print "CREEN"
-            Locate , 30: Print "STATS TO ";
-            Color 15: Print "P";
-            Color 7: Print "RINTER"
-            J$ = GetKeyPress$
+                Color 15, 0
+                Cls
 
-        Loop Until UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
+                Call MenuBox(8, 20, 40, 5, 15, 1)
 
-        backToMenu = 0
+                Do
 
-        If J$ <> Chr$(27) Then
+                    Locate 10
+                    Color 7, 1
 
-            Select Case UCase$(J$)
+                    Locate , 30: Print "SEND TO ";
+                    Color 15: Print "F";
+                    Color 7: Print "ILE"
+                    Locate , 30: Print "SEND TO ";
+                    Color 15: Print "P";
+                    Color 7: Print "RINTER"
+                    Locate , 30: Print "SEND TO ";
+                    Color 15: Print "S";
+                    Color 7: Print "CREEN"
 
-                Case "P":
-                    Call AllComparisons_Printer(team$, posn$())
+                    J$ = GetKeyPress$
 
-                Case "S":
-                    Call Comparisons_Screen(team$, backToMenu, posn$())
+                Loop Until UCase$(J$) = "F" Or UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
 
-            End Select
+                backToMenu = 0
 
-        End If
+                If J$ <> Chr$(27) Then
 
-    End If 'Done checking for ESC
+                    Select Case UCase$(J$)
+
+                        Case "F":
+                            userFile$ = _SAVEFILEDIALOG$("Save Comparison Report",_CWD$ + "\Comparison","*.txt","Text File")
+                            If userFile$ <> "" Then
+                                Call Comparisons_Report(0, userFile$, team$, posn$())
+                            End If
+
+                        Case "P":
+                            Call Comparisons_Report(1, "COMPARISON", team$, posn$())
+
+                        Case "S":
+                            Call Comparisons_Screen(team$, backToMenu, posn$())
+
+                    End Select
+
+                End If
+                
+            End If 'Done checking file count
+
+        End If 'Done checking for ESC
+
+    Loop Until backToMenu = 0 Or J$ = Chr$(27) Or teamNbr = 0 Or haveStats = 0
 
 End Sub
 
@@ -303,7 +363,11 @@ Sub TeamComparisons_Screen (teamName$)
     teamLen% = Len(team$)
 
     Color 11
+<<<<<<< Updated upstream
     Locate 11, Int((80 - teamLen%) / 2): Print teamName$
+=======
+    Locate 11, 33: Print teamName$
+>>>>>>> Stashed changes
 
     Color 15, 2
     Locate 5, 30: Print "              W - L ";
@@ -913,12 +977,12 @@ End Sub
 
 
 '----------------------------------------
-'   AllComparisons_Printer Subroutine
+'   Comparisons_Report Subroutine
 '----------------------------------------
 'This subroutine focuses on the formatting
 'of team stats for comparison. The stats
 'are output to the end user display
-Sub AllComparisons_Printer (teamName$, posn$())
+Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
     Shared replayLosses, replayWins
 
@@ -931,12 +995,14 @@ Sub AllComparisons_Printer (teamName$, posn$())
 
     Shared statPlyrNames$()
 
-    Open "REPORT" For Output As #1
-
+    Color 15, 0
+    Cls
 
     '--------------------
     '  Team Comparisons
     '--------------------
+
+    Open destFile$ For Output As #1
 
     Print #1,
     Print #1, Tab(33); teamName$
@@ -1530,20 +1596,22 @@ Sub AllComparisons_Printer (teamName$, posn$())
 
     Close #1
 
+    If printDest = 1 Then
 
-    'Print report from the file
-    Open "REPORT" For Input As #2
+        Open destFile$ For Input As #2
 
-    Do While Not EOF(2)
-        Line Input #2, X$
-        LPrint X$
-    Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-    Close #2
+        Close #2
 
-    LPrint Chr$(12)
+        LPrint Chr$(12)
 
-    Kill "REPORT"
+        Kill destFile$
+
+    End If
 
 End Sub
 

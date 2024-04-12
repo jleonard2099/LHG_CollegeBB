@@ -249,9 +249,12 @@ Do
 Loop Until Selection% = 8
 
 System
+<<<<<<< Updated upstream
 
 End
 
+=======
+>>>>>>> Stashed changes
 
 
 '----------------------------------------
@@ -293,7 +296,7 @@ Sub Main_Menu (menuSelection%)
         menuChoices$(6) = "TOURNAMENT PLAY                 "
         'menuChoices$(7) = "HARD DRIVE INSTALLATION         "
         menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-        menuChoices$(8) = "EXIT TO DOS                     "
+        menuChoices$(8) = "EXIT PROGRAM                    "
 
         Selection% = 1
         Count% = 8
@@ -501,8 +504,8 @@ Sub Leaders_Menu ()
         menuChoices$(10) = "VIEW / PRINT REPORTS      "
         menuChoices$(11) = "RECORD BOOKS              "
         menuChoices$(12) = "DELETE ORGANIZATION STATS "
-        menuChoices$(13) = "RETURN TO COURTSIDE MENU  "
-        menuChoices$(14) = "EXIT TO DOS               "
+        menuChoices$(13) = "RETURN TO MAIN MENU       "
+        menuChoices$(14) = "EXIT PROGRAM              "
         Selection% = 1
         Count% = 14
         Start% = 1
@@ -551,7 +554,6 @@ Sub Leaders_Menu ()
                 Case 10: Call SEENATL
                 Case 11: Call SeasonRecords
                 Case 12: Call BLANKORG
-                Case 13 Or 14: Cls
 
             End Select
 
@@ -560,7 +562,6 @@ Sub Leaders_Menu ()
     Loop Until Selection% >= 13 Or ExitCode% = 27
 
     If Selection% = 14 Then
-        End
         System
     End If
 
@@ -575,6 +576,7 @@ End Sub
 
 ' For Utils
 '$Include: 'BoxRoutines.bm'
+<<<<<<< Updated upstream
 '$Include: 'ConfigureDrives.bm'
 'Include: 'FileTeamSelection.bm'
 
@@ -1091,6 +1093,9 @@ End Function
 
 
 
+=======
+'$Include: 'FileTeamSelection.bm'
+>>>>>>> Stashed changes
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
 '$Include: 'ALIGN.BAS'
@@ -1120,6 +1125,7 @@ End Function
 '$Include: 'TOURNEY.BAS'
 
 ' For Game
+<<<<<<< Updated upstream
 'Include: 'COLHOOP.BAS'
 
 
@@ -16573,4 +16579,8 @@ Sub CheckRecords ()
     Close #2
 
 End Sub
+=======
+'$Include: 'COLHOOP.BAS'
+'$Include: 'GameRoutines.bm'
+>>>>>>> Stashed changes
 
