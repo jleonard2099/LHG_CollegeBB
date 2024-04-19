@@ -54,23 +54,17 @@ Sub COMPARE ()
 
                     Input #1, statsW0!(I)
 
-<<<<<<< Updated upstream
-        For L = 0 To 15:
-            Input #1, statsZ!(L)
-        Next
-
-        For L = 0 To 15:
-            Input #1, statsZ1!(L)
-        Next
-=======
                     Input #1, statsW1!(I)
 
                 Next
->>>>>>> Stashed changes
 
-                For L = 0 To 15: Input #1, statsZ!(L): Next
+                For L = 0 To 15:
+                    Input #1, statsZ!(L)
+                Next
 
-                For L = 0 To 15: Input #1, statsZ1!(L): Next
+                For L = 0 To 15:
+                    Input #1, statsZ1!(L)
+                Next
 
                 Close #1
 
@@ -84,23 +78,6 @@ Sub COMPARE ()
                     If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
                 Next
 
-<<<<<<< Updated upstream
-        For J = 1 To MAX_SCHED_STATS:
-            Input #2, teamScore(J)
-        Next
-
-        For J = 1 To MAX_SCHED_STATS:
-            Input #2, oppName$(J)
-        Next
-
-        For J = 1 To MAX_SCHED_STATS:
-            Input #2, oppScore(J)
-        Next
-
-        For J = 1 To MAX_SCHED_STATS:
-            Input #2, locIndicator$(J)
-        Next
-=======
                 Open diskPaths$(1) + statFile$ + "S" For Input As #2
 
                 Input #2, numberGames
@@ -112,61 +89,41 @@ Sub COMPARE ()
                 For J = 1 To MAX_SCHED_STATS: 
                     Input #2, oppName$(J)
                 Next
->>>>>>> Stashed changes
 
                 For J = 1 To MAX_SCHED_STATS: 
                     Input #2, oppScore(J)
                 Next
 
-<<<<<<< Updated upstream
-        replayLosses = 0
-        replayWins = 0
 
-        For currGame = 1 To numberGames
-            If teamScore(currGame) < oppScore(currGame) Then
-                replayLosses = replayLosses + 1
-            End If
-            If teamScore(currGame) > oppScore(currGame) Then
-                replayWins = replayWins + 1
-            End If
-        Next
-=======
-                For J = 1 To MAX_SCHED_STATS: 
-                    Input #2, locIndicator$(J)
-                Next
+                replayLosses = 0
+                replayWins = 0
 
-                Close #2
->>>>>>> Stashed changes
-
-                replayLosses% = 0
-                replayWins% = 0
-
-                For I = 1 To numberGames
-                    If teamScore(I) < oppScore(I) Then 
-                        replayLosses% = replayLosses% + 1
+                For currGame = 1 To numberGames
+                    If teamScore(currGame) < oppScore(currGame) Then
+                        replayLosses = replayLosses + 1
                     End If
-                    If teamScore(I) > oppScore(I) Then 
-                        replayWins% = replayWins% + 1
+                    If teamScore(currGame) > oppScore(currGame) Then
+                        replayWins = replayWins + 1
                     End If
                 Next
 
                 Color 15, 0
                 Cls
 
-                Call MenuBox(8, 20, 40, 5, 15, 1)
+                Call MenuBox(8, 25, 24, 5, 15, 1)
 
                 Do
 
                     Locate 10
                     Color 7, 1
 
-                    Locate , 30: Print "SEND TO ";
+                    Locate , 32: Print "SEND TO ";
                     Color 15: Print "F";
                     Color 7: Print "ILE"
-                    Locate , 30: Print "SEND TO ";
+                    Locate , 32: Print "SEND TO ";
                     Color 15: Print "P";
                     Color 7: Print "RINTER"
-                    Locate , 30: Print "SEND TO ";
+                    Locate , 32: Print "SEND TO ";
                     Color 15: Print "S";
                     Color 7: Print "CREEN"
 
@@ -363,11 +320,7 @@ Sub TeamComparisons_Screen (teamName$)
     teamLen% = Len(team$)
 
     Color 11
-<<<<<<< Updated upstream
     Locate 11, Int((80 - teamLen%) / 2): Print teamName$
-=======
-    Locate 11, 33: Print teamName$
->>>>>>> Stashed changes
 
     Color 15, 2
     Locate 5, 30: Print "              W - L ";
@@ -529,7 +482,12 @@ Sub TeamComparisons_Screen (teamName$)
 
     'FG PCT
     If teamRatings%(2) = 0 Then Locate 6, 62: Print "  .000";
-    If teamRatings%(2) > 0 Then Locate 6, 62: statPCT! = teamStats!(4) / 100: Print "  ";: Print Using ".###"; statPCT!;
+    If teamRatings%(2) > 0 Then
+        Locate 6, 62
+        statPCT! = teamStats!(4) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
 
     'FTM
     Locate 7, 62: Print Using "######"; teamStats!(6) / 100 * teamStats!(8);
@@ -539,7 +497,12 @@ Sub TeamComparisons_Screen (teamName$)
 
     'FT Pct
     If teamRatings%(6) = 0 Then Locate 9, 62: Print "  .000";
-    If teamRatings%(6) > 0 Then Locate 9, 62: statPCT! = teamStats!(8) / 100: Print "  ";: Print Using ".###"; statPCT!;
+    If teamRatings%(6) > 0 Then
+        Locate 9, 62
+        statPCT! = teamStats!(8) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End if
 
     'Rebounds / Assists / Fouls / Steals / TOs
     Locate 10, 62: Print Using "######"; .35 * teamStats!(10);

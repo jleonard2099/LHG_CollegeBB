@@ -64,10 +64,10 @@ Sub GameRecords (menuChoice)
                     Locate 10
                     Color 7, 1
 
-                    Locate , 30: Print "SEND TO ";
+                    Locate , 32: Print "SEND TO ";
                     Color 15: Print "F";
                     Color 7: Print "ILE"
-                    Locate , 30: Print "SEND TO ";
+                    Locate , 32: Print "SEND TO ";
                     Color 15: Print "P";
                     Color 7: Print "RINTER"
 

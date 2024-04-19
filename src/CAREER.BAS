@@ -154,8 +154,8 @@ Sub MergeFirstYear ()
                 Color 15, 0
                 Cls
 
-                Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-                Locate 9, 25: Print "ANY CHANGE? (Y/N)"
+                Locate 8, 22: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
+                Locate 9, 22: Print "ANY CHANGE? (Y/N)"
 
                 J$ = GetKeyPress$
 
@@ -514,8 +514,8 @@ Sub MergeAddYear (selectedFile$, statFile$)
     Cls
 
     Do
-        Locate 8, 25: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
-        Locate 9, 25: Print "ANY CHANGE? (Y/N)"
+        Locate 8, 22: Input "ENTER YEAR TO ADD (EX. - 1961)"; statYear
+        Locate 9, 22: Print "ANY CHANGE? (Y/N)"
         J$ = GetKeyPress$
     Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
 

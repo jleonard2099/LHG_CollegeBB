@@ -108,7 +108,6 @@ Sub InitVar ()
     DY = 0
     endAllGames = 0
     endGame = 0
-    F3 = 0
     fastBreak = 0
     FO = 0
     G9 = 0
@@ -178,7 +177,7 @@ Sub InitVar ()
     Erase F1, ft3PtFoul, G4, G5
     Erase offStrat
     Erase oppScore, teamScore
-    Erase P2, P4, P5, defCategory
+    Erase teamFouls, P4, P5, defCategory
     Erase plyrStamina, powerRating
     Erase pbpFG, pbpBG
     Erase QQ, QR, RB, schedGame
@@ -401,7 +400,7 @@ Function ShotPacing%
     'JY = Average FGA/G Adjustment For Both Teams
     '   FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA/G)
     '   FY%(1) = 2 * (Home Tm Average FGA/G - League FGA/G)
-    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
+    'JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
 
     'https://kenpom.com/blog/the-possession/
     yFactor! = .44
@@ -422,6 +421,8 @@ Function ShotPacing%
         Select Case sClockVal
 
             Case 0
+                'No shot clock = teams can stall as long as they want
+                'Value 99 = stall 1% of possessions
                 paceValue = 99
 
             Case 1
@@ -429,33 +430,34 @@ Function ShotPacing%
                 paceValue = 55
 
             Case 2
-                paceValue = 39 + Int(((JY - 56) * .8) + .5)
+                paceValue = 39 + Int(((JY - 58) * .8) + .5)
 
             Case 3
-                paceValue = 39 + Int(((JY - 58) * .8) + .5)
+                paceValue = 39 + Int(((JY - 61) * .8) + .5)
 
         End Select
 
     Else
 
-        'So far, it seems dividing by 80-(shot clock) is the sweet spot
         Select Case sClockVal
 
             Case 0
-                'There is currently no data that I can
-                'use to test this!!!
-                paceValue = Int((paceFactor! + 0.5) / 25)
+                'No shot clock = teams can stall as long as they want
+                'Value 99 = stall 1% of possessions
+                paceValue = 99
 
             Case 1
-                'There is currently no data that I can
-                'use to test this!!!
-                paceValue = Int((paceFactor! + 0.5) / 35)
+                'There is currently no data I can use to test this!!!
+                '58 = Avg FGA/G for 45-sec shot clock
+                paceValue = Int((paceFactor! + 0.5) / 48)
 
             Case 2
-                paceValue = Int((paceFactor! + 0.5) / 50)
+                '56 = Avg FGA/G for 35-sec shot clock
+                paceValue = Int((paceFactor! + 0.5) / 46)
 
             Case 3
-                paceValue = Int((paceFactor! + 0.5) / 50)
+                '58 = Avg FGA/G for 30-sec shot clock
+                paceValue = Int((paceFactor! + 0.5) / 48)
 
         End Select
 
@@ -529,7 +531,7 @@ End Sub
 
 
 '----------------------------------------
-'         Rolld100 Subroutine
+'            d100 Subroutine
 '----------------------------------------
 'This subroutine assigns a random number
 'between 1 and 100 to the variable that
@@ -551,7 +553,7 @@ Function d100% ()
 
     d100% = Int(Rnd(1) * 100) + 1
 
-End Sub
+End Function
 
 
 '----------------------------------------
@@ -3371,7 +3373,7 @@ Sub FoulCalled (randomCalcs%)
     End If
 
     plyrOff_GAME!(D, B1(D, fouler), 12) = plyrOff_GAME!(D, B1(D, fouler), 12) + 1
-    P2(D) = P2(D) + 1
+    teamFouls(D) = teamFouls(D) + 1
     Call UPDATESCREEN
 
     If plyrOff_GAME!(D, B1(D, fouler), 3) - plyrOff_GAME!(D, B1(D, fouler), 7) - plyrOff_GAME!(D, B1(D, fouler), 11) - plyrOff_GAME!(D, B1(D, fouler), 12) = 0 Then
@@ -3450,7 +3452,7 @@ Sub FoulCalled (randomCalcs%)
 
         Call DELAY
 
-        If P2(D) > 6 Then X = 50
+        If teamFouls(D) > 6 Then X = 50
 
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
             teamIdx = D
@@ -3593,13 +3595,13 @@ End Sub
 
 
 '----------------------------------------
-'          ComputerSubs Subroutine
+'          COMCOACH Subroutine
 '----------------------------------------
 'This subroutine essentially handles the
 'AI for the computer coach. It relies on
 'other routines to help deal with some of
 'the complexities.
-Sub ComputerSubs ()
+Sub COMCOACH ()
 
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
@@ -3722,7 +3724,7 @@ Sub ComputerSubs ()
         B1(P9, I) = G4(I)
     Next I
 
-    Call ComputerStrategy
+    Call COMPUTERCOACH
 
 End Sub
 
@@ -4078,18 +4080,18 @@ Sub UPDATESCREEN ()
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; totRebounds(1)
 
-    Locate , 35: Print Using "##  "; P2(0);
+    Locate , 35: Print Using "##  "; teamFouls(0);
     Color 12: Print "TF  ";
-    Color 7: Print Using "##"; P2(1);
+    Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If P2(0) > 5 Then
+    If teamFouls(0) > 5 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > 5 Then
+    If teamFouls(1) > 5 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -4290,18 +4292,18 @@ Sub SCOREBOARD ()
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; totRebounds(1)
 
-    Locate , 35: Print Using "##  "; P2(0);
+    Locate , 35: Print Using "##  "; teamFouls(0);
     Color 12: Print "TF  ";
-    Color 7: Print Using "##"; P2(1);
+    Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If P2(0) > 5 Then
+    If teamFouls(0) > 5 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
         Color 7, 0
     End If
 
-    If P2(1) > 5 Then
+    If teamFouls(1) > 5 Then
         Color 0, 2
         Locate , 29: Print "BONUS"
         Color 7, 0
@@ -4812,22 +4814,28 @@ Sub ZONECHANGE ()
 
         If I1 = 2 Then I1 = 3
 
-        If defStrat(D) <= 3 Then
-            defStrat(D) = I1
-        End If
+        Select Case defStrat
 
-        'what is I supposed to be here???
-        If defStrat(D) = 7 Then defStrat(D) = I + 8
-        If defStrat(D) = 10 Then defStrat(D) = 3
-        If defStrat(D) = 12 Then defStrat(D) = I + 10
-        If defStrat(D) = 12 Then defStrat(D) = 13
+            Case Is <= 3
+                defStrat(D) = I1
+            
+            Case 7
+                defStrat(D) = I1 + 8 '8, 9, 111
+
+            Case 10
+                defStrat(D) = 3
+
+            Case 12
+                defStrat(D) = I1 + 10 '10, 11, 13
+ 
+        End Select
 
         P9 = D
 
         Select Case defStrat(P9)
 
             Case 0 To 3
-                'Man-Man / Zone
+                'Man-Man / Zone (No Combo)
                 defCategory(P9) = 0
 
             Case 4
@@ -4839,15 +4847,15 @@ Sub ZONECHANGE ()
                 defCategory(P9) = 2
 
             Case 7 To 9
-                'Passive 2-2-1
+                'Passive 2-2-1 Zone
                 defCategory(P9) = 3
 
             Case 10 To 13
-                'Trap 1-2-1-1
+                'Trap 1-2-1-1 Zone
                 defCategory(P9) = 4
 
             Case 14
-                'Denial / Foul
+                'Fulll Court Man-to-Man Denial / Foul
                 defCategory(P9) = 5
 
         End Select
@@ -5083,7 +5091,7 @@ Sub COMPUTERSUBS ()
         If M3 >= 1 And 5 - M3 < 14 - M1 Or currHalf = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0 Or M4 >= 1 And M2 < 13 Or CTO% = 1 Then
             CTO% = 0
             XM = 1
-            Call ComputerSubs
+            Call COMCOACH
             skipG9% = 1
         End If
 
@@ -5616,7 +5624,8 @@ Sub FOULHARD ()
             If plyrOff_GAME!(I, I1, 22) = 50 Then
                 plyrOff_GAME!(I, I1, 22) = 0
                 plyrOff_GAME!(I, I1, 17) = plyrOff_GAME!(I, I1, 17) * 3
-                dFGPA(I) = dFGPA(I) - 1: MJ = 50
+                dFGPA(I) = dFGPA(I) - 1
+                MJ = 50
             End If
         Next I1
 
@@ -5741,13 +5750,13 @@ End Sub
 '----------------------------------------
 'This subroutine walks the user through
 'taking 3 free throw attempts.
-Sub THREEFT ()
+Sub THREEFT (ftNumber)
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
     Call Rolld100(RN0)
 
-    Select Case F3
+    Select Case ftNumber
 
         Case 1
             If RN0 <= 50 Then
@@ -5787,14 +5796,14 @@ End Sub
 '----------------------------------------
 'This subroutine handles score, stats and
 'Play-by-Play for a successful free throw
-Sub MADEFT ()
+Sub MADEFT (ftNumber)
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
     If pbpDelay! <> 0 Then
-        Locate F3 + 9, 1
+        Locate ftNumber + 9, 1
         Call DELAY
-        Print F3; " GOOD"
+        Print ftNumber; " GOOD"
     End If
 
     score(P, currHalf) = score(P, currHalf) + 1
@@ -5811,12 +5820,12 @@ End Sub
 '----------------------------------------
 'This subroutine handles Play-by-Play
 'for a missed free throw
-Sub MISSFT ()
+Sub MISSFT (ftNumber)
 
     If pbpDelay! <> 0 Then
         Call DELAY
-        Locate F3 + 9, 1
-        Print F3; " MISSED"
+        Locate ftNumber + 9, 1
+        Print ftNumber; " MISSED"
         Call DELAY
     End If
 
@@ -5828,9 +5837,9 @@ End Sub
 '----------------------------------------
 'This subroutine handles Play-by-Play for
 'missed FT's when there are 3 attempts.
-Sub BADFT ()
+Sub BADFT (ftNumber)
 
-    Select Case F3
+    Select Case ftNumber
         Case 1
             pbpString$ = "FIRST FREE THROW IS MISSED"
         Case 2
@@ -5853,7 +5862,7 @@ Sub PRDFAT ()
 
     For I = 0 To 4
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If RN0 <= X0% Then
             tmFatigue(D, B1(D, I)) = tmFatigue(D, B1(D, I)) + X1%
@@ -5878,7 +5887,7 @@ Sub PRPFAT ()
 
     For I = 0 To 4
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If RN0 <= X0% Then
             tmFatigue(P, B1(P, I)) = tmFatigue(P, B1(P, I)) + X1%
@@ -5911,7 +5920,7 @@ Sub WHOGETSBALL ()
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             If RN0 > 25 Then
 
@@ -5947,7 +5956,7 @@ End Sub
 ' ...explanation...
 Sub BALLDISTRIBUTE ()
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
         Call WHOGETSBALL
@@ -6537,22 +6546,28 @@ End Sub
 
 
 '----------------------------------------
-'        ComputerStrategy Subroutine
+'        COMPUTERCOACH Subroutine
 '----------------------------------------
 'This subroutine guides the computer AI
 'in how to handle it's strategy.
-Sub ComputerStrategy ()
+Sub COMPUTERCOACH ()
 
-    If P9 = 0 Then I6 = 1
-    If P9 = 1 Then I6 = 0
+    I6 = 1 - P9
 
+    ' *** Defensive Strategy ***
+    defStrat(P9) = 0
+    defCoverage(P9) = 0
+    defCategory(P9) = 0
+
+    'Offense is behind
     If score(P9, 0) - score(I6, 0) < 0 Then
 
-        I5 = score(I6, 0) - score(P9, 0)
+        'How far behind is the offense?
+        scoreDiff = score(I6, 0) - score(P9, 0)
 
         If currHalf = 1 Then
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
             Select Case RN0
             
                 Case 0 To 5
@@ -6577,7 +6592,7 @@ Sub ComputerStrategy ()
 
             End Select
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             Select Case RN0
             
@@ -6610,54 +6625,246 @@ Sub ComputerStrategy ()
 
         End If
 
-        Call d100(RN0)
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 <= 60 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 60 And RN0 <= 80 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 1: defCategory(P9) = 2: defStrat(P9) = 6
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 90 And RN0 <= 95 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 600 And I5 > 20 And RN0 > 95 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 <= 75 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 75 And RN0 <= 83 Then defCoverage(P9) = 0: defCategory(P9) = 1: defStrat(P9) = 4
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 83 And RN0 <= 91 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 91 And RN0 <= 96 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 600 And I5 >= 10 And I5 < 20 And RN0 > 96 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 70 And RN0 <= 75 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 76 And RN0 <= 85 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 85 And RN0 <= 93 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 93 And RN0 <= 97 Then defCoverage(P9) = 3: defCategory(P9) = 0: defStrat(P9) = 3
-        If currHalf = 2 And gameClock! >= 600 And I5 < 10 And RN0 > 97 Then defCoverage(P9) = 2: defCategory(P9) = 4: defStrat(P9) = 12
+        Call Rolld100(RN0)
 
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 70 And RN0 <= 80 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 20 And RN0 > 90 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 70 And RN0 <= 80 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 80 And RN0 <= 90 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 12
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 > 10 And I5 < 20 And RN0 > 90 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 <= 70 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 70 And RN0 <= 90 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 90 And RN0 <= 96 Then defCoverage(P9) = 1: defCategory(P9) = 0: defStrat(P9) = 1
-        If currHalf = 2 And gameClock! >= 120 And gameClock! < 600 And I5 <= 10 And RN0 > 96 Then defCoverage(P9) = 0: defCategory(P9) = 4: defStrat(P9) = 10
+        If currHalf = 2 Then
 
-        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 <= 50 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! < 120 And I5 > 10 And RN0 > 50 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
-        If currHalf = 2 And gameClock! < 120 And I5 <= 10 And I5 > 4 Then defCoverage(P9) = 3: defCategory(P9) = 5: defStrat(P9) = 14
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 <= 25 Then defCoverage(P9) = 0: defCategory(P9) = 2: defStrat(P9) = 5
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 25 And RN0 <= 50 Then defCoverage(P9) = 1: defCategory(P9) = 2: defStrat(P9) = 6
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 50 And RN0 <= 75 Then defCoverage(P9) = 1: defCategory(P9) = 4: defStrat(P9) = 11
-        If currHalf = 2 And gameClock! < 120 And I5 <= 4 And RN0 > 75 Then defCoverage(P9) = 3: defCategory(P9) = 4: defStrat(P9) = 13
+            Select Case gameClock!
 
-        If currHalf > 2 And RN0 <= 50 Then defCoverage(P9) = 0: defCategory(P9) = 0: defStrat(P9) = 0
-        If currHalf > 2 And RN0 > 50 Then defCoverage(P9) = 2: defCategory(P9) = 0: defStrat(P9) = 2
+                Case Is >= 600
+                
+                    Select Case scoreDiff
+
+                        Case Is > 20
+                        
+                            Select Case RN0
+                            
+                                Case 1 To 60
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 61 To 80
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 81 To 90
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 6
+                                Case 91 To 95
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                Case 96 To 100
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 11
+                            
+                            End Select
+                        
+                        Case 10 To 19
+
+                            Select Case RN0
+
+                                Case 1 To 75
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 76 To 83
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 1
+                                    defStrat(P9) = 4
+                                Case 84 To 91
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 92 To 96
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                Case 97 To 100
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 11
+
+                            End Select
+                        
+                        Case Is < 10
+
+                            Select Case RN0
+
+                                Case 1 To 70
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 To 75
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 76 To 85
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 2
+                                Case 86 To 93
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+                                Case 94 To 97
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 3
+                                Case 98 To 100
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 12
+                            
+                            End Select
+
+                    End Select
+
+                Case 120 To 599
+
+                    Select Case scoreDiff
+                    
+                        Case Is > 20
+
+                            Select Case RN0
+
+                                Case 1 To 70
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 To 80
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+                                Case 81 To 90
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                Case 91 To 100
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 13
+
+                            End Select
+                        
+                        Case 11 To 19
+
+                            Select Case RN0
+
+                                Case 1 To 70
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 To 80
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+                                Case 81 To 90
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 12
+                                Case 91 To 100
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                            
+                            End Select
+
+                        Case Is <= 10
+
+                            Select Case RN0
+
+                                Case 1 To 70
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 0
+                                Case 71 To 90
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 2
+                                Case 91 To 96
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                    defStrat(P9) = 1
+                                Case 97 To 100
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 10
+                                
+                            End Select
+
+                    End Select
+
+                Case 0 To 119
+
+                    Select Case scoreDiff
+
+                        Case Is >= 11
+
+                            If RN0 <= 50 Then
+                                defCoverage(P9) = 1
+                                defCategory(P9) = 4
+                                defStrat(P9) = 11
+                            Else
+                                defCoverage(P9) = 3
+                                defCategory(P9) = 4
+                                defStrat(P9) = 13
+                            End If
+                        
+                        Case 5 To 10
+                            defCoverage(P9) = 3
+                            defCategory(P9) = 5
+                            defStrat(P9) = 14
+
+                        Case Is <= 4
+                        
+                            Select Case RN0
+
+                                Case 1 To 15
+                                    defCoverage(P9) = 0
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 5
+
+                                Case 26 To 50
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 2
+                                    defStrat(P9) = 6
+
+                                Case 51 To 75
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 11
+
+                                Case 76 To 100
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 4
+                                    defStrat(P9) = 13
+
+                            End Select
+
+                    End Select
+
+            End Select
+
+        End If
+
+        If currHalf > 2 Then
+            If RN0 <= 50 Then
+                defCoverage(P9) = 0
+                defCategory(P9) = 0
+                defStrat(P9) = 0
+            Else
+                defCoverage(P9) = 2
+                defCategory(P9) = 0
+                defStrat(P9) = 2
+            End If
+        End If
 
     Else
-
-        Call d100(RN0)
-        defStrat(P9) = 0
-        defCoverage(P9) = 0
-        defCategory(P9) = 0
+    
+        Call Rolld100(RN0)
 
         Select Case RN0
 
@@ -6678,7 +6885,7 @@ Sub ComputerStrategy ()
 
         End Select
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case RN0
 
@@ -6696,62 +6903,70 @@ Sub ComputerStrategy ()
                 defCategory(P9) = 3
                 defStrat(P9) = 7
                 defCoverage(P9) = 2
+
                 'Nothing for 11 to 100
 
         End Select
 
     End If
 
-    Call d100(RN0)
+
+    ' *** Offensive Strategy ***
+    Call Rolld100(RN0)
 
     If currHalf = 1 Then
 
         Select Case RN0
+
             Case 1 To 80
                 offStrat(P9) = 0
+
             Case 81 To 90
                 offStrat(P9) = 1
+
             Case 91 To 100
                 offStrat(P9) = 2
+
         End Select
 
     End If
 
-    If currHalf >= 2 And score(P9, 0) - score(I6, 0) < 0 Then
+    If currHalf >= 2 Then
+    
+        If score(P9, 0) - score(I6, 0) < 0 Then
 
-        If RN0 <= 80 Then
-            offStrat(P9) = 0
+            If gameClock! <= 180 Then
+
+                If RN0 <= 30 Then
+                    offStrat(P9) = 3
+                Else
+                    offStrat(P9) = 4
+                End If
+
+            Else
+
+                If RN0 <= 80 Then
+                    offStrat(P9) = 0
+                Else
+                    offStrat(P9) = 1
+                End If
+                
+            End If
+
         Else
-            'R0 > 80
-            offStrat(P9) = 1
+
+            If RN0 <= 80 Then
+                offStrat(P9) = 0
+            Else
+                offStrat(P9) = 2
+            End If
+            
+        End If
+        
+        If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) = -3 Or score(P9, 0) - score(I6, 0) = -6) Then
+            offStrat(P9) = 9
         End If
 
-    End If
-
-    If currHalf >= 2 And score(P9, 0) - score(I6, 0) >= 0 Then
-
-        If RN0 <= 80 Then
-            offStrat(P9) = 0
-        Else
-            'RN0 > 80
-            offStrat(P9) = 2
-        End If
-
-    End If
-
-    If currHalf >= 2 And gameClock! <= 180 And score(P9, 0) - score(I6, 0) < 0 Then
-
-        If RN0 <= 30 Then
-            offStrat(P9) = 3
-        Else
-            'RN0 <= 30
-            offStrat(P9) = 4
-        End If
-
-    End If
-
-    If currHalf >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then
-        offStrat(P9) = 9
     End If
 
 End Sub
@@ -8160,9 +8375,11 @@ Sub COMPILESTATFILES (teamIdx)
     statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
     statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
+    'Total Rebounds
     statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
     statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
 
+    'Total Turnovers
     statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
     statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
@@ -8378,6 +8595,7 @@ Sub pbplog (lineNumber)
     Print #11, "Calling from "; lineNumber
     Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, pbpString$
+    Print #11, "Pacing factor = "; JY
     Print #11,
 
 End Sub
@@ -8700,7 +8918,8 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     Next
 
-    For I = 0 To 20
+    'For I = 0 To 20
+    For I = 0 To 24
         teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
     Next
 
@@ -8724,8 +8943,8 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
             Next
         Next
 
-        'For I = 0 To 20:
-        For I = 0 To 24:
+        'For I = 0 To 24
+        For I = 0 To 20:
             teamStats_GAME(gameIdx, I) = 0
         Next
 

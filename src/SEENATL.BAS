@@ -92,20 +92,20 @@ Sub StatOptions_Nat (NRT, leagueFile$)
         Cls
         Call TITLE_STATS
 
-        Call MenuBox(8, 20, 40, 5, 15, 1)
+        Call MenuBox(8, 25, 24, 5, 15, 1)
 
         Do
 
             Locate 10
             Color 7, 1
 
-            Locate , 30: Print "SEND TO ";
+            Locate , 32: Print "SEND TO ";
             Color 15: Print "F";
             Color 7: Print "ILE"
-            Locate , 30: Print "SEND TO ";
+            Locate , 32: Print "SEND TO ";
             Color 15: Print "P";
             Color 7: Print "RINTER"
-            Locate , 30: Print "SEND TO ";
+            Locate , 32: Print "SEND TO ";
             Color 15: Print "S";
             Color 7: Print "CREEN"
             I$ = GetKeyPress$
@@ -119,12 +119,13 @@ Sub StatOptions_Nat (NRT, leagueFile$)
             Select Case UCase$(I$)
 
                 Case "F":
+                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
                         Call LeaderStatsNat_Report(leagueFile$, NRT, 0, userFile$)
                     End If
 
                 Case "P":
-                    Call LeaderStatsNat_Report(leagueFile$, NRT, 1, userFile$)
+                    Call LeaderStatsNat_Report(leagueFile$, NRT, 1, "REPORT")
 
                 Case "S":
                     Call LeaderStatsNat_Screen(leagueFile$, NRT)
@@ -149,7 +150,7 @@ Sub StatOptions_Nat (NRT, leagueFile$)
 
         End If
 
-    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
+    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27) Or I$ = Chr$(27)
 
 End Sub
 

@@ -91,20 +91,20 @@ Sub StatOptions_Con (confName$, D1$, D2$)
         Cls
         Call TITLE_STATS
 
-        Call MenuBox(8, 20, 40, 5, 15, 1)
+        Call MenuBox(8, 25, 24, 5, 15, 1)
 
         Do
 
             Locate 10
             Color 7, 1
 
-            Locate , 30: Print "SEND TO ";
+            Locate , 32: Print "SEND TO ";
             Color 15: Print "F";
             Color 7: Print "ILE"
-            Locate , 30: Print "SEND TO ";
+            Locate , 32: Print "SEND TO ";
             Color 15: Print "P";
             Color 7: Print "RINTER"
-            Locate , 30: Print "SEND TO ";
+            Locate , 32: Print "SEND TO ";
             Color 15: Print "S";
             Color 7: Print "CREEN"
             I$ = GetKeyPress$
@@ -118,13 +118,13 @@ Sub StatOptions_Con (confName$, D1$, D2$)
             Select Case UCase$(I$)
 
                 Case "F"
-                    userFile$ = _SAVEFILEDIALOG$("Save Conference Report",_CWD$ + "\REPORT","*.txt","Text File")
+                    userFile$ = _SAVEFILEDIALOG$("Save Conference Report",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
                         Call LeaderStatsCon_Report(confName$, D1$, D2$, 0, userFile$)
                     End If
 
                 Case "P"
-                    Call LeaderStatsCon_Report(confName$, D1$, D2$, 1, userFile$)
+                    Call LeaderStatsCon_Report(confName$, D1$, D2$, 1, "REPORT")
 
                 Case "S"
                     Call LeaderStatsCon_Screen(confName$, D1$, D2$)
@@ -148,7 +148,7 @@ Sub StatOptions_Con (confName$, D1$, D2$)
 
         End If
 
-    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27)
+    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27) Or I$ = Chr$(27)
 
 End Sub
 

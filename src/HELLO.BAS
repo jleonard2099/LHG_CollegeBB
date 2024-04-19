@@ -249,12 +249,6 @@ Do
 Loop Until Selection% = 8
 
 System
-<<<<<<< Updated upstream
-
-End
-
-=======
->>>>>>> Stashed changes
 
 
 '----------------------------------------
@@ -288,15 +282,15 @@ Sub Main_Menu (menuSelection%)
 
         Call TITLE
 
-        menuChoices$(1) = "PLAY SINGLE GAME                "
-        menuChoices$(2) = "TEAM MANAGEMENT / ORGANIZATION  "
-        menuChoices$(3) = "REPLAY STATISTICS AND REPORTS   "
-        menuChoices$(4) = "LEADERS / STANDINGS / RECORDS   "
-        menuChoices$(5) = "SCHEDULER / AUTOPLAY / BOXSCORES"
-        menuChoices$(6) = "TOURNAMENT PLAY                 "
-        'menuChoices$(7) = "HARD DRIVE INSTALLATION         "
-        menuChoices$(7) = "CONFIGURE DRIVES FOR TEAMS,STATS"
-        menuChoices$(8) = "EXIT PROGRAM                    "
+        menuChoices$(1) = "PLAY SINGLE GAME       "
+        menuChoices$(2) = "TEAM MANAGEMENT        "
+        menuChoices$(3) = "REPLAY ASSESSMENT      "
+        menuChoices$(4) = "LEADERS AND RECORDS    "
+        menuChoices$(5) = "SCHEDULES AND BOXSCORES"
+        menuChoices$(6) = "TOURNAMENT PLAY        "
+        'menuChoices$(7) = "HARD DRIVE INSTALLATION   "
+        menuChoices$(7) = "CONFIGURE GAME FOLDERS "
+        menuChoices$(8) = "EXIT PROGRAM           "
 
         Selection% = 1
         Count% = 8
@@ -361,18 +355,19 @@ Sub TeamMgt_Menu ()
 
         Call TITLE
 
-        ReDim menuChoices$(1 To 6)
+        ReDim menuChoices$(1 To 7)
 
-        menuChoices$(1) = "INPUT A NEW TEAM            "
-        menuChoices$(2) = "EDIT AN EXISTING TEAM       "
-        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT  "
-        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT   "
-        menuChoices$(5) = "DRAFT TO NEW / EXISTING TEAM"
-        menuChoices$(6) = "RETURN TO MAIN MENU         "
+        menuChoices$(1) = "INPUT A NEW TEAM          "
+        menuChoices$(2) = "EDIT AN EXISTING TEAM     "
+        menuChoices$(3) = "PRINT TEAM ROSTER / REPORT"
+        menuChoices$(4) = "VIEW TEAM ROSTER / REPORT "
+        menuChoices$(5) = "DRAFT PLAYERS             "
+        menuChoices$(6) = "CONVERT DATA FILE FROM 4.0"
+        menuChoices$(7) = "RETURN TO MAIN MENU       "
         Selection% = 1
-        Count% = 6
+        Count% = 7
         Start% = 1
-        ExitCode% = 6
+        ExitCode% = 7
         FileFGColor% = 15: FileBGColor% = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -391,18 +386,34 @@ Sub TeamMgt_Menu ()
         If ExitCode% <> 27 Then
 
             Select Case Selection%
-                Case 1: Call TINPUT
-                Case 2: Call CNGTM(1)
-                Case 3: Call CNGTM(2)
-                Case 4: Call CNGTM(3)
-                Case 5: Call DRAFT
+
+                Case 1:
+                    Call TINPUT
+
+                Case 2:
+                    Call CNGTM(1)
+
+                Case 3:
+                    Call CNGTM(2)
+
+                Case 4:
+                    Call CNGTM(3)
+
+                Case 5:
+                    Call DRAFT
+
+                Case 6:
+                    Call ConvertTeamData
+
             End Select
 
         Else
-            Selection% = 6
+
+            Selection% = 7
+
         End If
 
-    Loop Until Selection% = 6 Or ExitCode% = 27
+    Loop Until Selection% = 7 Or ExitCode% = 27
 
 End Sub
 
@@ -424,12 +435,12 @@ Sub Replay_Menu ()
 
         ReDim menuChoices$(1 To 5)
 
-        menuChoices$(1) = "VIEW / PRINT COMPILED STATS       "
-        menuChoices$(2) = "ENCYCLOPEDIA / TEAM REPLAY OPTIONS"
-        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL    "
-        'menuChoices$(4) = "MODIFY REPLAY STATS               "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES  "
-        menuChoices$(5) = "RETURN TO MAIN MENU               "
+        menuChoices$(1) = "VIEW / PRINT COMPILED STATS     "
+        menuChoices$(2) = "TEAM CAREER OPTIONS             "
+        menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL  "
+        'menuChoices$(4) = "MODIFY REPLAY STATS             "
+        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
+        menuChoices$(5) = "RETURN TO MAIN MENU             "
         Selection% = 1
         Count% = 5
         Start% = 1
@@ -492,18 +503,18 @@ Sub Leaders_Menu ()
 
         ReDim menuChoices$(1 To 14)
 
-        menuChoices$(1) = "CREATE / EDIT A CONFERENCE"
+        menuChoices$(1) = "MANAGE CONFERENCES        "
         menuChoices$(2) = "UPDATE STATS / STANDINGS  "
-        menuChoices$(3) = "VIEW / PRINT REPORTS      "
-        menuChoices$(4) = "HEAD-TO-HEAD STATS        "
-        menuChoices$(5) = "RECORD BOOKS              "
+        menuChoices$(3) = "ACCESS CONFERENCE REPORTS "
+        menuChoices$(4) = "HEAD-TO-HEAD RESULTS      "
+        menuChoices$(5) = "CONFERENCE RECORDS        "
         menuChoices$(6) = "EXPANDED LEADERS          "
         menuChoices$(7) = "DELETE CONFERENCE STATS   "
-        menuChoices$(8) = "CREATE / EDIT ORGANIZATION"
+        menuChoices$(8) = "MANAGE ORGANIZATIONS      "
         menuChoices$(9) = "UPDATE POLL / STATS       "
-        menuChoices$(10) = "VIEW / PRINT REPORTS      "
-        menuChoices$(11) = "RECORD BOOKS              "
-        menuChoices$(12) = "DELETE ORGANIZATION STATS "
+        menuChoices$(10) = "ACCESS NAT'L. REPORTS     "
+        menuChoices$(11) = "NATIONAL RECORDS          "
+        menuChoices$(12) = "DELETE NATIONAL STATS     "
         menuChoices$(13) = "RETURN TO MAIN MENU       "
         menuChoices$(14) = "EXIT PROGRAM              "
         Selection% = 1
@@ -576,526 +587,8 @@ End Sub
 
 ' For Utils
 '$Include: 'BoxRoutines.bm'
-<<<<<<< Updated upstream
 '$Include: 'ConfigureDrives.bm'
-'Include: 'FileTeamSelection.bm'
-
-
-'----------------------------------------
-'          ChooseTeam Subroutine
-'----------------------------------------
-'Provides dialog for user to select teams
-' from a previously populated team file.
-'The focus of this routine is to accept
-' a disk ID from the user. It then relies
-' on separate subroutines to assist with
-' actually choosing the team, and also
-' reading in data for the chosen team
-Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
-
-    Shared teamRatings%()
-
-    'Shared teamNames$()
-
-    Shared previousYear$
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        JJ = 7
-
-        Locate 6, 8
-        Color 15, 4
-
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
-
-        Locate 7, 32
-
-        Locate , 12: Print "ENTER DISK ID: "
-        Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
-        Print
-        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-
-        I$ = GetKeyPress$
-
-        If I$ <> Chr$(27) Then
-
-            If I$ <> Chr$(13) Then
-
-                Locate 7, 27: Print I$;
-
-                NY$ = ""
-
-                Do Until NY$ = Chr$(13)
-
-                    NY$ = GetKeyPress$
-
-                    If NY$ = Chr$(8) And Len(I$) >= 1 Then
-                        col% = Pos(0)
-                        I$ = Left$(I$, (Len(I$) - 1))
-                        Locate , col% - 1
-                        Print " ";
-                        Locate , col% - 1
-                    Else
-                        I$ = I$ + NY$
-                        Print NY$;
-                    End If
-
-                Loop
-
-                I$ = Left$(I$, (Len(I$) - 1))
-
-                If Not (I$ = "" And yearNumber$ <> "") Then
-
-                    yearNumber$ = RTrim$(I$)
-                    Erase teamNames$
-                    numberTeams = 0
-
-                    Cls
-
-                    If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
-
-                        Locate 10, 8
-                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
-                        I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
-                        Exit Sub
-
-                    Else
-
-                        Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
-
-                        fileLength& = LOF(1)
-
-                        Field #1, 15 As Q$(0)
-
-                        numberTeams = fileLength& / TEAM_SIZE_BYTES
-
-                        For teamIdx = 1 To numberTeams
-                            Get #1, teamIdx
-                            'numberTeams = numberTeams + 1
-                            teamNames$(teamIdx) = Q$(0)
-                            teamIndex%(teamIdx) = teamIdx
-                        Next teamIdx
-
-                        Close #1
-
-                        previousYear$ = yearNumber$
-
-                    End If 'Done checking if file exists
-
-                End If 'Done checking for blank year number
-
-            Else
-
-                yearNumber$ = previousYear$
-
-            End If 'Done checking for ENTER key
-
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
-
-            Do
-
-                Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
-
-                If ExitCode% <> 27 And numberTeams <> 0 Then
-
-                    Do
-                        YCoord = Int((80 - Len(teamName$)) / 2)
-                        Locate 2, YCoord
-                        Color teamRatings%(0), teamRatings%(1): Print teamName$
-
-                        Color 15, 4
-                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
-
-                        J$ = GetKeyPress$
-
-                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
-
-                End If
-
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
-
-        End If 'Done checking for ESC
-
-    Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
-
-    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
-
-End Sub
-
-
-'----------------------------------------
-'          SelectTeam Subroutine
-'----------------------------------------
-'Presents selection menu of all teams
-' found in the target "disk" file.
-'The focus of this routine is confirming
-' a team choice. It then relies on
-' another subroutine to read in data
-' from the selected team.
-Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
-
-    'Shared teamNames$()
-
-    If numberTeams > 0 Then
-
-        SELECTION% = 1
-        Count% = numberTeams
-        Start% = 1
-        FileFGColor% = 15: FileBGColor% = 4
-        HiLiteFGColor% = 0: HiLiteBGColor% = 7
-        Rows% = 20
-        Columns% = 4
-        Spacing% = 6
-        Row% = 4
-        Column% = 1
-
-        Color , 4
-        Cls
-        Color 14
-        Locate , 33: Print "TEAM SELECTION"
-        Locate 25, 1
-        Color 14: Print "ESC";
-        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";
-        Color 15: Print "-SELECTS TEAM";
-
-        _MouseShow "DEFAULT"
-        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
-        _MouseHide
-
-        If ExitCode% <> 27 Then
-
-            selectedIdx = teamIndex%(SELECTION%)
-
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
-
-            Call ReadTeam(yearNumber$, teamName$, selectedIdx)
-            Call ReadExtraData(yearNumber$, selectedIdx)
-
-        End If
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'           ReadTeam Subroutine
-'----------------------------------------
-'Reads in all data for the selected team,
-' given it's index in the team file.
-'This routine is highly customized TO
-' the specific game for which it has
-' been included for.
-Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
-
-    Shared defFGPctAdj!, def3FG_Adj, def3FGA_Adj
-    Shared staminaRating!
-
-    Shared leagueRatings%(), teamRatings%()
-
-    Shared playerOff!(), playerRatings!()
-
-    Shared playerNames$()
-
-    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
-
-    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
-
-    For I = 0 To 13
-        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), 655 - 53 - 43 - I * 43 As X$
-    Next
-
-    Get #1, teamIdx
-
-    targetTeam$ = RTrim$(Q$(0))
-    staminaRating! = CVI(Q$(1))
-    defFGPctAdj! = CVI(Q$(2))
-    def3FG_Adj = CVI(Q$(3))
-    def3FGA_Adj = CVI(Q$(4))
-
-    'both of these are types of ratings
-    For I = 0 To 4:
-        leagueRatings%(I) = CVI(Q$(I + 5))
-    Next
-
-    For I = 0 To 9:
-        teamRatings%(I) = CVI(Q$(I + 10))
-    Next
-
-    For I = 0 To 13
-
-        'Player name
-        playerNames$(I) = RTrim$(Q$(I * 15 + 20))
-
-        'Player ratings
-        For I1 = 0 To 6
-            playerOff!(I, I1) = CVI(Q$(I * 15 + I1 + 21))
-            playerRatings!(I, I1) = CVI(Q$(I * 15 + I1 + 28))
-        Next
-    Next
-
-    'Close team file
-    Close #1
-
-End Sub
-
-
-'----------------------------------------
-'        ReadExtraData Subroutine
-'----------------------------------------
-'Reads in extra data for the selected team,
-' given it's index in the team file.
-'This extra file usually includes info.
-' related to stadiums, coaches, etc.
-'This routine is highly customized TO
-' the specific game for which it has
-' been included for.
-Sub ReadExtraData (teamYear$, teamIdx)
-
-    Shared CK, teamAttendance&
-
-    Shared coach$, arenaName$, mascot$
-
-    Shared playerDef!(), playerStats!(), teamStats!()
-
-    Shared position$()
-
-    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
-
-        MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
-        BoxWidth = 20
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-
-    Else
-
-        Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = DATA_SIZE_BYTES
-
-        Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-        For I = 0 To 13
-            Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Next
-
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
-
-        Get #1, teamIdx
-
-        coach$ = RTrim$(Q$(0))
-        arenaName$ = RTrim$(Q$(1))
-        mascot$ = RTrim$(Q$(2))
-        teamAttendance& = CVL(Q$(3))
-
-        For I = 0 To 13
-
-            playerDef!(I) = CVI(Q$(I * 16 + 4))
-            position$(I) = Q$(I * 16 + 5)
-
-            For I1 = 0 To 13
-                playerStats!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
-            Next
-
-        Next
-
-        For I = 0 To 24
-            'For I = 0 To 20
-            teamStats!(I) = CVI(Q$(228 + I))
-        Next
-
-        CK = CVI(Q$(253))
-
-        Close #1
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'         nameStatFile$ Function
-'----------------------------------------
-'Helps create uniquely named file to
-' store a team's stats.
-'
-'There are 2 main changes done in order
-' to accomodate this:
-' 1) Replaces invalid characters with _
-' 2) If "ST" is the name, shortens the
-'    prefix. This helps with college
-'    teams (ARKANSAS vs ARKANSAS ST)
-Function nameStatFile$ (teamName$)
-
-    teamPrefix$ = teamName$
-
-    For XX = 4 To 11
-
-        If Mid$(teamPrefix$, XX, 1) = " " Or Mid$(teamPrefix$, XX, 1) = "." Or Mid$(teamPrefix$, XX, 1) = "/" Or Mid$(teamPrefix$, XX, 1) = "_" Then
-            Mid$(teamPrefix$, XX, 1) = "_"
-        End If
-
-    Next XX
-
-    For XX = 12 To 14
-
-        If Mid$(teamPrefix$, XX, 2) = "ST" Then
-            Mid$(teamPrefix$, 9, 1) = "_"
-            Mid$(teamPrefix$, 10, 2) = "ST"
-        End If
-
-    Next XX
-
-    'Length of 'converted' name for file
-    '-- update this if we want to support long files
-    QQ = 8
-
-    For XX = 11 To 4 Step -1
-        If Mid$(teamPrefix$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
-
-    nameStatFile$ = Mid$(teamPrefix$, 4, QQ) + "." + Left$(teamPrefix$, 2)
-
-End Function
-
-
-'----------------------------------------
-'        ChooseFile$ Function
-'----------------------------------------
-'Shows user a file selection menu, based
-' on the file spec parameter passed.
-'
-'fileSpec$ - file specification to load
-'            should include base path.
-'
-' EXAMPLE - C:\Temp\*.tmp
-'
-'fileDesc$ - brief description of the
-'            type of file
-'
-' RETURNS - base name of chosen file
-'            (that is, without extension)
-Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
-
-    descLength = Len(fileDesc$)
-
-    Do
-        'Display list of files...
-
-        Count% = FileCount%(fileSpec$)
-
-        If Count% = 0 Then
-
-            Locate 10, 8
-            zeroCountMsg$ = "NO " + fileDesc$ + " FILES WERE FOUND... PRESS ANY KEY TO RETURN TO MAIN MENU"
-
-            Call CSMsgBox(zeroCountMsg$, 20, PASS)
-            I$ = GetKeyPress$
-            Call CSMsgBox("", 0, PASS)
-
-        Else
-
-            ReDim foundFiles$(0 To Count%)
-
-            'For X = 1 To Count%
-            '8 char's filename + 4 char's (. + ext)
-            'foundFiles$(X) = Space$(12)
-            'Next
-
-            foundFiles$(0) = fileSpec$
-            Call ReadFile(foundFiles$())
-
-            Do
-
-                XCoord = Int((80 - (descLength + 12)) / 2)
-
-                Color , 1
-                Cls
-                Locate , XCoord
-                Color 14
-                Print "SELECT "; fileDesc$; " FILE"
-                Color 15
-                Selection% = 1
-                START% = 1
-                FileFGColor% = 15: FileBGColor% = 1
-                HiLiteFGColor% = 0: HiLiteBGColor% = 7
-                Rows% = 20
-                Columns% = 3
-                Spacing% = 5
-                Row% = 4
-                Column% = 1
-                Locate 25, 1
-                Color 14
-                Print "ENTER";
-                Color 15
-                Print "-SELECTS "; fileDesc$;
-                Color 14
-                Locate , 55
-                Print "HIT ESCAPE KEY TO EXIT";
-                Color 15
-
-                _MouseShow "DEFAULT"
-                MAMenu foundFiles$(), Selection%, START%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
-                _MouseHide
-
-                If ExitCode% <> 27 Then
-
-                    Color 15, 1
-                    targetFile$ = RTrim$(foundFiles$(Selection%))
-                    XCoord = Int((80 - Len(targetFile$)) / 2)
-                    Locate 2, XCoord
-                    Print targetFile$
-
-                    Do
-                        Locate , 31
-                        Print "ANY CHANGE? (Y/N)";
-                        I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    Color 15, 0
-
-                End If
-
-            Loop Until UCase$(I$) = "N" Or ExitCode% = 27
-
-        End If 'Done checking file count
-
-        '...Until we press ESC
-    Loop Until ExitCode% = 27 Or Count% = 0 Or UCase$(I$) = "N"
-
-    If ExitCode% <> 27 Then
-        ChooseFile$ = Left$(RTrim$(targetFile$), Len(targetFile$) - 4)
-    End If
-
-End Function
-
-
-
-=======
 '$Include: 'FileTeamSelection.bm'
->>>>>>> Stashed changes
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
 '$Include: 'ALIGN.BAS'
@@ -1105,9 +598,1594 @@ End Function
 '$Include: 'CAREER.BAS'
 '$Include: 'CARVIEW.BAS'
 '$Include: 'CNGTM.BAS'
-'$Include: 'COMPARE.BAS'
+'Include: 'COMPARE.BAS'
+
+
+'----------------------------------------
+'           COMPARE Subroutine
+'----------------------------------------
+'This subroutine loads in existing stats
+'for a team and provides different options
+'to the end user for formatting stats
+Sub COMPARE ()
+
+    _Title "Courtside College Basketball - Stats Comparison"
+
+    Shared teamScore(), oppScore(), teamRatings%()
+    Shared replayLosses, replayWins
+
+    Shared statsA!(), statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
+
+    Shared position$()
+    Shared statPlyrNames$(), locIndicator$(), oppName$()
+
+    Dim posn$(0 To 13)
+
+    Do
+
+        teamNbr = 0
+        Call ChooseTeam(YN$, NTMS, teamNbr, team$)
+
+        If teamNbr <> 0 Then
+
+            haveStats = 1
+
+            statFile$ = nameStatFile$(team$)
+
+            If Not _FileExists(diskPaths$(1) + statFile$) Then
+                MsgText$ = "NO COMPILED STATS WERE FOUND FOR THIS TEAM.  PRESS ANY KEY TO RETURN TO MAIN MENU"
+                BoxWidth = 24
+                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Call CSMsgBox(MsgText$, BoxWidth, PASS)
+                I$ = GetKeyPress$
+                Call CSMsgBox("", 0, PASS)
+            Else
+
+                Open diskPaths$(1) + statFile$ For Input As #1
+
+                Input #1, statTeam$
+
+                For I = 0 To 13:
+
+                    Input #1, statPlyrNames$(I)
+
+                    For J = 0 To 13
+                        Input #1, statsA!(I, J)
+                    Next
+
+                    Input #1, statsW0!(I)
+
+                    Input #1, statsW1!(I)
+
+                Next
+
+                For L = 0 To 15:
+                    Input #1, statsZ!(L)
+                Next
+
+                For L = 0 To 15:
+                    Input #1, statsZ1!(L)
+                Next
+
+                Close #1
+
+                For I = 0 To 13
+                    If position$(I) = "F " Then posn$(I) = "FORWARD"
+                    If position$(I) = "C " Then posn$(I) = "CENTER"
+                    If position$(I) = "G " Then posn$(I) = "GUARD"
+                    If position$(I) = "FC" Then posn$(I) = "FORWARD/GUARD"
+                    If position$(I) = "FG" Then posn$(I) = "FORWARD/CENTER"
+                    If position$(I) = "GF" Then posn$(I) = "GUARD/FORWARD"
+                    If position$(I) = "CF" Then posn$(I) = "CENTER/FORWARD"
+                Next
+
+                Open diskPaths$(1) + statFile$ + "S" For Input As #2
+
+                Input #2, numberGames
+
+                For J = 1 To MAX_SCHED_STATS:
+                    Input #2, teamScore(J)
+                Next
+
+                For J = 1 To MAX_SCHED_STATS:
+                    Input #2, oppName$(J)
+                Next
+
+                For J = 1 To MAX_SCHED_STATS:
+                    Input #2, oppScore(J)
+                Next
+
+
+                replayLosses = 0
+                replayWins = 0
+
+                For currGame = 1 To numberGames
+                    If teamScore(currGame) < oppScore(currGame) Then
+                        replayLosses = replayLosses + 1
+                    End If
+                    If teamScore(currGame) > oppScore(currGame) Then
+                        replayWins = replayWins + 1
+                    End If
+                Next
+
+                Color 15, 0
+                Cls
+
+                Call MenuBox(8, 25, 24, 5, 15, 1)
+
+                Do
+
+                    Locate 10
+                    Color 7, 1
+
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "F";
+                    Color 7: Print "ILE"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "P";
+                    Color 7: Print "RINTER"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "S";
+                    Color 7: Print "CREEN"
+
+                    J$ = GetKeyPress$
+
+                Loop Until UCase$(J$) = "F" Or UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
+
+                backToMenu = 0
+
+                If J$ <> Chr$(27) Then
+
+                    Select Case UCase$(J$)
+
+                        Case "F":
+                            userFile$ = _SaveFileDialog$("Save Comparison Report", _CWD$ + "\Comparison", "*.txt", "Text File")
+                            If userFile$ <> "" Then
+                                Call Comparisons_Report(0, userFile$, team$, posn$())
+                            End If
+
+                        Case "P":
+                            Call Comparisons_Report(1, "COMPARISON", team$, posn$())
+
+                        Case "S":
+                            Call Comparisons_Screen(team$, backToMenu, posn$())
+
+                    End Select
+
+                End If
+
+            End If 'Done checking file count
+
+        End If 'Done checking for ESC
+
+    Loop Until backToMenu = 0 Or J$ = Chr$(27) Or teamNbr = 0 Or haveStats = 0
+
+End Sub
+
+
+'----------------------------------------
+'     Comparisons_Screen Subroutine
+'----------------------------------------
+'This subroutine provides a brief menu of
+'player comparisons that can be done, and
+'then formats stats for those options for
+'use with the user display
+Sub Comparisons_Screen (teamName$, backToMenu, posn$())
+
+    Shared teamRatings%(), teamStats!()
+
+    Shared statsA!(), playerStats!()
+    Shared statsW0!(), statsW1!()
+    Shared statsZ!(), statsZ1!()
+
+    Shared statPlyrNames$()
+
+    Shared replayLosses, replayWins
+
+    Cls
+
+    For dc = 1 To 22
+        Color 15, 0
+        Locate dc
+        Print String$(79, 177)
+    Next
+
+    Call TeamComparisons_Screen(teamName$)
+
+    Locate 23, 28
+    Color 15, 0: Print "HIT ANY KEY TO CONTINUE"
+    I$ = GetKeyPress$
+
+    Do
+
+        Color 0, 0
+        Cls
+
+        Color 9
+        Locate 3, 12: Print "STAT COMPARISONS FOR ";
+        Color 15: Print teamName$
+
+        'Print names of all 14 characters
+        For I = 0 To 13
+            Color 12
+            Locate I + 5, 15
+            Print Using "##"; I + 1;
+            Print ". ";
+            Color 7: Print statPlyrNames$(I)
+        Next
+
+        Color 12
+        Locate , 15: Print "15. ";
+        Color 3: Print "View Players In Sequence"
+        Color 12
+        Locate , 15: Print "16. ";
+        Color 3: Print "View Another Team"
+        Color 12
+        Locate , 15: Print "17. ";
+        Color 3: Print "Return To Main Menu"
+
+        Do
+
+            Color 15
+            Locate 23, 15
+            Input "ENTER # TO VIEW"; B9
+
+            Select Case B9
+
+                Case 1 To 14:
+                    playerIdx = B9 - 1
+
+                    Cls
+
+                    For dc = 1 To 19
+                        Color 15, 0: Locate dc
+                        Print String$(78, 177)
+                    Next
+
+                    Call PlayerComparisons_Screen(playerIdx, posn$(playerIdx), teamName$)
+
+                    Color 15, 0: Locate 22: Print "HIT ENTER TO CONTINUE"
+                    I$ = GetKeyPress$
+
+                Case 15:
+                    Cls
+
+                    For dc = 1 To 19
+                        Color 15, 0: Locate dc
+                        Print String$(78, 177)
+                    Next
+
+                    menuExit = 0
+
+                    playerIdx = 0
+
+                    Do
+
+                        If statPlyrNames$(playerIdx) <> "XXX" And statPlyrNames$(playerIdx) <> "END" And statPlyrNames$(playerIdx) <> "" Then
+
+                            Call PlayerComparisons_Screen(playerIdx, posn$(playerIdx), teamName$)
+
+                            Color 15, 0
+                            Locate 22: Print "HIT ENTER TO CONTINUE"
+                            Locate 22, 23: Print "OR ESC TO RETURN TO MENU"
+                            I$ = GetKeyPress$
+
+                            If I$ = Chr$(27) Then menuExit = 1
+
+                        End If 'done checking for null player
+
+                        playerIdx = playerIdx + 1
+
+                    Loop Until playerIdx = 14 Or menuExit = 1
+
+                Case 16:
+                    backToMenu = 1
+
+                Case 17:
+                    Exit Sub
+
+            End Select
+
+            Locate 23, 30
+            Print Space$(10)
+
+        Loop Until B9 >= 1 And B9 <= 17 Or menuExit = 1
+
+    Loop Until B9 = 17 Or backToMenu = 1
+
+    If backToMenu <> 1 Then
+        Color 15, 0
+        Locate 23, 28: Print "HIT ANY KEY TO CONTINUE"
+        I$ = GetKeyPress$
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'    TeamComparisons_Screen SubRoutine
+'----------------------------------------
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
+Sub TeamComparisons_Screen (teamName$)
+
+    Shared teamRatings%(), teamStats!()
+    Shared statsZ!(), statsZ1!()
+
+    Shared replayLosses, replayWins
+
+    Locate 11, 31: Print Space$(18)
+
+    team$ = _Trim$(teamName$)
+    teamLen% = Len(team$)
+
+    Color 11
+    Locate 11, Int((80 - teamLen%) / 2): Print teamName$
+
+    Color 15, 2
+    Locate 5, 30: Print "              W - L ";
+    Locate 6, 30: Print "  ACTUAL   ";
+    Locate 7, 30: Print "  REPLAY   ";
+
+    Color 15, 1
+    Locate 2, 3: Print "   OFFENSIVE STATS    "
+    Locate 3, 3: Print "       ACTUAL   REPLAY"
+    Locate 4, 3: Print " FGM   ";
+    Locate 5, 3: Print " FGA   ";
+    Locate 6, 3: Print " FG PCT";
+    Locate 7, 3: Print " FTM   ";
+    Locate 8, 3: Print " FTA   ";
+    Locate 9, 3: Print " FT PCT";
+    Locate 10, 3: Print " O.RB  ";
+    Locate 11, 3: Print " D.RB  ";
+    Locate 12, 3: Print " T.REB ";
+    Locate 13, 3: Print " ASS'T ";
+    Locate 14, 3: Print " FLS   ";
+    Locate 15, 3: Print "  ST   ";
+    Locate 16, 3: Print "  TO   ";
+    Locate 17, 3: Print " BLK   ";
+    Locate 18, 3: Print " 3-FGM ";
+    Locate 19, 3: Print " 3-FGA ";
+    Locate 20, 3: Print " 3-PCT ";
+
+    Color 15, 12
+    Locate 2, 55: Print "   DEFENSIVE STATS   "
+    Locate 3, 55: Print "       ACTUAL  REPLAY"
+    Locate 4, 55: Print " FGM   ";
+    Locate 5, 55: Print " FGA   ";
+    Locate 6, 55: Print " FG PCT";
+    Locate 7, 55: Print " FTM   ";
+    Locate 8, 55: Print " FTA   ";
+    Locate 9, 55: Print " FT PCT";
+    Locate 10, 55: Print " O.RB  ";
+    Locate 11, 55: Print " D.RB  ";
+    Locate 12, 55: Print " T.REB ";
+    Locate 13, 55: Print " ASS'T ";
+    Locate 14, 55: Print " FLS   ";
+    Locate 15, 55: Print "  ST   ";
+    Locate 16, 55: Print "  TO   ";
+    Locate 17, 55: Print " BLK   ";
+    Locate 18, 55: Print " 3-FGM ";
+    Locate 19, 55: Print " 3-FGA ";
+    Locate 20, 55: Print " 3-PCT ";
+
+    For I = 3 To 21:
+        Locate I, 25
+        Color 7, 0
+        Print String$(2, 177)
+    Next
+
+    For I = 3 To 21:
+        Locate I, 76
+        Print String$(2, 177)
+    Next
+
+    Locate 21, 5: Print String$(20, 177)
+    Locate 21, 57: Print String$(20, 177)
+
+    For I = 6 To 8:
+        Locate I, 50
+        Print String$(2, 177)
+    Next
+
+    Locate 8, 32: Print String$(18, 177)
+
+    Color 3, 0
+    Locate 6, 41: Print Using "####"; teamRatings%(7);
+    Locate 6, 45: Print Using "####"; teamRatings%(8);: Print " ";
+
+    Color 14, 0
+    Locate 7, 41: Print Using "####"; replayWins;
+    Locate 7, 45: Print Using "####"; replayLosses;: Print " ";
+
+    'Print out all ACTUAL values from COLBBTMS
+    Color 3, 0
+
+    'FGM
+    Locate 4, 10: Print Using "######"; teamStats!(1) / 100 * teamStats!(3);
+
+    'FGA
+    Locate 5, 10: Print Using "######"; teamStats!(1);
+
+    'FG PCT
+    If teamStats!(1) = 0 Then Locate 6, 10: Print "  .000";
+    If teamStats!(1) > 0 Then
+        Locate 6, 10
+        statPCT! = teamStats!(3) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
+
+    'FTM
+    Locate 7, 10: Print Using "######"; teamStats!(5) / 100 * teamStats!(7);
+
+    'FTA
+    Locate 8, 10: Print Using "######"; teamStats!(5);
+
+    'FT Pct
+    If teamStats!(5) = 0 Then Locate 9, 10: Print "  .000";
+    If teamStats!(5) > 0 Then
+        Locate 9, 10
+        statPCT! = teamStats!(7) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
+
+    'Rebounds / Assists / Fouls / Steals / TOs
+    Locate 10, 10: Print Using "######"; .35 * teamStats!(9);
+    Locate 11, 10: Print Using "######"; .65 * teamStats!(9);
+    Locate 12, 10: Print Using "######"; teamStats!(9);
+    Locate 13, 10: Print Using "######"; teamStats!(11);
+    Locate 14, 10: Print Using "######"; teamStats!(13);
+    Locate 15, 10: Print Using "######"; teamStats!(17);
+    Locate 16, 10: Print Using "######"; teamStats!(15);
+
+    'Blocks
+    If teamStats!(21) = 0 Then
+        Locate 17, 10: Print "   ---";
+    Else
+        Locate 17, 10: Print Using "######"; teamStats!(21);
+    End If
+
+    '3FGM
+    If teamStats!(23) = 0 Then
+        Locate 18, 10: Print "   ---"
+    Else
+        Locate 18, 10: Print Using "######"; teamStats!(23) * teamStats!(24) / 100;
+    End If
+
+    '3FGA
+    If teamStats!(23) = 0 Then
+        Locate 19, 10: Print "   ---"
+    Else
+        Locate 19, 10: Print Using "######"; teamStats!(23);
+    End If
+
+    '3FG Pct
+    If teamStats!(24) = 0 Then Locate 20, 10: Print "  .000";
+    If teamStats!(24) > 0 Then
+        Locate 20, 10
+        statPCT! = teamStats!(24) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
+
+
+    'DEFENSE
+    Color 3, 0
+
+    'FGM
+    Locate 4, 62: Print Using "######"; teamStats!(2) / 100 * teamStats!(4);
+
+    'FGA
+    Locate 5, 62: Print Using "######"; teamStats!(2);
+
+    'FG PCT
+    If teamRatings%(2) = 0 Then Locate 6, 62: Print "  .000";
+    If teamRatings%(2) > 0 Then
+        Locate 6, 62
+        statPCT! = teamStats!(4) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
+
+    'FTM
+    Locate 7, 62: Print Using "######"; teamStats!(6) / 100 * teamStats!(8);
+
+    'FTA
+    Locate 8, 62: Print Using "######"; teamStats!(6);
+
+    'FT Pct
+    If teamRatings%(6) = 0 Then Locate 9, 62: Print "  .000";
+    If teamRatings%(6) > 0 Then
+        Locate 9, 62
+        statPCT! = teamStats!(8) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
+
+    'Rebounds / Assists / Fouls / Steals / TOs
+    Locate 10, 62: Print Using "######"; .35 * teamStats!(10);
+    Locate 11, 62: Print Using "######"; .65 * teamStats!(10);
+    Locate 12, 62: Print Using "######"; teamStats!(10);
+    Locate 13, 62: Print Using "######"; teamStats!(12);
+    Locate 14, 62: Print Using "######"; teamStats!(14);
+    Locate 15, 62: Print Using "######"; teamStats!(18);
+    Locate 16, 62: Print Using "######"; teamStats!(16);
+
+    ' Blocks
+    If teamStats!(22) = 0 Then
+        Locate 17, 62: Print "   ---"
+    Else
+        Locate 17, 62: Print Using "   ###"; teamStats!(22);
+    End If
+
+    '3FGM
+    Locate 18, 62: Print Using "######"; teamStats!(19) * teamStats!(20) / 100;
+
+    '3FGA
+    Locate 19, 62: Print Using "######"; teamStats!(19);
+
+    '3FG Pct
+    If teamRatings%(9) = 0 Then
+        Locate 20, 62: Print "  .000";
+    End If
+    If teamRatings%(9) > 0 Then
+        Locate 20, 62: statPCT! = teamStats!(20) / 100
+        Print "  ";
+        Print Using ".###"; statPCT!;
+    End If
+
+    'Print out all REPLAY values from stat files
+    Locate 4, 16: Print Using "#########"; statsZ!(2);
+    Locate 5, 16: Print Using "#########"; statsZ!(1);
+
+    If statsZ!(1) = 0 Then Locate 6, 16: Print "     .000";
+    If statsZ!(1) > 0 Then Locate 6, 16: statPCT! = (statsZ!(2) / statsZ!(1)): Print "     ";: Print Using ".###"; statPCT!;
+
+    Locate 7, 16: Print Using "#########"; statsZ!(4);
+    Locate 8, 16: Print Using "#########"; statsZ!(3);
+
+    If statsZ!(3) = 0 Then Locate 9, 16: Print "     .000";
+    If statsZ!(3) > 0 Then Locate 9, 16: statPCT! = (statsZ!(4) / statsZ!(3)): Print "     ";: Print Using ".###"; statPCT!;
+
+    Locate 10, 16: Print Using "#########"; statsZ!(12);
+    Locate 11, 16: Print Using "#########"; statsZ!(5) - statsZ!(12) - statsZ!(15);
+    Locate 12, 16: Print Using "#########"; statsZ!(5) - statsZ!(15);
+    Locate 13, 16: Print Using "#########"; statsZ!(8);
+    Locate 14, 16: Print Using "#########"; statsZ!(6);
+    Locate 15, 16: Print Using "#########"; statsZ!(7);
+    Locate 16, 16: Print Using "#########"; statsZ!(11);
+    Locate 17, 16: Print Using "#########"; statsZ!(9);
+    Locate 18, 16: Print Using "#########"; statsZ!(13);
+    Locate 19, 16: Print Using "#########"; statsZ!(14);
+
+    If statsZ!(13) = 0 Then
+        Locate 20, 16: Print "     .000";
+    End If
+    If statsZ!(13) > 0 Then
+        Locate 20, 16: statPCT! = (statsZ!(13) / statsZ!(14))
+        Print "     ";: Print Using ".###"; statPCT!;
+    End If
+
+    Locate 4, 68: Print Using "########"; statsZ1!(2);
+    Locate 5, 68: Print Using "########"; statsZ1!(1);
+
+    If statsZ1!(1) = 0 Then Locate 6, 68: Print "    .000";
+    If statsZ1!(1) > 0 Then Locate 6, 68: statPCT! = (statsZ1!(2) / statsZ1!(1)): Print "    ";: Print Using ".###"; statPCT!;
+
+    Locate 7, 68: Print Using "########"; statsZ1!(4);
+    Locate 8, 68: Print Using "########"; statsZ1!(3);
+
+    If statsZ1!(3) = 0 Then Locate 9, 68: Print "    .000";
+    If statsZ1!(3) > 0 Then Locate 9, 68: statPCT! = (statsZ1!(4) / statsZ1!(3)): Print "    ";: Print Using ".###"; statPCT!;
+
+    Locate 10, 68: Print Using "########"; statsZ1!(12);
+    Locate 11, 68: Print Using "########"; statsZ1!(5) - statsZ1!(12) - statsZ1!(15);
+    Locate 12, 68: Print Using "########"; statsZ1!(5) - statsZ1!(15);
+    Locate 13, 68: Print Using "########"; statsZ1!(8);
+    Locate 14, 68: Print Using "########"; statsZ1!(6);
+    Locate 15, 68: Print Using "########"; statsZ1!(7);
+    Locate 16, 68: Print Using "########"; statsZ1!(11);
+    Locate 17, 68: Print Using "########"; statsZ1!(9);
+    Locate 18, 68: Print Using "########"; statsZ1!(13);
+    Locate 19, 68: Print Using "########"; statsZ1!(14);
+
+    If statsZ1!(13) = 0 Then
+        Locate 20, 68: Print "    .000";
+    End If
+    If statsZ1!(13) > 0 Then
+        Locate 20, 68: statPCT! = (statsZ1!(13) / statsZ1!(14))
+        Print "    ";: Print Using ".###"; statPCT!;
+    End If
+
+End Sub
+
+
+'----------------------------------------
+'  PlayerComparisons_Screen Subroutine
+'----------------------------------------
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
+Sub PlayerComparisons_Screen (idx, position$, teamName$)
+
+    Shared statsA!(), playerStats!()
+    Shared statsW0!(), statsW1!()
+
+    Shared statPlyrNames$()
+
+    Color 11
+    Locate 1, 2: Print teamName$
+
+    Color 15, 0
+    Locate 1, 14: Print String$(34, 177)
+
+    Color 14
+
+    'Player Name / Position
+    Locate 2, 14: Print statPlyrNames$(idx);
+    Print " - ";
+    Color 11: Print position$
+
+    Color 12
+    Locate 5, 2: Print "ACTUAL  "
+    Locate 6, 2: Print "REPLAY  ";
+    Color 7, 0: Print String$(2, 177)
+    Locate 7, 4: Print String$(8, 177)
+
+    Color 0, 11
+    Locate 4, 14: Print "  G ";
+    Locate , 18: Print " MIN ";
+    Locate , 23: Print " FGM ";
+    Locate , 28: Print " FGA ";
+    Locate , 33: Print " FG-PCT ";
+    Locate , 41: Print " FTM ";
+    Locate , 46: Print " FTA ";
+    Locate , 51: Print " FT-PCT ";
+    Locate , 59: Print " O.REB ";
+    Locate , 65: Print "  O.REB/G"
+
+    Color 12, 0
+    Locate 10, 2: Print "ACTUAL  "
+    Locate 11, 2: Print "REPLAY  ";
+
+    Color 7, 0: Print String$(2, 177)
+    Locate 12, 4: Print String$(8, 177)
+
+    Color 0, 11
+    Locate 9, 14: Print " D.REB ";
+    Locate , 21: Print " D.REB/G ";
+    Locate , 30: Print " ASST ";
+    Locate , 36: Print " ASST/G ";
+    Locate , 44: Print " FOULS ";
+    Locate , 51: Print " F/G ";
+    Locate , 56: Print " TREB ";
+    Locate , 62: Print " STL ";
+    Locate , 67: Print " STL/G"
+
+    Color 12, 0
+    Locate 15, 2: Print "ACTUAL  "
+    Locate 16, 2: Print "REPLAY  ";
+
+    Color 7, 0: Print String$(2, 177)
+    Locate 12, 4: Print String$(8, 177)
+
+    Color 0, 11
+    Locate 14, 14: Print " BLK ";
+    Locate , 19: Print " BLK/G ";
+    Locate , 26: Print " 3-FGM ";
+    Locate , 33: Print " 3-FGA ";
+    Locate , 40: Print " 3-FG-PCT ";
+    Locate , 50: Print "  RB/G ";
+    Locate , 57: Print "  PTS";
+    Locate , 62: Print " PTS/G ";
+    Locate , 69: Print " MIN/G"
+
+    Color 1, 11
+    Locate 5, 14: Print Using "###"; playerStats!(idx, 0);
+    Locate , 17: Print Using "#####"; playerStats!(idx, 1);
+    Locate , 22: Print Using "#####"; playerStats!(idx, 3);
+    Locate , 27: Print Using "#####"; playerStats!(idx, 2);
+
+    Locate , 32
+    If playerStats!(idx, 2) = 0 Then Print "   --.- %";
+    If playerStats!(idx, 2) > 0 Then
+        Print Using "#####.#"; (playerStats!(idx, 3) / playerStats!(idx, 2)) * 100;
+        Print " %";
+    End If
+
+    Locate , 40: Print Using "#####"; playerStats!(idx, 5);
+    Locate , 45: Print Using "#####"; playerStats!(idx, 4);
+
+    Locate , 50
+    If playerStats!(idx, 4) = 0 Then Print "   --.- %";
+    If playerStats!(idx, 4) > 0 Then
+        Print Using "#####.#"; (playerStats!(idx, 5) / playerStats!(idx, 4)) * 100;
+        Print " %";
+    End If
+
+    Locate , 58: Print Using "#######"; playerStats!(idx, 6);
+
+    Locate , 65
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 6) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 6) = 0) Then
+        Print "      0.0";
+    End If
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 6) > 0 Then
+        Print Using "#######.#"; playerStats!(idx, 6) / playerStats!(idx, 0);
+    End If
+
+    Color 7, 0: Print String$(2, 177)
+    Color 1, 11
+
+    Locate 10, 14: Print Using "######"; playerStats!(idx, 7) - playerStats!(idx, 6);
+
+    Locate , 20
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 7) - playerStats!(idx, 6) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 7) - playerStats!(idx, 6) = 0) Then
+        Print "      0.0";
+    End If
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 7) - playerStats!(idx, 6) > 0 Then
+        Print Using "#######.#"; (playerStats!(idx, 7) - playerStats!(idx, 6)) / playerStats!(idx, 0);
+    End If
+
+    Locate , 29: Print Using "######"; playerStats!(idx, 9);
+
+    Locate , 35
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 9) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 9) = 0) Then
+        Print "     0.0";
+    End If
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 9) > 0 Then
+        Print Using "######.#"; playerStats!(idx, 9) / playerStats!(idx, 0);
+    End If
+
+    Locate , 43: Print Using "#######"; playerStats!(idx, 8);
+
+    Locate , 50
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 8) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 8) = 0) Then
+        Print "  0.0";
+    End If
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 8) > 0 Then
+        Print Using "###.#"; playerStats!(idx, 8) / playerStats!(idx, 0);
+    End If
+
+    Locate , 55: Print Using "######"; playerStats!(idx, 7);
+    Locate , 61: Print Using "#####"; playerStats!(idx, 11);
+
+    Locate , 66
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 11) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 11) = 0) Then
+        Print "    0.0";
+    End If
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 11) > 0 Then
+        Print Using "#####.#"; playerStats!(idx, 11) / playerStats!(idx, 0);
+    End If
+
+    Color 7, 0: Print String$(2, 177)
+    Color 1, 11
+
+    Locate 15, 14: Print Using "####"; playerStats!(idx, 10);
+
+    Locate , 18:
+    If playerStats!(idx, 0) = 0 Or playerStats!(idx, 10) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 10) = 0) Then
+        Print "    0.0";
+    End If
+    If playerStats!(idx, 0) > 0 And playerStats!(idx, 12) > 0 Then
+        Print Using "#####.#"; playerStats!(idx, 10) / playerStats!(idx, 0);
+    End If
+
+    Locate , 25: Print Using "#######"; playerStats!(idx, 13);
+    Locate , 32: Print Using "#######"; playerStats!(idx, 12);
+
+    Locate , 39
+    If playerStats!(idx, 13) = 0 Then Print "     --.- %";
+    If playerStats!(idx, 12) > 0 Then
+        Print Using "#######.#"; (playerStats!(idx, 13) / playerStats!(idx, 12)) * 100;
+        Print " %";
+    End If
+
+    Locate , 49: If playerStats!(idx, 0) <> 0 Then Print Using "   ##.#"; playerStats!(idx, 7) / playerStats!(idx, 0);
+    Locate , 56: Print Using "######"; (playerStats!(idx, 3) * 2) + playerStats!(idx, 5) + playerStats!(idx, 13);
+
+    Locate , 62
+    If playerStats!(idx, 0) = 0 Then
+        Print "  --.-";
+    End If
+    If playerStats!(idx, 0) > 0 Then
+        Print Using "####.#"; (playerStats!(idx, 3) * 2) + (playerStats!(idx, 5) + playerStats!(idx, 13)) / playerStats!(idx, 0);
+    End If
+
+    Locate , 68
+    If playerStats!(idx, 0) = 0 Then
+        Print "   --.-";
+    End If
+    If playerStats!(idx, 0) > 0 Then
+        Print Using "#####.#"; playerStats!(idx, 1) / playerStats!(idx, 0);
+    End If
+
+    Color 7, 0: Print String$(2, 177)
+    Color 14, 11
+
+    Locate 6, 14: Print Using "###"; statsA!(idx, 0);
+
+    Locate , 17
+    If statsA!(idx, 10) = 0 Then
+        Print "    0";
+    End If
+    If statsA!(idx, 10) > 0 Then
+        Print Using "#####"; (statsA!(idx, 10) + 30) / 60;
+    End If
+
+    Locate , 22: Print Using "#####"; statsA!(idx, 2);
+    Locate , 27: Print Using "#####"; statsA!(idx, 1);
+
+    Locate , 32
+    If statsA!(idx, 2) = 0 Then Print "    0.0%";
+    If statsA!(idx, 2) > 0 Then
+        Print Using "#####.#"; (statsA!(idx, 2) / statsA!(idx, 1)) * 100;
+        Print "%";
+    End If
+
+    Locate 6, 40: Print Using "#####"; statsA!(idx, 4);
+    Locate 6, 45: Print Using "#####"; statsA!(idx, 3);
+
+    Locate , 50
+    If statsA!(idx, 4) = 0 Then Print "    0.0%";
+    If statsA!(idx, 4) > 0 Then
+        Print Using "#####.#"; statsA!(idx, 4) / statsA!(idx, 3) * 100;
+        Print "%";
+    End If
+
+    Locate , 58: Print Using "#######"; statsA!(idx, 12);
+
+    Locate , 65
+    If statsA!(idx, 0) = 0 Or statsA!(idx, 12) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 12) = 0) Then
+        Print "      0.0";
+    End If
+    If statsA!(idx, 0) > 0 And statsA!(idx, 12) > 0 Then
+        Print Using "#######.#"; statsA!(idx, 12) / statsA!(idx, 0);
+    End If
+
+    Color 7, 0: Print String$(2, 177)
+    Locate , 16: Print String$(60, 177)
+
+    Color 14, 11
+    Locate 11, 14: Print Using "######"; statsA!(idx, 5) - statsA!(idx, 12);
+
+    Locate , 20
+    If statsA!(idx, 0) = 0 Or (statsA!(idx, 5) - statsA!(idx, 12)) = 0 Or (statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) = 0) Then
+        Print "      0.0";
+    End If
+    If statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) > 0 Then
+        Print Using "#######.#"; (statsA!(idx, 5) - statsA!(idx, 12)) / statsA!(idx, 0);
+    End If
+
+    Locate , 29: Print Using "######"; statsA!(idx, 8);
+
+    Locate , 35
+    If statsA!(idx, 0) = 0 Or statsA!(idx, 8) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 8) = 0) Then
+        Print "     0.0";
+    End If
+    If statsA!(idx, 0) > 0 And statsA!(idx, 8) > 0 Then
+        Print Using "######.#"; statsA!(idx, 8) / statsA!(idx, 0);
+    End If
+
+    Locate , 43: Print Using "#######"; statsA!(idx, 6);
+
+    Locate , 50
+    If statsA!(idx, 0) = 0 Or statsA!(idx, 6) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 6) = 0) Then
+        Print "  0.0";
+    End If
+    If statsA!(idx, 0) > 0 And statsA!(idx, 6) > 0 Then
+        Print Using "###.#"; statsA!(idx, 6) / statsA!(idx, 0);
+    End If
+
+    Locate , 55: Print Using "######"; statsA!(idx, 5);
+    Locate , 61: Print Using "#####"; statsA!(idx, 7);
+
+    Locate , 66
+    If statsA!(idx, 0) = 0 Or statsA!(idx, 7) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 7) = 0) Then
+        Print "    0.0";
+    End If
+    If statsA!(idx, 0) > 0 And statsA!(idx, 7) > 0 Then
+        Print Using "#####.#"; statsA!(idx, 7) / statsA!(idx, 0);
+    End If
+
+    Color 7, 0: Print String$(2, 177)
+    Locate , 16: Print String$(59, 177)
+
+    Color 14, 11
+    Locate 16, 14: Print Using "####"; statsA!(idx, 9);
+
+    Locate , 18
+    If statsA!(idx, 0) = 0 Or statsA!(idx, 9) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 9) = 0) Then
+        Print "    0.0";
+    End If
+    If statsA!(idx, 0) > 0 And statsA!(idx, 9) > 0 Then
+        Print Using "#####.#"; statsA!(idx, 9) / statsA!(idx, 0);
+    End If
+
+    Locate , 25: Print Using "#######"; statsW0!(idx);
+    Locate , 32: Print Using "#######"; statsW1!(idx);
+
+    Locate , 39
+    If statsW0!(idx) = 0 Then Print "      0.0%";
+    If statsW0!(idx) > 0 Then
+        Print Using "#######.#"; (statsW0!(idx) / statsW1!(idx)) * 100;
+        Print "%";
+    End If
+
+    statVal = statsA!(idx, 5) / statsA!(idx, 0)
+    Locate , 49: Print Using "#####.#"; statVal;
+    Locate , 56: Print Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx);
+
+    Locate , 62
+    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx) = 0 Then
+        Print "   0.0";
+    End If
+    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx) > 0 Then
+        Print Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx)) / statsA!(idx, 0);
+    End If
+
+    Locate , 68
+    If statsA!(idx, 10) = 0 Then
+        Print "    0.0";
+    End If
+    If statsA!(idx, 10) > 0 Then
+        Print Using "#####.#"; ((statsA!(idx, 10) + 30) / 60) / statsA!(idx, 0);
+    End If
+
+    Color 7, 0: Print String$(2, 177)
+    Locate , 16: Print String$(61, 177)
+
+End Sub
+
+
+'----------------------------------------
+'   Comparisons_Report Subroutine
+'----------------------------------------
+'This subroutine focuses on the formatting
+'of team stats for comparison. The stats
+'are output to the end user display
+Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
+
+    Shared replayLosses, replayWins
+
+    Shared teamRatings%(), teamStats!()
+
+    Shared playerStats!()
+    Shared statsA!()
+    Shared statsZ!(), statsZ1!()
+    Shared statsW0!(), statsW1!()
+
+    Shared statPlyrNames$()
+
+    Color 15, 0
+    Cls
+
+    '--------------------
+    '  Team Comparisons
+    '--------------------
+
+    Open destFile$ For Output As #1
+
+    Print #1,
+    Print #1, Tab(33); teamName$
+    Print #1,
+
+    'Locate 2
+    Print #1, Tab(3); "   OFFENSIVE STATS    ";
+    Print #1, Tab(55); "   DEFENSIVE STATS   "
+    Print #1,
+
+    'Locate 3
+    Print #1, Tab(3); "       ACTUAL   REPLAY";
+    Print #1, Tab(55); "       ACTUAL  REPLAY"
+
+    'Locate 4
+    Print #1, Tab(3); " FGM   ";
+    Print #1, Tab(16); Using "#########"; statsZ!(2);
+
+    Print #1, Tab(55); " FGM   ";
+    Print #1, Tab(62); Using "######"; teamStats!(2) / 100 * teamStats!(4);
+    Print #1, Tab(68); Using "########"; statsZ1!(2)
+
+    'Locate 5
+    Print #1, Tab(3); " FGA   ";
+    Print #1, Tab(16); Using "#########"; statsZ!(1);
+
+    Print #1, Tab(30); "              W - L ";
+
+    Print #1, Tab(55); " FGA   ";
+    Print #1, Tab(62); Using "######"; teamStats!(2);
+    Print #1, Tab(68); Using "########"; statsZ1!(1)
+
+    'Locate 6
+    Print #1, Tab(3); " FG PCT";
+
+    If teamStats!(1) = 0 Then Print #1, Tab(10); "  .000";
+    If teamStats!(1) > 0 Then
+        statPCT! = teamStats!(3) / 100
+        Print #1, Tab(10); "  "; Using ".###"; statPCT!;
+    End If
+
+    If statsZ!(1) = 0 Then Print #1, Tab(16); "     .000";
+    If statsZ!(1) > 0 Then
+        statPCT! = (statsZ!(2) / statsZ!(1))
+        Print #1, Tab(16); "     "; Using ".###"; statPCT!;
+    End If
+
+    Print #1, Tab(30); "  ACTUAL   ";
+    Print #1, Tab(41); Using "####"; teamStats!(7);
+    Print #1, Tab(45); Using "####"; teamStats!(8);
+
+    Print #1, Tab(55); " FG PCT";
+
+    If teamStats!(2) = 0 Then Print #1, Tab(62); "  .000";
+    If teamStats!(2) > 0 Then
+        statPCT! = teamStats!(4) / 100
+        Print #1, Tab(62); "  "; Using ".###"; statPCT!;
+    End If
+
+    If statsZ1!(1) = 0 Then Print #1, Tab(68); "    .000"
+    If statsZ1!(1) > 0 Then
+        statPCT! = (statsZ1!(2) / statsZ1!(1))
+        Print #1, Tab(68); "    "; Using ".###"; statPCT!
+    End If
+
+    'Locate 7
+    Print #1, Tab(3); " FTM   ";
+    Print #1, Tab(10); Using "######"; teamStats!(5) / 100 * teamStats!(7);
+    Print #1, Tab(16); Using "#########"; statsZ!(4);
+
+    Print #1, Tab(30); "  REPLAY   ";
+    Print #1, Tab(41); Using "####"; replayWins;
+    Print #1, Tab(45); Using "####"; replayLosses;
+
+    Print #1, Tab(55); " FTM   ";
+    Print #1, Tab(62); Using "######"; teamStats!(6) / 100 * teamStats!(8);
+    Print #1, Tab(68); Using "########"; statsZ1!(4)
+
+    'Locate 8
+    Print #1, Tab(3); " FTA   ";
+    Print #1, Tab(10); Using "######"; teamStats!(5);
+    Print #1, Tab(16); Using "#########"; statsZ!(3);
+
+    Print #1, Tab(55); " FTA   ";
+    Print #1, Tab(62); Using "######"; teamStats!(6);
+    Print #1, Tab(68); Using "########"; statsZ1!(3)
+
+    'Locate 9
+    Print #1, Tab(3); " FT PCT";
+    If teamStats!(5) = 0 Then Print #1, Tab(10); "  .000";
+    If teamStats!(5) > 0 Then
+        statPCT! = teamStats!(7) / 100
+        Print #1, Tab(10); "  "; Using ".###"; statPCT!;
+    End If
+
+    If statsZ!(3) = 0 Then Print #1, Tab(16); "     .000";
+    If statsZ!(3) > 0 Then
+        statPCT! = (statsZ!(4) / statsZ!(3))
+        Print #1, Tab(16); "     "; Using ".###"; statPCT!;
+    End If
+
+    Print #1, Tab(55); " FT PCT";
+
+    If teamStats!(6) = 0 Then Print #1, Tab(62); "  .000";
+    If teamStats!(6) > 0 Then
+        statPCT! = teamStats!(8) / 100
+        Print #1, Tab(62); "  "; Using ".###"; statPCT!;
+    End If
+
+    If statsZ1!(3) = 0 Then Print #1, Tab(68); "    .000"
+    If statsZ1!(3) > 0 Then
+        statPCT! = (statsZ1!(4) / statsZ1!(3))
+        Print #1, Tab(68); "    "; Using ".###"; statPCT!
+    End If
+
+    'Locate 10
+    Print #1, Tab(3); " O.RB  ";
+    Print #1, Tab(10); Using "######"; .35 * teamStats!(9);
+    Print #1, Tab(16); Using "#########"; statsZ!(12);
+
+    Print #1, Tab(55); " O.RB  ";
+    Print #1, Tab(62); Using "######"; .35 * teamStats!(10);
+    Print #1, Tab(68); Using "########"; statsZ1!(12)
+
+    'Locate 11
+    Print #1, Tab(3); " D.RB  ";
+    Print #1, Tab(10); Using "######"; .65 * teamStats!(9);
+    Print #1, Tab(16); Using "#########"; statsZ!(5) - statsZ!(12) - statsZ!(15);
+
+    Print #1, Tab(55); " D.RB  ";
+    Print #1, Tab(62); Using "######"; .65 * teamStats!(10);
+    Print #1, Tab(68); Using "########"; statsZ1!(5) - statsZ1!(12) - statsZ1!(15);
+
+    'Locate 12
+    Print #1, Tab(3); " T.REB ";
+    Print #1, Tab(10); Using "######"; teamStats!(9);
+    Print #1, Tab(16); Using "#########"; statsZ!(5) - statsZ!(15);
+
+    Print #1, Tab(55); " T.REB ";
+    Print #1, Tab(62); Using "######"; teamStats!(10);
+    Print #1, Tab(68); Using "########"; statsZ1!(5) - statsZ1!(15)
+
+    'Locate 13
+    Print #1, Tab(3); " ASS'T ";
+    Print #1, Tab(10); Using "######"; teamStats!(11);
+    Print #1, Tab(16); Using "#########"; statsZ!(8);
+
+    Print #1, Tab(55); " ASS'T ";
+    Print #1, Tab(62); Using "######"; teamStats!(12);
+    Print #1, Tab(68); Using "########"; statsZ1!(8)
+
+    'Locate 14
+    Print #1, Tab(3); " FLS   ";
+    Print #1, Tab(10); Using "######"; teamStats!(13);
+    Print #1, Tab(16); Using "#########"; statsZ!(6);
+
+    Print #1, Tab(55); " FLS   ";
+    Print #1, Tab(62); Using "######"; teamStats!(14);
+    Print #1, Tab(68); Using "########"; statsZ1!(6)
+
+    'Locate 15
+    Print #1, Tab(3); "  ST   ";
+    Print #1, Tab(10); Using "######"; teamStats!(17);
+    Print #1, Tab(16); Using "#########"; statsZ!(7);
+
+    Print #1, Tab(55); "  ST   ";
+    Print #1, Tab(62); Using "######"; teamStats!(18);
+    Print #1, Tab(68); Using "########"; statsZ1!(7)
+
+    'Locate 16
+    Print #1, Tab(3); "  TO   ";
+    Print #1, Tab(10); Using "######"; teamStats!(15);
+    Print #1, Tab(16); Using "#########"; statsZ!(11);
+
+    Print #1, Tab(55); "  TO   ";
+    Print #1, Tab(62); Using "######"; teamStats!(16);
+    Print #1, Tab(68); Using "########"; statsZ1!(11)
+
+    'Locate 17
+    Print #1, Tab(3); " BLK   ";
+    Print #1, Tab(10); Using "######"; teamStats!(21);
+    Print #1, Tab(16); Using "#########"; statsZ!(9);
+
+    Print #1, Tab(55); " BLK   ";
+    Print #1, Tab(62); Using "######"; teamStats!(22);
+    Print #1, Tab(68); Using "########"; statsZ1!(9)
+
+    'Locate 18
+    Print #1, Tab(3); " 3-FGM ";
+    Print #1, Tab(10); Using "######"; teamStats!(23) * teamStats!(24) / 100;
+    Print #1, Tab(16); Using "#########"; statsZ!(13);
+
+    Print #1, Tab(55); " 3-FGM ";
+    Print #1, Tab(62); Using "######"; teamStats!(19) * teamStats!(20) / 100;
+    Print #1, Tab(68); Using "########"; statsZ1!(13)
+
+    'Locate 19
+    Print #1, Tab(3); " 3-FGA ";
+    Print #1, Tab(10); Using "######"; teamStats!(23);
+    Print #1, Tab(16); Using "#########"; statsZ!(14);
+
+    Print #1, Tab(55); " 3-FGA ";
+    Print #1, Tab(62); Using "######"; teamStats!(19);
+    Print #1, Tab(68); Using "########"; statsZ1!(14)
+
+    'Actual
+    Print #1, Tab(3); " 3-PCT ";
+
+    If teamStats!(23) = 0 Then Print #1, Tab(10); "  .000";
+    If teamStats!(23) > 0 Then
+        statPCT! = teamStats!(24) / 100
+        Print #1, Tab(10); "  "; Using ".###"; statPCT!;
+    End If
+
+    If statsZ!(13) = 0 Then Print #1, Tab(16); "     .000";
+    If statsZ!(13) > 0 Then
+        statPCT! = (statsZ!(13) / statsZ!(14))
+        Print #1, Tab(16); "     "; Using ".###"; statPCT!;
+    End If
+
+    'Replay
+    Print #1, Tab(55); " 3-PCT ";
+
+    If teamStats!(9) = 0 Then Print #1, Tab(62); "  .000";
+    If teamStats!(9) > 0 Then
+        statPCT! = teamStats!(20) / 100
+        Print #1, Tab(62); "  "; Using ".###"; statPCT!;
+    End If
+
+    If statsZ1!(13) = 0 Then Print #1, Tab(68); "    .000"
+    If statsZ1!(13) > 0 Then
+        statPCT! = (statsZ1!(13) / statsZ1!(14))
+        Print #1, Tab(68); "    "; Using ".###"; statPCT!
+    End If
+
+    Print #1, Chr$(12)
+
+
+    '--------------------
+    ' Player Comparisons
+    '--------------------
+
+    playerIdx = 0
+
+    For playerIdx = 0 To 14
+
+        If statPlyrNames$(playerIdx) <> "XXX" And statPlyrNames$(playerIdx) <> "END" And statPlyrNames$(playerIdx) <> "" Then
+
+            If playerIdx Mod 3 = 0 Then
+                Print #1,
+                Print #1, Tab(22); "STAT COMPARISONS FOR "; teamName$
+                Print #1,
+            End If
+
+            'Player Name
+            Print #1, statPlyrNames$(idx); " - "; posn$(idx)
+            Print #1,
+
+            Print #1, Tab(14); "  G ";
+            Print #1, Tab(18); " MIN ";
+            Print #1, Tab(23); " FGM ";
+            Print #1, Tab(28); " FGA ";
+            Print #1, Tab(33); " FG-PCT ";
+            Print #1, Tab(41); " FTM ";
+            Print #1, Tab(46); " FTA ";
+            Print #1, Tab(51); " FT-PCT ";
+            Print #1, Tab(59); " O.REB ";
+            Print #1, Tab(66); " O.REB/G"
+
+            'Locate 5
+            Print #1, " ACTUAL  ";
+            Print #1, Tab(14); Using "###"; playerStats!(idx, 0);
+            Print #1, Tab(17); Using "#####"; playerStats!(idx, 1);
+            Print #1, Tab(22); Using "#####"; playerStats!(idx, 3);
+            Print #1, Tab(27); Using "#####"; playerStats!(idx, 2);
+
+            Print #1, Tab(32);
+            If playerStats!(idx, 2) = 0 Then Print #1, "   --.- %";
+            If playerStats!(idx, 2) > 0 Then
+                Print #1, Using "#####.#"; (playerStats!(idx, 3) / playerStats!(idx, 2)) * 100;
+                Print #1, "%";
+            End If
+
+            Print #1, Tab(40); Using "#####"; playerStats!(idx, 5);
+            Print #1, Tab(45); Using "#####"; playerStats!(idx, 4);
+
+            Print #1, Tab(50);
+            If playerStats!(idx, 4) = 0 Then Print #1, "   --.- %";
+            If playerStats!(idx, 4) > 0 Then
+                Print #1, Using "#####.#"; (playerStats!(idx, 5) / playerStats!(idx, 4)) * 100;
+                Print #1, "%";
+            End If
+
+            Print #1, Tab(58); Using "#######"; playerStats!(idx, 6);
+
+            Print #1, Tab(65);
+            If playerStats!(idx, 0) = 0 Or playerStats!(idx, 6) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 6) = 0) Then
+                Print #1, "      0.0"
+            End If
+            If playerStats!(idx, 0) > 0 And playerStats!(idx, 6) > 0 Then
+                Print #1, Using "#######.#"; playerStats!(idx, 6) / playerStats!(idx, 0)
+            End If
+
+            '-----
+
+            'Locate 6
+            Print #1, " REPLAY  ";
+            Print #1, Tab(14); Using "###"; statsA!(idx, 0);
+
+            Print #1, Tab(17);
+            If statsA!(idx, 10) = 0 Then
+                Print #1, "    0";
+            End If
+            If statsA!(idx, 10) > 0 Then
+                Print #1, Using "#####"; (statsA!(idx, 10) + 30) / 60;
+            End If
+
+            Print #1, Tab(22); Using "#####"; statsA!(idx, 2);
+            Print #1, Tab(27); Using "#####"; statsA!(idx, 1);
+
+            Print #1, Tab(32);
+            If statsA!(idx, 2) = 0 Then Print #1, "    0.0%";
+            If statsA!(idx, 2) > 0 Then
+                Print #1, Using "#####.#"; (statsA!(idx, 2) / statsA!(idx, 1)) * 100;
+                Print #1, "%";
+            End If
+
+            Print #1, Tab(40); Using "#####"; statsA!(idx, 4);
+            Print #1, Tab(45); Using "#####"; statsA!(idx, 3);
+
+            Print #1, Tab(50);
+            If statsA!(idx, 4) = 0 Then Print #1, "    0.0%";
+            If statsA!(idx, 4) > 0 Then
+                Print #1, Using "#####.#"; statsA!(idx, 4) / statsA!(idx, 3) * 100;
+                Print #1, "%";
+            End If
+
+            Print #1, Tab(58); Using "#######"; statsA!(idx, 12);
+
+            Print #1, Tab(65);
+            If statsA!(idx, 0) = 0 Or statsA!(idx, 12) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 12) = 0) Then
+                Print #1, "      0.0";
+            End If
+            If statsA!(idx, 0) > 0 And statsA!(idx, 12) > 0 Then
+                Print #1, Using "#######.#"; statsA!(idx, 12) / statsA!(idx, 0);
+            End If
+
+            Print #1,
+            Print #1,
+
+            '-----
+
+            Print #1, Tab(14); " D.REB ";
+            Print #1, Tab(21); " D.REB/G ";
+            Print #1, Tab(30); " ASST ";
+            Print #1, Tab(36); " ASST/G ";
+            Print #1, Tab(44); " FOULS ";
+            Print #1, Tab(51); " F/G ";
+            Print #1, Tab(56); " TREB ";
+            Print #1, Tab(62); " STL ";
+            Print #1, Tab(67); " STL/G"
+
+            '-----
+
+            'Locate 10
+            Print #1, " ACTUAL ";
+
+            'Def Reb
+            Print #1, Tab(14); Using "######"; playerStats!(idx, 7) - playerStats!(idx, 6);
+
+            'Def Reb / Game
+            Print #1, Tab(20);
+            If playerStats!(idx, 0) = 0 Or playerStats!(idx, 7) - playerStats!(idx, 6) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 7) - playerStats!(idx, 6) = 0) Then
+                Print #1, "      0.0";
+            End If
+            If playerStats!(idx, 0) > 0 And playerStats!(idx, 7) - playerStats!(idx, 6) > 0 Then
+                Print #1, Using "#######.#"; (playerStats!(idx, 7) - playerStats!(idx, 6)) / playerStats!(idx, 0);
+            End If
+
+            'Assist
+            Print #1, Tab(29); Using "######"; playerStats!(idx, 9);
+
+            'Assist / Game
+            Print #1, Tab(35);
+            If playerStats!(idx, 0) = 0 Or playerStats!(idx, 9) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 9) = 0) Then
+                Print #1, "     0.0";
+            End If
+            If playerStats!(idx, 0) > 0 And playerStats!(idx, 9) > 0 Then
+                Print #1, Using "######.#"; playerStats!(idx, 9) / playerStats!(idx, 0);
+            End If
+
+            Print #1, Tab(43); Using "#######"; playerStats!(idx, 8);
+
+            Print #1, Tab(50);
+            If playerStats!(idx, 0) = 0 Or playerStats!(idx, 8) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 8) = 0) Then
+                Print #1, "  0.0";
+            End If
+            If playerStats!(idx, 0) > 0 And playerStats!(idx, 8) > 0 Then
+                Print #1, Using "###.#"; playerStats!(idx, 8) / playerStats!(idx, 0);
+            End If
+
+            Print #1, Tab(55);
+            Print #1, Using "######"; playerStats!(idx, 7);
+            Print #1, Tab(61);
+            Print #1, Using "#####"; playerStats!(idx, 11);
+
+            Print #1, Tab(66);
+            If playerStats!(idx, 0) = 0 Or playerStats!(idx, 11) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 11) = 0) Then
+                Print #1, "    0.0"
+            End If
+            If playerStats!(idx, 0) > 0 And playerStats!(idx, 11) > 0 Then
+                Print #1, Using "#####.#"; playerStats!(idx, 11) / playerStats!(idx, 0)
+            End If
+
+            '-----
+
+            'Locate 11
+            Print #1, " REPLAY  ";
+            Print #1, Tab(14); Using "######"; statsA!(idx, 5) - statsA!(idx, 12);
+
+            Print #1, Tab(20);
+            If statsA!(idx, 0) = 0 Or (statsA!(idx, 5) - statsA!(idx, 12)) = 0 Or (statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) = 0) Then
+                Print #1, "      0.0";
+            End If
+            If statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) > 0 Then
+                Print #1, Using "#######.#"; (statsA!(idx, 5) - statsA!(idx, 12)) / statsA!(idx, 0);
+            End If
+
+            Print #1, Tab(29);
+            Print #1, Using "######"; statsA!(idx, 8);
+
+            Print #1, Tab(35);
+            If statsA!(idx, 0) = 0 Or statsA!(idx, 8) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 8) = 0) Then
+                Print #1, "     0.0";
+            End If
+            If statsA!(idx, 0) > 0 And statsA!(idx, 8) > 0 Then
+                Print #1, Using "######.#"; statsA!(idx, 8) / statsA!(idx, 0);
+            End If
+
+            Print #1, Tab(43);
+            Print #1, Using "#######"; statsA!(idx, 6);
+
+            Print #1, Tab(50);
+            If statsA!(idx, 0) = 0 Or statsA!(idx, 6) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 6) = 0) Then
+                Print #1, "  0.0";
+            End If
+            If statsA!(idx, 0) > 0 And statsA!(idx, 6) > 0 Then
+                Print #1, Using "###.#"; statsA!(idx, 6) / statsA!(idx, 0);
+            End If
+
+            Print #1, Tab(55);
+            Print #1, Using "######"; statsA!(idx, 5);
+            Print #1, Tab(61);
+            Print #1, Using "#####"; statsA!(idx, 7);
+
+            Print #1, Tab(66);
+            If statsA!(idx, 0) = 0 Or statsA!(idx, 7) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 7) = 0) Then
+                Print #1, "    0.0"
+            End If
+            If statsA!(idx, 0) > 0 And statsA!(idx, 7) > 0 Then
+                Print #1, Using "#####.#"; statsA!(idx, 7) / statsA!(idx, 0);
+            End If
+
+            '-----
+
+            Print #1,
+            Print #1,
+
+            'Locate 14
+            Print #1, Tab(14); " BLK ";
+            Print #1, Tab(19); " BLK/G ";
+            Print #1, Tab(26); " 3-FGM ";
+            Print #1, Tab(33); " 3-FGA ";
+            Print #1, Tab(40); " 3-FG-PCT ";
+            Print #1, Tab(50); "  RB/G ";
+            Print #1, Tab(57); "  PTS";
+            Print #1, Tab(62); " PTS/G ";
+            Print #1, Tab(69); " MIN/G"
+
+            '-----
+
+            'Locate 15
+            Print #1, " ACTUAL  ";
+            Print #1, Tab(14); Using "####"; playerStats!(idx, 10);
+
+            Print #1, Tab(18);
+            If playerStats!(idx, 0) = 0 Or playerStats!(idx, 10) = 0 Or (playerStats!(idx, 0) > 0 And playerStats!(idx, 10) = 0) Then
+                Print #1, "    0.0";
+            End If
+            If playerStats!(idx, 0) > 0 And playerStats!(idx, 12) > 0 Then
+                Print #1, Using "#####.#"; playerStats!(idx, 10) / playerStats!(idx, 0);
+            End If
+
+            Print #1, Tab(25);
+            Print #1, Using "#######"; playerStats!(idx, 13);
+
+            Print #1, Tab(32);
+            Print #1, Using "#######"; playerStats!(idx, 12);
+
+            Print #1, Tab(39);
+            If playerStats!(idx, 13) = 0 Then Print #1, "     --.- %";
+            If playerStats!(idx, 12) > 0 Then
+                Print #1, Using "#######.#"; (playerStats!(idx, 13) / playerStats!(idx, 12)) * 100;
+                Print #1, "%";
+            End If
+
+            Print #1, Tab(49);
+            If playerStats!(idx, 0) <> 0 Then
+                Print #1, Using "   ##.#"; playerStats!(idx, 7) / playerStats!(idx, 0);
+            End If
+            Print #1, Tab(56);
+            Print #1, Using "######"; (playerStats!(idx, 3) * 2) + playerStats!(idx, 5) + playerStats!(idx, 13);
+
+            Print #1, Tab(62);
+            If playerStats!(idx, 0) = 0 Then
+                Print #1, "  --.-";
+            End If
+            If playerStats!(idx, 0) > 0 Then
+                Print #1, Using "####.#"; (playerStats!(idx, 3) * 2) + (playerStats!(idx, 5) + playerStats!(idx, 13)) / playerStats!(idx, 0);
+            End If
+
+            Print #1, Tab(68);
+            If playerStats!(idx, 0) = 0 Then
+                Print #1, "   --.-"
+            End If
+            If playerStats!(idx, 0) > 0 Then
+                Print #1, Using "#####.#"; playerStats!(idx, 1) / playerStats!(idx, 0)
+            End If
+
+            '-----
+
+            'Locate 16
+            Print #1, " REPLAY  ";
+            'Blocks
+            Print #1, Tab(14); Using "####"; statsA!(idx, 9);
+
+            'Blocks / Game
+            Print #1, Tab(18);
+            If statsA!(idx, 0) = 0 Or statsA!(idx, 9) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 9) = 0) Then
+                Print #1, "    0.0";
+            End If
+            If statsA!(idx, 0) > 0 And statsA!(idx, 9) > 0 Then
+                Print #1, Using "#####.#"; statsA!(idx, 9) / statsA!(idx, 0);
+            End If
+
+            '3 FGM
+            Print #1, Tab(25);
+            Print #1, Using "#######"; statsW0!(I);
+
+            '3 FGA
+            Print #1, Tab(32);
+            Print #1, Using "#######"; statsW1!(I);
+
+            Print #1, Tab(39);
+            If statsW0!(I) = 0 Then Print #1, "      0.0%";
+            If statsW0!(I) > 0 Then
+                Print #1, Using "#######.#"; (statsW0!(I) / statsW1!(I)) * 100;
+                Print #1, "%";
+            End If
+
+            statVal = statsA!(idx, 5) / statsA!(idx, 0)
+            Print #1, Tab(49);
+            Print #1, Using "#####.#"; statVal;
+            Print #1, Tab(56);
+            Print #1, Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I);
+
+            Print #1, Tab(62);
+            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I) = 0 Then
+                Print #1, "   0.0";
+            End If
+            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I) > 0 Then
+                Print #1, Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I)) / statsA!(idx, 0);
+            End If
+
+            Print #1, Tab(68);
+            If statsA!(idx, 10) = 0 Then
+                Print #1, "    0.0"
+            End If
+            If statsA!(idx, 10) > 0 Then
+                Print #1, Using "#####.#"; ((statsA!(idx, 10) + 30) / 60) / statsA!(idx, 0)
+            End If
+
+            Print #1,
+            Print #1,
+
+            If playerIdx Mod 3 = 2 Then Print #1, Chr$(12)
+
+        End If 'done checking for null player
+
+    Next playerIdx
+
+    Close #1
+
+    If printDest = 1 Then
+
+        Open destFile$ For Input As #2
+
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
+
+        Close #2
+
+        LPrint Chr$(12)
+
+        Kill destFile$
+
+    End If
+
+End Sub
+
+
+
 '$Include: 'COMPCON.BAS'
 '$Include: 'COMPNATL.BAS'
+'$Include: 'Convert.BAS'
 '$Include: 'CREATCON.BAS'
 '$Include: 'CREATNATL.BAS'
 '$Include: 'DRAFT.BAS'
@@ -1125,9 +2203,7 @@ End Function
 '$Include: 'TOURNEY.BAS'
 
 ' For Game
-<<<<<<< Updated upstream
 'Include: 'COLHOOP.BAS'
-
 
 '----------------------------------------
 '           COLHOOP Subroutine
@@ -1264,7 +2340,7 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
 
@@ -1293,7 +2369,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1659,11 +2735,6 @@ Sub COLHOOP ()
 
     gameAvgTmStamina = (teamStamina(0) + teamStamina(1)) / 2
 
-
-
-    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
-    Call pbplog(1143)
-
     For P9 = 0 To 1
 
         Call SETSTAMINA
@@ -1951,7 +3022,7 @@ Sub COLHOOP ()
     End If
 
     '--Start "EndOfGame" routine
-    Close #11
+    'Close #11
 
     Call POSTGAME
 
@@ -2023,14 +3094,15 @@ Sub COLHOOP ()
 
     'Last 5 seconds, down by 1 score!!!
     scoreDiff = score(D, 0) - score(P, 0)
-    If (gameClock! <= 5 And threePtOpt = 1 And scoreDiff <= 3) Or (threePtOpt = 0 And scoreDiff <= 2 And scoreDiff >= 0 And currHalf >= 2) Then
+    If gameClock! <= 5 And (threePtOpt = 1 And scoreDiff <= 3 Or threePtOpt = 0 And scoreDiff <= 2) And scoreDiff >= 0 And currHalf >= 2 Then
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
             ' Computer handle last 5 seconds
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             scoreDiff = score(P, 0) - score(D, 0)
+
             If gameClock! >= 3 And gameClock! <= 5 Then
 
                 If threePtOpt = 0 Then
@@ -2091,7 +3163,7 @@ Sub COLHOOP ()
 
         ballCarrier = Int(Rnd(1) * 5)
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         ' 0 | 1 = Full Court Pass [Shoot 2 | Shoot 3]
         '2 = Shoot from Back Court
@@ -2243,7 +3315,7 @@ Sub COLHOOP ()
         If shootFor3 = 1 And threePtOpt = 1 Then
 
             ' Shoot for 3!!!
-            Call d100(RN0)
+            Call Rolld100(RN0)
             Select Case gameClock!
                 Case Is <= .5
                     XX% = 2
@@ -2284,7 +3356,7 @@ Sub COLHOOP ()
         Else
 
             'Go for 2!!!
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             Select Case gameClock!
                 Case Is <= .5
@@ -2452,7 +3524,7 @@ Sub COLHOOP ()
         'Check for Denial / Foul
         If currHalf >= 2 And gameClock! <= 180 And defCategory(D) = 5 Then
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             If RN0 <= 10 Then
 
@@ -2481,8 +3553,8 @@ Sub COLHOOP ()
 
             End If
 
-            Call d100(RN1)
-            Call d100(RN0)
+            Call Rolld100(RN1)
+            Call Rolld100(RN0)
 
             IN = 99
             C1 = 2
@@ -2586,15 +3658,15 @@ Sub COLHOOP ()
                     432 '
                     pbpString$ = "PASS TO " + players$(P, B1(P, ballCarrier))
                     Call SELECTPBP
-                    
+
                 End If
 
             End If
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
             If RN0 <= 5 Then intentional = 1
 
-            Call d100(RN1)
+            Call Rolld100(RN1)
 
             Select Case RN1
 
@@ -2613,7 +3685,7 @@ Sub COLHOOP ()
             Call AdjustPlayTime
             Call AdjustShotClock
 
-            Call d100(RN2)
+            Call Rolld100(RN2)
 
             '80% chance of foul by designated person
             If RN2 <= 80 Then
@@ -2640,7 +3712,7 @@ Sub COLHOOP ()
             Call PRPFAT
         End If
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case defCategory(D)
 
@@ -2671,7 +3743,7 @@ Sub COLHOOP ()
         Call AdjustPlayTime
         Call AdjustShotClock
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If RN0 <= DP(2, defCategory(D)) Then
 
@@ -2720,7 +3792,7 @@ Sub COLHOOP ()
 
     Else
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If (offStrat(P) <> 8 And offStrat(P) <> 7) Or defCoverage(D) <> 2 Then
             'Offensive Stall or Defense is not 2-3 Zone
@@ -2784,7 +3856,7 @@ Sub COLHOOP ()
     '-----
 
     465 '
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     'Adjust likelihood of taking a shot baed on defense
     GS% = ShotPacing%
@@ -2819,9 +3891,9 @@ Sub COLHOOP ()
         'No Shot / Difficult Shot
         GoTo 437
     Else
-        RN0 = Int(Rnd(1) * 100)
 
-        If RN0 <= D8(1, defCoverage(D)) Then
+        Call Rolld100(RN1)
+        If RN1 <= D8(1, defCoverage(D)) Then
 
             A4 = 0
 
@@ -2836,12 +3908,12 @@ Sub COLHOOP ()
             Call SHOTPERCENT
 
             A4 = Int(Rnd(1) * 28) + 1
-            RN0 = Int(Rnd(1) * 9) + 1
+            RN2 = Int(Rnd(1) * 9) + 1
             I2 = Int(Rnd(1) * 5)
 
             If tmFatigue(P, B1(P, ballCarrier)) > -5 Then
 
-                If RN0 <= plyrOff_GAME!(P, B1(P, I2), 4) Then
+                If RN2 <= plyrOff_GAME!(P, B1(P, I2), 4) Then
 
                     shotChance! = plyrOff_GAME!(P, B1(P, ballCarrier), 0) + dFGPA(D) + A4 + ft3PtFoul(P) + ft3PtFoul(D)
                     ft3PtFoul(P) = 0
@@ -2850,9 +3922,9 @@ Sub COLHOOP ()
                     playChoice = 1
                     X = 0
 
-                    Call d100(RN1)
+                    Call Rolld100(RN3)
 
-                    If PZ% = 2 And RN1 <= 50 Then
+                    If PZ% = 2 And RN3 <= 50 Then
                         PZ% = 3
                         playChoice = 1
                     End If
@@ -2865,41 +3937,40 @@ Sub COLHOOP ()
 
         End If
 
-    End If
+        'Delay Offense
+        If offStrat(P) = 4 Then
+            GoTo 437
 
-    'Delay Offense
-    If offStrat(P) = 4 Then
-        GoTo 437
+        Else
 
-    Else
+            If currHalf <= 2 Then
 
-        If currHalf <= 2 Then
-
-            If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
-                If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 Then
-                    GoTo 437
+                If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
+                    If plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0 Then
+                        GoTo 437
+                    End If
                 End If
+
             End If
 
-        End If
-
-        playChoice = 1
-        Call SHOTPERCENT
-
-        PZ% = Int(Rnd(1) * 3) + 5
-
-        X = 0
-
-        Call d100(RN0)
-        If PZ% = 2 And RN0 <= 50 Then
-            PZ% = 3
             playChoice = 1
-        End If
+            Call SHOTPERCENT
 
-        GoTo 520
+            PZ% = Int(Rnd(1) * 3) + 5
+
+            X = 0
+
+            Call Rolld100(RN0)
+            If PZ% = 2 And RN0 <= 50 Then
+                PZ% = 3
+                playChoice = 1
+            End If
+
+            GoTo 520
+
+        End If
 
     End If
-
 
     '----- NOODLE -----
 
@@ -2932,7 +4003,7 @@ Sub COLHOOP ()
                 Call DELAY
             Else
 
-                Call d100(RN0)
+                Call Rolld100(RN0)
 
                 Select Case RN0
                     Case 1 To 3
@@ -3026,7 +4097,7 @@ Sub COLHOOP ()
 
         fastBreak = 1
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case RN0
             Case Is <= 38
@@ -3041,7 +4112,7 @@ Sub COLHOOP ()
                 ballCarrier = 4
         End Select
 
-        Call d100(RN1)
+        Call Rolld100(RN1)
 
         If PASS > 1 Then
             Select Case defCoverage(P9)
@@ -3064,7 +4135,7 @@ Sub COLHOOP ()
     Else
 
         'No steal - layup or take a shot!
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case defCategory(D)
 
@@ -3150,7 +4221,7 @@ Sub COLHOOP ()
     Else
 
         X = 0
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If PZ% = 2 And RN0 <= 50 Then
             PZ% = 3
@@ -3249,7 +4320,7 @@ Sub COLHOOP ()
     PZ% = Int(Rnd(1) * 3) + 5
     X = 0
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     If PZ% = 2 And RN0 <= 50 Then
         PZ% = 3
@@ -3262,7 +4333,6 @@ Sub COLHOOP ()
     Call LASTSHOT
     If gameClock! <= 0 Then 170
 
-    'Always give at least a 3% chance of making a 3
     If PZ% = 4 And threePtShotChance <= 0 Then threePtShotChance = 3
 
     If pbpDelay! <> 0 Then
@@ -3272,7 +4342,7 @@ Sub COLHOOP ()
             GDSHOTDES:
             If pbpDelay! <> 0 Then
 
-                Call d100(RN0)
+                Call Rolld100(RN0)
 
                 Select Case RN0
 
@@ -3292,7 +4362,7 @@ Sub COLHOOP ()
 
                 Call PBP
 
-                Call d100(RN1)
+                Call Rolld100(RN1)
 
                 Select Case RN1
 
@@ -3403,7 +4473,7 @@ Sub COLHOOP ()
 
                             playChoice = 1
 
-                            Call d100(RN0)
+                            Call Rolld100(RN0)
 
                             If ballCarrier = 4 Then
 
@@ -3537,7 +4607,7 @@ Sub COLHOOP ()
     skipShotPct% = 0
 
     If pbpDelay! > 0 Then
-    
+
         If pbpOpt = 1 Then
 
             Call WINDEX
@@ -3550,7 +4620,7 @@ Sub COLHOOP ()
                 Print "SHOT % "; shotChance!;
                 If PZ% >= 2 And PZ% <= 8 Then Print "*";
             End If
-            
+
             Call DELAY
 
         Else
@@ -3734,8 +4804,7 @@ Sub COLHOOP ()
 
     P3 = playChoice
 
-    If (playChoice = 2 And timeouts(P) = 0) Or (playChoice = 3 And currHalf = 2 And gameClock! > 240) Or (playChoice = 3 And currHalf = 1) Or (playChoice = 3 And playerMode = 1 And D = compTeam) Then
-        'Take shot with no timeous | Timeout with more than 4 mins left | Timeout before Q4 | Timeout with PC on Defense
+    If playChoice = 2 And timeouts(P) = 0 Or playChoice = 3 And currHalf = 1 Or playChoice = 3 And playerMode = 1 And D = compTeam Or playChoice = 3 And currHalf = 2 And gameClock! > 240 Then
         GoTo 530
     End If
 
@@ -3773,13 +4842,13 @@ Sub COLHOOP ()
             Call PBP
 
             shotRoll = 0
-            Call d100(foulRoll)
+            Call Rolld100(foulRoll)
 
             plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
 
             scoreDiff = score(D, 0) - score(P, 0)
 
-            If Not (currHalf > 1 And gameClock! <= 30 And scoreDiff = 2) Or (currHalf > 1 And gameClock! <= 30 And scoreDiff = 0) Or (currHalf > 1 And gameClock! <= 30 And scoreDiff = -2) Then
+            If Not (currHalf > 1 And gameClock! <= 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! <= 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! <= 30 And scoreDiff = -2) Then
 
                 blockRat_TMP = plyrOff_GAME!(P, B1(P, ballCarrier), 16)
                 fAdj_TMP = teamAdj(D, 7)
@@ -3800,7 +4869,6 @@ Sub COLHOOP ()
                     Call UPDATESCREEN
 
                     Call FoulCalled(1)
-
 
                     '--- BEGINNING OF SUBROUTINE
 
@@ -3844,7 +4912,7 @@ Sub COLHOOP ()
                     'Two FT Attempts
                     For freethrow = 1 To 2:
 
-                        Call d100(shotRoll)
+                        Call Rolld100(shotRoll)
 
                         'FT Success Chance
                         baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
@@ -3926,14 +4994,14 @@ Sub COLHOOP ()
 
             End If
 
-            Call d100(shotRoll)
+            Call Rolld100(shotRoll)
 
             'So, foul chance is up to 1/10 of the shot chance
-            foulChance = shotChance! * ((DY / 100) + (.03 * threePtOpt))
+            foulChance! = shotChance! * ((DY / 100) + (.03 * threePtOpt))
 
             If Not (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! < 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! < 30 And scoreDiff = -2) Then
 
-                If shotRoll <= foulChance Then
+                If shotRoll <= foulChance! Then
 
                     'Foul + Stuff
                     Call ResetShotClock
@@ -3963,28 +5031,28 @@ Sub COLHOOP ()
                         End If
 
                         DK% = 0
-                        GoTo 617
 
-                    End If
-
-                    If PZ% = 8 Then
-                        PT% = 7
-                        Call MAKEPBP
-                        PZ% = 0
-                        Call PBP
-                        GoTo 617
-                    End If
-
-                    If pbpOpt = 0 Then
-                        pbpString$ = "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
-                        Call PBP
                     Else
-                        'pbpOpt = 1
-                        If pbpDelay! <> 0 Then
-                            Call WINDEX
-                            Print "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
-                            Call DELAY
+
+                        If PZ% = 8 Then
+                            PT% = 7
+                            Call MAKEPBP
+                            PZ% = 0
+                            Call PBP
+
+                        Else
+
+                            F3 = 1
+                            If pbpOpt = 0 Then
+                                pbpString$ = "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
+                                Call PBP
+                            Else
+                                'pbpOpt = 1
+                                If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + players$(P, B1(P, ballCarrier)): Call DELAY
+                            End If
+
                         End If
+
                     End If
 
                     617 '
@@ -3999,12 +5067,13 @@ Sub COLHOOP ()
                     Call DELAY
 
                     'Update score and FGA
+                    F3 = 1
+
                     score(P, currHalf) = score(P, currHalf) + 2
                     score(P, 0) = score(P, 0) + 2
                     plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
 
                     Call UPDATESCREEN
-
                     Call FoulCalled(1)
 
                     619 '
@@ -4031,7 +5100,7 @@ Sub COLHOOP ()
 
                     X = 0
 
-                    Call d100(shotRoll)
+                    Call Rolld100(shotRoll)
 
                     If pbpOpt = 1 And pbpDelay! <> 0 Then
                         Call WINDEX
@@ -4151,7 +5220,7 @@ Sub COLHOOP ()
                                 Call DELAY
                             Else
 
-                                Call d100(RN0)
+                                Call Rolld100(RN0)
 
                                 If RN0 > 50 Then
 
@@ -4273,7 +5342,7 @@ Sub COLHOOP ()
 
             Else
 
-                Call d100(RN0)
+                Call Rolld100(RN0)
 
                 LT = 0
 
@@ -4321,7 +5390,7 @@ Sub COLHOOP ()
                         Call DELAY
                     Else
 
-                        Call d100(RN0)
+                        Call Rolld100(RN0)
 
                         Select Case RN0
                             Case 1 To 10
@@ -4415,7 +5484,7 @@ Sub COLHOOP ()
 
             Else
 
-                Call d100(shotRoll)
+                Call Rolld100(shotRoll)
 
                 threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
                 plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
@@ -4424,13 +5493,13 @@ Sub COLHOOP ()
                 Call MAKEPBP
                 Call PBP
 
-                Call d100(foulChance)
+                Call Rolld100(foulChance)
 
                 'Essentialy a 2% chance of being fouled on 3-pointer
                 If foulChance <= 2 And ft3PtFoul = 1 Then
-                
+
                     If shotRoll > threePtShotChance Then
-                        
+
                         'FOUL!
 
                         'Remove the attempt from the record
@@ -4490,7 +5559,7 @@ Sub COLHOOP ()
                         '3 FT Attempts
                         For freethrow = 1 To 3:
 
-                            Call d100(shotRoll)
+                            Call Rolld100(shotRoll)
 
                             'FT Success Chance
                             baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
@@ -4530,6 +5599,7 @@ Sub COLHOOP ()
                         End If
 
                     Else
+
                         'shotRoll <= threePtShotChance Then
 
                         gameClock! = gameClock! - 4
@@ -4552,6 +5622,7 @@ Sub COLHOOP ()
                             Call PBP
                         End If
 
+                        F3 = 1
 
                         score(P, currHalf) = score(P, currHalf) + 3
                         score(P, 0) = score(P, 0) + 3
@@ -4560,7 +5631,6 @@ Sub COLHOOP ()
                         threeFG(P, B1(P, ballCarrier), 0) = threeFG(P, B1(P, ballCarrier), 0) + 1
 
                         Call UPDATESCREEN
-
                         Call FoulCalled(1)
 
                         GoTo 619
@@ -4694,7 +5764,7 @@ Sub COLHOOP ()
         'Increase FT ATT
         plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
-        Call d100(shotRoll)
+        Call Rolld100(shotRoll)
 
         'FT Success Chance
         baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
@@ -4843,7 +5913,7 @@ Sub COLHOOP ()
         '--- RESUME ANALYSIS
 
         'Offense
-        Call d100(RN0)
+        Call Rolld100(RN0)
         If RN0 <= 8 Then
             ft3PtFoul(P) = 10
         End If
@@ -4852,7 +5922,7 @@ Sub COLHOOP ()
         End If
 
         'Defense
-        Call d100(RN1)
+        Call Rolld100(RN1)
         If RN1 <= 8 Then
             ft3PtFoul(D) = -10
         End If
@@ -4901,15 +5971,15 @@ Sub COLHOOP ()
 
     Call ResetShotClock
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
-    scoreDiff = score(D, 0) - score(P, 0)
-    If (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And scoreDiff = 0 And RN0 <= 12) Then
+    scoreDiff = score(P, 0) - score(D, 0)
+    If (currHalf > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And scoreDiff = 0 And RN0 <= 12) Then
         Call OFFREBOUND
         GoTo 760
     End If
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     Select Case RN0
 
@@ -4944,7 +6014,7 @@ Sub COLHOOP ()
     A4 = 0
     D6 = 0
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     scoreDiff = score(D, 0) - score(P, 0)
     If currHalf > 1 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0 Or scoreDiff = -2) And RN0 <= 12 Then
@@ -5005,11 +6075,10 @@ Sub COLHOOP ()
 
         Case 2 To DY
             foulOnReb = 1
-            'GoTo 707
 
         Case DY + 1 To 17
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             If RN0 > 35 Then
 
@@ -5344,7 +6413,7 @@ Sub COLHOOP ()
         GoTo RBTIEUP
     End If
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
     If CZ%(D) = 1 And RN0 <= 50 Then
 
         gameClock! = gameClock! - 4
@@ -5457,7 +6526,7 @@ Sub COLHOOP ()
     TIEUP:
     If pbpOpt <> 1 Then
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case RN0
             Case 1 To 20
@@ -5477,7 +6546,7 @@ Sub COLHOOP ()
     End If
 
     RBTIEUP:
-    Call d100(RN0)
+    Call Rolld100(RN0)
     P9 = Int(Rnd(1) * 5)
 
     If pbpOpt = 1 And pbpDelay! <> 0 Then
@@ -5566,6 +6635,7 @@ Sub COLHOOP ()
 
     ' *** TEAM FOULS ***
     9065 '
+
     If intentional = 1 Or (ft10thFoul = 1 And teamFouls(D) >= 10) Then
 
         'BONUS +
@@ -5612,7 +6682,7 @@ Sub COLHOOP ()
             'Increase FT ATT
             plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
-            Call d100(shotRoll)
+            Call Rolld100(shotRoll)
 
             'FT % Success Chance
             baseShotChance = plyrOff_GAME!(P, B1(P, ballCarrier), 1)
@@ -5695,7 +6765,7 @@ Sub COLHOOP ()
 
         'Check if BONUS
         If teamFouls(D) > 6 Then
-        
+
             GoTo 570
 
         Else
@@ -5713,7 +6783,7 @@ Sub COLHOOP ()
             Next
 
             If ft6FloorFouls = 0 Then
-            
+
                 If pbpOpt = 0 Or pbpDelay! = 0 Then
                     Call WINDEX
                     pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
@@ -5755,6 +6825,8 @@ Sub COLHOOP ()
 
             Call PBP
 
+            F3 = 1
+
             'Increase FT ATT
             plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
@@ -5763,7 +6835,7 @@ Sub COLHOOP ()
                 baseShotChance = Int(baseShotChance * .9 + .5)
             End If
 
-            Call d100(shotRoll)
+            Call Rolld100(shotRoll)
 
             If shotRoll <= baseShotChance Then
                 If pbpOpt = 0 Then
@@ -5822,7 +6894,7 @@ Sub COLHOOP ()
                 Call PRESSGUARD
 
                 GoTo 300
-                
+
             End If
 
         End If
@@ -5830,8 +6902,6 @@ Sub COLHOOP ()
     End If
 
 End Sub
-
-
 
 'Include: 'GameRoutines.bm'
 
@@ -6374,11 +7444,24 @@ End Sub
 'This subroutine assigns a random number
 'between 1 and 100 to the variable that
 'it is called with
-Sub d100 (randNumVar)
+Sub Rolld100 (randNumVar)
 
     randNumVar = Int(Rnd(1) * 100) + 1
 
 End Sub
+
+
+'----------------------------------------
+'            d100 Subroutine
+'----------------------------------------
+'This subroutine assigns a random number
+'between 1 and 100 to the variable that
+'it is called with
+Function d100% ()
+
+    d100% = Int(Rnd(1) * 100) + 1
+
+End Function
 
 
 '----------------------------------------
@@ -6615,7 +7698,7 @@ Sub MAKEPBP ()
 
     If pbpDelay! <> 0 Then
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         'PT% = pbpType
         Select Case PT%
@@ -7530,7 +8613,7 @@ Sub MAKEPBP ()
                     Case 10
                         DK% = 0
 
-                        Call d100(RN1)
+                        Call Rolld100(RN1)
 
                         Select Case RN1
 
@@ -8318,7 +9401,7 @@ Sub TICKER ()
         Color 14, 0
         Cls
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If halfTime = 1 Then
 
@@ -9151,7 +10234,7 @@ End Sub
 'the person performing a layup
 Sub WHOLAY ()
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     Select Case RN0
 
@@ -10640,7 +11723,7 @@ Sub ZONECHANGE ()
         If I1 = 2 Then I1 = 3
 
         Select Case defStrat
-        
+
             Case Is <= 3
                 defStrat(D) = I1
             
@@ -11579,7 +12662,7 @@ Sub THREEFT (ftNumber)
 
     plyrOff_GAME!(P, B1(P, ballCarrier), 10) = plyrOff_GAME!(P, B1(P, ballCarrier), 10) + 1
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     Select Case ftNumber
 
@@ -11687,7 +12770,7 @@ Sub PRDFAT ()
 
     For I = 0 To 4
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If RN0 <= X0% Then
             tmFatigue(D, B1(D, I)) = tmFatigue(D, B1(D, I)) + X1%
@@ -11712,7 +12795,7 @@ Sub PRPFAT ()
 
     For I = 0 To 4
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If RN0 <= X0% Then
             tmFatigue(P, B1(P, I)) = tmFatigue(P, B1(P, I)) + X1%
@@ -11745,7 +12828,7 @@ Sub WHOGETSBALL ()
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             If RN0 > 25 Then
 
@@ -11781,7 +12864,7 @@ End Sub
 ' ...explanation...
 Sub BALLDISTRIBUTE ()
 
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
         Call WHOGETSBALL
@@ -12392,7 +13475,7 @@ Sub COMPUTERCOACH ()
 
         If currHalf = 1 Then
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
             Select Case RN0
             
                 Case 0 To 5
@@ -12417,7 +13500,7 @@ Sub COMPUTERCOACH ()
 
             End Select
 
-            Call d100(RN0)
+            Call Rolld100(RN0)
 
             Select Case RN0
             
@@ -12450,7 +13533,7 @@ Sub COMPUTERCOACH ()
 
         End If
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         If currHalf = 2 Then
 
@@ -12689,7 +13772,7 @@ Sub COMPUTERCOACH ()
 
     Else
     
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case RN0
 
@@ -12710,7 +13793,7 @@ Sub COMPUTERCOACH ()
 
         End Select
 
-        Call d100(RN0)
+        Call Rolld100(RN0)
 
         Select Case RN0
 
@@ -12737,7 +13820,7 @@ Sub COMPUTERCOACH ()
 
 
     ' *** Offensive Strategy ***
-    Call d100(RN0)
+    Call Rolld100(RN0)
 
     If currHalf = 1 Then
 
@@ -14695,7 +15778,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
                 If rosterStatus(gameIdx, I) = -1 Then rosterStatus(gameIdx, I) = 0
 
-                Call d100(RN0)
+                Call Rolld100(RN0)
 
                 If UCase$(players$(gameIdx, I)) = "XXX" Then
                     CNTX% = CNTX% + 1
@@ -16579,8 +17662,4 @@ Sub CheckRecords ()
     Close #2
 
 End Sub
-=======
-'$Include: 'COLHOOP.BAS'
-'$Include: 'GameRoutines.bm'
->>>>>>> Stashed changes
 
