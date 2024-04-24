@@ -44,26 +44,61 @@ Sub CNGTM (userChoice)
             Color , 0
         End If
 
-        If ExitCode% <> 27 Then
+        If ExitCode% <> 27 And Selection% <> 4 Then
 
-            Select Case Selection%
+            teamNbr = 0
+            Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
-                Case 1:
-                    teamNbr = 0
-                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-                    If teamNbr > 0 Then Call EditTeam(team$, teamNbr, YN$)
+            If teamNbr <> 0 Then
 
-                Case 2:
-                    teamNbr = 0
-                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-                    If teamNbr > 0 Then Call PrintRoster(team$)
+                Select Case Selection%
 
-                Case 3:
-                    teamNbr = 0
-                    Call ChooseTeam(YN$, NTMS, teamNbr, team$)
-                    If teamNbr > 0 Then Call ViewRoster(team$)
+                    Case 1:
+                        Call EditTeam(team$, YN$, teamNbr)
 
-            End Select
+                    Case 2:
+                        Color 15, 0
+                        Cls
+
+                        Call MenuBox(8, 25, 24, 5, 15, 1)
+
+                        Do
+
+                            Locate 10, 32
+                            Color 7, 1
+
+                            Locate , 32: Print "SEND TO ";
+                            Color 15: Print "F";
+                            Color 7: Print "ILE"
+                            Locate , 32: Print "SEND TO ";
+                            Color 15: Print "P";
+                            Color 7: Print "RINTER"
+
+                            I$ = GetKeyPress$
+
+                            Color 14, 0
+
+                        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
+
+                        Select Case UCase$(I$)
+
+                            Case "F"
+                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                If userFile$ <> "" Then
+                                    Call PrintRoster(0, userFile$, team$)
+                                End If
+
+                            Case "P"
+                                Call PrintRoster(1, "REPORT", team$)
+
+                        End Select
+
+                    Case 3:
+                        Call ViewRoster(team$)
+
+                End Select
+
+            End If
 
             'Reset "user choice" after first call
             'We're at the menu now, no purpose in forcing shortcuts
@@ -85,7 +120,7 @@ End Sub
 'a user is prompted to press keys to CONTINUE
 'This improvement over the original makes it
 'faster and easier to proceed through screens
-Sub EditTeam (teamName$, teamIdx, yearNumber$)
+Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
@@ -796,7 +831,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the default printer
-Sub PrintRoster (teamName$)
+Sub PrintRoster (printDest, destFile$, teamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj!, staminaRating!
@@ -809,38 +844,56 @@ Sub PrintRoster (teamName$)
 
     Shared playerNames$(), position$()
 
-    Cls
+	Color 15, 0
+	Cls
 
-    LPrint "TEAM ROSTER FOR "; teamName$
-    LPrint
-    LPrint "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj!
-    LPrint "OPP PCT OF 3FG ATT ADJ = "; def3FGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
-    LPrint
-    LPrint "DEF STEAL ADJ "; leagueRatings%(0)
-    LPrint "OFF TURNOVER ADJ "; leagueRatings%(1)
-    LPrint "DEF TURNOVER ADJ "; leagueRatings%(2)
-    LPrint "OFF FOUL ADJ "; leagueRatings%(3)
-    LPrint
-    LPrint "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
-    LPrint
+	Open destFile$ For Output As #1
+
+    Print #1, "TEAM ROSTER FOR "; teamName$
+    Print #1,
+    Print #1, "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj!
+    Print #1, "OPP PCT OF 3FG ATT ADJ = "; def3FGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
+    Print #1,
+    Print #1, "DEF STEAL ADJ "; leagueRatings%(0)
+    Print #1, "OFF TURNOVER ADJ "; leagueRatings%(1)
+    Print #1, "DEF TURNOVER ADJ "; leagueRatings%(2)
+    Print #1, "OFF FOUL ADJ "; leagueRatings%(3)
+    Print #1,
+    Print #1, "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
+    Print #1,
 
     For I = 0 To 13
         If playerNames$(I) <> "XXX" Then
-            LPrint playerNames$(I); Tab(15);
-            LPrint Using "### ### ### ### ### "; playerOff!(I, 0); playerOff!(I, 1); playerRatings!(I, 4); playerOff!(I, 2); playerOff!(I, 3);
-            LPrint Using "## ## ## ## ## ### ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
+            Print #1, playerNames$(I); Tab(15);
+            Print #1, Using "### ### ### ### ### "; playerOff!(I, 0); playerOff!(I, 1); playerRatings!(I, 4); playerOff!(I, 2); playerOff!(I, 3);
+            Print #1, Using "## ## ## ## ## ### ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
         End If
     Next I
 
-    LPrint
-    LPrint "FG - FIELD GOAL %                 B - BLOCK SHOT RATING"
-    LPrint "FT - FREE THROW %                FC - FOUL COMMIT RATING"
-    LPrint "RB - REBOUNDING RATING           FD - FOUL DRAWING RATING"
-    LPrint "CX - CONTRIBUTION FACTOR        3FG - 3FGA/TOTAL FGA"
-    LPrint "PS - PASSING RATING            3FG% - THREE POINT GOAL %"
-    LPrint " D - DEFENSIVE RATING"
+    Print #1,
+    Print #1, "FG - FIELD GOAL %                 B - BLOCK SHOT RATING"
+    Print #1, "FT - FREE THROW %                FC - FOUL COMMIT RATING"
+    Print #1, "RB - REBOUNDING RATING           FD - FOUL DRAWING RATING"
+    Print #1, "CX - CONTRIBUTION FACTOR        3FG - 3FGA/TOTAL FGA"
+    Print #1, "PS - PASSING RATING            3FG% - THREE POINT GOAL %"
+    Print #1, " D - DEFENSIVE RATING"
 
-    LPrint Chr$(12)
+	If printDest = 1 Then
+
+		Open destFile$ For Input As #2
+
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
+
+		Close #2
+
+		LPrint Chr$(12)
+
+		Kill destFile$
+
+	End If
 
 End Sub
 
@@ -850,7 +903,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the user's display
-Sub ViewRoster (teamName$)
+Sub ViewRoster (printDest, destFile$, teamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj!, staminaRating!

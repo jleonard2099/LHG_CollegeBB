@@ -40,7 +40,7 @@ Sub InitVar ()
     Shared avgAttendance&(), gameAttendance&()
 
     Shared d3FG_Adj(), d3FGA_Adj()
-    Shared powerRating()
+    Shared eventSettings(), powerRating()
     Shared oppScore(), rosterStatus()
     Shared teamScore(), tourneySettings()
 
@@ -3655,8 +3655,6 @@ Sub COMCOACH ()
                         Loop Until Not (rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX")
 
                         'These can throw errors in some situations
-                        test1 = I
-                        test2 = F1(I)
                         G4(I1) = F1(I)
                         G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
 
@@ -7291,6 +7289,8 @@ End Sub
 'a corresponding "special" box score
 Sub EVENTS (specialCount, specialStat)
 
+    Shared eventSettings()
+
     If _FileExists("EVENTS.BOX") Then
 
         Open "EVENTS.BOX" For Input As #1
@@ -7916,6 +7916,8 @@ End Sub
 'This subroutine adds any special event
 'information to a boxscore file
 Sub BOX2SPC (boxName$)
+
+    Shared eventSettings()
 
     Open diskPaths$(1) + boxName$ For Output As #1
 
@@ -8617,20 +8619,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8
-        Color 15, 4
-
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox(6, 8, 61, 7, 15, 4)
 
         Locate 7, 32
 
@@ -8710,11 +8699,11 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
                         Close #1
 
-                        previousYear$ = yearNumber$
-
                     End If 'Done checking if file exists
 
                 End If 'Done checking for blank year number
+
+                previousYear$ = yearNumber$
 
             Else
 
@@ -8729,10 +8718,11 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
                 Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, gameIdx)
 
-                If ExitCode% <> 27 And numberTeams <> 0 Then
+                If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
                     Do
-                        Locate 2, 33
+                        YCoord = Int((80 - Len(teamName$)) / 2)
+                        Locate 2, YCoord
                         Color teamRat_GAME(gameIdx, 0), teamRat_GAME(gameIdx, 1): Print teamName$
 
                         Color 15, 4
@@ -8744,7 +8734,8 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
                 End If
 
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+                'chosenIdx = -1 means there was invalid data
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
 
         End If 'Done checking for ESC
 
@@ -8799,7 +8790,19 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
 
             Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, gameIdx)
 
+            Call ReadGameExtraData(yearNumber$, selectedIdx, gameIdx, validData)
+
         End If
+
+    End If
+
+    If validData = 0 And ExitCode% <> 27 Then
+
+        selectedIdx = -1
+        Locate 9,
+        Call CSMsgBox("THERE WAS AN ISSUE READING TEAM DATA. YOU MAY HAVE CHOSEN A TEAM FROM 4.0... PRESS ANY KEY AND TRY ANOTHER DISK ID", 20, PASS)
+        K$ = GetKeyPress$
+        Call CSMsgBox("", 0, PASS)
 
     End If
 
@@ -8812,7 +8815,7 @@ End Sub
 'This subroutine reads in the data for the
 'selected tema into each of the data arrays
 'needed by the game.
-Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
+Sub ReadGameTeam (YN$, targetTeam$, teamIdx, gameIdx)
 
     Shared FY%()
 
@@ -8830,7 +8833,7 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
         Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), TEAM_SIZE_BYTES - 53 - 43 - I * 43 As X$
     Next
 
-    Get #1, I1
+    Get #1, teamIdx
 
     targetTeam$ = RTrim$(Q$(0))
     teamStamina(gameIdx) = CVI(Q$(1))
@@ -8847,12 +8850,14 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
     Next
 
     For I3 = 0 To 13
+
         players$(gameIdx, I3) = RTrim$(Q$(I3 * 15 + 20))
 
         For I4 = 0 To 6
             plyrOff_GAME!(gameIdx, I3, I4) = CVI(Q$(I3 * 15 + I4 + 21))
             plyrRat_GAME(gameIdx, I3, I4) = CVI(Q$(I3 * 15 + I4 + 28))
         Next
+
     Next
 
     Close #1
@@ -8890,63 +8895,89 @@ Sub ReadGameTeam (YN$, targetTeam$, I1, gameIdx)
 
     Loop Until (CNT% < 10 And CNTX% < 4) Or (CNTX% >= 5 And CNT% < 8)
 
-    Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ As #2 Len = DATA_SIZE_BYTES
+End Sub
 
-    Field #2, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
-    For I = 0 To 13
-        Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-    Next
+'----------------------------------------
+'     ReadDraftExtraData Subroutine
+'----------------------------------------
+'Reads in extra data for the selected team,
+' given it's index in the team file.
+'This extra file usually includes info.
+' related to stadiums, coaches, etc.
+'This routine is highly customized TO
+' the specific game for which it has
+' been included for.
+Sub ReadGameExtraData (teamYear$, teamIdx, gameIdx, dataOK)
 
-    Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
+    Shared avgAttendance&()
 
-    Get #2, I1
+    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
 
-    gameCoaches$(gameIdx) = Q$(0)
-    gameArena$(gameIdx) = Q$(1)
-    gameMascots$(gameIdx) = Q$(2)
-    avgAttendance&(gameIdx) = CVL(Q$(3))
+        MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
+        BoxWidth = 20
+        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
+        I$ = GetKeyPress$
+        Call CSMsgBox("", 0, PASS)
 
-    For I = 0 To 13
+    Else
 
-        playerDef_GAME(gameIdx, I) = CVI(Q$(I * 16 + 4))
-        positions_GAME$(gameIdx, I) = Q$(I * 16 + 5)
+        Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$ As #2 Len = DATA_SIZE_BYTES
 
-        For I1 = 0 To 13
-            playerStat_GAME(gameIdx, I, I1) = CVI(Q$(I * 16 + I1 + 6))
+        Field #2, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
+
+        For I = 0 To 13
+            Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
         Next
 
-    Next
+        Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
 
-    'For I = 0 To 20
-    For I = 0 To 24
-        teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
-    Next
+        Get #2, teamIdx
 
-    CK = CVI(Q$(253))
+        gameCoaches$(gameIdx) = RTrim$(Q$(0))
+        gameArena$(gameIdx) = RTrim$(Q$(1))
+        gameMascots$(gameIdx) = RTrim$(Q$(2))
 
-    Close #2
+        test& = CVL(Q$(3))
+        avgAttendance&(gameIdx) = CVL(Q$(3))
 
-    If CK <> 999 Then
+        For I = 0 To 13
 
-        gameCoaches$(gameIdx) = ""
-        gameArena$(gameIdx) = ""
-        gameMascots$(gameIdx) = ""
-        avgAttendance&(gameIdx) = 0
-
-        For I = 0 To 13:
-            playerDef_GAME(gameIdx, I) = 5
-            positions_GAME$(gameIdx, I) = ""
+            playerDef_GAME(gameIdx, I) = CVI(Q$(I * 16 + 4))
+            positions_GAME$(gameIdx, I) = Q$(I * 16 + 5)
 
             For I1 = 0 To 13
-                playerStat_GAME(gameIdx, I, I1) = 0
+                playerStat_GAME(gameIdx, I, I1) = CVI(Q$(I * 16 + I1 + 6))
             Next
+
         Next
 
-        'For I = 0 To 24
-        For I = 0 To 20:
-            teamStats_GAME(gameIdx, I) = 0
+        For I = 0 To 20
+            teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
         Next
+
+        'If CVI(Q$(249)) <> 999 Then
+        If avgAttendance&(gameIdx) > 100000 Then
+        'If attendance is abnormally high, we ARE
+        'clearly not reading accurate data
+
+            dataOK = 0
+
+        Else
+
+            For I = 21 To 24
+                teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
+            Next
+
+            CK = CVI(Q$(253))
+
+            dataOK = 1
+
+        End If
+
+        Close #2
 
     End If
 

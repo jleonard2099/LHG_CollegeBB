@@ -55,19 +55,41 @@ Sub CARVIEW ()
         Color 15, 0
         Cls
 
+        Call MenuBox(8, 25, 24, 5, 15, 1)
+
         Do
-            Locate 15, 10
-            Color 12: Print "V";: Color 7: Print "iew or ";
-            Color 12: Print "P";: Color 7: Print "rint"
-            A$ = GetKeyPress$
-        Loop Until UCase$(A$) = "P" Or UCase$(A$) = "V"
 
-        Select Case UCase$(A$)
+            Locate 10, 32
+            Color 7, 1
 
-            Case "P":
-                Call CareerToPrinter(carviewA$(), careerFile$)
+            Locate , 32: Print "SEND TO ";
+            Color 15: Print "F";
+            Color 7: Print "ILE"
+            Locate , 32: Print "SEND TO ";
+            Color 15: Print "P";
+            Color 7: Print "RINTER"
+            Locate , 32: Print "SEND TO ";
+            Color 15: Print "S";
+            Color 7: Print "CREEN"
 
-            Case "V"
+            I$ = GetKeyPress$
+
+            Color 14, 0
+
+        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
+
+        Select Case UCase$(I$)
+
+            Case "F"
+                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                If userFile$ <> "" Then
+                    Call CareerToPrinter(0, userFile$, carviewA$(), careerFile$)
+                End If
+
+            Case "P"
+                Call CareerToPrinter(1, "REPORT", carviewA$(), careerFile$)
+
+            Case "S"
                 Call CareerToScreen(carviewA$(), careerFile$)
 
         End Select
@@ -81,15 +103,20 @@ End Sub
 '----------------------------------------
 'Formats results of Career stats and sends
 'to the user's default printer
-Sub CareerToPrinter (carviewA$(), careerFile$)
+Sub CareerToPrinter (printDest, destFile$, carviewA$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
     PTN = 0
 
-    LPrint Tab(59); careerFile$
-    LPrint
-    LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
+	Color 15, 0
+	Cls
+
+	Open destFile$ For Output As #1
+
+    Print #1, Tab(59); careerFile$
+    Print #1,
+    Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
 
     For I = 0 To 61
 
@@ -115,56 +142,56 @@ Sub CareerToPrinter (carviewA$(), careerFile$)
             VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
 
             If 55 - PTN < VV Then
-                LPrint Chr$(12)
-                LPrint Tab(59); careerFile$: LPrint
-                LPrint "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
+                Print #1, Chr$(12)
+                Print #1, Tab(59); careerFile$: Print #1,
+                Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
                 PTN = 0
             End If
 
-            LPrint Left$(carviewA$(I), 11);
+            Print #1, Left$(carviewA$(I), 11);
 
             For V = 1 To VV
                 PTN = PTN + 1
-                LPrint Tab(12); ARS!(V, I, 15);
-                LPrint Tab(19); Using "##"; ARS!(V, I, 0);
-                LPrint Tab(23); Using "###"; ARS!(V, I, 2);
-                LPrint Tab(28); Using "####"; ARS!(V, I, 1);
+                Print #1, Tab(12); ARS!(V, I, 15);
+                Print #1, Tab(19); Using "##"; ARS!(V, I, 0);
+                Print #1, Tab(23); Using "###"; ARS!(V, I, 2);
+                Print #1, Tab(28); Using "####"; ARS!(V, I, 1);
 
-                If ARS!(V, I, 2) = 0 Then LPrint Tab(34); "--.-";
-                If ARS!(V, I, 2) > 0 Then LPrint Tab(33); Using "###.#"; (ARS!(V, I, 2) / ARS!(V, I, 1)) * 100;
+                If ARS!(V, I, 2) = 0 Then Print #1, Tab(34); "--.-";
+                If ARS!(V, I, 2) > 0 Then Print #1, Tab(33); Using "###.#"; (ARS!(V, I, 2) / ARS!(V, I, 1)) * 100;
 
-                LPrint Tab(39); Using "###"; ARS!(V, I, 4);
-                LPrint Tab(45); Using "###"; ARS!(V, I, 3);
+                Print #1, Tab(39); Using "###"; ARS!(V, I, 4);
+                Print #1, Tab(45); Using "###"; ARS!(V, I, 3);
 
-                If ARS!(V, I, 4) = 0 Then LPrint Tab(50); "--.-";
-                If ARS!(V, I, 4) > 0 Then LPrint Tab(49); Using "###.#"; (ARS!(V, I, 4) / ARS!(V, I, 3)) * 100;
+                If ARS!(V, I, 4) = 0 Then Print #1, Tab(50); "--.-";
+                If ARS!(V, I, 4) > 0 Then Print #1, Tab(49); Using "###.#"; (ARS!(V, I, 4) / ARS!(V, I, 3)) * 100;
 
-                LPrint Tab(55); Using "####"; ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I);
+                Print #1, Tab(55); Using "####"; ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I);
 
-                If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I) = 0 Then LPrint Tab(61); " 0.0";
-                If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I) > 0 Then LPrint Tab(61); Using "##.#"; (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I)) / ARS!(V, I, 0);
+                If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I) = 0 Then Print #1, Tab(61); " 0.0";
+                If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I) > 0 Then Print #1, Tab(61); Using "##.#"; (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I)) / ARS!(V, I, 0);
 
-                LPrint Tab(68); Using "###"; W0S!(V, I);
-                LPrint Tab(73); Using "###"; W1S!(V, I);
+                Print #1, Tab(68); Using "###"; W0S!(V, I);
+                Print #1, Tab(73); Using "###"; W1S!(V, I);
 
-                If W0S!(V, I) = 0 Then LPrint Tab(78); "--.-";
-                If W0S!(V, I) > 0 Then LPrint Tab(77); Using "###.#"; (W0S!(V, I) / W1S!(V, I)) * 100;
+                If W0S!(V, I) = 0 Then Print #1, Tab(78); "--.-";
+                If W0S!(V, I) > 0 Then Print #1, Tab(77); Using "###.#"; (W0S!(V, I) / W1S!(V, I)) * 100;
 
-                LPrint Tab(83); Using "###"; ARS!(V, I, 5);
+                Print #1, Tab(83); Using "###"; ARS!(V, I, 5);
 
-                If ARS!(V, I, 5) = 0 Then LPrint Tab(88); " 0.0";
-                If ARS!(V, I, 5) > 0 Then LPrint Tab(88); Using "##.#"; ARS!(V, I, 5) / ARS!(V, I, 0);
+                If ARS!(V, I, 5) = 0 Then Print #1, Tab(88); " 0.0";
+                If ARS!(V, I, 5) > 0 Then Print #1, Tab(88); Using "##.#"; ARS!(V, I, 5) / ARS!(V, I, 0);
 
-                LPrint Tab(94); Using "###"; ARS!(V, I, 6);
-                LPrint Tab(99); Using "###"; ARS!(V, I, 8);
-                LPrint Tab(104); Using "###"; ARS!(V, I, 9);
-                LPrint Tab(109); Using "###"; ARS!(V, I, 7);
-                LPrint Tab(113); Using "###"; ARS!(V, I, 13);
+                Print #1, Tab(94); Using "###"; ARS!(V, I, 6);
+                Print #1, Tab(99); Using "###"; ARS!(V, I, 8);
+                Print #1, Tab(104); Using "###"; ARS!(V, I, 9);
+                Print #1, Tab(109); Using "###"; ARS!(V, I, 7);
+                Print #1, Tab(113); Using "###"; ARS!(V, I, 13);
 
-                If ARS!(V, I, 10) = 0 Then LPrint Tab(118); "   0";
-                If ARS!(V, I, 10) > 0 Then LPrint Tab(118); Using "####"; Int((ARS!(V, I, 10) + 30) / 60);
-                If ARS!(V, I, 10) = 0 Then LPrint Tab(125); " 0"
-                If ARS!(V, I, 10) > 0 Then LPrint Tab(125); Using "##"; Int(((ARS!(V, I, 10) / 60) / ARS!(V, I, 0)) + .5)
+                If ARS!(V, I, 10) = 0 Then Print #1, Tab(118); "   0";
+                If ARS!(V, I, 10) > 0 Then Print #1, Tab(118); Using "####"; Int((ARS!(V, I, 10) + 30) / 60);
+                If ARS!(V, I, 10) = 0 Then Print #1, Tab(125); " 0"
+                If ARS!(V, I, 10) > 0 Then Print #1, Tab(125); Using "##"; Int(((ARS!(V, I, 10) / 60) / ARS!(V, I, 0)) + .5)
 
             Next V
 
@@ -190,49 +217,49 @@ Sub CareerToPrinter (carviewA$(), careerFile$)
                 If ARS!(V, I, 13) > TT15 Then TT15 = ARS!(V, I, 13)
             Next V
 
-            LPrint "  TOTALS";
-            LPrint Tab(15); Using "##"; VV;
-            LPrint Tab(17); Using "####"; TT1;
-            LPrint Tab(21); Using "#####"; TT2;
-            LPrint Tab(27); Using "#####"; TT3;
+            Print #1, "  TOTALS";
+            Print #1, Tab(15); Using "##"; VV;
+            Print #1, Tab(17); Using "####"; TT1;
+            Print #1, Tab(21); Using "#####"; TT2;
+            Print #1, Tab(27); Using "#####"; TT3;
 
-            If TT2 = 0 Then LPrint Tab(34); "--.-";
-            If TT2 > 0 Then LPrint Tab(34); Using "###.#"; (TT2 / TT3) * 100;
+            If TT2 = 0 Then Print #1, Tab(34); "--.-";
+            If TT2 > 0 Then Print #1, Tab(34); Using "###.#"; (TT2 / TT3) * 100;
 
-            LPrint Tab(37); Using "#####"; TT4;
-            LPrint Tab(43); Using "#####"; TT5;
+            Print #1, Tab(37); Using "#####"; TT4;
+            Print #1, Tab(43); Using "#####"; TT5;
 
-            If TT4 = 0 Then LPrint Tab(50); "--.-";
-            If TT4 > 0 Then LPrint Tab(50); Using "###.#"; (TT4 / TT5) * 100;
+            If TT4 = 0 Then Print #1, Tab(50); "--.-";
+            If TT4 > 0 Then Print #1, Tab(50); Using "###.#"; (TT4 / TT5) * 100;
 
-            LPrint Tab(55); Using "####"; TT6;
+            Print #1, Tab(55); Using "####"; TT6;
 
-            If TT6 = 0 Then LPrint Tab(61); " 0.0";
-            If TT6 > 0 Then LPrint Tab(61); Using "##.#"; TT6 / TT1;
+            If TT6 = 0 Then Print #1, Tab(61); " 0.0";
+            If TT6 > 0 Then Print #1, Tab(61); Using "##.#"; TT6 / TT1;
 
-            LPrint Tab(67); Using "####"; TT7;
-            LPrint Tab(72); Using "####"; TT8;
+            Print #1, Tab(67); Using "####"; TT7;
+            Print #1, Tab(72); Using "####"; TT8;
 
-            If TT7 = 0 Then LPrint Tab(78); "--.-";
-            If TT7 > 0 Then LPrint Tab(78); Using "###.#"; (TT7 / TT8) * 100;
+            If TT7 = 0 Then Print #1, Tab(78); "--.-";
+            If TT7 > 0 Then Print #1, Tab(78); Using "###.#"; (TT7 / TT8) * 100;
 
-            LPrint Tab(81); Using "#####"; TT9;
+            Print #1, Tab(81); Using "#####"; TT9;
 
-            If TT9 = 0 Then LPrint Tab(88); " 0.0";
-            If TT9 > 0 Then LPrint Tab(88); Using "##.#"; TT9 / TT1;
+            If TT9 = 0 Then Print #1, Tab(88); " 0.0";
+            If TT9 > 0 Then Print #1, Tab(88); Using "##.#"; TT9 / TT1;
 
-            LPrint Tab(93); Using "####"; TT10;
-            LPrint Tab(98); Using "####"; TT11;
-            LPrint Tab(103); Using "####"; TT12;
-            LPrint Tab(109); Using "###"; TT13;
-            LPrint Tab(114); Using "##"; TT15;
+            Print #1, Tab(93); Using "####"; TT10;
+            Print #1, Tab(98); Using "####"; TT11;
+            Print #1, Tab(103); Using "####"; TT12;
+            Print #1, Tab(109); Using "###"; TT13;
+            Print #1, Tab(114); Using "##"; TT15;
 
-            If TT14 = 0 Then LPrint Tab(117); "    0";
-            If TT14 > 0 Then LPrint Tab(117); Using "#####"; Int((TT14 + 30) / 60);
-            If TT14 = 0 Then LPrint Tab(125); " 0"
-            If TT14 > 0 Then LPrint Tab(125); Using "##"; Int((TT14 / 60) / TT1) + .5
+            If TT14 = 0 Then Print #1, Tab(117); "    0";
+            If TT14 > 0 Then Print #1, Tab(117); Using "#####"; Int((TT14 + 30) / 60);
+            If TT14 = 0 Then Print #1, Tab(125); " 0"
+            If TT14 > 0 Then Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + .5
 
-            LPrint
+            Print #1,
 
             PTN = PTN + 2
 
@@ -240,7 +267,22 @@ Sub CareerToPrinter (carviewA$(), careerFile$)
 
     Next I
 
-    LPrint Chr$(12)
+	If printDest = 1 Then
+
+		Open destFile$ For Input As #2
+
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
+
+		Close #2
+
+		LPrint Chr$(12)
+
+		Kill destFile$
+
+	End If
 
 End Sub
 

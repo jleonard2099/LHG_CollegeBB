@@ -133,7 +133,6 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
 
@@ -162,7 +161,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1451,7 +1450,7 @@ Sub COLHOOP ()
                     432 '
                     pbpString$ = "PASS TO " + players$(P, B1(P, ballCarrier))
                     Call SELECTPBP
-                    
+
                 End If
 
             End If
@@ -2400,7 +2399,7 @@ Sub COLHOOP ()
     skipShotPct% = 0
 
     If pbpDelay! > 0 Then
-    
+
         If pbpOpt = 1 Then
 
             Call WINDEX
@@ -2413,7 +2412,7 @@ Sub COLHOOP ()
                 Print "SHOT % "; shotChance!;
                 If PZ% >= 2 And PZ% <= 8 Then Print "*";
             End If
-            
+
             Call DELAY
 
         Else
@@ -2827,7 +2826,7 @@ Sub COLHOOP ()
 
                     Else
 
-                        If PZ% = 8 Then 
+                        If PZ% = 8 Then
                             PT% = 7
                             Call MAKEPBP
                             PZ% = 0
@@ -2843,7 +2842,7 @@ Sub COLHOOP ()
                                 'pbpOpt = 1
                                 If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + players$(P, B1(P, ballCarrier)): Call DELAY
                             End If
-                            
+
                         End If
 
                     End If
@@ -3290,9 +3289,9 @@ Sub COLHOOP ()
 
                 'Essentialy a 2% chance of being fouled on 3-pointer
                 If foulChance <= 2 And ft3PtFoul = 1 Then
-                
+
                     If shotRoll > threePtShotChance Then
-                        
+
                         'FOUL!
 
                         'Remove the attempt from the record
@@ -4558,7 +4557,7 @@ Sub COLHOOP ()
 
         'Check if BONUS
         If teamFouls(D) > 6 Then
-        
+
             GoTo 570
 
         Else
@@ -4576,7 +4575,7 @@ Sub COLHOOP ()
             Next
 
             If ft6FloorFouls = 0 Then
-            
+
                 If pbpOpt = 0 Or pbpDelay! = 0 Then
                     Call WINDEX
                     pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
@@ -4687,7 +4686,7 @@ Sub COLHOOP ()
                 Call PRESSGUARD
 
                 GoTo 300
-                
+
             End If
 
         End If

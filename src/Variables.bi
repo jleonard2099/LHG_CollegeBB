@@ -70,9 +70,12 @@ Dim ZRD!(15), ZRD1!(15)
 ' Used in CAREER / LEADER routines
 '----------------------------------------
 Dim ARS!(15, 62, 15)
+Dim BLYR(21), BL(21)
 Dim W0S!(15, 62), W1S!(15, 62)
 
+
 Dim AL$(600), expanTT$(MAX_CONFERENCES, 15)
+Dim BL$(21)
 Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), TT1$(MAX_CONFERENCES, 15)
 
 '-- does the "R" refer to "Replay"?
@@ -123,11 +126,11 @@ Dim CK!(1)
 Dim dFGPctAdj_DRAFT!(1)
 
 Dim lgRat_DRAFT(1, 4), avgRat_DRAFT(1, 13, 12)
-Dim teamRat_DRAFT(1, 9), teamStats_DRAFT(1, 24)
+Dim teamRat_DRAFT(1, 9)
 
 Dim plyrDef_DRAFT!(1, 13), plyrOff_DRAFT!(1, 13, 6)
 Dim plyrRat_DRAFT!(1, 13, 6), plyrStat_DRAFT!(1, 13, 13)
-Dim stamina_DRAFT!(1)
+Dim stamina_DRAFT!(1), teamStats_DRAFT!(1, 24)
 
 Dim att_DRAFT&(1)
 
@@ -139,10 +142,14 @@ Dim teamYears$(1), tmName_DRAFT$(1)
 '----------------------------------------
 '   Used in Head-To-Head routines
 '----------------------------------------
-Dim AL!(50), AW!(50), HL!(50), HW!(50)
-Dim R1!(50), R2!(50), hd2hdR3!(50), R4!(50)
-Dim TAW!(MAX_CONFERENCES), THW!(MAX_CONFERENCES), THL!(MAX_CONFERENCES), TAL!(MAX_CONFERENCES)
-Dim TR1!(MAX_CONFERENCES), TR2!(MAX_CONFERENCES), TR3!(MAX_CONFERENCES), TR4!(MAX_CONFERENCES)
+Dim awayLosses!(50), awayWins!(50)
+Dim homeLosses!(50), homeWins!(50)
+Dim homeScoreTeam!(50), homeScoreOpp!(50)
+Dim awayScoreTeam!(50), awayScoreOpp!(50)
+Dim totAwayWin!(MAX_CONFERENCES), totHomeWins!(MAX_CONFERENCES)
+Dim totHomeLosses!(MAX_CONFERENCES), totAwayLosses!(MAX_CONFERENCES)
+Dim totHomeScoreTeam!(MAX_CONFERENCES), totHomeScoreOpp!(MAX_CONFERENCES)
+Dim totAwayScoreTeam!(MAX_CONFERENCES), totAwayScoreOpp!(MAX_CONFERENCES)
 
 
 '----------------------------------------
@@ -196,7 +203,7 @@ Dim Z1$(1 To 30), Z2$(1 To 30)
 
 
 '----------------------------------------
-' Used in TINPUT routine
+' Used in InputTeam routine
 '----------------------------------------
 Dim nbrGmsPlayed!, opp3FGA!, opp3FGAPct!, oppAsst!, oppBlocks!
 Dim oppFGPct!, oppFouls!, oppFGA!, oppFTA!, oppFTPct!
@@ -242,6 +249,7 @@ Dim FY%(0 To 1)
 
 Dim alpha$(3), tickerPeriod$(14), teamYrTourn$(0 To 3)
 
+Dim eventSettings(13)
 Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
 
 Dim avgAttendance&(1)
@@ -282,13 +290,14 @@ Dim Shared TM%(1, 13), TP%(1)
 Dim Shared B1(0 To 1, 0 To 4)
 Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defCoverage(1)
 Dim Shared D8(4, 3), DP(2, 4)
-Dim Shared eventSettings(13), ft3PtFoul(1), F1(13)
+Dim Shared ft3PtFoul(1), F1(13)
 Dim Shared G4(13), G5(13), leagRat_GAME(1, 4)
 Dim Shared offStrat(1)
 Dim Shared teamFouls(1), P4(14), P5(14), defCategory(1)
 Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
-Dim Shared playerDef_GAME(1, 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24), plyrRat_GAME(0 To 1, 0 To 13, 0 To 6)
-Dim Shared playerStat_GAME(0 To 1, 0 To 13, 0 To 15), plyrStamina(13)
+Dim Shared playerDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
+Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), playerStat_GAME(0 To 1, 0 To 13, 0 To 15)
+Dim Shared plyrStamina(13)
 Dim Shared rosterStatus(1, 13), QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9)
 Dim Shared schedGame(2), score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
 Dim Shared teamRat_GAME(1, 9), teamStats_GAME(0 To 1, 0 To 24), teamStamina(1)
@@ -300,10 +309,10 @@ Dim Shared W2(1, 13), W3(1, 13), Z5(1), Z6(1)
 Dim gameW0!(1, 13), gameW1!(1, 13)
 
 Dim Shared defStyles$(15), defStyles_brief$(14), diskIDs$(5)
-Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
+'Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
 Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13)
-Dim Shared positions_GAME$(1, 13), posnName$(0 To 4)
+Dim Shared positions_GAME$(0 To 1, 0 To 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
 
 

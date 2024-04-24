@@ -9,7 +9,7 @@ Sub DRAFT ()
 
     Shared d3FG_Adj(), d3FGA_Adj()
     Shared dFGPctAdj_DRAFT!()
-    
+
     Shared lgRat_DRAFT()
     Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
     Shared stamina_DRAFT!(), teamRat_DRAFT()
@@ -36,7 +36,7 @@ Sub DRAFT ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -51,7 +51,7 @@ Sub DRAFT ()
                     Erase dFGPctAdj_DRAFT!, d3FGA_Adj, d3FG_Adj
                     Erase lgRat_DRAFT, plyrOff_DRAFT!, plyrRat_DRAFT!
                     Erase stamina_DRAFT!, teamRat_DRAFT
-                    
+
                     For I = 0 To 1
 
                         tmName_DRAFT$(I) = "XXX"
@@ -86,7 +86,7 @@ End Sub
 '      NewTeamParameters Subroutine
 '----------------------------------------
 'This subroutine prompts the user for the
-'minimum required parameters to create a 
+'minimum required parameters to create a
 'new team that players will be drafted to.
 Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
 
@@ -187,7 +187,7 @@ End Sub
 '----------------------------------------
 '     DraftChoices Subroutine
 '----------------------------------------
-'This subroutine provides an interface the 
+'This subroutine provides an interface the
 'user can operate to choose their draft
 'selections.
 '
@@ -317,7 +317,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                                 Cls
 
-                                Call box0 (6, 8, 11, 70, 2, 15, 1)
+                                Call box0(6, 8, 11, 70, 2, 15, 1)
 
                                 Locate 7
 
@@ -356,7 +356,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
     Cls
 
-    Call box0 (6, 8, 8, 70, 2, 15, 1)
+    Call box0(6, 8, 8, 70, 2, 15, 1)
 
     Locate 7
 
@@ -379,7 +379,7 @@ End Sub
 '       SaveTeamDraft Subroutine
 '----------------------------------------
 'This subroutine updates the source team
-'with the newly assigned player / stat 
+'with the newly assigned player / stat
 'values after the draft.
 '
 'draftNew
@@ -393,7 +393,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     Shared plyrOff_DRAFT!(), att_DRAFT&(), dFGPctAdj_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrStat_DRAFT!(), plyrRat_DRAFT!(), stamina_DRAFT!()
 
-    Shared lgRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT()
+    Shared lgRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT!()
     Shared avgRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
 
     Cls
@@ -462,13 +462,13 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     LSet Q$(3) = MKI$(d3FG_Adj(0))
     LSet Q$(4) = MKI$(d3FGA_Adj(0))
 
-    For I = 0 To 4: 
+    For I = 0 To 4:
         LSet Q$(I + 5) = MKI$(lgRat_DRAFT(0, I))
     Next
 
     teamRat_DRAFT(0, 2) = 999
 
-    For I = 0 To 9: 
+    For I = 0 To 9:
         LSet Q$(I + 10) = MKI$(teamRat_DRAFT(0, I))
     Next
 
@@ -487,15 +487,15 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
     Close #1
 
-    If Not _FileExists (diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
-    
+    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
+
         MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -526,7 +526,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
         Next
 
         For I = 0 To 24
-            LSet Q$(228 + I) = MKI$(teamStats_DRAFT(0, I))
+            LSet Q$(228 + I) = MKI$(teamStats_DRAFT!(0, I))
         Next
 
         LSet Q$(253) = MKI$(999)
@@ -543,20 +543,20 @@ End Sub
 '----------------------------------------
 '     ChooseDraftTeam Subroutine
 '----------------------------------------
-'This subroutine provides an interface for 
+'This subroutine provides an interface for
 'choosing the team to draft players from
 Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
-    Shared teamRat_DRAFT()
-
     Shared previousYear$
+
+    Shared teamRat_DRAFT()
 
     Do
 
         Color 15, 0
         Cls
 
-        Call MenuBox (6, 8, 61, 7, 15, 4)
+        Call MenuBox(6, 8, 61, 7, 15, 4)
 
         Locate 7, 32
 
@@ -566,6 +566,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Print
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate 8,
 
         I$ = GetKeyPress$
 
@@ -610,9 +611,9 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
                         BoxWidth = 20
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
                         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+                        Call CSMsgBox(MsgText$, BoxWidth, PASS)
                         I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, Pass)
+                        Call CSMsgBox("", 0, PASS)
                         Exit Sub
 
                     Else
@@ -653,10 +654,11 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
                 Call SelectDraftTeam(numberTeams, chosenIdx, ExitCode%, draftIdx)
 
-                If ExitCode% <> 27 Then
+                If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
                     Do
-                        Locate 2, 33
+                        YCoord = Int((80 - Len(teamName$)) / 2)
+                        Locate 2, YCoord
                         Color teamRat_DRAFT(draftIdx, 0), teamRat_DRAFT(draftIdx, 1): Print teamName$
 
                         Color 15, 4
@@ -668,7 +670,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
                 End If
 
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N"
+            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
 
         End If 'Done checking for ESC
 
@@ -682,7 +684,7 @@ End Sub
 '----------------------------------------
 '       SelectDraftTeam Subroutine
 '----------------------------------------
-'This subroutine provides an interface for 
+'This subroutine provides an interface for
 'selecting the team to draft players from
 Sub SelectDraftTeam (numberTeams, selectedIdx, ExitCode%, draftIdx)
 
@@ -703,6 +705,7 @@ Sub SelectDraftTeam (numberTeams, selectedIdx, ExitCode%, draftIdx)
         Cls
         Color 14
         teamNumber = draftIdx + 1
+        Locate , 33
         Print Using "TEAM # SELECTION"; teamNumber
         Locate 25, 1
         Color 14: Print "ESC";
@@ -722,10 +725,19 @@ Sub SelectDraftTeam (numberTeams, selectedIdx, ExitCode%, draftIdx)
             'Color 31: Print "LOADING..."
 
             Call ReadDraftTeam(selectedIdx, draftIdx)
+            Call ReadDraftExtraData(selectedIdx, draftIdx, validData)
 
-        Else
-            BO% = 1
         End If
+
+    End If
+
+    If validData = 0 And ExitCode% <> 27 Then
+
+        selectedIdx = -1
+        Locate 9,
+        Call CSMsgBox("THERE WAS AN ISSUE READING TEAM DATA. YOU MAY HAVE CHOSEN A TEAM FROM 4.0... PRESS ANY KEY AND TRY ANOTHER DISK ID", 20, PASS)
+        K$ = GetKeyPress$
+        Call CSMsgBox("", 0, PASS)
 
     End If
 
@@ -735,7 +747,7 @@ End Sub
 '----------------------------------------
 '       ReadDraftTeam SubRoutine
 '----------------------------------------
-'This subroutine reads team data into 
+'This subroutine reads team data into
 'arrays for the selected team
 Sub ReadDraftTeam (teamIdx, draftIdx)
 
@@ -745,7 +757,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     Shared plyrOff_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrRat_DRAFT!(), plyrStat_DRAFT!(), stamina_DRAFT!()
 
-    Shared teamRat_DRAFT(), teamStats_DRAFT()
+    Shared teamRat_DRAFT(), teamStats_DRAFT!()
 
     Shared plyrNames_DRAFT$(), tmName_DRAFT$(), posn_DRAFT$(), teamYears$()
     Shared mascots_DRAFT$(), coaches_DRAFT$(), stadiums_DRAFT$()
@@ -775,14 +787,19 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     Next
 
     For I = 0 To 13
+
+        'Player name
         plyrNames_DRAFT$(draftIdx, I) = RTrim$(Q$(I * 15 + 20))
 
+        'Player ratings
         For I1 = 0 To 6
             plyrOff_DRAFT!(draftIdx, I, I1) = CVI(Q$(I * 15 + I1 + 21))
             plyrRat_DRAFT!(draftIdx, I, I1) = CVI(Q$(I * 15 + I1 + 28))
         Next
+
     Next
 
+    'Close team file
     Close #1
 
     If d3FG_Adj(draftIdx) > 20 Then d3FG_Adj(draftIdx) = 100 - d3FG_Adj(draftIdx)
@@ -791,15 +808,54 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     If lgRat_DRAFT(draftIdx, 2) > 20 Then lgRat_DRAFT(draftIdx, 2) = 100 - lgRat_DRAFT(draftIdx, 2)
     If lgRat_DRAFT(draftIdx, 3) > 20 Then lgRat_DRAFT(draftIdx, 3) = 100 - lgRat_DRAFT(draftIdx, 3)
 
-    If Not _FileExists (diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYears$(draftIdx)) Then
+    For I = 0 To 13
+        avgRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
+        avgRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
+        avgRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
+        avgRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
+        avgRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
+        avgRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
+        avgRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
+        avgRat_DRAFT(draftIdx, I, 8) = 99
+        avgRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
+        avgRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
+        avgRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
+        avgRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
+    Next
+
+
+End Sub
+
+
+'----------------------------------------
+'     ReadDraftExtraData Subroutine
+'----------------------------------------
+'Reads in extra data for the selected team,
+' given it's index in the team file.
+'This extra file usually includes info.
+' related to stadiums, coaches, etc.
+'This routine is highly customized TO
+' the specific game for which it has
+' been included for.
+Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
+
+    Shared CK!(), att_DRAFT&()
+
+    Shared coaches_DRAFT$(), stadiums_DRAFT$(), mascots_DRAFT$()
+
+    Shared plyrDef_DRAFT!(), plyrStat_DRAFT!(), teamStats_DRAFT!()
+
+    Shared posn_DRAFT$(), teamYears$()
+
+    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYears$(draftIdx)) Then
 
         MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -832,53 +888,57 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
         Next
 
         For I = 0 To 20
-            teamStats_DRAFT(draftIdx, I) = CVI(Q$(228 + I))
+            teamStats_DRAFT!(draftIdx, I) = CVI(Q$(228 + I))
         Next
 
-        CK!(draftIdx) = CVI(Q$(249))
+        'If CVI(Q$(249)) <> 999 Then
+        If att_DRAFT&(draftIdx) > 100000 Then
+        'If attendance is abnormally high, we ARE
+        'clearly not reading accurate data
 
-        Close #2
+            dataOK = 0
 
-        For I = 0 To 13
-            avgRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
-            avgRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
-            avgRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
-            avgRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
-            avgRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
-            avgRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
-            avgRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
-            avgRat_DRAFT(draftIdx, I, 8) = 99
-            avgRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
-            avgRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
-            avgRat_DRAFT(draftIdx, I, 11) = teamRat_DRAFT(draftIdx, 5)
-            avgRat_DRAFT(draftIdx, I, 12) = teamRat_DRAFT(draftIdx, 6)
-        Next
+        Else
 
-        If CK!(draftIdx) <> 999 Then
+            For I = 21 To 24
+                teamStats_DRAFT!(draftIdx, I) = CVI(Q$(228 + I))
+            Next
 
-            coaches_DRAFT$(draftIdx) = ""
-            stadiums_DRAFT$(draftIdx) = ""
-            mascots_DRAFT$(draftIdx) = ""
-            att_DRAFT&(draftIdx) = 0
+            CK!(draftIdx) = CVI(Q$(253))
 
-            For I = 0 To 13:
+            If CK!(draftIdx) <> 999 Then
 
-                plyrDef_DRAFT!(draftIdx, I) = 5
-                posn_DRAFT$(draftIdx, I) = ""
+                coaches_DRAFT$(draftIdx) = ""
+                stadiums_DRAFT$(draftIdx) = ""
+                mascots_DRAFT$(draftIdx) = ""
+                att_DRAFT&(draftIdx) = 0
 
-                For I1 = 0 To 13
-                    plyrStat_DRAFT!(draftIdx, I, I1) = 0
+                For I = 0 To 13:
+
+                    plyrDef_DRAFT!(draftIdx, I) = 5
+                    posn_DRAFT$(draftIdx, I) = ""
+
+                    For I1 = 0 To 13
+                        plyrStat_DRAFT!(draftIdx, I, I1) = 0
+                    Next
+
                 Next
 
-            Next
+                For I = 0 To 24
+                    teamStats_DRAFT!(draftIdx, I) = 0
+                Next
 
-            'For I = 0 To 20:
-            For I = 0 To 24
-                teamStats_DRAFT(draftIdx, I) = 0
-            Next
+            End If
+
+            dataOK = 1
 
         End If
+
+        Close #2
 
     End If
 
 End Sub
+
+
+

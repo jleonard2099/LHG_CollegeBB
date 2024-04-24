@@ -357,8 +357,46 @@ Sub ViewStatSummary (statFile$, teamName$, totalGames%, menuExit)
                 Kill diskPaths$(1) + statFile$ + "S"
 
             Case "P":
-                Call PrintStatsSchedule(teamName$, totalGames%)
-                Call PrintStatsSummary(teamName$, totalGames%)
+                Color 15, 0
+                Cls
+
+                Call MenuBox(8, 25, 24, 5, 15, 1)
+
+                Do
+
+                    Locate 10, 32
+                    Color 7, 1
+
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "F";
+                    Color 7: Print "ILE"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "P";
+                    Color 7: Print "RINTER"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "S";
+                    Color 7: Print "CREEN"
+
+                    I$ = GetKeyPress$
+
+                    Color 14, 0
+
+                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
+
+                Select Case UCase$(I$)
+
+                    Case "F"
+                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                        If userFile$ <> "" Then
+                            Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                            Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                        End If
+
+                    Case "P"
+                        Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                        Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
+
+                End Select
 
         End Select
 
@@ -612,8 +650,46 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
                 Case "P"
                     'Print
-                    Call PrintStatsSchedule(teamName$, totalGames%)
-                    Call PrintStatsSummary(teamName$, totalGames%)
+                    Color 15, 0
+                    Cls
+
+                    Call MenuBox(8, 25, 24, 5, 15, 1)
+
+                    Do
+
+                        Locate 10, 32
+                        Color 7, 1
+
+                        Locate , 32: Print "SEND TO ";
+                        Color 15: Print "F";
+                        Color 7: Print "ILE"
+                        Locate , 32: Print "SEND TO ";
+                        Color 15: Print "P";
+                        Color 7: Print "RINTER"
+                        Locate , 32: Print "SEND TO ";
+                        Color 15: Print "S";
+                        Color 7: Print "CREEN"
+
+                        I$ = GetKeyPress$
+
+                        Color 14, 0
+
+                    Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
+
+                    Select Case UCase$(I$)
+
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                            If userFile$ <> "" Then
+                                Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                                Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                            End If
+
+                        Case "P"
+                            Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                            Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
+
+                    End Select
 
             End Select
 
@@ -778,8 +854,46 @@ Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                     Kill diskPaths$(1) + statFile$ + "S"
 
                 Case "P"
-                    Call PrintStatsSchedule(teamName$, totalGames%)
-                    Call PrintStatsSummary(teamName$, totalGames%)
+                    Color 15, 0
+                    Cls
+
+                    Call MenuBox(8, 25, 24, 5, 15, 1)
+
+                    Do
+
+                        Locate 10, 32
+                        Color 7, 1
+
+                        Locate , 32: Print "SEND TO ";
+                        Color 15: Print "F";
+                        Color 7: Print "ILE"
+                        Locate , 32: Print "SEND TO ";
+                        Color 15: Print "P";
+                        Color 7: Print "RINTER"
+                        Locate , 32: Print "SEND TO ";
+                        Color 15: Print "S";
+                        Color 7: Print "CREEN"
+
+                        I$ = GetKeyPress$
+
+                        Color 14, 0
+
+                    Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
+
+                    Select Case UCase$(I$)
+
+                        Case "F"
+                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                            If userFile$ <> "" Then
+                                Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                                Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                            End If
+
+                        Case "P"
+                            Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                            Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
+
+                    End Select
 
             End Select
 
@@ -899,8 +1013,46 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames%, menuExit)
 
             Case "P":
                 'Print
-                Call PrintStatsSchedule(teamName$, totalGames%)
-                Call PrintStatsSummary(teamName$, totalGames%)
+                Color 15, 0
+                Cls
+
+                Call MenuBox(8, 25, 24, 5, 15, 1)
+
+                Do
+
+                    Locate 10, 32
+                    Color 7, 1
+
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "F";
+                    Color 7: Print "ILE"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "P";
+                    Color 7: Print "RINTER"
+                    Locate , 32: Print "SEND TO ";
+                    Color 15: Print "S";
+                    Color 7: Print "CREEN"
+
+                    I$ = GetKeyPress$
+
+                    Color 14, 0
+
+                Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
+
+                Select Case UCase$(I$)
+
+                    Case "F"
+                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                        If userFile$ <> "" Then
+                            Call StatsSchedule_Report(0, userFile$, teamName$, totalGames%)
+                            Call StatsSummary_Report(0, userFile$, teamName$, totalGames%)
+                        End If
+
+                    Case "P"
+                        Call StatsSchedule_Report(1, "REPORT", teamName$, totalGames%)
+                        Call StatsSummary_Report(1, "REPORT", teamName$, totalGames%)
+
+                End Select
 
         End Select
 
@@ -912,11 +1064,11 @@ End Sub
 
 
 '----------------------------------------
-'     PrintStatsSchedule Subroutine
+'     StatsSchedule_Report Subroutine
 '----------------------------------------
 'This subroutine formats and outputs the
 'team's schedule results to the default printer
-Sub PrintStatsSchedule (teamName$, totalGames%)
+Sub StatsSchedule_Report (printDest, destFile$, teamName$, totalGames%)
 
     Shared homeLosses, homeWins, neutralLosses, neutralWins
     Shared roadLosses, roadWins, totalLosses, totalWins
@@ -928,55 +1080,75 @@ Sub PrintStatsSchedule (teamName$, totalGames%)
 
     Shared statPlyrNames$(), locIndicator$(), oppName$()
 
-    LPrint "SCHEDULE RESULTS FOR "; teamName$
-    LPrint
+	Color 15, 0
+	Cls
+
+	Open destFile$ For Output As #1
+
+    Print #1, "SCHEDULE RESULTS FOR "; teamName$
+    Print #1,
 
     For I = 1 To 28
 
-        LPrint Using "###"; teamScore(I);
-        LPrint Tab(5); Left$(oppName$(I), 14);
-        LPrint Tab(20); Using "###"; oppScore(I);
-        LPrint Tab(24); locIndicator$(I); Tab(27);
+        Print #1, Using "###"; teamScore(I);
+        Print #1, Tab(5); Left$(oppName$(I), 14);
+        Print #1, Tab(20); Using "###"; oppScore(I);
+        Print #1, Tab(24); locIndicator$(I); Tab(27);
 
         If I + 28 <= totalGames% Then
-            LPrint Using "###"; teamScore(I + 28);
-            LPrint Tab(31); Left$(oppName$(I + 28), 14);
-            LPrint Tab(46); Using "###"; oppScore(I + 28);
-            LPrint Tab(50); locIndicator$(I + 28); Tab(53);
+            Print #1, Using "###"; teamScore(I + 28);
+            Print #1, Tab(31); Left$(oppName$(I + 28), 14);
+            Print #1, Tab(46); Using "###"; oppScore(I + 28);
+            Print #1, Tab(50); locIndicator$(I + 28); Tab(53);
 
             If I + 56 <= totalGames% Then
-                LPrint Using "###"; teamScore(I + 56);
-                LPrint Tab(57); Left$(oppName$(I + 56), 14);
-                LPrint Tab(72); Using "###"; oppScore(I + 56);
-                LPrint Tab(76); locIndicator$(I + 56)
+                Print #1, Using "###"; teamScore(I + 56);
+                Print #1, Tab(57); Left$(oppName$(I + 56), 14);
+                Print #1, Tab(72); Using "###"; oppScore(I + 56);
+                Print #1, Tab(76); locIndicator$(I + 56)
             Else
-                LPrint
+                Print #1,
             End If
         Else
-            LPrint
+            Print #1,
         End If
 
     Next I
 
-    LPrint Chr$(12)
+    Print #1, Chr$(12)
 
-    LPrint
-    LPrint Tab(27); "OVERALL RECORD ("; totalWins; "-"; totalLosses; ")"
-    LPrint Tab(27); "HOME RECORD    ("; homeWins; "-"; homeLosses; ")"
-    LPrint Tab(27); "ROAD RECORD    ("; roadWins; "-"; roadLosses; ")"
-    LPrint Tab(27); "NEUTRAL RECORD ("; neutralWins; "-"; neutralLosses; ")"
+    Print #1,
+    Print #1, Tab(27); "OVERALL RECORD ("; totalWins; "-"; totalLosses; ")"
+    Print #1, Tab(27); "HOME RECORD    ("; homeWins; "-"; homeLosses; ")"
+    Print #1, Tab(27); "ROAD RECORD    ("; roadWins; "-"; roadLosses; ")"
+    Print #1, Tab(27); "NEUTRAL RECORD ("; neutralWins; "-"; neutralLosses; ")"
 
-    LPrint Chr$(12)
+	If printDest = 1 Then
+
+		Open destFile$ For Input As #2
+
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
+
+		Close #2
+
+		LPrint Chr$(12)
+
+		Kill destFile$
+
+	End If
 
 End Sub
 
 
 '----------------------------------------
-'      PrintStatsSummary Subroutine
+'     StatsSummary_Report Subroutine
 '----------------------------------------
 'This subroutine formats and outputs the
 'team's stats to the default printer
-Sub PrintStatsSummary (teamName$, totalGames%)
+Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
 
     Shared teamScore(), oppScore()
 
@@ -985,199 +1157,219 @@ Sub PrintStatsSummary (teamName$, totalGames%)
 
     Shared statPlyrNames$(), locIndicator$(), oppName$()
 
-    LPrint "STATISTICS SUMMARY FOR "; teamName$
-    LPrint "NAME"; Tab(15);
-    LPrint " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
+	Color 15, 0
+	Cls
+
+	Open destFile$ For Output As #1
+
+    Print #1, "STATISTICS SUMMARY FOR "; teamName$
+    Print #1, "NAME"; Tab(15);
+    Print #1, " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
     For I = 0 To 13
-        LPrint Left$(statPlyrNames$(I), 13); Tab(15);
+        Print #1, Left$(statPlyrNames$(I), 13); Tab(15);
 
         'Games
-        LPrint Using "## "; values!(I, 0);
+        Print #1, Using "## "; values!(I, 0);
 
         'Min, Avg
         If values!(I, 10) > 0 Then
-            LPrint Tab(18); Using "####"; Int((values!(I, 10) + 30) / 60);
-            LPrint Tab(24); Using "##"; Int(((values!(I, 10) / 60) / values!(I, 0)) + .5);
+            Print #1, Tab(18); Using "####"; Int((values!(I, 10) + 30) / 60);
+            Print #1, Tab(24); Using "##"; Int(((values!(I, 10) / 60) / values!(I, 0)) + .5);
         End If
 
         'FGM, FGA, FG PCT
-        LPrint Tab(28); Using "#### ####"; values!(I, 2); values!(I, 1);
-        LPrint Tab(38);
+        Print #1, Tab(28); Using "#### ####"; values!(I, 2); values!(I, 1);
+        Print #1, Tab(38);
 
         If values!(I, 1) = 0 Then
-            LPrint ".---";
+            Print #1, ".---";
         Else
             If values!(I, 2) = values!(I, 1) Then
-                LPrint "1.00";
+                Print #1, "1.00";
             Else
                 If values!(I, 2) = 0 Then
-                    LPrint ".000";
+                    Print #1, ".000";
                 Else
                     fgPCT! = values!(I, 2) / values!(I, 1)
-                    LPrint Using ".###"; fgPCT!;
+                    Print #1, Using ".###"; fgPCT!;
                 End If
             End If
         End If
 
         '3FGM, 3FGA, 3FG PCT
-        LPrint Tab(44); Using "#### ####"; statsW0!(I); statsW1!(I);: LPrint Tab(54);
+        Print #1, Tab(44); Using "#### ####"; statsW0!(I); statsW1!(I);: Print #1, Tab(54);
 
         If statsW1!(I) = 0 Then
-            LPrint ".---";
+            Print #1, ".---";
         Else
             If statsW1!(I) = statsW0!(I) Then
-                LPrint "1.00";
+                Print #1, "1.00";
             Else
                 If statsW0!(I) = 0 Then
-                    LPrint ".000";
+                    Print #1, ".000";
                 Else
                     statPCT! = statsW0!(I) / statsW1!(I)
-                    LPrint Using ".###"; statPCT!;
+                    Print #1, Using ".###"; statPCT!;
                 End If
             End If
         End If
 
         'FTM, FTA, FT PCT
-        LPrint Tab(60); Using "#### ####"; values!(I, 4); values!(I, 3);
-        LPrint Tab(70);
+        Print #1, Tab(60); Using "#### ####"; values!(I, 4); values!(I, 3);
+        Print #1, Tab(70);
 
         If values!(I, 3) = 0 Then
-            LPrint ".---"
+            Print #1, ".---"
         Else
             If values!(I, 3) = values!(I, 4) Then
-                LPrint "1.00"
+                Print #1, "1.00"
             Else
                 If values!(I, 4) = 0 Then
-                    LPrint ".000"
+                    Print #1, ".000"
                 Else
                     statPCT! = values!(I, 4) / values!(I, 3)
-                    LPrint Using ".###"; statPCT!
+                    Print #1, Using ".###"; statPCT!
                 End If
             End If
         End If
 
     Next 'done looping through players
 
-    LPrint
-    LPrint "TOTALS"; Tab(15);
+    Print #1,
+    Print #1, "TOTALS"; Tab(15);
 
     'Games
-    LPrint Using "##"; totalGames%;
+    Print #1, Using "##"; totalGames%;
 
     'FGM / FGA / FGPCT
-    LPrint Tab(28); Using "#### ####"; statsZ!(2); statsZ!(1);
+    Print #1, Tab(28); Using "#### ####"; statsZ!(2); statsZ!(1);
     If statsZ!(1) <> 0 Then
         statPCT! = statsZ!(2) / statsZ!(1)
-        LPrint Tab(38); Using ".###"; statPCT!;
+        Print #1, Tab(38); Using ".###"; statPCT!;
     End If
 
     '3FGM / 3FGA / 3FGPCT
-    LPrint Tab(44); Using "#### ####"; statsZ!(13); statsZ!(14);
+    Print #1, Tab(44); Using "#### ####"; statsZ!(13); statsZ!(14);
     If statsZ!(14) <> 0 Then
         statPCT! = statsZ!(13) / statsZ!(14)
-        LPrint Tab(54); Using ".###"; statPCT!;
+        Print #1, Tab(54); Using ".###"; statPCT!;
     End If
 
     'FTM / FTA / FTPCT
-    LPrint Tab(60); Using "#### ####"; statsZ!(4); statsZ!(3);
+    Print #1, Tab(60); Using "#### ####"; statsZ!(4); statsZ!(3);
     If statsZ!(3) <> 0 Then
         statPCT! = statsZ!(4) / statsZ!(3)
-        LPrint Tab(70); Using ".###"; statPCT!
+        Print #1, Tab(70); Using ".###"; statPCT!
     End If
 
     'Opponents
 
     'Games
-    LPrint Tab(15); Using "##"; totalGames%;
+    Print #1, Tab(15); Using "##"; totalGames%;
 
     'FGM / FGA / FGPCT
-    LPrint Tab(28); Using "#### ####"; statsZ1!(2); statsZ1!(1);
+    Print #1, Tab(28); Using "#### ####"; statsZ1!(2); statsZ1!(1);
     If statsZ1!(1) <> 0 Then
         statPCT! = statsZ1!(2) / statsZ1!(1)
-        LPrint Tab(38); Using ".###"; statPCT!;
+        Print #1, Tab(38); Using ".###"; statPCT!;
     End If
 
     '3FGM / 3FGA / 3FGPCT
-    LPrint Tab(44); Using "#### ####"; statsZ1!(13); statsZ1!(14);
+    Print #1, Tab(44); Using "#### ####"; statsZ1!(13); statsZ1!(14);
     If statsZ1!(14) <> 0 Then
         statPCT! = statsZ1!(13) / statsZ1!(14)
-        LPrint Tab(54); Using ".###"; statPCT!;
+        Print #1, Tab(54); Using ".###"; statPCT!;
     End If
 
     'FTM / FTA / FTPCT
-    LPrint Tab(60); Using "#### ####"; statsZ1!(4); statsZ1!(3);
+    Print #1, Tab(60); Using "#### ####"; statsZ1!(4); statsZ1!(3);
     If statsZ1!(3) <> 0 Then
         statPCT! = statsZ1!(4) / statsZ1!(3)
-        LPrint Tab(70); Using ".###"; statPCT!
+        Print #1, Tab(70); Using ".###"; statPCT!
     End If
 
     'Player Stats
-    LPrint
-    LPrint Tab(15);
-    LPrint "               OFF  DEF  TOT": LPrint Tab(15);
-    LPrint " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
+    Print #1,
+    Print #1, Tab(15);
+    Print #1, "               OFF  DEF  TOT": Print #1, Tab(15);
+    Print #1, " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
     For I = 0 To 13
 
         'Player Name
-        LPrint Left$(statPlyrNames$(I), 13);: LPrint Tab(15);
+        Print #1, Left$(statPlyrNames$(I), 13);: Print #1, Tab(15);
 
         'Points
-        LPrint Using "####"; values!(I, 2) * 2 + values!(I, 4) + statsW0!(I);
+        Print #1, Using "####"; values!(I, 2) * 2 + values!(I, 4) + statsW0!(I);
 
         'Average
         If values!(I, 0) > 0 Then
-            LPrint Tab(21); Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + statsW0!(I)) / values!(I, 0);
+            Print #1, Tab(21); Using "##.#"; (values!(I, 2) * 2 + values!(I, 4) + statsW0!(I)) / values!(I, 0);
         End If
 
         'Highest Points, Rebounds
-        LPrint Tab(26); Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);
+        Print #1, Tab(26); Using "## #### #### ####"; values!(I, 13); values!(I, 12); values!(I, 5) - values!(I, 12); values!(I, 5);
 
         'Average Rebounds
         If values!(I, 0) > 0 Then
-            LPrint Tab(45); Using "##.#"; values!(I, 5) / values!(I, 0);
+            Print #1, Tab(45); Using "##.#"; values!(I, 5) / values!(I, 0);
         End If
 
         'Fouls / AST / BLK / STL / TO
-        LPrint Tab(51); Using "### ####  ###  ###  ###"; values!(I, 6); values!(I, 8); values!(I, 9); values!(I, 7); values!(I, 11)
+        Print #1, Tab(51); Using "### ####  ###  ###  ###"; values!(I, 6); values!(I, 8); values!(I, 9); values!(I, 7); values!(I, 11)
 
     Next I
 
-    LPrint "TEAM";: LPrint Tab(39); Using "####"; statsZ!(15)
+    Print #1, "TEAM";: Print #1, Tab(39); Using "####"; statsZ!(15)
 
-    LPrint
-    LPrint "TOTALS";
+    Print #1,
+    Print #1, "TOTALS";
 
     'Points
     If totalGames% > 0 Then ptsCalc! = statsZ!(10) / totalGames% Else ptsCalc! = 0
-    LPrint Tab(14); Using "##### ###.#"; statsZ!(10); ptsCalc!;
+    Print #1, Tab(14); Using "##### ###.#"; statsZ!(10); ptsCalc!;
 
     'Rebounds
     If totalGames% > 0 Then rebCalc! = statsZ!(5) / totalGames% Else rebCalc! = 0
-    LPrint Tab(29); Using "#### #### ####  ##.#"; statsZ!(12); statsZ!(5) - statsZ!(12) - statsZ!(15); statsZ!(5); rebCalc!;
+    Print #1, Tab(29); Using "#### #### ####  ##.#"; statsZ!(12); statsZ!(5) - statsZ!(12) - statsZ!(15); statsZ!(5); rebCalc!;
 
     'Fouls  AST  BLK  STL  TO
-    LPrint Using " #### #### #### #### ####"; statsZ!(6); statsZ!(8); statsZ!(9); statsZ!(7); statsZ!(11)
+    Print #1, Using " #### #### #### #### ####"; statsZ!(6); statsZ!(8); statsZ!(9); statsZ!(7); statsZ!(11)
 
     'Points
     If totalGames% > 0 Then ptsCalc! = statsZ1!(10) / totalGames% Else ptsCalc! = 0
-    LPrint Tab(14); Using "##### ###.#"; statsZ1!(10); ptsCalc!;
+    Print #1, Tab(14); Using "##### ###.#"; statsZ1!(10); ptsCalc!;
 
     'Rebounds
     If totalGames% > 0 Then rebCalc! = statsZ1!(5) / totalGames% Else rebCalc! = 0
-    LPrint Tab(29); Using "#### #### ####  ##.#"; statsZ1!(12); statsZ1!(5) - statsZ1!(12) - statsZ1!(15); statsZ1!(5); rebCalc!;
+    Print #1, Tab(29); Using "#### #### ####  ##.#"; statsZ1!(12); statsZ1!(5) - statsZ1!(12) - statsZ1!(15); statsZ1!(5); rebCalc!;
 
     'Fouls  AST  BLK  STL  TO
-    LPrint Using " #### #### #### #### ####"; statsZ1!(6); statsZ1!(8); statsZ1!(9); statsZ1!(7); statsZ1!(11)
+    Print #1, Using " #### #### #### #### ####"; statsZ1!(6); statsZ1!(8); statsZ1!(9); statsZ1!(7); statsZ1!(11)
 
-    LPrint Chr$(12)
+	If printDest = 1 Then
+
+		Open destFile$ For Input As #2
+
+		Do While Not EOF(2)
+			Line Input #2, X$
+			LPrint X$
+		Loop
+
+		Close #2
+
+		LPrint Chr$(12)
+
+		Kill destFile$
+
+	End If
 
 End Sub
 
 
 '----------------------------------------
-'       SortStats Subroutine
+'          SortStats Subroutine
 '----------------------------------------
 'This subroutine sorts the associate stats
 'based on the chosen category

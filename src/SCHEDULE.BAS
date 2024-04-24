@@ -36,15 +36,15 @@ Sub SCHEDULE ()
         Print "STANDINGS AND CONFERENCE LEADERS OPTIONS. YOU MUST ALREADY HAVE CREATED"
         Print "AN APPROPRIATE CONFERENCE FOR THIS OPTION TO FUNCTION."
 
-        menuChoices$(1) = "ENTER A NEW SCHEDULE                          "
-        menuChoices$(2) = "RETRIEVE / EDIT / PLAY AN EXISTING SCHEDULE   "
-        menuChoices$(3) = "EXTRACT TEAM SCHEDULE FROM CONFERENCE SCHEDULE"
-        menuChoices$(4) = "EXTRACT A CONFERENCE SCHEDULE                 "
-        menuChoices$(5) = "CHANGE TEAM'S MODE OF PLAY IN A SCHEDULE      "
-        menuChoices$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE             "
-        menuChoices$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE       "
-        menuChoices$(8) = "BOXSCORE MAINTENANCE / PARAMETERS             "
-        menuChoices$(9) = "EXIT TO COURTSIDE MAIN MENU                   "
+        menuChoices$(1) = "ENTER A NEW SCHEDULE                    "
+        menuChoices$(2) = "REVIEW / EDIT AN EXISTING SCHEDULE      "
+        menuChoices$(3) = "EXTRACT TEAM SCHEDULE FROM CONFERENCE   "
+        menuChoices$(4) = "EXTRACT CONFERENCE SCHEDULE             "
+        menuChoices$(5) = "CHANGE TEAM'S MODE OF PLAY IN A SCHEDULE"
+        menuChoices$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE       "
+        menuChoices$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE "
+        menuChoices$(8) = "BOXSCORE MAINTENANCE / PARAMETERS       "
+        menuChoices$(9) = "RETURN TO COURTSIDE CB MAIN MENU        "
         Selection% = 1
         Count% = 9
         Start% = 1
