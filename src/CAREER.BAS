@@ -310,92 +310,72 @@ Sub ReviewCareerRecords ()
 
         Close #1
 
-        Color 15, 0
-        Cls
+        userKey$ = GetOutputOptions$
 
-        Call MenuBox(8, 25, 24, 5, 15, 1)
+        If userKey$ <> Chr$(27) Then
 
-        Do
+            Select Case userKey$
 
-            Locate 10, 32
-            Color 7, 1
+                Case "F"
+                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Career","*.txt","Text File")
+                    If userFile$ <> "" Then
+                        Call CareerRecords_Report(0, userFile$)
+                    End If
 
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "F";
-            Color 7: Print "ILE"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "P";
-            Color 7: Print "RINTER"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "S";
-            Color 7: Print "CREEN"
+                Case "P"
+                    Call CareerRecords_Report(1, "CAREER")
 
-            I$ = GetKeyPress$
-
-            Color 14, 0
-
-        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
-
-        Select Case UCase$(I$)
-
-            Case "F"
-                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Career","*.txt","Text File")
-                If userFile$ <> "" Then
-                    Call CareerRecords_Report(0, userFile$)
-                End If
-
-            Case "P"
-                Call CareerRecords_Report(1, "CAREER")
-
-            Case "S":
-
-                Do
-                    Cls
-                    Color 0, 15
-
-                    Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
-                    Print
-
-                    Color 3: Print "FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(0);: Print Tab(47); BL$(0);: Print Tab(66); BLYR(0)
-                    Color 3: Print "FIELD GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(1);: Print Tab(47); BL$(1);: Print Tab(66); BLYR(1)
-                    Color 3: Print "FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(2);: Print Tab(47); BL$(2);: Print Tab(66); BLYR(2)
-                    Color 3: Print "FREE THROWS MADE";: Color 7: Print Tab(33); Using "####"; BL(3);: Print Tab(47); BL$(3);: Print Tab(66); BLYR(3)
-                    Color 3: Print "FREE THROW ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(4);: Print Tab(47); BL$(4);: Print Tab(66); BLYR(4)
-                    Color 3: Print "FREE THROW PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(5);: Print Tab(47); BL$(5);: Print Tab(66); BLYR(5)
-                    Color 3: Print "3 PT. FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(6);: Print Tab(47); BL$(6);: Print Tab(66); BLYR(6)
-                    Color 3: Print "3 PT. FILED GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(7);: Print Tab(47); BL$(7);: Print Tab(66); BLYR(7)
-                    Color 3: Print "3 PT. FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(8);: Print Tab(47); BL$(8);: Print Tab(66); BLYR(8)
-                    Color 3: Print "POINTS";: Color 7: Print Tab(32); Using "#####"; BL(9);: Print Tab(47); BL$(9);: Print Tab(66); BLYR(9)
-                    Color 3: Print "POINTS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(10);: Print Tab(47); BL$(10);: Print Tab(66); BLYR(10)
-                    Color 3: Print "OFFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(11);: Print Tab(47); BL$(11);: Print Tab(66); BLYR(11)
-                    Color 3: Print "DEFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR(12)
-                    Color 3: Print "TOTAL REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR(13)
-                    Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR(14)
-
-                    Color 15
-                    Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
-                    I$ = GetKeyPress$
-
-                    Cls
-                    Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
-                    Print
-                    Color 3: Print "PERSONAL FOULS";: Color 7: Print Tab(33); Using "####"; BL(15);: Print Tab(47); BL$(15);: Print Tab(66); BLYR(15)
-                    Color 3: Print "ASSISTS";: Color 7: Print Tab(32); Using "#####"; BL(16);: Print Tab(47); BL$(16);: Print Tab(66); BLYR(16)
-                    Color 3: Print "SHOTS BLOCKED";: Color 7: Print Tab(33); Using "####"; BL(17);: Print Tab(47); BL$(17);: Print Tab(66); BLYR(17)
-                    Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR(18)
-                    Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR(19)
-                    Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR(20)
-
-                    Color 15
+                Case "S":
 
                     Do
-                        Locate 22: Print "VIEW AGAIN? (Y/N)"
+                        Cls
+                        Color 0, 15
+
+                        Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
+                        Print
+
+                        Color 3: Print "FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(0);: Print Tab(47); BL$(0);: Print Tab(66); BLYR(0)
+                        Color 3: Print "FIELD GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(1);: Print Tab(47); BL$(1);: Print Tab(66); BLYR(1)
+                        Color 3: Print "FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(2);: Print Tab(47); BL$(2);: Print Tab(66); BLYR(2)
+                        Color 3: Print "FREE THROWS MADE";: Color 7: Print Tab(33); Using "####"; BL(3);: Print Tab(47); BL$(3);: Print Tab(66); BLYR(3)
+                        Color 3: Print "FREE THROW ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(4);: Print Tab(47); BL$(4);: Print Tab(66); BLYR(4)
+                        Color 3: Print "FREE THROW PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(5);: Print Tab(47); BL$(5);: Print Tab(66); BLYR(5)
+                        Color 3: Print "3 PT. FIELD GOALS MADE";: Color 7: Print Tab(33); Using "####"; BL(6);: Print Tab(47); BL$(6);: Print Tab(66); BLYR(6)
+                        Color 3: Print "3 PT. FILED GOAL ATTEMPTS";: Color 7: Print Tab(33); Using "####"; BL(7);: Print Tab(47); BL$(7);: Print Tab(66); BLYR(7)
+                        Color 3: Print "3 PT. FIELD GOAL PCT.";: Color 7: Print Tab(32); Using "#.###"; BL(8);: Print Tab(47); BL$(8);: Print Tab(66); BLYR(8)
+                        Color 3: Print "POINTS";: Color 7: Print Tab(32); Using "#####"; BL(9);: Print Tab(47); BL$(9);: Print Tab(66); BLYR(9)
+                        Color 3: Print "POINTS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(10);: Print Tab(47); BL$(10);: Print Tab(66); BLYR(10)
+                        Color 3: Print "OFFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(11);: Print Tab(47); BL$(11);: Print Tab(66); BLYR(11)
+                        Color 3: Print "DEFENSIVE REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR(12)
+                        Color 3: Print "TOTAL REBOUNDS";: Color 7: Print Tab(32); Using "#####"; BL(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR(13)
+                        Color 3: Print "REBOUNDS PER GAME";: Color 7: Print Tab(32); Using "###.#"; BL(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR(14)
+
+                        Color 15
+                        Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
                         I$ = GetKeyPress$
-                    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
 
-                Loop Until UCase$(I$) = "N"
+                        Cls
+                        Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
+                        Print
+                        Color 3: Print "PERSONAL FOULS";: Color 7: Print Tab(33); Using "####"; BL(15);: Print Tab(47); BL$(15);: Print Tab(66); BLYR(15)
+                        Color 3: Print "ASSISTS";: Color 7: Print Tab(32); Using "#####"; BL(16);: Print Tab(47); BL$(16);: Print Tab(66); BLYR(16)
+                        Color 3: Print "SHOTS BLOCKED";: Color 7: Print Tab(33); Using "####"; BL(17);: Print Tab(47); BL$(17);: Print Tab(66); BLYR(17)
+                        Color 3: Print "STEALS";: Color 7: Print Tab(32); Using "#####"; BL(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR(18)
+                        Color 3: Print "TURNOVERS";: Color 7: Print Tab(32); Using "#####"; BL(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR(19)
+                        Color 3: Print "HI-GAME (POINTS)";: Color 7: Print Tab(33); Using "####"; BL(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR(20)
 
-        End Select
+                        Color 15
+
+                        Do
+                            Locate 22: Print "VIEW AGAIN? (Y/N)"
+                            I$ = GetKeyPress$
+                        Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y"
+
+                    Loop Until UCase$(I$) = "N"
+
+            End Select
+            
+        End If
 
     End If 'Done checking for ESC
 

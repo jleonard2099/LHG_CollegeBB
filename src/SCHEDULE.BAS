@@ -16,8 +16,6 @@ Sub SCHEDULE ()
 
     _Title "Courtside College Basketball - Scheduler"
 
-    '--- Pay close attention to this and consider the "why"
-    '--- I think this is setting defaults - much like we want to do!
     scheduleNG%(0, 8) = 3
     scheduleNG%(0, 3) = 1
     scheduleNG%(0, 7) = 1
@@ -30,7 +28,7 @@ Sub SCHEDULE ()
         Cls
 
         Call TITLE_SCHEDULER
-        Locate 19
+        Locate 3, 1
         Color 2
         Print "GENERATING A SEASON SCHEDULE MUST BE USED IN CONJUNCTION WITH"
         Print "STANDINGS AND CONFERENCE LEADERS OPTIONS. YOU MUST ALREADY HAVE CREATED"
@@ -744,11 +742,11 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 Color 15, 0
                 Cls
 
-                conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+                conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.TMI", "CONFERENCE", ExitCode%)
 
                 If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-                    Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
+                    Open diskPaths$(1) + conferenceFile$ + ".TMI" For Input As #1
 
                     Input #1, X%
                     Input #1, LG$
@@ -1477,6 +1475,8 @@ Sub CreateConferenceSchedule ()
 
     Cls
 
+    schedSizeOpt = 0
+
     Locate 5, 1: Color , 0
     Color 15: Print "(1) ";
     Color 14: Print "6 TEAM, 30 GAME SCHEDULE"
@@ -1501,43 +1501,42 @@ Sub CreateConferenceSchedule ()
 
     Do
         I$ = GetKeyPress$
-        D3% = Val(I$)
-        If I$ = Chr$(27) Then D3% = 0
-    Loop Until D3% >= 0 And D3% <= 9
+        schedSizeOpt = Val(I$)
+    Loop Until (schedSizeOpt > 0 And schedSizeOpt <= 9) Or (I$ = Chr$(27))
 
-    If D3% <> 0 Then
+    If I$ <> Chr$(27) Then
 
-        conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.LIB", "CONFERENCE", ExitCode%)
+        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-            Open diskPaths$(1) + conferenceFile$ + ".LIB" For Input As #1
+            Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
             X1 = 0
 
             Input #1, LG%
-            Input #1, LG$
-            Input #1, D1$
-            Input #1, D2$
+            Input #1, leagueName$
+            Input #1, div1$
+            Input #1, div2$
 
             For X = 1 To TEAMS_PER_CONFERENCE
 
-                Input #1, D1$
+                Input #1, div1$
                 Input #1, LG%
-                Input #1, D2$
+                Input #1, div2$
 
-                If D1$ <> "XXX" And D1$ <> "" And D1$ <> "*" Then
+                If div1$ <> "XXX" And div1$ <> "" And div1$ <> "*" Then
                     X1 = X1 + 1
-                    Z1$(X1) = D1$
                     scheduleZ1%(X1) = LG%
-                    Z2$(X1) = D2$
+                    Z1$(X1) = div1$
+                    Z2$(X1) = div2$
                 End If
 
             Next
 
             Close #1
 
-            Select Case D3%
+            Select Case schedSizeOpt
                 Case 1: templateFile$ = "6TM.SCX"
                 Case 2: templateFile$ = "7TM.SCX"
                 Case 3: templateFile$ = "8TM.SCX"
@@ -1564,15 +1563,19 @@ Sub CreateConferenceSchedule ()
 
             Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
-            For I = 1 To scheduleAP%(0)
+            For currGame = 1 To scheduleAP%(0)
 
-                Get #2, I
+                Get #2, currGame
 
-                For X = 0 To 18: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-                For X = 0 To 1: scheduleYN$(I, X) = Q$(20 + X): Next
+                For X = 0 To 18: 
+                    scheduleNG%(currGame, X) = CVI(Q$(X + 1))
+                Next
+                For X = 0 To 1: 
+                    scheduleYN$(currGame, X) = Q$(20 + X)
+                Next
 
-                visitorScores(I) = CVI(Q$(22))
-                homeScores(I) = CVI(Q$(23))
+                visitorScores(currGame) = CVI(Q$(22))
+                homeScores(currGame) = CVI(Q$(23))
 
             Next
 
@@ -1589,6 +1592,7 @@ Sub CreateConferenceSchedule ()
             If scheduleFile$ <> "" Then
 
                 For I = 1 To scheduleAP%(0)
+
                     Print "GAME"; I
                     Print scheduleNG%(I, 0), scheduleYN$(I, 0)
                     Print scheduleNG%(I, 1), scheduleYN$(I, 1)
@@ -1605,12 +1609,13 @@ Sub CreateConferenceSchedule ()
                     Print "GAME"; I
                     Print scheduleNG%(I, 0), scheduleYN$(I, 0)
                     Print scheduleNG%(I, 1), scheduleYN$(I, 1)
+
                 Next
 
-                '-- Save file -- reference the routine?????
+                'Save modified file (essentially a copy of the template)
                 Open diskPaths$(3) + scheduleFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
 
-                fileLength& = LOF(3) / SCHEDULE_SIZE_BYTES
+                nbrSchedGames = LOF(3) / SCHEDULE_SIZE_BYTES
 
                 For X = 0 To 18
                     Field #3, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -1619,24 +1624,30 @@ Sub CreateConferenceSchedule ()
                 Field #3, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
 
                 For I = 1 To scheduleAP%(0)
-                    For X = 0 To 18: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
-                    For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
+
+                    For X = 0 To 18: 
+                        LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
+                    Next
+                    
+                    For X = 0 To 1: 
+                        LSet Q$(20 + X) = scheduleYN$(I, X)
+                    Next
+                    
                     LSet Q$(22) = MKI$(visitorScores(I))
                     LSet Q$(23) = MKI$(homeScores(I))
 
-                    'With Y being the EOF, this should be appending items to the end
-                    Put #3, I + Y
+                    'This should be appending items to the end
+                    Put #3, nbrSchedGames + I
+
                 Next
 
                 Close #3
-
-                D3% = 1
 
             End If 'Done checking for schedule file name
 
         End If 'Done checking for ESC
 
-    End If 'Done checking D3%
+    End If 'Done checking for ESC
 
 End Sub
 

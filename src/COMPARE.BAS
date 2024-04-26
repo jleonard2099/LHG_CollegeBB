@@ -111,35 +111,13 @@ Sub COMPARE ()
                     End If
                 Next
 
-                Color 15, 0
-                Cls
+                userKey$ = GetOutputOptions$
 
-                Call MenuBox(8, 25, 24, 5, 15, 1)
+                If userKey$ <> Chr$(27) Then
 
-                Do
+                    backToMenu = 0
 
-                    Locate 10
-                    Color 7, 1
-
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "F";
-                    Color 7: Print "ILE"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "P";
-                    Color 7: Print "RINTER"
-                    Locate , 32: Print "SEND TO ";
-                    Color 15: Print "S";
-                    Color 7: Print "CREEN"
-
-                    J$ = GetKeyPress$
-
-                Loop Until UCase$(J$) = "F" Or UCase$(J$) = "P" Or UCase$(J$) = "S" Or J$ = Chr$(27)
-
-                backToMenu = 0
-
-                If J$ <> Chr$(27) Then
-
-                    Select Case UCase$(J$)
+                    Select Case userKey$
 
                         Case "F":
                             userFile$ = _SAVEFILEDIALOG$("Save Comparison Report",_CWD$ + "\Comparison","*.txt","Text File")
@@ -161,7 +139,7 @@ Sub COMPARE ()
 
         End If 'Done checking for valid team
 
-    Loop Until backToMenu = 0 Or J$ = Chr$(27) Or teamNbr = 0 Or haveStats = 0
+    Loop Until backToMenu = 0 Or userKey$ = Chr$(27) Or teamNbr = 0 Or haveStats = 0
 
 End Sub
 

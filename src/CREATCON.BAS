@@ -16,12 +16,13 @@ Sub CREATCON ()
 
     Do
 
+        Color 15, 0
         Cls
 
         Call TITLE
-        menuChoices$(1) = "CREATE / DEFINE NEW CONFERENCES  "
-        menuChoices$(2) = "ADD / DELETE / REVIEW CONFERENCES"
-        menuChoices$(3) = "RETURN TO STANDINGS/LEADERS MENU "
+        menuChoices$(1) = "CREATE A CONFERENCE      "
+        menuChoices$(2) = "MANAGE CONFERENCE MEMBERS"
+        menuChoices$(3) = "RETURN TO LEADERS MENU   "
         Selection% = 1
         Count% = 3
         Start% = 1

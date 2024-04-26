@@ -91,31 +91,11 @@ Sub StatOptions_Con (confName$, D1$, D2$)
         Cls
         Call TITLE_STATS
 
-        Call MenuBox(8, 25, 24, 5, 15, 1)
+        userKey$ = GetOutputOptions$
 
-        Do
+        If userKey$ <> Chr$(27) Then
 
-            Locate 10
-            Color 7, 1
-
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "F";
-            Color 7: Print "ILE"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "P";
-            Color 7: Print "RINTER"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "S";
-            Color 7: Print "CREEN"
-            I$ = GetKeyPress$
-
-            Color 14, 0
-
-        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S" Or I$ = Chr$(27)
-
-        If I$ <> Chr$(27) Then
-
-            Select Case UCase$(I$)
+            Select Case userKey$
 
                 Case "F"
                     userFile$ = _SAVEFILEDIALOG$("Save Conference Report",_CWD$ + "\Report","*.txt","Text File")
@@ -148,7 +128,7 @@ Sub StatOptions_Con (confName$, D1$, D2$)
 
         End If
 
-    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27) Or I$ = Chr$(27)
+    Loop Until UCase$(A$) = "N" Or A$ = Chr$(27) Or userKey$ = Chr$(27)
 
 End Sub
 

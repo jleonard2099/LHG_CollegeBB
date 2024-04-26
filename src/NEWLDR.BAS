@@ -796,41 +796,24 @@ Sub ViewIndividualLeaders (printOrView, JB)
                 Case 2
                     Call GetListLength(printOrView, LG, QW)
                     
-                    Color 15, 0
-                    Cls
+                    userKey$ = GetPrintOptions$
 
-                    Call MenuBox(8, 25, 24, 5, 15, 1)
+                    If userKey$ <> Chr$(27) Then
 
-                    Do
+                        Select Case userKey$
 
-                        Locate 10, 32
-                        Color 7, 1
+                            Case "F"
+                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                If userFile$ <> "" Then
+                                    Call Leaders_Report(0, userFile$, TVN, LG, B9)
+                                End If
 
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "F";
-                        Color 7: Print "ILE"
-                        Locate , 32: Print "SEND TO ";
-                        Color 15: Print "P";
-                        Color 7: Print "RINTER"
+                            Case "P"
+                                Call Leaders_Report(1, "REPORT", TVN, LG, B9)
 
-                        I$ = GetKeyPress$
-
-                        Color 14, 0
-
-                    Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                    Select Case UCase$(I$)
-
-                        Case "F"
-                            userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                            If userFile$ <> "" Then
-                                Call PrintLeaders(0, userFile$, TVN, LG, B9)
-                            End If
-
-                        Case "P"
-                            Call PrintLeaders(1, "REPORT", TVN, LG, B9)
-
-                    End Select
+                        End Select
+                        
+                    End If
 
             End Select
 
@@ -1452,87 +1435,69 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
             Loop Until UCase$(I$) = "N" Or I$ = Chr$(27) Or UCase$(A$) = "N"
 
         Case 2:
+            userKey$ = GetPrintOptions$
 
-            Color 15, 0
-            Cls
+            If userKey$ <> Chr$(27) Then
 
-            Call MenuBox(8, 25, 24, 5, 15, 1)
+                Select Case userKey$
 
-            Do
+                    Case "F"
+                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                        If userFile$ <> "" Then
+                            printDest = 0
+                        End If
 
-                Locate 10, 32
-                Color 7, 1
-
-                Locate , 32: Print "SEND TO ";
-                Color 15: Print "F";
-                Color 7: Print "ILE"
-                Locate , 32: Print "SEND TO ";
-                Color 15: Print "P";
-                Color 7: Print "RINTER"
-
-                I$ = GetKeyPress$
-
-                Color 14, 0
-
-            Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-            Select Case UCase$(I$)
-
-                Case "F"
-                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                    If userFile$ <> "" Then
-                        printDest = 0
-                    End If
-
-                Case "P"
-                    printDest = 1
-                    userFile$ = "REPORT"
-
-            End Select
-
-            Color 15, 0
-            Cls
-
-            Open destFile$ For Output As #1
-
-            Print #1, "     TEAM                     "; expTeamCategory$(categoryID)
-
-            For W = 1 To maxRecords
-
-                Print #1, Using "###"; W;
-                Print #1, " "; TMM$(W);
-                Color 15
-
-                Select Case TVN
-
-                    Case 1:
-                        Print #1, Tab(32); Using "#####"; TYP!(W)
-
-                    Case 2:
-                        Print #1, Tab(33); Using ".###"; TYP!(W)
-
-                    Case 3:
-                        Print #1, Tab(33); Using "###.#"; TYP!(W)
+                    Case "P"
+                        printDest = 1
+                        userFile$ = "REPORT"
 
                 End Select
 
-            Next W
+                Color 15, 0
+                Cls
 
-            If printDest = 1 Then
+                Open destFile$ For Output As #1
 
-                Open destFile$ For Input As #2
+                Print #1, "     TEAM                     "; expTeamCategory$(categoryID)
 
-                Do While Not EOF(2)
-                    Line Input #2, X$
-                    LPrint X$
-                Loop
+                For W = 1 To maxRecords
 
-                Close #2
+                    Print #1, Using "###"; W;
+                    Print #1, " "; TMM$(W);
+                    Color 15
 
-                LPrint Chr$(12)
+                    Select Case TVN
 
-                Kill destFile$
+                        Case 1:
+                            Print #1, Tab(32); Using "#####"; TYP!(W)
 
+                        Case 2:
+                            Print #1, Tab(33); Using ".###"; TYP!(W)
+
+                        Case 3:
+                            Print #1, Tab(33); Using "###.#"; TYP!(W)
+
+                    End Select
+
+                Next W
+
+                If printDest = 1 Then
+
+                    Open destFile$ For Input As #2
+
+                    Do While Not EOF(2)
+                        Line Input #2, X$
+                        LPrint X$
+                    Loop
+
+                    Close #2
+
+                    LPrint Chr$(12)
+
+                    Kill destFile$
+
+                End If
+                
             End If
 
     End Select
@@ -1541,11 +1506,11 @@ End Sub
 
 
 '----------------------------------------
-'        PrintLeaders Subroutine
+'        Leaders_Report Subroutine
 '----------------------------------------
 'This subroutine displays individual player
 'stat categories to the default printer
-Sub PrintLeaders (printDest, destFile$, TVN, maxRecords, categoryID)
+Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryID)
 
     Shared TYP!()
     Shared expIndCategory$(), TMM$(), TPP$()

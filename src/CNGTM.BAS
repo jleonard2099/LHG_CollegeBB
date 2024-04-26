@@ -57,41 +57,24 @@ Sub CNGTM (userChoice)
                         Call EditTeam(team$, YN$, teamNbr)
 
                     Case 2:
-                        Color 15, 0
-                        Cls
+                        userKey$ = GetPrintOptions$
 
-                        Call MenuBox(8, 25, 24, 5, 15, 1)
+                        If userKey$ <> Chr$(27) Then
 
-                        Do
+                            Select Case userKey$
 
-                            Locate 10, 32
-                            Color 7, 1
+                                Case "F"
+                                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                    If userFile$ <> "" Then
+                                        Call Roster_Report(0, userFile$, team$)
+                                    End If
 
-                            Locate , 32: Print "SEND TO ";
-                            Color 15: Print "F";
-                            Color 7: Print "ILE"
-                            Locate , 32: Print "SEND TO ";
-                            Color 15: Print "P";
-                            Color 7: Print "RINTER"
+                                Case "P"
+                                    Call Roster_Report(1, "REPORT", team$)
 
-                            I$ = GetKeyPress$
-
-                            Color 14, 0
-
-                        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P"
-
-                        Select Case UCase$(I$)
-
-                            Case "F"
-                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                                If userFile$ <> "" Then
-                                    Call PrintRoster(0, userFile$, team$)
-                                End If
-
-                            Case "P"
-                                Call PrintRoster(1, "REPORT", team$)
-
-                        End Select
+                            End Select
+                            
+                        End If
 
                     Case 3:
                         Call ViewRoster(team$)
@@ -827,11 +810,11 @@ End Sub
 
 
 '----------------------------------------
-'         PrintRoster Subroutine
+'         Roster_Report Subroutine
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the default printer
-Sub PrintRoster (printDest, destFile$, teamName$)
+Sub Roster_Report (printDest, destFile$, teamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj!, staminaRating!
@@ -844,10 +827,10 @@ Sub PrintRoster (printDest, destFile$, teamName$)
 
     Shared playerNames$(), position$()
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, "TEAM ROSTER FOR "; teamName$
     Print #1,
@@ -878,22 +861,22 @@ Sub PrintRoster (printDest, destFile$, teamName$)
     Print #1, "PS - PASSING RATING            3FG% - THREE POINT GOAL %"
     Print #1, " D - DEFENSIVE RATING"
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 
@@ -903,7 +886,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the user's display
-Sub ViewRoster (printDest, destFile$, teamName$)
+Sub ViewRoster (teamName$)
 
     Shared def3FG_Adj, def3FGA_Adj
     Shared defFGPctAdj!, staminaRating!

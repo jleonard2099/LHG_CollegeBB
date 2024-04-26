@@ -52,58 +52,38 @@ Sub CARVIEW ()
 
         Close #1
 
-        Color 15, 0
-        Cls
+        userKey$ = GetOutputOptions$
 
-        Call MenuBox(8, 25, 24, 5, 15, 1)
+        If userKey$ <> Chr$(27) Then
 
-        Do
+            Select Case userKey$
 
-            Locate 10, 32
-            Color 7, 1
+                Case "F"
+                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                    If userFile$ <> "" Then
+                        Call CareerStats_Report(0, userFile$, carviewA$(), careerFile$)
+                    End If
 
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "F";
-            Color 7: Print "ILE"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "P";
-            Color 7: Print "RINTER"
-            Locate , 32: Print "SEND TO ";
-            Color 15: Print "S";
-            Color 7: Print "CREEN"
+                Case "P"
+                    Call CareerStats_Report(1, "REPORT", carviewA$(), careerFile$)
 
-            I$ = GetKeyPress$
+                Case "S"
+                    Call CareerStats_Screen(carviewA$(), careerFile$)
 
-            Color 14, 0
-
-        Loop Until UCase$(I$) = "F" Or UCase$(I$) = "P" Or UCase$(I$) = "S"
-
-        Select Case UCase$(I$)
-
-            Case "F"
-                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
-                If userFile$ <> "" Then
-                    Call CareerToPrinter(0, userFile$, carviewA$(), careerFile$)
-                End If
-
-            Case "P"
-                Call CareerToPrinter(1, "REPORT", carviewA$(), careerFile$)
-
-            Case "S"
-                Call CareerToScreen(carviewA$(), careerFile$)
-
-        End Select
+            End Select
+            
+        End If
 
     End If 'Done checking for ESC
 
 End Sub
 
 '----------------------------------------
-'       CareerToPrinter Subroutine
+'       CareerStats_Report Subroutine
 '----------------------------------------
 'Formats results of Career stats and sends
 'to the user's default printer
-Sub CareerToPrinter (printDest, destFile$, carviewA$(), careerFile$)
+Sub CareerStats_Report (printDest, destFile$, carviewA$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -287,14 +267,14 @@ Sub CareerToPrinter (printDest, destFile$, carviewA$(), careerFile$)
 End Sub
 
 '----------------------------------------
-'        CareerToScreen Subroutine
+'        CareerStats_Screen Subroutine
 '----------------------------------------
 'This routine gives the user different 
 'categories of stats related to the roster.
 'It then calls a supplemental routine for 
 'each  that will format those stats and 
 'send them to the display screen
-Sub CareerToScreen (carviewA$(), careerFile$)
+Sub CareerStats_Screen (carviewA$(), careerFile$)
 
     Do
 
