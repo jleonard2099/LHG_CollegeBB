@@ -785,8 +785,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -801,8 +801,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -818,8 +818,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -854,7 +854,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -887,8 +887,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -903,8 +903,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -921,8 +921,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -973,7 +973,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -989,7 +989,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1006,8 +1006,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -1022,8 +1022,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -1039,8 +1039,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -1107,8 +1107,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -1123,7 +1123,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1140,8 +1140,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -1156,8 +1156,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -1173,8 +1173,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -1257,8 +1257,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -1273,8 +1273,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -1290,8 +1290,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -1306,8 +1306,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -1323,8 +1323,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -1407,7 +1407,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1423,8 +1423,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -1439,8 +1439,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -1456,8 +1456,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -1472,8 +1472,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -1489,8 +1489,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -1541,7 +1541,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1589,7 +1589,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1605,8 +1605,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -1621,8 +1621,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -1638,8 +1638,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -1654,8 +1654,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -1671,8 +1671,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -1739,7 +1739,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1755,7 +1755,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1787,7 +1787,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1803,8 +1803,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -1819,8 +1819,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -1836,8 +1836,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -1852,8 +1852,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -1869,8 +1869,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -1953,7 +1953,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1969,7 +1969,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
@@ -1985,7 +1985,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2001,7 +2001,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2017,8 +2017,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2033,8 +2033,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -2050,8 +2050,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -2066,8 +2066,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -2083,8 +2083,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -2183,8 +2183,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2199,7 +2199,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2215,7 +2215,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2231,7 +2231,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2247,8 +2247,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2263,8 +2263,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -2280,8 +2280,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -2296,8 +2296,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -2313,8 +2313,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -2429,8 +2429,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2445,7 +2445,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2461,8 +2461,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2477,7 +2477,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2493,8 +2493,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2509,8 +2509,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -2526,8 +2526,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -2542,8 +2542,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -2559,8 +2559,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -2691,8 +2691,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2707,8 +2707,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2723,8 +2723,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2739,7 +2739,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
             homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
             yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
@@ -2755,8 +2755,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2771,8 +2771,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -2788,8 +2788,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -2804,8 +2804,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -2821,8 +2821,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -2969,8 +2969,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -2985,8 +2985,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3001,8 +3001,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3017,8 +3017,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3033,8 +3033,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3049,8 +3049,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
             homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
@@ -3066,8 +3066,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 LOSER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3082,8 +3082,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
@@ -3099,8 +3099,8 @@ Sub PickIt (var%, currRegion, saveFile$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
                 homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -3143,8 +3143,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3164,8 +3164,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3181,8 +3181,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3202,8 +3202,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3219,8 +3219,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -3237,8 +3237,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 1 LOSER"
                 homeTeam$(TC!) = "GAME 2 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3254,8 +3254,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 1 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3274,8 +3274,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 1 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3298,8 +3298,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 5 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3315,8 +3315,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3332,8 +3332,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -3350,8 +3350,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 LOSER"
                 homeTeam$(TC!) = "GAME 2 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3367,8 +3367,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3386,8 +3386,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 WINNER"
                 homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3408,8 +3408,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 5 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3425,8 +3425,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3442,8 +3442,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3459,8 +3459,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -3477,8 +3477,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 LOSER"
                 homeTeam$(TC!) = "GAME 4 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3494,8 +3494,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 WINNER"
                 homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3514,8 +3514,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 3 WINNER"
                 homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3537,8 +3537,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3554,8 +3554,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3571,8 +3571,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3588,8 +3588,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3605,8 +3605,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -3623,8 +3623,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 LOSER"
                 homeTeam$(TC!) = "GAME 4 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3640,8 +3640,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 WINNER"
                 homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3660,8 +3660,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 WINNER"
                 homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3682,8 +3682,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3699,8 +3699,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3716,8 +3716,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3733,8 +3733,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3750,8 +3750,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3767,8 +3767,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -3785,8 +3785,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 LOSER"
                 homeTeam$(TC!) = "GAME 6 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3802,8 +3802,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 WINNER"
                 homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3823,8 +3823,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 5 WINNER"
                 homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -3846,8 +3846,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3863,8 +3863,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3880,8 +3880,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3897,8 +3897,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3914,8 +3914,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3931,8 +3931,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -3948,8 +3948,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -3966,8 +3966,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 LOSER"
                 homeTeam$(TC!) = "GAME 6 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -3983,8 +3983,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4003,8 +4003,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4025,8 +4025,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4042,8 +4042,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 8 WINNER"
             homeTeam$(TC!) = "REGION 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4059,8 +4059,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4076,8 +4076,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4093,8 +4093,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4110,8 +4110,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4127,8 +4127,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4144,8 +4144,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 5 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -4162,8 +4162,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 LOSER"
                 homeTeam$(TC!) = "GAME 8 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -4179,8 +4179,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4199,8 +4199,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4222,8 +4222,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4239,8 +4239,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4256,8 +4256,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4273,8 +4273,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4290,8 +4290,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4307,8 +4307,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4324,8 +4324,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4341,8 +4341,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4358,8 +4358,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 6 WINNER"
             homeTeam$(TC!) = "GAME 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -4376,8 +4376,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 LOSER"
                 homeTeam$(TC!) = "GAME 8 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -4393,8 +4393,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 WINNER"
                 homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4412,8 +4412,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 7 WINNER"
                 homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4434,8 +4434,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4451,8 +4451,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4468,8 +4468,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4485,8 +4485,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4502,8 +4502,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 2 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4519,8 +4519,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4536,8 +4536,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 4 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4553,8 +4553,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4570,8 +4570,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 6 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4587,8 +4587,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -4605,8 +4605,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 LOSER"
                 homeTeam$(TC!) = "GAME 10 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -4622,8 +4622,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 WINNER"
                 homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4643,8 +4643,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 9 WINNER"
                 homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4666,8 +4666,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4683,8 +4683,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4700,8 +4700,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4717,8 +4717,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4734,8 +4734,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 6 WINNER"
             homeTeam$(TC!) = "REGION 11 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4751,8 +4751,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4768,8 +4768,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 1 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4785,8 +4785,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4802,8 +4802,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 3 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4819,8 +4819,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4836,8 +4836,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -4854,8 +4854,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 11 LOSER"
                 homeTeam$(TC!) = "GAME 10 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -4871,8 +4871,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 11 WINNER"
                 homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4891,8 +4891,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 11 WINNER"
                 homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -4914,8 +4914,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 14 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4931,8 +4931,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4948,8 +4948,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4965,8 +4965,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4982,8 +4982,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -4999,8 +4999,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5016,8 +5016,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5033,8 +5033,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 5 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5050,8 +5050,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5067,8 +5067,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 6 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5084,8 +5084,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5101,8 +5101,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 9 WINNER"
             homeTeam$(TC!) = "GAME 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -5119,8 +5119,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 LOSER"
                 homeTeam$(TC!) = "GAME 11 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -5136,8 +5136,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 WINNER"
                 homeTeam$(TC!) = "GAME 11 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -5156,8 +5156,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 11 WINNER"
                 homeTeam$(TC!) = "GAME 12 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -5179,8 +5179,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 15 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5196,8 +5196,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 14 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5213,8 +5213,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5230,8 +5230,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5247,8 +5247,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5264,8 +5264,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5281,8 +5281,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5298,8 +5298,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5315,8 +5315,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5332,8 +5332,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5349,8 +5349,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 7 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5366,8 +5366,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 9 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5383,8 +5383,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 10 WINNER"
             homeTeam$(TC!) = "GAME 11 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -5401,8 +5401,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 LOSER"
                 homeTeam$(TC!) = "GAME 13 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -5418,8 +5418,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 WINNER"
                 homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -5438,8 +5438,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 12 WINNER"
                 homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -5461,8 +5461,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 16 WINNER"
             homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5478,8 +5478,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 15 WINNER"
             homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5495,8 +5495,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 14 WINNER"
             homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5512,8 +5512,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 13 WINNER"
             homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5529,8 +5529,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 12 WINNER"
             homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5546,8 +5546,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 11 WINNER"
             homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5563,8 +5563,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 10 WINNER"
             homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5580,8 +5580,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "REGION 9 WINNER"
             homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5597,8 +5597,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 1 WINNER"
             homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5614,8 +5614,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 4 WINNER"
             homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5631,8 +5631,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 3 WINNER"
             homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5648,8 +5648,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 2 WINNER"
             homeTeam$(TC!) = "GAME 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5665,8 +5665,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 9 WINNER"
             homeTeam$(TC!) = "GAME 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             TC! = TC! + 1
@@ -5682,8 +5682,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
             scheduleNG%(TC!, 17) = GAME
             visitingTeam$(TC!) = "GAME 11 WINNER"
             homeTeam$(TC!) = "GAME 12 WINNER"
-            yearNumber$(TC!, 0) = "XXX"
-            yearNumber$(TC!, 1) = "XXX"
+            yearNumber$(TC!, 0) = "XXX  "
+            yearNumber$(TC!, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             If consolationSetting%(1) <> 0 Then
@@ -5700,8 +5700,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 14 LOSER"
                 homeTeam$(TC!) = "GAME 13 LOSER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 TC! = TC! + 1
@@ -5717,8 +5717,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 14 WINNER"
                 homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
                 Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
@@ -5737,8 +5737,8 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
                 scheduleNG%(TC!, 17) = GAME
                 visitingTeam$(TC!) = "GAME 14 WINNER"
                 homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX"
-                yearNumber$(TC!, 1) = "XXX"
+                yearNumber$(TC!, 0) = "XXX  "
+                yearNumber$(TC!, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -5797,11 +5797,15 @@ Sub WRITEGAME (outputFile$)
     Next
 
     Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-    Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X)): Next
-    For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(TC!, X): Next
+    For X = 0 To 14: 
+        LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
+    Next
+    For X = 0 To 3: 
+        LSet Q$(20 + X) = yearNumber$(TC!, X)
+    Next
 
     LSet Q$(16) = MKI$(visitorScores(TC!))
     LSet Q$(17) = MKI$(homeScores(TC!))
@@ -5824,7 +5828,7 @@ Sub WRITEGAME (outputFile$)
     Next
 
     Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-    Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
     Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
     For X = 0 To 14: 
@@ -5939,13 +5943,17 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                         Next
 
                         Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                        Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                         Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                         Get #1, AP
 
-                        For X = 0 To 14: scheduleNG%(0, X) = CVI(Q$(X + 1)): Next
-                        For X = 0 To 3: yearNumber$(0, X) = Q$(20 + X): Next
+                        For X = 0 To 14:
+                             scheduleNG%(0, X) = CVI(Q$(X + 1))
+                        Next
+                        For X = 0 To 3: 
+                             yearNumber$(0, X) = Q$(20 + X)
+                        Next
 
                         visitorScores(0) = CVI(Q$(16))
                         homeScores(0) = CVI(Q$(17))
@@ -5970,11 +5978,15 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                             Next
 
                             Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                            Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                            Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                             Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-                            For X = 0 To 14: LSet Q$(X + 1) = MKI$(scheduleNG%(0, X)): Next
-                            For X = 0 To 3: LSet Q$(20 + X) = yearNumber$(0, X): Next
+                            For X = 0 To 14: 
+                                LSet Q$(X + 1) = MKI$(scheduleNG%(0, X))
+                            Next
+                            For X = 0 To 3: 
+                                LSet Q$(20 + X) = yearNumber$(0, X)
+                            Next
 
                             LSet Q$(16) = MKI$(visitorScores(0))
                             LSet Q$(17) = MKI$(homeScores(0))
@@ -6017,7 +6029,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                 Next
 
                 Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                 Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                 Get #1, AP
@@ -6052,7 +6064,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                     Next
 
                     Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-                    Field #2, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+                    Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
                     Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                     For X = 0 To 14: 

@@ -17,7 +17,7 @@ Sub ConfigureDrives ()
     browseImage& = _LoadImage("search.png", 32)
     saveImage& = _LoadImage("floppy-disk.png", 32)
 
-    Open "DEV.BAS" For Input As #2
+    Open "FOLDERS.CFG" For Input As #2
 
     For I = 0 To 3
         Input #2, diskPaths$(I)
@@ -216,7 +216,7 @@ Sub ConfigureDrives ()
     If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
     Save:
-    Open "DEV.BAS" For Output As #1
+    Open "FOLDERS.CFG" For Output As #1
 
     For R = 0 To 3:
 

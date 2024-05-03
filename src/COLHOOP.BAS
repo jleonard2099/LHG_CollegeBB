@@ -134,7 +134,7 @@ Sub COLHOOP ()
 
         'Open "pbplog" + Str$(currGame) For Append As #11
 
-        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = 48
+        Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
         For X = 0 To 18
             Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$

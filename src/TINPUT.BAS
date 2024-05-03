@@ -335,8 +335,8 @@ Sub InputTeam ()
         Locate 19, 14: Input tmSteal!
         Locate 19, 29: Input oppSteal!
         Locate 20, 1: Print "17. BLOCKS";
-        Locate 20, 14: Input tmSteal!
-        Locate 20, 29: Input oppSteal!
+        Locate 20, 14: Input tmBlocks!
+        Locate 20, 29: Input oppBlocks!
         Locate 21, 1: Print "18. 3 FGA ";
         Locate 21, 14: Input tm3FGA!
         Locate 21, 29: Input opp3FGA!
@@ -816,11 +816,14 @@ Sub InputTeam ()
         HS! = tmReb! - X1! + X2! - oppReb!
         M7! = ((35 + RD!) / leagRebPerGm!)
 
-        If choice = 2 Then M7! = ((44 + RD!) / leagRebPerGm!)
+        If choice = 2 Then 
+            M7! = ((44 + RD!) / leagRebPerGm!)
+        End If
 
         For I = 0 To 13
 
             If playerNames$(I) <> "XXX" Then
+                'Sum of all player Blocks + Assists
                 X9! = X9! + playerOff!(I, 10) + playerOff!(I, 9)
             End If
 
@@ -846,7 +849,7 @@ Sub InputTeam ()
                 If playerOff!(I, 8) = 0 Then
                     M! = (X9! / 5) / (playerOff!(I, 9) + playerOff!(I, 10))
                     MI! = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9! / 5)
-                    If M! < 1.1 Then M = 1.1
+                    If M! < 1.1 Then M! = 1.1
                 End If
 
                 playerOff!(I, 2) = Int((((playerOff!(I, 10) / playerOff!(I, 7)) * M!) * M7!) + .5)
@@ -884,12 +887,11 @@ Sub InputTeam ()
         Next I
 
         X! = leagFGAPerGm! + leagRebPerGm! + 20
-
         inputY! = (tmFGA! + oppFGA! + tmReb! + oppReb! + tmFouls! + oppFouls!) / (2 * nbrGmsPlayed!)
         staminaRating! = Int(((2 * inputY!) - X!) + .5)
 
         X1! = (tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)
-        X3 = (sosAdj / 2) / X1
+        X3 = (sosAdj / 2) / X1!
         X3 = Int((X3 * 100) + .5)
         sosAdj = Int(X3 / 2)
         BY = Int(X3 / 2)
@@ -909,7 +911,7 @@ Sub InputTeam ()
         For I = 0 To 13
 
             If playerNames$(I) <> "XXX" Then
-                playerOff!(I, 3) = (playerOff!(I, 9) + playerOff!(I, 10)) / X9
+                playerOff!(I, 3) = (playerOff!(I, 9) + playerOff!(I, 10)) / X9!
                 playerOff!(I, 3) = Int((100 * playerOff!(I, 3)) + .5)
             End If
 
@@ -950,13 +952,15 @@ Sub InputTeam ()
                     If M! < 1 Then M! = 1
                 End If
 
-                B3 = (playerOff!(I, 12) / playerOff!(I, 7)) * M
+                B3 = (playerOff!(I, 12) / playerOff!(I, 7)) * M!
                 B3 = Int((B3 * 10) + .5)
                 playerRatings!(I, 5) = B3
                 B3 = playerOff!(I, 9) * (playerOff!(I, 0) / 100)
                 B4 = playerOff!(I, 17) * (playerOff!(I, 18) / 100)
 
-                If playerOff!(I, 9) - playerOff!(I, 17) <> 0 Then playerOff!(I, 0) = ((B3 - B4) / (playerOff!(I, 9) - playerOff!(I, 17))) + .005
+                If playerOff!(I, 9) - playerOff!(I, 17) <> 0 Then 
+                    playerOff!(I, 0) = ((B3 - B4) / (playerOff!(I, 9) - playerOff!(I, 17))) + .005
+                End If
                 playerOff!(I, 0) = Int((playerOff!(I, 0) * 100) + .5)
 
             End If
@@ -966,6 +970,7 @@ Sub InputTeam ()
         For I = 0 To 13
 
             If playerNames$(I) <> "XXX" Then
+                'Adjust player FG% by SOS and U7 (how far league FG% is from 46)
                 playerOff!(I, 0) = playerOff!(I, 0) - sosAdj + U7
             End If
 
@@ -979,7 +984,7 @@ Sub InputTeam ()
 
                 X! = ((playerOff!(I, 9) * playerOff!(I, 0)) / 100)
                 MI = (playerOff!(I, 8) / playerOff!(I, 7)) / 40
-                If playerOff!(I, 8) = 0 Then MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9 / 5)
+                If playerOff!(I, 8) = 0 Then MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9! / 5)
                 X! = X! * .1
                 If MI > 1 And playerOff!(I, 8) = 0 Then MI = 1
                 X! = X! + ((playerOff!(I, 7) * 1.64) * MI)

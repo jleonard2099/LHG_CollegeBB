@@ -137,13 +137,18 @@ Sub ViewTourneyInfo (ACTION%)
             Next
 
             Field #4, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-            Field #4, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+            Field #4, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
             Field #4, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
             Get #4, I
 
-            For X = 0 To 14: scheduleNG%(I, X) = CVI(Q$(X + 1)): Next
-            For X = 0 To 3: yearNumber$(I, X) = Q$(20 + X): Next
+            For X = 0 To 14: 
+                scheduleNG%(I, X) = CVI(Q$(X + 1))
+            Next
+            
+            For X = 0 To 3
+                yearNumber$(I, X) = Q$(20 + X)
+            Next
 
             visitorScores(I) = CVI(Q$(16))
             homeScores(I) = CVI(Q$(17))
@@ -155,9 +160,8 @@ Sub ViewTourneyInfo (ACTION%)
             Next
 
             For X = 2 To 3
-                While Right$(yearNumber$(I, X), 1) = " "
-                    yearNumber$(I, X) = Left$(yearNumber$(I, X), Len(yearNumber$(I, X)) - 1)
-                Wend
+                'Why not for 0 / 1 index?
+                yearNumber$(I, X) = RTrim$(yearNumber$(I, X))
             Next
 
             Close #4
@@ -1907,4 +1911,3 @@ Sub BracketsNotUsed ()
     Next
 
 End Sub
-

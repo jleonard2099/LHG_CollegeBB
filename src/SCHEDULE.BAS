@@ -71,7 +71,7 @@ Sub SCHEDULE ()
                     scheduleAP%(0) = 0
                     NS% = 0
 
-                    scheduleFile$ = _InputBox$("Schedule File Name","Enter name for schedule file")
+                    scheduleFile$ = _InputBox$("Schedule File Name", "Enter name for schedule file")
 
                     If scheduleFile$ <> "" Then
                         Call NewSchedule(scheduleFile$)
@@ -750,8 +750,8 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                     Input #1, X%
                     Input #1, LG$
-                    Input #1, X$
-                    Input #1, X$
+                    Input #1, div1$
+                    Input #1, div2$
 
                     For X = 1 To TEAMS_PER_CONFERENCE
                         Input #1, Z1$(X)
@@ -786,13 +786,18 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                         Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
                                     Next
 
-                                    Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+                                    Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
-                                    For X = 0 To 18: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
+                                    For X = 0 To 18: 
+                                        LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
+                                    Next
 
-                                    For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
+                                    For X = 0 To 1: 
+                                        LSet Q$(20 + X) = scheduleYN$(I, X)
+                                    Next
 
-                                    LSet Q$(22) = MKI$(visitorScores(I)): LSet Q$(23) = MKI$(homeScores(I))
+                                    LSet Q$(22) = MKI$(visitorScores(I))
+                                    LSet Q$(23) = MKI$(homeScores(I))
 
                                     Put #2, targetGame% + 1
 
@@ -849,9 +854,17 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                         If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Or T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then
 
                             'CHANGE SETTINGS FOR A TEAM
-                            If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Then scheduleNG%(I, 8) = 2
-                            If T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then scheduleNG%(I, 8) = 1
-                            If (T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Or T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1)) And I1 = 1 And scheduleAction% = 4 Then scheduleNG%(I, 8) = 3
+                            If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Then 
+                                scheduleNG%(I, 8) = 2
+                            End If
+                            If T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then 
+                                scheduleNG%(I, 8) = 1
+                            End If
+
+                            If (T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Or T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1)) And I1 = 1 And scheduleAction% = 4 Then
+                                scheduleNG%(I, 8) = 3
+                            End If
+
                             scheduleNG%(I, 4) = displayPause! * 10
 
                             'Extract only
@@ -869,13 +882,18 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                     Field #3, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
                                 Next
 
-                                Field #3, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+                                Field #3, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
-                                For X = 0 To 18: LSet Q$(X + 1) = MKI$(scheduleNG%(I, X)): Next
+                                For X = 0 To 18: 
+                                    LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
+                                Next
 
-                                For X = 0 To 1: LSet Q$(20 + X) = scheduleYN$(I, X): Next
+                                For X = 0 To 1: 
+                                    LSet Q$(20 + X) = scheduleYN$(I, X)
+                                Next
 
-                                LSet Q$(22) = MKI$(visitorScores(I)): LSet Q$(23) = MKI$(homeScores(I))
+                                LSet Q$(22) = MKI$(visitorScores(I))
+                                LSet Q$(23) = MKI$(homeScores(I))
 
                                 Put #3, numberGames + 1
 
@@ -1120,7 +1138,7 @@ Sub SaveScheduleFile (saveFile$)
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
     For I = 1 To scheduleAP%(0)
 
@@ -1179,15 +1197,19 @@ Sub SortSchedule ()
             Locate 1, 1: Print Z, Z1
 
             If scheduleNG%(Z, 12) > scheduleNG%(Z1, 12) Then
+
                 For I = 0 To 18:
                     Swap scheduleNG%(Z, I), scheduleNG%(Z1, I)
                 Next
+
                 For I = 0 To 1:
                     Swap scheduleYN$(Z, I), scheduleYN$(Z1, I)
                 Next
+
                 Swap schedDates&(Z), schedDates&(Z1)
                 Swap visitorScores(Z), visitorScores(Z1)
                 Swap homeScores(Z), homeScores(Z1)
+
             End If
 
         Next Z1
@@ -1199,15 +1221,19 @@ Sub SortSchedule ()
         For Z1 = Z + 1 To scheduleAP%(0)
 
             If schedDates&(Z) > schedDates&(Z1) Then
+
                 For I = 0 To 18:
                     Swap scheduleNG%(Z, I), scheduleNG%(Z1, I)
                 Next
+
                 For I = 0 To 1:
                     Swap scheduleYN$(Z, I), scheduleYN$(Z1, I)
                 Next
+
                 Swap schedDates&(Z), schedDates&(Z1)
                 Swap visitorScores(Z), visitorScores(Z1)
                 Swap homeScores(Z), homeScores(Z1)
+
             End If
 
         Next Z1
@@ -1434,7 +1460,7 @@ Sub LoadScheduleInfo (targetFile$)
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
     For I = 1 To scheduleAP%(0)
         Get #1, I
@@ -1521,15 +1547,15 @@ Sub CreateConferenceSchedule ()
 
             For X = 1 To TEAMS_PER_CONFERENCE
 
-                Input #1, div1$
-                Input #1, LG%
-                Input #1, div2$
+                Input #1, confTeam$
+                Input #1, teamIdx
+                Input #1, teamDiskID$
 
-                If div1$ <> "XXX" And div1$ <> "" And div1$ <> "*" Then
+                If confTeam$ <> "XXX" And confTeam$ <> "" And confTeam$ <> "*" Then
                     X1 = X1 + 1
-                    scheduleZ1%(X1) = LG%
-                    Z1$(X1) = div1$
-                    Z2$(X1) = div2$
+                    scheduleZ1%(X1) = teamIdx
+                    Z1$(X1) = confTeam$
+                    Z2$(X1) = teamDiskID$
                 End If
 
             Next
@@ -1561,16 +1587,16 @@ Sub CreateConferenceSchedule ()
                 Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
             Next
 
-            Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+            Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
             For currGame = 1 To scheduleAP%(0)
 
                 Get #2, currGame
 
-                For X = 0 To 18: 
+                For X = 0 To 18:
                     scheduleNG%(currGame, X) = CVI(Q$(X + 1))
                 Next
-                For X = 0 To 1: 
+                For X = 0 To 1:
                     scheduleYN$(currGame, X) = Q$(20 + X)
                 Next
 
@@ -1621,18 +1647,18 @@ Sub CreateConferenceSchedule ()
                     Field #3, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
                 Next
 
-                Field #3, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+                Field #3, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
                 For I = 1 To scheduleAP%(0)
 
-                    For X = 0 To 18: 
+                    For X = 0 To 18:
                         LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                     Next
-                    
-                    For X = 0 To 1: 
+
+                    For X = 0 To 1:
                         LSet Q$(20 + X) = scheduleYN$(I, X)
                     Next
-                    
+
                     LSet Q$(22) = MKI$(visitorScores(I))
                     LSet Q$(23) = MKI$(homeScores(I))
 
