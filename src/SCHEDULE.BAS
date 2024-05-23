@@ -34,15 +34,15 @@ Sub SCHEDULE ()
         Print "STANDINGS AND CONFERENCE LEADERS OPTIONS. YOU MUST ALREADY HAVE CREATED"
         Print "AN APPROPRIATE CONFERENCE FOR THIS OPTION TO FUNCTION."
 
-        menuChoices$(1) = "ENTER A NEW SCHEDULE                    "
-        menuChoices$(2) = "REVIEW / EDIT AN EXISTING SCHEDULE      "
-        menuChoices$(3) = "EXTRACT TEAM SCHEDULE FROM CONFERENCE   "
-        menuChoices$(4) = "EXTRACT CONFERENCE SCHEDULE             "
-        menuChoices$(5) = "CHANGE TEAM'S MODE OF PLAY IN A SCHEDULE"
-        menuChoices$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE       "
-        menuChoices$(7) = "GENERATE A STANDARD CONFERENCE SCHEDULE "
-        menuChoices$(8) = "BOXSCORE MAINTENANCE / PARAMETERS       "
-        menuChoices$(9) = "RETURN TO COURTSIDE CB MAIN MENU        "
+        menuChoices$(1) = "ENTER A NEW SCHEDULE              "
+        menuChoices$(2) = "PLAY / EDIT AN EXISTING SCHEDULE  "
+        menuChoices$(3) = "EXTRACT TEAM SCHEDULE             "
+        menuChoices$(4) = "EXTRACT CONFERENCE SCHEDULE       "
+        menuChoices$(5) = "CHANGE TEAM CONTROL FOR A SCHEDULE"
+        menuChoices$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE "
+        menuChoices$(7) = "GENERATE A CONFERENCE SCHEDULE    "
+        menuChoices$(8) = "BOXSCORE MAINTENANCE / PARAMETERS "
+        menuChoices$(9) = "RETURN TO COURTSIDE CB MAIN MENU  "
         Selection% = 1
         Count% = 9
         Start% = 1
@@ -704,9 +704,9 @@ End Sub
 'then writes the changes back to the orig-
 'inal schedule file.
 Sub ExtractSchedule (scheduleAction%, subSchedFile$)
-    'scheduleAction% = 3: EXTRACT ONE TEAM'S SCHEDULE FROM LEAGUE SCHEDULE
-    'scheduleAction% = 4: EXTRACT CONFERENCE SCHEDULE FROM LEAGUE SCHEDULE
-    'scheduleAction% = 5: CHANGE THE MODE OF PLAY FOR A TEAM IN A SCHEDULE
+    'scheduleAction% = 3: EXTRACT ONE TEAM'S SCHEDULE
+    'scheduleAction% = 4: EXTRACT CONFERENCE SCHEDULE
+    'scheduleAction% = 5: CHANGE THE MODE OF PLAY FOR A TEAM
     'scheduleAction% = 6: MAKE GLOBAL CHANGES TO A SCHEDULE
 
     Dim displayPause!
@@ -737,16 +737,13 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                 subSchedFile$ = _InputBox$("Schedule File Name", "Enter name for schedule file")
             End If
 
-            If scheduleAction% = 4 Or subSchedFile$ <> "" Then
-
-                Color 15, 0
-                Cls
-
-                conferenceFile$ = ChooseFile$(diskPaths$(1) + "*.TMI", "CONFERENCE", ExitCode%)
+            If scheduleAction% = 4 And subSchedFile$ <> "" Then
+                'Pick conference to extract
+                conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
                 If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-                    Open diskPaths$(1) + conferenceFile$ + ".TMI" For Input As #1
+                    Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
                     Input #1, X%
                     Input #1, LG$
@@ -779,8 +776,8 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                                     Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #2 Len = SCHEDULE_SIZE_BYTES
 
-                                    fileLength& = LOF(1)
-                                    targetGame% = fileLength& / SCHEDULE_SIZE_BYTES
+                                    fileLength& = LOF(2)
+                                    numberGames = fileLength& / SCHEDULE_SIZE_BYTES
 
                                     For X = 0 To 18
                                         Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -788,18 +785,18 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                                     Field #2, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
-                                    For X = 0 To 18: 
+                                    For X = 0 To 18:
                                         LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                                     Next
 
-                                    For X = 0 To 1: 
+                                    For X = 0 To 1:
                                         LSet Q$(20 + X) = scheduleYN$(I, X)
                                     Next
 
                                     LSet Q$(22) = MKI$(visitorScores(I))
                                     LSet Q$(23) = MKI$(homeScores(I))
 
-                                    Put #2, targetGame% + 1
+                                    Put #2, numberGames + 1
 
                                     Close #2
 
@@ -817,8 +814,13 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
             Else
 
-                T1 = 0
-                Call ChooseTeam(YN$, numberTeams, T1, teamName$)
+                If (scheduleAction% = 3 And subSchedFile$ = "") Then
+                    'If user cancelled from name entry
+                    T1 = 0
+                Else
+                    T1 = 0
+                    Call ChooseTeam(YN$, numberTeams, T1, N$)
+                End If
 
                 If T1 <> 0 Then
 
@@ -854,10 +856,10 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                         If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Or T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then
 
                             'CHANGE SETTINGS FOR A TEAM
-                            If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Then 
+                            If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Then
                                 scheduleNG%(I, 8) = 2
                             End If
-                            If T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then 
+                            If T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then
                                 scheduleNG%(I, 8) = 1
                             End If
 
@@ -875,7 +877,6 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                                 Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
 
                                 fileLength& = LOF(3)
-
                                 numberGames = fileLength& / SCHEDULE_SIZE_BYTES
 
                                 For X = 0 To 18
@@ -884,11 +885,11 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                                 Field #3, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
-                                For X = 0 To 18: 
+                                For X = 0 To 18:
                                     LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                                 Next
 
-                                For X = 0 To 1: 
+                                For X = 0 To 1:
                                     LSet Q$(20 + X) = scheduleYN$(I, X)
                                 Next
 
@@ -1451,8 +1452,8 @@ Sub LoadScheduleInfo (targetFile$)
     Shared scheduleYN$()
 
     Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
-    fileLength& = LOF(1)
 
+    fileLength& = LOF(1)
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
@@ -1463,6 +1464,7 @@ Sub LoadScheduleInfo (targetFile$)
     Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
     For I = 1 To scheduleAP%(0)
+
         Get #1, I
 
         For X = 0 To 18
@@ -1709,3 +1711,4 @@ Sub EditBoxscore (boxName$)
     End If
 
 End Sub
+

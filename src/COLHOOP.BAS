@@ -1220,20 +1220,20 @@ Sub COLHOOP ()
     If (defCoverage(D) = 1 Or defCoverage(D) = 3) And defCategory(D) = 0 Then
         X0% = 50
         X1% = -1
-        Call PRDFAT
+        Call PressFatigueDef
     End If
 
     If defCoverage(D) = 2 And defCategory(D) = 0 Then
         X0% = 100
         X1% = 1
-        Call PRDFAT
-        Call PRPFAT
+        Call PressFatigueDef
+        Call PressFatigueOff
     End If
 
     If defCoverage(D) = 1 And defCategory(D) = 0 Then
         X0% = 25
         X1% = -1
-        Call PRPFAT
+        Call PressFatigueOff
     End If
 
     GoTo 400
@@ -1256,20 +1256,20 @@ Sub COLHOOP ()
         If (defCoverage(D) = 1 Or defCoverage(D) = 3) Then
             X0% = 50
             X1% = -1
-            Call PRDFAT
+            Call PressFatigueDef
         End If
 
         If defCoverage(D) = 2 Then
             X0% = 100
             X1% = 1
-            Call PRDFAT
-            Call PRPFAT
+            Call PressFatigueDef
+            Call PressFatigueOff
         End If
 
         If defCoverage(D) = 1 Then
             X0% = 25
             X1% = -1
-            Call PRPFAT
+            Call PressFatigueOff
         End If
 
     End If
@@ -1311,7 +1311,7 @@ Sub COLHOOP ()
 
         End Select
 
-        Call PRDFAT
+        Call PressFatigueDef
 
         'Check for Denial / Foul
         If currHalf >= 2 And gameClock! <= 180 And defCategory(D) = 5 Then
@@ -1495,13 +1495,13 @@ Sub COLHOOP ()
             X0% = 25
             X1% = -1
             tmFatigue(P, B1(P, BU%)) = tmFatigue(P, B1(P, BU%)) - 1
-            Call PRPFAT
+            Call PressFatigueOff
         End If
 
         If defCategory(D) > 1 Then
             X0% = 25
             X1% = -1
-            Call PRPFAT
+            Call PressFatigueOff
         End If
 
         Call Rolld100(RN0)

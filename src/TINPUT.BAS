@@ -943,24 +943,30 @@ Sub InputTeam ()
                 End If
 
                 If playerOff!(I, 8) <> 0 Then
+                    '(Minutes / Game) /  (Player Mins / Game)
                     If choice = 0 Then M = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
                     If choice = 1 Then M = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
-                End If
-
-                If playerOff!(I, 8) = 0 Then
+                Else
+                    'playerOff!(I, 8) = 0
                     M! = (X9! / 5) / (playerOff!(I, 9) + playerOff!(I, 10))
                     If M! < 1 Then M! = 1
                 End If
 
+                'Fouls / Game, adjusted for player time contrib.
                 B3 = (playerOff!(I, 12) / playerOff!(I, 7)) * M!
                 B3 = Int((B3 * 10) + .5)
                 playerRatings!(I, 5) = B3
+
+                'FGA * FG%
                 B3 = playerOff!(I, 9) * (playerOff!(I, 0) / 100)
+                
+                '3FGA * 3FG%
                 B4 = playerOff!(I, 17) * (playerOff!(I, 18) / 100)
 
                 If playerOff!(I, 9) - playerOff!(I, 17) <> 0 Then 
                     playerOff!(I, 0) = ((B3 - B4) / (playerOff!(I, 9) - playerOff!(I, 17))) + .005
                 End If
+
                 playerOff!(I, 0) = Int((playerOff!(I, 0) * 100) + .5)
 
             End If
@@ -997,6 +1003,7 @@ Sub InputTeam ()
 
         Next I
 
+        'Calculat Off Steal Rating
         inputY! = oppSteal! / nbrGmsPlayed!
         X! = (inputY! - 7) / .4
         X! = Int(X! + .5)
@@ -1004,6 +1011,7 @@ Sub InputTeam ()
         If X! < 0 Then leagueRatings%(0) = 100 + X!
         If X! > 0 Then leagueRatings%(0) = X!
 
+        'Calculate Off TO Rating
         R! = 1200 - (((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) * 4)
         R! = R! / 6
         inputY! = (tmTO! - oppSteal!) / nbrGmsPlayed!
@@ -1011,6 +1019,7 @@ Sub InputTeam ()
         X! = Int((X! * 100) + .5)
         leagueRatings%(1) = X!
 
+        'Calculate Def TO Adj
         inputY! = (oppTO! - tmSteal!) / nbrGmsPlayed!
         X! = (inputY! / R!) - .01
         X! = Int((X! * 100) + .5)
@@ -1019,6 +1028,7 @@ Sub InputTeam ()
         If X! < 0 Then leagueRatings%(2) = 100 + X!
         If X! > 0 Then leagueRatings%(2) = X!
 
+        'Calculate Def Foul Adj
         homeScoreTeam! = Int(((oppFGA! * oppFGPct!) / 100) + .5)
         X! = (homeScoreTeam! * .1) + (nbrGmsPlayed! * 8.2)
         X! = (oppFTA! - X!) / 2

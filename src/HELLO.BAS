@@ -26,9 +26,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
-
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -94,14 +91,15 @@ Next
 Data 1,4,2,5,15,29,22,36,7,9,7,12
 For I = 0 To 2
     For I1 = 1 To 4
-        Read DP(I, I1)
+        Read defAdjVsShot(I, I1)
     Next
 Next
 
 Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
-For I = 0 To 4
+'For I = 0 To 4
+For I = 0 To 8
     For I1 = 0 To 3
-        Read D8(I, I1)
+        Read defAdjVsPass(I, I1)
     Next
 Next
 
@@ -119,22 +117,25 @@ For I = 0 To 9:
     Read offStyles$(I)
 Next
 
-Data "SOLID MAN TO MAN"
-Data "PRESSURE MAN TO MAN"
-Data "PASSIVE 2-3 ZONE"
+Data "SOLID MAN-TO-MAN"
+Data "PRESSURE MAN-TO-MAN"
+Data "2-3 ZONE"
 Data "1-3-1 TRAPPING ZONE"
-Data "FULL COURT MAN TO MAN PRESS/SOLID MAN TO MAN"
-Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/SOLID MAN TO MAN"
-Data "FULL COURT MAN TO MAN (RUN & JUMP) PRESS/PRESSURE MAN TO MAN"
-Data "PASSIVE 2-2-1 ZONE PRESS/2-3 ZONE"
-Data "PASSIVE 2-2-1 ZONE PRESS/SOLID MAN TO MAN"
-Data "PASSIVE 2-2-1 ZONE PRESS/PRESSURE MAN TO MAN"
-Data "TRAPPING 1-2-1-1 ZONE PRESS/SOLID MAN TO MAN"
-Data "TRAPPING 1-2-1-1 ZONE PRESS/PRESSURE MAN TO MAN"
-Data "TRAPPING 1-2-1-1 ZONE PRESS/2-3 ZONE"
-Data "TRAPPING 1-2-1-1 ZONE PRESS/1-3-1 TRAPPING ZONE"
-Data "FULL COURT M-M DENIAL & FOUL (LAST 3 MIN WHEN DOWN)"
-For I = 0 To 14
+Data "FULL COURT PRESS / SOLID MAN-TO-MAN"
+Data "FULL COURT PRESS (RUN & JUMP) / SOLID MAN-TO-MAN"
+Data "FULL COURT PRESS (RUN & JUMP) / PRESSURE MAN-TO-MAN"
+Data "2-2-1 PASSIVE ZONE / 2-3 ZONE"
+Data "2-2-1 PASSIVE ZONE / SOLID MAN-TO-MAN"
+Data "2-2-1 PASSIVE ZONE / PRESSURE MAN-TO-MAN"
+Data "DIAMOND TRAPPING ZONE / SOLID MAN-TO-MAN"
+Data "DIAMOND TRAPPING ZONE / PRESSURE MAN-TO-MAN"
+Data "DIAMOND TRAPPING ZONE / 2-3 ZONE"
+Data "DIAMOND TRAPPING ZONE / 1-3-1 TRAPPING ZONE"
+Data "FULL COURT MAN-TO-MAN DENIAL (LAST 3 MIN WHEN DOWN)"
+Data "3-2 ZONE"
+'Data "1-3-1 PASSIVE ZONE"
+'Data "2-2-1 TRAPPING ZONE"
+For I = 0 To 15
     Read defStyles$(I)
 Next I
 
@@ -143,31 +144,32 @@ Data "AGGRESSIVE                        "
 Data "SAFE                              "
 Data "QUICK OFFENSE (LAST 3 MIN)        "
 Data "DELAY OFFENSE (LAST 3 MIN)        "
-Data "MILK CLOCK TO 15 SEC-IF USING S.C."
-Data "STALL-GOOD SHOT-MUST BE WITHIN 10 "
+Data "MILK CLOCK TO 15 SEC (USING S.C.) "
+Data "STALL F GOOD SHOT (WITHIN 10 PTS) "
 Data "TOTAL STALL (LAST 3 MIN)          "
-Data "HOLD BALL VS PASS.ZN-AHEAD-NO S.C."
+Data "HOLD VS PASS ZN (AHEAD, NO S.C.)  "
 Data "SHOOT ONLY THREES (LAST 3 MIN)    "
 For I = 0 To 9
     Read offStyles_brief$(I)
 Next
 
-Data "SOLID MAN TO MAN                  "
-Data "PRESSURE MAN TO MAN               "
-Data "PASSIVE 2-3 ZONE                  "
-Data "1-3-1 TRAPPING ZONE               "
-Data "FULL COURT M-M PRESS/SOLID M-M    "
-Data "FC M-M (RUN&JMP) PRESS/SOLID M-M  "
-Data "FC M-M (RUN&JMP) PRESS/PRESSUR M-M"
-Data "PASSIVE 2-2-1 ZN PRESS/2-3 ZONE   "
-Data "PASSIVE 2-2-1 ZN PRESS/SOLID M-M  "
-Data "PASSIVE 2-2-1 ZN PRESS/PRESSUR M-M"
-Data "TRAP 1-2-1-1 ZN PRESS/SOLID M-M   "
-Data "TRAP 1-2-1-1 ZN PRESS/PRESSURE M-M"
-Data "TRAP 1-2-1-1 ZN PRESS/2-3 ZONE    "
-Data "TRAP 1-2-1-1 ZN PRSS/1-3-1 TRAP ZN"
-Data "DENIAL & FOUL-LAST 3 MIN WHEN DOWN"
-For I = 0 To 14
+Data "SOLID MAN-TO-MAN               "
+Data "PRESSURE MAN-TO-MAN            "
+Data "2-3 ZONE                       "
+Data "1-3-1 TRAPPING ZONE            "
+Data "FULL COURT / SOLID M-M         "
+Data "FULL COURT (R&J) / SOLID M-M   "
+Data "FULL COURT (R&J) / PRESSURE M-M"
+Data "2-2-1 PASS ZN / 2-3 ZN         "
+Data "2-2-1 PASS ZN / SOLID M-M      "
+Data "2-2-1 PASS ZN / PRESSURE M-M   "
+Data "DIAMOND TRAP ZN / SOLID M-M    "
+Data "DIAMOND TRAP ZN / PRESSURE M-M "
+Data "DIAMOND TRAP ZN / 2-3 ZN       "
+Data "DIAMOND TRAP ZN / 1-3-1 TRAP ZN"
+Data "FULL COURT DENIAL (LAST 3 MIN) "
+Data "3-2 ZONE                       "
+For I = 0 To 15
     Read defStyles_brief$(I)
 Next I
 
@@ -1518,6 +1520,7 @@ Sub COLHOOP ()
     300 '
 
     If gameClock! <= 5 And timeouts(D) <= 0 And score(P, 0) > score(D, 0) Then
+
         timeElapsed! = gameClock!
         Call AdjustPlayTime
         gameClock! = 0
@@ -1865,23 +1868,27 @@ Sub COLHOOP ()
 
     If X <> 90 Then X = 0
 
+    'Pressure Man-to-Man | Trapping Zone AND Single Strategy ONLY
     If (defCoverage(D) = 1 Or defCoverage(D) = 3) And defCategory(D) = 0 Then
         X0% = 50
         X1% = -1
-        Call PRDFAT
+        Call PressFatigueDef
     End If
 
+    'Passive Zone AND Single Strategy ONLY
     If defCoverage(D) = 2 And defCategory(D) = 0 Then
         X0% = 100
         X1% = 1
-        Call PRDFAT
-        Call PRPFAT
+        Call PressFatigueDef
+        Call PressFatigueOff
     End If
 
+    
+    'Pressure Man-to-Man AND Single Strategy ONLY
     If defCoverage(D) = 1 And defCategory(D) = 0 Then
         X0% = 25
         X1% = -1
-        Call PRPFAT
+        Call PressFatigueOff
     End If
 
     GoTo 400
@@ -1899,25 +1906,29 @@ Sub COLHOOP ()
     shotChance! = 0
     X = 0
 
-    If PASS = 2 And defCategory(D) > 0 Then
+    'Multi-Strategy Def And 2nd Pass ???
+    If defCategory(D) > 0 And PASS = 2 Then
 
+        'Pressure Man-to-Man Or Passive Zone
         If (defCoverage(D) = 1 Or defCoverage(D) = 3) Then
             X0% = 50
             X1% = -1
-            Call PRDFAT
+            Call PressFatigueDef
         End If
 
+        'Passive Zone
         If defCoverage(D) = 2 Then
             X0% = 100
             X1% = 1
-            Call PRDFAT
-            Call PRPFAT
+            Call PressFatigueDef
+            Call PressFatigueOff
         End If
 
+        'Pressure Man-to-Man
         If defCoverage(D) = 1 Then
             X0% = 25
             X1% = -1
-            Call PRPFAT
+            Call PressFatigueOff
         End If
 
     End If
@@ -1933,33 +1944,38 @@ Sub COLHOOP ()
     ballCarrier = Int(Rnd(1) * 5)
     Call BALLDISTRIBUTE
 
+    'Multi-Strategy Defense and First Pass
     If defCategory(D) > 0 And PASS = 1 Then
 
-        ' *** FULL COURT PRESS ***
+        ' Defense is a "combined" strategy
 
-        'Yes it's odd that Case 1, 2 and 4
-        'have identical outcome.
+        'It's odd that Case 1, 2 and 4 have identical outcome.
         'That is the code as it was written.
-        'Leaving as is in case there would
-        'be a perceived need to adjust.
-        'My guess is they were Previously
-        'different in the past.
+        'It is being left as is in case there is a perceived 
+        'need to adjust.
+        'My guess is they were previously different in the past.
 
         Select Case defCategory(D)
 
+            
             Case 1:
+                'Full Court Press
                 X0% = 50
                 X1% = -1
+
             Case 2, 4:
+                'Run&Jump, Diamond
                 X0% = 50
                 X1% = -1
+
             Case 3:
+                '2-2-1
                 X0% = 25
                 X1% = -1
 
         End Select
 
-        Call PRDFAT
+        Call PressFatigueDef
 
         'Check for Denial / Foul
         If currHalf >= 2 And gameClock! <= 180 And defCategory(D) = 5 Then
@@ -1968,6 +1984,7 @@ Sub COLHOOP ()
 
             If RN0 <= 10 Then
 
+                '10% chance of a break from the inbound
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
                 Call AdjustPlayTime
@@ -1990,7 +2007,7 @@ Sub COLHOOP ()
                 playChoice = 1
 
                 GoTo 520
-
+                
             End If
 
             Call Rolld100(RN1)
@@ -2047,7 +2064,12 @@ Sub COLHOOP ()
 
                 End If
 
-                CY = 7 + DP(0, 4)
+                'This was previously 7 + defAdjVsShot(0, 4)
+                'This is always 5. Technically, it
+                'could be changed, but the overall
+                'game accuracy is not in question
+                CY = 7 + 5
+
                 If RN1 <= CY Then
 
                     Select Case RN0
@@ -2071,7 +2093,8 @@ Sub COLHOOP ()
 
                 End If
 
-                CY = CY + teamAdj(P, 4) + DP(1, 4)
+                'Off Steal Rating + Steal Chance
+                CY = CY + teamAdj(P, 4) + defAdjVsShot(1, 4)
 
                 If RN1 <= CY Then
 
@@ -2140,16 +2163,18 @@ Sub COLHOOP ()
         End If
 
         If defCategory(D) = 1 Then
+            'Full Court Press
             X0% = 25
             X1% = -1
             tmFatigue(P, B1(P, BU%)) = tmFatigue(P, B1(P, BU%)) - 1
-            Call PRPFAT
-        End If
+            Call PressFatigueOff
+        Else
 
         If defCategory(D) > 1 Then
+            'Multi-Strategy Defense
             X0% = 25
             X1% = -1
-            Call PRPFAT
+            Call PressFatigueOff
         End If
 
         Call Rolld100(RN0)
@@ -2185,8 +2210,9 @@ Sub COLHOOP ()
 
         Call Rolld100(RN0)
 
-        If RN0 <= DP(2, defCategory(D)) Then
+        If RN0 <= defAdjVsShot(2, defCategory(D)) Then
 
+            'Foul
             Call LASTSHOT
             Call ResetShotClock
             Call UPDATESCREEN
@@ -2205,19 +2231,24 @@ Sub COLHOOP ()
         'and these are some of the only places these
         'code branches "GoTo". But I don't think it
         'can be condensed at all.
-        If RN0 <= DP(2, defCategory(D)) + 1 Then
+        If RN0 <= defAdjVsShot(2, defCategory(D)) + 1 Then
+            'Offensive Foul
             X = 0
             GoTo 580
         End If
 
-        CY = DP(2, defCategory(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + DP(0, defCategory(D)) - PR%(D, 0)
+        'Chance of Turnover
+        '    ??? + 1 + Off T/O Rating + Def TO Adj + ??? - Pressure Rating(?)
+        CY = defAdjVsShot(2, defCategory(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(0, defCategory(D)) - PR%(D, 0)
 
         If RN0 <= CY Then
             Call LASTSHOT
+            'Turnover
             GoTo 517
         End If
 
-        CY = CY + teamAdj(P, 4) + DP(1, defCategory(D)) - PR%(D, 1)
+        'Off Steal Rating + Steal Chance - Pressure Rating
+        CY = CY + teamAdj(P, 4) + defAdjVsShot(1, defCategory(D)) - PR%(D, 1)
         pctContrib(D) = pctContrib(D) + 1
 
         If pctContrib(D) > 3 Then
@@ -2234,10 +2265,10 @@ Sub COLHOOP ()
 
         Call Rolld100(RN0)
 
+        'If NOT an Offensive Stall OR Defense is not 2-3 Zone
         If (offStrat(P) <> 8 And offStrat(P) <> 7) Or defCoverage(D) <> 2 Then
-            'Offensive Stall or Defense is not 2-3 Zone
 
-            If RN0 <= D8(4, defCoverage(D)) Then
+            If RN0 <= defAdjVsPass(4, defCoverage(D)) Then
 
                 Call LASTSHOT
                 Call ResetShotClock
@@ -2253,36 +2284,54 @@ Sub COLHOOP ()
 
             End If
 
-            If RN0 <= D8(4, defCoverage(D)) + 1 Then
+            If RN0 <= defAdjVsPass(4, defCoverage(D)) + 1 Then
+            'Offensive Foul
                 X = 0
                 GoTo 580
             End If
 
-            OY% = 0
+            'Check for Turnover
+
             If offStrat(P) = 4 Or offStrat(P) = 7 Then
-                OY% = Int((D8(2, defCoverage(D)) / 2) + .5) * -1
+            'Delay / Stall
+            'OY% is -(defAdjVsPass/2)
+            'So, either +-1 or +-2  (1/2 would have the 0.5 added)
+                OY% = Int((defAdjVsPass(2, defCoverage(D)) / 2) + .5) * -1
+            Else
+                OY% = 0
             End If
 
-            CY = D8(4, defCoverage(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + D8(2, defCoverage(D)) + OY% + 1
+            'Chance of Turnover ???
+            '    ??? + Off TO Rating + Def TO Adj + ??? + OY%
+            CY = defAdjVsPass(4, defCoverage(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(2, defCoverage(D)) + OY% + 1
             If RN0 <= CY Then
                 Call LASTSHOT
                 GoTo 517
             End If
 
-            CY = CY + teamAdj(P, 4) + D8(3, defCoverage(D))
-            OY% = 0
+            'Chance of Steal; based on Turnover
+            '         Off Steal Rating
+            CY = CY + teamAdj(P, 4) + defAdjVsPass(3, defCoverage(D))
 
-            If offStrat(P) = 4 Or offStrat(P) = 7 Then
-                OY% = Int((D8(3, defCoverage(D)) / 2) + .5) * -1
-            End If
+            Select Case offStrat(P)
 
-            If offStrat(P) = 1 Then
-                OY% = 7
-            End If
+                Case 0,3,5,6,8,9
+                'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
+                    OY% = 0
+            
+                Case 1
+                    'Aggressive
+                    OY% = 7
+                    
+                Case 2
+                    'Safe
+                    OY% = -7
 
-            If offStrat(P) = 2 Then
-                OY% = -7
-            End If
+                Case 4, 7
+                    'Delay, Total Stall
+                    OY% = Int((defAdjVsPass(3, defCoverage(D)) / 2) + .5) * -1
+                    
+            End Select
 
             If RN0 <= CY + OY% Then
                 'Check for steal
@@ -2333,7 +2382,7 @@ Sub COLHOOP ()
     Else
 
         Call Rolld100(RN1)
-        If RN1 <= D8(1, defCoverage(D)) Then
+        If RN1 <= defAdjVsPass(1, defCoverage(D)) Then
 
             A4 = 0
 
@@ -2556,13 +2605,15 @@ Sub COLHOOP ()
 
         If PASS > 1 Then
             Select Case defCoverage(P9)
-                Case 0, 1, 3
-                    If RN1 <= 15 Then GoTo LAYUP
                 Case 2
+                    'Passive Zone
                     If RN1 <= 5 Then GoTo LAYUP
+                Case 0, 1, 3
+                    'Everything Else
+                    If RN1 <= 15 Then GoTo LAYUP
             End Select
         Else
-            'PASS = 1
+            'Shooting, Multi-Strategy Defense
             If defCategory(P) > 0 Then
                 If RN1 <= 33 Or (defCategory(P) <> 3 And RN1 <= 40) Then
                     GoTo LAYUP
@@ -3272,6 +3323,7 @@ Sub COLHOOP ()
     Select Case playType
 
         Case 1
+            ' *** PASS ***
             GoTo 350
 
         Case 2
@@ -3884,9 +3936,11 @@ Sub COLHOOP ()
             '--- done with "routines" for taking a shot
 
         Case 3
+            ' *** TIMEOUT ***
             GoTo 640
 
         Case 4
+            ' *** FOUL ***
             IN = 99
             Call LASTSHOT
 
@@ -4342,6 +4396,11 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
+    ' TIMEOUT "ROUTINE"
+    '-- we can make it into one if we JUST
+    '-- move the A6 part after each reference
+    '-- what is A6, btw???
+
     640 '
     prevBall$ = ""
 
@@ -4349,8 +4408,6 @@ Sub COLHOOP ()
 
         timeouts(P) = timeouts(P) - 1
         Call SCOREBOARD
-
-        '--- RESUME ANALYSIS
 
         'Offense
         Call Rolld100(RN0)
@@ -4394,9 +4451,13 @@ Sub COLHOOP ()
 
     End If
 
-    If A6 = 0 Then Call PRESSGUARD: GoTo 300
+    If A6 = 0 Then 
+        Call PRESSGUARD
+        GoTo 300
+    Else
+        GoTo 350
+    End If
 
-    GoTo 350
 
     '----- NOODLE -----
 
@@ -4679,7 +4740,9 @@ Sub COLHOOP ()
         RB(I) = 0
     Next
 
+    'Calculate Offensive Rebounds
     For I = 0 To 4
+
         XZ = plyrOff_GAME!(P, B1(P, I), 21)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
@@ -4694,10 +4757,12 @@ Sub COLHOOP ()
 
         RB(I) = RB(I) + XZ
         RB = RB + XZ
+
     Next
 
     ORB = RB
 
+    'Calculate Total Rebounds
     For I = 0 To 4
 
         XZ = plyrOff_GAME!(1 - P, B1(1 - P, I), 2)
@@ -4717,15 +4782,41 @@ Sub COLHOOP ()
 
     Next
 
+    'Calculate Defensive Rebounds
     DRB = RB - ORB
 
-    If defCoverage(D) = 0 Then XQ = Int((RB * .06) + .5)
-    If defCoverage(D) = 1 Then XQ = Int((RB * .12) + .5)
-    If defCoverage(D) = 2 Then XQ = Int((RB * .1) + .5)
-    If defCoverage(D) = 3 Then XQ = Int((RB * .14) + .5)
-    If CZ%(P) = 1 Then XQ = Int((RB * .17) + .5)
+    'XQ = Rebound Chance, Based on Defense
+    Select Case defCoverage(D)
+    
+        Case 0 
+            'Solid Man-to-Man
+            '6% of total rebounds
+            XQ = Int((RB * .06) + .5)
+            
+        Case 1 
+            'Pressure Man-to-Man
+            '12% of total rebounds
+            XQ = Int((RB * .12) + .5)
+            
+        Case 2 
+            'Passive Zone
+            '10% of total rebounds
+            XQ = Int((RB * .1) + .5)
+            
+        Case 3 
+            'Trapping Zone
+            '14% of total rebounds
+            XQ = Int((RB * .14) + .5)
+            
+    End Select
+
+    If CZ%(P) = 1 Then 
+        '17% of total rebounds
+        XQ = Int((RB * .17) + .5)
+    End If
 
     rndReb = Rnd(1) * RB
+
     If rndReb <= ORB + XQ Then
 
         rndOReb = Rnd(1) * ORB
@@ -5679,13 +5770,17 @@ Sub TEAMSETUP (teamIdx)
 
     Shared d3FG_Adj(), d3FGA_Adj()
 
-    'This is where we "adjust" values that were in the 90's
+    ' *** This is where we "adjust" values that were in the 90's
+
+    'Off Steal Rating
     teamAdj(teamIdx, 4) = leagRat_GAME(teamIdx, 0)
     If teamAdj(teamIdx, 4) > 20 Then teamAdj(teamIdx, 4) = teamAdj(teamIdx, 4) - 100
 
+    'Def TO Adj
     teamAdj(teamIdx, 6) = leagRat_GAME(teamIdx, 2)
     If teamAdj(teamIdx, 6) > 20 Then teamAdj(teamIdx, 6) = teamAdj(teamIdx, 6) - 100
 
+    'Def Foul Adj
     teamAdj(teamIdx, 7) = leagRat_GAME(teamIdx, 3)
     If teamAdj(teamIdx, 7) > 20 Then teamAdj(teamIdx, 7) = teamAdj(teamIdx, 7) - 100
 
@@ -10153,8 +10248,8 @@ Sub ZONECHANGE ()
 
         Print gameTeams$(D); " SELECT STRATEGY:"
         Locate 12, 14
-        Locate , 14: Print "0 - SOLID MAN TO MAN"
-        Locate , 14: Print "1 - PRESSURE MAN TO MAN"
+        Locate , 14: Print "0 - SOLID MAN-TO-MAN"
+        Locate , 14: Print "1 - PRESSURE MAN-TO-MAN"
         Locate , 14: Print "2 - 1-3-1 TRAPPING ZONE"
 
         Do
@@ -11026,7 +11121,7 @@ Sub SHOTPERCENT ()
         FX% = FX% - 10
     End If
 
-    shotChance! = FX% + dFGPA(D) + D8(0, defCoverage(D))
+    shotChance! = FX% + dFGPA(D) + defAdjVsPass(0, defCoverage(D))
     J8% = 0
 
     'Improve chance for homefield advantage
@@ -11204,11 +11299,11 @@ End Sub
 
 
 '----------------------------------------
-'           PRDFAT Subroutine
+'           PressFatigueDef Subroutine
 '----------------------------------------
 'This subroutine calculates fatigue of the
-'defense due pressure on the defense.
-Sub PRDFAT ()
+'defense from a press
+Sub PressFatigueDef ()
 
     For I = 0 To 4
 
@@ -11229,11 +11324,11 @@ End Sub
 
 
 '----------------------------------------
-'           PRDFAT Subroutine
+'           PressFatigueOff Subroutine
 '----------------------------------------
 'This subroutine calculates fatigue of the
-'defense due pressure on the defense.
-Sub PRPFAT ()
+'offense from a press
+Sub PressFatigueOff ()
 
     For I = 0 To 4
 

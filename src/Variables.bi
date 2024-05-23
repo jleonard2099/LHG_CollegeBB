@@ -5,7 +5,7 @@ Dim Shared findFile$
 
 Dim opSysType$
 
-'Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
+Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)
 Dim Shared teamIndex%(MAX_TEAMS)
 
@@ -288,8 +288,8 @@ Dim Shared PR%(1, 1), ST%(32), SX%(32, 1, 14)
 Dim Shared TM%(1, 13), TP%(1)
 
 Dim Shared B1(0 To 1, 0 To 4)
+Dim Shared defAdjVsPass(4, 3), defAdjVsShot(2, 4)
 Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defCoverage(1)
-Dim Shared D8(4, 3), DP(2, 4)
 Dim Shared ft3PtFoul(1), F1(13)
 Dim Shared G4(13), G5(13), leagRat_GAME(1, 4)
 Dim Shared offStrat(1)
@@ -308,7 +308,7 @@ Dim Shared W2(1, 13), W3(1, 13), Z5(1), Z6(1)
 'Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25)
 Dim gameW0!(1, 13), gameW1!(1, 13)
 
-Dim Shared defStyles$(15), defStyles_brief$(14), diskIDs$(5)
+Dim Shared defStyles$(0 to 15), defStyles_brief$(0 to 15), diskIDs$(5)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
 Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpType$(1), players$(1, 13)

@@ -5852,11 +5852,11 @@ End Sub
 
 
 '----------------------------------------
-'           PRDFAT Subroutine
+'           PressFatigueDef Subroutine
 '----------------------------------------
 'This subroutine calculates fatigue of the
 'defense due pressure on the defense.
-Sub PRDFAT ()
+Sub PressFatigueDef ()
 
     For I = 0 To 4
 
@@ -5877,11 +5877,11 @@ End Sub
 
 
 '----------------------------------------
-'           PRDFAT Subroutine
+'           PressFatigueDef Subroutine
 '----------------------------------------
 'This subroutine calculates fatigue of the
 'defense due pressure on the defense.
-Sub PRPFAT ()
+Sub PressFatigueOff ()
 
     For I = 0 To 4
 
