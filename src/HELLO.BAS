@@ -96,8 +96,8 @@ For I = 0 To 2
 Next
 
 Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
-'For I = 0 To 4
-For I = 0 To 8
+For I = 0 To 4
+    'For I = 0 To 8
     For I1 = 0 To 3
         Read defAdjVsPass(I, I1)
     Next
@@ -119,23 +119,23 @@ Next
 
 Data "SOLID MAN-TO-MAN"
 Data "PRESSURE MAN-TO-MAN"
-Data "2-3 ZONE"
-Data "1-3-1 TRAPPING ZONE"
+Data "2-3 ZONE (PASSIVE)"
+Data "1-3-1 ZONE (TRAPPING)"
 Data "FULL COURT PRESS / SOLID MAN-TO-MAN"
 Data "FULL COURT PRESS (RUN & JUMP) / SOLID MAN-TO-MAN"
 Data "FULL COURT PRESS (RUN & JUMP) / PRESSURE MAN-TO-MAN"
-Data "2-2-1 PASSIVE ZONE / 2-3 ZONE"
-Data "2-2-1 PASSIVE ZONE / SOLID MAN-TO-MAN"
-Data "2-2-1 PASSIVE ZONE / PRESSURE MAN-TO-MAN"
-Data "DIAMOND TRAPPING ZONE / SOLID MAN-TO-MAN"
-Data "DIAMOND TRAPPING ZONE / PRESSURE MAN-TO-MAN"
-Data "DIAMOND TRAPPING ZONE / 2-3 ZONE"
-Data "DIAMOND TRAPPING ZONE / 1-3-1 TRAPPING ZONE"
+Data "2-2-1 ZONE PRESS (PASSIVE) / 2-3 ZONE"
+Data "2-2-1 ZONE PRESS (PASSIVE) / SOLID MAN-TO-MAN"
+Data "2-2-1 ZONE PRESS (PASSIVE) / PRESSURE MAN-TO-MAN"
+Data "DIAMOND ZONE (TRAPPING) / SOLID MAN-TO-MAN"
+Data "DIAMOND ZONE (TRAPPING) / PRESSURE MAN-TO-MAN"
+Data "DIAMOND ZONE (TRAPPING) / 2-3 ZONE (PASSIVE)"
+Data "DIAMOND ZONE (TRAPPING) / 1-3-1 ZONE (TRAPPING)"
 Data "FULL COURT MAN-TO-MAN DENIAL (LAST 3 MIN WHEN DOWN)"
-Data "3-2 ZONE"
-'Data "1-3-1 PASSIVE ZONE"
-'Data "2-2-1 TRAPPING ZONE"
-For I = 0 To 15
+Data "3-2 ZONE (PASSIVE)"
+Data "2-2-1 ZONE PRESS (TRAPPING) / 3-2 ZONE (PASSIVE)"
+Data "DIAMOND ZONE (TRAPPING) / 3-2 ZONE (PASSIVE)"
+For I = 0 To 17
     Read defStyles$(I)
 Next I
 
@@ -153,23 +153,25 @@ For I = 0 To 9
     Read offStyles_brief$(I)
 Next
 
-Data "SOLID MAN-TO-MAN               "
-Data "PRESSURE MAN-TO-MAN            "
-Data "2-3 ZONE                       "
-Data "1-3-1 TRAPPING ZONE            "
-Data "FULL COURT / SOLID M-M         "
-Data "FULL COURT (R&J) / SOLID M-M   "
-Data "FULL COURT (R&J) / PRESSURE M-M"
-Data "2-2-1 PASS ZN / 2-3 ZN         "
-Data "2-2-1 PASS ZN / SOLID M-M      "
-Data "2-2-1 PASS ZN / PRESSURE M-M   "
-Data "DIAMOND TRAP ZN / SOLID M-M    "
-Data "DIAMOND TRAP ZN / PRESSURE M-M "
-Data "DIAMOND TRAP ZN / 2-3 ZN       "
-Data "DIAMOND TRAP ZN / 1-3-1 TRAP ZN"
-Data "FULL COURT DENIAL (LAST 3 MIN) "
-Data "3-2 ZONE                       "
-For I = 0 To 15
+Data "SOLID MAN-TO-MAN                  "
+Data "PRESSURE MAN-TO-MAN               "
+Data "2-3 ZONE (PSV)                    "
+Data "1-3-1 ZONE (TRAP)                 "
+Data "FULL COURT / SOLID M-M            "
+Data "FULL COURT (R&J) / SOLID M-M      "
+Data "FULL COURT (R&J) / PRESSURE M-M   "
+Data "2-2-1 ZN PRS (PSV) / 2-3 ZN (PSV) "
+Data "2-2-1 ZN PRS (PSV) / SOLID M-M    "
+Data "2-2-1 ZN PRS (PSV) / PRESSURE M-M "
+Data "DIAMOND ZONE (TRAP) / SOLID M-M   "
+Data "DIAMOND ZONE (TRAP) / PRESSURE M-M"
+Data "DIAMOND ZONE (TRAP) / 2-3 ZN (PSV)"
+Data "DIAMOND ZN / 1-3-1 ZN (TRAP)      "
+Data "FULL COURT DENIAL (LAST 3 MIN)    "
+Data "3-2 ZONE (PSV)                    "
+Data "2-2-1 ZN PRS (PSV) / 3-2 ZN (PSV) "
+Data "DIAMOND ZN (TRAP) / 3-2 ZN (PSV)  "
+For I = 0 To 17
     Read defStyles_brief$(I)
 Next I
 
@@ -289,7 +291,7 @@ Print #10, "Error #"; Err; "on program file line"; _ErrorLine
 If _FileExists("GAME82") Then
     Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
     Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
-    Print #10, currHalf
+    Print #10, defStrat(D)
 End If
 Print #10, findFile$
 Print #10,
@@ -1182,7 +1184,7 @@ Sub COLHOOP ()
         Call SETSTAMINA
 
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
-            Call COMCOACH
+            Call ComputerCoach
         Else
             Call LINEUPS
             Call FOULSAFE
@@ -1353,14 +1355,14 @@ Sub COLHOOP ()
 
         If playerMode = 1 Then
             P9 = compTeam
-            Call COMCOACH
+            Call ComputerCoach
         End If
 
         If playerMode = 2 Then
             P9 = 0
-            Call COMCOACH
+            Call ComputerCoach
             P9 = 1
-            Call COMCOACH
+            Call ComputerCoach
         End If
 
     End If
@@ -1951,13 +1953,11 @@ Sub COLHOOP ()
 
         'It's odd that Case 1, 2 and 4 have identical outcome.
         'That is the code as it was written.
-        'It is being left as is in case there is a perceived 
-        'need to adjust.
+        'It is left as is in case there is a perceived need to adjust.
         'My guess is they were previously different in the past.
 
         Select Case defCategory(D)
 
-            
             Case 1:
                 'Full Court Press
                 X0% = 50
@@ -2170,95 +2170,97 @@ Sub COLHOOP ()
             Call PressFatigueOff
         Else
 
-        If defCategory(D) > 1 Then
-            'Multi-Strategy Defense
-            X0% = 25
-            X1% = -1
-            Call PressFatigueOff
-        End If
+            If defCategory(D) > 1 Then
+                'Multi-Strategy Defense
+                X0% = 25
+                X1% = -1
+                Call PressFatigueOff
+            End If
 
-        Call Rolld100(RN0)
+            Call Rolld100(RN0)
 
-        Select Case defCategory(D)
+            Select Case defCategory(D)
 
-            Case 1, 3
-                gameClock! = gameClock! - 2
-                timeElapsed! = 2
-
-            Case 2
-                If RN0 <= 75 Then
+                Case 1, 3
                     gameClock! = gameClock! - 2
                     timeElapsed! = 2
-                Else
-                    gameClock! = gameClock! + 2
-                    timeElapsed! = -2
-                End If
 
-            Case 4
-                If RN0 <= 50 Then
-                    gameClock! = gameClock! - 2
-                    timeElapsed! = 2
-                Else
-                    gameClock! = gameClock! + 2
-                    timeElapsed! = -2
-                End If
+                Case 2
+                    If RN0 <= 75 Then
+                        gameClock! = gameClock! - 2
+                        timeElapsed! = 2
+                    Else
+                        gameClock! = gameClock! + 2
+                        timeElapsed! = -2
+                    End If
 
-        End Select
+                Case 4
+                    If RN0 <= 50 Then
+                        gameClock! = gameClock! - 2
+                        timeElapsed! = 2
+                    Else
+                        gameClock! = gameClock! + 2
+                        timeElapsed! = -2
+                    End If
 
-        Call AdjustPlayTime
-        Call AdjustShotClock
+            End Select
 
-        Call Rolld100(RN0)
+            Call AdjustPlayTime
+            Call AdjustShotClock
 
-        If RN0 <= defAdjVsShot(2, defCategory(D)) Then
+            Call Rolld100(RN0)
 
-            'Foul
-            Call LASTSHOT
-            Call ResetShotClock
-            Call UPDATESCREEN
+            If RN0 <= defAdjVsShot(2, defCategory(D)) Then
 
-            X = 88
+                'Foul
+                Call LASTSHOT
+                Call ResetShotClock
+                Call UPDATESCREEN
 
-            Call FoulCalled(1)
+                X = 88
 
-            LT = 4
+                Call FoulCalled(1)
 
-            GoTo 9065
+                LT = 4
 
-        End If
+                GoTo 9065
 
-        'We have some near identical behavior below,
-        'and these are some of the only places these
-        'code branches "GoTo". But I don't think it
-        'can be condensed at all.
-        If RN0 <= defAdjVsShot(2, defCategory(D)) + 1 Then
-            'Offensive Foul
-            X = 0
-            GoTo 580
-        End If
+            End If
 
-        'Chance of Turnover
-        '    ??? + 1 + Off T/O Rating + Def TO Adj + ??? - Pressure Rating(?)
-        CY = defAdjVsShot(2, defCategory(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(0, defCategory(D)) - PR%(D, 0)
+            'We have some near identical behavior below,
+            'and these are some of the only places these
+            'code branches "GoTo". But I don't think it
+            'can be condensed at all.
+            If RN0 <= defAdjVsShot(2, defCategory(D)) + 1 Then
+                'Offensive Foul
+                X = 0
+                GoTo 580
+            End If
 
-        If RN0 <= CY Then
-            Call LASTSHOT
-            'Turnover
-            GoTo 517
-        End If
+            'Chance of Turnover
+            '    ??? + 1 + Off T/O Rating + Def TO Adj + ??? - Pressure Rating(?)
+            CY = defAdjVsShot(2, defCategory(D)) + 1 + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(0, defCategory(D)) - PR%(D, 0)
 
-        'Off Steal Rating + Steal Chance - Pressure Rating
-        CY = CY + teamAdj(P, 4) + defAdjVsShot(1, defCategory(D)) - PR%(D, 1)
-        pctContrib(D) = pctContrib(D) + 1
+            If RN0 <= CY Then
+                Call LASTSHOT
+                'Turnover
+                GoTo 517
+            End If
 
-        If pctContrib(D) > 3 Then
-            PR%(D, 0) = 0
-            PR%(D, 1) = 0
-        End If
+            'Off Steal Rating + Steal Chance - Pressure Rating
+            CY = CY + teamAdj(P, 4) + defAdjVsShot(1, defCategory(D)) - PR%(D, 1)
+            pctContrib(D) = pctContrib(D) + 1
 
-        If RN0 <= CY Then
-            'Check for steal
-            GoTo 435
+            If pctContrib(D) > 3 Then
+                PR%(D, 0) = 0
+                PR%(D, 1) = 0
+            End If
+
+            If RN0 <= CY Then
+                'Check for steal
+                GoTo 435
+            End If
+
         End If
 
     Else
@@ -2285,7 +2287,7 @@ Sub COLHOOP ()
             End If
 
             If RN0 <= defAdjVsPass(4, defCoverage(D)) + 1 Then
-            'Offensive Foul
+                'Offensive Foul
                 X = 0
                 GoTo 580
             End If
@@ -2293,9 +2295,9 @@ Sub COLHOOP ()
             'Check for Turnover
 
             If offStrat(P) = 4 Or offStrat(P) = 7 Then
-            'Delay / Stall
-            'OY% is -(defAdjVsPass/2)
-            'So, either +-1 or +-2  (1/2 would have the 0.5 added)
+                'Delay / Stall
+                'OY% is -(defAdjVsPass/2)
+                'So, either +-1 or +-2  (1/2 would have the 0.5 added)
                 OY% = Int((defAdjVsPass(2, defCoverage(D)) / 2) + .5) * -1
             Else
                 OY% = 0
@@ -2315,8 +2317,8 @@ Sub COLHOOP ()
 
             Select Case offStrat(P)
 
-                Case 0,3,5,6,8,9
-                'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
+                Case 0, 3, 5, 6, 8, 9
+                    'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
                     OY% = 0
             
                 Case 1
@@ -4451,7 +4453,7 @@ Sub COLHOOP ()
 
     End If
 
-    If A6 = 0 Then 
+    If A6 = 0 Then
         Call PRESSGUARD
         GoTo 300
     Else
@@ -4788,29 +4790,29 @@ Sub COLHOOP ()
     'XQ = Rebound Chance, Based on Defense
     Select Case defCoverage(D)
     
-        Case 0 
+        Case 0
             'Solid Man-to-Man
             '6% of total rebounds
             XQ = Int((RB * .06) + .5)
             
-        Case 1 
+        Case 1
             'Pressure Man-to-Man
             '12% of total rebounds
             XQ = Int((RB * .12) + .5)
             
-        Case 2 
+        Case 2
             'Passive Zone
             '10% of total rebounds
             XQ = Int((RB * .1) + .5)
             
-        Case 3 
+        Case 3
             'Trapping Zone
             '14% of total rebounds
             XQ = Int((RB * .14) + .5)
             
     End Select
 
-    If CZ%(P) = 1 Then 
+    If CZ%(P) = 1 Then
         '17% of total rebounds
         XQ = Int((RB * .17) + .5)
     End If
@@ -9042,15 +9044,13 @@ End Sub
 
 
 '----------------------------------------
-'          COMCOACH Subroutine
+'        ComputerCoach Subroutine
 '----------------------------------------
 'This subroutine essentially handles the
-'AI for the computer coach. It relies on
-'other routines to help deal with some of
-'the complexities.
-Sub COMCOACH ()
-
-    'COMPUTER COACH FOR SUBSTITUTIONS AND AI
+'AI for the computer coach. After an
+'evaluation of substitutions, it then calls
+'another routine to decide on strategies
+Sub ComputerCoach ()
 
     For I = 0 To 13
 
@@ -9169,7 +9169,7 @@ Sub COMCOACH ()
         B1(P9, I) = G4(I)
     Next I
 
-    Call COMPUTERCOACH
+    Call ComputerStrategy
 
 End Sub
 
@@ -10238,10 +10238,10 @@ End Sub
 '         ZONECHANGE Subroutine
 '----------------------------------------
 'This subroutine lets the user configure
-'their zone strategy.
+'their zone strategy, except for a 2-3 / 3-2.
 Sub ZONECHANGE ()
 
-    If Not (playerMode = 1 And compTeam = D Or playerMode = 2) Or defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or (offStrat(P) <= 8 And offStrat(P) >= 4) Then
+    If (playerMode = 1 And compTeam = P9 Or playerMode = 0) And (defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or defStrat(D) >= 15) And (offStrat(P) <= 8 And offStrat(P) >= 4) Then
 
         Call FRAMEOPTION(8, P)
         Locate 10, 15
@@ -10250,7 +10250,7 @@ Sub ZONECHANGE ()
         Locate 12, 14
         Locate , 14: Print "0 - SOLID MAN-TO-MAN"
         Locate , 14: Print "1 - PRESSURE MAN-TO-MAN"
-        Locate , 14: Print "2 - 1-3-1 TRAPPING ZONE"
+        Locate , 14: Print "2 - 1-3-1 ZONE (TRAPPING)"
 
         Do
             I$ = GetKeyPress$
@@ -10259,19 +10259,29 @@ Sub ZONECHANGE ()
 
         If I1 = 2 Then I1 = 3
 
-        Select Case defStrat
+        Select Case defStrat(D)
 
-            Case Is <= 3
+            Case Is <= 3, 15
+                'If currently a single defense, simply
+                'make the straight up change
                 defStrat(D) = I1
             
             Case 7
-                defStrat(D) = I1 + 8 '8, 9, 111
-
-            Case 10
-                defStrat(D) = 3
+                'If a 2-2-1, shift to the appropriate zone
+                If I1 = 2 Then
+                    '(I1 + 8) will go past 2-2-1 options
+                    defStrat(D) = 3
+                Else
+                    defStrat(D) = I1 + 8
+                End If
 
             Case 12
-                defStrat(D) = I1 + 10 '10, 11, 13
+                If I1 = 2 Then
+                    '(I1 + 10) will go past Diamond options
+                    defStrat(D) = 13
+                Else
+                    defStrat(D) = I1 + 10
+                End If
  
         End Select
 
@@ -10279,7 +10289,7 @@ Sub ZONECHANGE ()
 
         Select Case defStrat(P9)
 
-            Case 0 To 3
+            Case 0 To 3, 15
                 'Man-Man / Zone (No Combo)
                 defCategory(P9) = 0
 
@@ -10291,12 +10301,12 @@ Sub ZONECHANGE ()
                 'Run & Jump
                 defCategory(P9) = 2
 
-            Case 7 To 9
+            Case 7 To 9, 16
                 'Passive 2-2-1 Zone
                 defCategory(P9) = 3
 
-            Case 10 To 13
-                'Trap 1-2-1-1 Zone
+            Case 10 To 13, 17
+                'Diamond Trap Zone
                 defCategory(P9) = 4
 
             Case 14
@@ -10315,11 +10325,11 @@ Sub ZONECHANGE ()
                 'Pressure Man-Man
                 defCoverage(P9) = 1
 
-            Case 2, 7, 12
-                '2-3 Zone
+            Case 2, 7, 12, 15, 16
+                'Passive Zone
                 defCoverage(P9) = 2
 
-            Case 3, 13
+            Case 3, 13, 17
                 'Trapping Zone
                 defCoverage(P9) = 3
 
@@ -10359,6 +10369,7 @@ Sub DEFENSEMENU ()
             If I = 12 Then Locate , 5: Print "C ";
             If I = 13 Then Locate , 5: Print "D ";
             If I = 14 Then Locate , 5: Print "E ";
+            If I = 15 Then Locate , 5: Print "F ";
             Print defStyles$(I)
         Next
 
@@ -10369,14 +10380,14 @@ Sub DEFENSEMENU ()
             I$ = GetKeyPress$
             I1 = Val(I$)
             Call LetterToNumber(I$, I1)
-        Loop Until I1 >= 0 And I1 <= 14
+        Loop Until I1 >= 0 And I1 <= 15
 
         defStrat(P9) = I1
 
         Select Case defStrat(P9)
 
-            Case 0 To 3
-                'Man-Man / Zone
+            Case 0 To 3, 15
+                'Single Strategy
                 defCategory(P9) = 0
 
             Case 4
@@ -10419,8 +10430,8 @@ Sub DEFENSEMENU ()
             'Pressure Man-to-Man
             defCoverage(P9) = 1
 
-        Case 2, 7, 12
-            '2-3 Zone
+        Case 2, 7, 12, 15
+            '2-3 Zone, 3-2 Zone
             defCoverage(P9) = 2
 
         Case 3, 13
@@ -10536,7 +10547,7 @@ Sub COMPUTERSUBS ()
         If M3 >= 1 And 5 - M3 < 14 - M1 Or currHalf = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0 Or M4 >= 1 And M2 < 13 Or CTO% = 1 Then
             CTO% = 0
             XM = 1
-            Call COMCOACH
+            Call ComputerCoach
             skipG9% = 1
         End If
 
@@ -10561,14 +10572,31 @@ Sub FATIGUE ()
     FQ% = 0
 
     For I = 0 To 4
+
         FD% = FD% + tmFatigue(P9, B1(P9, I))
-        If tmFatigue(P9, B1(P9, I)) <= -4 Then FQ% = 1
+
+        If tmFatigue(P9, B1(P9, I)) <= -4 Then
+            FQ% = 1
+        End If
+
     Next
 
+    'FQ% = 1 means 1 or more player's fatigue is -4 or lower
+
     If FD% < -15 Or FQ% = 1 Then
-        defCoverage(P9) = 2
+        'If the team's total fatigue is really low,
+        'or a single player is depleted...
+
+        'Switch to a 2-3 or 3-2
+        If (d100% <= 80) Then
+            defStrat(P9) = 2
+        Else
+            defStrat(P9) = 15
+        End If
+
         defCategory(P9) = 0
-        defStrat(P9) = 2
+        defCoverage(P9) = 2
+
     End If
 
 End Sub
@@ -11131,18 +11159,27 @@ Sub SHOTPERCENT ()
         If gameLoc <> 2 Then shotChance! = shotChance! + homeCtFactor(1, teamRat_GAME(P, 6))
     End If
 
+    ' ** Chance for 3-Point Shot **
     threePtShotChance = Int(Rnd(1) * 100) + 1
-    TPA% = 0
+
+    'Adjust 3-point chance based on defense
+    threePtAdj = 0
 
     Select Case defStrat(D)
 
         Case 1, 6, 9, 11
             'Pressure Man-Man
-            TPA% = -5
+            threePtAdj = -5
 
         Case 2, 7, 12
             '2-3 Zone
-            TPA% = 3
+            threePtAdj = 3
+            
+        Case 15 To 17
+            '3-2 Zone is more effective
+            'than most defenses, but not
+            'quite on par with Man-to-Man
+            threePtAdj = -2
 
     End Select
 
@@ -11153,16 +11190,16 @@ Sub SHOTPERCENT ()
     If offStrat(P) = 9 Then
 
         'Strategy = Shoot only 3's
-        If (threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0) Then
+        If (threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + threePtAdj Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0) Then
             threePtShotChance = Int(Rnd(1) * 5) + 11
             J8% = 1
         End If
 
     Else
 
-        If threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0 Then
+        If threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + threePtAdj Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0 Then
 
-            'Odd that it calculates a % here when a shot won't be taken
+            'Odd that it calculates a % here???
             threePtShotChance = Int(Rnd(1) * 5) + 3
             J8% = 0
 
@@ -11788,12 +11825,15 @@ Sub PRESSGUARD ()
         End If
     End If
 
-    If defCategory(D) <> 0 And defCategory(D) <= 2 Then
+    If defCategory(D) = 1 Or defCategory(D) = 2 Then
+        'Full Court Press only
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' COMPUTER GUARD FOR PRESS
             BU% = 1
-            If plyrOff_GAME!(P, B1(P, 0), 4) >= plyrOff_GAME!(P, B1(P, 1), 4) And tmFatigue(P, B1(P, 0)) <= 3 Then BU% = 0
+            If plyrOff_GAME!(P, B1(P, 0), 4) >= plyrOff_GAME!(P, B1(P, 1), 4) And tmFatigue(P, B1(P, 0)) <= 3 Then
+                BU% = 0
+            End If
 
         Else
             Call FRAMEOPTION(8, P)
@@ -11991,15 +12031,17 @@ End Sub
 
 
 '----------------------------------------
-'        COMPUTERCOACH Subroutine
+'       ComputerStrategy Subroutine
 '----------------------------------------
 'This subroutine guides the computer AI
 'in how to handle it's strategy.
-Sub COMPUTERCOACH ()
+Sub ComputerStrategy ()
 
     I6 = 1 - P9
 
+    ' **************************
     ' *** Defensive Strategy ***
+    ' **************************
     defStrat(P9) = 0
     defCoverage(P9) = 0
     defCategory(P9) = 0
@@ -12010,61 +12052,78 @@ Sub COMPUTERCOACH ()
         'How far behind is the offense?
         scoreDiff = score(I6, 0) - score(P9, 0)
 
+        'If threePtOpt = 1
+
         If currHalf = 1 Then
 
             Call Rolld100(RN0)
             Select Case RN0
             
-                Case 0 To 5
-                    defCoverage(P9) = 1
-                    defCategory(P9) = 0
-                    defStrat(P9) = 1
-                    
-                Case 6 To 10
-                    defCoverage(P9) = 3
-                    defCategory(P9) = 0
-                    defStrat(P9) = 3
-                    
-                Case 11 To 36
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 0
-                    defStrat(P9) = 2
-                    
-                Case 37 To 100
+                Case 1 To 63
+                    defStrat(P9) = 0
                     defCoverage(P9) = 0
                     defCategory(P9) = 0
-                    defStrat(P9) = 0
+                                
+                Case 64 To 69
+                    defStrat(P9) = 1
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 0
+                                
+                Case 70 To 93
+                    defStrat(P9) = 2
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
 
+                Case 94 To 95
+                    defStrat(P9) = 15
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+                                
+                Case 96 To 100
+                    defStrat(P9) = 3
+                    defCoverage(P9) = 3
+                    defCategory(P9) = 0
+            
             End Select
 
             Call Rolld100(RN0)
-
             Select Case RN0
             
-                Case 0 To 3
+                Case 1 To 3
+                    defStrat(P9) = 10
                     defCoverage(P9) = 0
                     defCategory(P9) = 4
-                    defStrat(P9) = 10
                     
-                Case 4 To 6
+                Case 4 To 5
+                    '2-3
+                    defStrat(P9) = 9
                     defCoverage(P9) = 1
                     defCategory(P9) = 3
-                    defStrat(P9) = 9
+
+                Case 6
+                    defStrat(P9) = 16
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 3
                 
                 Case 7 To 9
+                    defStrat(P9) = 7
                     defCoverage(P9) = 2
                     defCategory(P9) = 3
-                    defStrat(P9) = 7
                 
                 Case 10 To 12
+                    defStrat(P9) = 8
                     defCoverage(P9) = 0
                     defCategory(P9) = 3
-                    defStrat(P9) = 8
                 
-                Case 13 To 15
+                Case 13 To 14
+                    defStrat(P9) = 4
                     defCoverage(P9) = 0
                     defCategory(P9) = 1
-                    defStrat(P9) = 4
+                    
+                Case 15
+                    defStrat(P9) = 15
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 1
 
             End Select
 
@@ -12085,25 +12144,29 @@ Sub COMPUTERCOACH ()
                             Select Case RN0
                             
                                 Case 1 To 60
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
+
                                 Case 61 To 80
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
+
                                 Case 81 To 90
+                                    defStrat(P9) = 6
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 6
+
                                 Case 91 To 95
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
+
                                 Case 96 To 100
+                                    defStrat(P9) = 11
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 11
                             
                             End Select
                         
@@ -12112,25 +12175,29 @@ Sub COMPUTERCOACH ()
                             Select Case RN0
 
                                 Case 1 To 75
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
+
                                 Case 76 To 83
+                                    defStrat(P9) = 4
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 1
-                                    defStrat(P9) = 4
+
                                 Case 84 To 91
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
+
                                 Case 92 To 96
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
+
                                 Case 97 To 100
+                                    defStrat(P9) = 11
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 11
 
                             End Select
                         
@@ -12139,29 +12206,39 @@ Sub COMPUTERCOACH ()
                             Select Case RN0
 
                                 Case 1 To 70
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
+
                                 Case 71 To 75
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
-                                Case 76 To 85
+
+                                Case 76 To 84
+                                    defStrat(P9) = 2
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 2
+                                    
+                                Case 85
+                                    defStrat(P9) = 15
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+
                                 Case 86 To 93
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
+
                                 Case 94 To 97
+                                    defStrat(P9) = 3
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 3
+
                                 Case 98 To 100
+                                    defStrat(P9) = 12
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 12
                             
                             End Select
 
@@ -12176,21 +12253,24 @@ Sub COMPUTERCOACH ()
                             Select Case RN0
 
                                 Case 1 To 70
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
+
                                 Case 71 To 80
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
+
                                 Case 81 To 90
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
+
                                 Case 91 To 100
+                                    defStrat(P9) = 13
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 13
 
                             End Select
                         
@@ -12199,21 +12279,24 @@ Sub COMPUTERCOACH ()
                             Select Case RN0
 
                                 Case 1 To 70
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
+
                                 Case 71 To 80
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
+
                                 Case 81 To 90
+                                    defStrat(P9) = 12
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 12
+
                                 Case 91 To 100
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
                             
                             End Select
 
@@ -12222,21 +12305,29 @@ Sub COMPUTERCOACH ()
                             Select Case RN0
 
                                 Case 1 To 70
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 71 To 90
+
+                                Case 71 To 89
+                                    defStrat(P9) = 2
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 2
+                                    
+                                Case 90
+                                    defStrat(P9) = 15
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+
                                 Case 91 To 96
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
+
                                 Case 97 To 100
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
                                 
                             End Select
 
@@ -12246,48 +12337,48 @@ Sub COMPUTERCOACH ()
 
                     Select Case scoreDiff
 
-                        Case Is >= 11
-
-                            If RN0 <= 50 Then
-                                defCoverage(P9) = 1
-                                defCategory(P9) = 4
-                                defStrat(P9) = 11
-                            Else
-                                defCoverage(P9) = 3
-                                defCategory(P9) = 4
-                                defStrat(P9) = 13
-                            End If
-                        
-                        Case 5 To 10
-                            defCoverage(P9) = 3
-                            defCategory(P9) = 5
-                            defStrat(P9) = 14
-
                         Case Is <= 4
-                        
+
                             Select Case RN0
 
                                 Case 1 To 15
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
 
                                 Case 26 To 50
+                                    defStrat(P9) = 6
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 6
 
                                 Case 51 To 75
+                                    defStrat(P9) = 11
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 11
 
                                 Case 76 To 100
+                                    defStrat(P9) = 13
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 13
 
                             End Select
+
+                        Case 5 To 10
+                            defStrat(P9) = 14
+                            defCoverage(P9) = 3
+                            defCategory(P9) = 5
+
+                        Case Is >= 11
+
+                            If RN0 <= 50 Then
+                                defStrat(P9) = 11
+                                defCoverage(P9) = 1
+                                defCategory(P9) = 4
+                            Else
+                                defStrat(P9) = 13
+                                defCoverage(P9) = 3
+                                defCategory(P9) = 4
+                            End If
 
                     End Select
 
@@ -12296,38 +12387,54 @@ Sub COMPUTERCOACH ()
         End If
 
         If currHalf > 2 Then
-            If RN0 <= 50 Then
-                defCoverage(P9) = 0
-                defCategory(P9) = 0
-                defStrat(P9) = 0
-            Else
-                defCoverage(P9) = 2
-                defCategory(P9) = 0
-                defStrat(P9) = 2
-            End If
+
+            Select Case RN0
+
+                Case Is <= 50
+                    defStrat(P9) = 0
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 0
+
+                Case 51 To 96
+                    defStrat(P9) = 2
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+
+                Case 97 To 100
+                    defStrat(P9) = 15
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+
+            End Select
+
         End If
 
     Else
-    
+
         Call Rolld100(RN0)
 
         Select Case RN0
 
-            Case 1 To 10
-                defCoverage(P9) = 1
-                defStrat(P9) = 1
-                defCategory(P9) = 0
-
-            Case 11 To 36
-                defCoverage(P9) = 2
-                defStrat(P9) = 2
-                defCategory(P9) = 0
-
-            Case 37 To 100
+            Case 1 To 64
                 defStrat(P9) = 0
                 defCoverage(P9) = 0
                 defCategory(P9) = 0
-
+            
+            Case 65 To 74
+                defStrat(P9) = 1
+                defCoverage(P9) = 1
+                defCategory(P9) = 0
+            
+            Case 75 To 98
+                defStrat(P9) = 2
+                defCoverage(P9) = 2
+                defCategory(P9) = 0
+                
+            Case 99 To 100
+                defStrat(P9) = 15
+                defCoverage(P9) = 2
+                defCategory(P9) = 0
+            
         End Select
 
         Call Rolld100(RN0)
@@ -12335,28 +12442,33 @@ Sub COMPUTERCOACH ()
         Select Case RN0
 
             Case 1 To 5
-                defCategory(P9) = 1
                 defStrat(P9) = 4
+                defCategory(P9) = 1
                 defCoverage(P9) = 0
 
             Case 6 To 9
-                defCategory(P9) = 3
                 defStrat(P9) = 8
+                defCategory(P9) = 3
                 defCoverage(P9) = 0
 
             Case 10
-                defCategory(P9) = 3
                 defStrat(P9) = 7
+                defCategory(P9) = 3
                 defCoverage(P9) = 2
 
-                'Nothing for 11 to 100
+            Case 11
+                defStrat(P9) = 16
+                defCategory(P9) = 3
+                defCoverage(P9) = 2
 
         End Select
 
     End If
 
 
+    ' **************************
     ' *** Offensive Strategy ***
+    ' **************************
     Call Rolld100(RN0)
 
     If currHalf = 1 Then

@@ -3595,13 +3595,13 @@ End Sub
 
 
 '----------------------------------------
-'          COMCOACH Subroutine
+'          ComputerCoach Subroutine
 '----------------------------------------
 'This subroutine essentially handles the
 'AI for the computer coach. It relies on
 'other routines to help deal with some of
 'the complexities.
-Sub COMCOACH ()
+Sub ComputerCoach ()
 
     'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
@@ -3722,7 +3722,7 @@ Sub COMCOACH ()
         B1(P9, I) = G4(I)
     Next I
 
-    Call COMPUTERCOACH
+    Call ComputerStrategy
 
 End Sub
 
@@ -5089,7 +5089,7 @@ Sub COMPUTERSUBS ()
         If M3 >= 1 And 5 - M3 < 14 - M1 Or currHalf = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0 Or M4 >= 1 And M2 < 13 Or CTO% = 1 Then
             CTO% = 0
             XM = 1
-            Call COMCOACH
+            Call ComputerCoach
             skipG9% = 1
         End If
 
@@ -6544,11 +6544,11 @@ End Sub
 
 
 '----------------------------------------
-'        COMPUTERCOACH Subroutine
+'        ComputerStrategy Subroutine
 '----------------------------------------
 'This subroutine guides the computer AI
 'in how to handle it's strategy.
-Sub COMPUTERCOACH ()
+Sub ComputerStrategy ()
 
     I6 = 1 - P9
 
