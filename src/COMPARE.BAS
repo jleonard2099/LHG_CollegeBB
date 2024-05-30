@@ -380,7 +380,12 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 7, 41: Print Using "####"; replayWins;
     Locate 7, 45: Print Using "####"; replayLosses;: Print " ";
 
+    ' *** ACTUAL VALUES ***
+
     'Print out all ACTUAL values from COLBBTMS
+
+    '--> OFFENSE
+
     Color 3, 0
 
     'FGM
@@ -462,7 +467,7 @@ Sub TeamComparisons_Screen (teamName$)
     End If
 
 
-    'DEFENSE
+    '--> DEFENSE
     Color 3, 0
 
     'FGM
@@ -533,11 +538,21 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using ".###"; statPCT!;
     End If
 
+
+    ' *** REPLAY VALUES ***
+    
     'Print out all REPLAY values from stat files
+
+    '--> OFFENSE
+    
+    'FGM
     Locate 4, 16: Print Using "#########"; statsZ!(2);
+
+    'FGA
     Locate 5, 16: Print Using "#########"; statsZ!(1);
 
-    'Locate 6, 16
+    'FG PCT
+    Locate 6, 16
     If statsZ!(1) = 0 Then 
         Print "     .000";
     End If
@@ -547,9 +562,12 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using ".###"; statPCT!;
     End If
 
+    'FTM
     Locate 7, 16: Print Using "#########"; statsZ!(4);
+    'FTA
     Locate 8, 16: Print Using "#########"; statsZ!(3);
 
+    'FT PCT
     Locate 9, 16
     If statsZ!(3) = 0 Then 
         Print "     .000";
@@ -559,6 +577,7 @@ Sub TeamComparisons_Screen (teamName$)
         Print "     ";: Print Using ".###"; statPCT!;
     End If
 
+    'Rebounds / Assists / Fouls / Steals / TOs
     Locate 10, 16: Print Using "#########"; statsZ!(12);
     Locate 11, 16: Print Using "#########"; statsZ!(5) - statsZ!(12) - statsZ!(15);
     Locate 12, 16: Print Using "#########"; statsZ!(5) - statsZ!(15);
@@ -566,10 +585,17 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 14, 16: Print Using "#########"; statsZ!(6);
     Locate 15, 16: Print Using "#########"; statsZ!(7);
     Locate 16, 16: Print Using "#########"; statsZ!(11);
+    
+    'Blocks
     Locate 17, 16: Print Using "#########"; statsZ!(9);
+
+    '3 FGM
     Locate 18, 16: Print Using "#########"; statsZ!(13);
+
+    '3 FGA
     Locate 19, 16: Print Using "#########"; statsZ!(14);
 
+    '3 FG PCT
     Locate 20, 16
     If statsZ!(13) = 0 Then
         Print "     .000";
@@ -580,9 +606,14 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using ".###"; statPCT!;
     End If
 
+    '--> DEFENSE
+    'FGM
     Locate 4, 68: Print Using "########"; statsZ1!(2);
+    
+    'FGA
     Locate 5, 68: Print Using "########"; statsZ1!(1);
 
+    'FG PCT
     Locate 6, 68
     If statsZ1!(1) = 0 Then 
         Print "    .000";
@@ -592,9 +623,13 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using "    .###"; statPCT!;
     End If
 
+    'FTM
     Locate 7, 68: Print Using "########"; statsZ1!(4);
+    
+    'FTA
     Locate 8, 68: Print Using "########"; statsZ1!(3);
 
+    'FT PCT
     Locate 9, 68
     If statsZ1!(3) = 0 Then
         Print "    .000";
@@ -604,6 +639,7 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using "    .###"; statPCT!;
     End If
 
+    'Rebounds / Assists / Fouls / Steals / TOs
     Locate 10, 68: Print Using "########"; statsZ1!(12);
     Locate 11, 68: Print Using "########"; statsZ1!(5) - statsZ1!(12) - statsZ1!(15);
     Locate 12, 68: Print Using "########"; statsZ1!(5) - statsZ1!(15);
@@ -612,9 +648,14 @@ Sub TeamComparisons_Screen (teamName$)
     Locate 15, 68: Print Using "########"; statsZ1!(7);
     Locate 16, 68: Print Using "########"; statsZ1!(11);
     Locate 17, 68: Print Using "########"; statsZ1!(9);
+
+    '3 FGM
     Locate 18, 68: Print Using "########"; statsZ1!(13);
+
+    '3 FGA
     Locate 19, 68: Print Using "########"; statsZ1!(14);
 
+    '3 FGA PCT
     If statsZ1!(13) = 0 Then
         Locate 20, 68: Print "    .000";
     End If

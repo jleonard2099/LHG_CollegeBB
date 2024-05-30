@@ -595,24 +595,24 @@ Sub ViewPlayerStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
             Select Case UCase$(I$)
 
-                Case Chr$(0) + "Q"
+                Case Chr$(0) + Chr$(81)
                     'Pg Down
                     Call ViewTeamStats(statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-                Case Chr$(0) + "I"
+                Case Chr$(0) + Chr$(73)
                     'Pg Up
                     Cls
                     Call ViewStatSummary(statFile$, teamName$, totalGames%, menuExit)
                     'Call ExtendedStatSummary(statFile$, teamName$, totalGames%, menuExit)
 
-                Case Chr$(0) + "M"
+                Case Chr$(0) + Chr$(77)
                     'Right Arrow
                     categoryPick = categoryPick + 1
                     If categoryPick > 13 Then categoryPick = 1
                     Color 12
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
-                Case Chr$(0) + "K"
+                Case Chr$(0) + Chr$(75)
                     'Left Arrow
                     categoryPick = categoryPick - 1
                     If categoryPick < 1 Then categoryPick = 13
@@ -668,7 +668,6 @@ End Sub
 'This subroutine formats and outputs the
 'team's OFF/DEF stats to the user display
 Sub ViewTeamStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
-
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -1293,7 +1292,7 @@ End Sub
 '----------------------------------------
 'This subroutine sorts the associate stats
 'based on the chosen category
-Sub SortStats (categoryPick)
+Sub SortStats    (categoryPick)
 
     Shared statsW0!(), statsW0!()
     Shared statsW1!(), statsW1!()

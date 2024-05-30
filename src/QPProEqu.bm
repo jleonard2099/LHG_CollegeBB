@@ -1087,7 +1087,7 @@ Sub NumIn (Number#, Max, XCode, FGColor%, BGColor%)
     Call QPrint(A$, FGColor&, BGColor&, -1) 'print the digit
     If Insrt GoTo NHandleInsert 'special treatment for insert
     Mid$(X$, Curpo, 1) = A$ 'assign new digit
-    Curpo = Curpo + 1 'show the cursor being forward
+    Curpo = Curpo + 1 'show the cursor being foneRunWinsard
     Locate , Pos(0) + 1
     GoTo NGetKey
 
@@ -1693,3 +1693,5 @@ Sub Lts2Menu (Item$(), Prompt$(), Choice%, FGColor%, BGColor%)
     Erase Break%, ScrBuf%
 
 End Sub
+
+

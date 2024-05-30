@@ -18,7 +18,7 @@ Sub SCHEDULE ()
 
     scheduleNG%(0, 8) = 3
     scheduleNG%(0, 3) = 1
-    scheduleNG%(0, 7) = 1
+    scheduleNG%(0, 7) = 3
     scheduleNG%(0, 2) = 1
     scheduleNG%(0, 5) = 5
 
@@ -1082,13 +1082,13 @@ Sub BoxscoreMaintenance ()
                     Call EditParameters
 
                 Case 2:
-                    'boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
-                    boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
+                    boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.BSS", "BOXSCORE", ExitCode%)
+                    'boxscoreFile$ = ChooseFile$(diskPaths$(1) + "*.SPC", "BOXSCORE", ExitCode%)
 
                     If ExitCode% <> 27 And ExitCode% <> 0 And boxscoreFile$ <> "" Then
                         boxName$ = diskPaths$(1) + boxscoreFile$
-                        'Call EditBoxscore(boxName$ + ".BSS")
-                        Call EditBoxscore(boxName$ + ".SPC")
+                        Call EditBoxscore(boxName$ + ".BSS")
+                        'Call EditBoxscore(boxName$ + ".SPC")
                     End If
 
                 Case 3

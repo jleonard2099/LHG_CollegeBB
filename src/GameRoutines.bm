@@ -69,8 +69,8 @@ Sub InitVar ()
     alpha$(2) = "C "
     alpha$(3) = "D "
 
-    pbpType$(0) = "VERBOSE        "
-    pbpType$(1) = "HAFFNER CLASSIC"
+    pbpStyle$(0) = "VERBOSE        "
+    pbpStyle$(1) = "HAFFNER CLASSIC"
 
     posnName$(0) = "G"
     posnName$(1) = "G"
@@ -111,6 +111,7 @@ Sub InitVar ()
     fastBreak = 0
     FO = 0
     G9 = 0
+    gameAvgTmStamina = 0
     halfTime = 0
     IN = 0
     M5 = 0
@@ -119,7 +120,6 @@ Sub InitVar ()
     P9 = 0
     PASS = 0
     S2 = 0
-    gameAvgTmStamina = 0
     shotClock = 0
     statSpecial = 0
     threePtShotChance = 0
@@ -133,9 +133,8 @@ Sub InitVar ()
     BU% = 0
     DK% = 0
     FT% = 0
-    J8% = 0
     LC% = 0
-    PT% = 0
+    pbpType = 0
     PZ% = 0
     X0% = 0
     X1% = 0
@@ -212,7 +211,7 @@ End Sub
 '----------------------------------------
 'This subroutine auto-assigns game param-
 'eters from a schedule file's data.
-Sub AUTOSETUP ()
+Sub AUTOSETUP (validTeam)
 
     Shared tickerStart
 
@@ -232,21 +231,25 @@ Sub AUTOSETUP ()
     tickerStart = NG%(12)
     ft6FloorFouls = NG%(14)
 
+    validTeam = 0
+
     For P9 = 0 To 1
 
         I1 = NG%(P9)
 
         Call ReadGameTeam(diskIDs$(P9), gameTeams$(P9), I1, P9)
+        Call ReadGameExtraData(diskIDs$(P9), I1, P9, validTeam)
 
         If I1 <> 0 Then
             Call TEAMSETUP(P9)
-            'Else
-            '   -- throw an error message
+        Else
+            'In case chosen team ends up with 0 value
+            validTeam = 0
         End If
 
     Next P9
 
-    If TOU = 1 Then
+    If validTeam = 1 And TOU = 1 Then
 
         'Read in tournament settings
         tournFileNoExt$ = Mid$(tourneyFile$, 1, Len(tourneyFile$) - 4)
@@ -327,13 +330,17 @@ Sub TEAMSETUP (teamIdx)
 
     Shared d3FG_Adj(), d3FGA_Adj()
 
-    'This is where we "adjust" values that were in the 90's
+    ' *** This is where we "adjust" values that were in the 90's
+
+    'Off Steal Rating
     teamAdj(teamIdx, 4) = leagRat_GAME(teamIdx, 0)
     If teamAdj(teamIdx, 4) > 20 Then teamAdj(teamIdx, 4) = teamAdj(teamIdx, 4) - 100
 
+    'Def TO Adj
     teamAdj(teamIdx, 6) = leagRat_GAME(teamIdx, 2)
     If teamAdj(teamIdx, 6) > 20 Then teamAdj(teamIdx, 6) = teamAdj(teamIdx, 6) - 100
 
+    'Def Foul Adj
     teamAdj(teamIdx, 7) = leagRat_GAME(teamIdx, 3)
     If teamAdj(teamIdx, 7) > 20 Then teamAdj(teamIdx, 7) = teamAdj(teamIdx, 7) - 100
 
@@ -352,6 +359,7 @@ Sub TEAMSETUP (teamIdx)
         teamAdj(teamIdx, 7) = 0
     End If
 
+    'Ratings based on player contributions
     For I = 0 To 13
 
         plyrOff_GAME!(teamIdx, I, 16) = plyrRat_GAME(teamIdx, I, 6)
@@ -364,9 +372,16 @@ Sub TEAMSETUP (teamIdx)
             plyrOff_GAME!(teamIdx, I, 17) = 40
         End If
 
-        plyrOff_GAME!(teamIdx, I, 19) = plyrRat_GAME(teamIdx, I, 3)
+        '3FGM / 3FGA
         plyrOff_GAME!(teamIdx, I, 20) = plyrRat_GAME(teamIdx, I, 2)
+
+        '3FGA / FGA
+        plyrOff_GAME!(teamIdx, I, 19) = plyrRat_GAME(teamIdx, I, 3)
+
+        'Based on ORB / TRB
         plyrOff_GAME!(teamIdx, I, 21) = plyrRat_GAME(teamIdx, I, 4)
+
+        'Based on TRB / Game
         plyrOff_GAME!(teamIdx, I, 2) = plyrOff_GAME!(teamIdx, I, 2)
 
     Next I
@@ -423,7 +438,7 @@ Function ShotPacing%
             Case 0
                 'No shot clock = teams can stall as long as they want
                 'Value 99 = stall 1% of possessions
-                paceValue = 99
+                paceValue = 100
 
             Case 1
                 'paceValue = 39 + Int(((JY - 52) * .8) + .5)
@@ -449,15 +464,15 @@ Function ShotPacing%
             Case 1
                 'There is currently no data I can use to test this!!!
                 '58 = Avg FGA/G for 45-sec shot clock
-                paceValue = Int((paceFactor! + 0.5) / 48)
+                paceValue = Int((paceFactor! + 0.5) / 58)
 
             Case 2
                 '56 = Avg FGA/G for 35-sec shot clock
-                paceValue = Int((paceFactor! + 0.5) / 46)
+                paceValue = Int((paceFactor! + 0.5) / 56)
 
             Case 3
                 '58 = Avg FGA/G for 30-sec shot clock
-                paceValue = Int((paceFactor! + 0.5) / 48)
+                paceValue = Int((paceFactor! + 0.5) / 58)
 
         End Select
 
@@ -785,15 +800,15 @@ End Sub
 '----------------------------------------
 'This subroutine helps build strings for
 'the Play-by-Play text, depending on the
-'context given (assigned as PT%)
+'context given (assigned as pbpType)
 Sub MAKEPBP ()
 
     If pbpDelay! <> 0 Then
 
         Call Rolld100(RN0)
 
-        'PT% = pbpType
-        Select Case PT%
+        'pbpType = pbpType
+        Select Case pbpType
 
             Case 1
                 'TURNOVER
@@ -972,46 +987,23 @@ Sub MAKEPBP ()
 
                     Case 2
                         'INSIDE W/ASSIST
+                        checkForBlock = 0
+
                         Select Case RN0
 
                             Case 1 To 10
                                 pbpString$ = "HE CUTS TO THE BASKET"
                                 Call PBP
                                 pbpString$ = "TAKES IT UP"
-
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
-                                    DK% = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
-                                    DK% = 1
-                                End If
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
-                                    DK% = 1
-                                End If
+                                checkForBlock = 1
 
                             Case 11 To 20
                                 pbpString$ = "HE TAKES IT TO THE HOLE"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
-                                    DK% = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
-                                    DK% = 1
-                                End If
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
-                                    DK% = 1
-                                End If
+                                checkForBlock = 1
 
                             Case 21 To 30
                                 pbpString$ = "HE TAKES IT TO THE HOOP"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
-                                    DK% = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
-                                    DK% = 1
-                                End If
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
-                                    DK% = 1
-                                End If
+                                checkForBlock = 1
 
                             Case 31 To 40
                                 pbpString$ = "HE LEANS IN AND SHOOTS"
@@ -1021,15 +1013,7 @@ Sub MAKEPBP ()
 
                             Case 51 To 60
                                 pbpString$ = "HE TAKES IT TO THE BOARD"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
-                                    DK% = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
-                                    DK% = 1
-                                End If
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
-                                    DK% = 1
-                                End If
+                                checkForBlock = 1
 
                             Case 61 To 70
                                 pbpString$ = "HE PUTS IT OFF THE GLASS"
@@ -1044,35 +1028,36 @@ Sub MAKEPBP ()
 
                             Case 81 To 90
                                 pbpString$ = "HE TAKES IT UP STRONG"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
-                                    DK% = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
-                                    DK% = 1
-                                End If
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
-                                    DK% = 1
-                                End If
+                                checkForBlock = 1
 
                             Case 91 To 95
                                 pbpString$ = "HE POWERS IT UP"
-                                If (ballCarrier = 0 Or ballCarrier = 1) And Int(Rnd(1) * 100) + 1 <= 1 Then
-                                    DK% = 1
-                                End If
-                                If (ballCarrier = 2 Or ballCarrier = 3) And Int(Rnd(1) * 100) + 1 <= 5 Then
-                                    DK% = 1
-                                End If
-                                If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 7 Then
-                                    DK% = 1
-                                End If
+                                checkForBlock = 1
 
                             Case 96 To 100
                                 pbpString$ = "HE LAYS IT UP"
 
                         End Select
 
+                        If checkForBlock = 1 Then
+
+                            'If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 1 Then
+                            If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 2 Then
+                                DK% = 1
+                            End If
+                            If (ballCarrier = 2 Or ballCarrier = 3) And d100% <= 6 Then
+                                DK% = 1
+                            End If
+                            If ballCarrier = 4 And d100% <= 8 Then
+                                DK% = 1
+                            End If
+
+                        End If
+
                     Case 3
                         'PENETRATE
+                        checkForBlock = 0
+
                         Select Case ballCarrier
 
                             Case 0, 1
@@ -1086,17 +1071,13 @@ Sub MAKEPBP ()
 
                                     Case 26 To 50
                                         pbpString$ = "HE TAKES IT UP UNDER THE BASKET"
-                                        If Int(Rnd(1) * 100) + 1 <= 2 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 51 To 52
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         pbpString$ = "AND SOARS TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 2 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 53 To 54
                                         pbpString$ = "HE BLOWS PAST TWO DEFENDERS"
@@ -1105,9 +1086,7 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE DRIVES THE BASELINE"
                                         Call PBP
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 2 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 57
                                         pbpString$ = "HE SLICES IN THE HOLE"
@@ -1144,31 +1123,31 @@ Sub MAKEPBP ()
 
                                 End Select
 
+                                If checkForBlock = 1 And d100% <= 3 Then
+                                    DK% = 1
+                                End If
+
                             Case 2, 3
+                            
+                                checkForBlock = 0
 
                                 Select Case RN0
 
                                     Case 1 To 16
                                         pbpString$ = "HE TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 17 To 32
                                         pbpString$ = "HE SPINS FREE"
                                         Call PBP
                                         pbpString$ = "SHOOTS"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 33 To 48
                                         pbpString$ = "HE GETS LOOSE IN THE PAINT"
                                         Call PBP
                                         pbpString$ = "TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 49 To 64
                                         pbpString$ = "HE PUTS IT UP"
@@ -1177,25 +1156,19 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
                                         Call PBP
                                         pbpString$ = "TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 68, 69
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         pbpString$ = "AND SOARS TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 70, 71
                                         pbpString$ = "HE DRIVES THE BASELINE"
                                         Call PBP
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 7 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 72
                                         pbpString$ = "HE SLICES IN THE HOLE"
@@ -1219,6 +1192,10 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE TAKES THE SHOT"
 
                                 End Select
+                                
+                                If checkForBlock = 1 And d100% <= 7 Then
+                                    DK% = 1
+                                End If
 
                             Case 4
 
@@ -1235,9 +1212,7 @@ Sub MAKEPBP ()
 
                                     Case 41 To 58
                                         pbpString$ = "HE TAKES IT TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 59 To 70
                                         pbpString$ = "HE TAKES THE SHOT"
@@ -1246,25 +1221,23 @@ Sub MAKEPBP ()
                                         pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
                                         Call PBP
                                         pbpString$ = "TAKES IT UP"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 73, 74
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
                                         Call PBP
                                         pbpString$ = "AND SOARS TO THE HOOP"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                     Case 75 To 100
                                         pbpString$ = "HE TAKES IT UP STRONG"
-                                        If Int(Rnd(1) * 100) + 1 <= 15 Then
-                                            DK% = 1
-                                        End If
+                                        checkForBlock = 1
 
                                 End Select
+
+                                If checkForBlock = 1 And d100% <= 15 Then
+                                    DK% = 1
+                                End If
 
                         End Select
 
@@ -1695,10 +1668,10 @@ Sub MAKEPBP ()
 
                         End Select
 
-                        If ballCarrier = 2 Or ballCarrier = 3 And Int(Rnd(1) * 100) + 1 <= 7 Then
+                        If ballCarrier = 2 Or ballCarrier = 3 And d100% <= 7 Then
                             DK% = 1
                         End If
-                        If ballCarrier = 4 And Int(Rnd(1) * 100) + 1 <= 15 Then
+                        If ballCarrier = 4 And d100% <= 15 Then
                             DK% = 1
                         End If
 
@@ -3261,7 +3234,7 @@ Sub TickerSchedule
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
     Next
 
-    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 3 As Q$(20), 3 As Q$(21)
+    Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
     NG%(13) = 1
 
@@ -3374,6 +3347,7 @@ Sub FoulCalled (randomCalcs%)
 
     plyrOff_GAME!(D, B1(D, fouler), 12) = plyrOff_GAME!(D, B1(D, fouler), 12) + 1
     teamFouls(D) = teamFouls(D) + 1
+
     Call UPDATESCREEN
 
     If plyrOff_GAME!(D, B1(D, fouler), 3) - plyrOff_GAME!(D, B1(D, fouler), 7) - plyrOff_GAME!(D, B1(D, fouler), 11) - plyrOff_GAME!(D, B1(D, fouler), 12) = 0 Then
@@ -3429,15 +3403,19 @@ Sub FoulCalled (randomCalcs%)
         End If
 
         If intentional = 1 Then
+
             pbpString$ = "FOUL IS RULED INTENTIONAL!"
             If pbpOpt = 0 Then
                 Call PBP
             End If
+
             If pbpOpt = 1 And pbpDelay! <> 0 Then
                 Print pbpString$
                 Call DELAY
             End If
+
             Call DELAY
+
         End If
 
         pbpString$ = "AND HE HAS JUST FOULED OUT !!!"
@@ -3455,11 +3433,13 @@ Sub FoulCalled (randomCalcs%)
         If teamFouls(D) > 6 Then X = 50
 
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
+
             teamIdx = D
             C1 = 1
             Call LINEUPS
             Call FOULSAFE
             Call DEADBALLOPTIONS
+
             For I = 0 To 1
                 If defCategory(I) = 0 Then
                     PR%(I, 0) = 1
@@ -3467,7 +3447,9 @@ Sub FoulCalled (randomCalcs%)
                     pctContrib(I) = 0
                 End If
             Next
+
             Call SCOREBOARD
+
         End If
 
         Call CheckGameClock
@@ -3595,15 +3577,13 @@ End Sub
 
 
 '----------------------------------------
-'          ComputerCoach Subroutine
+'        ComputerCoach Subroutine
 '----------------------------------------
 'This subroutine essentially handles the
-'AI for the computer coach. It relies on
-'other routines to help deal with some of
-'the complexities.
+'AI for the computer coach. After an
+'evaluation of substitutions, it then calls
+'another routine to decide on strategies
 Sub ComputerCoach ()
-
-    'COMPUTER COACH FOR SUBSTITUTIONS AND AI
 
     For I = 0 To 13
 
@@ -3758,7 +3738,7 @@ Sub TOURNEY_Game ()
         Next
 
         Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-        Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+        Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
         Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
         Get #1, I
 
@@ -3986,7 +3966,7 @@ Sub UpdateTourneyFile (gameIdx, loseTeam$, winTeam$)
     Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
     For X = 0 To 14:
-        LSet Q$(X + 1) = MKI$(NG1%(X))
+        LSet Q$(1 + X) = MKI$(NG1%(X))
     Next
 
     For X = 0 To 3:
@@ -3994,7 +3974,7 @@ Sub UpdateTourneyFile (gameIdx, loseTeam$, winTeam$)
     Next
 
     For X = 1 To 3:
-        LSet Q$(X + 23) = MKI$(NG1%(X + 14))
+        LSet Q$(23 + X) = MKI$(NG1%(X + 14))
     Next
 
     LSet Q$(16) = MKI$(score(0, 0))
@@ -4113,11 +4093,13 @@ Sub UPDATESCREEN ()
     'Team strategies / decisions
     If pbpDelay! <> 0 Then
 
-        'Team Play Styles
+        'Team strategies / decisions
         Locate 9, 41
-        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1): Print "DEF-"; defStyles_brief$(defStrat(D))
+        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
+        Print "DEF-"; defStyles_brief$(defStrat(D))
         Locate , 41
-        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1): Print "OFF-"; offStyles_brief$(offStrat(P))
+        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
+        Print "OFF-"; offStyles_brief$(offStrat(P))
 
         Color 15, 0
         Locate 11, 41
@@ -4791,19 +4773,19 @@ End Sub
 '         ZONECHANGE Subroutine
 '----------------------------------------
 'This subroutine lets the user configure
-'their zone strategy.
+'their zone strategy, except for a 2-3 / 3-2.
 Sub ZONECHANGE ()
 
-    If Not (playerMode = 1 And compTeam = D Or playerMode = 2) Or defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or (offStrat(P) <= 8 And offStrat(P) >= 4) Then
+    If (playerMode = 1 And compTeam = P9 Or playerMode = 0) And (defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or defStrat(D) >= 15) And (offStrat(P) <= 8 And offStrat(P) >= 4) Then
 
         Call FRAMEOPTION(8, P)
         Locate 10, 15
 
         Print gameTeams$(D); " SELECT STRATEGY:"
         Locate 12, 14
-        Locate , 14: Print "0 - SOLID MAN TO MAN"
-        Locate , 14: Print "1 - PRESSURE MAN TO MAN"
-        Locate , 14: Print "2 - 1-3-1 TRAPPING ZONE"
+        Locate , 14: Print "0 - SOLID MAN-TO-MAN"
+        Locate , 14: Print "1 - PRESSURE MAN-TO-MAN"
+        Locate , 14: Print "2 - 1-3-1 ZONE (TRAPPING)"
 
         Do
             I$ = GetKeyPress$
@@ -4812,19 +4794,29 @@ Sub ZONECHANGE ()
 
         If I1 = 2 Then I1 = 3
 
-        Select Case defStrat
+        Select Case defStrat(D)
 
-            Case Is <= 3
+            Case Is <= 3, 15
+                'If currently a single defense, simply
+                'make the straight up change
                 defStrat(D) = I1
             
             Case 7
-                defStrat(D) = I1 + 8 '8, 9, 111
-
-            Case 10
-                defStrat(D) = 3
+                'If a 2-2-1, shift to the appropriate zone
+                If I1 = 2 Then
+                    '(I1 + 8) will go past 2-2-1 options
+                    defStrat(D) = 3
+                Else
+                    defStrat(D) = I1 + 8
+                End If
 
             Case 12
-                defStrat(D) = I1 + 10 '10, 11, 13
+                If I1 = 2 Then
+                    '(I1 + 10) will go past Diamond options
+                    defStrat(D) = 13
+                Else
+                    defStrat(D) = I1 + 10
+                End If
  
         End Select
 
@@ -4832,7 +4824,7 @@ Sub ZONECHANGE ()
 
         Select Case defStrat(P9)
 
-            Case 0 To 3
+            Case 0 To 3, 15
                 'Man-Man / Zone (No Combo)
                 defCategory(P9) = 0
 
@@ -4844,12 +4836,12 @@ Sub ZONECHANGE ()
                 'Run & Jump
                 defCategory(P9) = 2
 
-            Case 7 To 9
+            Case 7 To 9, 16
                 'Passive 2-2-1 Zone
                 defCategory(P9) = 3
 
-            Case 10 To 13
-                'Trap 1-2-1-1 Zone
+            Case 10 To 13, 17
+                'Diamond Trap Zone
                 defCategory(P9) = 4
 
             Case 14
@@ -4868,11 +4860,11 @@ Sub ZONECHANGE ()
                 'Pressure Man-Man
                 defCoverage(P9) = 1
 
-            Case 2, 7, 12
-                '2-3 Zone
+            Case 2, 7, 12, 15, 16
+                'Passive Zone
                 defCoverage(P9) = 2
 
-            Case 3, 13
+            Case 3, 13, 17
                 'Trapping Zone
                 defCoverage(P9) = 3
 
@@ -4912,6 +4904,7 @@ Sub DEFENSEMENU ()
             If I = 12 Then Locate , 5: Print "C ";
             If I = 13 Then Locate , 5: Print "D ";
             If I = 14 Then Locate , 5: Print "E ";
+            If I = 15 Then Locate , 5: Print "F ";
             Print defStyles$(I)
         Next
 
@@ -4922,14 +4915,14 @@ Sub DEFENSEMENU ()
             I$ = GetKeyPress$
             I1 = Val(I$)
             Call LetterToNumber(I$, I1)
-        Loop Until I1 >= 0 And I1 <= 14
+        Loop Until I1 >= 0 And I1 <= 15
 
         defStrat(P9) = I1
 
         Select Case defStrat(P9)
 
-            Case 0 To 3
-                'Man-Man / Zone
+            Case 0 To 3, 15
+                'Single Strategy
                 defCategory(P9) = 0
 
             Case 4
@@ -4972,8 +4965,8 @@ Sub DEFENSEMENU ()
             'Pressure Man-to-Man
             defCoverage(P9) = 1
 
-        Case 2, 7, 12
-            '2-3 Zone
+        Case 2, 7, 12, 15
+            '2-3 Zone, 3-2 Zone
             defCoverage(P9) = 2
 
         Case 3, 13
@@ -5114,14 +5107,31 @@ Sub FATIGUE ()
     FQ% = 0
 
     For I = 0 To 4
+
         FD% = FD% + tmFatigue(P9, B1(P9, I))
-        If tmFatigue(P9, B1(P9, I)) <= -4 Then FQ% = 1
+
+        If tmFatigue(P9, B1(P9, I)) <= -4 Then
+            FQ% = 1
+        End If
+
     Next
 
+    'FQ% = 1 means 1 or more player's fatigue is -4 or lower
+
     If FD% < -15 Or FQ% = 1 Then
-        defCoverage(P9) = 2
+        'If the team's total fatigue is really low,
+        'or a single player is depleted...
+
+        'Switch to a 2-3 or 3-2
+        If (d100% <= 80) Then
+            defStrat(P9) = 2
+        Else
+            defStrat(P9) = 15
+        End If
+
         defCategory(P9) = 0
-        defStrat(P9) = 2
+        defCoverage(P9) = 2
+
     End If
 
 End Sub
@@ -5674,8 +5684,7 @@ Sub SHOTPERCENT ()
         FX% = FX% - 10
     End If
 
-    shotChance! = FX% + dFGPA(D) + D8(0, defCoverage(D))
-    J8% = 0
+    shotChance! = FX% + dFGPA(D) + defAdjVsShot(0, defCoverage(D))
 
     'Improve chance for homefield advantage
     If gameLoc = P Then
@@ -5684,58 +5693,69 @@ Sub SHOTPERCENT ()
         If gameLoc <> 2 Then shotChance! = shotChance! + homeCtFactor(1, teamRat_GAME(P, 6))
     End If
 
-    threePtShotChance = Int(Rnd(1) * 100) + 1
-    TPA% = 0
+    ' ** Chance for 3-Point Shot **
+    Call Rolld100(threePtShotChance)
+    J8% = 0
+
+    'Adjust 3-point chance based on defense
+    'threePtDefAdj = 0
+    threePtDefAdj = 11
 
     Select Case defStrat(D)
 
         Case 1, 6, 9, 11
             'Pressure Man-Man
-            TPA% = -5
+            'threePtDefAdj = -5
+            threePtDefAdj = 6
 
         Case 2, 7, 12
             '2-3 Zone
-            TPA% = 3
+            'threePtDefAdj = 3
+            threePtDefAdj = 14
+
+        Case 15 To 17
+            '3-2 Zone is more effective
+            'than most defenses, but not
+            'quite on par with Man-to-Man
+            'threePtDefAdj = -3
+            threePtDefAdj = 8
 
     End Select
 
     skipCalcs% = 0
 
-    'plyOff(.., 19) = ORBs
-    'teamAdj(D, 3) = d3FGA_Adj for DEFENSE
-    If offStrat(P) = 9 Then
+    ' ** Check for bad shot **
+    '% of player shots that are 3 FG + d3FGA_Adj + adjustment due to Def
+    If threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + threePtDefAdj Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0 Then
 
         'Strategy = Shoot only 3's
-        If (threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0) Then
+        If offStrat(P) = 9 Then
+            'Shoot 3's no matter what!
             threePtShotChance = Int(Rnd(1) * 5) + 11
             J8% = 1
+        Else
+            threePtShotChance = Int(Rnd(1) * 5) + 3
+            J8% = 0
         End If
 
     Else
+        'Good shot
 
-        If threePtShotChance > plyrOff_GAME!(P, B1(P, ballCarrier), 19) + teamAdj(D, 3) + TPA% Or plyrOff_GAME!(P, B1(P, ballCarrier), 19) = 0 Then
+        FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 20)
 
-            'Odd that it calculates a % here when a shot won't be taken
+        If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
+            'Fatigue impacts chance for shot
+            FX% = Int(FX% * .67 + .5)
+        End If
+
+        'If more than 2 minutes in half and already contributed share
+        If (currHalf < 3 And gameClock! > 120) And (plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0) Then
+            'Bad shot b/c of fatigue
             threePtShotChance = Int(Rnd(1) * 5) + 3
             J8% = 0
-
         Else
-
-            FX% = plyrOff_GAME!(P, B1(P, ballCarrier), 20)
-
-            If tmFatigue(P, B1(P, ballCarrier)) <= -5 Then
-                FX% = Int(FX% * .67 + .5)
-            End If
-
-            'If more than 2 minutes in half and (ContribPct - FGA - Rebounds - Fouls) <= 0
-            If (currHalf < 3 And gameClock! > 120) And (plyrOff_GAME!(P, B1(P, ballCarrier), 3) - plyrOff_GAME!(P, B1(P, ballCarrier), 7) - plyrOff_GAME!(P, B1(P, ballCarrier), 11) - plyrOff_GAME!(P, B1(P, ballCarrier), 12) <= 0) Then
-                threePtShotChance = Int(Rnd(1) * 5) + 3
-                J8% = 0
-            Else
-                threePtShotChance = FX% + teamAdj(D, 2)
-                J8% = 1
-            End If
-
+            threePtShotChance = FX% + teamAdj(D, 2)
+            J8% = 1
         End If
 
     End If
@@ -5855,7 +5875,7 @@ End Sub
 '           PressFatigueDef Subroutine
 '----------------------------------------
 'This subroutine calculates fatigue of the
-'defense due pressure on the defense.
+'defense from a press
 Sub PressFatigueDef ()
 
     For I = 0 To 4
@@ -5877,10 +5897,10 @@ End Sub
 
 
 '----------------------------------------
-'           PressFatigueDef Subroutine
+'           PressFatigueOff Subroutine
 '----------------------------------------
 'This subroutine calculates fatigue of the
-'defense due pressure on the defense.
+'offense from a press
 Sub PressFatigueOff ()
 
     For I = 0 To 4
@@ -6341,12 +6361,15 @@ Sub PRESSGUARD ()
         End If
     End If
 
-    If defCategory(D) <> 0 And defCategory(D) <= 2 Then
+    If defCategory(D) = 1 Or defCategory(D) = 2 Then
+        'Full Court Press only
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' COMPUTER GUARD FOR PRESS
             BU% = 1
-            If plyrOff_GAME!(P, B1(P, 0), 4) >= plyrOff_GAME!(P, B1(P, 1), 4) And tmFatigue(P, B1(P, 0)) <= 3 Then BU% = 0
+            If plyrOff_GAME!(P, B1(P, 0), 4) >= plyrOff_GAME!(P, B1(P, 1), 4) And tmFatigue(P, B1(P, 0)) <= 3 Then
+                BU% = 0
+            End If
 
         Else
             Call FRAMEOPTION(8, P)
@@ -6544,7 +6567,7 @@ End Sub
 
 
 '----------------------------------------
-'        ComputerStrategy Subroutine
+'       ComputerStrategy Subroutine
 '----------------------------------------
 'This subroutine guides the computer AI
 'in how to handle it's strategy.
@@ -6552,7 +6575,9 @@ Sub ComputerStrategy ()
 
     I6 = 1 - P9
 
+    ' **************************
     ' *** Defensive Strategy ***
+    ' **************************
     defStrat(P9) = 0
     defCoverage(P9) = 0
     defCategory(P9) = 0
@@ -6563,61 +6588,88 @@ Sub ComputerStrategy ()
         'How far behind is the offense?
         scoreDiff = score(I6, 0) - score(P9, 0)
 
+        'If threePtOpt = 1
+
         If currHalf = 1 Then
 
             Call Rolld100(RN0)
             Select Case RN0
             
-                Case 0 To 5
-                    defCoverage(P9) = 1
-                    defCategory(P9) = 0
-                    defStrat(P9) = 1
-                    
-                Case 6 To 10
-                    defCoverage(P9) = 3
-                    defCategory(P9) = 0
-                    defStrat(P9) = 3
-                    
-                Case 11 To 36
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 0
-                    defStrat(P9) = 2
-                    
-                Case 37 To 100
+                'Case 1 To 61
+                Case 1 To 43
+                    defStrat(P9) = 0
                     defCoverage(P9) = 0
                     defCategory(P9) = 0
-                    defStrat(P9) = 0
+                                
+                    'Case 62 To 67
+                Case 44 To 67
 
+                    defStrat(P9) = 1
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 0
+                                
+                Case 68 To 92
+                    defStrat(P9) = 2
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+
+                Case 93 To 94
+                    defStrat(P9) = 15
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+                                
+                Case 95 To 100
+                    defStrat(P9) = 3
+                    defCoverage(P9) = 3
+                    defCategory(P9) = 0
+            
             End Select
 
             Call Rolld100(RN0)
-
             Select Case RN0
             
-                Case 0 To 3
+                Case 1 To 3
+                    'Case 1
+                    defStrat(P9) = 10
                     defCoverage(P9) = 0
                     defCategory(P9) = 4
-                    defStrat(P9) = 10
                     
-                Case 4 To 6
+                Case 4 To 5
+                    'Case 2 to 3
+                    '2-3
+                    defStrat(P9) = 9
                     defCoverage(P9) = 1
                     defCategory(P9) = 3
-                    defStrat(P9) = 9
+
+                Case 6
+                    'Case 4
+                    defStrat(P9) = 16
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 3
                 
                 Case 7 To 9
+                    'Case 5 to 6
+                    defStrat(P9) = 7
                     defCoverage(P9) = 2
                     defCategory(P9) = 3
-                    defStrat(P9) = 7
                 
                 Case 10 To 12
+                    'Case 7 to 8
+                    defStrat(P9) = 8
                     defCoverage(P9) = 0
                     defCategory(P9) = 3
-                    defStrat(P9) = 8
                 
-                Case 13 To 15
+                Case 13 To 14
+                    'Case 9 to 13
+                    defStrat(P9) = 4
                     defCoverage(P9) = 0
                     defCategory(P9) = 1
-                    defStrat(P9) = 4
+                    
+                Case 15
+                    'Case 14, 15
+                    defStrat(P9) = 15
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 1
 
             End Select
 
@@ -6637,26 +6689,32 @@ Sub ComputerStrategy ()
                         
                             Select Case RN0
                             
-                                Case 1 To 60
+                                'Case 1 To 60
+                                Case 1 To 42
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 61 To 80
+
+                                    'Case 61 To 80
+                                Case 43 To 80
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
-                                Case 81 To 90
+
+                                Case 81 To 92
+                                    defStrat(P9) = 6
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 6
-                                Case 91 To 95
+
+                                Case 93 To 97
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
-                                Case 96 To 100
+
+                                Case 98 To 100
+                                    defStrat(P9) = 11
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 11
                             
                             End Select
                         
@@ -6664,26 +6722,33 @@ Sub ComputerStrategy ()
 
                             Select Case RN0
 
-                                Case 1 To 75
+                                'Case 1 To 75
+                                Case 1 To 57
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 76 To 83
+
+                                    'Case 76 To 83
+                                Case 58 To 86
+                                    defStrat(P9) = 4
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 1
-                                    defStrat(P9) = 4
-                                Case 84 To 91
+
+                                Case 87 To 94
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
-                                Case 92 To 96
+
+                                Case 95 To 99
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
-                                Case 97 To 100
+
+                                    'Case 97 to 100
+                                Case 100
+                                    defStrat(P9) = 11
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 11
 
                             End Select
                         
@@ -6691,30 +6756,42 @@ Sub ComputerStrategy ()
 
                             Select Case RN0
 
-                                Case 1 To 70
+                                'Case 1 to 70
+                                Case 1 To 52
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 71 To 75
+
+                                    'Case 71 to 75
+                                Case 53 To 75
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
-                                Case 76 To 85
+
+                                Case 76 To 84
+                                    defStrat(P9) = 2
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 2
+                                    
+                                Case 85
+                                    defStrat(P9) = 15
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+
                                 Case 86 To 93
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
+
                                 Case 94 To 97
+                                    defStrat(P9) = 3
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 3
+
                                 Case 98 To 100
+                                    defStrat(P9) = 12
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 12
                             
                             End Select
 
@@ -6728,22 +6805,34 @@ Sub ComputerStrategy ()
 
                             Select Case RN0
 
-                                Case 1 To 70
+                                'Case 1 To 70
+                                Case 1 To 52
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 71 To 80
+                                    
+                                Case 53 To 74
+                                    defStrat(P9) = 1
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                
+                                    'Case 71 To 80
+                                Case 75 To 84
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
-                                Case 81 To 90
+
+                                    'Case 81 To 90
+                                Case 85 To 94
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
-                                Case 91 To 100
+
+                                    'Case 91 To 100
+                                Case 95 To 100
+                                    defStrat(P9) = 13
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 13
 
                             End Select
                         
@@ -6751,22 +6840,30 @@ Sub ComputerStrategy ()
 
                             Select Case RN0
 
-                                Case 1 To 70
+                                'Case 1 To 70
+                                Case 1 To 52
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 71 To 80
+                                    
+                                    'Case 91 To 100
+                                Case 53 To 80
+                                    defStrat(P9) = 1
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+
+                                    'Case 71 To 80
+                                Case 81 To 90
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
-                                Case 81 To 90
+
+                                    'Case 81 To 90
+                                Case 91 To 100
+                                    defStrat(P9) = 12
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 12
-                                Case 91 To 100
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
-                                    defStrat(P9) = 1
+
                             
                             End Select
 
@@ -6774,22 +6871,35 @@ Sub ComputerStrategy ()
 
                             Select Case RN0
 
-                                Case 1 To 70
+                                'Case 1 To 70
+                                Case 1 To 52
+                                    defStrat(P9) = 0
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 0
-                                Case 71 To 90
+
+                                    'Case 71 To 89
+                                Case 53 To 71
+                                    defStrat(P9) = 2
                                     defCoverage(P9) = 2
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 2
-                                Case 91 To 96
+                                 
+                                Case 72
+                                    'Case 90
+                                    defStrat(P9) = 15
+                                    defCoverage(P9) = 2
+                                    defCategory(P9) = 0
+
+                                Case 73 To 78
+                                    'Case 91 To 96
+                                    defStrat(P9) = 1
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 0
-                                    defStrat(P9) = 1
-                                Case 97 To 100
+
+                                Case 79 To 100
+                                    'Case 97 To 100
+                                    defStrat(P9) = 10
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 10
                                 
                             End Select
 
@@ -6799,47 +6909,64 @@ Sub ComputerStrategy ()
 
                     Select Case scoreDiff
 
-                        Case Is >= 11
-
-                            If RN0 <= 50 Then
-                                defCoverage(P9) = 1
-                                defCategory(P9) = 4
-                                defStrat(P9) = 11
-                            Else
-                                defCoverage(P9) = 3
-                                defCategory(P9) = 4
-                                defStrat(P9) = 13
-                            End If
-                        
-                        Case 5 To 10
-                            defCoverage(P9) = 3
-                            defCategory(P9) = 5
-                            defStrat(P9) = 14
-
                         Case Is <= 4
-                        
+
                             Select Case RN0
 
                                 Case 1 To 15
+                                    defStrat(P9) = 5
                                     defCoverage(P9) = 0
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 5
 
-                                Case 26 To 50
+                                    'Case 26 To 50
+                                Case 16 To 41
+                                    defStrat(P9) = 6
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 2
-                                    defStrat(P9) = 6
 
-                                Case 51 To 75
+                                Case 42 To 63
+                                    'Case 51 To 75
+                                    defStrat(P9) = 11
                                     defCoverage(P9) = 1
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 11
 
-                                Case 76 To 100
+                                Case 64 To 84
+                                    'Case 76 To 100
+                                    defStrat(P9) = 13
                                     defCoverage(P9) = 3
                                     defCategory(P9) = 4
-                                    defStrat(P9) = 13
+                                    
+                                Case 85 To 100
+                                    defStrat(P9) = 1
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
 
+                            End Select
+
+                        Case 5 To 10
+                            defStrat(P9) = 14
+                            defCoverage(P9) = 3
+                            defCategory(P9) = 5
+
+                        Case Is >= 11
+
+                            Select Case RN0
+                                
+                                Case 1 To 47
+                                    defStrat(P9) = 11
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 4
+                                    
+                                Case 48 To 93
+                                    defStrat(P9) = 13
+                                    defCoverage(P9) = 3
+                                    defCategory(P9) = 4
+                                    
+                                Case 94 To 100
+                                    defStrat(P9) = 1
+                                    defCoverage(P9) = 1
+                                    defCategory(P9) = 0
+                                                                        
                             End Select
 
                     End Select
@@ -6849,38 +6976,65 @@ Sub ComputerStrategy ()
         End If
 
         If currHalf > 2 Then
-            If RN0 <= 50 Then
-                defCoverage(P9) = 0
-                defCategory(P9) = 0
-                defStrat(P9) = 0
-            Else
-                defCoverage(P9) = 2
-                defCategory(P9) = 0
-                defStrat(P9) = 2
-            End If
+
+            Select Case RN0
+
+                'Case Is <= 50
+                Case 0 To 32
+                    defStrat(P9) = 0
+                    defCoverage(P9) = 0
+                    defCategory(P9) = 0
+
+                Case 33 To 36
+                    defStrat(P9) = 1
+                    defCoverage(P9) = 1
+                    defCategory(P9) = 0
+
+                Case 37 To 50
+    
+
+                Case 51 To 96
+                    defStrat(P9) = 2
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+
+                Case 97 To 100
+                    defStrat(P9) = 15
+                    defCoverage(P9) = 2
+                    defCategory(P9) = 0
+
+            End Select
+
         End If
 
     Else
-    
+
         Call Rolld100(RN0)
 
         Select Case RN0
 
-            Case 1 To 10
-                defCoverage(P9) = 1
-                defStrat(P9) = 1
-                defCategory(P9) = 0
-
-            Case 11 To 36
-                defCoverage(P9) = 2
-                defStrat(P9) = 2
-                defCategory(P9) = 0
-
-            Case 37 To 100
+            'Case 1 To 64
+            Case 1 To 46
                 defStrat(P9) = 0
                 defCoverage(P9) = 0
                 defCategory(P9) = 0
-
+            
+                'Case 65 To 74
+            Case 47 To 74
+                defStrat(P9) = 1
+                defCoverage(P9) = 1
+                defCategory(P9) = 0
+            
+            Case 75 To 98
+                    
+                defCoverage(P9) = 2
+                defCategory(P9) = 0
+                
+            Case 99 To 100
+                defStrat(P9) = 15
+                defCoverage(P9) = 2
+                defCategory(P9) = 0
+            
         End Select
 
         Call Rolld100(RN0)
@@ -6888,41 +7042,47 @@ Sub ComputerStrategy ()
         Select Case RN0
 
             Case 1 To 5
-                defCategory(P9) = 1
                 defStrat(P9) = 4
+                defCategory(P9) = 1
                 defCoverage(P9) = 0
 
             Case 6 To 9
-                defCategory(P9) = 3
                 defStrat(P9) = 8
+                defCategory(P9) = 3
                 defCoverage(P9) = 0
 
             Case 10
-                defCategory(P9) = 3
                 defStrat(P9) = 7
+                defCategory(P9) = 3
                 defCoverage(P9) = 2
 
-                'Nothing for 11 to 100
+            Case 11
+                defStrat(P9) = 16
+                defCategory(P9) = 3
+                defCoverage(P9) = 2
 
         End Select
 
     End If
 
-
+    ' **************************
     ' *** Offensive Strategy ***
+    ' **************************
     Call Rolld100(RN0)
 
     If currHalf = 1 Then
 
         Select Case RN0
 
-            Case 1 To 80
+            'Case 1 To 80
+            Case 1 To 75
                 offStrat(P9) = 0
 
-            Case 81 To 90
+                'Case 81 To 90
+            Case 76 To 94
                 offStrat(P9) = 1
 
-            Case 91 To 100
+            Case 95 To 100
                 offStrat(P9) = 2
 
         End Select
@@ -6930,38 +7090,45 @@ Sub ComputerStrategy ()
     End If
 
     If currHalf >= 2 Then
-    
+
         If score(P9, 0) - score(I6, 0) < 0 Then
+            'Offense is behind
 
             If gameClock! <= 180 Then
 
                 If RN0 <= 30 Then
+                    'Quick
                     offStrat(P9) = 3
                 Else
+                    'Delay
                     offStrat(P9) = 4
                 End If
 
             Else
 
-                If RN0 <= 80 Then
+                'If RN0 <= 80 Then
+                If RN0 <= 70 Then
                     offStrat(P9) = 0
                 Else
                     offStrat(P9) = 1
                 End If
-                
+
             End If
 
         Else
 
-            If RN0 <= 80 Then
+            'Offense is tied / ahead
+            'If RN0 <= 80 Then
+            If RN0 <= 85 Then
                 offStrat(P9) = 0
             Else
                 offStrat(P9) = 2
             End If
-            
+
         End If
-        
-        If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) = -3 Or score(P9, 0) - score(I6, 0) = -6) Then
+
+        If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) <= -3) Then
+            'If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) = -3 Or score(P9, 0) - score(I6, 0) = -6) Then
             offStrat(P9) = 9
         End If
 
@@ -8594,11 +8761,12 @@ End Function
 'issues are happening in a game.
 Sub pbplog (lineNumber)
 
-    Print #11, "Calling from "; lineNumber
-    Print #11, gameTeams$(0); " vs "; gameTeams$(1)
+    'Print #11, "Calling from "; lineNumber
+    'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, pbpString$
-    Print #11, "Pacing factor = "; JY
-    Print #11,
+    Print #11, lineNumber
+    'Print #11, defAdjVsShot(4, defCoverage(D));",";teamAdj(P, 5);",";teamAdj(D, 6);",";defAdjVsShot(2, defCoverage(D));",";OY%;CY
+    'Print #11,
 
 End Sub
 
@@ -8939,8 +9107,6 @@ Sub ReadGameExtraData (teamYear$, teamIdx, gameIdx, dataOK)
         gameCoaches$(gameIdx) = RTrim$(Q$(0))
         gameArena$(gameIdx) = RTrim$(Q$(1))
         gameMascots$(gameIdx) = RTrim$(Q$(2))
-
-        test& = CVL(Q$(3))
         avgAttendance&(gameIdx) = CVL(Q$(3))
 
         For I = 0 To 13
@@ -8959,9 +9125,9 @@ Sub ReadGameExtraData (teamYear$, teamIdx, gameIdx, dataOK)
         Next
 
         'If CVI(Q$(249)) <> 999 Then
-        If avgAttendance&(gameIdx) > 100000 Then
-        'If attendance is abnormally high, we ARE
-        'clearly not reading accurate data
+        If avgAttendance&(gameIdx) > 100000 Or (CheckString%(gameArena$(gameIdx)) = 1) Then
+            'If attendance is abnormally high, we ARE
+            'clearly not reading accurate data
 
             dataOK = 0
 
@@ -9818,7 +9984,11 @@ Sub CheckRecords ()
         Next I2
 
         ' TEAM FIELD GOAL PERCENTAGES
-        For I1 = 0 To 14: V8(I, I1) = 0: V8(1 - I, I1) = 0: Next
+        For I1 = 0 To 14: 
+            V8(I, I1) = 0
+            V8(1 - I, I1) = 0
+        Next
+
         For I2 = 0 To 1
             For I1 = 0 To 13
                 V8(I2, 0) = V8(I2, 0) + plyrOff_GAME!(I2, I1, 8)
@@ -10786,3 +10956,29 @@ Sub CheckRecords ()
 
 End Sub
 
+
+'----------------------------------------
+'         CheckString Subroutine
+'----------------------------------------
+Function CheckString% (targetString$)
+
+    badString = 0
+    stringPosition% = 1
+
+    Do
+
+        test = Asc(Mid$(targetString$, stringPosition%, 1))
+
+        'If it is a non-printable character (corrupt data)
+        If test > 122 Or test < 32 Then
+            stringPosition% = 1
+            badString = 1
+        Else
+            stringPosition% = stringPosition% + 1
+        End If
+
+    Loop Until stringPosition% = Len(targetString$) Or badString = 1
+
+    CheckString% = badString
+
+End Function

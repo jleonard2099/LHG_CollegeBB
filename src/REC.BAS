@@ -15,102 +15,93 @@ SUB SeasonRecords ()
 
 	ReDim menuChoices$(1 to 7)
 
-    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
+	Do
+		
+		Cls
 
-		MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
-		BoxWidth = 24
-		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-		Call CSMsgBox(MsgText$, BoxWidth, Pass)
-		I$ = GetKeyPress$
-		Call CSMsgBox("", 0, Pass)
+		Call TITLE
 
-    Else
+		menuChoices$(1) = "VIEW SEASON RECORDS      "
+		menuChoices$(2) = "PRINT SEASON RECORDS     "
+		menuChoices$(3) = "DELETE SEASON RECORDS    "
+		menuChoices$(4) = "VIEW SINGLE GAME RECORDS "
+		menuChoices$(5) = "PRINT SINGLE GAME RECORDS"
+		menuChoices$(6) = "DELETE GAME RECORDS      "
+		menuChoices$(7) = "RETURN TO GAME MENU      "
+		Selection% = 1
+		Count% = 7
+		Start% = 1
+		ExitCode% = 7
+		FileFGColor% = 15: FileBGColor% = 1
+		HiLiteFGColor% = 0: HiLiteBGColor% = 7
+		Spacing% = 1
+		Row% = 8
+		menuWidth% = Len(menuChoices$(1))
+		Column% = (80 - menuWidth% - 2) / 2
 
-		Do
-			
-			Cls
+		Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
 
-			Call TITLE
+		_MouseShow "DEFAULT"
+		MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+		_MouseHide
 
-			menuChoices$(1) = "VIEW SEASON RECORDS      "
-			menuChoices$(2) = "PRINT SEASON RECORDS     "
-			menuChoices$(3) = "DELETE SEASON RECORDS    "
-			menuChoices$(4) = "VIEW SINGLE GAME RECORDS "
-			menuChoices$(5) = "PRINT SINGLE GAME RECORDS"
-			menuChoices$(6) = "DELETE GAME RECORDS      "
-			menuChoices$(7) = "RETURN TO GAME MENU      "
-			Selection% = 1
-			Count% = 7
-			Start% = 1
-			ExitCode% = 7
-			FileFGColor% = 15: FileBGColor% = 1
-			HiLiteFGColor% = 0: HiLiteBGColor% = 7
-			Spacing% = 1
-			Row% = 8
-			menuWidth% = Len(menuChoices$(1))
-			Column% = (80 - menuWidth% - 2) / 2
+		Color , 0
 
-			Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+		If ExitCode% <> 27 Then	
 
-			_MouseShow "DEFAULT"
-			MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
-			_MouseHide
+			Select Case Selection%
 
-			Color , 0
+				Case 1, 2:
+					Call ViewSeasonRecords
 
-			If ExitCode% <> 27 Then	
+				Case 2: 
 
-				Select Case Selection%
 
-					Case 1: 
-						Call ViewSeasonRecords
 
-					Case 2: 
-						userKey$ = GetPrintOptions$
+					userKey$ = GetPrintOptions$
 
-						If userKey$ <> Chr$(27) Then
+					If userKey$ <> Chr$(27) Then
 
-							Select Case userKey$
+						Select Case userKey$
 
-								Case "F"
-									userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")			
-									If userFile$ <> "" Then
-										Call SeasonRecords_Report(0, userFile$)
-									End If
+							Case "F"
+								userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")			
+								If userFile$ <> "" Then
+									Call SeasonRecords_Report(0, userFile$)
+								End If
 
-								Case "P"
-									Call SeasonRecords_Report(1, "RECORDS")
+							Case "P"
+								Call SeasonRecords_Report(1, "RECORDS")
 
-							End Select
-							
-						End If
+						End Select
+						
+					End If
 
-					Case 3: 
-						If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
-							Kill diskPaths$(1) + "RECORDS.CBB"
-						End If
+				Case 3: 
+					If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
+						Kill diskPaths$(1) + "RECORDS.CBB"
+					End If
 
-					Case 4: 
-						Call GameRecords (1)
+				Case 4: 
+					Call GameRecords (1)
 
-					Case 5: 
-						Call GameRecords (2)
+				Case 5: 
+					Call GameRecords (2)
 
-					Case 6: 
-						If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then 
-							Kill diskPaths$(1) + "RECORDS.GAM"
-						End If
+				Case 6: 
+					If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then 
+						Kill diskPaths$(1) + "RECORDS.GAM"
+					End If
 
-					Case 7: Cls
+				Case 7: Cls
 
-				End Select
+			End Select
 
-			End If
+		End If
 
-		Loop Until Selection% = 7 OR ExitCode% = 27
+	Loop Until Selection% = 7 OR ExitCode% = 27
 
-	End If
+
 
 	Cls
 
@@ -476,122 +467,137 @@ Sub SeasonRecords_Report  (printDest, destFile$)
 	Shared indRecordDesc$(), teamRecordDesc$(), plyrRecDesc$()
 	Shared offRecDesc$(), defRecDesc$()
 
-	Color 15, 0
-	Cls
+	If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
 
-	Open destFile$ For Output As #1
+		MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
+		BoxWidth = 24
+		BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+		Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+		Call CSMsgBox(MsgText$, BoxWidth, Pass)
+		I$ = GetKeyPress$
+		Call CSMsgBox("", 0, Pass)
 
-	Print #1,  Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
-	Print #1, 
-	Print #1,  "CATEGORY                PLAYER           TEAM            RECORD"
+	Else
 
-	Print #1,  indRecordDesc$(1); Tab(28); plyrRecDesc$(1, 0); Tab(42); plyrRecDesc$(1, 1); Tab(62); Using "####"; plyrRecords!(1)
-	Print #1,  indRecordDesc$(2); Tab(28); plyrRecDesc$(2, 0); Tab(42); plyrRecDesc$(2, 1); Tab(62); Using "####"; plyrRecords!(2)
-	Print #1,  indRecordDesc$(3); Tab(28); plyrRecDesc$(3, 0); Tab(42); plyrRecDesc$(3, 1); Tab(62); Using "####"; plyrRecords!(3)
 
-	Print #1,  indRecordDesc$(4); Tab(28); plyrRecDesc$(4, 0); Tab(42); plyrRecDesc$(4, 1); Tab(62); Using "##.#"; plyrRecords!(4) * 100
+		Color 15, 0
+		Cls
 
-	Print #1,  indRecordDesc$(5); Tab(28); plyrRecDesc$(5, 0); Tab(42); plyrRecDesc$(5, 1); Tab(62); Using "####"; plyrRecords!(5)
-	Print #1,  indRecordDesc$(6); Tab(28); plyrRecDesc$(6, 0); Tab(42); plyrRecDesc$(6, 1); Tab(62); Using "####"; plyrRecords!(6)
+		Open destFile$ For Output As #1
 
-	Print #1,  indRecordDesc$(7); Tab(28); plyrRecDesc$(7, 0); Tab(42); plyrRecDesc$(7, 1); Tab(62); Using "##.#"; plyrRecords!(7) * 100
+		Print #1,  Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
+		Print #1, 
+		Print #1,  "CATEGORY                PLAYER           TEAM            RECORD"
 
-	Print #1,  indRecordDesc$(8); Tab(28); plyrRecDesc$(8, 0); Tab(42); plyrRecDesc$(8, 1); Tab(62); Using "####"; plyrRecords!(8)
-	Print #1,  indRecordDesc$(9); Tab(28); plyrRecDesc$(9, 0); Tab(42); plyrRecDesc$(9, 1); Tab(62); Using "####"; plyrRecords!(9)
+		Print #1,  indRecordDesc$(1); Tab(28); plyrRecDesc$(1, 0); Tab(42); plyrRecDesc$(1, 1); Tab(62); Using "####"; plyrRecords!(1)
+		Print #1,  indRecordDesc$(2); Tab(28); plyrRecDesc$(2, 0); Tab(42); plyrRecDesc$(2, 1); Tab(62); Using "####"; plyrRecords!(2)
+		Print #1,  indRecordDesc$(3); Tab(28); plyrRecDesc$(3, 0); Tab(42); plyrRecDesc$(3, 1); Tab(62); Using "####"; plyrRecords!(3)
 
-	Print #1,  indRecordDesc$(10); Tab(28); plyrRecDesc$(10, 0); Tab(42); plyrRecDesc$(10, 1); Tab(62); Using "##.#"; plyrRecords!(10) * 100
+		Print #1,  indRecordDesc$(4); Tab(28); plyrRecDesc$(4, 0); Tab(42); plyrRecDesc$(4, 1); Tab(62); Using "##.#"; plyrRecords!(4) * 100
 
-	Print #1,  indRecordDesc$(11); Tab(28); plyrRecDesc$(11, 0); Tab(42); plyrRecDesc$(11, 1); Tab(62); Using "####"; plyrRecords!(11)
-	Print #1,  indRecordDesc$(12); Tab(28); plyrRecDesc$(12, 0); Tab(42); plyrRecDesc$(12, 1); Tab(62); Using "####"; plyrRecords!(12)
-	Print #1,  indRecordDesc$(13); Tab(28); plyrRecDesc$(13, 0); Tab(42); plyrRecDesc$(13, 1); Tab(62); Using "####"; plyrRecords!(13)
-	Print #1,  indRecordDesc$(14); Tab(28); plyrRecDesc$(14, 0); Tab(42); plyrRecDesc$(14, 1); Tab(62); Using "####"; plyrRecords!(14)
-	Print #1,  indRecordDesc$(15); Tab(28); plyrRecDesc$(15, 0); Tab(42); plyrRecDesc$(15, 1); Tab(62); Using "####"; plyrRecords!(15)
-	Print #1,  indRecordDesc$(16); Tab(28); plyrRecDesc$(16, 0); Tab(42); plyrRecDesc$(16, 1); Tab(62); Using "####"; plyrRecords!(16)
-	Print #1,  indRecordDesc$(17); Tab(28); plyrRecDesc$(17, 0); Tab(42); plyrRecDesc$(17, 1); Tab(62); Using "####"; plyrRecords!(17)
+		Print #1,  indRecordDesc$(5); Tab(28); plyrRecDesc$(5, 0); Tab(42); plyrRecDesc$(5, 1); Tab(62); Using "####"; plyrRecords!(5)
+		Print #1,  indRecordDesc$(6); Tab(28); plyrRecDesc$(6, 0); Tab(42); plyrRecDesc$(6, 1); Tab(62); Using "####"; plyrRecords!(6)
 
-	Print #1,  indRecordDesc$(18); Tab(28); plyrRecDesc$(18, 0); Tab(42); plyrRecDesc$(18, 1); Tab(62); Using "##.#"; plyrRecords!(18)
+		Print #1,  indRecordDesc$(7); Tab(28); plyrRecDesc$(7, 0); Tab(42); plyrRecDesc$(7, 1); Tab(62); Using "##.#"; plyrRecords!(7) * 100
 
-	Print #1,  indRecordDesc$(19); Tab(28); plyrRecDesc$(19, 0); Tab(42); plyrRecDesc$(19, 1); Tab(62); Using "####"; plyrRecords!(19)
-	Print #1,  indRecordDesc$(20); Tab(28); plyrRecDesc$(20, 0); Tab(42); plyrRecDesc$(20, 1); Tab(62); Using "####"; plyrRecords!(20)
-	Print #1,  indRecordDesc$(21); Tab(28); plyrRecDesc$(21, 0); Tab(42); plyrRecDesc$(21, 1); Tab(62); Using "####"; plyrRecords!(21)
-	Print #1,  indRecordDesc$(22); Tab(28); plyrRecDesc$(22, 0); Tab(42); plyrRecDesc$(22, 1); Tab(62); Using "####"; plyrRecords!(22)
-	Print #1,  indRecordDesc$(23); Tab(28); plyrRecDesc$(23, 0); Tab(42); plyrRecDesc$(23, 1); Tab(62); Using "####"; plyrRecords!(23)
+		Print #1,  indRecordDesc$(8); Tab(28); plyrRecDesc$(8, 0); Tab(42); plyrRecDesc$(8, 1); Tab(62); Using "####"; plyrRecords!(8)
+		Print #1,  indRecordDesc$(9); Tab(28); plyrRecDesc$(9, 0); Tab(42); plyrRecDesc$(9, 1); Tab(62); Using "####"; plyrRecords!(9)
 
-	Print #1,  indRecordDesc$(24); Tab(28); plyrRecDesc$(24, 0); Tab(42); plyrRecDesc$(24, 1); Tab(62); Using "##.#"; plyrRecords!(24)
+		Print #1,  indRecordDesc$(10); Tab(28); plyrRecDesc$(10, 0); Tab(42); plyrRecDesc$(10, 1); Tab(62); Using "##.#"; plyrRecords!(10) * 100
 
-	Print #1,  indRecordDesc$(25); Tab(28); plyrRecDesc$(25, 0); Tab(42); plyrRecDesc$(25, 1); Tab(62); Using "####"; plyrRecords!(25)
+		Print #1,  indRecordDesc$(11); Tab(28); plyrRecDesc$(11, 0); Tab(42); plyrRecDesc$(11, 1); Tab(62); Using "####"; plyrRecords!(11)
+		Print #1,  indRecordDesc$(12); Tab(28); plyrRecDesc$(12, 0); Tab(42); plyrRecDesc$(12, 1); Tab(62); Using "####"; plyrRecords!(12)
+		Print #1,  indRecordDesc$(13); Tab(28); plyrRecDesc$(13, 0); Tab(42); plyrRecDesc$(13, 1); Tab(62); Using "####"; plyrRecords!(13)
+		Print #1,  indRecordDesc$(14); Tab(28); plyrRecDesc$(14, 0); Tab(42); plyrRecDesc$(14, 1); Tab(62); Using "####"; plyrRecords!(14)
+		Print #1,  indRecordDesc$(15); Tab(28); plyrRecDesc$(15, 0); Tab(42); plyrRecDesc$(15, 1); Tab(62); Using "####"; plyrRecords!(15)
+		Print #1,  indRecordDesc$(16); Tab(28); plyrRecDesc$(16, 0); Tab(42); plyrRecDesc$(16, 1); Tab(62); Using "####"; plyrRecords!(16)
+		Print #1,  indRecordDesc$(17); Tab(28); plyrRecDesc$(17, 0); Tab(42); plyrRecDesc$(17, 1); Tab(62); Using "####"; plyrRecords!(17)
 
-	Print #1, 
-	Print #1,  Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
-	Print #1, 
-	Print #1,  "CATEGORY                        TEAM             RECORD            "
+		Print #1,  indRecordDesc$(18); Tab(28); plyrRecDesc$(18, 0); Tab(42); plyrRecDesc$(18, 1); Tab(62); Using "##.#"; plyrRecords!(18)
 
-	Print #1,  teamRecordDesc$(1); Tab(33); offRecDesc$(1); Tab(53); Using "####"; offRecords!(1)
-	Print #1,  teamRecordDesc$(2); Tab(33); offRecDesc$(2); Tab(53); Using "####"; offRecords!(2)
-	Print #1,  teamRecordDesc$(3); Tab(33); offRecDesc$(3); Tab(53); Using "##.#"; offRecords!(3) * 100
-	Print #1,  teamRecordDesc$(4); Tab(33); offRecDesc$(4); Tab(53); Using "####"; offRecords!(4)
-	Print #1,  teamRecordDesc$(5); Tab(33); offRecDesc$(5); Tab(53); Using "####"; offRecords!(5)
-	Print #1,  teamRecordDesc$(6); Tab(33); offRecDesc$(6); Tab(53); Using "##.#"; offRecords!(6) * 100
-	Print #1,  teamRecordDesc$(7); Tab(33); offRecDesc$(7); Tab(53); Using "####"; offRecords!(7)
-	Print #1,  teamRecordDesc$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
-	Print #1,  teamRecordDesc$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
-	Print #1,  teamRecordDesc$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
-	Print #1,  teamRecordDesc$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
-	Print #1,  teamRecordDesc$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
-	Print #1,  teamRecordDesc$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
-	Print #1,  teamRecordDesc$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
-	Print #1,  teamRecordDesc$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
-	Print #1,  teamRecordDesc$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
-	Print #1,  teamRecordDesc$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
-	Print #1,  teamRecordDesc$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
-	Print #1,  teamRecordDesc$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
-	Print #1,  teamRecordDesc$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
-	Print #1,  "WINS"; Tab(33); offRecDesc$(21); Tab(53); Using "####"; offRecords!(21)
+		Print #1,  indRecordDesc$(19); Tab(28); plyrRecDesc$(19, 0); Tab(42); plyrRecDesc$(19, 1); Tab(62); Using "####"; plyrRecords!(19)
+		Print #1,  indRecordDesc$(20); Tab(28); plyrRecDesc$(20, 0); Tab(42); plyrRecDesc$(20, 1); Tab(62); Using "####"; plyrRecords!(20)
+		Print #1,  indRecordDesc$(21); Tab(28); plyrRecDesc$(21, 0); Tab(42); plyrRecDesc$(21, 1); Tab(62); Using "####"; plyrRecords!(21)
+		Print #1,  indRecordDesc$(22); Tab(28); plyrRecDesc$(22, 0); Tab(42); plyrRecDesc$(22, 1); Tab(62); Using "####"; plyrRecords!(22)
+		Print #1,  indRecordDesc$(23); Tab(28); plyrRecDesc$(23, 0); Tab(42); plyrRecDesc$(23, 1); Tab(62); Using "####"; plyrRecords!(23)
 
-	Print #1, 
-	Print #1,  Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
-	Print #1, 
-	Print #1,  "CATEGORY                        TEAM             RECORD            "
+		Print #1,  indRecordDesc$(24); Tab(28); plyrRecDesc$(24, 0); Tab(42); plyrRecDesc$(24, 1); Tab(62); Using "##.#"; plyrRecords!(24)
 
-	Print #1,  teamRecordDesc$(1); Tab(33); defRecDesc$(1); Tab(53); Using "####"; defRecords!(1)
-	Print #1,  teamRecordDesc$(2); Tab(33); defRecDesc$(2); Tab(53); Using "####"; defRecords!(2)
-	Print #1,  teamRecordDesc$(3); Tab(33); defRecDesc$(3); Tab(53); Using "##.#"; defRecords!(3) * 100
-	Print #1,  teamRecordDesc$(4); Tab(33); defRecDesc$(4); Tab(53); Using "####"; defRecords!(4)
-	Print #1,  teamRecordDesc$(5); Tab(33); defRecDesc$(5); Tab(53); Using "####"; defRecords!(5)
-	Print #1,  teamRecordDesc$(6); Tab(33); defRecDesc$(6); Tab(53); Using "##.#"; defRecords!(6) * 100
-	Print #1,  teamRecordDesc$(7); Tab(33); defRecDesc$(7); Tab(53); Using "####"; defRecords!(7)
-	Print #1,  teamRecordDesc$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
-	Print #1,  teamRecordDesc$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
-	Print #1,  teamRecordDesc$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
-	Print #1,  teamRecordDesc$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
-	Print #1,  teamRecordDesc$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
-	Print #1,  teamRecordDesc$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
-	Print #1,  teamRecordDesc$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
-	Print #1,  teamRecordDesc$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
-	Print #1,  teamRecordDesc$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
-	Print #1,  teamRecordDesc$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
-	Print #1,  teamRecordDesc$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
-	Print #1,  teamRecordDesc$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
-	Print #1,  teamRecordDesc$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
-	Print #1,  "LOSSES"; Tab(33); defRecDesc$(21); Tab(53); Using "####"; defRecords!(21)
+		Print #1,  indRecordDesc$(25); Tab(28); plyrRecDesc$(25, 0); Tab(42); plyrRecDesc$(25, 1); Tab(62); Using "####"; plyrRecords!(25)
 
-	Close #1
+		Print #1, 
+		Print #1,  Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
+		Print #1, 
+		Print #1,  "CATEGORY                        TEAM             RECORD            "
 
-	If printDest = 1 Then
+		Print #1,  teamRecordDesc$(1); Tab(33); offRecDesc$(1); Tab(53); Using "####"; offRecords!(1)
+		Print #1,  teamRecordDesc$(2); Tab(33); offRecDesc$(2); Tab(53); Using "####"; offRecords!(2)
+		Print #1,  teamRecordDesc$(3); Tab(33); offRecDesc$(3); Tab(53); Using "##.#"; offRecords!(3) * 100
+		Print #1,  teamRecordDesc$(4); Tab(33); offRecDesc$(4); Tab(53); Using "####"; offRecords!(4)
+		Print #1,  teamRecordDesc$(5); Tab(33); offRecDesc$(5); Tab(53); Using "####"; offRecords!(5)
+		Print #1,  teamRecordDesc$(6); Tab(33); offRecDesc$(6); Tab(53); Using "##.#"; offRecords!(6) * 100
+		Print #1,  teamRecordDesc$(7); Tab(33); offRecDesc$(7); Tab(53); Using "####"; offRecords!(7)
+		Print #1,  teamRecordDesc$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
+		Print #1,  teamRecordDesc$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
+		Print #1,  teamRecordDesc$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
+		Print #1,  teamRecordDesc$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
+		Print #1,  teamRecordDesc$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
+		Print #1,  teamRecordDesc$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
+		Print #1,  teamRecordDesc$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
+		Print #1,  teamRecordDesc$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
+		Print #1,  teamRecordDesc$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
+		Print #1,  teamRecordDesc$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
+		Print #1,  teamRecordDesc$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
+		Print #1,  teamRecordDesc$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
+		Print #1,  teamRecordDesc$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
+		Print #1,  "WINS"; Tab(33); offRecDesc$(21); Tab(53); Using "####"; offRecords!(21)
 
-		Open destFile$ For Input As #2
+		Print #1, 
+		Print #1,  Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
+		Print #1, 
+		Print #1,  "CATEGORY                        TEAM             RECORD            "
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+		Print #1,  teamRecordDesc$(1); Tab(33); defRecDesc$(1); Tab(53); Using "####"; defRecords!(1)
+		Print #1,  teamRecordDesc$(2); Tab(33); defRecDesc$(2); Tab(53); Using "####"; defRecords!(2)
+		Print #1,  teamRecordDesc$(3); Tab(33); defRecDesc$(3); Tab(53); Using "##.#"; defRecords!(3) * 100
+		Print #1,  teamRecordDesc$(4); Tab(33); defRecDesc$(4); Tab(53); Using "####"; defRecords!(4)
+		Print #1,  teamRecordDesc$(5); Tab(33); defRecDesc$(5); Tab(53); Using "####"; defRecords!(5)
+		Print #1,  teamRecordDesc$(6); Tab(33); defRecDesc$(6); Tab(53); Using "##.#"; defRecords!(6) * 100
+		Print #1,  teamRecordDesc$(7); Tab(33); defRecDesc$(7); Tab(53); Using "####"; defRecords!(7)
+		Print #1,  teamRecordDesc$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
+		Print #1,  teamRecordDesc$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
+		Print #1,  teamRecordDesc$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
+		Print #1,  teamRecordDesc$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
+		Print #1,  teamRecordDesc$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
+		Print #1,  teamRecordDesc$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
+		Print #1,  teamRecordDesc$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
+		Print #1,  teamRecordDesc$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
+		Print #1,  teamRecordDesc$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
+		Print #1,  teamRecordDesc$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
+		Print #1,  teamRecordDesc$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
+		Print #1,  teamRecordDesc$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
+		Print #1,  teamRecordDesc$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
+		Print #1,  "LOSSES"; Tab(33); defRecDesc$(21); Tab(53); Using "####"; defRecords!(21)
 
-		Close #2
+		Close #1
 
-		LPrint Chr$(12)
+		If printDest = 1 Then
+
+			Open destFile$ For Input As #2
+
+			Do While Not EOF(2)
+				Line Input #2, X$
+				LPrint X$
+			Loop
+
+			Close #2
+
+			LPrint Chr$(12)
+			
+			Kill destFile$
+
+		End If
 		
-		Kill destFile$
-
 	End If
 
 END SUB
