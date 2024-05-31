@@ -129,8 +129,6 @@ Sub InitVar ()
     XM = 0
     XS = 0
 
-    BO% = 0
-    BU% = 0
     DK% = 0
     FT% = 0
     LC% = 0
@@ -1042,13 +1040,13 @@ Sub MAKEPBP ()
                         If checkForBlock = 1 Then
 
                             'If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 1 Then
-                            If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 2 Then
+                            If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 1 Then
                                 DK% = 1
                             End If
-                            If (ballCarrier = 2 Or ballCarrier = 3) And d100% <= 6 Then
+                            If (ballCarrier = 2 Or ballCarrier = 3) And d100% <= 5 Then
                                 DK% = 1
                             End If
-                            If ballCarrier = 4 And d100% <= 8 Then
+                            If ballCarrier = 4 And d100% <= 7 Then
                                 DK% = 1
                             End If
 
@@ -1123,7 +1121,7 @@ Sub MAKEPBP ()
 
                                 End Select
 
-                                If checkForBlock = 1 And d100% <= 3 Then
+                                If checkForBlock = 1 And d100% <= 2 Then
                                     DK% = 1
                                 End If
 
@@ -2214,7 +2212,8 @@ Sub MAKEPBP ()
                 End Select
 
             Case 10
-                'PASS prevBall$=PREV HANDLER
+                'PASS 
+                'prevBall$=PREV HANDLER
                 V$ = players$(P, B1(P, ballCarrier))
 
                 RN1 = Int(Rnd(1) * 60) + 1
@@ -3345,6 +3344,7 @@ Sub FoulCalled (randomCalcs%)
 
     End If
 
+    'Increase player + team fouls
     plyrOff_GAME!(D, B1(D, fouler), 12) = plyrOff_GAME!(D, B1(D, fouler), 12) + 1
     teamFouls(D) = teamFouls(D) + 1
 
@@ -3354,6 +3354,7 @@ Sub FoulCalled (randomCalcs%)
         plyrOff_GAME!(D, B1(D, fouler), 3) = plyrOff_GAME!(D, B1(D, fouler), 3) + 1
     End If
 
+    'Check for player DQ
     If plyrOff_GAME!(D, B1(D, fouler), 12) < foulsToDQ Then
 
         If pbpOpt = 1 And pbpDelay! <> 0 Then
@@ -3739,7 +3740,7 @@ Sub TOURNEY_Game ()
 
         Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
         Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+        Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
         Get #1, I
 
         VS1% = CVI(Q$(16))
@@ -3963,7 +3964,7 @@ Sub UpdateTourneyFile (gameIdx, loseTeam$, winTeam$)
 
     Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
     Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+    Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
     For X = 0 To 14:
         LSet Q$(1 + X) = MKI$(NG1%(X))
@@ -6366,9 +6367,9 @@ Sub PRESSGUARD ()
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
             ' COMPUTER GUARD FOR PRESS
-            BU% = 1
+            guardIdx = 1
             If plyrOff_GAME!(P, B1(P, 0), 4) >= plyrOff_GAME!(P, B1(P, 1), 4) And tmFatigue(P, B1(P, 0)) <= 3 Then
-                BU% = 0
+                guardIdx = 0
             End If
 
         Else
@@ -6387,7 +6388,7 @@ Sub PRESSGUARD ()
                 I1 = Val(I$)
             Loop Until I1 >= 0 And I1 <= 1
 
-            BU% = I1
+            guardIdx = I1
             Color 15, 0
             Call SCOREBOARD
 
@@ -8336,7 +8337,7 @@ Sub SAVESTATS ()
 
                 Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                 Field #1, 64 As X$, 3 As Q$(20), 3 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                 NG%(13) = 1
 

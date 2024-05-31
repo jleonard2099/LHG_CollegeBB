@@ -21,7 +21,7 @@ Sub TOURNEY ()
     Dim gameDay(MAX_TEAMS), gameMonth(MAX_TEAMS), gameYear(MAX_TEAMS)
 
     Shared coachMode$(), foulShotOpt$(), location$()
-    Shared playMode$(), sClockOpt$(), yesNo$()
+    Shared modeAbbrev$(), playMode$(), sClockOpt$(), yesNo$()
 
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
@@ -51,39 +51,45 @@ Sub TOURNEY ()
 
         Do
 
+            Color 15, 0
             Cls
 
             Locate 23, 1
             Color , 1: Print Tab(80); " ";
-
             Locate 23, 1
             Color 13: Print "SC";
             Color 14: Print "-SHOT CLOCK  ";
-            Color 13: Print "HC";
-            Color 14: Print "-HOME COURT ADVANTAGE  ";
-            Color 13: Print "3";
-            Color 14: Print "-USE 3-POINT SHOT  ";
+            Color 13: Print "MA";
+            Color 14: Print "-MODE OF PLAY  ";
+            Color 11: Print " G";
+            Color 14: Print "-GOTO GAME";
+            Color 11: Print " B";
+            Color 14: Print "-BOXSCORE OPTIONS"
 
             Locate 24, 1
             Color , 1: Print Tab(80); " ";
             Locate 24, 1
-            Color 11: Print "PGUP  PGDN  ";
+            Color 13: Print "HC";
+            Color 14: Print "-HOME COURT  ";
+            Color 13: Print "3";
+            Color 14: Print "-USE 3-PT SHOT  ";
             Color 13: Print "REG";
             Color 14: Print "-REGION  ";
             Color 13: Print "RND";
             Color 14: Print "-ROUND  ";
             Color 13: Print "GM";
             Color 14: Print "-GAME  ";
+            Color 11: Print "   PGUP  PGDN  ";
 
             Locate 25, 1
             Color , 1: Print Tab(80); " ";
             Locate 25, 1
             Color 11: Print "P";
             Color 14: Print "-PLAY TOURNAMENT   ";
-            Color 11: Print "Q";
-            Color 14: Print "-QUIT  ";
             Color 11: Print "E";
             Color 14: Print "-EDIT A GAME  ";
+            Color 11: Print "Q";
+            Color 14: Print "-QUIT  ";
 
             Locate 1, 1: Print Tab(80); " ";
             Locate 1, 1: Print tourneyFile$
@@ -94,7 +100,7 @@ Sub TOURNEY ()
 
             Locate 2, 1
             Color 14
-            Print "GM ID#  REG  RND  GM    VISITING TEAM        HOME TEAM            HC  3  SC": Color 15
+            Print "GM ID#  REG  RND  GM    VISITING TEAM        HOME TEAM            MA  HC  3  SC": Color 15
 
             'Show 20 schedule entries on the screen at once
             For X = 1 To 20
@@ -105,23 +111,25 @@ Sub TOURNEY ()
 
                     Print Using "###      ##   ##   ##"; X + NS% * 20; scheduleNG%(X + NS% * 20, 15); scheduleNG%(X + NS% * 20, 16); scheduleNG%(X + NS% * 20, 17);
 
-                    'Locate , 17: Print yearNumber$(X + NS% * 20, 2);
+                    'Visiting Team
                     Locate , 25: Print visitingTeam$(X + NS% * 20); " ";
                     If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * 20);
 
+                    'Home Team
                     Locate , 46: Print homeTeam$(X + NS% * 20); " ";
                     If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScores(X + NS% * 20);
 
-                    Locate , 67
-                    If scheduleNG%(X + NS% * 20, 2) = 1 Then
-                        Print "Y";
-                    Else
-                        Print "N";
-                    End If
+                    'Mode of Play
+                    Locate , 67: Print modeAbbrev$(scheduleNG%(X + NS% * 20, 8));
 
-                    Locate , 71: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
+                    'Home Court
+                    Locate , 72: If scheduleNG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
 
-                    Locate , 74: Print Left$(sClockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
+                    '3 Pt Option
+                    Locate , 75: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
+
+                    'Shot Clock
+                    Locate , 78: Print Left$(sClockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
 
                 End If
 
@@ -131,12 +139,34 @@ Sub TOURNEY ()
 
             Select Case UCase$(I$)
 
+                Case "B":
+                    Do
+                        Locate 23, 1: Print "ENTER GAME # TO GO TO        "
+                        Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
+                    Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
+                    NS% = Int((targetGame% - 1) / 20)
+
+                    'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
+                    boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
+
+                    Call EditBoxscore(boxName$)
+                    Color 15, 0
+
                 Case "E":
                     Call EditGame_TOURNEY
 
+                Case "G":
+                    'GOTO A SPECIFIC PAGE
+                    Do
+                        Locate 23, 1: Print "ENTER GAME # TO GO TO        "
+                        Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
+                    Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
+
+                    NS% = Int((targetGame% - 1) / 20)
+
                 Case "P":
                     ' *** SAVE TOURNAMENT SCHEDULE ***                    
-                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 94
 
                     For X = 0 To 14
                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -144,7 +174,7 @@ Sub TOURNEY ()
 
                     Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                     Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                    Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                     For I = 1 To scheduleAP%(0)
 
@@ -152,14 +182,14 @@ Sub TOURNEY ()
                             LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
                         Next
 
-                        For X = 0 To 3:
-                            LSet Q$(20 + X) = yearNumber$(I, X)
-                        Next
-
                         LSet Q$(16) = MKI$(visitorScores(I))
                         LSet Q$(17) = MKI$(homeScores(I))
                         LSet Q$(18) = visitingTeam$(I)
                         LSet Q$(19) = homeTeam$(I)
+
+                        For X = 0 To 3:
+                            LSet Q$(20 + X) = yearNumber$(I, X)
+                        Next
 
                         For X = 1 To 3:
                             LSet Q$(X + 23) = MKI$(scheduleNG%(I, X + 14))
@@ -284,7 +314,7 @@ Sub ReadTourneyFile (tourneyFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
 
-    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 90
+    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 94
     fileLength& = LOF(1)
     Close #1
 
@@ -293,7 +323,7 @@ Sub ReadTourneyFile (tourneyFile$)
 
     For I = 1 To scheduleAP%(0)
 
-        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 90
+        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 94
 
         For X = 0 To 14
             Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -301,7 +331,7 @@ Sub ReadTourneyFile (tourneyFile$)
 
         Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
         Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-        Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+        Field #2, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
         Get #2, I
 

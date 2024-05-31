@@ -38,20 +38,28 @@ Sub COLHOOP ()
 
         Open "DEFAULT" For Output As #3
 
-        For I = 1 To 2:
-            Print #3, 0
-        Next
+        'Player option
+        Print #3, 3
 
-        'sclock value
+        'Three point option
+        Print #3, 1
+
+        'Shot clock value
         Print #3, 3
 
         'Location
         Print #3, 1
+        
+        'Fouls to DQ
         Print #3, 5
 
-        For I = 6 To 11:
-            Print #3, 0
+        'PBP Delay / Coach / FT Options
+        For I = 6 To 10:
+            Print #3, 1
         Next
+
+        'PBP Option
+        Print #3, 0
 
         Close #3
 
@@ -115,7 +123,7 @@ Sub COLHOOP ()
 
         currGame = schedGame(0) + schedGame(2)
 
-        'Open "pbplog" + Str$(currGame) For Append As #11
+        Open "pbplog" + Str$(currGame) For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
@@ -144,7 +152,7 @@ Sub COLHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -184,7 +192,7 @@ Sub COLHOOP ()
 
             Field #9, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
             Field #9, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-            Field #9, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+            Field #9, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
             Get #9, schedGame(0) + schedGame(2)
 
@@ -816,7 +824,7 @@ Sub COLHOOP ()
     End If
 
     '--Start "EndOfGame" routine
-    'Close #11
+    Close #11
 
     Call POSTGAME
 
@@ -1530,7 +1538,7 @@ Sub COLHOOP ()
             'Full Court Press
             X0% = 25
             X1% = -1
-            tmFatigue(P, B1(P, BU%)) = tmFatigue(P, B1(P, BU%)) - 1
+            tmFatigue(P, B1(P, guardIdx)) = tmFatigue(P, B1(P, guardIdx)) - 1
             Call PressFatigueOff
 
         Else
@@ -2014,15 +2022,15 @@ Sub COLHOOP ()
             Case 1
                 If PASS = 1 Then
                     '3, 6
-                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then GoTo LAYUP
-                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo GDSHOT
+                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) Then GoTo LAYUP
+                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) * 2 Then GoTo GDSHOT
                 End If
 
             Case 2
                 If PASS = 1 Then
                     '6,12
-                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo LAYUP
-                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then GoTo GDSHOT
+                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) * 2 Then GoTo LAYUP
+                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) * 4 Then GoTo GDSHOT
                 End If
 
             Case 3
@@ -2891,7 +2899,6 @@ Sub COLHOOP ()
                     Call UPDATESCREEN
                     Call CreditAssists
 
-                    'DK% = 1 means the shot is blocked?
                     If DK% = 1 Then
 
                         pbpString$ = "STUFF BY " + players$(P, B1(P, ballCarrier))
@@ -2907,6 +2914,7 @@ Sub COLHOOP ()
                         Call PBP
                         Call DELAY
                         DK% = 0
+                        Call pbplog(2917)
 
                     Else
 
@@ -3067,8 +3075,8 @@ Sub COLHOOP ()
             End If
 
             If shotRoll <= shotChance! Then
-            
-                ' *** CHECK FOR BLOCK ***
+
+                'Shot Good
 
                 LT = 0
 
@@ -3087,6 +3095,10 @@ Sub COLHOOP ()
                     Call PBP
                     Call DELAY
                     DK% = 0
+                    Call pbplog(3098)
+                    
+                    '--> increase blocks here???
+                    'plyrOff_GAME!(P, B1(P, ballCarrier), 15) = plyrOff_GAME!(P, B1(P, ballCarrier), 15) + 1
 
                 Else
     
@@ -3171,7 +3183,6 @@ Sub COLHOOP ()
 
                 End If
 
-
                 560 '
                 score(P, currHalf) = score(P, currHalf) + 2
                 score(P, 0) = score(P, 0) + 2
@@ -3228,15 +3239,21 @@ Sub COLHOOP ()
                 GoTo 300
 
             Else
+            
+                'Shot Missed
 
                 Call Rolld100(RN0)
 
                 LT = 0
 
-                I2 = Int(Rnd(1) * 5) + 1
+                ' *** CHECK FOR BLOCK ***
+
+                'blockChance = Int(Rnd(1) * 5) + 1
+                blockChance = Int(Rnd(1) * 6) + 1
                 rndPlayer = Int(Rnd(1) * 5)
 
-                If I2 > plyrOff_GAME!(D, B1(D, rndPlayer), 6) Then
+                'Check player's blocks / game
+                If blockChance > plyrOff_GAME!(D, B1(D, rndPlayer), 6) Then
 
                     If pbpOpt = 1 And pbpDelay! <> 0 Then
                         Call WINDEX
@@ -3265,67 +3282,68 @@ Sub COLHOOP ()
 
                     LT = 0
 
-                    GoTo 670
+                Else
 
-                End If
+                    If pbpDelay! <> 0 Then
 
-                If pbpDelay! <> 0 Then
+                        If pbpOpt = 1 Then
+                            Call WINDEX
+                            Print "SHOT BLOCKED BY "; players$(D, B1(D, rndPlayer))
+                            Call DELAY
+                        Else
 
-                    If pbpOpt = 1 Then
-                        Call WINDEX
-                        Print "SHOT BLOCKED BY "; players$(D, B1(D, rndPlayer))
-                        Call DELAY
-                    Else
+                            Call Rolld100(RN0)
 
-                        Call Rolld100(RN0)
+                            Select Case RN0
+                                Case 1 To 10
+                                    pbpString$ = players$(D, B1(D, rndPlayer)) + " STUFFS THE SHOT!!"
+                                Case 11 To 15
+                                    pbpString$ = "DENIED BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 16 To 20
+                                    pbpString$ = "ERASED BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 21 To 25
+                                    pbpString$ = "EXPUNGED BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 26 To 30
+                                    pbpString$ = "REBUKED BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 31 To 35
+                                    pbpString$ = "SHOT BLOCKED CLEANLY BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 36 To 70
+                                    pbpString$ = "SHOT BLOCKED BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 71 To 90
+                                    pbpString$ = "SHOT REJECTED BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                                Case 91 To 100
+                                    pbpString$ = "SHOT SWATTED OUT BY " + players$(D, B1(D, rndPlayer)) + "!!"
+                            End Select
 
-                        Select Case RN0
-                            Case 1 To 10
-                                pbpString$ = players$(D, B1(D, rndPlayer)) + " STUFFS THE SHOT!!"
-                            Case 11 To 15
-                                pbpString$ = "DENIED BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 16 To 20
-                                pbpString$ = "ERASED BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 21 To 25
-                                pbpString$ = "EXPUNGED BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 26 To 30
-                                pbpString$ = "REBUKED BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 31 To 35
-                                pbpString$ = "SHOT BLOCKED CLEANLY BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 36 To 70
-                                pbpString$ = "SHOT BLOCKED BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 71 To 90
-                                pbpString$ = "SHOT REJECTED BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                            Case 91 To 100
-                                pbpString$ = "SHOT SWATTED OUT BY " + players$(D, B1(D, rndPlayer)) + "!!"
-                        End Select
+                            Call PBP
 
-                        Call PBP
+                        End If
 
                     End If
 
-                End If
+                    'Increase blocks
+                    plyrOff_GAME!(D, B1(D, rndPlayer), 15) = plyrOff_GAME!(D, B1(D, rndPlayer), 15) + 1
+                    X = 98
 
-                plyrOff_GAME!(D, B1(D, rndPlayer), 15) = plyrOff_GAME!(D, B1(D, rndPlayer), 15) + 1
-                X = 98
-
-                Call ResetShotClock
-                gameClock! = gameClock! - 4
-                timeElapsed! = 4
-                Call AdjustPlayTime
-                Call AdjustShotClock
-
-                If gameClock! <= 0 Then
-                    timeElapsed! = gameClock!
+                    Call ResetShotClock
+                    gameClock! = gameClock! - 4
+                    timeElapsed! = 4
                     Call AdjustPlayTime
-                    TP% = 0
-                    GoTo 170
-                End If
+                    Call AdjustShotClock
 
-                Call UPDATESCREEN
+                    If gameClock! <= 0 Then
+                        timeElapsed! = gameClock!
+                        Call AdjustPlayTime
+                        TP% = 0
+                        GoTo 170
+                    End If
+
+                    Call UPDATESCREEN
+
+                End If
 
                 GoTo 670
-
+                
             End If
 
             '--- done with "routines" for taking a shot
@@ -3377,8 +3395,8 @@ Sub COLHOOP ()
 
                 threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
                 plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
-                pbpType = 3 'Shot
 
+                pbpType = 3 'Shot
                 Call MAKEPBP
                 Call PBP
 

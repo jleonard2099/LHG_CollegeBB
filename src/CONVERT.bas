@@ -174,3 +174,52 @@ Sub ConvertTeamData ()
     End If
 
 End Sub
+
+
+
+
+
+Sub NotWorthy
+
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
+
+    fileLength& = LOF(1)
+
+    If newID = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_FILE_BYTES + 1
+
+    Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
+
+    For I = 0 To 13
+        Field #1, 53 + I * 43 As X$, 15 As Q$(I * 15 + 20), 2 As Q$(I * 15 + 21), 2 As Q$(I * 15 + 22), 2 As Q$(I * 15 + 23), 2 As Q$(I * 15 + 24), 2 As Q$(I * 15 + 25), 2 As Q$(I * 15 + 26), 2 As Q$(I * 15 + 27), 2 As Q$(I * 15 + 28), 2 As Q$(I * 15 + 29), 2 As Q$(I * 15 + 30), 2 As Q$(I * 15 + 31), 2 As Q$(I * 15 + 32), 2 As Q$(I * 15 + 33), 2 As Q$(I * 15 + 34), TEAM_SIZE_BYTES - 53 - 43 - I * 43 As X$
+    Next
+
+    LSet Q$(0) = RTrim$(teamName$)
+    LSet Q$(1) = MKI$(staminaRating!)
+    LSet Q$(2) = MKI$(defFGPctAdj!)
+    LSet Q$(3) = MKI$(def3FG_Adj)
+    LSet Q$(4) = MKI$(def3FGA_Adj)
+
+    For I = 0 To 4:
+        LSet Q$(I + 5) = MKI$(leagueRatings%(I))
+    Next
+
+    teamRatings%(2) = 999
+
+    For I = 0 To 9:
+        LSet Q$(I + 10) = MKI$(teamRatings%(I))
+    Next
+
+    'Players
+    For I = 0 To 13
+        LSet Q$(I * 15 + 20) = playerNames$(I)
+        For I1 = 0 To 6
+            LSet Q$(I * 15 + I1 + 21) = MKI$(playerOff!(I, I1))
+            LSet Q$(I * 15 + I1 + 28) = MKI$(playerRatings!(I, I1))
+        Next
+    Next
+
+    Put #1, teamIdx
+
+    Close #1
+
+End Sub

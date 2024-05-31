@@ -300,7 +300,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         Locate 23, 53
         Print Space$(10)
-
+            
     Loop Until B9 = 0
 
 

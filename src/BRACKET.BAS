@@ -121,7 +121,7 @@ Sub ViewTourneyInfo (ACTION%)
         If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
         NR$ = Str$(R%)
 
-        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #3 Len = 90
+        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #3 Len = 94
         fileLength& = LOF(3)
         Close #3
 
@@ -130,7 +130,7 @@ Sub ViewTourneyInfo (ACTION%)
 
         For I = 1 To scheduleAP%(0)
 
-            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #4 Len = 90
+            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #4 Len = 94
 
             For X = 0 To 14
                 Field #4, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -138,22 +138,22 @@ Sub ViewTourneyInfo (ACTION%)
 
             Field #4, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
             Field #4, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-            Field #4, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+            Field #4, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
             Get #4, I
 
             For X = 0 To 14: 
                 scheduleNG%(I, X) = CVI(Q$(X + 1))
             Next
-            
-            For X = 0 To 3
-                yearNumber$(I, X) = Q$(20 + X)
-            Next
 
             visitorScores(I) = CVI(Q$(16))
             homeScores(I) = CVI(Q$(17))
             visitingTeam$(I) = Q$(18)
             homeTeam$(I) = Q$(19)
+            
+            For X = 0 To 3
+                yearNumber$(I, X) = Q$(20 + X)
+            Next
 
             For X = 1 To 3:
                 scheduleNG%(I, X + 14) = CVI(Q$(X + 23))

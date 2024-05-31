@@ -268,8 +268,8 @@ Dim Shared S2, gameAvgTmStamina, sClockVal, shotClock
 Dim Shared threePtOpt, threePtShotChance
 Dim Shared tickerIdx, TMT, TOU, XM, XS
 
-Dim Shared BO%, BU%, coachOpt, DK%
-Dim Shared fastBreak, FT%, J8%, LC%
+Dim Shared coachOpt, DK%, fastBreak
+Dim Shared guardIdx, FT%, J8%, LC%
 Dim Shared PA%, PASS, pbpOpt, PT%, PZ%, ST%
 Dim Shared X0%, X1%, XX%
 

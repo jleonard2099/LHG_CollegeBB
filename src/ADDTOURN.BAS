@@ -45,7 +45,7 @@ Sub ADDTOURN ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -98,10 +98,11 @@ End Sub
 'all rely on separate routine.
 Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
-    Dim HC$(2)
-    Dim SC$(2), TE$(1), TF$(1)
+    Shared yesNo$()
 
-    Dim tourneyCM$(1), tourneyTS$(1)
+    Dim SC$(0 To 3), TE$(0 To 1)
+
+    Dim tourneyCM$(0 To 1)
 
     Shared tourneyDefaults%()
 
@@ -112,22 +113,16 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
 
     tourneyDefaults%(3) = 1
-    tourneyDefaults%(7) = 2
+    tourneyDefaults%(7) = 3
     tourneyDefaults%(5) = 5
     tourneyDefaults%(6) = 1
     tourneyDefaults%(10) = 1
     tourneyDefaults%(14) = 0
 
-    tourneyTS$(0) = "N"
-    tourneyTS$(1) = "Y"
     SC$(0) = "NO SHOT CLOCK"
     SC$(1) = "45 SEC CLOCK "
     SC$(2) = "35 SEC CLOCK "
-    'SC$(3) = "30 SEC CLOCK"
-    HC$(1) = "Y"
-    HC$(2) = "N"
-    TF$(0) = "N"
-    TF$(1) = "Y"
+    SC$(3) = "30 SEC CLOCK"
     TE$(0) = "SHOOT 1+1"
     TE$(1) = "SHOOT 2  "
     tourneyCM$(0) = "COACH AND SELECT SHOTS           "
@@ -149,9 +144,10 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Color , 0
 
     Do
-        Locate 5, 
+
+        Locate 5,
         Color 14: Print " (1) ";
-        Color 15: Print "3-POINT SHOT: "; tourneyTS$(tourneyDefaults%(3))
+        Color 15: Print "3-POINT SHOT: "; yesNo$(tourneyDefaults%(3))
         Color 14: Print " (2) ";
         Color 15: Print SC$(tourneyDefaults%(7))
         Color 14: Print " (3) ";
@@ -159,11 +155,11 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
         Color 14: Print " (4) ";
         Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
         Color 14: Print " (5) ";
-        Color 15: Print "FREE THROWS ON 10TH FOUL "; TE$(tourneyDefaults%(6))
+        Color 15: Print "FREE THROWS ON 10TH FOUL "; yesNo$(tourneyDefaults%(6))
         Color 14: Print " (6) ";
-        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; TF$(tourneyDefaults%(10))
+        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(tourneyDefaults%(10))
         Color 14: Print " (7) ";
-        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; TF$(tourneyDefaults%(14))
+        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(tourneyDefaults%(14))
         Color 14: Print " (8) ";
         Color 15: Print "ACCEPT SETTINGS"
 
@@ -180,29 +176,29 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
         Select Case I
 
-            Case 1: 
+            Case 1:
                 tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
 
-            Case 2: 
+            Case 2:
                 tourneyDefaults%(7) = tourneyDefaults%(7) + 1
-                If tourneyDefaults%(7) > 2 Then tourneyDefaults%(7) = 0
+                If tourneyDefaults%(7) > 3 Then tourneyDefaults%(7) = 0
 
             Case 3:
                 Locate 7, 32
                 Input pbpDelayTourn!
                 tourneyDefaults%(4) = pbpDelayTourn! * 10
 
-            Case 4: 
+            Case 4:
                 tourneyDefaults%(5) = tourneyDefaults%(5) + 1
                 If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
 
-            Case 5: 
+            Case 5:
                 tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
 
-            Case 6: 
+            Case 6:
                 tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
 
-            Case 7: 
+            Case 7:
                 tourneyDefaults%(14) = 1 - tourneyDefaults%(14)
 
             Case 8: '
@@ -293,12 +289,12 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
             BoxWidth = 18
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
             Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-            Call CSMsgBox(MsgText$, BoxWidth, Pass)
+            Call CSMsgBox(MsgText$, BoxWidth, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
 
             GoTo GetData
-            
+
         Else
 
             numberRegions = Val(numberRegions$)
@@ -340,7 +336,7 @@ End Sub
 '        SeedBrackets Subroutine
 '----------------------------------------
 'This subroutine lets the user review and
-'make changes to the Tournament Regions 
+'make changes to the Tournament Regions
 'and their corresponding seedings and
 'brackets.
 Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
@@ -462,9 +458,9 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                                 BoxWidth = 18
                                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
                                 Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-                                Call CSMsgBox(MsgText$, BoxWidth, Pass)
+                                Call CSMsgBox(MsgText$, BoxWidth, PASS)
                                 I$ = GetKeyPress$
-                                Call CSMsgBox("", 0, Pass)
+                                Call CSMsgBox("", 0, PASS)
 
                                 NF = 1
                                 'Return
@@ -500,7 +496,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                     If Val(I$) = 1 Then
 
                         teamNbr = 0
-                        Call ChooseTeam (YN$, NTMS, teamNbr, team$)
+                        Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
                         If teamNbr <> 0 Then
 
@@ -511,7 +507,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                             tourneyN%(currRegion, seed, 2) = teamRatings%(0)
                             tourneyN%(currRegion, seed, 3) = teamRatings%(1)
                             tourneyN%(currRegion, seed, 1) = 1
-                                                        
+
                         End If
 
                     Else
@@ -535,11 +531,11 @@ End Sub
 '      EditBracket_TOURN Subroutine
 '----------------------------------------
 'This subroutine gives the user a menu of
-'regions that were named previously. For 
-'any region chosen, it calls a  separate 
+'regions that were named previously. For
+'any region chosen, it calls a  separate
 'subroutine to assist with populating the
-'seedings for the region. When done, it 
-'then calls a routine to create the schedule 
+'seedings for the region. When done, it
+'then calls a routine to create the schedule
 'for the tournament and save the file.
 Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
@@ -601,7 +597,7 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
         End If
 
-    Loop Until Selection% = numberRegions + 1  Or ExitCode% = 27
+    Loop Until Selection% = numberRegions + 1 Or ExitCode% = 27
 
     If ExitCode% <> 27 Then Call ScheduleAndSaveTourney(saveFile$, numberRegions, tourneyName$)
 
@@ -649,8 +645,8 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
     Shared consolationSetting%()
     Shared tourneyN%(), nbrRegionalTeams()
     Shared tourneyDefaults%()
-    
-    tourneyFile$ = ChooseFile$ (diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
+
+    tourneyFile$ = ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
 
     If ExitCode% <> 27 Then
 
@@ -664,9 +660,9 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             BoxWidth = 18
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
             Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-            Call CSMsgBox(MsgText$, BoxWidth, Pass)
+            Call CSMsgBox(MsgText$, BoxWidth, PASS)
             I$ = GetKeyPress$
-            Call CSMsgBox("", 0, Pass)
+            Call CSMsgBox("", 0, PASS)
 
             ACTION% = 1
 
@@ -5752,7 +5748,7 @@ End Sub
 '    SETTINGS Subroutine
 '----------------------------------------
 'This subroutine assigns the tournament
-'settings to the current game, using the 
+'settings to the current game, using the
 'defaults set earlier.
 Sub SETTINGS ()
 
@@ -5771,14 +5767,14 @@ End Sub
 '----------------------------------------
 '    WRITEGAME Subroutine
 '----------------------------------------
-'This subroutine writes the current game 
+'This subroutine writes the current game
 'being considered to temporary files.
-'Both .TMP and .TCX files are used, which 
-'serve as "schedule" files of sorts for 
+'Both .TMP and .TCX files are used, which
+'serve as "schedule" files of sorts for
 'tournaments.
-'The .TMP file becomes the final .TOU 
-'file for play later, while the .TCX file 
-'is a backup of initial settings if the 
+'The .TMP file becomes the final .TOU
+'file for play later, while the .TCX file
+'is a backup of initial settings if the
 'tournament is reset.
 
 Sub WRITEGAME (outputFile$)
@@ -5790,7 +5786,7 @@ Sub WRITEGAME (outputFile$)
 
     'WRITE OUT A GAME
     'TMP file
-    Open diskPaths$(1) + outputFile$ + ".TMP" For Random As #1 Len = 90
+    Open diskPaths$(1) + outputFile$ + ".TMP" For Random As #1 Len = 94
 
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5798,19 +5794,20 @@ Sub WRITEGAME (outputFile$)
 
     Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
     Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-    Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+    Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: 
+    For X = 0 To 14:
         LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
-    Next
-    For X = 0 To 3: 
-        LSet Q$(20 + X) = yearNumber$(TC!, X)
     Next
 
     LSet Q$(16) = MKI$(visitorScores(TC!))
     LSet Q$(17) = MKI$(homeScores(TC!))
     LSet Q$(18) = visitingTeam$(TC!)
     LSet Q$(19) = homeTeam$(TC!)
+
+    For X = 0 To 3:
+        LSet Q$(20 + X) = yearNumber$(TC!, X)
+    Next
 
     For X = 24 To 26
         LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
@@ -5821,7 +5818,7 @@ Sub WRITEGAME (outputFile$)
     Close #1
 
     'TCX file
-    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #2 Len = 90
+    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #2 Len = 94
 
     For X = 0 To 14
         Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5829,13 +5826,13 @@ Sub WRITEGAME (outputFile$)
 
     Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
     Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-    Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+    Field #2, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-    For X = 0 To 14: 
+    For X = 0 To 14:
         LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
     Next
 
-    For X = 0 To 3: 
+    For X = 0 To 3:
         LSet Q$(20 + X) = yearNumber$(TC!, X)
     Next
 
@@ -5860,7 +5857,7 @@ End Sub
 'This subroutine saves the tournament
 '"INFO" file (.INF), then relies on a
 'separate routine to sort the games and
-'save them to the .TOU file. 
+'save them to the .TOU file.
 Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
 
     Shared TC!
@@ -5901,9 +5898,9 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
     BoxWidth = 18
     BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
     Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-    Call CSMsgBox(MsgText$, BoxWidth, Pass)
+    Call CSMsgBox(MsgText$, BoxWidth, PASS)
     I$ = GetKeyPress$
-    Call CSMsgBox("", 0, Pass)
+    Call CSMsgBox("", 0, PASS)
 
 End Sub
 
@@ -5911,7 +5908,7 @@ End Sub
 '----------------------------------------
 '      SortAndSaveGames Subroutine
 '----------------------------------------
-'This subroutine reads data from a .TMP 
+'This subroutine reads data from a .TMP
 'file created earlier in the process. If
 'then performs a sort on all games to be
 'scheduled and creates the final .TOU file.
@@ -5936,7 +5933,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                     For AP = 1 To TC!
 
                         'Read data from .TMP file
-                        Open diskPaths$(1) + tourneyFile$ + ".TMP" For Random As #1 Len = 90
+                        Open diskPaths$(1) + tourneyFile$ + ".TMP" For Random As #1 Len = 94
 
                         For X = 0 To 14
                             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5944,15 +5941,15 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                         Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                         Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                        Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                        Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                         Get #1, AP
 
                         For X = 0 To 14:
-                             scheduleNG%(0, X) = CVI(Q$(X + 1))
+                            scheduleNG%(0, X) = CVI(Q$(X + 1))
                         Next
-                        For X = 0 To 3: 
-                             yearNumber$(0, X) = Q$(20 + X)
+                        For X = 0 To 3:
+                            yearNumber$(0, X) = Q$(20 + X)
                         Next
 
                         visitorScores(0) = CVI(Q$(16))
@@ -5971,7 +5968,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                             MATCH = MATCH + 1
 
-                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 90
+                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 94
 
                             For X = 0 To 14
                                 Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5979,12 +5976,12 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                             Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                             Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                            Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                            Field #2, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-                            For X = 0 To 14: 
+                            For X = 0 To 14:
                                 LSet Q$(X + 1) = MKI$(scheduleNG%(0, X))
                             Next
-                            For X = 0 To 3: 
+                            For X = 0 To 3:
                                 LSet Q$(20 + X) = yearNumber$(0, X)
                             Next
 
@@ -6022,7 +6019,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
             For AP = 1 To TC!
 
-                Open tempFile$ For Random As #1 Len = 90
+                Open tempFile$ For Random As #1 Len = 94
 
                 For X = 0 To 14
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -6030,15 +6027,15 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                 Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                 Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                Field #1, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
                 Get #1, AP
-                
-                For X = 0 To 14: 
+
+                For X = 0 To 14:
                     scheduleNG%(0, X) = CVI(Q$(X + 1))
                 Next
-                
-                For X = 0 To 3: 
+
+                For X = 0 To 3:
                     yearNumber$(0, X) = Q$(20 + X)
                 Next
 
@@ -6047,7 +6044,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                 visitingTeam$(0) = Q$(18)
                 homeTeam$(0) = Q$(19)
 
-                For X = 1 To 3: 
+                For X = 1 To 3:
                     scheduleNG%(0, X + 14) = CVI(Q$(X + 23))
                 Next
 
@@ -6057,7 +6054,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                     MATCH = MATCH + 1
 
-                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 90
+                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 94
 
                     For X = 0 To 14
                         Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -6065,13 +6062,13 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                     Field #2, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
                     Field #2, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-                    Field #2, 84 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+                    Field #2, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-                    For X = 0 To 14: 
+                    For X = 0 To 14:
                         LSet Q$(X + 1) = MKI$(scheduleNG%(0, X))
                     Next
-                    
-                    For X = 0 To 3: 
+
+                    For X = 0 To 3:
                         LSet Q$(20 + X) = yearNumber$(0, X)
                     Next
 
@@ -6080,7 +6077,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
                     LSet Q$(18) = visitingTeam$(0)
                     LSet Q$(19) = homeTeam$(0)
 
-                    For X = 24 To 26: 
+                    For X = 24 To 26:
                         LSet Q$(X) = MKI$(scheduleNG%(0, X - 9))
                     Next
 
@@ -6099,3 +6096,4 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
     If _FileExists(tempFile$) Then Kill tempFile$
 
 End Sub
+
