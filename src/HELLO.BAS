@@ -4560,17 +4560,17 @@ Sub COLHOOP ()
     Select Case RN0
 
         Case 1 To 16
-        'Case 1 To 11
+            'Case 1 To 11
             foulOnReb = 1
             GoTo 707
 
         Case 17 To 24
-        'Case 12 To 19
+            'Case 12 To 19
             Call OFFREBOUND
             GoTo 760
 
         Case 25 To 100
-        'Case 20 To 100
+            'Case 20 To 100
             Call DEFREBOUND
             GoTo 800
 
@@ -8995,12 +8995,23 @@ End Sub
 'from Pro BB to do the same
 Sub CreditAssists ()
 
-    assistChance = Int(Rnd(1) * 3) + 1
+    randPlayer = Int(Rnd(1) * 5)
 
-    randPlayer = Int(Rnd(1) * 5)    
     assistRating = plyrOff_GAME!(P, B1(P, randPlayer), 4)
+    'assistChance = Int(Rnd(1) * 3) + 1
+    Select Case assistRating
 
-    If ((assistChance <= assistRating) Or (assistRating > 3 And assistChance < assistRating - 3)) And (players$(P, B1(P, ballCarrier)) <> players$(P, B1(P, randPlayer))) Then
+        'Case 0 To 6
+        Case 0 to 4
+            assistChance = Int(Rnd(1) * 4) + 1
+
+        'Case Is >= 7
+        Case Is >= 5
+            assistChance = Int(Rnd(1) * assistRating) + 3
+
+    End Select
+
+    If ((assistChance <= assistRating) Or (assistRating > 4 And assistChance < assistRating - 3)) And (players$(P, B1(P, ballCarrier)) <> players$(P, B1(P, randPlayer))) Then
 
         Do
 
