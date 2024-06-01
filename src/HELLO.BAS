@@ -89,7 +89,8 @@ For I = 0 To 1
     Next
 Next
 
-Data 1,4,2,5,15,29,22,36,7,9,7,12
+'Data 1,4,2,5,15,29,22,36,7,9,7,12
+Data 2,5,1,4,15,29,22,36,7,9,7,12
 For I = 0 To 2
     For I1 = 1 To 4
         Read defAdjVsPass(I, I1)
@@ -2019,6 +2020,7 @@ Sub COLHOOP ()
                 shotChance! = 98
                 playChoice = 1
 
+                'Call pbplog(2022)
                 GoTo 520
                 
             End If
@@ -2093,9 +2095,9 @@ Sub COLHOOP ()
                 ' *** CHECK FOR TURNOVER ***
 
                 'NOTE - defAdjVsPass(0, 4) is a value of 5
+                'We are not relying on the current DEFENSE???
                 CY = 7 + defAdjVsPass(0, 4)
 
-                'So, 12% of passes are turnovers?
                 If RN1 <= CY Then
 
                     Select Case RN0
@@ -2115,6 +2117,7 @@ Sub COLHOOP ()
                     End Select
 
                     Call LASTSHOT
+
                     GoTo 517
 
                 End If
@@ -2122,7 +2125,11 @@ Sub COLHOOP ()
                 ' *** CHECK FOR STEAL ***
 
                 'Off Steal Rating + Steal Chance
-                CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 4)
+                'We are referencing a fixed index of defAdjVsPass
+                'We are not relying on the current DEFENSE
+                'So technically the fixed values can be put in here
+                'CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 4)
+                CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 1)
 
                 If RN1 <= CY Then
 
@@ -2342,9 +2349,8 @@ Sub COLHOOP ()
 
             'Chance of Turnover
             '   Def Foul Chance + Off TO Rating + Def TO Adj + Def TO Chance + OY%
-            '   5% = fudge factor to get Turnovers where they should be overall
-            '---> 96% of turnovers get calculated from here
-            CY = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY% + 1
+            '---> 95+% of turnovers get calculated from here
+            CY = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY% + 3
 
             If RN0 <= CY Then
                 Call LASTSHOT
@@ -2363,7 +2369,7 @@ Sub COLHOOP ()
                 Case 0, 3, 5, 6, 8, 9
                     'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
                     OY% = 0
-            
+
                 Case 1
                     'Aggressive
                     OY% = 7
@@ -2649,21 +2655,30 @@ Sub COLHOOP ()
         Call Rolld100(RN1)
 
         If PASS > 1 Then
+
             Select Case defCoverage(P9)
+
                 Case 2
                     'Passive Zone
                     If RN1 <= 5 Then GoTo LAYUP
+
                 Case 0, 1, 3
                     'Everything Else
                     If RN1 <= 15 Then GoTo LAYUP
+
             End Select
+
         Else
+
             'Shooting, Multi-Strategy Defense
             If defCategory(P) > 0 Then
+
                 If RN1 <= 33 Or (defCategory(P) <> 3 And RN1 <= 40) Then
                     GoTo LAYUP
                 End If
+
             End If
+
         End If
 
         GoTo 300
@@ -2677,16 +2692,14 @@ Sub COLHOOP ()
 
             Case 1
                 If PASS = 1 Then
-                    '3, 6
-                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) Then GoTo LAYUP
-                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) * 2 Then GoTo GDSHOT
+                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) Then GoTo LAYUP
+                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo GDSHOT
                 End If
 
             Case 2
                 If PASS = 1 Then
-                    '6,12
-                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) * 2 Then GoTo LAYUP
-                    If RN0 <= plyrOff_GAME!(P, B1(P, guardIdx), 4) * 4 Then GoTo GDSHOT
+                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 2 Then GoTo LAYUP
+                    If RN0 <= plyrOff_GAME!(P, B1(P, BU%), 4) * 4 Then GoTo GDSHOT
                 End If
 
             Case 3
@@ -3570,7 +3583,6 @@ Sub COLHOOP ()
                         Call PBP
                         Call DELAY
                         DK% = 0
-                        'Call pbplog(2917)
 
                     Else
 
@@ -3751,10 +3763,6 @@ Sub COLHOOP ()
                     Call PBP
                     Call DELAY
                     DK% = 0
-                    'Call pbplog(3098)
-                    
-                    '--> increase blocks here???
-                    'plyrOff_GAME!(P, B1(P, ballCarrier), 15) = plyrOff_GAME!(P, B1(P, ballCarrier), 15) + 1
 
                 Else
     
@@ -9002,10 +9010,10 @@ Sub CreditAssists ()
     Select Case assistRating
 
         'Case 0 To 6
-        Case 0 to 4
+        Case 0 To 4
             assistChance = Int(Rnd(1) * 4) + 1
 
-        'Case Is >= 7
+            'Case Is >= 7
         Case Is >= 5
             assistChance = Int(Rnd(1) * assistRating) + 3
 
@@ -14301,10 +14309,8 @@ End Function
 Sub pbplog (lineNumber)
 
     'Print #11, "Calling from "; lineNumber
-    'Print #11, gameTeams$(0); " vs "; gameTeams$(1)
     'Print #11, pbpString$
-    Print #11, lineNumber
-    'Print #11, defAdjVsShot(4, defCoverage(D));",";teamAdj(P, 5);",";teamAdj(D, 6);",";defAdjVsShot(2, defCoverage(D));",";OY%;CY
+    Print #11, lineNumber; ","; defCategory(D)
     'Print #11,
 
 End Sub
