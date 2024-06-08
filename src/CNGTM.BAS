@@ -345,13 +345,13 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Locate 12, 14: Print teamStats!(17)
     Locate 12, 29: Print teamStats!(18)
     Locate 13, 1: Print "10. BLOCKS";
-    Locate 13, 14: Print teamStats!(21);
-    Locate 13, 29: Print teamStats!(22)
+    Locate 13, 14: Print teamStats!(23);
+    Locate 13, 29: Print teamStats!(24)
     Locate 14, 1: Print "11. 3 FGA";
-    Locate 14, 14: Print teamStats!(23);
+    Locate 14, 14: Print teamStats!(21);
     Locate 14, 29: Print teamStats!(19)
-    Locate 15, 1: Print "12. 3 FGA %";
-    Locate 15, 14: Print teamStats!(24);
+    Locate 15, 1: Print "12. 3 FG %";
+    Locate 15, 14: Print teamStats!(22);
     Locate 15, 29: Print teamStats!(20)
 
     Do
@@ -465,17 +465,17 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Case 10
                 Locate 13, 15: Print Space$(10)
                 Locate 13, 1: Print "10. BLOCKS";
-                Locate 13, 13: Input teamStats!(21)
+                Locate 13, 13: Input teamStats!(23)
                 Locate 13, 13: Print " "
 
                 Locate 13, 30: Print Space$(10)
-                Locate 13, 28: Input teamStats!(22)
+                Locate 13, 28: Input teamStats!(24)
                 Locate 13, 28: Print " "
 
             Case 11
                 Locate 14, 15: Print Space$(10)
                 Locate 14, 1: Print "11. 3 FGA";
-                Locate 14, 13: Input teamStats!(23)
+                Locate 14, 13: Input teamStats!(21)
                 Locate 14, 13: Print " "
 
                 Locate 14, 30: Print Space$(10)
@@ -484,8 +484,8 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
             Case 12
                 Locate 15, 15: Print Space$(10)
-                Locate 15, 1: Print "12. 3 FGA %";
-                Locate 15, 13: Input teamStats!(24)
+                Locate 15, 1: Print "12. 3 FG %";
+                Locate 15, 13: Input teamStats!(22)
                 Locate 15, 13: Print " "
 
                 Locate 15, 30: Print Space$(10)

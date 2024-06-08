@@ -819,7 +819,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                     T1 = 0
                 Else
                     T1 = 0
-                    Call ChooseTeam(YN$, numberTeams, T1, N$)
+                    Call ChooseTeam(YN$, numberTeams, T1, teamName$)
                 End If
 
                 If T1 <> 0 Then
@@ -834,9 +834,15 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                         Color 15, 0
                         Print " IS TO BE:"
                         Print
-                        Print "(0) MANUALLY CONTROLLED"
+                        Color 12
+                        Print "(0)";
+                        Color 15
+                        Print " MANUALLY CONTROLLED"
                         Print
-                        Print "(1) COMPUTER CONTROLLED"
+                        Color 12
+                        Print "(1)";
+                        Color 15
+                        Print " COMPUTER CONTROLLED"
 
                         Do
                             C$ = GetKeyPress$

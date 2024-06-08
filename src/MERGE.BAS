@@ -71,16 +71,18 @@ Sub MergeStats ()
 
     Shared nbrGamesCurr, nbrGamesRoad
 
-    Shared gameSite$(), ORP$(), HRP$()
-    Shared oppName$(), oppName$(), SITERP$()
+    Shared gameSite$(), gameSite_Road$()
+    Shared  locIndicator$(), locIndicator_Road$()
+    Shared oppName$(), oppName_Road$()
     Shared statPlyrNames$()
 
-    Shared ARD(), gameAttendance&(), gameAttRoad&()
+    Shared ARD(), gameAttendance&(), gameAtt_Road&()
 
-    Shared APRD%(), powerRating()
+    Shared powerRating_Road(), powerRating()
     Shared teamScore(), oppScore()
+    Shared teamScore_Road(), oppScore_Road()
+
     Shared mergeA%()
-    Shared ORD%(), TRD%()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -146,33 +148,33 @@ Sub MergeStats ()
                     Input #2, nbrGamesRoad
 
                     For I = 1 To MAX_SCHED_STATS: 
-                        Input #2, ORD%(I)
+                        Input #2, teamScore_Road(I)
                     Next I
 
                     For I = 1 To MAX_SCHED_STATS: 
-                        Input #2, ORP$(I)
+                        Input #2, oppName_Road$(I)
                     Next I
 
                     For I = 1 To MAX_SCHED_STATS: 
-                        Input #2, TRD%(I)
+                        Input #2, oppScore_Road(I)
                     Next I
 
                     For I = 1 To MAX_SCHED_STATS: 
-                        Input #2, HRP$(I)
+                        Input #2, locIndicator_Road$(I)
                     Next I
 
                     For I = 1 To MAX_SCHED_STATS
                         For I1 = 0 To 1: 
-                            Input #2, APRD%(I, I1)
+                            Input #2, powerRating_Road(I, I1)
                         Next
                     Next
 
                     For I = 1 To MAX_SCHED_STATS: 
-                        Input #2, gameAttRoad&(I)
+                        Input #2, gameAtt_Road&(I)
                     Next I
 
                     For I = 1 To MAX_SCHED_STATS: 
-                        Input #2, SITERP$(I)
+                        Input #2, gameSite_Road$(I)
                     Next I
 
                     Close #2
@@ -230,7 +232,7 @@ Sub MergeStats ()
                         Next I
 
                         For I = 1 To MAX_SCHED_STATS: 
-                            Input #4, oppName$(I)
+                            Input #4, locIndicator$(I)
                         Next I
 
                         For I = 1 To MAX_SCHED_STATS
@@ -349,31 +351,34 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Shared nbrGamesCurr, nbrGamesRoad
 
-    Shared APRD%(), powerRating()
-    Shared ARD(), gameAttendance&(), gameAttRoad&()
-    Shared teamScore(), oppScore()
+    Shared ARD()
+    Shared powerRating(), powerRating_Road()
+    Shared gameAttendance&(), gameAtt_Road&()
+    Shared oppScore(), oppScore_Road() 
+    Shared teamScore(), teamScore_Road()
+
     Shared mergeA%()
-    Shared ORD%(), TRD%()
-    Shared W0RD!(), W1RD!()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
+    Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
 
-    Shared HRP$(), ORP$(), gameSite$(), SITERP$()
+    Shared gameSite$(), gameSite_Road$()
+    Shared locIndicator$(), locIndicator_Road$()
+    Shared oppName$(), oppName_Road$()
     Shared statPlyrNames$()
-    Shared oppName$(), oppName$()
 
     For K = 1 To nbrGamesRoad
         nbrGamesCurr = nbrGamesCurr + 1
-        teamScore(nbrGamesCurr) = ORD%(K)
-        oppName$(nbrGamesCurr) = ORP$(K)
-        oppScore(nbrGamesCurr) = TRD%(K)
-        oppName$(nbrGamesCurr) = HRP$(K)
-        powerRating(nbrGamesCurr, 0) = APRD%(nbrGamesCurr, 0)
-        powerRating(nbrGamesCurr, 1) = APRD%(nbrGamesCurr, 1)
-        gameAttendance&(nbrGamesCurr) = gameAttRoad&(nbrGamesCurr)
-        gameSite$(nbrGamesCurr) = SITERP$(nbrGamesCurr)
+        teamScore(nbrGamesCurr) = teamScore_Road(K)
+        oppName$(nbrGamesCurr) = oppName_Road$(K)
+        oppScore(nbrGamesCurr) = oppScore_Road(K)
+        locIndicator$(nbrGamesCurr) = locIndicator_Road$(K)
+        powerRating(nbrGamesCurr, 0) = powerRating_Road(nbrGamesCurr, 0)
+        powerRating(nbrGamesCurr, 1) = powerRating_Road(nbrGamesCurr, 1)
+        gameAttendance&(nbrGamesCurr) = gameAtt_Road&(nbrGamesCurr)
+        gameSite$(nbrGamesCurr) = gameSite_Road$(nbrGamesCurr)
     Next
 
     Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
@@ -405,15 +410,25 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Write #1, B$
 
     For I = 0 To 13: 
+
         Write #1, statPlyrNames$(I)
-        For J = 0 To 13: Write #1, mergeA%(I, J): Next
+
+        For J = 0 To 13: 
+            Write #1, mergeA%(I, J)
+        Next
+
         Write #1, statsW0!(I)
         Write #1, statsW1!(I)
+
     Next
 
-    For L = 0 To 15: Write #1, statsZ!(L): Next
+    For L = 0 To 15: 
+        Write #1, statsZ!(L)
+    Next
 
-    For L = 0 To 15: Write #1, statsZ1!(L): Next
+    For L = 0 To 15: 
+        Write #1, statsZ1!(L)
+    Next
 
     Close #1
 
@@ -434,7 +449,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
     Next I
 
     For I = 1 To MAX_SCHED_STATS: 
-        Write #2, oppName$(I)
+        Write #2, locIndicator$(I)
     Next I
 
     For I = 1 To MAX_SCHED_STATS

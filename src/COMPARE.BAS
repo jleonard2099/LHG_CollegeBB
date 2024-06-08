@@ -98,7 +98,6 @@ Sub COMPARE ()
                     Input #2, oppScore(J)
                 Next
 
-
                 replayLosses = 0
                 replayWins = 0
 

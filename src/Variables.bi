@@ -22,12 +22,13 @@ Dim powerRating(MAX_SCHED_STATS, 1), teamScore(MAX_SCHED_STATS)
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
 '-- For Road Data
-Dim APRD%(MAX_SCHED_STATS, 1)
-Dim ORD%(MAX_SCHED_STATS), TRD%(MAX_SCHED_STATS)
+Dim gameAtt_Road&(MAX_SCHED_STATS)
+Dim oppScore_Road(MAX_SCHED_STATS), powerRating_Road(MAX_SCHED_STATS, 1)
+Dim teamScore_Road(MAX_SCHED_STATS)
 
 Dim gameAttRoad&(MAX_SCHED_STATS)
 
-Dim HRP$(MAX_SCHED_STATS), ORP$(MAX_SCHED_STATS), SITERP$(MAX_SCHED_STATS)
+Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppName_Road$(MAX_SCHED_STATS)
 
 
 ' *** Schedule Data ***
@@ -270,7 +271,7 @@ Dim Shared tickerIdx, TMT, TOU, XM, XS
 
 Dim Shared coachOpt, DK%, fastBreak
 Dim Shared guardIdx, FT%, J8%, LC%
-Dim Shared PA%, PASS, pbpOpt, PT%, PZ%, ST%
+Dim Shared PA%, PASS, pbpOpt, PT%, shotType, ST%
 Dim Shared X0%, X1%, XX%
 
 Dim Shared P6, GS%
@@ -284,7 +285,7 @@ Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$, YN$
 
 Dim Shared CZ%(1), teamAdj(0 To 1, 0 To 8)
 Dim Shared G9%(1), homeCtFactor(1, 6), NG%(18), NG1%(18)
-Dim Shared PR%(1, 1), ST%(32), SX%(32, 1, 14)
+Dim Shared pressureRating(1, 1), ST%(32), SX%(32, 1, 14)
 Dim Shared TM%(1, 13), TP%(1)
 
 Dim Shared B1(0 To 1, 0 To 4)

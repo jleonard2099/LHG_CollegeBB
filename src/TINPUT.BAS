@@ -766,6 +766,11 @@ Sub InputTeam ()
                         playerRatings!(I, 2) = 0
                     Else
                         playerOff!(I, 18) = Int(playerStats!(I, 13) / playerStats!(I, 12) * 100 + .5)
+                        
+                        
+                        Locate 17, 1: Input "15. 3 FGM"; playerStats!(I, 13)
+                        Locate 18, 1: Input "16. 3 FGA"; playerOff!(I, 17)
+
                         playerRatings!(I, 2) = playerOff!(I, 18)
                     End If
 
