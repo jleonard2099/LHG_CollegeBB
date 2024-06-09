@@ -26,7 +26,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared testVal
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -76,7 +75,6 @@ Data PERSONAL FOULS,STEALS,ASSISTS,BLOCKS,TURNOVERS,POINTS,POINTS PER GAME
 For I = 1 To 20:
     Read teamRecordDesc$(I)
 Next
-
 
 Data L,1,1,1,1,1,1,H,H,2,2,2,2,2,F
 For I = 0 To 14:
@@ -438,7 +436,8 @@ Sub TeamMgt_Menu ()
                     Call DRAFT
 
                 Case 6:
-                    Call ConvertTeamData
+                    targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "COLBBTMS.*", "Team files")
+                    Call ConvertTeam4to5 (targetFile$)
 
             End Select
 
@@ -619,6 +618,7 @@ End Sub
 '$Include: 'QPProEqu.bm'
 '$Include: 'PadRight.bm'
 '$Include: 'QBWRITE.bm'
+'$Include: 'Convert.BAS'
 
 ' For Utils
 '$Include: 'BoxRoutines.bm'
@@ -636,221 +636,6 @@ End Sub
 '$Include: 'COMPARE.BAS'
 '$Include: 'COMPCON.BAS'
 '$Include: 'COMPNATL.BAS'
-'Include: 'Convert.BAS'
-
-
-'----------------------------------------
-'       ReadExtraDataOld Subroutine
-'----------------------------------------
-'Reads in extra data for the selected team,
-' given it's index in the team file.
-'This extra file usually includes info.
-' related to stadiums, coaches, etc.
-'This routine is highly customized TO
-' the specific game for which it has
-' been included for.
-Sub ReadExtraDataOld (fileName$, teamIdx)
-
-    Shared CK, teamAttendance&
-
-    Shared coach$, arenaName$, mascot$
-
-    Shared playerDef!(), playerStats!(), teamStats!()
-
-    Shared position$()
-
-    If Not _FileExists(fileName$) Then
-
-        MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
-        BoxWidth = 20
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-
-    Else
-
-        Open fileName$ For Random As #1 Len = (DATA_SIZE_BYTES - 8)
-
-        Field #1, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-        For I = 0 To 13
-            Field #1, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-        Next
-
-        Field #1, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249)
-
-        Get #1, teamIdx
-
-        coach$ = RTrim$(Q$(0))
-        arenaName$ = RTrim$(Q$(1))
-        mascot$ = RTrim$(Q$(2))
-        teamAttendance& = CVL(Q$(3))
-
-        For I = 0 To 13
-
-            playerDef!(I) = CVI(Q$(I * 16 + 4))
-            position$(I) = Q$(I * 16 + 5)
-
-            For I1 = 0 To 13
-                playerStats!(I, I1) = CVI(Q$(I * 16 + I1 + 6))
-            Next
-
-        Next
-
-        For I = 0 To 20
-            teamStats!(I) = CVI(Q$(228 + I))
-        Next
-
-        CK = CVI(Q$(249))
-
-        Close #1
-
-    End If
-
-End Sub
-
-
-'----------------------------------------
-'       SaveChangedData Subroutine
-'----------------------------------------
-'This routine saves the modified data back
-'to the original team file
-Sub SaveChangedData (fileName$, teamIdx)
-
-    Shared teamAttendance&
-    Shared mascot$, coach$, arenaName$
-
-    Shared teamStats!()
-    Shared position$()
-    Shared playerDef!(), playerStats!()
-
-    Open fileName$ For Random As #2 Len = DATA_SIZE_BYTES
-
-    Field #2, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
-
-    For I = 0 To 13
-        Field #2, 74 + I * 32 As X$, 2 As Q$(I * 16 + 4), 2 As Q$(I * 16 + 5), 2 As Q$(I * 16 + 6), 2 As Q$(I * 16 + 7), 2 As Q$(I * 16 + 8), 2 As Q$(I * 16 + 9), 2 As Q$(I * 16 + 10), 2 As Q$(I * 16 + 11), 2 As Q$(I * 16 + 12), 2 As Q$(I * 16 + 13), 2 As Q$(I * 16 + 14), 2 As Q$(I * 16 + 15), 2 As Q$(I * 16 + 16), 2 As Q$(I * 16 + 17), 2 As Q$(I * 16 + 18), 2 As Q$(I * 16 + 19)
-    Next
-
-    Field #2, 522 As X$, 2 As Q$(228), 2 As Q$(229), 2 As Q$(230), 2 As Q$(231), 2 As Q$(232), 2 As Q$(233), 2 As Q$(234), 2 As Q$(235), 2 As Q$(236), 2 As Q$(237), 2 As Q$(238), 2 As Q$(239), 2 As Q$(240), 2 As Q$(241), 2 As Q$(242), 2 As Q$(243), 2 As Q$(244), 2 As Q$(245), 2 As Q$(246), 2 As Q$(247), 2 As Q$(248), 2 As Q$(249), 2 As Q$(250), 2 As Q$(251), 2 As Q$(252), 2 As Q$(253)
-
-    LSet Q$(0) = RTrim$(coach$)
-    LSet Q$(1) = RTrim$(arenaName$)
-    LSet Q$(2) = RTrim$(mascot$)
-    LSet Q$(3) = MKL$(teamAttendance&)
-
-    For I = 0 To 13
-
-        LSet Q$(I * 16 + 4) = MKI$(playerDef!(I))
-        LSet Q$(I * 16 + 5) = position$(I)
-
-        For I1 = 0 To 13
-            LSet Q$(I * 16 + I1 + 6) = MKI$(playerStats!(I, I1))
-        Next
-
-    Next
-
-    For I = 0 To 24
-        LSet Q$(228 + I) = MKI$(teamStats!(I))
-    Next
-
-    LSet Q$(253) = MKI$(999)
-
-    Put #2, teamIdx
-
-    Close #2
-
-End Sub
-
-
-'----------------------------------------
-'       ConvertTeamData Subroutine
-'----------------------------------------
-' Reads in existing data
-Sub ConvertTeamData ()
-
-    Shared CK, teamAttendance&
-
-    Shared coach$, arenaName$, mascot$
-
-    Shared playerDef!(), playerOff!()
-    Shared playerRatings!(), playerStats!(), teamStats!()
-
-    Shared playerNames$(), position$()
-
-    targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "COLBBTMS.*", "Team files")
-
-    diskID$ = Right$(targetFile$, Len(targetFile$) - InStr(targetFile$, "COLBBTMS.") - 8)
-    newFile$ = targetFile$ + ".NEW"
-
-    If targetFile$ <> "" Then
-
-        Open targetFile$ For Random As #1
-        fileLength& = LOF(1)
-        Close #1
-
-        numberTeams = fileLength& / (DATA_SIZE_BYTES - 8)
-
-        For currTeam = 1 To numberTeams
-
-            Call ReadTeam(diskID$, nothing$, currTeam)
-            Call ReadExtraDataOld(targetFile$, currTeam)
-
-            ' Fill new "actuals" with 0's
-            For I = 21 To 24
-                teamStats!(I) = 0
-            Next I
-
-            tm3FGM = 0
-
-            'Calculate values from existing players
-            For I = 0 To 13
-
-                If playerNames$(I) <> "XXX" Then
-
-                    '3FGA
-                    player3FGA = playerStats!(I, 12)
-                    teamStats!(21) = teamStats!(21) + playerStats!(I, 12)
-
-                    '3FGM - based on 3FGA / PCT
-                    player3FGPct = playerRatings!(I, 2)
-                    player3FGM = (player3FGA * player3FGPct) / 100
-                    tm3FGM = tm3FGM + Int(player3FGM + 0.5)
-
-                    'Blocks
-                    teamStats!(23) = teamStats!(23) + playerStats!(I, 10)
-
-                    'We can't "calculate" opponent blocks without having total somewhere
-                    'teamStats!(24) = teamStats!(24) + playerOff!(I, _)
-
-                End If
-
-            Next I
-
-            'Calculate 3FGA PCT now that we have the team whole stats
-            a! = teamStats!(21)
-            teamStats!(22) = Int(((tm3FGM / teamStats!(21)) * 100) + 0.5)
-
-            Call SaveChangedData(newFile$, currTeam)
-
-        Next currTeam
-
-        Kill targetFile$
-
-        Call FCopy(newFile$, targetFile$, Buff$, copyErr%)
-
-        Kill newFile$
-
-        result& = _MessageBox("Success!", "The team file has been converted for use", "ok", "info", 1)
-
-    End If
-
-End Sub
-
-
-
 '$Include: 'CREATCON.BAS'
 '$Include: 'CREATNATL.BAS'
 '$Include: 'DRAFT.BAS'
@@ -997,7 +782,6 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
@@ -1026,7 +810,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1517,9 +1301,6 @@ Sub COLHOOP ()
     End If
 
 
-    testVal = ShotPacing%
-    Call pbplog(1307)
-
     GoTo 300
 
     '----- NOODLE -----
@@ -1773,27 +1554,28 @@ Sub COLHOOP ()
 
     End If
 
-    'Last 5 seconds, down by 1 score!!!
-    scoreDiff = score(D, 0) - score(P, 0)
-    If gameClock! <= 5 And (threePtOpt = 1 And scoreDiff <= 3 Or threePtOpt = 0 And scoreDiff <= 2) And scoreDiff >= 0 And currHalf >= 2 Then
+    scoreDiffOp = score(D, 0) - score(P, 0)
+
+    If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOp <= 3 Or threePtOpt = 0 And scoreDiffOp <= 2) And scoreDiffOp >= 0 And currHalf >= 2 Then
+        'Last 5 seconds, down by 1 score!!!
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
             ' Computer handle last 5 seconds
-            scoreDiff = score(P, 0) - score(D, 0)
+            scoreDiffTm = score(P, 0) - score(D, 0)
 
             If gameClock! >= 3 And gameClock! <= 5 Then
 
                 If threePtOpt = 0 Then
-                    If scoreDiff < 3 Then
+                    If scoreDiffTm < 3 Then
                         I1% = 5
                     End If
                 Else
                     'threePtOpt = 1
-                    If scoreDiff = 3 Then
+                    If scoreDiffTm = 3 Then
                         I1% = 4
                     End If
-                    If scoreDiff = 2 Then
+                    If scoreDiffTm = 2 Then
                         If d100% <= 50 Then
                             I1% = 5
                         Else
@@ -1805,15 +1587,15 @@ Sub COLHOOP ()
 
                 If gameClock! < 3 Then
                     If threePtOpt = 0 Then
-                        If scoreDiff < 3 Then
+                        If scoreDiffTm < 3 Then
                             I1% = 0
                         End If
                     Else
                         'threePtOpt = 1
-                        If scoreDiff = 3 Then
+                        If scoreDiffTm = 3 Then
                             I1% = 1
                         End If
-                        If scoreDiff = 2 Then
+                        If scoreDiffTm = 2 Then
                             If d100% <= 50 Then
                                 I1% = 0
                             Else
@@ -1844,7 +1626,8 @@ Sub COLHOOP ()
 
         Call Rolld100(RN0)
 
-        ' 0 | 1 = Full Court Pass [Shoot 2 | Shoot 3]
+        'Values of I1%
+        '0 | 1 = Full Court Pass [Shoot 2 | Shoot 3]
         '2 = Shoot from Back Court
         '3 = TO from Half Court
         '4 | 5 = Work the Floor [Shoot 2 | Shoot 3]
@@ -1971,7 +1754,6 @@ Sub COLHOOP ()
 
         End If
 
-
         If I1% >= 4 And gameClock! < 3 Then
 
             pbpString$ = "INBOUND PASS TO " + players$(P, B1(P, ballCarrier))
@@ -1983,8 +1765,6 @@ Sub COLHOOP ()
             GoTo TIMEEXP
         End If
 
-
-        '-- Previously If I1% = 0 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
         If I1% = 1 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
             shootFor3 = 1
         Else
@@ -2035,7 +1815,6 @@ Sub COLHOOP ()
         Else
 
             'Go for 2!!!
-            Call Rolld100(RN0)
 
             Select Case gameClock!
                 Case Is <= .5
@@ -2046,7 +1825,7 @@ Sub COLHOOP ()
                     XX% = 29
             End Select
 
-            If RN0 > XX% Then
+            If d100% > XX% Then
 
                 pbpString$ = players$(P, B1(P, ballCarrier)) + " MISSES"
                 Call PBP
@@ -2095,11 +1874,11 @@ Sub COLHOOP ()
 
     If gameClock! < 6 And LT <> 4 Then LS = 4
 
-    playChoice = 0
-    D6 = 0
-    assistShotBoost = 0
     A6 = 0
+    assistShotBoost = 0
+    D6 = 0
     PASS = 1
+    playChoice = 0
     shotChance! = 0
 
     If X <> 90 Then X = 0
@@ -2345,8 +2124,8 @@ Sub COLHOOP ()
                 'Off Steal Rating + Steal Chance
                 'We are referencing a fixed index of defAdjVsPass
                 'We are not relying on the current DEFENSE
-                'So technically the fixed values can be put in here
-                'CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 4)
+                'So technically fixed values could be put in here
+                'However, if research would show them needing changed...
                 CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 1)
 
                 If RN1 <= CY Then
@@ -2378,8 +2157,9 @@ Sub COLHOOP ()
 
             End If
 
-            Call Rolld100(RN0)
-            If RN0 <= 5 Then intentional = 1
+            If d100% <= 5 Then
+                intentional = 1
+            End If
 
             Call Rolld100(RN1)
 
@@ -2400,10 +2180,8 @@ Sub COLHOOP ()
             Call AdjustPlayTime
             Call AdjustShotClock
 
-            Call Rolld100(RN2)
-
             '80% chance of foul by designated person
-            If RN2 <= 80 Then
+            If d100% <= 80 Then
                 fouler = desigFouler
                 Call FoulCalled(0)
             Else
@@ -2666,9 +2444,7 @@ Sub COLHOOP ()
 
     Else
 
-        Call Rolld100(RN1)
-
-        If RN1 <= defAdjVsShot(1, defCoverage(D)) Then
+        If d100% <= defAdjVsShot(1, defCoverage(D)) Then
 
             assistShotBoost = 0
 
@@ -2684,8 +2460,7 @@ Sub COLHOOP ()
 
             Call SHOTPERCENT
 
-            'I2 = random ball carrier
-            I2 = Int(Rnd(1) * 5)
+            rndCarrier = Int(Rnd(1) * 5)
             assistShotBoost = Int(Rnd(1) * 28) + 1
             assistChance = Int(Rnd(1) * 9) + 1
 
@@ -2693,7 +2468,7 @@ Sub COLHOOP ()
             If tmFatigue(P, B1(P, ballCarrier)) > -5 Then
 
                 'Player is not fatigued - check assist rating
-                If assistChance <= plyrOff_GAME!(P, B1(P, I2), 4) Then
+                If assistChance <= plyrOff_GAME!(P, B1(P, rndCarrier), 4) Then
 
                     shotChance! = plyrOff_GAME!(P, B1(P, ballCarrier), 0) + dFGPA(D) + assistShotBoost + ft3PtFoul(P) + ft3PtFoul(D)
                     ft3PtFoul(P) = 0
@@ -2754,17 +2529,17 @@ Sub COLHOOP ()
     ' ***** CHECK FOR STEALS *****
     435 '
     'Random ball carrier (0-4)
-    P9 = Int(Rnd(1) * 5)
+    rndCarrier = Int(Rnd(1) * 5)
 
     'Compare random # 1-4 against that player's steal rating
     '(basically, average steals / game)
-    stealRating = plyrOff_GAME!(D, P9, 5)
+    stealRating = plyrOff_GAME!(D, rndCarrier, 5)
     RNX = Int(Rnd(1) * 4) + 1
 
     If RNX <= (stealRating) Then
 
         'Successful steal!
-        plyrOff_GAME!(D, B1(D, P9), 18) = plyrOff_GAME!(D, B1(D, P9), 18) + 1
+        plyrOff_GAME!(D, B1(D, rndCarrier), 18) = plyrOff_GAME!(D, B1(D, rndCarrier), 18) + 1
 
         If defCategory(D) <= 0 Or PASS <> 1 Then
             Call LASTSHOT
@@ -2776,7 +2551,7 @@ Sub COLHOOP ()
 
         If pbpDelay! <> 0 Then
 
-            pbpString$ = "BALL STOLEN BY " + players$(D, B1(D, P9)) + "!"
+            pbpString$ = "BALL STOLEN BY " + players$(D, B1(D, rndCarrier)) + "!"
 
             If pbpOpt = 1 Then
                 Call WINDEX
@@ -2788,13 +2563,13 @@ Sub COLHOOP ()
 
                 Select Case RN0
                     Case 1 To 3
-                        pbpString$ = players$(D, B1(D, P9)) + " QUICKLY REACHES IN!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " QUICKLY REACHES IN!"
                         Call PBP
                     Case 4 To 6
-                        pbpString$ = players$(D, B1(D, P9)) + " SNEAKS IN FROM BEHIND!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " SNEAKS IN FROM BEHIND!"
                         Call PBP
                     Case 7 To 10
-                        pbpString$ = players$(D, B1(D, P9)) + " GETS A HAND ON THE BALL!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " GETS A HAND ON THE BALL!"
                         Call PBP
                         'No case for 11 to 100
                 End Select
@@ -2804,45 +2579,45 @@ Sub COLHOOP ()
                 Select Case RN1
 
                     Case 1
-                        pbpString$ = "PASS INTERCEPTED BY " + players$(D, B1(D, P9)) + "!"
+                        pbpString$ = "PASS INTERCEPTED BY " + players$(D, B1(D, rndCarrier)) + "!"
                     Case 2
-                        pbpString$ = "PASS IS PICKED OFF BY " + players$(D, B1(D, P9)) + "!"
+                        pbpString$ = "PASS IS PICKED OFF BY " + players$(D, B1(D, rndCarrier)) + "!"
                     Case 3
-                        pbpString$ = "BALL IS STOLEN BY " + players$(D, B1(D, P9)) + "!"
+                        pbpString$ = "BALL IS STOLEN BY " + players$(D, B1(D, rndCarrier)) + "!"
                     Case 4
-                        pbpString$ = players$(D, B1(D, P9)) + " WITH THE STEAL!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " WITH THE STEAL!"
                     Case 5
-                        pbpString$ = players$(D, B1(D, P9)) + " TAKES IT AWAY!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " TAKES IT AWAY!"
                     Case 6
-                        pbpString$ = players$(D, B1(D, P9)) + " STEALS IT!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " STEALS IT!"
                     Case 7
-                        pbpString$ = players$(D, B1(D, P9)) + " RIPS IT LOOSE!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " RIPS IT LOOSE!"
                     Case 8
-                        pbpString$ = players$(D, B1(D, P9)) + " TAKES THE BALL AWAY!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " TAKES THE BALL AWAY!"
                     Case 9
-                        pbpString$ = players$(D, B1(D, P9)) + " STEALS THE BALL!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " STEALS THE BALL!"
                     Case 10
-                        pbpString$ = players$(D, B1(D, P9)) + " PICKS IT OFshotChance!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " PICKS IT OFF!"
                     Case 11
-                        pbpString$ = players$(D, B1(D, P9)) + " SWIPES THE BALL!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " SWIPES THE BALL!"
                     Case 12
-                        pbpString$ = players$(D, B1(D, P9)) + " WITH THE STOLEN BALL!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " WITH THE STOLEN BALL!"
                     Case 13
-                        pbpString$ = players$(D, B1(D, P9)) + " STRIPS IT AWAY!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " STRIPS IT AWAY!"
                     Case 14
-                        pbpString$ = players$(D, B1(D, P9)) + " WITH THE STEAL!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " WITH THE STEAL!"
                     Case 15
-                        pbpString$ = players$(D, B1(D, P9)) + " SWIPES AND STEALS IT!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " SWIPES AND STEALS IT!"
                     Case 16
-                        pbpString$ = players$(D, B1(D, P9)) + " SNATCHES IT AWAY!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " SNATCHES IT AWAY!"
                     Case 17
-                        pbpString$ = players$(D, B1(D, P9)) + " QUICKLY REACHES IN!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " QUICKLY REACHES IN!"
                     Case 18
-                        pbpString$ = players$(D, B1(D, P9)) + " TAKES IT THE OTHER WAY!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " TAKES IT THE OTHER WAY!"
                     Case 19
-                        pbpString$ = players$(D, B1(D, P9)) + " POKES IT LOOSE!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " POKES IT LOOSE!"
                     Case 20
-                        pbpString$ = players$(D, B1(D, P9)) + " STRIPS IT CLEAN!"
+                        pbpString$ = players$(D, B1(D, rndCarrier)) + " STRIPS IT CLEAN!"
 
                 End Select
 
@@ -2852,7 +2627,7 @@ Sub COLHOOP ()
 
         End If
 
-        plyrOff_GAME!(D, B1(D, P9), 13) = plyrOff_GAME!(D, B1(D, P9), 13) + 1
+        plyrOff_GAME!(D, B1(D, rndCarrier), 13) = plyrOff_GAME!(D, B1(D, rndCarrier), 13) + 1
         turnovers(P) = turnovers(P) + 1
 
         Call UPDATESCREEN
@@ -4924,9 +4699,7 @@ Sub COLHOOP ()
 
         Case DY + 1 To 17
 
-            Call Rolld100(RN0)
-
-            If RN0 > 35 Then
+            If d100% > 35 Then
 
                 totRebounds(D) = totRebounds(D) + 1
                 Call UPDATESCREEN
@@ -5298,8 +5071,7 @@ Sub COLHOOP ()
         GoTo RBTIEUP
     End If
 
-    Call Rolld100(RN0)
-    If CZ%(D) = 1 And RN0 <= 50 Then
+    If CZ%(D) = 1 And d100% <= 50 Then
 
         gameClock! = gameClock! - 4
         timeElapsed! = 4
@@ -5397,8 +5169,6 @@ Sub COLHOOP ()
                 End If
             End If
 
-
-            '-- If RN1 <= 8 Then
             If RN1 <= 7 Then
                 shotType = 9
                 playChoice = 1
@@ -10651,54 +10421,8 @@ Sub ZONECHANGE ()
         End Select
 
         P9 = D
-
-        Select Case defStrat(P9)
-
-            Case 0 To 3, 15
-                'Man-Man / Zone (No Combo)
-                defCategory(P9) = 0
-
-            Case 4
-                'Full Court Press
-                defCategory(P9) = 1
-
-            Case 5, 6
-                'Run & Jump
-                defCategory(P9) = 2
-
-            Case 7 To 9, 16
-                'Passive 2-2-1 Zone
-                defCategory(P9) = 3
-
-            Case 10 To 13, 17
-                'Diamond Trap Zone
-                defCategory(P9) = 4
-
-            Case 14
-                'Fulll Court Man-to-Man Denial / Foul
-                defCategory(P9) = 5
-
-        End Select
-
-        Select Case defStrat(P9)
-
-            Case 0, 4, 5, 8, 10
-                'Solid Man-Man
-                defCoverage(P9) = 0
-
-            Case 1, 6, 9, 11
-                'Pressure Man-Man
-                defCoverage(P9) = 1
-
-            Case 2, 7, 12, 15, 16
-                'Passive Zone
-                defCoverage(P9) = 2
-
-            Case 3, 13, 17
-                'Trapping Zone
-                defCoverage(P9) = 3
-
-        End Select
+        
+        Call CategorizeDefense(P9)
 
         Color 15, 0
 
@@ -10749,61 +10473,16 @@ Sub DEFENSEMENU ()
 
         defStrat(P9) = I1
 
-        Select Case defStrat(P9)
+        Call CategorizeDefense(P9)
 
-            Case 0 To 3, 15
-                'Single Strategy
-                defCategory(P9) = 0
-
-            Case 4
-                'Full Court Press
-                defCategory(P9) = 1
-
-            Case 5, 6
-                'Run & Jump
-                defCategory(P9) = 2
-
-            Case 7 To 9
-                'Passive 2-2-1
-                defCategory(P9) = 3
-
-            Case 10 To 13
-                'Trap 1-2-1-1
-                defCategory(P9) = 4
-
-            Case 14
-                If (currHalf < 2 Or currHalf >= 2 And gameClock! > 180) Then
-                    Beep
-                    Locate 23, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT"
-                    I$ = GetKeyPress$
-                    wrongChoice% = 1
-                Else
-                    defCategory(P9) = 5
-                End If
-
-        End Select
+        If defStrat(P9) = 14 And (currHalf < 2 Or currHalf >= 2 And gameClock! > 180) Then
+            Beep
+            Locate 23, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT"
+            I$ = GetKeyPress$
+            wrongChoice% = 1
+        End If
 
     Loop Until wrongChoice% = 0
-
-    Select Case defStrat(P9)
-
-        Case 0, 4, 5, 8, 10
-            'Solid Man-to-Man
-            defCoverage(P9) = 0
-
-        Case 1, 6, 9, 11
-            'Pressure Man-to-Man
-            defCoverage(P9) = 1
-
-        Case 2, 7, 12, 15
-            '2-3 Zone, 3-2 Zone
-            defCoverage(P9) = 2
-
-        Case 3, 13
-            'Trapping Zone
-            defCoverage(P9) = 3
-
-    End Select
 
     Color 15, 0
 
@@ -10959,8 +10638,7 @@ Sub FATIGUE ()
             defStrat(P9) = 15
         End If
 
-        defCategory(P9) = 0
-        defCoverage(P9) = 2
+        Call CategorizeDefense(P9)
 
     End If
 
@@ -11546,19 +11224,19 @@ Sub SHOTPERCENT ()
         Case 1, 6, 9, 11
             'Pressure Man-Man
             'threePtDefAdj = -5
-            threePtDefAdj = 6
+            threePtDefAdj = 5
 
         Case 2, 7, 12
             '2-3 Zone
             'threePtDefAdj = 3
-            threePtDefAdj = 14
+            threePtDefAdj = 13
 
         Case 15 To 17
             '3-2 Zone is more effective
             'than most defenses, but not
             'quite on par with Man-to-Man
             'threePtDefAdj = -3
-            threePtDefAdj = 8
+            threePtDefAdj = 7
 
     End Select
 
@@ -11778,9 +11456,8 @@ Sub WHOGETSBALL ()
 
             M9 = 0
             ballCarrier = Int(Rnd(1) * 5)
-            Call Rolld100(RN0)
 
-            If RN0 > 25 Then
+            If d100% > 25 Then
 
                 For I = 0 To 4
                     M8 = Int(plyrRat_GAME(P, B1(P, I), 1) / plyrRat_GAME(P, B1(P, I), 0) + .5) - plyrOff_GAME!(P, B1(P, I), 7)
@@ -12413,467 +12090,322 @@ End Sub
 'in how to handle it's strategy.
 Sub ComputerStrategy ()
 
-    I6 = 1 - P9
+    'P9 is the current team being assigned strategy
+    opposeTeam = 1 - P9
 
     ' **************************
     ' *** Defensive Strategy ***
     ' **************************
+    'Default to Solid Man-to-Man
     defStrat(P9) = 0
-    defCoverage(P9) = 0
-    defCategory(P9) = 0
 
-    'Offense is behind
-    If score(P9, 0) - score(I6, 0) < 0 Then
+    'Where is our score compared to opponent?
+    scoreDiffTm = score(P9, 0) - score(opposeTeam, 0)
 
-        'How far behind is the offense?
-        scoreDiff = score(I6, 0) - score(P9, 0)
+    If scoreDiffTm < 0 Then
+        'Current team is behind is behind
 
-        'If threePtOpt = 1
-
-        If currHalf = 1 Then
-
-            Call Rolld100(RN0)
-            Select Case RN0
-
-                'Case 1 To 61
-                Case 1 To 43
-                    defStrat(P9) = 0
-                    defCoverage(P9) = 0
-                    defCategory(P9) = 0
-
-                    'Case 62 To 67
-                Case 44 To 67
-
-                    defStrat(P9) = 1
-                    defCoverage(P9) = 1
-                    defCategory(P9) = 0
-
-                Case 68 To 92
-                    defStrat(P9) = 2
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 0
-
-                Case 93 To 94
-                    defStrat(P9) = 15
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 0
-
-                Case 95 To 100
-                    defStrat(P9) = 3
-                    defCoverage(P9) = 3
-                    defCategory(P9) = 0
-
-            End Select
-
-            Call Rolld100(RN0)
-            Select Case RN0
-
-                Case 1 To 3
-                    'Case 1
-                    defStrat(P9) = 10
-                    defCoverage(P9) = 0
-                    defCategory(P9) = 4
-
-                Case 4 To 5
-                    'Case 2 to 3
-                    '2-3
-                    defStrat(P9) = 9
-                    defCoverage(P9) = 1
-                    defCategory(P9) = 3
-
-                Case 6
-                    'Case 4
-                    defStrat(P9) = 16
-                    defCoverage(P9) = 1
-                    defCategory(P9) = 3
-
-                Case 7 To 9
-                    'Case 5 to 6
-                    defStrat(P9) = 7
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 3
-
-                Case 10 To 12
-                    'Case 7 to 8
-                    defStrat(P9) = 8
-                    defCoverage(P9) = 0
-                    defCategory(P9) = 3
-
-                Case 13 To 14
-                    'Case 9 to 13
-                    defStrat(P9) = 4
-                    defCoverage(P9) = 0
-                    defCategory(P9) = 1
-
-                Case 15
-                    'Case 14, 15
-                    defStrat(P9) = 15
-                    defCoverage(P9) = 0
-                    defCategory(P9) = 1
-
-            End Select
-
-        End If
+        'Where is opponent's score compared to us?
+        scoreDiffOpp = score(opposeTeam, 0) - score(P9, 0)
 
         Call Rolld100(RN0)
 
-        If currHalf = 2 Then
+        Select Case currHalf
+        
+            Case 1
+                '1st half strategy
 
-            Select Case gameClock!
+                Select Case RN0
 
-                Case Is >= 600
-
-                    Select Case scoreDiff
+                    Case 1 To 43
+                        defStrat(P9) = 0
 
-                        Case Is > 20
-
-                            Select Case RN0
+                    Case 44 To 67
+                        defStrat(P9) = 1
 
-                                'Case 1 To 60
-                                Case 1 To 42
-                                    defStrat(P9) = 0
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 0
-
-                                    'Case 61 To 80
-                                Case 43 To 80
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                    Case 68 To 92
+                        defStrat(P9) = 2
 
-                                Case 81 To 92
-                                    defStrat(P9) = 6
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 2
+                    Case 93 To 94
+                        defStrat(P9) = 15
 
-                                Case 93 To 97
-                                    defStrat(P9) = 10
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 4
+                    Case 95 To 100
+                        defStrat(P9) = 3
 
-                                Case 98 To 100
-                                    defStrat(P9) = 11
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 4
+                End Select
 
-                            End Select
+                Call Rolld100(RN1)
+                Select Case RN1
 
-                        Case 10 To 19
+                    Case 1 To 3
+                        defStrat(P9) = 10
 
-                            Select Case RN0
+                    Case 4 To 5
+                        defStrat(P9) = 9
 
-                                'Case 1 To 75
-                                Case 1 To 57
-                                    defStrat(P9) = 0
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 0
+                    Case 6
+                        defStrat(P9) = 16
 
-                                    'Case 76 To 83
-                                Case 58 To 86
-                                    defStrat(P9) = 4
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 1
+                    Case 7 To 9
+                        defStrat(P9) = 7
 
-                                Case 87 To 94
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                    Case 10 To 12
+                        defStrat(P9) = 8
 
-                                Case 95 To 99
-                                    defStrat(P9) = 10
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 4
+                    Case 13 To 14
+                        defStrat(P9) = 4
 
-                                    'Case 97 to 100
-                                Case 100
-                                    defStrat(P9) = 11
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 4
+                    Case 15
+                        defStrat(P9) = 15
 
-                            End Select
+                End Select
 
-                        Case Is < 10
 
-                            Select Case RN0
+            Case 2
+                '2nd Half strategy
 
-                                'Case 1 to 70
-                                Case 1 To 52
-                                    defStrat(P9) = 0
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 0
+                Select Case gameClock!
 
-                                    'Case 71 to 75
-                                Case 53 To 75
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                    Case Is >= 600
 
-                                Case 76 To 84
-                                    defStrat(P9) = 2
-                                    defCoverage(P9) = 2
-                                    defCategory(P9) = 0
+                        Select Case scoreDiffOpp
 
-                                Case 85
-                                    defStrat(P9) = 15
-                                    defCoverage(P9) = 2
-                                    defCategory(P9) = 0
+                            Case Is > 20
+                                'Opponent ahead by 20+
 
-                                Case 86 To 93
-                                    defStrat(P9) = 5
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 2
+                                Select Case RN0
 
-                                Case 94 To 97
-                                    defStrat(P9) = 3
-                                    defCoverage(P9) = 3
-                                    defCategory(P9) = 0
+                                    Case 1 To 42
+                                        defStrat(P9) = 0
 
-                                Case 98 To 100
-                                    defStrat(P9) = 12
-                                    defCoverage(P9) = 2
-                                    defCategory(P9) = 4
+                                    Case 43 To 80
+                                        defStrat(P9) = 1
 
-                            End Select
-
-                    End Select
+                                    Case 81 To 92
+                                        defStrat(P9) = 6
 
-                Case 120 To 599
-
-                    Select Case scoreDiff
-
-                        Case Is > 20
-
-                            Select Case RN0
+                                    Case 93 To 97
+                                        defStrat(P9) = 10
 
-                                'Case 1 To 70
-                                Case 1 To 52
-                                    defStrat(P9) = 0
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 0
+                                    Case 98 To 100
+                                        defStrat(P9) = 11
 
-                                Case 53 To 74
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                                End Select
 
-                                    'Case 71 To 80
-                                Case 75 To 84
-                                    defStrat(P9) = 5
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 2
+                            Case 10 To 19
+                                'Opponent ahead by 10-19
 
-                                    'Case 81 To 90
-                                Case 85 To 94
-                                    defStrat(P9) = 10
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 4
+                                Select Case RN0
 
-                                    'Case 91 To 100
-                                Case 95 To 100
-                                    defStrat(P9) = 13
-                                    defCoverage(P9) = 3
-                                    defCategory(P9) = 4
+                                    Case 1 To 57
+                                        defStrat(P9) = 0
 
-                            End Select
+                                    Case 58 To 86
+                                        defStrat(P9) = 4
 
-                        Case 11 To 19
+                                    Case 87 To 94
+                                        defStrat(P9) = 1
 
-                            Select Case RN0
+                                    Case 95 To 99
+                                        defStrat(P9) = 10
 
-                                'Case 1 To 70
-                                Case 1 To 52
-                                    defStrat(P9) = 0
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 0
+                                    Case 100
+                                        defStrat(P9) = 11
 
-                                    'Case 91 To 100
-                                Case 53 To 80
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                                End Select
 
-                                    'Case 71 To 80
-                                Case 81 To 90
-                                    defStrat(P9) = 5
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 2
+                            Case Is < 10
+                                'Opponent behind or within 10
 
-                                    'Case 81 To 90
-                                Case 91 To 100
-                                    defStrat(P9) = 12
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 4
+                                Select Case RN0
 
+                                    Case 1 To 52
+                                        defStrat(P9) = 0
 
-                            End Select
+                                    Case 53 To 75
+                                        defStrat(P9) = 1
 
-                        Case Is <= 10
+                                    Case 76 To 84
+                                        defStrat(P9) = 2
 
-                            Select Case RN0
+                                    Case 85
+                                        defStrat(P9) = 15
 
-                                'Case 1 To 70
-                                Case 1 To 52
-                                    defStrat(P9) = 0
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 0
+                                    Case 86 To 93
+                                        defStrat(P9) = 5
 
-                                    'Case 71 To 89
-                                Case 53 To 71
-                                    defStrat(P9) = 2
-                                    defCoverage(P9) = 2
-                                    defCategory(P9) = 0
+                                    Case 94 To 97
+                                        defStrat(P9) = 3
 
-                                Case 72
-                                    'Case 90
-                                    defStrat(P9) = 15
-                                    defCoverage(P9) = 2
-                                    defCategory(P9) = 0
+                                    Case 98 To 100
+                                        defStrat(P9) = 12
 
-                                Case 73 To 78
-                                    'Case 91 To 96
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                                End Select
 
-                                Case 79 To 100
-                                    'Case 97 To 100
-                                    defStrat(P9) = 10
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 4
+                        End Select
 
-                            End Select
+                    Case 120 To 599
 
-                    End Select
+                        Select Case scoreDiffOpp
+                            'Opponent ahead by 20+
 
-                Case 0 To 119
+                            Case Is > 20
 
-                    Select Case scoreDiff
+                                Select Case RN0
 
-                        Case Is <= 4
+                                    Case 1 To 52
+                                        defStrat(P9) = 0
 
-                            Select Case RN0
+                                    Case 53 To 74
+                                        defStrat(P9) = 1
 
-                                Case 1 To 15
-                                    defStrat(P9) = 5
-                                    defCoverage(P9) = 0
-                                    defCategory(P9) = 2
+                                    Case 75 To 84
+                                        defStrat(P9) = 5
 
-                                    'Case 26 To 50
-                                Case 16 To 41
-                                    defStrat(P9) = 6
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 2
+                                    Case 85 To 94
+                                        defStrat(P9) = 10
 
-                                Case 42 To 63
-                                    'Case 51 To 75
-                                    defStrat(P9) = 11
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 4
+                                    Case 95 To 100
+                                        defStrat(P9) = 13
 
-                                Case 64 To 84
-                                    'Case 76 To 100
-                                    defStrat(P9) = 13
-                                    defCoverage(P9) = 3
-                                    defCategory(P9) = 4
+                                End Select
 
-                                Case 85 To 100
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                            Case 11 To 19
+                                'Opponent ahead by 11-19
 
-                            End Select
+                                Select Case RN0
 
-                        Case 5 To 10
-                            defStrat(P9) = 14
-                            defCoverage(P9) = 3
-                            defCategory(P9) = 5
+                                    Case 1 To 52
+                                        defStrat(P9) = 0
 
-                        Case Is >= 11
+                                    Case 53 To 80
+                                        defStrat(P9) = 1
 
-                            Select Case RN0
+                                    Case 81 To 90
+                                        defStrat(P9) = 5
 
-                                Case 1 To 47
-                                    defStrat(P9) = 11
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 4
+                                    Case 91 To 100
+                                        defStrat(P9) = 12
 
-                                Case 48 To 93
-                                    defStrat(P9) = 13
-                                    defCoverage(P9) = 3
-                                    defCategory(P9) = 4
+                                End Select
 
-                                Case 94 To 100
-                                    defStrat(P9) = 1
-                                    defCoverage(P9) = 1
-                                    defCategory(P9) = 0
+                            Case Is <= 10
+                                'Opponent behind or within 10
 
-                            End Select
+                                Select Case RN0
 
-                    End Select
+                                    Case 1 To 52
+                                        defStrat(P9) = 0
 
-            End Select
+                                    Case 53 To 71
+                                        defStrat(P9) = 2
 
-        End If
+                                    Case 72
+                                        defStrat(P9) = 15
 
-        If currHalf > 2 Then
+                                    Case 73 To 78
+                                        defStrat(P9) = 1
 
-            Select Case RN0
+                                    Case 79 To 100
+                                        defStrat(P9) = 10
 
-                'Case Is <= 50
-                Case 0 To 32
-                    defStrat(P9) = 0
-                    defCoverage(P9) = 0
-                    defCategory(P9) = 0
+                                End Select
 
-                Case 33 To 36
-                    defStrat(P9) = 1
-                    defCoverage(P9) = 1
-                    defCategory(P9) = 0
+                        End Select
 
-                Case 37 To 50
+                    Case 0 To 119
 
+                        Select Case scoreDiffOpp
 
-                Case 51 To 96
-                    defStrat(P9) = 2
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 0
+                            Case Is <= 4
+                                'Opponent behind or within 4
 
-                Case 97 To 100
-                    defStrat(P9) = 15
-                    defCoverage(P9) = 2
-                    defCategory(P9) = 0
+                                Select Case RN0
 
-            End Select
+                                    Case 1 To 15
+                                        defStrat(P9) = 5
 
-        End If
+                                    Case 16 To 41
+                                        defStrat(P9) = 6
+
+                                    Case 42 To 63
+                                        defStrat(P9) = 11
+
+                                    Case 64 To 84
+                                        defStrat(P9) = 13
+
+                                    Case 85 To 100
+                                        defStrat(P9) = 1
+
+                                End Select
+
+                            Case 5 To 10
+                                'Opponent ahead by 5-10
+                                defStrat(P9) = 14
+
+                            Case Is >= 11
+                                'Opponent ahead by 11+
+
+                                Select Case RN0
+
+                                    Case 1 To 47
+                                        defStrat(P9) = 11
+
+                                    Case 48 To 93
+                                        defStrat(P9) = 13
+
+                                    Case 94 To 100
+                                        defStrat(P9) = 1
+
+                                End Select
+
+                        End Select
+
+                End Select
+
+
+            Case Is > 2
+                'Overtime strategy
+
+                Select Case RN0
+
+                    Case 0 To 32
+                        defStrat(P9) = 0
+
+                    Case 33 To 36
+                        defStrat(P9) = 1
+
+                    Case 37 To 50
+                        'Nothing here?
+
+                    Case 51 To 96
+                        defStrat(P9) = 2
+
+                    Case 97 To 100
+                        defStrat(P9) = 15
+
+                End Select
+
+        End Select
 
     Else
+        'Team is ahead
 
         Call Rolld100(RN0)
 
         Select Case RN0
 
-            'Case 1 To 64
             Case 1 To 46
                 defStrat(P9) = 0
-                defCoverage(P9) = 0
-                defCategory(P9) = 0
 
-                'Case 65 To 74
             Case 47 To 74
                 defStrat(P9) = 1
-                defCoverage(P9) = 1
-                defCategory(P9) = 0
 
             Case 75 To 98
-
-                defCoverage(P9) = 2
-                defCategory(P9) = 0
+                defStrat(P9) = 2
 
             Case 99 To 100
                 defStrat(P9) = 15
-                defCoverage(P9) = 2
-                defCategory(P9) = 0
 
         End Select
 
@@ -12883,27 +12415,23 @@ Sub ComputerStrategy ()
 
             Case 1 To 5
                 defStrat(P9) = 4
-                defCategory(P9) = 1
-                defCoverage(P9) = 0
 
             Case 6 To 9
                 defStrat(P9) = 8
-                defCategory(P9) = 3
-                defCoverage(P9) = 0
 
             Case 10
                 defStrat(P9) = 7
-                defCategory(P9) = 3
-                defCoverage(P9) = 2
 
             Case 11
                 defStrat(P9) = 16
-                defCategory(P9) = 3
-                defCoverage(P9) = 2
 
         End Select
 
     End If
+
+
+    Call CategorizeDefense(P9)
+
 
     ' **************************
     ' *** Offensive Strategy ***
@@ -12927,12 +12455,11 @@ Sub ComputerStrategy ()
 
         End Select
 
-    End If
+    Else
+        'currHalf >= 2
 
-    If currHalf >= 2 Then
-
-        If score(P9, 0) - score(I6, 0) < 0 Then
-            'Offense is behind
+        If scoreDiffTm < 0 Then
+            'We are behind
 
             If gameClock! <= 180 Then
 
@@ -12946,7 +12473,6 @@ Sub ComputerStrategy ()
 
             Else
 
-                'If RN0 <= 80 Then
                 If RN0 <= 70 Then
                     offStrat(P9) = 0
                 Else
@@ -12957,8 +12483,7 @@ Sub ComputerStrategy ()
 
         Else
 
-            'Offense is tied / ahead
-            'If RN0 <= 80 Then
+            'We are ahead
             If RN0 <= 85 Then
                 offStrat(P9) = 0
             Else
@@ -12967,12 +12492,72 @@ Sub ComputerStrategy ()
 
         End If
 
-        If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) <= -3) Then
-            'If gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(I6, 0) = -3 Or score(P9, 0) - score(I6, 0) = -6) Then
+        If gameClock! <= 60 And threePtOpt = 1 And scoreDiffTm <= -3 Then
+            'We are behind by 3 or more
             offStrat(P9) = 9
         End If
 
     End If
+
+End Sub
+
+
+'----------------------------------------
+'      CategorizeDefense Subroutine
+'----------------------------------------
+'This subroutine assigns a coverage type
+'and category to each defensive style.
+'These are used to generalize adjustments
+'to play outcomes based on the defense.
+Sub CategorizeDefense (teamIdx)
+
+    Select Case defStrat(teamIdx)
+
+        Case 0 To 3, 15
+            'Single Strategy
+            defCategory(teamIdx) = 0
+
+        Case 4
+            'Full Court Press
+            defCategory(teamIdx) = 1
+
+        Case 5, 6
+            'Run & Jump
+            defCategory(teamIdx) = 2
+
+        Case 7 To 9, 16
+            'Passive 2-2-1 Zone
+            defCategory(teamIdx) = 3
+
+        Case 10 To 13, 17
+            'Diamond Trap Zone
+            defCategory(teamIdx) = 4
+
+        Case 14
+            'Fulll Court Man-to-Man Denial / Foul
+            defCategory(teamIdx) = 5
+
+    End Select
+
+    Select Case defStrat(teamIdx)
+
+        Case 0, 4, 5, 8, 10
+            'Solid Man-Man
+            defCoverage(teamIdx) = 0
+
+        Case 1, 6, 9, 11
+            'Pressure Man-Man
+            defCoverage(teamIdx) = 1
+
+        Case 2, 7, 12, 15, 16
+            'Passive Zone
+            defCoverage(teamIdx) = 2
+
+        Case 3, 13, 17
+            'Trapping Zone
+            defCoverage(teamIdx) = 3
+
+    End Select
 
 End Sub
 
@@ -14602,9 +14187,8 @@ End Function
 Sub pbplog (lineNumber)
 
     'Print #11, "Calling from "; lineNumber
-    'Print #11, pbpString$
-    Print #11, testVal
-    'Print #11,
+    Print #11, pbpString$
+    Print #11,
 
 End Sub
 

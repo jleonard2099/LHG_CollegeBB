@@ -1201,4 +1201,3 @@ Sub Hd2HdColl_Screen (teamName$)
 
 End Sub
 
-

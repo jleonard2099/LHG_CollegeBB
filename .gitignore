@@ -14,3 +14,5 @@ src/GAME82
 src/EVENTS.BOX
 src/TICKER
 src/*.SCX
+src/*.mp3
+src/FOLDERS.CFG

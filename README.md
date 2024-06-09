@@ -26,7 +26,8 @@ No installation required. Releases are available as pre-compiled binaries for ea
 ### Usage ###
 Run Hello.exe to start with the main game menu.
 
-Teams files will not be included at this time. However, if you're nice enough, the people at the [Haffner Files Facebook group](https://www.facebook.com/groups/183455342454939) will be glad to help you.
+Teams files are now included! Simply put them in the same folder as the game. Or, create folders for each type of file and configure the game to use those folders.
+Files provided are NOT backwards-compatible with the DOS versions of the game.
 
 ### Support ###
 Contact support@lhgames.net with inquiries for now.
@@ -48,14 +49,12 @@ This phase will get the games available to the general public in a steady and re
 **Completed.**
 
 ### Phase 2 ###
-This phase will start to identify these as new games, and involve these short and simple goals:
+This phase will start to identify these as new games, making improvements to the flow and logic without impacting the styling.
 **Completed.**
 
 ### Phase 3 ###
-This final phase will involve the following:
-- Updating the games to support modern rules
-- Including support files such as team files, leagues, schedules, etc.
-- Address gameplay bugs as reported by longtime users and playtesters
+This phase will see the games take on updated rules and correct accuracy. All known bugs will be squashed and user files will be prepared to distribute with the game.
+**Completed.**
 
 ### The Future ###
 - Updating code to work with databases instead of flat files.
@@ -69,10 +68,14 @@ Affero GNU GPL v3
 Contact me directly if interested in contributing. Only considering people who share my vision for these games and are able to honor Lance's work and legacy.
 
 ### Authors / Acknowledgment ###
-- [Game icons created by Joseph Gan (Icon-Icons)](https://icon-icons.com/users/XHgnBHIfJk0ZlajSy0A0x/icon-sets/)
-- [Basketball-court icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/basketball-court)
-- [Save icons created by Those Icons - Flaticon](https://www.flaticon.com/free-icons/save)
-- [File explorer icons created by juicy_fish - Flaticon](https://www.flaticon.com/free-icons/file-explorer)
+- Manual images created by [Cool Clips](http://search.coolclips.com/)
+- Game icons created by [Joseph Gan (Icon-Icons)](https://icon-icons.com/users/XHgnBHIfJk0ZlajSy0A0x/icon-sets/)
+- Basketball-court icons created by [Freepik - Flaticon](https://www.flaticon.com/free-icons/basketball-court)
+- Save icons created by [Those Icons - Flaticon](https://www.flaticon.com/free-icons/save)
+- File explorer icons created by [juicy_fish - Flaticon](https://www.flaticon.com/free-icons/file-explorer)
+- Buzzer, Whistle and Swish sounds courtesy of [Audio Jungle / Envato] (https://audiojungle.com)
+- Crowd sound courtesy of [Mike_Koenig] (https://soundbible.com)
+- Backboard sound retrieved from [Pixabay](https://pixabay.com)
 - I am responsible for maintaining / updating most of the code and will spend equal effort to code cleanup as to code improvement.
 - Randy Dudley, the original author of the LOOKY subroutine, for his crazy attention to detail and testing all my work
 - Jason Lamb, for lending his expertise in BASIC to helping me learn some standards and rewriting the menu functions.
