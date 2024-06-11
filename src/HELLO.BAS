@@ -437,7 +437,7 @@ Sub TeamMgt_Menu ()
 
                 Case 6:
                     targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "COLBBTMS.*", "Team files")
-                    Call ConvertTeam4to5 (targetFile$)
+                    Call ConvertTeam4to5(targetFile$, 0)
 
             End Select
 
@@ -618,12 +618,12 @@ End Sub
 '$Include: 'QPProEqu.bm'
 '$Include: 'PadRight.bm'
 '$Include: 'QBWRITE.bm'
-'$Include: 'Convert.BAS'
 
 ' For Utils
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
 '$Include: 'FileTeamSelection.bm'
+'$Include: 'Convert.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
 '$Include: 'ALIGN.BAS'
@@ -1165,7 +1165,9 @@ Sub COLHOOP ()
 
     Call LOADSTATS
 
-    If autoPlay = 1 Then gameLoc = NG%(2)
+    If autoPlay = 1 Then
+        gameLoc = NG%(2)
+    End If
 
     'Determine attendance
     If gameLoc = 2 Or avgAttendance&(1) = 0 Then
@@ -1226,6 +1228,12 @@ Sub COLHOOP ()
     Call CheckGameClock
     Call STEALADJ
 
+    If autoPlay <> 1 And playerMode <> 2 Then
+        whistle& = _SndOpen("ref-whistle.mp3")
+        swish& = _SndOpen("swish.mp3")
+        backboard& = _SndOpen("backboard.mp3")
+    End If
+
     250 '
     prevBall$ = ""
 
@@ -1259,7 +1267,7 @@ Sub COLHOOP ()
             If pbpOpt = 0 Then
                 pbpString$ = gameTeams$(P) + " GETS THE JUMP"
                 possArrow = D
-                Call PBP
+                Call PBP(P)
             Else
                 'pbpOpt = 1
                 Call WINDEX
@@ -1276,15 +1284,8 @@ Sub COLHOOP ()
             D = 1 - P
             possArrow = 1 - possArrow
 
-            If pbpOpt = 0 Then
-                pbpString$ = gameTeams$(P) + " INBOUNDS THE BALL"
-                Call PBP
-            Else
-                'pbpOpt = 1
-                Call WINDEX
-                Print gameTeams$(P) + " INBOUNDS THE BALL"
-                Call DELAY
-            End If
+            pbpString$ = gameTeams$(P) + " INBOUNDS THE BALL"
+            Call SELECTPBP(P, 1)
 
         End If
 
@@ -1532,6 +1533,10 @@ Sub COLHOOP ()
     gameClock! = 0
     Call CheckGameShotClock
 
+    If autoPlay <> 1 And playerMode <> 2 Then
+        Call HORN
+    End If
+
     GoTo 170
 
     '----- NOODLE -----
@@ -1549,6 +1554,10 @@ Sub COLHOOP ()
         Print gameTeams$(P); " RUNS THE CLOCK OUT!"
         Call DELAY
         Call DELAY
+
+        If autoPlay <> 1 And playerMode <> 2 Then
+            Call HORN
+        End If
 
         GoTo 170
 
@@ -1635,10 +1644,10 @@ Sub COLHOOP ()
         If I1% = 0 And RN0 <= 50 Or I1% = 1 And RN0 <= 33 Then
 
             pbpString$ = "LONG PASS DOWN COURT"
-            Call PBP
+            Call PBP(P)
             Call DELAY
             pbpString$ = "IT'S INTERCEPTED...GAME OVER!!"
-            Call PBP
+            Call PBP(P)
             GoTo TIMEEXP
 
         End If
@@ -1648,16 +1657,16 @@ Sub COLHOOP ()
             rndFtLine = Int(Rnd(1) * 45) + 45
 
             pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE BALL"
-            Call PBP
+            Call PBP(P)
 
-            pbpString$ = "HE PUTS IT UP FROM" + Str$(rndFtLine) + " FEET"
-            Call PBP
+            pbpString$ = "PUTS IT UP FROM" + Str$(rndFtLine) + " FEET"
+            Call PBP(P)
             Call DELAY
 
             If RN0 = 61 Then
 
                 pbpString$ = "GOOD!!"
-                Call PBP
+                Call PBP(P)
 
                 'Reward at least 2 points (depends on if 3-pt shot is supported)
                 score(P, currHalf) = score(P, currHalf) + 2
@@ -1687,7 +1696,11 @@ Sub COLHOOP ()
             Else
 
                 pbpString$ = "SHOT MISSES...GAME OVER"
-                Call PBP
+                Call PBP(P)
+
+                If autoPlay <> 1 Or playerMode <> 2 And backboard& Then
+                    _SndPlay backboard&
+                End If
 
                 plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
 
@@ -1707,12 +1720,12 @@ Sub COLHOOP ()
 
                 Case Is <= 8
                     pbpString$ = "BALL LOST O.B.  GAME OVER"
-                    Call PBP
+                    Call PBP(P)
                     GoTo TIMEEXP
 
                 Case 9 To 18
                     pbpString$ = "PASS INTERCEPTED"
-                    Call PBP
+                    Call PBP(P)
                     GoTo TIMEEXP
 
             End Select
@@ -1724,10 +1737,10 @@ Sub COLHOOP ()
             If gameClock! < 1.5 Then
 
                 pbpString$ = "INBOUND PASS TO " + players$(P, B1(P, ballCarrier))
-                Call PBP
+                Call PBP(P)
 
                 pbpString$ = "TIME EXPIRES"
-                Call PBP
+                Call PBP(P)
 
                 GoTo TIMEEXP
 
@@ -1740,16 +1753,17 @@ Sub COLHOOP ()
                 Call AdjustShotClock
 
                 pbpString$ = gameTeams$(P) + " GETS THE BALL TO HALF COURT"
-                Call PBP
+                Call PBP(P)
 
                 pbpString$ = "THEY QUICKLY CALL FOR A TIMEOUT"
-                Call PBP
+                Call PBP(P)
 
                 timeouts(P) = timeouts(P) - 1
 
                 Call DEADBALLOPTIONS
                 Call SCOREBOARD
                 Call HalfCourt(I2%)
+
             End If
 
         End If
@@ -1757,12 +1771,13 @@ Sub COLHOOP ()
         If I1% >= 4 And gameClock! < 3 Then
 
             pbpString$ = "INBOUND PASS TO " + players$(P, B1(P, ballCarrier))
-            Call PBP
+            Call PBP(P)
 
             pbpString$ = "TIME EXPIRES"
-            Call PBP
+            Call PBP(P)
 
             GoTo TIMEEXP
+
         End If
 
         If I1% = 1 Or I1% = 4 Or (I1% = 3 And I2% = 1) Then
@@ -1774,7 +1789,6 @@ Sub COLHOOP ()
         If shootFor3 = 1 And threePtOpt = 1 Then
 
             ' Shoot for 3!!!
-            Call Rolld100(RN0)
             Select Case gameClock!
                 Case Is <= .5
                     XX% = 2
@@ -1784,20 +1798,28 @@ Sub COLHOOP ()
                     XX% = 20
             End Select
 
-            If RN0 > XX% Then
+            plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+
+            If d100% > XX% Then
 
                 pbpString$ = players$(P, B1(P, ballCarrier)) + " MISSES"
-                Call PBP
+                Call PBP(P)
 
-                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+                If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% <= 10 Then
+                    _SndPlay backboard&
+                End If
+
                 threeFG(P, B1(P, ballCarrier), 1) = threeFG(P, B1(P, ballCarrier), 1) + 1
 
             Else
 
                 pbpString$ = "BASKET BY " + players$(P, B1(P, ballCarrier)) + "!!"
-                Call PBP
+                Call PBP(P)
 
-                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+                If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                    _SndPlay swish&
+                End If
+
                 plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
 
                 score(P, currHalf) = score(P, currHalf) + 3
@@ -1825,18 +1847,26 @@ Sub COLHOOP ()
                     XX% = 29
             End Select
 
+            plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+
             If d100% > XX% Then
 
                 pbpString$ = players$(P, B1(P, ballCarrier)) + " MISSES"
-                Call PBP
-                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+                Call PBP(P)
+
+                If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% <= 10 Then
+                    _SndPlay backboard&
+                End If
 
             Else
 
                 pbpString$ = "BASKET BY " + players$(P, B1(P, ballCarrier)) + "!!"
-                Call PBP
+                Call PBP(P)
 
-                plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
+                If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                    _SndPlay swish&
+                End If
+
                 plyrOff_GAME!(P, B1(P, ballCarrier), 8) = plyrOff_GAME!(P, B1(P, ballCarrier), 8) + 1
 
                 score(P, currHalf) = score(P, currHalf) + 2
@@ -2009,9 +2039,9 @@ Sub COLHOOP ()
                     pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE BALL"
                 End If
 
-                Call PBP
-                pbpString$ = "HE IS STREAKING DOWN THE FLOOR!"
-                Call PBP
+                Call PBP(P)
+                pbpString$ = "HE'S STREAKING DOWN THE FLOOR!"
+                Call PBP(P)
 
                 LAYUP:
                 fastBreak = 1
@@ -2030,7 +2060,7 @@ Sub COLHOOP ()
             P9 = D
 
             pbpString$ = "DESIGNATED FOULER (0-4)"
-            Call SELECTPBP
+            Call SELECTPBP(P, 1)
 
             skipInbound% = 0
 
@@ -2047,32 +2077,26 @@ Sub COLHOOP ()
             End If
 
             If skipInbound% = 0 Then
-            
+
                 Select Case RN1
 
                     Case 1 To 4
 
                         pbpString$ = gameTeams$(P) + " CAN'T INBOUND THE BALL"
-                        Call SELECTPBP
+                        Call SELECTPBP(P, 1)
 
                         If timeouts(P) > 0 Then
 
                             pbpString$ = gameTeams$(P) + " CALLS A TIME OUT"
 
-                            If pbpOpt = 1 And pbpDelay! <> 0 Then
-                                Print pbpString$
-                                Call DELAY
-                            End If
-                            If pbpOpt = 0 Then Call PBP
+                            Call SELECTPBP(P, 0)
 
                             PASS = 0
                             GoTo 640
 
                         Else
 
-                            'timeouts(P) = 0
                             pbpString$ = "5 SECOND VIOLATION...TURNOVER"
-
                             SV% = 1
                             GoTo 517
 
@@ -2080,7 +2104,7 @@ Sub COLHOOP ()
 
                     Case 5 To 7
                         pbpString$ = gameTeams$(P) + " CAN'T INBOUND THE BALL"
-                        Call SELECTPBP
+                        Call SELECTPBP(P, 1)
 
                         pbpString$ = "5 SECOND VIOLATION...TURNOVER"
                         SV% = 1
@@ -2145,13 +2169,14 @@ Sub COLHOOP ()
                             Call AdjustShotClock
 
                     End Select
-
+                    
+                    'Check for steal
                     GoTo 435
 
                 Else
                     432 '
                     pbpString$ = "PASS TO " + players$(P, B1(P, ballCarrier))
-                    Call SELECTPBP
+                    Call SELECTPBP(P, 1)
 
                 End If
 
@@ -2401,19 +2426,23 @@ Sub COLHOOP ()
             End Select
 
             If RN0 <= CY + OY% Then
+                'Check for steal
                 GoTo 435
             End If
 
         End If
 
     End If
+    
+    'Is this when we actually pass the ball ???
+
 
     '-----
 
     465 '
     Call Rolld100(RN0)
 
-    'Adjust likelihood of taking a shot baed on defense
+    'Adjust likelihood of taking a shot based on defense
     GS% = ShotPacing%
 
     'Pressure Man-to-Man | 2-3 Zone
@@ -2555,7 +2584,7 @@ Sub COLHOOP ()
 
             If pbpOpt = 1 Then
                 Call WINDEX
-                Print pbpString$
+                Call PBP(D)
                 Call DELAY
             Else
 
@@ -2564,13 +2593,13 @@ Sub COLHOOP ()
                 Select Case RN0
                     Case 1 To 3
                         pbpString$ = players$(D, B1(D, rndCarrier)) + " QUICKLY REACHES IN!"
-                        Call PBP
+                        Call PBP(D)
                     Case 4 To 6
                         pbpString$ = players$(D, B1(D, rndCarrier)) + " SNEAKS IN FROM BEHIND!"
-                        Call PBP
+                        Call PBP(D)
                     Case 7 To 10
                         pbpString$ = players$(D, B1(D, rndCarrier)) + " GETS A HAND ON THE BALL!"
-                        Call PBP
+                        Call PBP(D)
                         'No case for 11 to 100
                 End Select
 
@@ -2621,7 +2650,7 @@ Sub COLHOOP ()
 
                 End Select
 
-                Call PBP
+                Call PBP(D)
 
             End If
 
@@ -2631,11 +2660,6 @@ Sub COLHOOP ()
         turnovers(P) = turnovers(P) + 1
 
         Call UPDATESCREEN
-
-        C1 = 2
-        P9 = D
-
-        If gameClock! <= 0 Then 170
 
         prevBall$ = ""
         If P = 1 Then
@@ -2650,6 +2674,11 @@ Sub COLHOOP ()
             P9 = 1
             C1 = 2
         End If
+
+        C1 = 2
+        P9 = D
+
+        If gameClock! <= 0 Then 170
 
         fastBreak = 1
 
@@ -2809,24 +2838,16 @@ Sub COLHOOP ()
 
         If SV% <> 1 Then
             pbpType = 1
-            Call MAKEPBP
+            Call MAKEPBP(pbpType)
         End If
 
         SV% = 0
 
-        If pbpOpt = 1 And pbpDelay! <> 0 Then
-            Call WINDEX
-            Print "TURNOVER BY "; gameTeams$(P)
-            Call DELAY
-        End If
-        If pbpOpt = 0 Then Call PBP
+        pbpString$ = "TURNOVER BY " + gameTeams$(P)
+        Call SELECTPBP(P, 1)
 
         pbpString$ = "BALL OUT OF BOUNDS TO " + gameTeams$(D)
-        If pbpOpt = 1 And pbpDelay! <> 0 Then
-            Print pbpString$
-            Call DELAY
-        End If
-        If pbpOpt = 0 Then Call PBP
+        Call SELECTPBP(P, 0)
 
         Call DELAY
         Call UPDATESCREEN
@@ -2918,14 +2939,14 @@ Sub COLHOOP ()
 
                 End Select
 
-                Call PBP
+                Call PBP(P)
 
                 Call Rolld100(RN1)
 
                 Select Case RN1
 
                     Case Is <= 33
-                        pbpString$ = "HE HAS AN OPEN JUMPER AT THE FT LINE"
+                        pbpString$ = "HAS AN OPEN JUMPER AT THE FT LINE"
 
                     Case 34 To 66
                         pbpString$ = "HE'S OPEN ON THE BASELINE"
@@ -2936,7 +2957,7 @@ Sub COLHOOP ()
                 End Select
 
                 Call SHOTSTRING
-                Call PBP
+                Call PBP(P)
 
             End If
 
@@ -2946,24 +2967,24 @@ Sub COLHOOP ()
 
                 pbpType = 6
                 shotType = 8
-                Call MAKEPBP
-                Call PBP
+                Call MAKEPBP(pbpType)
+                Call PBP(P)
 
             Else
 
                 If players$(P, B1(P, ballCarrier)) <> prevBall$ Then
                     If prevBall$ = "" Then
                         pbpString$ = "PASS TO " + players$(P, B1(P, ballCarrier))
-                        Call PBP
+                        Call PBP(P)
                     Else
                         pbpType = 10
-                        Call MAKEPBP
-                        Call PBP
+                        Call MAKEPBP(pbpType)
+                        Call PBP(P)
                     End If
                 Else
                     pbpType = 9
-                    Call MAKEPBP
-                    Call PBP
+                    Call MAKEPBP(pbpType)
+                    Call PBP(P)
                 End If
 
                 If shotClock <= 0 And sClockVal > 0 Then
@@ -3018,14 +3039,14 @@ Sub COLHOOP ()
 
                         End If
 
-                        Call PBP
+                        Call PBP(P)
 
                     Case 2:
                         pbpString$ = YY$ + " WORKS FREE INSIDE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE HAS AN OPEN SHOT"
                         Call SHOTSTRING
-                        Call PBP
+                        Call PBP(P)
 
                         playChoice = 1
 
@@ -3042,26 +3063,26 @@ Sub COLHOOP ()
                                 Select Case RN0
                                     Case Is <= 25
                                         pbpString$ = YY$ + " MAKES A MOVE DOWN LOW"
-                                        Call PBP
+                                        Call PBP(P)
 
                                     Case 26 To 50
                                         pbpString$ = YY$ + " POSITIONS HIMSELF DOWN LOW"
-                                        Call PBP
+                                        Call PBP(P)
 
                                     Case 51 To 75
                                         pbpString$ = YY$ + " POSTS UP UNDERNEATH"
-                                        Call PBP
+                                        Call PBP(P)
 
                                     Case 76 To 100
                                         pbpString$ = YY$ + " BACKS IN AGAINST " + players$(D, B1(D, 4))
 
                                 End Select
 
-                                Call PBP
+                                Call PBP(P)
 
                                 pbpString$ = "HE HAS A GOOD SHOT INSIDE"
                                 Call SHOTSTRING
-                                Call PBP
+                                Call PBP(P)
 
                             End If
 
@@ -3089,11 +3110,11 @@ Sub COLHOOP ()
 
                                 End Select
 
-                                Call PBP
+                                Call PBP(P)
 
                                 pbpString$ = "HE'S GOT A GOOD SHOT UNDERNEATH"
                                 Call SHOTSTRING
-                                Call PBP
+                                Call PBP(P)
 
                             End If
 
@@ -3105,7 +3126,7 @@ Sub COLHOOP ()
 
                                     Case 26 To 50
                                         pbpString$ = YY$ + " DRIVES THROUGH THE KEY"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "HE'S INTO THE LANE"
 
                                     Case 51 To 75
@@ -3116,11 +3137,11 @@ Sub COLHOOP ()
 
                                 End Select
 
-                                Call PBP
+                                Call PBP(P)
 
                                 pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
                                 Call SHOTSTRING
-                                Call PBP
+                                Call PBP(P)
 
                             End If
 
@@ -3129,29 +3150,15 @@ Sub COLHOOP ()
                     Case 4:
                         pbpString$ = "HE'S OPEN FROM 3-POINT RANGE!"
                         pbpString$ = pbpString$ + Str$(threePtShotChance) + "*"
-                        Call PBP
+                        Call PBP(P)
 
                         'playChoice = 1
                         playChoice = 4
 
-                    Case 5:
+                    Case 5 To 7
                         pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
                         Call SHOTSTRING
-                        Call PBP
-
-                        playChoice = 1
-
-                    Case 6:
-                        pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
-                        Call SHOTSTRING
-                        Call PBP
-
-                        playChoice = 1
-
-                    Case 7:
-                        pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
-                        Call SHOTSTRING
-                        Call PBP
+                        Call PBP(P)
 
                         playChoice = 1
 
@@ -3416,8 +3423,8 @@ Sub COLHOOP ()
             537 '
             ' *** SHOOT !!! ***
             pbpType = 3
-            Call MAKEPBP
-            Call PBP
+            Call MAKEPBP(pbpType)
+            Call PBP(P)
 
             shotRoll = 0
             Call Rolld100(foulRoll)
@@ -3447,16 +3454,6 @@ Sub COLHOOP ()
 
                     '--- BEGINNING OF SUBROUTINE
 
-                    If pbpOpt = 0 Then
-                        pbpString$ = "2 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                        Call PBP
-                        Call DELAY
-                    Else
-                        Call WINDEX
-                        Print gameTeams$(P)
-                        Print "2 FT: "; players$(P, B1(P, ballCarrier)); "   "; plyrOff_GAME!(P, B1(P, ballCarrier), 1); " %"
-                    End If
-
                     X = 50
 
                     Call DEADBALLOPTIONS
@@ -3475,7 +3472,7 @@ Sub COLHOOP ()
 
                         If pbpOpt = 0 Then
                             pbpString$ = "2 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                            Call PBP
+                            Call PBP(P)
                         Else
                             Call WINDEX
                             Print gameTeams$(P)
@@ -3505,6 +3502,10 @@ Sub COLHOOP ()
                                 Call MADEFT(freethrow)
                             End If
 
+                            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+                                _SndPlay swish&
+                            End If
+
                         Else
 
                             If pbpOpt = 0 Then
@@ -3512,8 +3513,12 @@ Sub COLHOOP ()
                             Else
                                 'pbpOpt = 1
                                 Call MISSFT(freethrow)
-
                             End If
+
+                            If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                                _SndPlay backboard&
+                            End If
+
                         End If
 
                     Next freethrow
@@ -3526,9 +3531,16 @@ Sub COLHOOP ()
                     LT = 0
 
                     If gameClock! <= 0 Then
+
                         timeElapsed! = gameClock!
                         Call AdjustPlayTime
+
+                        If autoPlay <> 1 And playerMode <> 2 Then
+                            Call HORN
+                        End If
+
                         GoTo 170
+
                     End If
 
                     If shotRoll > baseShotChance Then
@@ -3551,7 +3563,7 @@ Sub COLHOOP ()
                         End If
 
                         pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-                        Call SELECTPBP
+                        Call SELECTPBP(P, 1)
 
                         Locate 8, 41: Print Space$(12)
 
@@ -3596,13 +3608,13 @@ Sub COLHOOP ()
 
                         If pbpOpt = 0 Then
                             pbpType = 2
-                            Call MAKEPBP
+                            Call MAKEPBP(pbpType)
                         Else
                             'pbpOpt = 1
                             Call WINDEX
                         End If
 
-                        Call PBP
+                        Call PBP(D)
                         Call DELAY
                         DK% = 0
 
@@ -3611,19 +3623,14 @@ Sub COLHOOP ()
                         If shotType = 8 Then
 
                             pbpType = 7
-                            Call MAKEPBP
+                            Call MAKEPBP(pbpType)
                             shotType = 0
-                            Call PBP
+                            Call PBP(P)
 
                         Else
 
-                            If pbpOpt = 0 Then
-                                pbpString$ = "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
-                                Call PBP
-                            Else
-                                'pbpOpt = 1
-                                If pbpDelay! <> 0 Then Call WINDEX: Print "BASKET GOOD BY " + players$(P, B1(P, ballCarrier)): Call DELAY
-                            End If
+                            pbpString$ = "BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
+                            Call SELECTPBP(P, 1)
 
                         End If
 
@@ -3631,12 +3638,7 @@ Sub COLHOOP ()
 
                     617 '
                     pbpString$ = "... AND HE'S FOULED !!!"
-
-                    If pbpOpt = 1 And pbpDelay! <> 0 Then
-                        Print pbpString$
-                        Call DELAY
-                    End If
-                    If pbpOpt = 0 Then Call PBP
+                    Call SELECTPBP(P, 0)
 
                     Call DELAY
 
@@ -3656,7 +3658,7 @@ Sub COLHOOP ()
                     End If
                     If pbpOpt = 0 Then
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " WILL SHOOT 1"
-                        Call PBP
+                        Call PBP(P)
                     End If
 
                     X = 50
@@ -3694,7 +3696,7 @@ Sub COLHOOP ()
 
                             If pbpDelay! <> 0 Then
                                 pbpString$ = "FREE THROW IS GOOD"
-                                Call PBP
+                                Call PBP(P)
                             End If
 
                             score(P, currHalf) = score(P, currHalf) + 1
@@ -3712,9 +3714,13 @@ Sub COLHOOP ()
 
                         If pbpOpt = 0 And pbpDelay! <> 0 Then
                             pbpString$ = "FREE THROW IS MISSED"
-                            Call PBP
+                            Call PBP(P)
                         Else
                             Call MISSFT(1)
+                        End If
+
+                        If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                            _SndPlay backboard&
                         End If
 
                     End If
@@ -3723,9 +3729,16 @@ Sub COLHOOP ()
                     plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
 
                     If gameClock! <= 0 Then
+
                         timeElapsed! = gameClock!
                         Call AdjustPlayTime
+
+                        If autoPlay <> 1 And playerMode <> 2 Then
+                            Call HORN
+                        End If
+
                         GoTo 170
+
                     End If
 
                     X = 99
@@ -3749,7 +3762,7 @@ Sub COLHOOP ()
                         End If
 
                         pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-                        Call SELECTPBP
+                        Call SELECTPBP(P, 1)
 
                         Locate 8, 41: Print Space$(12)
 
@@ -3780,13 +3793,13 @@ Sub COLHOOP ()
 
                     If pbpOpt = 0 Then
                         pbpType = 2
-                        Call MAKEPBP
+                        Call MAKEPBP(pbpType)
                     Else
                         'pbpOpt = 1
                         Call WINDEX
                     End If
 
-                    Call PBP
+                    Call PBP(D)
                     Call DELAY
                     DK% = 0
 
@@ -3795,8 +3808,8 @@ Sub COLHOOP ()
                     If pbpOpt = 0 And shotType = 8 Then
 
                         pbpType = 7
-                        Call MAKEPBP
-                        Call PBP
+                        Call MAKEPBP(pbpType)
+                        Call PBP(P)
                         shotType = 0
 
                     Else
@@ -3807,7 +3820,7 @@ Sub COLHOOP ()
                         If pbpOpt = 1 And pbpDelay! <> 0 Then
 
                             Call WINDEX
-                            Call PBP
+                            Call PBP(P)
                             Call DELAY
                         
                         Else
@@ -3865,7 +3878,7 @@ Sub COLHOOP ()
 
                             End If
 
-                            Call PBP
+                            Call PBP(P)
 
                         End If
 
@@ -3885,16 +3898,9 @@ Sub COLHOOP ()
 
                 562 '
                 pbpString$ = gameTeams$(D) + " BALL O.B. AFTER SCORE"
-
-                If pbpOpt = 1 And pbpDelay! <> 0 Then
-                    Locate 9, 1: Print pbpString$
-                End If
-                If pbpOpt = 0 Then
-                    Locate 8, 41: Print Space$(12)
-                    Call PBP
-                End If
-
+                Call SELECTPBP(D, 1)
                 Call DELAY
+
                 Call ResetShotClock
                 gameClock! = gameClock! - 4
                 timeElapsed! = 4
@@ -3902,9 +3908,16 @@ Sub COLHOOP ()
                 Call AdjustShotClock
 
                 If gameClock! <= 0 Then
+
                     timeElapsed! = gameClock!
                     Call AdjustPlayTime
+
+                    If autoPlay <> 1 And playerMode <> 2 Then
+                        Call HORN
+                    End If
+
                     GoTo 170
+
                 End If
 
                 Call UPDATESCREEN
@@ -3945,14 +3958,17 @@ Sub COLHOOP ()
                 If blockChance > blockRating Then
 
                     If pbpOpt = 1 And pbpDelay! <> 0 Then
-                        Call WINDEX
-                        Print "SHOT MISSED BY "; players$(P, B1(P, ballCarrier))
-                        Call DELAY
+                        pbpString$ = "SHOT MISSED BY " + players$(P, B1(P, ballCarrier))
                     End If
                     If pbpOpt = 0 Then
                         pbpType = 8
-                        Call MAKEPBP
-                        Call PBP
+                        Call MAKEPBP(pbpType)
+                    End If
+
+                    Call SELECTPBP(P, 1)
+
+                    If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                        _SndPlay backboard&
                     End If
 
                     Call ResetShotClock
@@ -4008,7 +4024,7 @@ Sub COLHOOP ()
                                         pbpString$ = "SHOT SWATTED OUT BY " + players$(D, B1(D, rndPlayer)) + "!!"
                                 End Select
 
-                                Call PBP
+                                Call PBP(D)
 
                             End If
 
@@ -4059,7 +4075,7 @@ Sub COLHOOP ()
             P9 = D
             pbpString$ = "DESIGNATED FOULER (0-4)"
 
-            Call SELECTPBP
+            Call SELECTPBP(P, 1)
 
             If playerMode = 1 And D = compTeam Or playerMode = 2 Then
                 fouler = Int(Rnd(1) * 5)
@@ -4093,8 +4109,8 @@ Sub COLHOOP ()
                 plyrOff_GAME!(P, B1(P, ballCarrier), 7) = plyrOff_GAME!(P, B1(P, ballCarrier), 7) + 1
 
                 pbpType = 3 'Shot
-                Call MAKEPBP
-                Call PBP
+                Call MAKEPBP(pbpType)
+                Call PBP(P)
 
                 Call Rolld100(foulChance)
 
@@ -4124,7 +4140,7 @@ Sub COLHOOP ()
                         If pbpDelay! <> 0 Then
                             If pbpOpt = 0 Then
                                 pbpString$ = "3 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                                Call PBP
+                                Call PBP(P)
                                 Call DELAY
                             Else
                                 Call WINDEX
@@ -4149,7 +4165,7 @@ Sub COLHOOP ()
                         If pbpDelay! <> 0 Then
                             If pbpOpt = 0 Then
                                 pbpString$ = "3 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                                Call PBP
+                                Call PBP(P)
                             Else
                                 Call WINDEX
                                 Print gameTeams$(P)
@@ -4177,6 +4193,11 @@ Sub COLHOOP ()
                                     'pbpOpt = 1
                                     Call MADEFT(freethrow)
                                 End If
+
+                                If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+                                    _SndPlay swish&
+                                End If
+
                             Else
                                 'shotRoll > baseShotChance
                                 If pbpOpt = 0 Then
@@ -4184,6 +4205,11 @@ Sub COLHOOP ()
                                 Else
                                     Call MISSFT(freethrow)
                                 End If
+
+                                If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                                    _SndPlay backboard&
+                                End If
+
                             End If
 
                         Next freethrow
@@ -4213,19 +4239,14 @@ Sub COLHOOP ()
                         Call AdjustShotClock
                         Call UPDATESCREEN
                         Call CreditAssists
+
                         pbpString$ = "3 PT BASKET GOOD BY " + players$(P, B1(P, ballCarrier))
-                        Call SELECTPBP
+                        Call SELECTPBP(P, 1)
 
                         Call CreditAssists
 
                         pbpString$ = "AND HE WAS FOULED !!!"
-                        If pbpOpt = 1 And pbpDelay! <> 0 Then
-                            Print pbpString$
-                            Call DELAY
-                        End If
-                        If pbpOpt = 0 Then
-                            Call PBP
-                        End If
+                        Call SELECTPBP(P, 0)
 
                         score(P, currHalf) = score(P, currHalf) + 3
                         score(P, 0) = score(P, 0) + 3
@@ -4246,16 +4267,17 @@ Sub COLHOOP ()
                     If shotRoll > threePtShotChance Then
 
                         If pbpOpt = 1 And pbpDelay! <> 0 Then
-                            Call WINDEX
-                            Print "3 PT FG MISSED BY "; players$(P, B1(P, ballCarrier))
-                            Call DELAY
+                            pbpString$ = "3 PT FG MISSED BY " + players$(P, B1(P, ballCarrier))
                         End If
-
                         If pbpOpt = 0 Then
                             TP% = 1
                             pbpType = 5
-                            Call MAKEPBP
-                            Call PBP
+                            Call MAKEPBP(pbpType)
+                        End If
+                        Call SELECTPBP(P, 0)
+
+                        If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                            _SndPlay backboard&
                         End If
 
                         Call ResetShotClock
@@ -4278,15 +4300,16 @@ Sub COLHOOP ()
                     Else
 
                         If pbpOpt = 1 And pbpDelay! <> 0 Then
-                            Call WINDEX
-                            Print "3 PT FG GOOD BY "; players$(P, B1(P, ballCarrier)); " !!!"
-                            Call DELAY
+                            pbpString$ = "3 PT FG GOOD BY " + players$(P, B1(P, ballCarrier)) + " !!!"
                         End If
-
                         If pbpOpt = 0 Then
                             pbpType = 4
-                            Call MAKEPBP
-                            Call PBP
+                            Call MAKEPBP(pbpType)
+                        End If
+                        Call SELECTPBP(P, 0)
+
+                        If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                            _SndPlay swish&
                         End If
 
                         369 '
@@ -4326,7 +4349,7 @@ Sub COLHOOP ()
     If pbpDelay! <> 0 Then
         If pbpOpt = 0 Then
             pbpString$ = "1+1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-            Call PBP
+            Call PBP(P)
         Else
             Call WINDEX
             Print gameTeams$(P)
@@ -4352,7 +4375,7 @@ Sub COLHOOP ()
 
         If pbpOpt = 0 Then
             pbpString$ = "1+1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-            Call PBP
+            Call PBP(P)
         Else
             Call WINDEX
             Print gameTeams$(P)
@@ -4381,12 +4404,22 @@ Sub COLHOOP ()
                 'pbpOpt = 1
                 Call MADEFT(freethrow)
             End If
+
+            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+                _SndPlay swish&
+            End If
+
         Else
+
             If pbpOpt = 0 Then
                 Call BADFT(freethrow)
             Else
                 'pbpOpt = 1
                 Call MISSFT(freethrow)
+            End If
+
+            If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                _SndPlay backboard&
             End If
 
         End If
@@ -4422,7 +4455,7 @@ Sub COLHOOP ()
 
         X = 0
         pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-        Call SELECTPBP
+        Call SELECTPBP(D, 1)
 
         Locate 8, 41: Print Space$(12)
         Call DELAY
@@ -4470,16 +4503,10 @@ Sub COLHOOP ()
 
         If gameClock! <= 0 Then 170
         pbpString$ = "OFFENSIVE FOUL"
-        Call SELECTPBP
+        Call SELECTPBP(P, 1)
 
         pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
-        If pbpOpt = 1 And pbpDelay! <> 0 Then
-            Print pbpString$
-            Call DELAY
-        End If
-        If pbpOpt = 0 Then
-            Call PBP
-        End If
+        Call SELECTPBP(P, 1)
 
         Locate 8, 41: Print Space$(12)
 
@@ -4549,7 +4576,7 @@ Sub COLHOOP ()
         Erase pressureRating
 
         pbpString$ = "TIME OUT " + gameTeams$(P)
-        Call SELECTPBP
+        Call SELECTPBP(P, 1)
         Call DELAY
         Call DEADBALLOPTIONS
 
@@ -4651,47 +4678,46 @@ Sub COLHOOP ()
 
         Case 0 To 1
 
-            If X = 98 Then 700
-            turnovers(P) = turnovers(P) + 1
-            pbpString$ = "OFFENSIVE GOAL TENDING"
-            Call SELECTPBP
-
-            pbpString$ = "BALL O.B. TO " + gameTeams$(D)
-            If pbpOpt = 1 And pbpDelay! <> 0 Then
-                Print pbpString$
-                Call DELAY
-            End If
-            If pbpOpt = 0 Then
-                Call PBP
-            End If
-
-            Call DELAY
-
-            prevBall$ = ""
-            If P = 1 Then
-                P = 0
-                D = 1
-                P9 = 0
-                C1 = 2
+            If X = 98 Then
+                GoTo 700
             Else
-                'P = 0
-                P = 1
-                D = 0
-                P9 = 1
-                C1 = 2
-            End If
+                turnovers(P) = turnovers(P) + 1
 
-            Call DEADBALLOPTIONS
+                pbpString$ = "OFFENSIVE GOAL TENDING"
+                Call SELECTPBP(P, 1)
 
-            For I = 0 To 1
-                If defCategory(I) = 0 Then
-                    pressureRating(I, 0) = 1
-                    pressureRating(I, 1) = 7
-                    pctContrib(I) = 0
+                pbpString$ = "BALL O.B. TO " + gameTeams$(D)
+                Call SELECTPBP(P, 1)
+
+                Call DELAY
+
+                prevBall$ = ""
+                If P = 1 Then
+                    P = 0
+                    D = 1
+                    P9 = 0
+                    C1 = 2
+                Else
+                    'P = 0
+                    P = 1
+                    D = 0
+                    P9 = 1
+                    C1 = 2
                 End If
-            Next
 
-            GoTo 300
+                Call DEADBALLOPTIONS
+
+                For I = 0 To 1
+                    If defCategory(I) = 0 Then
+                        pressureRating(I, 0) = 1
+                        pressureRating(I, 1) = 7
+                        pctContrib(I) = 0
+                    End If
+                Next
+
+                GoTo 300
+
+            End If
 
         Case 2 To DY
             foulOnReb = 1
@@ -4704,7 +4730,7 @@ Sub COLHOOP ()
                 totRebounds(D) = totRebounds(D) + 1
                 Call UPDATESCREEN
                 pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
-                Call SELECTPBP
+                Call SELECTPBP(P, 1)
                 Call DELAY
                 Call DEADBALLOPTIONS
 
@@ -4741,7 +4767,7 @@ Sub COLHOOP ()
                 totRebounds(P) = totRebounds(P) + 1
                 Call UPDATESCREEN
                 pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(P)
-                Call SELECTPBP
+                Call SELECTPBP(P, 1)
                 Call DELAY
                 Call DEADBALLOPTIONS
 
@@ -4783,7 +4809,7 @@ Sub COLHOOP ()
             End If
             If pbpOpt = 0 Then
                 pbpString$ = players$(P, B1(P, ballCarrier)) + " TIPS IT IN!!"
-                Call PBP
+                Call PBP(P)
             End If
 
             prevBall$ = ""
@@ -4801,15 +4827,7 @@ Sub COLHOOP ()
             End If
 
             pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-            Locate 8, 41: Print Space$(12)
-
-            If pbpOpt = 1 And pbpDelay! <> 0 Then
-                Print pbpString$
-                Call DELAY
-            End If
-            If pbpOpt = 0 Then
-                Call PBP
-            End If
+            Call SELECTPBP(P, 1)
 
             Call DELAY
             Call STOPPAGE
@@ -4826,7 +4844,7 @@ Sub COLHOOP ()
             Else
 
                 pbpString$ = "DEFENSIVE GOAL TENDING"
-                Call SELECTPBP
+                Call SELECTPBP(P, 1)
 
                 If TP% = 1 Then
 
@@ -4914,27 +4932,27 @@ Sub COLHOOP ()
 
     'XQ = Rebound Chance, Based on Defense
     Select Case defCoverage(D)
-    
+
         Case 0
             'Solid Man-to-Man
             '6% of total rebounds
             XQ = Int((RB * .06) + .5)
-            
+
         Case 1
             'Pressure Man-to-Man
             '12% of total rebounds
             XQ = Int((RB * .12) + .5)
-            
+
         Case 2
             'Passive Zone
             '10% of total rebounds
             XQ = Int((RB * .1) + .5)
-            
+
         Case 3
             'Trapping Zone
             '14% of total rebounds
             XQ = Int((RB * .14) + .5)
-            
+
     End Select
 
     If CZ%(P) = 1 Then
@@ -4985,14 +5003,16 @@ Sub COLHOOP ()
         If pbpDelay! <> 0 Then
             If pbpOpt = 1 Then
                 Call WINDEX
-                Print players$(D, B1(D, ballCarrier)); " HAS THE DEF RB FOR"
-                Print gameTeams$(D); " AND IS FOULED !!!"
+                pbpString$ = players$(D, B1(D, ballCarrier)) + " HAS THE DEF RB FOR"
+                Call PBP(D)
+                pbpString$ = gameTeams$(D) + " AND IS FOULED !!!"
+                Call PBP(D)
                 Call DELAY
             Else
                 pbpString$ = players$(D, B1(D, ballCarrier)) + " HAS THE DEF RB"
-                Call PBP
+                Call PBP(D)
                 pbpString$ = "HE'S FOULED !!!"
-                Call PBP
+                Call PBP(D)
             End If
         End If
 
@@ -5031,13 +5051,14 @@ Sub COLHOOP ()
     If pbpDelay! <> 0 Then
 
         If pbpOpt = 0 Then
-            Call PBP
+            Call PBP(D)
         End If
 
         If pbpOpt = 1 Then
             Call WINDEX
             Print pbpString$
-            Print "FOR " + gameTeams$(D)
+            pbpString$ = "FOR " + gameTeams$(D)
+            Call PBP(D)
             Call DELAY
         End If
 
@@ -5102,18 +5123,11 @@ Sub COLHOOP ()
             Call DELAY
         End If
         If pbpOpt = 0 Then
-            Call PBP
+            Call PBP(P)
         End If
 
         pbpString$ = "HE'S FOULED !!!"
-        If pbpOpt = 1 And pbpDelay! <> 0 Then
-            Call WINDEX
-            Print pbpString$
-            Call DELAY
-        End If
-        If pbpOpt = 0 Then
-            Call PBP
-        End If
+        Call SELECTPBP(P, 1)
 
         plyrOff_GAME!(P, B1(P, ballCarrier), 11) = plyrOff_GAME!(P, B1(P, ballCarrier), 11) + 1
         plyrOff_GAME!(P, B1(P, ballCarrier), 24) = plyrOff_GAME!(P, B1(P, ballCarrier), 24) + 1
@@ -5136,7 +5150,7 @@ Sub COLHOOP ()
 
     pbpString$ = players$(P, B1(P, ballCarrier)) + " HAS THE OFF RB"
     If pbpDelay! <> 0 Then
-        If pbpOpt = 0 Then Call PBP
+        If pbpOpt = 0 Then Call PBP(P)
         If pbpOpt = 1 Then
             Call WINDEX
             Print pbpString$
@@ -5201,7 +5215,7 @@ Sub COLHOOP ()
                 pbpString$ = players$(P, B1(P, ballCarrier)) + " IS PINNED ON THE LINE"
         End Select
 
-        Call PBP
+        Call PBP(P)
 
     End If
 
@@ -5225,17 +5239,12 @@ Sub COLHOOP ()
                 pbpString$ = "JUMP BALL!"
         End Select
 
-        Call PBP
+        Call PBP(P)
 
     End If
 
     pbpString$ = "POSSESSION ARROW TO " + gameTeams$(possArrow)
-
-    If pbpOpt = 1 And pbpDelay! <> 0 Then
-        Print pbpString$
-        Call DELAY
-    End If
-    If pbpOpt = 0 Then Call PBP
+    Call SELECTPBP(P, 0)
 
     Call DELAY
 
@@ -5305,7 +5314,7 @@ Sub COLHOOP ()
         If pbpDelay! <> 0 Then
             If pbpOpt = 0 Then
                 pbpString$ = "2 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                Call PBP
+                Call PBP(P)
                 Call DELAY
             Else
                 Call WINDEX
@@ -5330,7 +5339,7 @@ Sub COLHOOP ()
         If pbpDelay! <> 0 Then
             If pbpOpt = 0 Then
                 pbpString$ = "2 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                Call PBP
+                Call PBP(P)
             Else
                 Call WINDEX
                 Print gameTeams$(P)
@@ -5360,13 +5369,23 @@ Sub COLHOOP ()
                     'pbpOpt = 1
                     Call MADEFT(freethrow)
                 End If
+
+                If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+                    _SndPlay swish&
+                End If
+
             Else
+
                 'shotRoll > baseShotChance And
                 If pbpOpt = 0 Then
                     Call BADFT(freethrow)
                 Else
                     'pbpOpt = 1
                     Call MISSFT(freethrow)
+                End If
+
+                If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                    _SndPlay backboard&
                 End If
 
             End If
@@ -5387,7 +5406,7 @@ Sub COLHOOP ()
             intentional = 0
             X = 0
             pbpString$ = gameTeams$(P) + " BALL AFTER INT. FOUL"
-            Call SELECTPBP
+            Call SELECTPBP(P, 1)
             Locate 8, 41: Print Space$(12)
             Call DELAY
             Call STOPPAGE
@@ -5412,9 +5431,8 @@ Sub COLHOOP ()
             X = 0
 
             pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-            Locate 8, 41: Print Space$(12)
+            Call SELECTPBP(P, 1)
 
-            Call SELECTPBP
             Call DELAY
             Call STOPPAGE
             Call PRESSGUARD
@@ -5446,19 +5464,8 @@ Sub COLHOOP ()
 
             If ft6FloorFouls = 0 Then
 
-                If pbpOpt = 0 Or pbpDelay! = 0 Then
-                    Call WINDEX
-                    pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
-                    Call PBP
-                    Locate 8, 41: Print Space$(12)
-
-                Else
-                    'pbpOpt = 1
-                    Call WINDEX
-                    Print gameTeams$(P) + " BALL O.B. AFTER FOUL"
-                    Call DELAY
-                    Locate 8, 41: Print Space$(12)
-                End If
+                pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
+                Call SELECTPBP(P, 1)
 
                 GoTo 350
 
@@ -5467,9 +5474,6 @@ Sub COLHOOP ()
                 'ft6FloorFouls = 1
 
                 Call UPDATESCREEN
-
-                pbpString$ = "1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                Call PBP
 
                 X = 50
 
@@ -5486,7 +5490,7 @@ Sub COLHOOP ()
                 X = 0
 
                 pbpString$ = "1 FT: " + players$(P, B1(P, ballCarrier)) + Str$(plyrOff_GAME!(P, B1(P, ballCarrier), 1)) + " %"
-                Call PBP
+                Call PBP(P)
 
                 'Increase FT ATT
                 plyrOff_GAME!(P, B1(P, ballCarrier), 9) = plyrOff_GAME!(P, B1(P, ballCarrier), 9) + 1
@@ -5500,13 +5504,21 @@ Sub COLHOOP ()
                 Call Rolld100(shotRoll)
 
                 If shotRoll <= baseShotChance Then
+
                     If pbpOpt = 0 Then
                         Call THREEFT(1)
                     Else
                         'pbpOpt = 1
                         Call MADEFT(1)
                     End If
+
+                    If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+                        _SndPlay swish&
+                    End If
+
+
                 Else
+
                     'shotRoll > baseShotChance
                     If pbpOpt = 0 Then
                         Call BADFT(1)
@@ -5514,6 +5526,11 @@ Sub COLHOOP ()
                         'pbpOpt = 1
                         Call MISSFT(1)
                     End If
+
+                    If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                        _SndPlay backboard&
+                    End If
+
                 End If
 
                 LT = 0
@@ -5544,10 +5561,8 @@ Sub COLHOOP ()
                     End If
 
                     pbpString$ = gameTeams$(P) + " BALL O.B. AFTER SCORE"
-                    Locate 8, 41: Print Space$(12)
+                    Call SELECTPBP(P, 1)
 
-                    Call PBP
-                    Call DELAY
                     Call STOPPAGE
 
                     ballCarrier = 6
@@ -5888,6 +5903,9 @@ Sub LetterToNumber (promptVal$, J)
     If UCase$(promptVal$) = "C" Then J = 12
     If UCase$(promptVal$) = "D" Then J = 13
     If UCase$(promptVal$) = "E" Then J = 14
+    If UCase$(promptVal$) = "F" Then J = 15
+    If UCase$(promptVal$) = "G" Then J = 16
+    If UCase$(promptVal$) = "H" Then J = 17
 
 End Sub
 
@@ -6281,7 +6299,7 @@ End Sub
 'place it in the correct spot in the pbp
 'text window. No text is placed if the
 'delay is 0.
-Sub PBP ()
+Sub PBP (teamIdx)
 
     M$ = InKey$
 
@@ -6302,34 +6320,55 @@ Sub PBP ()
 
         Locate 8, 1
 
-        If nbrLines = 1 Then A1$ = pbpString$: pbpFG(1) = teamRat_GAME(P, 0): pbpBG(1) = teamRat_GAME(P, 1)
-        If nbrLines = 2 Then B1$ = pbpString$: pbpFG(2) = teamRat_GAME(P, 0): pbpBG(2) = teamRat_GAME(P, 1)
-        If nbrLines = 3 Then C1$ = pbpString$: pbpFG(3) = teamRat_GAME(P, 0): pbpBG(3) = teamRat_GAME(P, 1)
-        If nbrLines = 4 Then D1$ = pbpString$: pbpFG(4) = teamRat_GAME(P, 0): pbpBG(4) = teamRat_GAME(P, 1)
-        If nbrLines = 5 Then E1$ = pbpString$: pbpFG(5) = teamRat_GAME(P, 0): pbpBG(5) = teamRat_GAME(P, 1)
-        If nbrLines = 6 Then F1$ = pbpString$: pbpFG(6) = teamRat_GAME(P, 0): pbpBG(6) = teamRat_GAME(P, 1)
-        If nbrLines = 7 Then G1$ = pbpString$: pbpFG(7) = teamRat_GAME(P, 0): pbpBG(7) = teamRat_GAME(P, 1)
-        If nbrLines = 8 Then H1$ = pbpString$: pbpFG(8) = teamRat_GAME(P, 0): pbpBG(8) = teamRat_GAME(P, 1)
+        Select Case nbrLines
+            
+            Case 1
+                A1$ = pbpString$
+            
+            Case 2
+                B1$ = pbpString$
 
-        If nbrLines > 8 Then
+            Case 3
+                C1$ = pbpString$
+            
+            Case 4
+                D1$ = pbpString$
+            
+            Case 5
+                E1$ = pbpString$
+                        
+            Case 6
+                F1$ = pbpString$
+                        
+            Case 7
+                G1$ = pbpString$
+                
+            Case 8
+                H1$ = pbpString$
+                
+            Case Is > 8
+                A1$ = B1$
+                B1$ = C1$
+                C1$ = D1$
+                D1$ = E1$
+                E1$ = F1$
+                F1$ = G1$
+                G1$ = H1$
+                H1$ = pbpString$
 
-            A1$ = B1$
-            B1$ = C1$
-            C1$ = D1$
-            D1$ = E1$
-            E1$ = F1$
-            F1$ = G1$
-            G1$ = H1$
-            H1$ = pbpString$
+                For I = 1 To 7
+                    pbpFG(I) = pbpFG(I + 1)
+                    pbpBG(I) = pbpBG(I + 1)
+                Next
 
-            For I = 1 To 7
-                pbpFG(I) = pbpFG(I + 1)
-                pbpBG(I) = pbpBG(I + 1)
-            Next
+        End Select
 
-            pbpFG(8) = teamRat_GAME(P, 0)
-            pbpBG(8) = teamRat_GAME(P, 1)
-
+        If nbrLines < 8 Then
+            pbpFG(nbrLines) = teamRat_GAME(teamIdx, 0)
+            pbpBG(nbrLines) = teamRat_GAME(teamIdx, 1)
+        Else
+            pbpFG(8) = teamRat_GAME(teamIdx, 0)
+            pbpBG(8) = teamRat_GAME(teamIdx, 1)
         End If
 
         nbrLines = nbrLines + 1
@@ -6357,16 +6396,16 @@ End Sub
 'This subroutine essentially handles the
 'prep for PBP depending on the style that
 'was chosen for the game (classic / verbose)
-Sub SELECTPBP ()
+Sub SELECTPBP (teamIdx, clean)
 
     Select Case pbpOpt
 
         Case 0:
-            Call PBP
+            Call PBP(teamIdx)
 
         Case 1:
             If pbpDelay! <> 0 Then
-                Call WINDEX
+                If clean = 1 Then Call WINDEX
                 Print pbpString$
                 Call DELAY
             End If
@@ -6382,13 +6421,12 @@ End Sub
 'This subroutine helps build strings for
 'the Play-by-Play text, depending on the
 'context given (assigned as pbpType)
-Sub MAKEPBP ()
+Sub MAKEPBP (pbpType)
 
     If pbpDelay! <> 0 Then
 
         Call Rolld100(RN0)
 
-        'pbpType = pbpType
         Select Case pbpType
 
             Case 1
@@ -6500,9 +6538,9 @@ Sub MAKEPBP ()
                         pbpString$ = players$(P, B1(P, ballCarrier)) + "...IN YOUR FACE SLAM!!!"
                     Case 28
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 29
                         pbpString$ = "HE SLAMS IT HOME!!"
@@ -6522,9 +6560,9 @@ Sub MAKEPBP ()
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED SLAM!!!"
                     Case 37
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 38
                         pbpString$ = "HE JAMS IT HOME!!!"
@@ -6574,7 +6612,7 @@ Sub MAKEPBP ()
 
                             Case 1 To 10
                                 pbpString$ = "HE CUTS TO THE BASKET"
-                                Call PBP
+                                Call PBP(P)
                                 pbpString$ = "TAKES IT UP"
                                 checkForStuff = 1
 
@@ -6647,7 +6685,7 @@ Sub MAKEPBP ()
 
                                     Case 1 To 25
                                         pbpString$ = "HE SPINS FREE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "SHOOTS"
 
                                     Case 26 To 50
@@ -6656,7 +6694,7 @@ Sub MAKEPBP ()
 
                                     Case 51 To 52
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "AND SOARS TO THE HOOP"
                                         checkForStuff = 1
 
@@ -6665,23 +6703,23 @@ Sub MAKEPBP ()
 
                                     Case 55 To 56
                                         pbpString$ = "HE DRIVES THE BASELINE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
                                         checkForStuff = 1
 
                                     Case 57
                                         pbpString$ = "HE SLICES IN THE HOLE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "UNDERHAND SCOOP SHOT"
 
                                     Case 58
                                         pbpString$ = "STRONG CUT ALONG THE BASELINE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                     Case 59
                                         pbpString$ = "HE PENETRATES"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                     Case 60 To 75
@@ -6689,14 +6727,14 @@ Sub MAKEPBP ()
 
                                     Case 76 To 90
                                         pbpString$ = "HE STOPS"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "SHOOTS"
 
                                     Case 91
                                         pbpString$ = "HE LOOKS TO PASS"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "NO ONE IS OPEN"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "HE PUTS IT UP"
 
                                     Case 92 To 100
@@ -6720,13 +6758,13 @@ Sub MAKEPBP ()
 
                                     Case 17 To 32
                                         pbpString$ = "HE SPINS FREE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "SHOOTS"
                                         checkForStuff = 1
 
                                     Case 33 To 48
                                         pbpString$ = "HE GETS LOOSE IN THE PAINT"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "TAKES IT UP"
                                         checkForStuff = 1
 
@@ -6735,35 +6773,35 @@ Sub MAKEPBP ()
 
                                     Case 65 To 67
                                         pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "TAKES IT UP"
                                         checkForStuff = 1
 
                                     Case 68, 69
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "AND SOARS TO THE HOOP"
                                         checkForStuff = 1
 
                                     Case 70, 71
                                         pbpString$ = "HE DRIVES THE BASELINE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
                                         checkForStuff = 1
 
                                     Case 72
                                         pbpString$ = "HE SLICES IN THE HOLE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "UNDERHAND SCOOP SHOT"
 
                                     Case 73
                                         pbpString$ = "STRONG CUT ALONG THE BASELINE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                     Case 74
                                         pbpString$ = "HE PENETRATES"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                     Case 75 To 80
@@ -6800,13 +6838,13 @@ Sub MAKEPBP ()
 
                                     Case 71, 72
                                         pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "TAKES IT UP"
                                         checkForStuff = 1
 
                                     Case 73, 74
                                         pbpString$ = "HE MAKES A NICE SPIN MOVE"
-                                        Call PBP
+                                        Call PBP(P)
                                         pbpString$ = "AND SOARS TO THE HOOP"
                                         checkForStuff = 1
 
@@ -7173,10 +7211,10 @@ Sub MAKEPBP ()
                             Case 91
                                 If threePtOpt = 1 Then
                                     pbpString$ = pbpString$ + " FOR THREE!"
-                                    Call PBP
+                                    Call PBP(P)
 
                                     pbpString$ = "NO!"
-                                    Call PBP
+                                    Call PBP(P)
 
                                     pbpString$ = "HIS FOOT IS ON THE 3-POINT LINE"
                                 End If
@@ -7286,9 +7324,9 @@ Sub MAKEPBP ()
 
                     Case 1 To 6
                         pbpString$ = pbpString$ + " DRAINS THE THREE!"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "NO!"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HIS FOOT IS ON THE 3-POINT LINE"
                         XX% = 1
                     Case 7 To 10
@@ -7492,9 +7530,9 @@ Sub MAKEPBP ()
                         pbpString$ = players$(P, B1(P, ballCarrier)) + "...IN YOUR FACE SLAM!!!"
                     Case 28
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 29
                         pbpString$ = "HE SLAMS IT HOME!!"
@@ -7514,9 +7552,9 @@ Sub MAKEPBP ()
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " WITH THE 2-HANDED SLAM!!!"
                     Case 37
                         pbpString$ = players$(P, B1(P, ballCarrier)) + " IS UP"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 38
                         pbpString$ = "HE JAMS IT HOME!!!"
@@ -7757,23 +7795,23 @@ Sub MAKEPBP ()
                         pbpString$ = pbpString$ + "CUTS RIGHT"
                     Case 45
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS LEFT"
                     Case 46
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS RIGHT"
                     Case 47
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE CUTS LEFT"
                     Case 48
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE CUTS RIGHT"
                     Case 49
                         pbpString$ = pbpString$ + "STUTTER STEPS"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE MOVES LEFT"
                     Case 50
                         pbpString$ = pbpString$ + "MAINTAINS HIS DRIBBLE"
@@ -7783,7 +7821,7 @@ Sub MAKEPBP ()
                         pbpString$ = pbpString$ + "FAKE SPINS RIGHT...GOES LEFT"
                     Case 53
                         pbpString$ = pbpString$ + "PALMS THE BALL"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE TAKES IT AND SPINS"
                     Case 54
                         pbpString$ = pbpString$ + "SHAKES AND BAKES"
@@ -7807,7 +7845,7 @@ Sub MAKEPBP ()
                         pbpString$ = prevBall$ + " TO " + V$
                     Case 2
                         pbpString$ = prevBall$ + " KICKS IT OUT"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = V$ + " TAKES THE PASS"
                     Case 3
                         pbpString$ = prevBall$ + " FEEDS " + V$
@@ -7821,7 +7859,7 @@ Sub MAKEPBP ()
                         pbpString$ = prevBall$ + " WITH A NICE GIVE TO " + V$
                     Case 7
                         pbpString$ = prevBall$ + " LOOKS"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE GETS IT TO " + V$
                     Case 8
                         pbpString$ = prevBall$ + " SENDS IT TO " + V$
@@ -7919,31 +7957,31 @@ Sub MAKEPBP ()
                         pbpString$ = prevBall$ + " SHOVELS IT TO " + V$
                     Case 54
                         pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SWINGS IT TO " + V$
                     Case 55
                         pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE BOUNCES IT TO " + V$
                     Case 56
                         pbpString$ = prevBall$ + " WITH A FOOT FAKE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE SPINS AND DUMPS IT TO " + V$
                     Case 57
                         pbpString$ = prevBall$ + " CUTS ACROSS THE LANE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE DISHES INSIDE TO " + V$
                     Case 58
                         pbpString$ = prevBall$ + " DRIVES THE BASELINE"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "DISHES UNDERNEATH TO " + V$
                     Case 59
                         pbpString$ = prevBall$ + " FAKES RIGHT...CUTS LEFT"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "SHUFFLES IT TO " + V$
                     Case 60
                         pbpString$ = prevBall$ + " HEAD FAKES"
-                        Call PBP
+                        Call PBP(P)
                         pbpString$ = "HE PUSHES IT TO " + V$
 
                 End Select
@@ -8866,7 +8904,9 @@ Sub HalfCourt (shotChoice)
         shotChoice = Val(I$)
     Loop Until shotChoice >= 0 And shotChoice <= 1
 
-    If shotChoice = 1 And threePtOpt = 0 Then shotChoice = 0
+    If shotChoice = 1 And threePtOpt = 0 Then
+        shotChoice = 0
+    End If
 
     Color 15, 0
 
@@ -8886,11 +8926,20 @@ Sub WHOLAY ()
 
     Select Case RN0
 
-        Case 1 To 38: ballCarrier = 0
-        Case 39 To 75: ballCarrier = 1
-        Case 76 To 83: ballCarrier = 2
-        Case 84 To 91: ballCarrier = 3
-        Case 92 To 100: ballCarrier = 4
+        Case 1 To 38:
+            ballCarrier = 0
+
+        Case 39 To 75:
+            ballCarrier = 1
+
+        Case 76 To 83:
+            ballCarrier = 2
+
+        Case 84 To 91:
+            ballCarrier = 3
+
+        Case 92 To 100:
+            ballCarrier = 4
 
     End Select
 
@@ -8908,6 +8957,10 @@ End Sub
 '   1 = perform random # generation
 
 Sub FoulCalled (randomCalcs%)
+
+    If autoPlay <> 1 Or playerMode <> 2 And whistle& Then
+        _SndPlay whistle&
+    End If
 
     'Determine who fouled
     If randomCalcs% = 1 Then
@@ -8951,10 +9004,9 @@ Sub FoulCalled (randomCalcs%)
             Print "HE HAS "; plyrOff_GAME!(D, B1(D, fouler), 12)
             Call DELAY
         End If
-
         If pbpOpt = 0 Then
             pbpString$ = "FOUL NUMBER" + Str$(plyrOff_GAME!(D, B1(D, fouler), 12)) + " CALLED ON " + players$(D, B1(D, fouler))
-            Call PBP
+            Call PBP(D)
         End If
 
         Call DELAY
@@ -8970,11 +9022,13 @@ Sub FoulCalled (randomCalcs%)
         Next
 
         For I3 = 0 To 13
+
             If Not (I3 = B1(D, fouler) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
                 If plyrOff_GAME!(D, I3, 0) <= plyrOff_GAME!(D, B1(D, fouler), 0) Then
                     plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + Int((plyrOff_GAME!(D, B1(D, fouler), 3) / M9) + .5)
                 End If
             End If
+
         Next I3
 
         'Player fouled
@@ -8984,37 +9038,21 @@ Sub FoulCalled (randomCalcs%)
             Print "FOUL ON "; players$(D, B1(D, fouler))
             Call DELAY
         End If
-
         If pbpOpt = 0 Then
             pbpString$ = "FOUL CALLED ON " + players$(D, B1(D, fouler))
-            Call PBP
+            Call PBP(D)
         End If
 
         If intentional = 1 Then
 
             pbpString$ = "FOUL IS RULED INTENTIONAL!"
-            If pbpOpt = 0 Then
-                Call PBP
-            End If
-
-            If pbpOpt = 1 And pbpDelay! <> 0 Then
-                Print pbpString$
-                Call DELAY
-            End If
-
+            Call SELECTPBP(D, 0)
             Call DELAY
 
         End If
 
         pbpString$ = "AND HE HAS JUST FOULED OUT !!!"
-
-        If pbpOpt = 0 Then
-            Call PBP
-        End If
-        If pbpOpt = 1 And pbpDelay! <> 0 Then
-            Print pbpString$
-            Call DELAY
-        End If
+        Call SELECTPBP(D, 1)
 
         Call DELAY
 
@@ -9112,11 +9150,15 @@ End Sub
 'to load and play a sound file
 Sub HORN ()
 
-    For PP = 1 To 70
-        Sound 50, .05
-        Sound 100, .05
-        Sound 317, .3
-    Next PP
+    If _FileExists("buzzer.mp3") Then
+        _SndPlayFile ("buzzer.mp3")
+    Else
+        For PP = 1 To 70
+            Sound 50, .05
+            Sound 100, .05
+            Sound 317, .3
+        Next PP
+    End If
 
 End Sub
 
@@ -9709,7 +9751,7 @@ Sub UPDATESCREEN ()
         Color 15: Print "-PASS"
         Locate , 41
         Color 14: Print "(2)  ";
-        Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
+        Color 15: Print gameTeams$(P); " CALL TIMEOUT         "
         Locate , 41
         Color 14: Print "(T)  ";
         Color 15: Print "10 MIN TICKER"
@@ -9778,7 +9820,11 @@ Sub UPDATESCREEN ()
 
             Print Using "## ## "; plyrOff_GAME!(1, B1(1, I1), 0), plyrOff_GAME!(1, B1(1, I1), 1);
 
-            If P = 1 Then Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 21) * 2 / 10; Else Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 2) * 2 / 10;
+            If P = 1 Then
+                Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 21) * 2 / 10;
+            Else
+                Print Using "##"; plyrOff_GAME!(1, B1(1, I1), 2) * 2 / 10;
+            End If
 
             If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
             Print Using "### "; J;
@@ -9909,7 +9955,7 @@ Sub SCOREBOARD ()
     Color 15: Print "-PASS"
     Locate , 41
     Color 14: Print "(2)  ";
-    Color 15: Print gameTeams$(P); " CALL TIMEOUT     "
+    Color 15: Print gameTeams$(P); " CALL TIMEOUT         "
     Locate , 41
     Color 14: Print "(T)  ";
     Color 15: Print "10 MIN TICKER"
@@ -10451,7 +10497,7 @@ Sub DEFENSEMENU ()
         Print ; Tab(33); "DEFENSIVE STYLE"
         Print
 
-        For I = 0 To 14
+        For I = 0 To 17
             Locate , 5: Print Using "# "; I;
             If I = 10 Then Locate , 5: Print "A ";
             If I = 11 Then Locate , 5: Print "B ";
@@ -10459,17 +10505,19 @@ Sub DEFENSEMENU ()
             If I = 13 Then Locate , 5: Print "D ";
             If I = 14 Then Locate , 5: Print "E ";
             If I = 15 Then Locate , 5: Print "F ";
+            If I = 16 Then Locate , 5: Print "G ";
+            If I = 17 Then Locate , 5: Print "H ";
             Print defStyles$(I)
         Next
 
         Print
-        Locate 19, 5: Print "SELECT DEFENSIVE STYLE FOR "; gameTeams$(P9)
+        Locate 22, 5: Print "SELECT DEFENSIVE STYLE FOR "; gameTeams$(P9)
 
         Do
             I$ = GetKeyPress$
             I1 = Val(I$)
             Call LetterToNumber(I$, I1)
-        Loop Until I1 >= 0 And I1 <= 15
+        Loop Until I1 >= 0 And I1 <= 17
 
         defStrat(P9) = I1
 
@@ -11072,18 +11120,31 @@ Sub FOULSAFE ()
         For ZZ = 0 To 4
             If currHalf <= 1 And plyrOff_GAME!(P9, B1(P9, ZZ), 12) >= foulsToDQ - 3 And plyrOff_GAME!(P9, B1(P9, ZZ), 22) = 0 Or plyrOff_GAME!(P9, B1(P9, ZZ), 12) = foulsToDQ - 1 And plyrOff_GAME!(P9, B1(P9, ZZ), 22) = 0 Then
                 A = A + 1
-                If S2 = 1 Then Cls: Print: Print "THE FOLLOWING PLAYER(S) CAN ME MADE TO PLAY SAFE IF YOU WISH": Print
+                If S2 = 1 Then
+                    Cls
+                    Print
+                    Print "THE FOLLOWING PLAYER(S) CAN ME MADE TO PLAY SAFE IF YOU WISH"
+                    Print
+                End If
             End If
 
-            If A = 0 And ZZ > 3 Then 1230
+            If A = 0 And ZZ > 3 Then
+                GoTo 1230
+            End If
 
-            If S2 = A And S2 < 6 Then Print S2; "- "; players$(P9, B1(P9, ZZ)): P5(A) = S2: P4(A) = ZZ: S2 = S2 + 1: S3 = S3 + 1
+            If S2 = A And S2 < 6 Then
+                Print S2; "- "; players$(P9, B1(P9, ZZ))
+                P5(A) = S2
+                P4(A) = ZZ
+                S2 = S2 + 1
+                S3 = S3 + 1
+            End If
 
         Next ZZ
 
         A = 1
         Print
-        Print "Z - CONTINUE"
+        Print " Z - CONTINUE"
 
         1220 '
         Do
@@ -11100,7 +11161,8 @@ Sub FOULSAFE ()
                 plyrOff_GAME!(P9, B1(P9, P4(A)), 17) = Int((plyrOff_GAME!(P9, B1(P9, P4(A)), 17) + 1) / 3)
                 plyrOff_GAME!(P9, B1(P9, P4(A)), 22) = 50
 
-                Locate P5(A) + 3, 20: Print players$(P9, B1(P9, P4(A))); " WILL NOW PLAY SAFE!"
+                Locate P5(A) + 3, 20
+                Print players$(P9, B1(P9, P4(A))); " WILL NOW PLAY SAFE!"
                 Call STEALADJ
 
                 dFGPA(P9) = dFGPA(P9) + 1
@@ -11317,7 +11379,7 @@ Sub THREEFT (ftNumber)
 
     End Select
 
-    Call PBP
+    Call PBP(P)
 
     score(P, currHalf) = score(P, currHalf) + 1
     score(P, 0) = score(P, 0) + 1
@@ -11384,7 +11446,7 @@ Sub BADFT (ftNumber)
             pbpString$ = "THIRD FREE THROW IS MISSED"
     End Select
 
-    Call PBP
+    Call PBP(P)
 
 End Sub
 
@@ -11531,7 +11593,7 @@ Sub BALLDISTRIBUTE ()
             424 '
             If pbpDelay! <> 0 And pbpOpt = 0 Then
                 pbpString$ = "PASS TO CHOICE (0-4)"
-                Call PBP
+                Call PBP(P)
             End If
 
             If pbpDelay! > 0 And pbpOpt = 1 Then
@@ -11781,6 +11843,7 @@ Sub STOPPAGE ()
     End If
 
     If playerMode = 2 Then
+
         S2 = 0
         P9 = P
         C1 = 2
@@ -11790,7 +11853,9 @@ Sub STOPPAGE ()
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Locate 11, 1
         End If
-        If pbpOpt = 0 Then Call CLEARPBPBOX
+        If pbpOpt = 0 Then
+            Call CLEARPBPBOX
+        End If
 
         Color 14, 0
         Print "<ENTER>";
@@ -11874,7 +11939,7 @@ Sub PRESSGUARD ()
     If pbpDelay! <> 0 Then
         If defCategory(D) > 0 Then
             pbpString$ = gameTeams$(D) + " IS PRESSING"
-            Call SELECTPBP
+            Call SELECTPBP(D, 0)
         End If
     End If
 
@@ -12686,6 +12751,7 @@ Sub CheckGameClock ()
         timeElapsed! = gameClock!
         Call AdjustPlayTime
         gameClock! = 0
+        Call HORN
     End If
 
 End Sub
@@ -14067,9 +14133,11 @@ Sub COMPILESTATFILES (teamIdx)
 
     End If
 
-    If numberGames < MAX_SCHED_STATS Then numberGames = numberGames + 1
-    If gameLoc = 2 And TG < 12100 Then locIndicator$(numberGames) = "N": GoTo 6540
+    If numberGames < MAX_SCHED_STATS Then
+        numberGames = numberGames + 1
+    End If
 
+    If gameLoc = 2 And TG < 12100 Then locIndicator$(numberGames) = "N": GoTo 6540
     If gameLoc <> teamIdx And TG < 12100 Then locIndicator$(numberGames) = "V": GoTo 6540
     If gameLoc = teamIdx And TG < 12100 Then locIndicator$(numberGames) = "H": GoTo 6540
 
@@ -14186,8 +14254,8 @@ End Function
 'issues are happening in a game.
 Sub pbplog (lineNumber)
 
-    'Print #11, "Calling from "; lineNumber
-    Print #11, pbpString$
+    Print #11, "Calling from "; lineNumber
+    Print #11, pbpType
     Print #11,
 
 End Sub

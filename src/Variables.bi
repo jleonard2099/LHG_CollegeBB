@@ -245,6 +245,7 @@ Dim consolationSetting%(1)
 '----------------------------------------
 Dim scheduleFile$, tourneyFile$
 Dim actualAttendance&
+Dim Shared whistle&, swish&, backboard&
 
 Dim FY%(0 To 1)
 

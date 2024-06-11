@@ -18,6 +18,8 @@ Sub ReadExtraDataOld (teamYear$, teamIdx)
 
     Shared position$()
 
+    test$ = diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$
+
     If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
 
         MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
@@ -218,7 +220,7 @@ Sub ConvertTeam4to5 (targetFile$, silent)
         For currTeam = 1 To numberTeams
 
             Call ReadTeam(diskID$, nothing$, currTeam)
-            Call ReadExtraDataOld(targetFile$, currTeam)
+            Call ReadExtraDataOld(diskID$, currTeam)
 
             ' Fill new "actuals" with 0's
             For I = 21 To 24
@@ -302,13 +304,15 @@ Sub ConvertTeam5to4 (targetFile$, silent)
         For currTeam = 1 To numberTeams
 
             Call ReadTeam(diskID$, teamName$, currTeam)
-            Call ReadExtraData (diskID$, currTeam)
+            Call ReadExtraData(diskID$, currTeam, validData)
 
             'To convert to 4.0, let's just not write the new fields!!!
-            Call SaveTeamDataOld (0, diskID$, teamName$, currTeam)
+            If validData = 1 Then
+                Call SaveTeamDataOld(0, diskID$, teamName$, currTeam)
+            End If
 
         Next currTeam
-        
+
         Kill targetFile$
 
         Call FCopy(oldFile$, targetFile$, Buff$, copyErr%)
@@ -322,3 +326,4 @@ Sub ConvertTeam5to4 (targetFile$, silent)
     End If
 
 End Sub
+
