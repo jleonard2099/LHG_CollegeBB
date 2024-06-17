@@ -624,7 +624,7 @@ End Sub
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
 '$Include: 'FileTeamSelection.bm'
-'$Include: 'Convert.BAS'
+'$Include: 'CONVERT.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
 '$Include: 'ALIGN.BAS'
@@ -783,7 +783,6 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
@@ -812,7 +811,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1232,7 +1231,7 @@ Sub COLHOOP ()
     Call STEALADJ
 
     If autoPlay <> 1 And playerMode <> 2 Then
-        whistle& = _SndOpen("ref-whistle.mp3")
+        whistle& = _SndOpen("whistle.mp3")
         swish& = _SndOpen("swish.mp3")
         backboard& = _SndOpen("backboard.mp3")
     End If
@@ -3439,8 +3438,8 @@ Sub COLHOOP ()
 
             Call Rolld100(shotRoll)
 
-            'So, foul chance is up to 1/10 of the shot chance
-            foulChance! = shotChance! * ((DY / 100) + (.03 * threePtOpt))
+            'So, foul chance is up to 16% of the shot chance
+            foulChance! = shotChance! * ((rebFoulChance / 100) + (.03 * threePtOpt))
 
             If Not (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! < 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! < 30 And scoreDiff = -2) Then
 
@@ -3476,7 +3475,6 @@ Sub COLHOOP ()
                         Else
                             Call WINDEX
                         End If
-
 
                         pbpString$ = "STUFF BY " + players$(P, lineupIdx(P, ballCarrier)) + " !!!"
                         Call PBP(D)
@@ -4330,11 +4328,11 @@ Sub COLHOOP ()
 
             End If
 
-        Case 2 To DY
+        Case 2 To rebFoulChance
             foulOnReb = 1
             'GoTo 707
 
-        Case DY + 1 To 17
+        Case rebFoulChance + 1 To 17
 
             If d100% > 35 Then
 
@@ -5120,7 +5118,7 @@ Sub InitVar ()
     C1 = 0
     compTeam = 0
     D = 0
-    DY = 0
+    rebFoulChance = 0
     endAllGames = 0
     endGame = 0
     fastBreak = 0
@@ -10140,11 +10138,11 @@ Sub SETSTAMINA ()
         End If
     Next I
 
-    DY = 7
+    rebFoulChance = 7
 
     If gameAvgTmStamina > 114 Then
-        DY = (114 / gameAvgTmStamina) * DY
-        DY = Int(DY + .5)
+        rebFoulChance = (114 / gameAvgTmStamina) * rebFoulChance
+        rebFoulChance = Int(rebFoulChance + .5)
     End If
 
 End Sub
@@ -10619,20 +10617,25 @@ Sub FOULSAFE ()
     For ZZ = 0 To 4
 
         If plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 50 Then
+
             A = A + 1
+
             If SW = 0 Then
                 Print
                 Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE BUT CAN NOW PLAY NORMAL IF YOU WISH"
                 SW = 1
             End If
+
         End If
 
         If plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 50 And SW = 1 And S2 < 6 Then
+
             Locate S2 + 3, 1: Print S2; "-"; players$(P9, lineupIdx(P9, ZZ))
             P5(A) = S2
             P4(A) = ZZ
             S2 = S2 + 1
             S3 = S3 + 1
+
         End If
 
     Next ZZ
@@ -10678,14 +10681,18 @@ Sub FOULSAFE ()
         S2 = 1
 
         For ZZ = 0 To 4
+
             If currHalf <= 1 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 12) >= foulsToDQ - 3 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 0 Or plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 12) = foulsToDQ - 1 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 0 Then
+
                 A = A + 1
+
                 If S2 = 1 Then
                     Cls
                     Print
                     Print "THE FOLLOWING PLAYER(S) CAN ME MADE TO PLAY SAFE IF YOU WISH"
                     Print
                 End If
+
             End If
 
             If A = 0 And ZZ > 3 Then
@@ -10753,7 +10760,7 @@ End Sub
 
 
 '----------------------------------------
-'          FOULSAFE Subroutine
+'          FOULHARD Subroutine
 '----------------------------------------
 ' ...explanation...
 Sub FOULHARD ()
@@ -10785,16 +10792,21 @@ End Sub
 '----------------------------------------
 '          STEALADJ Subroutine
 '----------------------------------------
-' ...explanation...
+'Uses data from all player ratings to help
+'calculate several team-based adjustments
+'for frequency of steals, etc.
 Sub STEALADJ ()
 
     For I = 0 To 1
+
         teamAdj(I, 0) = 0
         teamAdj(I, 1) = 0
+
         For I1 = 0 To 4
             teamAdj(I, 0) = teamAdj(I, 0) + plyrOff_GAME!(I, lineupIdx(I, I1), 17)
             teamAdj(I, 1) = teamAdj(I, 1) + plyrOff_GAME!(I, lineupIdx(I, I1), 18)
         Next I1
+
     Next I
 
 End Sub
@@ -14200,7 +14212,7 @@ End Sub
 Sub pbplog (lineNumber)
 
     'Print #11, "Calling from "; lineNumber
-    'Print #11, currGame; ","; ballCarrier; ","; lineNumber
+    Print #11, currGame; ","; ballCarrier; ","; lineNumber
     'Print #11,
 
 End Sub
