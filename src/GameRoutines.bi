@@ -99,7 +99,9 @@ Declare Sub WHOLAY ()
 Declare Sub WINDEX ()
 Declare Sub ZONECHANGE ()
 
+Declare Function CheckString% (targetString$)
 Declare Function d100% ()
+Declare Function GetTeamGender$(diskID$)
 Declare Function GetTeamYear% (yearFromName$)
 Declare Function ShotPacing%
 Declare Function TickerTime% (timeInterval, X)

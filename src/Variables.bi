@@ -266,17 +266,14 @@ Dim Shared fastBreak, FO, ftNumber
 Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
 Dim Shared halfTime
 Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul, foulsToDQ
-
 Dim Shared JY, IN, M5, MJ, nbrLines
-
 Dim Shared offStatus
-
-Dim Shared P, P9, playerMode, playerOpt, pbpOpt
+Dim Shared P, P9, playerMode, playerOpt, pbpOpt, pbpType
 Dim Shared S2, sClockVal, shotClock, shotType
 Dim Shared threePtOpt, threePtShotChance
-Dim Shared tickerIdx, TMT, TOU, XM, XS
+Dim Shared tickerIdx, TMT, TOU, willDunk, XM, XS
 
-Dim Shared DK%, GS%, FT%, J8%, LC%
+Dim Shared GS%, FT%, J8%, LC%
 Dim Shared PA%, PASS, PT%, ST%
 Dim Shared X0%, X1%, XX%
 
@@ -318,5 +315,6 @@ Dim Shared offStyles$(9), offStyles_brief$(9)
 Dim Shared pbpStyle$(1), players$(1, 13)
 Dim Shared positions_GAME$(0 To 1, 0 To 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
+Dim Shared teamGender$(0 To 1)
 
 

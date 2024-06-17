@@ -26,6 +26,7 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim Shared currGame
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -782,6 +783,7 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
+        Open "pbplog" For Append As #11
 
         Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
@@ -810,7 +812,7 @@ Sub COLHOOP ()
 
     Else
 
-        'Open "pbplog" For Append As #11
+        Open "pbplog" For Append As #11
 
     End If
 
@@ -2005,7 +2007,7 @@ Sub COLHOOP ()
                 End If
 
                 Call PBP(P)
-                pbpString$ = "HE'S STREAKING DOWN THE FLOOR!"
+                pbpString$ = teamGender$(P) + "'S STREAKING DOWN THE FLOOR!"
                 Call PBP(P)
 
                 LAYUP:
@@ -2630,20 +2632,7 @@ Sub COLHOOP ()
 
         fastBreak = 1
 
-        Call Rolld100(RN0)
-
-        Select Case RN0
-            Case Is <= 38
-                ballCarrier = 0
-            Case 39 To 75
-                ballCarrier = 1
-            Case 76 To 83
-                ballCarrier = 2
-            Case 84 To 91
-                ballCarrier = 3
-            Case 92 To 100
-                ballCarrier = 4
-        End Select
+        Call WHOLAY
 
         Call Rolld100(RN1)
 
@@ -2887,10 +2876,10 @@ Sub COLHOOP ()
                         pbpString$ = "HAS AN OPEN JUMPER AT THE FT LINE"
 
                     Case 34 To 66
-                        pbpString$ = "HE'S OPEN ON THE BASELINE"
+                        pbpString$ = teamGender$(P) + "'S OPEN ON THE BASELINE"
 
                     Case 66 To 100
-                        pbpString$ = "HE'S OPEN FROM THE WING"
+                        pbpString$ = teamGender$(P) + "'S OPEN FROM THE WING"
 
                 End Select
 
@@ -2937,7 +2926,6 @@ Sub COLHOOP ()
                 End If
 
                 prevBall$ = players$(P, lineupIdx(P, ballCarrier))
-                YY$ = "HE"
 
                 Select Case shotType
 
@@ -2950,29 +2938,40 @@ Sub COLHOOP ()
                             Select Case RN0
 
                                 Case 1
-                                    pbpString$ = YY$ + "'S HEAVILY GUARDED"
+                                    pbpString$ = teamGender$(P) + "'S HEAVILY GUARDED"
                                 Case 2
-                                    pbpString$ = YY$ + "'S GUARDED"
+                                    pbpString$ = teamGender$(P) + "'S GUARDED"
                                 Case 3
-                                    pbpString$ = YY$ + "'S GUARDED BY " + players$(D, lineupIdx(D, ballCarrier))
-                                Case 4
-                                    pbpString$ = YY$ + " HAS A MAN ON HIM"
-                                Case 5
-                                    pbpString$ = YY$ + " HAS A DEFENDER ON HIM"
+                                    pbpString$ = teamGender$(P) + "'S GUARDED BY " + players$(D, lineupIdx(D, ballCarrier))
+
+                                Case 4, 5
+                                    pbpString$ = teamGender$(P) + " HAS A DEFENDER ON "
+                                    If teamGender$(P) = "HE" Then
+                                        pbpString$ = pbpString$ + "HIM"
+                                    Else
+                                        pbpString$ = pbpString$ + "HER"
+                                    End If
+
                                 Case 6
-                                    pbpString$ = YY$ + "'S COVERED"
+                                    pbpString$ = teamGender$(P) + "'S COVERED"
                                 Case 7
-                                    pbpString$ = YY$ + " CAN'T GET AROUND THE DEFENDER"
+                                    pbpString$ = teamGender$(P) + " CAN'T GET AROUND THE DEFENDER"
                                 Case 8
-                                    pbpString$ = YY$ + "'S PRESSURED"
+                                    pbpString$ = teamGender$(P) + "'S PRESSURED"
                                 Case 9
-                                    pbpString$ = YY$ + " HAS NOWHERE TO GO"
+                                    pbpString$ = teamGender$(P) + " HAS NOWHERE TO GO"
                                 Case 10
-                                    pbpString$ = YY$ + " HAS A HAND IN HIS FACE"
+                                    pbpString$ = teamGender$(P) + " HAS A HAND IN "
+                                    If teamGender$(P) = "HE" Then
+                                        pbpString$ = pbpString$ + "HIS FACE"
+                                    Else
+                                        pbpString$ = pbpString$ + "HER FACE"
+                                    End If
+
                                 Case 11
-                                    pbpString$ = YY$ + "'S WATCHED BY " + players$(D, lineupIdx(D, ballCarrier))
+                                    pbpString$ = teamGender$(P) + "'S WATCHED BY " + players$(D, lineupIdx(D, ballCarrier))
                                 Case 12
-                                    pbpString$ = YY$ + "'S WORKING ON " + players$(D, lineupIdx(D, ballCarrier))
+                                    pbpString$ = teamGender$(P) + "'S WORKING ON " + players$(D, lineupIdx(D, ballCarrier))
                             End Select
 
                         End If
@@ -2980,9 +2979,9 @@ Sub COLHOOP ()
                         Call PBP(P)
 
                     Case 2:
-                        pbpString$ = YY$ + " WORKS FREE INSIDE"
+                        pbpString$ = teamGender$(P) + " WORKS FREE INSIDE"
                         Call PBP(P)
-                        pbpString$ = "HE HAS AN OPEN SHOT"
+                        pbpString$ = teamGender$(P) + " HAS AN OPEN SHOT"
                         Call SHOTSTRING
                         Call PBP(P)
 
@@ -3000,84 +2999,91 @@ Sub COLHOOP ()
 
                                 Select Case RN0
                                     Case Is <= 25
-                                        pbpString$ = YY$ + " MAKES A MOVE DOWN LOW"
+                                        pbpString$ = teamGender$(P) + " MAKES A MOVE DOWN LOW"
                                         Call PBP(P)
 
                                     Case 26 To 50
-                                        pbpString$ = YY$ + " POSITIONS HIMSELF DOWN LOW"
+                                        If teamGender$(P) = "HE" Then
+                                            pbpString$ = teamGender$(P) + " POSITIONS HIMSELF DOWN LOW"
+                                        Else
+                                            pbpString$ = teamGender$(P) + " POSITIONS HERSELF DOWN LOW"
+                                        End If
+
                                         Call PBP(P)
 
                                     Case 51 To 75
-                                        pbpString$ = YY$ + " POSTS UP UNDERNEATH"
+                                        pbpString$ = teamGender$(P) + " POSTS UP UNDERNEATH"
                                         Call PBP(P)
 
                                     Case 76 To 100
-                                        pbpString$ = YY$ + " BACKS IN AGAINST " + players$(D, lineupIdx(D, 4))
+                                        pbpString$ = teamGender$(P) + " BACKS IN AGAINST " + players$(D, lineupIdx(D, 4))
 
                                 End Select
 
                                 Call PBP(P)
 
-                                pbpString$ = "HE HAS A GOOD SHOT INSIDE"
+                                pbpString$ = teamGender$(P) + " HAS A GOOD SHOT INSIDE"
                                 Call SHOTSTRING
                                 Call PBP(P)
 
                             End If
 
-                            If (ballCarrier = 3 Or ballCarrier = 2) Then
+                            'Forwards
+                            If (ballCarrier = 2 Or ballCarrier = 3) Then
 
                                 Select Case RN0
 
                                     Case Is <= 17
-                                        pbpString$ = YY$ + " DRIVES THE BASELINE"
+                                        pbpString$ = teamGender$(P) + " DRIVES THE BASELINE"
 
                                     Case 18 To 34
-                                        pbpString$ = YY$ + " PENETRATES THE LANE"
+                                        pbpString$ = teamGender$(P) + " PENETRATES THE LANE"
 
                                     Case 35 To 50
-                                        pbpString$ = YY$ + " MOVES INSIDE"
+                                        pbpString$ = teamGender$(P) + " MOVES INSIDE"
 
                                     Case 51 To 67
-                                        pbpString$ = YY$ + " DRIVES THE LANE"
+                                        pbpString$ = teamGender$(P) + " DRIVES THE LANE"
 
                                     Case 68 To 84
-                                        pbpString$ = YY$ + " MOVES INTO THE PAINT"
+                                        pbpString$ = teamGender$(P) + " MOVES INTO THE PAINT"
 
                                     Case 85 To 100
-                                        pbpString$ = YY$ + " DRIVES UNDERNEATH"
+                                        pbpString$ = teamGender$(P) + " DRIVES UNDERNEATH"
 
                                 End Select
 
                                 Call PBP(P)
 
-                                pbpString$ = "HE'S GOT A GOOD SHOT UNDERNEATH"
+                                pbpString$ = teamGender$(P) + "'S GOT A GOOD SHOT UNDERNEATH"
                                 Call SHOTSTRING
                                 Call PBP(P)
 
                             End If
 
+                            'Guards
                             If (ballCarrier = 0 Or ballCarrier = 1) Then
 
                                 Select Case RN0
                                     Case Is <= 25
-                                        pbpString$ = YY$ + " DRIVES THE LANE":
+                                        pbpString$ = teamGender$(P) + " DRIVES THE LANE":
 
                                     Case 26 To 50
-                                        pbpString$ = YY$ + " DRIVES THROUGH THE KEY"
+                                        pbpString$ = teamGender$(P) + " DRIVES THROUGH THE KEY"
                                         Call PBP(P)
-                                        pbpString$ = "HE'S INTO THE LANE"
+                                        pbpString$ = teamGender$(P) + "'S INTO THE LANE"
 
                                     Case 51 To 75
-                                        pbpString$ = YY$ + " DRIVES TO THE BASKET"
+                                        pbpString$ = teamGender$(P) + " DRIVES TO THE BASKET"
 
                                     Case 76 To 100
-                                        pbpString$ = YY$ + " DRIVES THROUGH AN OPENING"
+                                        pbpString$ = teamGender$(P) + " DRIVES THROUGH AN OPENING"
 
                                 End Select
 
                                 Call PBP(P)
 
-                                pbpString$ = "HE HAS A GOOD SHOT CLOSE IN"
+                                pbpString$ = teamGender$(P) + " HAS A GOOD SHOT CLOSE IN"
                                 Call SHOTSTRING
                                 Call PBP(P)
 
@@ -3086,7 +3092,7 @@ Sub COLHOOP ()
                         End If
 
                     Case 4:
-                        pbpString$ = "HE'S OPEN FROM 3-POINT RANGE!"
+                        pbpString$ = teamGender$(P) + "'S OPEN FROM 3-POINT RANGE!"
                         pbpString$ = pbpString$ + Str$(threePtShotChance) + "*"
                         Call PBP(P)
 
@@ -3094,7 +3100,7 @@ Sub COLHOOP ()
                         playChoice = 4
 
                     Case 5 To 7
-                        pbpString$ = "HE'S OPEN FROM MEDIUM RANGE"
+                        pbpString$ = teamGender$(P) + "'S OPEN FROM MEDIUM RANGE"
                         Call SHOTSTRING
                         Call PBP(P)
 
@@ -3440,7 +3446,6 @@ Sub COLHOOP ()
 
                 If shotRoll <= foulChance! Then
 
-                    'Foul + Block
                     Call ResetShotClock
                     gameClock! = gameClock! - 4
                     timeElapsed! = 4
@@ -3452,43 +3457,48 @@ Sub COLHOOP ()
 
                     LT = 0
 
-                    If DK% = 1 Then
+                    If willDunk = 1 Then
 
-                        ' *** if it's a stuff, how do we still make the shot?
                         If pbpOpt = 0 Then
-                            pbpType = 2
+                            'Women dunk on 0.15% of FGAs
+                            '(as opposed to 2.31% for men)
+                            test$ = teamGender$(P)
+                            If teamGender$(P) = "SHE" And d100% > 5 Then
+                                pbpType = 3
+                            Else
+                                pbpType = 2
+                                'Failed dunk
+                                'Call pbplog(3472)
+                            End If
+
                             Call MAKEPBP(pbpType)
-                            Call PBP(P)
+
                         Else
-                            'pbpOpt = 1
                             Call WINDEX
                         End If
 
-                        pbpString$ = "STUFF BY " + players$(P, lineupIdx(P, ballCarrier))
+
+                        pbpString$ = "STUFF BY " + players$(P, lineupIdx(P, ballCarrier)) + " !!!"
                         Call PBP(D)
                         Call DELAY
-                        DK% = 0
+                        willDunk = 0
 
                     Else
 
-                        If shotType = 8 Then
-
+                        If shotType = 8 And pbpOpt = 0 Then
                             pbpType = 7
                             Call MAKEPBP(pbpType)
                             shotType = 0
                             Call PBP(P)
-
                         Else
-
                             pbpString$ = "BASKET GOOD BY " + players$(P, lineupIdx(P, ballCarrier))
                             Call SELECTPBP(P, 1)
-
                         End If
 
                     End If
 
                     617 '
-                    pbpString$ = "... AND HE'S FOULED !!!"
+                    pbpString$ = "... AND " + teamGender$(P) + "'S FOULED !!!"
                     Call SELECTPBP(P, 0)
                     Call DELAY
 
@@ -3564,21 +3574,32 @@ Sub COLHOOP ()
 
                 LT = 0
 
-                If DK% = 1 Then
+                If willDunk = 1 Then
 
                     If pbpOpt = 0 Then
-                        pbpType = 2
+
+                        'Women dunk on 0.15% of FGAs
+                        '(as opposed to 2.31% for men)
+                        '-- "1%" factor = 20
+                        If teamGender$(P) = "SHE" And d100% > 5 Then
+                            pbpType = 3
+                        Else
+                            pbpType = 2
+                            'Good dunk
+                            'Call pbplog(3590)
+                        End If
+
                         Call MAKEPBP(pbpType)
-                        Call PBP(P)
+
                     Else
                         'pbpOpt = 1
                         Call WINDEX
+                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " DUNKS IT IN!!!"
                     End If
 
-                    pbpString$ = "STUFF BY " + players$(P, lineupIdx(P, ballCarrier))
-                    Call PBP(D)
+                    Call PBP(P)
                     Call DELAY
-                    DK% = 0
+                    willDunk = 0
 
                 Else
 
@@ -3590,16 +3611,15 @@ Sub COLHOOP ()
                         shotType = 0
 
                     Else
-                        
-                        pbpString$ = "BASKET BY "
-                        pbpString$ = pbpString$ + players$(P, lineupIdx(P, ballCarrier)) + " !!!"
+
+                        pbpString$ = "BASKET BY " + players$(P, lineupIdx(P, ballCarrier)) + " !!!"
 
                         If pbpOpt = 1 And pbpDelay! <> 0 Then
 
                             Call WINDEX
                             Call PBP(P)
                             Call DELAY
-                        
+
                         Else
 
                             If d100% > 50 Then
@@ -3628,7 +3648,7 @@ Sub COLHOOP ()
                                     Case 10
                                         pbpString$ = "IT FALLS!"
                                     Case 11
-                                        pbpString$ = "HE DRAINS IT!"
+                                        pbpString$ = teamGender$(P) + " DRAINS IT!"
                                     Case 12
                                         pbpString$ = "SWISH!"
                                     Case 13
@@ -3636,7 +3656,7 @@ Sub COLHOOP ()
                                     Case 14
                                         pbpString$ = "IT'S THERE!"
                                     Case 15
-                                        pbpString$ = "HE BURIES IT!"
+                                        pbpString$ = teamGender$(P) + " BURIES IT!"
                                     Case 16
                                         pbpString$ = "IT GOES IN!"
                                     Case 17
@@ -3646,11 +3666,11 @@ Sub COLHOOP ()
                                     Case 19
                                         pbpString$ = "BULLSEYE!"
                                     Case 20
-                                        pbpString$ = "HE SCORES!"
+                                        pbpString$ = teamGender$(P) + " SCORES!"
                                     Case 21
-                                        pbpString$ = "HE HAS IT!"
+                                        pbpString$ = teamGender$(P) + " HAS IT!"
                                     Case 22
-                                        pbpString$ = "HE CONNECTS!"
+                                        pbpString$ = teamGender$(P) + " CONNECTS!"
                                 End Select
 
                             End If
@@ -3950,7 +3970,7 @@ Sub COLHOOP ()
 
                         Call CreditAssists
 
-                        pbpString$ = "AND HE WAS FOULED !!!"
+                        pbpString$ = "AND " + teamGender$(P) + " WAS FOULED !!!"
                         Call SELECTPBP(P, 0)
 
                         score(P, currHalf) = score(P, currHalf) + 3
@@ -4589,7 +4609,7 @@ Sub COLHOOP ()
             Else
                 pbpString$ = players$(D, lineupIdx(D, ballCarrier)) + " HAS THE DEF RB"
                 Call PBP(D)
-                pbpString$ = "HE'S FOULED !!!"
+                pbpString$ = teamGender$(P) + "'S FOULED !!!"
                 Call PBP(D)
             End If
         End If
@@ -4683,7 +4703,7 @@ Sub COLHOOP ()
             Call PBP(P)
         End If
 
-        pbpString$ = "HE'S FOULED !!!"
+        pbpString$ = teamGender$(P) + "'S FOULED !!!"
         Call SELECTPBP(P, 1)
 
         plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) + 1
@@ -5125,7 +5145,7 @@ Sub InitVar ()
     XS = 0
 
     BU% = 0
-    DK% = 0
+    willDunk = 0
     FT% = 0
     LC% = 0
     pbpType = 0
@@ -5227,21 +5247,23 @@ Sub AUTOSETUP (validTeam)
 
     validTeam = 0
 
-    For P9 = 0 To 1
+    For tgtTeam = 0 To 1
 
-        I1 = NG%(P9)
+        tgtId = NG%(tgtTeam)
 
-        Call ReadGameTeam(diskIDs$(P9), gameTeams$(P9), I1, P9)
-        Call ReadGameExtraData(diskIDs$(P9), I1, P9, validTeam)
+        teamGender$(tgtTeam) = GetTeamGender$(diskIDs$(tgtTeam))
 
-        If I1 <> 0 Then
-            Call TEAMSETUP(P9)
+        Call ReadGameTeam(diskIDs$(tgtTeam), gameTeams$(tgtTeam), tgtId, tgtTeam)
+        Call ReadGameExtraData(diskIDs$(tgtTeam), tgtId, tgtTeam, validTeam)
+
+        If tgtId <> 0 Then
+            Call TEAMSETUP(tgtTeam)
         Else
             'In case chosen team ends up with 0 value
             validTeam = 0
         End If
 
-    Next P9
+    Next tgtTeam
 
     If validTeam = 1 And TOU = 1 Then
 
@@ -5305,14 +5327,19 @@ End Sub
 Sub LetterToNumber (promptVal$, J)
 
     J = Val(promptVal$)
-    If UCase$(promptVal$) = "A" Then J = 10
-    If UCase$(promptVal$) = "B" Then J = 11
-    If UCase$(promptVal$) = "C" Then J = 12
-    If UCase$(promptVal$) = "D" Then J = 13
-    If UCase$(promptVal$) = "E" Then J = 14
-    If UCase$(promptVal$) = "F" Then J = 15
-    If UCase$(promptVal$) = "G" Then J = 16
-    If UCase$(promptVal$) = "H" Then J = 17
+
+    Select Case UCase$(promptVal$)
+
+        Case "A": J = 10
+        Case "B": J = 11
+        Case "C": J = 12
+        Case "D": J = 13
+        Case "E": J = 14
+        Case "F": J = 15
+        Case "G": J = 16
+        Case "H": J = 17
+
+    End Select
 
 End Sub
 
@@ -5721,7 +5748,7 @@ Sub PBP (teamIdx)
     End If
 
     'Positive delay or Verbose PBP
-    If pbpDelay! <> 0 And pbpOpt <> 1 Then
+    If pbpDelay! <> 0 And pbpOpt = 0 Then
 
         pbpString$ = PadRight$(pbpString$, 38)
         'Print #11, pbpString$
@@ -5729,31 +5756,31 @@ Sub PBP (teamIdx)
         Locate 8, 1
 
         Select Case nbrLines
-            
+
             Case 1
                 A1$ = pbpString$
-            
+
             Case 2
                 B1$ = pbpString$
 
             Case 3
                 C1$ = pbpString$
-            
+
             Case 4
                 D1$ = pbpString$
-            
+
             Case 5
                 E1$ = pbpString$
-                        
+
             Case 6
                 F1$ = pbpString$
-                        
+
             Case 7
                 G1$ = pbpString$
-                
+
             Case 8
                 H1$ = pbpString$
-                
+
             Case Is > 8
                 A1$ = B1$
                 B1$ = C1$
@@ -5831,7 +5858,8 @@ End Sub
 'context given (assigned as pbpType)
 Sub MAKEPBP (pbpType)
 
-    If pbpDelay! <> 0 Then
+    'If pbpDelay! <> 0 Then
+    If pbpDelay! < 1 Then
 
         Call Rolld100(RN0)
 
@@ -5886,6 +5914,7 @@ Sub MAKEPBP (pbpType)
 
             Case 2
                 'DUNK
+                'Call pbplog(5911)
                 RN1 = Int(Rnd(1) * 39) + 1
 
                 Select Case RN1
@@ -5947,35 +5976,35 @@ Sub MAKEPBP (pbpType)
                     Case 28
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " IS UP"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS"
+                        pbpString$ = teamGender$(P) + " SPINS"
                         Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 29
-                        pbpString$ = "HE SLAMS IT HOME!!"
+                        pbpString$ = teamGender$(P) + " SLAMS IT HOME!!"
                     Case 30
-                        pbpString$ = "HE LAYS IT UP AND IN!!"
+                        pbpString$ = teamGender$(P) + " LAYS IT UP AND IN!!"
                     Case 31
-                        pbpString$ = "HE BANGS IT IN!!"
+                        pbpString$ = teamGender$(P) + " BANGS IT IN!!"
                     Case 32
-                        pbpString$ = "HE RAMS IT IN!!"
+                        pbpString$ = teamGender$(P) + " RAMS IT IN!!"
                     Case 33
-                        pbpString$ = "HE SLAMS IT IN!!!"
+                        pbpString$ = teamGender$(P) + " SLAMS IT IN!!!"
                     Case 34
                         pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 35
-                        pbpString$ = "HE MAKES IT HAMMER TIME!!!"
+                        pbpString$ = teamGender$(P) + " MAKES IT HAMMER TIME!!!"
                     Case 36
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 2-HANDED SLAM!!!"
                     Case 37
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " IS UP"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS"
+                        pbpString$ = teamGender$(P) + " SPINS"
                         Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 38
-                        pbpString$ = "HE JAMS IT HOME!!!"
+                        pbpString$ = teamGender$(P) + " JAMS IT HOME!!!"
                     Case 39
-                        pbpString$ = "HE HAMMERS IT HOME!"
+                        pbpString$ = teamGender$(P) + " HAMMERS IT HOME!"
 
                 End Select
 
@@ -6019,64 +6048,83 @@ Sub MAKEPBP (pbpType)
                         Select Case RN0
 
                             Case 1 To 10
-                                pbpString$ = "HE CUTS TO THE BASKET"
+                                pbpString$ = teamGender$(P) + " CUTS TO THE BASKET"
                                 Call PBP(P)
                                 pbpString$ = "TAKES IT UP"
                                 checkForStuff = 1
 
                             Case 11 To 20
-                                pbpString$ = "HE TAKES IT TO THE HOLE"
+                                pbpString$ = teamGender$(P) + " TAKES IT TO THE HOLE"
                                 checkForStuff = 1
 
                             Case 21 To 30
-                                pbpString$ = "HE TAKES IT TO THE HOOP"
+                                pbpString$ = teamGender$(P) + " TAKES IT TO THE HOOP"
                                 checkForStuff = 1
 
                             Case 31 To 40
-                                pbpString$ = "HE LEANS IN AND SHOOTS"
+                                pbpString$ = teamGender$(P) + " LEANS IN AND SHOOTS"
 
                             Case 41 To 50
-                                pbpString$ = "HE PUTS IT UP"
+                                pbpString$ = teamGender$(P) + " PUTS IT UP"
 
                             Case 51 To 60
-                                pbpString$ = "HE TAKES IT TO THE BOARD"
+                                pbpString$ = teamGender$(P) + " TAKES IT TO THE BOARD"
                                 checkForStuff = 1
 
                             Case 61 To 70
-                                pbpString$ = "HE PUTS IT OFF THE GLASS"
+                                pbpString$ = teamGender$(P) + " PUTS IT OFF THE GLASS"
 
                             Case 71 To 80
                                 If ballCarrier = 4 Then
-                                    pbpString$ = "HE SHOOTS THE HOOK"
+                                    pbpString$ = teamGender$(P) + " SHOOTS THE HOOK"
                                 Else
-                                    'ballCarrier <> 4
-                                    pbpString$ = "HE GOES IN FOR THE LAYUP"
+                                    pbpString$ = teamGender$(P) + " GOES IN FOR THE LAYUP"
                                 End If
 
                             Case 81 To 90
-                                pbpString$ = "HE TAKES IT UP STRONG"
+                                pbpString$ = teamGender$(P) + " TAKES IT UP STRONG"
                                 checkForStuff = 1
 
                             Case 91 To 95
-                                pbpString$ = "HE POWERS IT UP"
+                                pbpString$ = teamGender$(P) + " POWERS IT UP"
                                 checkForStuff = 1
 
                             Case 96 To 100
-                                pbpString$ = "HE LAYS IT UP"
+                                pbpString$ = teamGender$(P) + " LAYS IT UP"
 
                         End Select
 
                         If checkForStuff = 1 Then
 
-                            'If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 1 Then
-                            If (ballCarrier = 0 Or ballCarrier = 1) And d100% <= 1 Then
-                                DK% = 1
+                            'Frequency of dunk based on position
+
+                            'Guards rarely dunk; this is the only place they do
+                            'In women's basketball they dunk even less often
+                            '-- "1%" factor = 15
+                            If (ballCarrier = 0 Or ballCarrier = 1) Then
+                                '-- was 18
+                                If (teamGender$(P) = "SHE" And d100% <= 22) Or (teamGender$(P) = "HE" And d100% <= 45) Then
+                                    'Call pbplog(6076)
+                                    willDunk = 1
+                                End If
                             End If
-                            If (ballCarrier = 2 Or ballCarrier = 3) And d100% <= 5 Then
-                                DK% = 1
+
+                            'Forwards are very likely
+                            '-- "1%" factor = 10
+                            If (ballCarrier = 2 Or ballCarrier = 3) And d100% <= 30 Then
+                                'Call pbplog(6082)
+                                willDunk = 1
                             End If
-                            If ballCarrier = 4 And d100% <= 7 Then
-                                DK% = 1
+
+                            'Centers are most likely to dunk, but rarely reach here
+                            '-- "1%" factor = 5
+                            If ballCarrier = 4 Then
+                                '-- was 18
+                                If (teamGender$(P) = "SHE" And d100% <= 22) Or (teamGender$(P) = "HE" And d100% <= 15) Then
+                                    'Centers dunk slightly more often in women's basketball
+                                    'Call pbplog(6088)
+                                    willDunk = 1
+                                End If
                             End If
 
                         End If
@@ -6092,31 +6140,31 @@ Sub MAKEPBP (pbpType)
                                 Select Case RN0
 
                                     Case 1 To 25
-                                        pbpString$ = "HE SPINS FREE"
+                                        pbpString$ = teamGender$(P) + " SPINS FREE"
                                         Call PBP(P)
                                         pbpString$ = "SHOOTS"
 
                                     Case 26 To 50
-                                        pbpString$ = "HE TAKES IT UP UNDER THE BASKET"
+                                        pbpString$ = teamGender$(P) + " TAKES IT UP UNDER THE BASKET"
                                         checkForStuff = 1
 
                                     Case 51 To 52
-                                        pbpString$ = "HE MAKES A NICE SPIN MOVE"
+                                        pbpString$ = teamGender$(P) + " MAKES A NICE SPIN MOVE"
                                         Call PBP(P)
                                         pbpString$ = "AND SOARS TO THE HOOP"
                                         checkForStuff = 1
 
                                     Case 53 To 54
-                                        pbpString$ = "HE BLOWS PAST TWO DEFENDERS"
+                                        pbpString$ = teamGender$(P) + " BLOWS PAST TWO DEFENDERS"
 
                                     Case 55 To 56
-                                        pbpString$ = "HE DRIVES THE BASELINE"
+                                        pbpString$ = teamGender$(P) + " DRIVES THE BASELINE"
                                         Call PBP(P)
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
                                         checkForStuff = 1
 
                                     Case 57
-                                        pbpString$ = "HE SLICES IN THE HOLE"
+                                        pbpString$ = teamGender$(P) + " SLICES IN THE HOLE"
                                         Call PBP(P)
                                         pbpString$ = "UNDERHAND SCOOP SHOT"
 
@@ -6126,32 +6174,34 @@ Sub MAKEPBP (pbpType)
                                         pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                     Case 59
-                                        pbpString$ = "HE PENETRATES"
+                                        pbpString$ = teamGender$(P) + " PENETRATES"
                                         Call PBP(P)
                                         pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                     Case 60 To 75
-                                        pbpString$ = "HE TAKES THE JUMPER"
+                                        pbpString$ = teamGender$(P) + " TAKES THE JUMPER"
 
                                     Case 76 To 90
-                                        pbpString$ = "HE STOPS"
+                                        pbpString$ = teamGender$(P) + " STOPS"
                                         Call PBP(P)
                                         pbpString$ = "SHOOTS"
 
                                     Case 91
-                                        pbpString$ = "HE LOOKS TO PASS"
+                                        pbpString$ = teamGender$(P) + " LOOKS TO PASS"
                                         Call PBP(P)
                                         pbpString$ = "NO ONE IS OPEN"
                                         Call PBP(P)
-                                        pbpString$ = "HE PUTS IT UP"
+                                        pbpString$ = teamGender$(P) + " PUTS IT UP"
 
                                     Case 92 To 100
-                                        pbpString$ = "HE TAKES THE SHOT"
+                                        pbpString$ = teamGender$(P) + " TAKES THE SHOT"
 
                                 End Select
 
-                                If checkForStuff = 1 And d100% <= 2 Then
-                                    DK% = 1
+                                '-- "1%" factor = 2
+                                If checkForStuff = 1 And d100% <= 6 Then
+                                    'Call pbplog(6164)
+                                    willDunk = 1
                                 End If
 
                             Case 2, 3
@@ -6161,44 +6211,44 @@ Sub MAKEPBP (pbpType)
                                 Select Case RN0
 
                                     Case 1 To 16
-                                        pbpString$ = "HE TAKES IT UP"
+                                        pbpString$ = teamGender$(P) + " TAKES IT UP"
                                         checkForStuff = 1
 
                                     Case 17 To 32
-                                        pbpString$ = "HE SPINS FREE"
+                                        pbpString$ = teamGender$(P) + " SPINS FREE"
                                         Call PBP(P)
                                         pbpString$ = "SHOOTS"
                                         checkForStuff = 1
 
                                     Case 33 To 48
-                                        pbpString$ = "HE GETS LOOSE IN THE PAINT"
+                                        pbpString$ = teamGender$(P) + " GETS LOOSE IN THE PAINT"
                                         Call PBP(P)
                                         pbpString$ = "TAKES IT UP"
                                         checkForStuff = 1
 
                                     Case 49 To 64
-                                        pbpString$ = "HE PUTS IT UP"
+                                        pbpString$ = teamGender$(P) + " PUTS IT UP"
 
                                     Case 65 To 67
-                                        pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
+                                        pbpString$ = teamGender$(P) + " CURLS OFF A PICK IN THE PAINT"
                                         Call PBP(P)
                                         pbpString$ = "TAKES IT UP"
                                         checkForStuff = 1
 
                                     Case 68, 69
-                                        pbpString$ = "HE MAKES A NICE SPIN MOVE"
+                                        pbpString$ = teamGender$(P) + " MAKES A NICE SPIN MOVE"
                                         Call PBP(P)
                                         pbpString$ = "AND SOARS TO THE HOOP"
                                         checkForStuff = 1
 
                                     Case 70, 71
-                                        pbpString$ = "HE DRIVES THE BASELINE"
+                                        pbpString$ = teamGender$(P) + " DRIVES THE BASELINE"
                                         Call PBP(P)
                                         pbpString$ = "SPINS RIGHT AND GOES UP"
                                         checkForStuff = 1
 
                                     Case 72
-                                        pbpString$ = "HE SLICES IN THE HOLE"
+                                        pbpString$ = teamGender$(P) + " SLICES IN THE HOLE"
                                         Call PBP(P)
                                         pbpString$ = "UNDERHAND SCOOP SHOT"
 
@@ -6208,20 +6258,22 @@ Sub MAKEPBP (pbpType)
                                         pbpString$ = "DOUBLE PUMP REVERSE LAYUP"
 
                                     Case 74
-                                        pbpString$ = "HE PENETRATES"
+                                        pbpString$ = teamGender$(P) + " PENETRATES"
                                         Call PBP(P)
                                         pbpString$ = "GORGEOUS FINGER ROLL!"
 
                                     Case 75 To 80
-                                        pbpString$ = "HE SHOOTS"
+                                        pbpString$ = teamGender$(P) + " SHOOTS"
 
                                     Case 81 To 100
-                                        pbpString$ = "HE TAKES THE SHOT"
+                                        pbpString$ = teamGender$(P) + " TAKES THE SHOT"
 
                                 End Select
 
-                                If checkForStuff = 1 And d100% <= 7 Then
-                                    DK% = 1
+                                '-- "1%" factor = 5
+                                If checkForStuff = 1 And d100% <= 15 Then
+                                    'Call pbplog(6235)
+                                    willDunk = 1
                                 End If
 
                             Case 4
@@ -6229,41 +6281,43 @@ Sub MAKEPBP (pbpType)
                                 Select Case RN0
 
                                     Case 1 To 15
-                                        pbpString$ = "HE PUTS IT OFF THE GLASS"
+                                        pbpString$ = teamGender$(P) + " PUTS IT OFF THE GLASS"
 
                                     Case 16 To 25
-                                        pbpString$ = "HE PIVOTS TO THE BASKET"
+                                        pbpString$ = teamGender$(P) + " PIVOTS TO THE BASKET"
 
                                     Case 26 To 40
-                                        pbpString$ = "HE POWERS IT UP"
+                                        pbpString$ = teamGender$(P) + " POWERS IT UP"
 
                                     Case 41 To 58
-                                        pbpString$ = "HE TAKES IT TO THE HOOP"
+                                        pbpString$ = teamGender$(P) + " TAKES IT TO THE HOOP"
                                         checkForStuff = 1
 
                                     Case 59 To 70
-                                        pbpString$ = "HE TAKES THE SHOT"
+                                        pbpString$ = teamGender$(P) + " TAKES THE SHOT"
 
                                     Case 71, 72
-                                        pbpString$ = "HE CURLS OFF A PICK IN THE PAINT"
+                                        pbpString$ = teamGender$(P) + " CURLS OFF A PICK IN THE PAINT"
                                         Call PBP(P)
                                         pbpString$ = "TAKES IT UP"
                                         checkForStuff = 1
 
                                     Case 73, 74
-                                        pbpString$ = "HE MAKES A NICE SPIN MOVE"
+                                        pbpString$ = teamGender$(P) + " MAKES A NICE SPIN MOVE"
                                         Call PBP(P)
                                         pbpString$ = "AND SOARS TO THE HOOP"
                                         checkForStuff = 1
 
                                     Case 75 To 100
-                                        pbpString$ = "HE TAKES IT UP STRONG"
+                                        pbpString$ = teamGender$(P) + " TAKES IT UP STRONG"
                                         checkForStuff = 1
 
                                 End Select
 
-                                If checkForStuff = 1 And d100% <= 15 Then
-                                    DK% = 1
+                                '-- "1%" factor = 10
+                                If checkForStuff = 1 And d100% <= 30 Then
+                                    'Call pbplog(6278)
+                                    willDunk = 1
                                 End If
 
                         End Select
@@ -6311,7 +6365,7 @@ Sub MAKEPBP (pbpType)
 
                     Case 5
                         'SHORT JUMP
-                        DK% = 0
+                        willDunk = 0
 
                         RN1 = Int(Rnd(1) * 59) + 1
 
@@ -6325,7 +6379,6 @@ Sub MAKEPBP (pbpType)
                                 If ballCarrier = 4 Then
                                     pbpString$ = pbpString$ + " RELEASES THE HOOK"
                                 Else
-                                    'ballCarrier <> 4
                                     pbpString$ = pbpString$ + " TAKES THE SHOT"
                                 End If
                             Case 4
@@ -6336,7 +6389,6 @@ Sub MAKEPBP (pbpType)
                                 If ballCarrier = 4 Then
                                     pbpString$ = pbpString$ + " WITH THE RUNNING HOOK"
                                 Else
-                                    'ballCarrier <> 4
                                     pbpString$ = pbpString$ + " WITH THE RUNNER"
                                 End If
 
@@ -6344,7 +6396,6 @@ Sub MAKEPBP (pbpType)
                                 If ballCarrier = 4 Then
                                     pbpString$ = pbpString$ + " WITH A SWEEPING HOOK"
                                 Else
-                                    'ballCarrier <> 4
                                     pbpString$ = pbpString$ + " WORKS FREE AND SHOOTS"
                                 End If
 
@@ -6352,7 +6403,6 @@ Sub MAKEPBP (pbpType)
                                 If ballCarrier = 4 Then
                                     pbpString$ = pbpString$ + " WITH A BABY HOOK SHOT"
                                 Else
-                                    'ballCarrier <> 4
                                     pbpString$ = pbpString$ + " TAKES THE SHOT"
                                 End If
 
@@ -6377,9 +6427,21 @@ Sub MAKEPBP (pbpType)
                             Case 18
                                 pbpString$ = pbpString$ + " TAKES IT IN THE PAINT"
                             Case 19
-                                pbpString$ = pbpString$ + " FLOATS IT OVER HIS MAN"
+                                pbpString$ = pbpString$ + " FLOATS IT OVER "
+                                If teamGender$(P) = "HE" Then
+                                    pbpString$ = pbpString$ + "HIS MAN"
+                                Else
+                                    pbpString$ = pbpString$ + "HER DEFENDER"
+                                End If
+
                             Case 20
-                                pbpString$ = pbpString$ + " TAKES HIS MAN INSIDE"
+                                pbpString$ = pbpString$ + " TAKES "
+                                If teamGender$(P) = "HE" Then
+                                    pbpString$ = pbpString$ + "HIS MAN INSIDE"
+                                Else
+                                    pbpString$ = pbpString$ + "HER DEFENDER INSIDE"
+                                End If
+
                             Case 21
                                 pbpString$ = pbpString$ + " WHEELS IN THE LANE"
                             Case 22
@@ -6462,7 +6524,7 @@ Sub MAKEPBP (pbpType)
                         End Select
 
                     Case 6
-                        DK% = 0
+                        willDunk = 0
 
                         RN1 = Int(Rnd(1) * 59) + 1
 
@@ -6517,7 +6579,14 @@ Sub MAKEPBP (pbpType)
                             Case 24
                                 pbpString$ = pbpString$ + " WORKS FREE AND FIRES"
                             Case 25
-                                pbpString$ = pbpString$ + " SHOOTS OVER HIS MAN"
+                                pbpString$ = pbpString$ + " SHOOTS OVER "
+
+                                If teamGender$(P) = "HE" Then
+                                    pbpString$ = pbpString$ + "HIS MAN"
+                                Else
+                                    pbpString$ = pbpString$ + "HER DEFENDER"
+                                End If
+
                             Case 26
                                 pbpString$ = pbpString$ + " SHOOTS FALLING AWAY"
                             Case 27
@@ -6590,7 +6659,7 @@ Sub MAKEPBP (pbpType)
                         End Select
 
                     Case 7
-                        DK% = 0
+                        willDunk = 0
 
                         Select Case RN0
 
@@ -6624,7 +6693,13 @@ Sub MAKEPBP (pbpType)
                                     pbpString$ = "NO!"
                                     Call PBP(P)
 
-                                    pbpString$ = "HIS FOOT IS ON THE 3-POINT LINE"
+                                    If teamGender$(P) = "HE" Then
+                                        pbpString$ = "HIS"
+                                    Else
+                                        pbpString$ = "HER"
+                                    End If
+                                    pbpString$ = pbpString$ + " FOOT IS ON THE 3-POINT LINE"
+
                                 End If
                             Case 92 To 100
                                 pbpString$ = pbpString$ + " SHOOTS FROM THE WING"
@@ -6636,35 +6711,41 @@ Sub MAKEPBP (pbpType)
                         Select Case RN0
 
                             Case 1 To 20
-                                pbpString$ = "HE SAILS TO THE HOOP"
+                                pbpString$ = teamGender$(P) + " SAILS TO THE HOOP"
                             Case 21 To 23
-                                pbpString$ = "HE TAKES IT TO THE BUCKET"
+                                pbpString$ = teamGender$(P) + " TAKES IT TO THE BUCKET"
                             Case 24 To 26
-                                pbpString$ = "HE TAKES IT TO THE HOLE"
+                                pbpString$ = teamGender$(P) + " TAKES IT TO THE HOLE"
                             Case 27 To 29
-                                pbpString$ = "HE SLASHES TO THE HOLE"
+                                pbpString$ = teamGender$(P) + " SLASHES TO THE HOLE"
                             Case 30 To 32
-                                pbpString$ = "HE SLASHES TO THE BUCKET"
+                                pbpString$ = teamGender$(P) + " SLASHES TO THE BUCKET"
                             Case 33 To 35
-                                pbpString$ = "HE SOARS TO THE BUCKET"
+                                pbpString$ = teamGender$(P) + " SOARS TO THE BUCKET"
                             Case 36 To 38
-                                pbpString$ = "HE SOARS TO THE HOLE"
+                                pbpString$ = teamGender$(P) + " SOARS TO THE HOLE"
                             Case 39 To 40
-                                pbpString$ = "HE GLIDES TO THE HOLE"
+                                pbpString$ = teamGender$(P) + " GLIDES TO THE HOLE"
                             Case 41 To 60
-                                pbpString$ = "HE GOES IN STRONG"
+                                pbpString$ = teamGender$(P) + " GOES IN STRONG"
                             Case 61 To 80
-                                pbpString$ = "HE TAKES IT IN"
+                                pbpString$ = teamGender$(P) + " TAKES IT IN"
                             Case 81 To 90
-                                pbpString$ = "HE TAKES A DEFENDER WITH HIM"
+                                pbpString$ = teamGender$(P) + " TAKES A DEFENDER WITH "
+                                If teamGender$(P) = "HE" Then
+                                    pbpString$ = pbpString$ + "HIM"
+                                Else
+                                    pbpString$ = pbpString$ + "HER"
+                                End If
+
                             Case 91 To 100
-                                pbpString$ = "HE GOES UP WITH IT"
+                                pbpString$ = teamGender$(P) + " GOES UP WITH IT"
 
                         End Select
 
                     Case 9
                         'BACK AFTER REB
-                        pbpString$ = "HE "
+                        pbpString$ = teamGender$(P) + " "
 
                         RN1 = Int(Rnd(1) * 11) + 1
 
@@ -6675,7 +6756,13 @@ Sub MAKEPBP (pbpType)
                             Case 2
                                 pbpString$ = pbpString$ + "GOES BACK UP WITH IT"
                             Case 3
-                                pbpString$ = pbpString$ + "POWERS HIS WAY UP WITH IT"
+                                If teamGender$(P) = "HE" Then
+                                    pbpString$ = "POWERS HIS"
+                                Else
+                                    pbpString$ = "POWERS HER"
+                                End If
+                                pbpString$ = pbpString$ + " WAY UP WITH IT"
+
                             Case 4
                                 pbpString$ = pbpString$ + "GOES STRONG TO THE BASKET"
                             Case 5
@@ -6689,21 +6776,36 @@ Sub MAKEPBP (pbpType)
                             Case 9
                                 pbpString$ = pbpString$ + "SHOOTS IT AGAIN"
                             Case 10
-                                pbpString$ = pbpString$ + "CLAWS HIS WAY UP"
+                                If teamGender$(P) = "HE" Then
+                                    pbpString$ = "CLAWS HIS WAY UP"
+                                Else
+                                    pbpString$ = "CLAWS HER WAY UP"
+                                End If
+
                             Case 11
                                 pbpString$ = pbpString$ + "SHOOTS IN TRAFFIC"
 
                         End Select
 
-                        If ballCarrier = 2 Or ballCarrier = 3 And d100% <= 7 Then
-                            DK% = 1
+                        'Forward
+                        '-- "1%" factor = 10
+                        If (ballCarrier = 2 Or ballCarrier = 3) And d100% <= 30 Then
+                            'Call pbplog(6712)
+                            willDunk = 1
                         End If
-                        If ballCarrier = 4 And d100% <= 15 Then
-                            DK% = 1
+
+                        'Center
+                        '-- "1%" factor = 8
+                        If ballCarrier = 4 Then
+                            'Centers dunk slightly more often in women's basketball
+                            If (teamGender$(P) = "SHE" And d100% <= 36) Or (teamGender$(P) = "HE" And d100% <= 24) Then
+                                'Call pbplog(6718)
+                                willDunk = 1
+                            End If
                         End If
 
                     Case 10
-                        DK% = 0
+                        willDunk = 0
 
                         Call Rolld100(RN1)
 
@@ -6726,25 +6828,28 @@ Sub MAKEPBP (pbpType)
 
             Case 4
                 'THREE GOOD
-                pbpString$ = "HE "
-
                 Select Case RN0
 
                     Case 1 To 6
-                        pbpString$ = pbpString$ + " DRAINS THE THREE!"
+                        pbpString$ = teamGender$(P) + " DRAINS THE THREE!"
                         Call PBP(P)
                         pbpString$ = "NO!"
                         Call PBP(P)
-                        pbpString$ = "HIS FOOT IS ON THE 3-POINT LINE"
+                        If teamGender$(P) = "HE" Then
+                            pbpString$ = "HIS"
+                        Else
+                            pbpString$ = "HER"
+                        End If
+                        pbpString$ = pbpString$ + " FOOT IS ON THE 3-POINT LINE"
                         XX% = 1
                     Case 7 To 10
-                        pbpString$ = pbpString$ + "FILLS UP THE BASKET!!!"
+                        pbpString$ = teamGender$(P) + " FILLS UP THE BASKET!!!"
                     Case 11 To 20
-                        pbpString$ = pbpString$ + "HITS THE TREY!!!"
+                        pbpString$ = teamGender$(P) + " HITS THE TREY!!!"
                     Case 21 To 30
                         pbpString$ = "IT'S GOOOODD!!"
                     Case 31 To 40
-                        pbpString$ = pbpString$ + "GETS IT!!!"
+                        pbpString$ = teamGender$(P) + " GETS IT!!!"
                     Case 41 To 45
                         pbpString$ = "NOTHING BUT THE BOTTOM OF THE NET"
                     Case 46 To 50
@@ -6752,11 +6857,11 @@ Sub MAKEPBP (pbpType)
                     Case 51 To 55
                         pbpString$ = "WAY DOWNTOWN BANG!!!"
                     Case 56 To 60
-                        pbpString$ = pbpString$ + "RINGS IT UP!!!"
+                        pbpString$ = teamGender$(P) + " RINGS IT UP!!!"
                     Case 61 To 80
-                        pbpString$ = pbpString$ + "DRAINS IT!!!"
+                        pbpString$ = teamGender$(P) + " DRAINS IT!!!"
                     Case 81 To 90
-                        pbpString$ = "HE BURIES IT!!!"
+                        pbpString$ = teamGender$(P) + " BURIES IT!!!"
                     Case 91 To 100
                         pbpString$ = "IT'S ALL NET!!!"
 
@@ -6764,24 +6869,22 @@ Sub MAKEPBP (pbpType)
 
             Case 5
                 'THREE BAD
-                pbpString$ = "HE "
-
                 Select Case RN0
 
                     Case 1 To 20
-                        pbpString$ = pbpString$ + "GETS NONE"
+                        pbpString$ = teamGender$(P) + " GETS NONE"
                     Case 21 To 25
                         pbpString$ = "IT NEVER HAD A CHANCE"
                     Case 26 To 35
                         pbpString$ = "AIRRRR BALLLL!!"
                     Case 36 To 40
-                        pbpString$ = pbpString$ + "MISFIRES"
+                        pbpString$ = teamGender$(P) + " MISFIRES"
                     Case 41 To 60
                         pbpString$ = "IT'S OFF THE RIM...NO GOOD!"
                     Case 61 To 80
                         pbpString$ = "IT'S SHORT"
                     Case 81 To 100
-                        pbpString$ = pbpString$ + "MISSES"
+                        pbpString$ = teamGender$(P) + " MISSES"
 
                 End Select
 
@@ -6939,35 +7042,35 @@ Sub MAKEPBP (pbpType)
                     Case 28
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " IS UP"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS"
+                        pbpString$ = teamGender$(P) + " SPINS"
                         Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 29
-                        pbpString$ = "HE SLAMS IT HOME!!"
+                        pbpString$ = teamGender$(P) + " SLAMS IT HOME!!"
                     Case 30
-                        pbpString$ = "HE LAYS IT UP AND IN!!"
+                        pbpString$ = teamGender$(P) + " LAYS IT UP AND IN!!"
                     Case 31
-                        pbpString$ = "HE BANGS IT IN!!"
+                        pbpString$ = teamGender$(P) + " BANGS IT IN!!"
                     Case 32
-                        pbpString$ = "HE RAMS IT IN!!"
+                        pbpString$ = teamGender$(P) + " RAMS IT IN!!"
                     Case 33
-                        pbpString$ = "HE SLAMS IT IN!!!"
+                        pbpString$ = teamGender$(P) + " SLAMS IT IN!!!"
                     Case 34
                         pbpString$ = "DIPSY-DOO DUNK-A-ROO!!!"
                     Case 35
-                        pbpString$ = "HE MAKES IT HAMMER TIME!!!"
+                        pbpString$ = teamGender$(P) + " MAKES IT HAMMER TIME!!!"
                     Case 36
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 2-HANDED SLAM!!!"
                     Case 37
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " IS UP"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS"
+                        pbpString$ = teamGender$(P) + " SPINS"
                         Call PBP(P)
                         pbpString$ = "BEHIND THE BACK SLAM!!!"
                     Case 38
-                        pbpString$ = "HE JAMS IT HOME!!!"
+                        pbpString$ = teamGender$(P) + " JAMS IT HOME!!!"
                     Case 39
-                        pbpString$ = "HE HAMMERS IT HOME!"
+                        pbpString$ = teamGender$(P) + " HAMMERS IT HOME!"
 
                 End Select
 
@@ -6977,20 +7080,23 @@ Sub MAKEPBP (pbpType)
 
                     shotType = 0
                     fastBreak = 0
-                    pbpString$ = "HE "
 
                     Select Case RN0
 
                         Case 1 To 20
-                            pbpString$ = pbpString$ + "MISSES THE EASY BASKET!"
+                            pbpString$ = teamGender$(P) + "MISSES THE EASY BASKET!"
+
                         Case 21 To 40
-                            pbpString$ = pbpString$ + "JAMS IT TOO HARD!!"
+                            pbpString$ = teamGender$(P) + "JAMS IT TOO HARD!!"
+
                         Case 41 To 60
-                            pbpString$ = pbpString$ + "SLAMS IT OFF THE IRON...NO GOOD!"
+                            pbpString$ = teamGender$(P) + "SLAMS IT OFF THE IRON...NO GOOD!"
+
                         Case 61 To 80
-                            pbpString$ = pbpString$ + "CAN'T GET IT DOWN!"
+                            pbpString$ = teamGender$(P) + "CAN'T GET IT DOWN!"
+
                         Case 81 To 100
-                            pbpString$ = pbpString$ + "BLOWS THE EASY BASKET!!"
+                            pbpString$ = teamGender$(P) + "BLOWS THE EASY BASKET!!"
 
                     End Select
 
@@ -7021,7 +7127,7 @@ Sub MAKEPBP (pbpType)
                         Case 10
                             pbpString$ = "NO GOOD"
                         Case 11
-                            pbpString$ = "HE MISSES"
+                            pbpString$ = teamGender$(P) + " MISSES"
                         Case 12
                             pbpString$ = "DOESN'T GET THE ROLL"
                         Case 13
@@ -7033,7 +7139,7 @@ Sub MAKEPBP (pbpType)
                         Case 16
                             pbpString$ = "NO"
                         Case 17
-                            pbpString$ = "HE MISSES"
+                            pbpString$ = teamGender$(P) + " MISSES"
                         Case 18
                             pbpString$ = "IN AND OUT"
                         Case 19
@@ -7061,11 +7167,11 @@ Sub MAKEPBP (pbpType)
                         Case 30
                             pbpString$ = "NO GOOD"
                         Case 31
-                            pbpString$ = "HE MISSES"
+                            pbpString$ = teamGender$(P) + " MISSES"
                         Case 32
                             pbpString$ = "IT'S A BRICK"
                         Case 33
-                            pbpString$ = "HE FAILS TO CONNECT"
+                            pbpString$ = teamGender$(P) + " FAILS TO CONNECT"
                         Case 34
                             pbpString$ = "OFF THE SIDE OF THE RIM"
                         Case 35
@@ -7106,7 +7212,7 @@ Sub MAKEPBP (pbpType)
                 End If
 
             Case 9
-                'NOPASS
+                'NO PASS
                 pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " "
 
                 RN1 = Int(Rnd(1) * 56) + 1
@@ -7122,7 +7228,14 @@ Sub MAKEPBP (pbpType)
                     Case 4
                         pbpString$ = pbpString$ + "LOOKS FOR AN OPENING"
                     Case 5
-                        pbpString$ = pbpString$ + "DRIBBLES AROUND HIS MAN"
+                        pbpString$ = pbpString$ + "DRIBBLES AROUND "
+
+                        If teamGender$(P) = "HE" Then
+                            pbpString$ = "HIS MAN"
+                        Else
+                            pbpString$ = "HER DEFENDER"
+                        End If
+
                     Case 6
                         pbpString$ = pbpString$ + "SIGNALS THE PLAY"
                     Case 7
@@ -7190,7 +7303,7 @@ Sub MAKEPBP (pbpType)
                     Case 38
                         pbpString$ = pbpString$ + "LEANS RIGHT...CUTS LEFT"
                     Case 39
-                        pbpString$ = pbpString$ + "DOUBLE REVERSES HIS DRIBBLE"
+                        pbpString$ = pbpString$ + "DOUBLE REVERSES THE DRIBBLE"
                     Case 40
                         pbpString$ = pbpString$ + "BACKS IN"
                     Case 41
@@ -7204,25 +7317,25 @@ Sub MAKEPBP (pbpType)
                     Case 45
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS LEFT"
+                        pbpString$ = teamGender$(P) + " SPINS LEFT"
                     Case 46
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS RIGHT"
+                        pbpString$ = teamGender$(P) + " SPINS RIGHT"
                     Case 47
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP(P)
-                        pbpString$ = "HE CUTS LEFT"
+                        pbpString$ = teamGender$(P) + " CUTS LEFT"
                     Case 48
                         pbpString$ = pbpString$ + "WITH THE HESITATION DRIBBLE"
                         Call PBP(P)
-                        pbpString$ = "HE CUTS RIGHT"
+                        pbpString$ = teamGender$(P) + " CUTS RIGHT"
                     Case 49
                         pbpString$ = pbpString$ + "STUTTER STEPS"
                         Call PBP(P)
-                        pbpString$ = "HE MOVES LEFT"
+                        pbpString$ = teamGender$(P) + " MOVES LEFT"
                     Case 50
-                        pbpString$ = pbpString$ + "MAINTAINS HIS DRIBBLE"
+                        pbpString$ = pbpString$ + "MAINTAINS THE DRIBBLE"
                     Case 51
                         pbpString$ = pbpString$ + "FAKE SPINS LEFT...GOES RIGHT"
                     Case 52
@@ -7230,7 +7343,7 @@ Sub MAKEPBP (pbpType)
                     Case 53
                         pbpString$ = pbpString$ + "PALMS THE BALL"
                         Call PBP(P)
-                        pbpString$ = "HE TAKES IT AND SPINS"
+                        pbpString$ = teamGender$(P) + " TAKES IT AND SPINS"
                     Case 54
                         pbpString$ = pbpString$ + "SHAKES AND BAKES"
                     Case 55
@@ -7268,7 +7381,7 @@ Sub MAKEPBP (pbpType)
                     Case 7
                         pbpString$ = prevBall$ + " LOOKS"
                         Call PBP(P)
-                        pbpString$ = "HE GETS IT TO " + V$
+                        pbpString$ = teamGender$(P) + " GETS IT TO " + V$
                     Case 8
                         pbpString$ = prevBall$ + " SENDS IT TO " + V$
                     Case 9
@@ -7366,19 +7479,19 @@ Sub MAKEPBP (pbpType)
                     Case 54
                         pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
                         Call PBP(P)
-                        pbpString$ = "HE SWINGS IT TO " + V$
+                        pbpString$ = teamGender$(P) + " SWINGS IT TO " + V$
                     Case 55
                         pbpString$ = prevBall$ + " PUMP FAKES A SHOT"
                         Call PBP(P)
-                        pbpString$ = "HE BOUNCES IT TO " + V$
+                        pbpString$ = teamGender$(P) + " BOUNCES IT TO " + V$
                     Case 56
                         pbpString$ = prevBall$ + " WITH A FOOT FAKE"
                         Call PBP(P)
-                        pbpString$ = "HE SPINS AND DUMPS IT TO " + V$
+                        pbpString$ = teamGender$(P) + " SPINS AND DUMPS IT TO " + V$
                     Case 57
                         pbpString$ = prevBall$ + " CUTS ACROSS THE LANE"
                         Call PBP(P)
-                        pbpString$ = "HE DISHES INSIDE TO " + V$
+                        pbpString$ = teamGender$(P) + " DISHES INSIDE TO " + V$
                     Case 58
                         pbpString$ = prevBall$ + " DRIVES THE BASELINE"
                         Call PBP(P)
@@ -7390,7 +7503,7 @@ Sub MAKEPBP (pbpType)
                     Case 60
                         pbpString$ = prevBall$ + " HEAD FAKES"
                         Call PBP(P)
-                        pbpString$ = "HE PUSHES IT TO " + V$
+                        pbpString$ = teamGender$(P) + " PUSHES IT TO " + V$
 
                 End Select
 
@@ -8428,7 +8541,7 @@ Sub FoulCalled (randomCalcs%)
             Call WINDEX
             Print "FOUL ON "; players$(D, lineupIdx(D, fouler))
             Call DELAY
-            Print "HE HAS "; plyrOff_GAME!(D, lineupIdx(D, fouler), 12)
+            Print teamGender$(P) + " HAS "; plyrOff_GAME!(D, lineupIdx(D, fouler), 12)
             Call DELAY
         End If
         If pbpOpt = 0 Then
@@ -8478,7 +8591,7 @@ Sub FoulCalled (randomCalcs%)
 
         End If
 
-        pbpString$ = "AND HE HAS JUST FOULED OUT !!!"
+        pbpString$ = "AND " + teamGender$(P) + " HAS JUST FOULED OUT !!!"
         Call SELECTPBP(D, 1)
         Call DELAY
 
@@ -8710,6 +8823,7 @@ Sub ComputerCoach ()
                         Loop Until Not (rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX")
 
                         'These can throw errors in some situations
+                        'F1(I) receives an invalid value
                         G4(I1) = F1(I)
                         G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
 
@@ -10237,7 +10351,9 @@ Sub LINEUPS ()
             CV% = 0
 
             For IP% = 0 To Z
-                If rosterStatus(P9, IP%) <> 0 Or players$(P9, IP%) = "" Or players$(P9, IP%) = "XXX" Then CV% = CV% + 1
+                If rosterStatus(P9, IP%) <> 0 Or players$(P9, IP%) = "" Or players$(P9, IP%) = "XXX" Then
+                    CV% = CV% + 1
+                End If
             Next
 
             Print players$(P9, Z);
@@ -10807,21 +10923,21 @@ Sub THREEFT (ftNumber)
             If RN0 <= 50 Then
                 pbpString$ = "FREE THROW IS GOOD"
             Else
-                pbpString$ = "HE HITS THE FIRST FREE THROW"
+                pbpString$ = teamGender$(P) + " HITS THE FIRST FREE THROW"
             End If
 
         Case 2
             If RN0 <= 50 Then
                 pbpString$ = "SECOND FREE THROW IS GOOD"
             Else
-                pbpString$ = "HE HITS THE SECOND ONE"
+                pbpString$ = teamGender$(P) + " HITS THE SECOND ONE"
             End If
 
         Case 3
             If RN0 <= 50 Then
                 pbpString$ = "THIRD FREE THROW IS GOOD"
             Else
-                pbpString$ = "HE HITS THE LAST ONE"
+                pbpString$ = teamGender$(P) + " HITS THE LAST ONE"
             End If
 
     End Select
@@ -14073,30 +14189,7 @@ End Sub
 
 
 '----------------------------------------
-'          GetTeamYear Function
-'----------------------------------------
-'This subroutine determines the 4-digit
-'team year from the team loaded by the
-'file. It uses the 2 digit year to make
-'assumptions. (00 to 24 are year 2000.)
-'The first NCAA tournament was held in
-'1939, so it's safe to guess teams from
-'00 to 38 are year 2000.
-Function GetTeamYear% (yearFromName$)
-
-    teamYear% = Val(yearFromName$)
-
-    If teamYear% >= 0 And teamYear% < 39 Then
-        GetTeamYear% = 2000 + teamYear%
-    Else
-        GetTeamYear% = 1900 + teamYear%
-    End If
-
-End Function
-
-
-'----------------------------------------
-'            pbplog Function
+'            pbplog Routine
 '----------------------------------------
 'This subroutine is designed to help me
 'print information about where the game
@@ -14106,9 +14199,9 @@ End Function
 'issues are happening in a game.
 Sub pbplog (lineNumber)
 
-    Print #11, "Calling from "; lineNumber
-    Print #11, pbpType
-    Print #11,
+    'Print #11, "Calling from "; lineNumber
+    'Print #11, currGame; ","; ballCarrier; ","; lineNumber
+    'Print #11,
 
 End Sub
 
@@ -14227,6 +14320,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
             Do
 
                 Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, gameIdx)
+                teamGender$(gameIdx) = GetTeamGender$(yearNumber$)
 
                 If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
@@ -14299,7 +14393,6 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
             'Color 31: Print "LOADING..."
 
             Call ReadGameTeam(yearNumber$, teamName$, selectedIdx, gameIdx)
-
             Call ReadGameExtraData(yearNumber$, selectedIdx, gameIdx, validData)
 
         End If
@@ -16358,6 +16451,10 @@ End Sub
 '----------------------------------------
 '         CheckString Subroutine
 '----------------------------------------
+'This function checks the given string
+'to determine if any characters are not
+'printable. If found, it will return a
+'value of 1. Otherwise, it will return 0.
 Function CheckString% (targetString$)
 
     badString = 0
@@ -16378,6 +16475,55 @@ Function CheckString% (targetString$)
     Loop Until stringPosition% = Len(targetString$) Or badString = 1
 
     CheckString% = badString
+
+End Function
+
+
+'----------------------------------------
+'          GetTeamYear Function
+'----------------------------------------
+'This subroutine determines the 4-digit
+'team year from the team loaded by the
+'file. It uses the 2 digit year to make
+'assumptions. (00 to 24 are year 2000.)
+'The first NCAA tournament was held in
+'1939, so it's safe to guess teams from
+'00 to 38 are year 2000.
+Function GetTeamYear% (yearFromName$)
+
+    teamYear% = Val(yearFromName$)
+
+    If teamYear% >= 0 And teamYear% < 39 Then
+        GetTeamYear% = 2000 + teamYear%
+    Else
+        GetTeamYear% = 1900 + teamYear%
+    End If
+
+End Function
+
+
+'----------------------------------------
+'        GetTeamGender$ Function
+'----------------------------------------
+'This function attempts to determine if
+'the team has been loaded from a disk of
+'women's teams only". It is only able to
+'do this by checking if the last letter
+'(ie, 2024W) or first letter (ie, WNBA)
+' is a "W", as has been common to do in
+'the modding community.
+'This obviously would not be useful for
+'leagues that would choose a W arbitrarily
+'(ie, for a "World" league, etc.)
+Function GetTeamGender$ (diskID$)
+
+    test$ = diskID$
+
+    If Right$(diskID$, 1) = "W" Or Left$(diskID$, 1) = "W" Then
+        GetTeamGender$ = "SHE"
+    Else
+        GetTeamGender$ = "HE"
+    End If
 
 End Function
 
