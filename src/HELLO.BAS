@@ -624,7 +624,7 @@ End Sub
 '$Include: 'BoxRoutines.bm'
 '$Include: 'ConfigureDrives.bm'
 '$Include: 'FileTeamSelection.bm'
-'$Include: 'Convert.BAS'
+'$Include: 'CONVERT.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
 '$Include: 'ALIGN.BAS'
