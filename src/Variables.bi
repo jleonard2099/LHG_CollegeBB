@@ -260,7 +260,7 @@ Dim avgAttendance&(1)
 Dim Shared Q, I, J, RN0
 
 Dim Shared autoPlay, ballCarrier, C1, coachOpt, currHalf
-Dim Shared DY, compTeam, D, endGame, endAllGames
+Dim Shared compTeam, D, endGame, endAllGames
 'Dim Shared fouler, desigFouler
 Dim Shared fastBreak, FO, ftNumber
 Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
@@ -269,7 +269,7 @@ Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul, foulsToDQ
 Dim Shared JY, IN, M5, MJ, nbrLines
 Dim Shared offStatus
 Dim Shared P, P9, playerMode, playerOpt, pbpOpt, pbpType
-Dim Shared S2, sClockVal, shotClock, shotType
+Dim Shared rebFoulChance, S2, sClockVal, shotClock, shotType
 Dim Shared threePtOpt, threePtShotChance
 Dim Shared tickerIdx, TMT, TOU, willDunk, XM, XS
 
