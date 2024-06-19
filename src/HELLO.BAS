@@ -26,7 +26,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared currGame
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -2026,7 +2025,7 @@ Sub COLHOOP ()
             P9 = D
 
             pbpString$ = "DESIGNATED FOULER (0-4)"
-            Call SELECTPBP(P, 1)
+            Call SELECTPBP(D, 1)
 
             skipInbound% = 0
 
@@ -2349,7 +2348,7 @@ Sub COLHOOP ()
 
             'Chance of Turnover
             '   Def Foul Chance + Off TO Rating + Def TO Adj + Def TO Chance + OY%
-            '---> 95+% of turnovers get calculated from here
+            '--> 95+% of turnovers get calculated from here
             CY = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY% + 3
 
             If RN0 <= CY Then
@@ -3476,6 +3475,7 @@ Sub COLHOOP ()
                             Call WINDEX
                         End If
 
+                        '--> need to fix this !!!
                         pbpString$ = "STUFF BY " + players$(P, lineupIdx(P, ballCarrier)) + " !!!"
                         Call PBP(D)
                         Call DELAY
@@ -4105,6 +4105,8 @@ Sub COLHOOP ()
 
     Call ResetShotClock
 
+    'FoulCalled always targets the DEF
+    'Switch teams before we handle
     Call ChangePossession
 
     Call FoulCalled(1)
@@ -4232,37 +4234,41 @@ Sub COLHOOP ()
     Call Rolld100(RN0)
 
     scoreDiff = score(P, 0) - score(D, 0)
-    If (currHalf > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And scoreDiff = 0 And RN0 <= 12) Then
-        Call OFFREBOUND
-        GoTo 760
-    End If
-
-    Call Rolld100(RN0)
 
     'Roughly 65% of rebounds are DEFENSIVE
-    'This means '47 to 100 should be DEFREBOUND
     'Roughly 35% of rebounds are OFFENSIVE
-    'This means 17 to 46 should be OFFREBOUND
     'Roughly 10 - 20% of ALL rebounds are fouled
 
-    Select Case RN0
+    If (currHalf > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And scoreDiff = 0 And RN0 <= 12) Then
 
-        Case 1 To 16
-            'Case 1 To 11
-            foulOnReb = 1
-            GoTo 707
+        Call OFFREBOUND
+        GoTo 760
 
-        Case 17 To 24
-            'Case 12 To 19
-            Call OFFREBOUND
-            GoTo 760
+    Else
 
-        Case 25 To 100
-            'Case 20 To 100
-            Call DEFREBOUND
-            GoTo 800
+        Call Rolld100(RN0)
 
-    End Select
+        Select Case RN0
+
+            Case 1 To 16
+                'Case 1 To 11
+                '--> Could this be where the wrong rebound team is tagged??
+                foulOnReb = 1
+                GoTo 707
+
+            Case 17 To 24
+                'Case 12 To 19
+                Call OFFREBOUND
+                GoTo 760
+
+            Case 25 To 100
+                'Case 20 To 100
+                Call DEFREBOUND
+                GoTo 800
+
+        End Select
+
+    End If
 
 
     '----- NOODLE -----
@@ -4591,12 +4597,19 @@ Sub COLHOOP ()
         ballCarrier = Int(Rnd(1) * 5)
     End If
 
+
     800 '
+    totRebounds(D) = totRebounds(D) + 1
+    plyrOff_GAME!(D, lineupIdx(D, ballCarrier), 11) = plyrOff_GAME!(D, lineupIdx(D, ballCarrier), 11) + 1
+
+    Call UPDATESCREEN
+
     If foulOnReb = 1 Then
 
         foulOnReb = 0
 
         If pbpDelay! <> 0 Then
+
             If pbpOpt = 1 Then
                 Call WINDEX
                 pbpString$ = players$(D, lineupIdx(D, ballCarrier)) + " HAS THE DEF RB FOR"
@@ -4607,16 +4620,14 @@ Sub COLHOOP ()
             Else
                 pbpString$ = players$(D, lineupIdx(D, ballCarrier)) + " HAS THE DEF RB"
                 Call PBP(D)
-                pbpString$ = teamGender$(P) + "'S FOULED !!!"
+                pbpString$ = teamGender$(D) + "'S FOULED !!!"
                 Call PBP(D)
             End If
+
         End If
 
-        totRebounds(D) = totRebounds(D) + 1
-        plyrOff_GAME!(D, lineupIdx(D, ballCarrier), 11) = plyrOff_GAME!(D, lineupIdx(D, ballCarrier), 11) + 1
-
-        Call UPDATESCREEN
-
+        'FoulCalled always targets the DEF
+        'Switch teams before we handle
         Call ChangePossession
 
         Call FoulCalled(1)
@@ -4625,61 +4636,59 @@ Sub COLHOOP ()
 
         GoTo 9065
 
-    End If
-
-    plyrOff_GAME!(D, lineupIdx(D, ballCarrier), 11) = plyrOff_GAME!(D, lineupIdx(D, ballCarrier), 11) + 1
-    totRebounds(D) = totRebounds(D) + 1
-
-    Call UPDATESCREEN
-
-    pbpString$ = players$(D, lineupIdx(D, ballCarrier)) + " HAS THE DEF RB"
-
-    If pbpDelay! <> 0 Then
-
-        If pbpOpt = 0 Then
-            Call PBP(D)
-        End If
-
-        If pbpOpt = 1 Then
-            Call WINDEX
-            Print pbpString$
-            pbpString$ = "FOR " + gameTeams$(D)
-            Call PBP(D)
-            Call DELAY
-        End If
-
-    End If
-
-    'Why do we do this if we just change it after???
-    prevBall$ = players$(D, lineupIdx(D, ballCarrier))
-    C1 = 2
-
-    Call ChangePossession
-    P9 = D
-
-    fastBreak = 1
-    prevBall$ = players$(P, lineupIdx(P, ballCarrier))
-
-    RN0 = Int(Rnd(1) * 130) + 1
-
-    If RN0 = 15 Then
-        fastBreak = 0
-        GoTo RBTIEUP
-    End If
-
-    If CZ%(D) = 1 And d100% <= 50 Then
-
-        gameClock! = gameClock! - 4
-        timeElapsed! = 4
-        Call AdjustPlayTime
-        Call AdjustShotClock
-        Call WHOLAY
-
-        GoTo LAYUP
-
     Else
 
-        GoTo 300
+        pbpString$ = players$(D, lineupIdx(D, ballCarrier)) + " HAS THE DEF RB"
+
+        If pbpDelay! <> 0 Then
+
+            If pbpOpt = 0 Then
+                Call PBP(D)
+            End If
+
+            If pbpOpt = 1 Then
+                Call WINDEX
+                Print pbpString$
+                pbpString$ = "FOR " + gameTeams$(D)
+                Call PBP(D)
+                Call DELAY
+            End If
+
+        End If
+
+        'New defender
+        prevBall$ = players$(D, lineupIdx(D, ballCarrier))
+        C1 = 2
+
+        Call ChangePossession
+        P9 = D
+
+        fastBreak = 1
+        'New offense
+        prevBall$ = players$(P, lineupIdx(P, ballCarrier))
+
+        RN0 = Int(Rnd(1) * 130) + 1
+
+        If RN0 = 15 Then
+            fastBreak = 0
+            GoTo RBTIEUP
+        End If
+
+        If CZ%(D) = 1 And d100% <= 50 Then
+
+            gameClock! = gameClock! - 4
+            timeElapsed! = 4
+            Call AdjustPlayTime
+            Call AdjustShotClock
+            Call WHOLAY
+
+            GoTo LAYUP
+
+        Else
+
+            GoTo 300
+
+        End If
 
     End If
 
@@ -5460,8 +5469,7 @@ Function ShotPacing%
         Select Case sClockVal
 
             Case 0
-                'No shot clock = teams can stall as long as they want
-                paceValue = 100
+                paceValue = 39 + Int(((JY - 40) * .8) + .5)
 
             Case 1
                 paceValue = 39 + Int(((JY - 48) * .8) + .5)
@@ -5476,31 +5484,28 @@ Function ShotPacing%
 
     Else
 
-
         leagFGAG = teamRat_GAME(gameIdx, 4)
 
         Select Case sClockVal
 
             Case 0
                 'No shot clock = teams can stall as long as they want
-                paceValue = 100
+                'paceValue = Int((paceFactor! + 0.5) / 59)
+                paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
             Case 1
                 '59 = Avg FGA/G for 45-sec shot clock
                 'paceValue = Int((paceFactor! + 0.5) / 59)
-                'paceValue = Int((paceFactor! + 0.5) / teamRat_GAME(gameIdx, 4))
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
             Case 2
                 '57 = Avg FGA/G for 35-sec shot clock
                 'paceValue = Int((paceFactor! + 0.5) / 57)
-                'paceValue = Int((paceFactor! + 0.5) / teamRat_GAME(gameIdx, 4))
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
             Case 3
                 '57 = Avg FGA/G for 30-sec shot clock
                 'paceValue = Int((paceFactor! + 0.5) / 57)
-                'paceValue = Int((paceFactor! + 0.5) / teamRat_GAME(gameIdx, 4))
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
         End Select
@@ -5856,8 +5861,7 @@ End Sub
 'context given (assigned as pbpType)
 Sub MAKEPBP (pbpType)
 
-    'If pbpDelay! <> 0 Then
-    If pbpDelay! < 1 Then
+    If pbpDelay! <> 0 Then
 
         Call Rolld100(RN0)
 
@@ -8492,6 +8496,8 @@ End Sub
 '   0 = skip random # generation
 '   1 = perform random # generation
 
+'This will always process as the DEF team
+
 Sub FoulCalled (randomCalcs%)
 
     Shared rosterStatus()
@@ -8539,7 +8545,7 @@ Sub FoulCalled (randomCalcs%)
             Call WINDEX
             Print "FOUL ON "; players$(D, lineupIdx(D, fouler))
             Call DELAY
-            Print teamGender$(P) + " HAS "; plyrOff_GAME!(D, lineupIdx(D, fouler), 12)
+            Print teamGender$(D) + " HAS "; plyrOff_GAME!(D, lineupIdx(D, fouler), 12)
             Call DELAY
         End If
         If pbpOpt = 0 Then
@@ -8589,7 +8595,7 @@ Sub FoulCalled (randomCalcs%)
 
         End If
 
-        pbpString$ = "AND " + teamGender$(P) + " HAS JUST FOULED OUT !!!"
+        pbpString$ = "AND " + teamGender$(D) + " HAS JUST FOULED OUT !!!"
         Call SELECTPBP(D, 1)
         Call DELAY
 
@@ -9817,13 +9823,15 @@ End Sub
 '----------------------------------------
 '         DEFREBOUND Subroutine
 '----------------------------------------
-'This subroutine clearly does something
-'related to defensive rebounds
+'This subroutine determines which player
+'gets the rebound, based on the team's
+'distribution of total rebounds
 Sub DEFREBOUND ()
 
     RB = 0
 
     For I = 0 To 4
+
         RB(I) = 0
         XZ = plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 2)
 
@@ -9836,8 +9844,10 @@ Sub DEFREBOUND ()
         If tmFatigue(1 - P, lineupIdx(1 - P, I)) <= -5 Then
             XZ = Int(XZ * .9 + .5)
         End If
+
         RB(I) = RB(I) + XZ
         RB = RB + XZ
+
     Next
 
     rndReb = Rnd(1) * RB
@@ -9845,11 +9855,14 @@ Sub DEFREBOUND ()
     skipRandom% = 0
 
     For ballCarrier = 0 To 4
+
         If rndReb <= RB(ballCarrier) Then
             skipRandom% = 1
             Exit For
         End If
+
         RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+
     Next
 
     If skipRandom% = 0 Then
