@@ -5459,13 +5459,11 @@ Function ShotPacing%
     'https://sports.icalculator.com/basketball-pace-factor-calculator.html
     paceFactor! = 40 * ((nbrPoss(0) + nbrPoss(1)) / 2)
 
-    If paceFactor! = 0 Then
-        'If paceFactor! > 0 Then
-
-        'This will most often come from teams before 1993
+    If paceFactor! = 0 then
+    
+        'This will most often come from teams before 1997
         'Without team actual stats being entered, there
         'is no way to determine a value above
-
         Select Case sClockVal
 
             Case 0
@@ -5489,30 +5487,24 @@ Function ShotPacing%
         Select Case sClockVal
 
             Case 0
-                'No shot clock = teams can stall as long as they want
-                'paceValue = Int((paceFactor! + 0.5) / 59)
+                'We don't anticipate ever reaching here
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
             Case 1
-                '59 = Avg FGA/G for 45-sec shot clock
-                'paceValue = Int((paceFactor! + 0.5) / 59)
+                'We don't anticipate ever reaching here
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
             Case 2
-                '57 = Avg FGA/G for 35-sec shot clock
-                'paceValue = Int((paceFactor! + 0.5) / 57)
-                paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
+                'the "old" formula works way too well for 35-sec clock
+                'paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
+                paceValue = 39 + Int(((JY - 58) * .8) + .5)
 
             Case 3
-                '57 = Avg FGA/G for 30-sec shot clock
-                'paceValue = Int((paceFactor! + 0.5) / 57)
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
         End Select
 
     End If
-
-    altPace = 39 + Int(((JY - 58) * .8) + .5)
 
     ShotPacing% = paceValue
 
