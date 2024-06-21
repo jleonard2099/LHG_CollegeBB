@@ -5459,8 +5459,8 @@ Function ShotPacing%
     'https://sports.icalculator.com/basketball-pace-factor-calculator.html
     paceFactor! = 40 * ((nbrPoss(0) + nbrPoss(1)) / 2)
 
-    If paceFactor! = 0 then
-    
+    If paceFactor! = 0 Then
+
         'This will most often come from teams before 1997
         'Without team actual stats being entered, there
         'is no way to determine a value above
@@ -5496,10 +5496,12 @@ Function ShotPacing%
 
             Case 2
                 'the "old" formula works way too well for 35-sec clock
+                'the new formula sometimes would calculate too high
                 'paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
                 paceValue = 39 + Int(((JY - 58) * .8) + .5)
 
             Case 3
+                'this gets almost identical values to the "old" formula every time
                 paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
         End Select

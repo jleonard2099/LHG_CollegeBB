@@ -176,7 +176,7 @@ Sub ReviewEditConference (conference$, div1$, div2$)
 
         Open diskPaths$(2) + conference$ + ".TMI" For Input As #1
 
-        Input #1, LG%, conference$, div1$, div2$
+        Input #1, LG%, confName$, div1$, div2$
 
         For X = 1 To TEAMS_PER_CONFERENCE
             Input #1, Z1$(X)
@@ -194,7 +194,7 @@ Sub ReviewEditConference (conference$, div1$, div2$)
         Cls
 
         Print
-        Print "  "; conference$; " CONFERENCE"
+        Print "  "; confName$; " CONFERENCE"
         Print
 
         Color 12
@@ -248,7 +248,7 @@ Sub ReviewEditConference (conference$, div1$, div2$)
 
     Loop Until choice = 3
 
-    Call SaveConferences(conference$, div1$, div2$)
+    Call SaveConferences(conference$, confName$, div1$, div2$)
 
 End Sub
 
@@ -259,7 +259,7 @@ End Sub
 'This subroutine writes the conference's
 'team memberships and definition to
 'each of the corresponding files (.TMI, .TMS)
-Sub SaveConferences (conference$, div1$, div2$)
+Sub SaveConferences (conference$, confName$, div1$, div2$)
 
     Shared scheduleZ1%()
 
@@ -269,7 +269,7 @@ Sub SaveConferences (conference$, div1$, div2$)
 
     Print #1, 0
 
-    Print #1, conference$ 'League / Conference Name
+    Print #1, confName$ 'League / Conference Name
     Print #1, div1$ 'Division 1 Name
     Print #1, div2$ 'Division 2 Name
 
@@ -306,4 +306,4 @@ Sub SaveConferences (conference$, div1$, div2$)
     Close #2
 
 End Sub
-    
+
