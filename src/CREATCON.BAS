@@ -55,14 +55,15 @@ Sub CREATCON ()
 
                 Case 1:
                     Call DefineConference(conference$, D1$, D2$)
-                    Call ReviewEditConference(conference$, D1$, D2$)
+                    confFile$ = conference$
+                    Call ReviewEditConference(confFile$, conference$, D1$, D2$)
 
                 Case 2:
                     Do
-                        conference$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
+                        confFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditConference(conference$, D1$, D2$)
+                            Call ReviewEditConference(confFile$, conference$, D1$, D2$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -166,15 +167,15 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the conference
-Sub ReviewEditConference (conference$, div1$, div2$)
+Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
 
     Shared scheduleZ1%()
 
     Shared Z1$(), Z2$()
 
-    If _FileExists(diskPaths$(2) + conference$ + ".TMI") Then
+    If _FileExists(diskPaths$(2) + confFile$ + ".TMI") Then
 
-        Open diskPaths$(2) + conference$ + ".TMI" For Input As #1
+        Open diskPaths$(2) + confFile$ + ".TMI" For Input As #1
 
         Input #1, LG%, confName$, div1$, div2$
 
@@ -204,11 +205,11 @@ Sub ReviewEditConference (conference$, div1$, div2$)
         For I = 1 To 15
 
             Color 2: Print Using "  ##"; I;
-            Color 15: Print " "; Z1$(I);
+            Color 15: Print " "; Left$(Z1$(I), 25);
 
             Locate , 50
             Color 2: Print Using "##"; I + 15;
-            Color 15: Print " "; Z1$(I + 15)
+            Color 15: Print " "; Left$(Z1$(I + 15), 25)
 
         Next I
 
@@ -248,7 +249,7 @@ Sub ReviewEditConference (conference$, div1$, div2$)
 
     Loop Until choice = 3
 
-    Call SaveConferences(conference$, confName$, div1$, div2$)
+    Call SaveConferences(confFile$, confName$, div1$, div2$)
 
 End Sub
 
@@ -259,13 +260,13 @@ End Sub
 'This subroutine writes the conference's
 'team memberships and definition to
 'each of the corresponding files (.TMI, .TMS)
-Sub SaveConferences (conference$, confName$, div1$, div2$)
+Sub SaveConferences (confFile$, confName$, div1$, div2$)
 
     Shared scheduleZ1%()
 
     Shared Z1$(), Z2$()
 
-    Open diskPaths$(2) + conference$ + ".TMI" For Output As #1
+    Open diskPaths$(2) + confFile$ + ".TMI" For Output As #1
 
     Print #1, 0
 
@@ -293,9 +294,9 @@ Sub SaveConferences (conference$, confName$, div1$, div2$)
 
     Next X
 
-    Open diskPaths$(2) + conference$ + ".TMS" For Output As #2
+    Open diskPaths$(2) + confFile$ + ".TMS" For Output As #2
 
-    Write #2, conference$
+    Write #2, confName$
     Write #2, div1$
     Write #2, div2$
 
@@ -306,4 +307,6 @@ Sub SaveConferences (conference$, confName$, div1$, div2$)
     Close #2
 
 End Sub
+
+
 

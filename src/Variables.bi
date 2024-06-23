@@ -249,7 +249,7 @@ Dim Shared whistle&, swish&, backboard&
 
 Dim FY%(0 To 1)
 
-Dim alpha$(3), tickerPeriod$(14), teamYrTourn$(0 To 3)
+Dim alpha$(4), tickerPeriod$(14), teamYrTourn$(0 To 3)
 
 Dim eventSettings(13)
 Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
@@ -261,7 +261,7 @@ Dim Shared Q, I, J, RN0
 
 Dim Shared autoPlay, ballCarrier, C1, coachOpt, currHalf
 Dim Shared compTeam, currGame, D, endGame, endAllGames
-'Dim Shared fouler, desigFouler
+'Dim Shared desigFouler, desigdesigFouler
 Dim Shared fastBreak, FO, ftNumber
 Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
 Dim Shared halfTime

@@ -1,7 +1,7 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.01"
+Const GAME_VERSION$ = "5.02"
 Const MAX_SCHEDULE_GAMES = 6000
 Const MAX_TEAMS = 1000
 Const MAX_FILES = 10240
@@ -384,6 +384,8 @@ End Sub
 '...explanation...
 Sub TeamMgt_Menu ()
 
+    Shared opSysType$
+
     Do
 
         Call TITLE
@@ -437,6 +439,7 @@ Sub TeamMgt_Menu ()
 
                 Case 6:
                     targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "COLBBTMS.*", "Team files")
+
                     Call ConvertTeam4to5(targetFile$, 0)
 
             End Select
@@ -1203,8 +1206,8 @@ Sub COLHOOP ()
         If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
             Call ComputerCoach
         Else
-            Call LINEUPS
-            Call FOULSAFE
+            Call PlayStyle
+            Call PlayItSafe
         End If
 
         If threePtOpt = 1 Then
@@ -1236,7 +1239,6 @@ Sub COLHOOP ()
     End If
 
     250 '
-
     'Determine which team gets the ball 1st
     P = Int(Rnd(1) * 2) '0 or 1
     jumpBall = P
@@ -1254,18 +1256,11 @@ Sub COLHOOP ()
     If pbpDelay! <> 0 Then
 
         If (currHalf = 1 Or currHalf = 3) Then
+        
+            possArrow = D
 
-            If pbpOpt = 0 Then
-                pbpString$ = gameTeams$(P) + " GETS THE JUMP"
-                possArrow = D
-                Call PBP(P)
-            Else
-                'pbpOpt = 1
-                Call WINDEX
-                Print gameTeams$(P) + " GETS THE JUMP"
-                possArrow = D
-                Call DELAY
-            End If
+            pbpString$ = gameTeams$(P) + " GETS THE JUMP"
+            Call SELECTPBP(P, 1)
 
         End If
 
@@ -1338,6 +1333,7 @@ Sub COLHOOP ()
 
         halfTime = 1
         Call BOXOPTIONS(0)
+        endGame = 0
         Call TICKER
         halfTime = 0
 
@@ -1379,8 +1375,7 @@ Sub COLHOOP ()
 
     If currHalf < 3 Then
 
-        teamFouls(0) = 0
-        teamFouls(1) = 0
+        Erase teamFouls
 
         Call CheckGameClock
         Call SCOREBOARD
@@ -1413,6 +1408,7 @@ Sub COLHOOP ()
     If currHalf = 3 Then
 
         pbpString$ = "END OF REGULATION"
+
         Select Case pbpOpt
             Case 0:
                 Color 7, 0
@@ -1424,6 +1420,7 @@ Sub COLHOOP ()
                     Print pbpString$
                 End If
         End Select
+
     End If
 
     Locate 2, 31
@@ -1949,8 +1946,10 @@ Sub COLHOOP ()
 
     400 '
     assistShotBoost = 0
+
     D6 = 0
     P3 = 0
+
     ballCarrier = Int(Rnd(1) * 5)
     Call BALLDISTRIBUTE
 
@@ -2030,12 +2029,12 @@ Sub COLHOOP ()
             skipInbound% = 0
 
             If playerMode = 1 And D = compTeam Or playerMode = 2 Then
-                desigFouler = Int(Rnd(1) * 5)
+                desigdesigFouler = Int(Rnd(1) * 5)
             Else
                 Do
                     I$ = GetKeyPress$
-                    desigFouler = Val(I$)
-                Loop Until desigFouler >= 0 And desigFouler <= 4
+                    desigdesigFouler = Val(I$)
+                Loop Until desigdesigFouler >= 0 And desigdesigFouler <= 4
 
                 If PASS > 1 Then skipInbound% = 1
 
@@ -2172,7 +2171,7 @@ Sub COLHOOP ()
 
             '80% chance of foul by designated person
             If d100% <= 80 Then
-                fouler = desigFouler
+                desigFouler = desigdesigFouler
                 Call FoulCalled(0)
             Else
                 Call FoulCalled(1)
@@ -2301,7 +2300,7 @@ Sub COLHOOP ()
             ' *** CHECK FOR PERSONAL FOUL ***
             foulChance = defAdjVsShot(4, defCoverage(D))
 
-            'Around 2005, the NCAA saw a shift towards fewer jump shots.
+            'Around 2005, the NCAA  saw a shift towards fewer jump shots.
             'This naturally leads to increased personal fouls.
             'Here, we arbitrarily increase the chance of a foul during
             'these years, but only against Man-to-Man defense.
@@ -2702,8 +2701,8 @@ Sub COLHOOP ()
     End If
 
 
-
     ' ***BAD SHOT ***
+
     437 '
     playChoice = 0
     J8% = 0
@@ -3852,22 +3851,21 @@ Sub COLHOOP ()
             IN = 99
 
             Call LASTSHOT
-
             If gameClock! <= 0 Then 170
 
             C1 = 2
             P9 = D
-            pbpString$ = "DESIGNATED FOULER (0-4)"
 
+            pbpString$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP(P, 1)
 
             If playerMode = 1 And D = compTeam Or playerMode = 2 Then
-                fouler = Int(Rnd(1) * 5)
+                desigFouler = Int(Rnd(1) * 5)
             Else
                 Do
                     I$ = GetKeyPress$
-                    fouler = Val(I$)
-                Loop Until fouler >= 0 And fouler <= 4
+                    desigFouler = Val(I$)
+                Loop Until desigFouler >= 0 And desigFouler <= 4
             End If
 
             Call FoulCalled(0)
@@ -5090,6 +5088,7 @@ Sub InitVar ()
     alpha$(1) = "B "
     alpha$(2) = "C "
     alpha$(3) = "D "
+    alpha$(4) = "E "
 
     pbpStyle$(0) = "VERBOSE        "
     pbpStyle$(1) = "HAFFNER CLASSIC"
@@ -5327,10 +5326,15 @@ Sub AUTOSETUP (validTeam)
 End Sub
 
 
-'------------------------------
-'    LetterToNumber Subroutine
-'------------------------------
-' ...explanation...
+'----------------------------------------
+'       LetterToNumber Subroutine
+'----------------------------------------
+'This subroutine converts an alphabetic
+'character to a numeric equivalent,
+'where A = 10, B = 11, etc.
+'This is useful for long menus that have
+'more than 10 options (0 - 9) and a single
+'key is desired for a choice.
 Sub LetterToNumber (promptVal$, J)
 
     J = Val(promptVal$)
@@ -8570,7 +8574,6 @@ Sub FoulCalled (randomCalcs%)
         Next I3
 
         'Player fouled
-        635 '
         If pbpOpt = 1 And pbpDelay! <> 0 Then
             Call WINDEX
             Print "FOUL ON "; players$(D, lineupIdx(D, fouler))
@@ -8604,8 +8607,8 @@ Sub FoulCalled (randomCalcs%)
 
             teamIdx = D
             C1 = 1
-            Call LINEUPS
-            Call FOULSAFE
+            Call PlayStyle
+            Call PlayItSafe
 
             Call DEADBALLOPTIONS
 
@@ -10258,87 +10261,16 @@ End Sub
 
 
 '----------------------------------------
-'           LINEUPS Subroutine
+'          PlayStyle Subroutine
 '----------------------------------------
-'This subroutine displays the starting
-'lineup for each team and gives the user
-'an interface for changing the lineup
-Sub LINEUPS ()
+'This subroutine walks the user through
+'the selection of play styles for their
+'team on both offense and defense.
+Sub PlayStyle ()
 
-    Shared alpha$()
+    Call LINEUPS
 
-    Cls
-    Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1): Print gameTeams$(P9);
-
-    Color 15, 0
-    Print " TEAM ROSTER    COACH: "; gameCoaches$(P9);
-
-    Print "  RECORD: ";
-    Print Using "##"; teamRat_GAME(P9, 7);
-    Print "-";
-    Print Using "##"; teamRat_GAME(P9, 8)
-
-    Color 14: Print "# NAME         POS FG  FT 3FG %3A ORB DRB RB PA  S  B CX EF  PT  F  FC  PTS/G"
-    Locate 3, 1
-
-    For R1 = 0 To 13
-
-        If rosterStatus(P9, R1) = 0 And players$(P9, R1) <> "XXX" And players$(P9, R1) <> "" Then
-
-            Color 2
-            If R1 <= 9 Then
-                Print Using "# "; R1;
-            Else
-                Print alpha$(R1 - 10);
-            End If
-
-            Color 15
-            Print Left$(players$(P9, R1), 12);
-            Locate , 16: Print positions_GAME$(P9, R1);
-            Locate , 20
-
-            L = 0
-            L = plyrOff_GAME!(P9, R1, 3) - plyrOff_GAME!(P9, R1, 7) - plyrOff_GAME!(P9, R1, 11) - plyrOff_GAME!(P9, R1, 12)
-
-            If L <= 0 Then L = 0
-
-            Print Using "## ###  ##  ##  ##  ## ## "; plyrOff_GAME!(P9, R1, 0), plyrOff_GAME!(P9, R1, 1), plyrOff_GAME!(P9, R1, 20), plyrOff_GAME!(P9, R1, 19), plyrOff_GAME!(P9, R1, 21) * 2 / 10, plyrOff_GAME!(P9, R1, 2) * 2 / 10, (plyrOff_GAME!(P9, R1, 2) + plyrOff_GAME!(P9, R1, 21)) / 5;
-            Print Using "## ## ##"; plyrOff_GAME!(P9, R1, 4), plyrOff_GAME!(P9, R1, 5), plyrOff_GAME!(P9, R1, 6);
-
-            If L <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-            Print Using "### "; L;
-
-            Color 15
-            If tmFatigue(P9, R1) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-            Print Using "##"; tmFatigue(P9, R1) * -1;
-
-            Color 15
-            Locate , 61: Print Using "###  "; plyrOff_GAME!(P9, R1, 8) * 2 + plyrOff_GAME!(P9, R1, 10) + threeFG(P9, R1, 0);
-
-            If plyrOff_GAME!(P9, R1, 12) >= 4 Then Color 12
-            Print Using "# "; plyrOff_GAME!(P9, R1, 12);
-
-            Color 15
-            Print Using "###   "; plyrOff_GAME!(P9, R1, 17);
-
-            If playerStat_GAME(P9, R1, 0) = 0 Then
-                Print "--.-"
-            Else
-                Print Using "##.#"; (playerStat_GAME(P9, R1, 3) * 2 + playerStat_GAME(P9, R1, 5) + playerStat_GAME(P9, R1, 13)) / playerStat_GAME(P9, R1, 0)
-            End If
-
-        End If
-
-    Next R1
-
-    Locate 18, 1: Color 9, 0
-    Print String$(27, 205); Chr$(203); String$(51, 205)
-
-    For R1 = 1 To 7:
-        Locate R1 + 18, 28
-        Print Chr$(186);
-    Next
-
+    'Select the lineup
     Color 14, 0
     Locate 19, 1: Print "STARTING LINEUP"
 
@@ -10445,7 +10377,7 @@ Sub LINEUPS ()
 
             End If
 
-            If skipMenu% = 0 Then Call PlayStyle
+            If skipMenu% = 0 Then Call CHANGESTRATEGY
 
         Else
 
@@ -10519,6 +10451,96 @@ Sub LINEUPS ()
 
     Loop Until K = 6
 
+
+
+End Sub
+
+
+'----------------------------------------
+'           LINEUPS Subroutine
+'----------------------------------------
+'This subroutine displays the starting
+'lineup for each team and gives the user
+'an interface for changing the lineup
+Sub LINEUPS ()
+
+    Shared alpha$()
+
+    Cls
+    Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1): Print gameTeams$(P9);
+
+    Color 15, 0
+    Print " TEAM ROSTER    COACH: "; gameCoaches$(P9);
+
+    Print "  RECORD: ";
+    Print Using "##"; teamRat_GAME(P9, 7);
+    Print "-";
+    Print Using "##"; teamRat_GAME(P9, 8)
+
+    Color 14
+    Print "# NAME         POS FG  FT 3FG %3A ORB DRB RB PA  S  B CX EF  PT  F  FC  PTS/G"
+
+    Locate 3, 1
+
+    For R1 = 0 To 13
+
+        If rosterStatus(P9, R1) = 0 And players$(P9, R1) <> "XXX" And players$(P9, R1) <> "" Then
+
+            Color 2
+            If R1 <= 9 Then
+                Print Using "# "; R1;
+            Else
+                Print alpha$(R1 - 10);
+            End If
+
+            Color 15
+            Print Left$(players$(P9, R1), 12);
+            Locate , 16: Print positions_GAME$(P9, R1);
+            Locate , 20
+
+            L = 0
+            L = plyrOff_GAME!(P9, R1, 3) - plyrOff_GAME!(P9, R1, 7) - plyrOff_GAME!(P9, R1, 11) - plyrOff_GAME!(P9, R1, 12)
+
+            If L <= 0 Then L = 0
+
+            Print Using "## ###  ##  ##  ##  ## ## "; plyrOff_GAME!(P9, R1, 0), plyrOff_GAME!(P9, R1, 1), plyrOff_GAME!(P9, R1, 20), plyrOff_GAME!(P9, R1, 19), plyrOff_GAME!(P9, R1, 21) * 2 / 10, plyrOff_GAME!(P9, R1, 2) * 2 / 10, (plyrOff_GAME!(P9, R1, 2) + plyrOff_GAME!(P9, R1, 21)) / 5;
+            Print Using "## ## ##"; plyrOff_GAME!(P9, R1, 4), plyrOff_GAME!(P9, R1, 5), plyrOff_GAME!(P9, R1, 6);
+
+            If L <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
+            Print Using "### "; L;
+
+            Color 15
+            If tmFatigue(P9, R1) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
+            Print Using "##"; tmFatigue(P9, R1) * -1;
+
+            Color 15
+            Locate , 61: Print Using "###  "; plyrOff_GAME!(P9, R1, 8) * 2 + plyrOff_GAME!(P9, R1, 10) + threeFG(P9, R1, 0);
+
+            If plyrOff_GAME!(P9, R1, 12) >= 4 Then Color 12
+            Print Using "# "; plyrOff_GAME!(P9, R1, 12);
+
+            Color 15
+            Print Using "###   "; plyrOff_GAME!(P9, R1, 17);
+
+            If playerStat_GAME(P9, R1, 0) = 0 Then
+                Print "--.-"
+            Else
+                Print Using "##.#"; (playerStat_GAME(P9, R1, 3) * 2 + playerStat_GAME(P9, R1, 5) + playerStat_GAME(P9, R1, 13)) / playerStat_GAME(P9, R1, 0)
+            End If
+
+        End If
+
+    Next R1
+
+    Locate 18, 1: Color 9, 0
+    Print String$(27, 205); Chr$(203); String$(51, 205)
+
+    For R1 = 1 To 7:
+        Locate R1 + 18, 28
+        Print Chr$(186);
+    Next
+
+
 End Sub
 
 
@@ -10528,21 +10550,10 @@ End Sub
 'This subroutine walks the user through
 'the selection of play styles for their
 'team on both offense and defense.
-Sub PlayStyle ()
+'Chosen strategy gets assigned to offStrat(P9)
+Sub CHANGESTRATEGY ()
 
     109 '
-    Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1)
-    Cls
-    Print ; Tab(33); "OFFENSIVE STYLE"
-    Print
-
-    For I = 0 To 9
-        Locate , 5: Print Using "# "; I;: Print offStyles$(I)
-    Next
-
-    Print
-    Locate 14, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(P9)
-
     Do
         I$ = GetKeyPress$
         I1 = Val(I$)
@@ -10607,10 +10618,12 @@ End Sub
 
 
 '----------------------------------------
-'          FOULSAFE Subroutine
+'         PlayItSafe Subroutine
 '----------------------------------------
-' ...explanation...
-Sub FOULSAFE ()
+'This subroutine lets the user review all
+'players who are taking it safe on defense
+'and determine if they should play normal.
+Sub PlayItSafe ()
 
     Cls
 
@@ -10775,20 +10788,24 @@ Sub FOULHARD ()
     For I = 0 To 1
 
         For I1 = 0 To 13
+
             If plyrOff_GAME!(I, I1, 22) = 50 Then
                 plyrOff_GAME!(I, I1, 22) = 0
                 plyrOff_GAME!(I, I1, 17) = plyrOff_GAME!(I, I1, 17) * 3
                 dFGPA(I) = dFGPA(I) - 1
                 MJ = 50
             End If
+
         Next I1
 
         If MJ = 50 Then
+
             MJ = 0
             teamAdj(I, 0) = 0
             For I1 = 0 To 4:
                 teamAdj(I, 0) = teamAdj(I, 0) + plyrOff_GAME!(I, lineupIdx(I, I1), 17)
             Next I1
+
         End If
 
     Next I
@@ -11151,8 +11168,11 @@ Sub BALLDISTRIBUTE ()
     Call Rolld100(RN0)
 
     If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
+
         Call WHOGETSBALL
+
     Else
+
         'Select / Case statement
         If defCoverage(D) = 2 Or defCoverage(D) = 3 Then 415
         If gameAvgTmStamina <= 90 And RN0 <= 15 Then 424
@@ -11318,8 +11338,8 @@ Sub DEADBALLOPTIONS ()
                         S2 = P
                         C1 = 1
                         P9 = S2
-                        Call LINEUPS
-                        Call FOULSAFE
+                        Call PlayStyle
+                        Call PlayItSafe
                         P9 = P
                         LC% = 1
 
@@ -11330,21 +11350,21 @@ Sub DEADBALLOPTIONS ()
                         S2 = D
                         C1 = 1
                         P9 = S2
-                        Call LINEUPS
-                        Call FOULSAFE
+                        Call PlayStyle
+                        Call PlayItSafe
                         P9 = P
                         LC% = 1
 
                     Case 3
                         'Strategy - Offense
                         P9 = P
-                        Call PlayStyle
+                        Call CHANGESTRATEGY
                         Call SCOREBOARD
 
                     Case 4
                         'Strategy - Defense
                         P9 = D
-                        Call PlayStyle
+                        Call CHANGESTRATEGY
                         Call SCOREBOARD
 
                     Case 5
@@ -11479,7 +11499,7 @@ Sub STOPPAGE ()
             'Strategy - Offense
             If P3 = 3 Then
                 P9 = P
-                Call PlayStyle
+                Call CHANGESTRATEGY
                 Call SCOREBOARD
                 GoTo 810
             End If
@@ -11487,7 +11507,7 @@ Sub STOPPAGE ()
             'Strategy - Defense
             If P3 = 4 Then
                 P9 = D
-                Call PlayStyle
+                Call CHANGESTRATEGY
                 Call SCOREBOARD
                 GoTo 810
             End If
@@ -12375,7 +12395,6 @@ End Sub
 'zeros them out if so. UPDATESCREEN is
 'called to update the clock on the board.
 Sub CheckGameShotClock ()
-
 
     If gameClock! <= .001 Then
         timeElapsed! = gameClock!
@@ -16505,7 +16524,7 @@ End Function
 'team year from the team loaded by the
 'file. It uses the 2 digit year to make
 'assumptions. (00 to 24 are year 2000.)
-'The first NCAA tournament was held in
+'The first NCAA  tournament was held in
 '1939, so it's safe to guess teams from
 '00 to 38 are year 2000.
 Function GetTeamYear% (yearFromName$)

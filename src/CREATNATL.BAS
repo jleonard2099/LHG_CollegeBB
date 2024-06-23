@@ -32,7 +32,7 @@ Sub CREATENATL ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -49,16 +49,17 @@ Sub CREATENATL ()
             Select Case Selection%
 
                 Case 1:
-                    Call DefineNatOrg(league$)
-                    Call ReviewEditNatOrg(league$)
+                    Call DefineNatOrg(orgName$)
+                    orgFile$ = orgName$
+                    Call ReviewEditNatOrg(orgFile$, orgName$)
 
                 Case 2:
                     Do
 
-                        league$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
+                        orgFile$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditNatOrg(league$)
+                            Call ReviewEditNatOrg(orgFile$, orgName$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -85,7 +86,7 @@ Sub DefineNatOrg (organization$)
         Color 15, 0
         Cls
 
-        Call MenuBox (6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 7, 15, 1)
 
         Do
 
@@ -120,15 +121,15 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'conferences from the org definition.
-Sub ReviewEditNatOrg (organization$)
+Sub ReviewEditNatOrg (orgFile$, orgName$)
 
     Shared creatZ1$()
 
-    If _FileExists(diskPaths$(2) + organization$ + ".CON") Then
+    If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
 
-        Open diskPaths$(2) + organization$ + ".CON" For Input As #1
+        Open diskPaths$(2) + orgFile$ + ".CON" For Input As #1
 
-        Input #1, organization$
+        Input #1, orgName$
 
         For X = 1 To MAX_CONFERENCES
             Input #1, creatZ1$(X)
@@ -144,7 +145,7 @@ Sub ReviewEditNatOrg (organization$)
         Cls
 
         Print
-        Print "  "; organization$
+        Print "  "; orgName$
         Print
 
         Color 12
@@ -152,19 +153,19 @@ Sub ReviewEditNatOrg (organization$)
         For I = 1 To 10
 
             Color 2: Print Using "## "; I;
-            Color 15: Print creatZ1$(I);
+            Color 15: Print Left$(creatZ1$(I), 17);
 
             Locate , 21
             Color 2: Print Using "## "; I + 10;
-            Color 15: Print creatZ1$(I + 10);
+            Color 15: Print Left$(creatZ1$(I + 10), 17);
 
             Locate , 41
             Color 2: Print Using "## "; I + 20;
-            Color 15: Print creatZ1$(I + 20);
+            Color 15: Print Left$(creatZ1$(I + 20), 17);
 
             Locate , 61
             Color 2: Print Using "## "; I + 30;
-            Color 15: Print creatZ1$(I + 30)
+            Color 15: Print Left$(creatZ1$(I + 30), 17)
 
         Next I
 
@@ -193,7 +194,7 @@ Sub ReviewEditNatOrg (organization$)
 
             If choice = 1 Then
                 'Add conference
-                creatZ1$(conferenceIndex) = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
+                creatZ1$(conferenceIndex) = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
                 creatZ1$(conferenceIndex) = "XXX"
@@ -203,7 +204,7 @@ Sub ReviewEditNatOrg (organization$)
 
     Loop Until choice = 3
 
-    Call SaveNatOrg(organization$)
+    Call SaveNatOrg(orgFile$, orgName$)
 
 End Sub
 
@@ -212,15 +213,15 @@ End Sub
 '        SaveNatOrg Subroutine
 '----------------------------------------
 'This subroutine writes the organization's
-'conference memberships and definition to 
+'conference memberships and definition to
 'each of the corresponding files (.CON)
-Sub SaveNatOrg (leagueFile$)
+Sub SaveNatOrg (orgFile$, orgName$)
 
     Shared creatZ1$()
 
-    Open diskPaths$(2) + leagueFile$ + ".CON" For Output As #1
+    Open diskPaths$(2) + orgFile$ + ".CON" For Output As #1
 
-    Print #1, leagueFile$
+    Print #1, orgName$
 
     For idx = 1 To MAX_CONFERENCES
         Print #1, creatZ1$(idx)
