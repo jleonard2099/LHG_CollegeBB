@@ -121,92 +121,117 @@ Sub CompileNatlOrg ()
                 Erase deffLeaderNames$, offLeaderNames$
                 Erase Z0$, Z1$, Z3$
 
-                Open diskPaths$(2) + confNames$(currConf) + ".TMS" For Input As #3
+                targetConf$ = diskPaths$(2) + confNames$(currConf) + ".TMS"
 
-                Input #3, LG$
-                Input #3, div1$
-                Input #3, div2$
+                If _FileExists(targetConf$) Then
 
-                For XW = 1 To TEAMS_PER_CONFERENCE
-                    Input #3, statFiles$(XW)
-                    Z1$(XW) = statFiles$(XW)
-                Next
+                    Open targetConf$ For Input As #4
+                    Input #4, LG%
+                    Close #4
 
-                Close #3
+                    If LG% <> 0 Then
 
-                For XW = 1 To TEAMS_PER_CONFERENCE
+                        MsgText$ = "ERROR!! THIS IS NOT A COLLEGE CONFERENCE. PRESS ANY KEY TO RETURN TO MAIN MENU"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, PASS)
+                        I$ = GetKeyPress$
+                        Call CSMsgBox("", 0, PASS)
+                        Exit Sub
 
-                    'Look for * as terminating char
-                    If statFiles$(XW) <> Chr$(42) Then
+                    Else
 
-                        haveStats = FindStatsNat%(statFiles$(XW), numberGames, NRT)
+                        Open targetConf$ For Input As #3
 
-                        If (haveStats) Then
+                        Input #3, LG$
+                        Input #3, div1$
+                        Input #3, div2$
 
-                            L = Len(statFiles$(XW))
-                            WT$ = ""
+                        For XW = 1 To TEAMS_PER_CONFERENCE
+                            Input #3, statFiles$(XW)
+                            Z1$(XW) = statFiles$(XW)
+                        Next
 
-                            For X = 1 To L
-                                A = Asc(Mid$(statFiles$(XW), X, 1))
-                                WT$ = WT$ + Chr$(A)
-                            Next X
+                        Close #3
 
-                            nonConfGame = 0
+                        For XW = 1 To TEAMS_PER_CONFERENCE
 
-                            For X = 1 To TEAMS_PER_CONFERENCE
+                            'Look for * as terminating char
+                            If statFiles$(XW) <> Chr$(42) Then
 
-                                If Z1$(X) = WT$ Then
+                                haveStats = FindStatsNat%(statFiles$(XW), numberGames, NRT)
 
-                                    If O1!(X) = fullWins And O2!(X) = fullLosses Then
+                                If (haveStats) Then
 
-                                        nonConfGame = 1
-                                        Exit For
+                                    L = Len(statFiles$(XW))
+                                    WT$ = ""
 
-                                    Else
+                                    For X = 1 To L
+                                        A = Asc(Mid$(statFiles$(XW), X, 1))
+                                        WT$ = WT$ + Chr$(A)
+                                    Next X
 
-                                        O1!(X) = fullWins
-                                        O2!(X) = fullLosses
+                                    nonConfGame = 0
 
-                                        O4!(X) = confWins
-                                        O5!(X) = confLosses
+                                    For X = 1 To TEAMS_PER_CONFERENCE
 
-                                        If O1!(X) + O2!(X) = 0 Then
-                                            O3!(X) = 0
-                                        Else
-                                            O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                        If Z1$(X) = WT$ Then
+
+                                            If O1!(X) = fullWins And O2!(X) = fullLosses Then
+
+                                                nonConfGame = 1
+                                                Exit For
+
+                                            Else
+
+                                                O1!(X) = fullWins
+                                                O2!(X) = fullLosses
+
+                                                O4!(X) = confWins
+                                                O5!(X) = confLosses
+
+                                                If O1!(X) + O2!(X) = 0 Then
+                                                    O3!(X) = 0
+                                                Else
+                                                    O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                                End If
+
+                                                If O4!(X) + O5!(X) = 0 Then
+                                                    O6!(X) = 0
+                                                Else
+                                                    O6!(X) = O4!(X) / (O4!(X) + O5!(X))
+                                                End If
+
+                                            End If
+
                                         End If
 
-                                        If O4!(X) + O5!(X) = 0 Then
-                                            O6!(X) = 0
-                                        Else
-                                            O6!(X) = O4!(X) / (O4!(X) + O5!(X))
-                                        End If
+                                    Next X
+
+
+                                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
+
+                                        Call ReadStatsConf(statFiles$(XW), TN$)
+                                        Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
+                                        Call CalcStatLeadersConf(TN$)
+                                        Call CalcStatLeadersNat(statFiles$(XW), TN$)
 
                                     End If
 
-                                End If
+                                End If 'Done looking for stats
 
-                            Next X
+                            End If 'Done checking for valid stat file
 
+                        Next XW
 
-                            If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
+                        Call SortStandingsConference
+                        Call PostLeadersConf(confNames$(currConf))
+                        Call PostRecordsColl
 
-                                Call ReadStatsConf (statFiles$(XW), TN$)
-                                Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
-                                Call CalcStatLeadersConf(TN$)
-                                Call CalcStatLeadersNat(statFiles$(XW), TN$)
+                    End If 'Done checking for valid conference
 
-                            End If
-
-                        End If
-
-                    End If 'Done looking for * as char
-
-                Next XW
-
-                Call SortStandingsConference
-                Call PostLeadersConf(confNames$(currConf))
-                Call PostRecordsColl
+                End If 'Done checking if file exists
 
             End If
 
@@ -281,7 +306,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -305,7 +330,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -329,7 +354,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -353,7 +378,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -377,7 +402,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -401,7 +426,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -425,7 +450,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -449,7 +474,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -473,7 +498,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -497,7 +522,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -521,7 +546,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -545,7 +570,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -569,7 +594,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -593,7 +618,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -617,7 +642,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -641,7 +666,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -665,7 +690,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -683,13 +708,16 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
             NZ0$(230) = statPlyrNames$(X)
             NZ3$(230) = teamName$
 
+            fpg! = compS!(X, 14)
+            test$ = statPlyrNames$(X)
+
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -713,7 +741,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -737,7 +765,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap NZ0$(Z1), NZ0$(Z)
                         Swap NZ3$(Z1), NZ3$(Z)
-                        For M = 1 To 2: 
+                        For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
                     End If
@@ -1038,3 +1066,4 @@ Sub PostLeadersOrg (organization$, NRT)
     Close #2
 
 End Sub
+
