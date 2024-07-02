@@ -13,14 +13,10 @@ Sub SCHEDULE ()
     Shared NS%
 
     Shared scheduleAP%(), scheduleNG%()
+    
+    Shared scheduleYN$()
 
     _Title "Courtside College Basketball - Scheduler"
-
-    scheduleNG%(0, 8) = 3
-    scheduleNG%(0, 3) = 1
-    scheduleNG%(0, 7) = 3
-    scheduleNG%(0, 2) = 1
-    scheduleNG%(0, 5) = 5
 
     Do
 
@@ -63,6 +59,16 @@ Sub SCHEDULE ()
         Color , 0
 
         If ExitCode% <> 27 Then
+
+            'Assign full array sizes for schedule games
+            ReDim homeScores(MAX_SCHEDULE_GAMES)
+            ReDim visitorScores(MAX_SCHEDULE_GAMES)
+            
+            scheduleNG%(0, 8) = 3
+            scheduleNG%(0, 3) = 1
+            scheduleNG%(0, 7) = 3
+            scheduleNG%(0, 2) = 1
+            scheduleNG%(0, 5) = 5
 
             Select Case Selection%
 
@@ -118,7 +124,9 @@ Sub SCHEDULE ()
 
     Loop Until Selection% = 9 Or ExitCode% = 27
 
-    '15 Exit Sub
+    'Restore array sizes for TOURNAMENT routines
+    ReDim homeScores(200)
+    ReDim visitorScores(200)
 
 End Sub
 
@@ -134,6 +142,7 @@ Sub NewSchedule (scheduleFile$)
     Shared BS%, NS%
 
     Shared homeScores(), visitorScores()
+
     Shared scheduleAP%(), scheduleNG%()
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
@@ -411,7 +420,13 @@ Sub NewSchedule (scheduleFile$)
 
                 Close #2
 
+                ReDim scheduleNG%(1, 18)
+                ReDim scheduleYN$(1, 1)
+                
                 Call COLHOOP
+
+                ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 18)
+                ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 
                 Call LoadScheduleInfo(scheduleFile$)
 
@@ -719,7 +734,8 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
     Shared scheduleYN$()
 
-    Shared scheduleZ1%(), Z1$(), Z2$()
+    Shared memberIdx()
+    Shared memberName$(), memberYear$()
 
     'Do
     I$ = ""
@@ -745,15 +761,15 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                     Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
 
-                    Input #1, X%
-                    Input #1, LG$
+                    Input #1, statType
+                    Input #1, confName$
                     Input #1, div1$
                     Input #1, div2$
 
                     For X = 1 To TEAMS_PER_CONFERENCE
-                        Input #1, Z1$(X)
-                        Input #1, scheduleZ1%(X)
-                        Input #1, Z2$(X)
+                        Input #1, memberName$(X)
+                        Input #1, memberIdx(X)
+                        Input #1, memberYear$(X)
                     Next
 
                     numberTeams = TEAMS_PER_CONFERENCE
@@ -767,9 +783,9 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                         For I1 = 1 To numberTeams
 
-                            If Z1$(I1) <> "XXX" Then
+                            If memberName$(I1) <> "XXX" Then
 
-                                If scheduleZ1%(I1) = scheduleNG%(I, 0) And Z2$(I1) = scheduleYN$(I, 0) Or scheduleZ1%(I1) = scheduleNG%(I, 1) And Z2$(I1) = scheduleYN$(I, 1) Then
+                                If memberIdx(I1) = scheduleNG%(I, 0) And memberYear$(I1) = scheduleYN$(I, 0) Or memberIdx(I1) = scheduleNG%(I, 1) And memberYear$(I1) = scheduleYN$(I, 1) Then
 
                                     Print
                                     Print "FOUND A MATCH"
@@ -802,7 +818,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                                     Exit For
 
-                                End If 'Done checking scheduleZ1%
+                                End If 'Done checking memberIdx
 
                             End If 'Done checking for "XXX"
 
@@ -1457,6 +1473,11 @@ Sub LoadScheduleInfo (targetFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleYN$()
 
+    ReDim scheduleNG%(MAX_SCHEDULE_GAMES, 18)
+    ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+    ReDim homeScores(MAX_SCHEDULE_GAMES)
+    ReDim visitorScores(MAX_SCHEDULE_GAMES)
+
     Open diskPaths$(3) + targetFile$ + ".SCD" For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
     fileLength& = LOF(1)
@@ -1504,8 +1525,9 @@ Sub CreateConferenceSchedule ()
     Shared BS%
 
     Shared scheduleAP%(), homeScores(), visitorScores()
-    Shared scheduleNG%(), scheduleZ1%()
-    Shared scheduleYN$(), Z1$(), Z2$()
+    Shared scheduleNG%(), memberIdx()
+    Shared scheduleYN$()
+    Shared memberName$(), memberYear$()
 
     Cls
 
@@ -1548,7 +1570,7 @@ Sub CreateConferenceSchedule ()
 
             X1 = 0
 
-            Input #1, LG%
+            Input #1, statType
             Input #1, leagueName$
             Input #1, div1$
             Input #1, div2$
@@ -1561,9 +1583,9 @@ Sub CreateConferenceSchedule ()
 
                 If confTeam$ <> "XXX" And confTeam$ <> "" And confTeam$ <> "*" Then
                     X1 = X1 + 1
-                    scheduleZ1%(X1) = teamIdx
-                    Z1$(X1) = confTeam$
-                    Z2$(X1) = teamDiskID$
+                    memberName$(X1) = confTeam$
+                    memberIdx(X1) = teamIdx
+                    memberYear$(X1) = teamDiskID$
                 End If
 
             Next
@@ -1633,12 +1655,12 @@ Sub CreateConferenceSchedule ()
 
                     'Replace template values with those from global change
                     X = scheduleNG%(I, 0)
-                    scheduleNG%(I, 0) = scheduleZ1%(X)
-                    scheduleYN$(I, 0) = Z2$(X)
+                    scheduleNG%(I, 0) = memberIdx(X)
+                    scheduleYN$(I, 0) = memberYear$(X)
 
                     X = scheduleNG%(I, 1)
-                    scheduleNG%(I, 1) = scheduleZ1%(X)
-                    scheduleYN$(I, 1) = Z2$(X)
+                    scheduleNG%(I, 1) = memberIdx(X)
+                    scheduleYN$(I, 1) = memberYear$(X)
 
                     Print "GAME"; I
                     Print scheduleNG%(I, 0), scheduleYN$(I, 0)

@@ -302,7 +302,7 @@ Sub EditStats ()
 
             For I = 0 To 13
                 Color 7
-                If I / 2 = Int(I / 2) Then Color 15
+                If (I Mod 2) = 0 Then Color 15
                 Print (I + 1);
                 Print " "; statPlyrNames$(I)
             Next I

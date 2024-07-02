@@ -1,5 +1,5 @@
 '----------------------------------------
-'             ALIGN Subroutine
+'            ALIGN Subroutine
 '----------------------------------------
 'This routine presents a menu / interface
 'that assists the user with aligning
@@ -11,8 +11,7 @@ Sub ALIGN ()
 
     _Title "Courtside College Basketball - Align Stats"
 
-    Shared statPlyrNames$()
-    Shared alignAR$()
+    Shared statPlyrNames$(), roadPlyrNames$()
 
     Shared AR!(), statsA!()
     Shared statsW0!(), statsW1!()
@@ -48,9 +47,11 @@ Sub ALIGN ()
 
                 For I = 0 To 13:
 
-                    Input #1, alignAR$(I)
+                    Input #1, roadPlyrNames$(I)
 
-                    For J = 0 To 13: Input #1, AR!(I, J): Next
+                    For J = 0 To 13: 
+                        Input #1, AR!(I, J)
+                    Next
 
                     Input #1, W0R!(I)
                     Input #1, WR1!(I)
@@ -82,17 +83,16 @@ Sub ALIGN ()
                         Next
 
                         Input #2, statsW0!(I)
-
                         Input #2, statsW1!(I)
 
                     Next
 
                     For L = 0 To 15: 
-                        Input #2, Z!(L)
+                        Input #2, statsZ!(L)
                     Next
 
                     For L = 0 To 15: 
-                        Input #2, Z1!(L)
+                        Input #2, statsZ1!(L)
                     Next
 
                     Close #2
@@ -144,19 +144,19 @@ End Sub
 Sub AlignStats (pathRoadStats$, statFile$)
 
     Shared statPlyrNames$()
+    Shared roadPlyrNames$()
+    Shared AN$()
 
-    Shared alignAR$()
     Shared AR!()
     Shared W0R!(), WR1!()
 
-    Shared AN$()
     Shared AN!()
     Shared W0N!(), WN1!()
 
     Cls
 
-    Color 12
-    Locate 1, 34: Print "STAT ROSTERS"
+    Locate 1, 34
+    Color 12: Print "STAT ROSTERS"
 
     Color 15
     Locate , 26: Print "CURRENT  ";
@@ -171,7 +171,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
         Print " ";
-        Color 7: Print alignAR$(I)
+        Color 7: Print roadPlyrNames$(I)
 
     Next
 
@@ -185,9 +185,9 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
         For J = 0 To 13
 
-            If statPlyrNames$(N) = alignAR$(J) Then
+            If statPlyrNames$(N) = roadPlyrNames$(J) Then
 
-                AN$(N) = alignAR$(J)
+                AN$(N) = roadPlyrNames$(J)
 
                 For K = 0 To 13
                     AN!(N, K) = AR!(J, K)
@@ -208,9 +208,11 @@ Sub AlignStats (pathRoadStats$, statFile$)
             SEQ = 0
 
             For K = 0 To 13
+
                 If AN$(K) <> statPlyrNames$(K) Then
                     SEQ = SEQ + 1
                 End If
+
             Next
 
             If SEQ = 0 Then
@@ -259,8 +261,8 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Color 7: Print "             ROAD"
 
     For I = 0 To 13:
-        Locate I + 4, 22
-        Color 12: Print Using "##"; I;
+        Color 12
+        Locate I + 4, 22: Print Using "##"; I;
         Print " ";
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
@@ -285,7 +287,6 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
         Next
 
         Write #1, W0N!(I)
-
         Write #1, WN1!(I)
 
     Next
@@ -310,5 +311,3 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Cls
 
 End Sub
-
-

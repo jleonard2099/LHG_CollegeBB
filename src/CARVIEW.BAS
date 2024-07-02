@@ -8,7 +8,7 @@ Sub CARVIEW ()
 
     _Title "Courtside College Basketball - View Careers"
 
-    Dim carviewA$(62)
+    Dim careerPlayers$(62)
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -19,19 +19,19 @@ Sub CARVIEW ()
         Color 15, 0
         Cls
 
-        TMR% = 930
+        TMR = 930
         
         Locate 12, 10: Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
         Open diskPaths$(1) + careerFile$ + ".CAR" For Input As #1
 
-        Input #1, NB%, B$
+        Input #1, NB, B$
 
         For N = 1 To 15
 
             For I = 0 To 61
 
-                Input #1, carviewA$(I)
+                Input #1, careerPlayers$(I)
 
                 For J = 0 To 15
                     Input #1, ARS!(N, I, J)
@@ -40,7 +40,7 @@ Sub CARVIEW ()
                 Input #1, W0S!(N, I)
                 Input #1, W1S!(N, I)
 
-                TMR% = TMR% - 1
+                TMR = TMR - 1
 
                 Color 5
                 Locate 12, 38
@@ -61,14 +61,14 @@ Sub CARVIEW ()
                 Case "F"
                     userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
-                        Call CareerStats_Report(0, userFile$, carviewA$(), careerFile$)
+                        Call CareerStats_Report(0, userFile$, careerPlayers$(), careerFile$)
                     End If
 
                 Case "P"
-                    Call CareerStats_Report(1, "REPORT", carviewA$(), careerFile$)
+                    Call CareerStats_Report(1, "REPORT", careerPlayers$(), careerFile$)
 
                 Case "S"
-                    Call CareerStats_Screen(carviewA$(), careerFile$)
+                    Call CareerStats_Screen(careerPlayers$(), careerFile$)
 
             End Select
             
@@ -78,12 +78,50 @@ Sub CARVIEW ()
 
 End Sub
 
+
+'----------------------------------------
+'        CareerStats_Screen Subroutine
+'----------------------------------------
+'This routine gives the user different 
+'categories of stats related to the roster.
+'It then calls a supplemental routine for 
+'each  that will format those stats and 
+'send them to the display screen
+Sub CareerStats_Screen (careerPlayers$(), careerFile$)
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Color 7: Print "VIEW ";
+        Color 12: Print "P";: Color 7: Print "LAYERS, ";
+        Color 12: Print "R";: Color 7: Print "OSTER IN SEQUENCE, OR ";
+        Color 12: Print "E";: Color 7: Print "XIT TO MAIN MENU"
+
+        I$ = GetKeyPress$
+
+        Select Case UCase$(I$)
+
+            Case "P":
+                Call ViewPlayer(careerPlayers$(), careerFile$)
+
+            Case "R":
+                Call ViewRosterSequence(careerPlayers$(), careerFile$)
+
+        End Select
+
+    Loop Until UCase$(I$) = "E" Or UCase$(I$) = "X" Or I$ = Chr$(27)
+
+End Sub
+
+
 '----------------------------------------
 '       CareerStats_Report Subroutine
 '----------------------------------------
 'Formats results of Career stats and sends
 'to the user's default printer
-Sub CareerStats_Report (printDest, destFile$, carviewA$(), careerFile$)
+Sub CareerStats_Report (printDest, destFile$, careerPlayers$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -100,8 +138,9 @@ Sub CareerStats_Report (printDest, destFile$, carviewA$(), careerFile$)
 
     For I = 0 To 61
 
-        If carviewA$(I) <> "" And carviewA$(I) <> "XXX" Then
+        If careerPlayers$(I) <> "" And careerPlayers$(I) <> "XXX" Then
 
+            'Process player
             TT1 = 0
             TT2 = 0
             TT3 = 0
@@ -123,12 +162,13 @@ Sub CareerStats_Report (printDest, destFile$, carviewA$(), careerFile$)
 
             If 55 - PTN < VV Then
                 Print #1, Chr$(12)
-                Print #1, Tab(59); careerFile$: Print #1,
+                Print #1, Tab(59); careerFile$
+                Print #1,
                 Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
                 PTN = 0
             End If
 
-            Print #1, Left$(carviewA$(I), 11);
+            Print #1, Left$(careerPlayers$(I), 11);
 
             For V = 1 To VV
                 PTN = PTN + 1
@@ -243,7 +283,7 @@ Sub CareerStats_Report (printDest, destFile$, carviewA$(), careerFile$)
 
             PTN = PTN + 2
 
-        End If
+        End If ' Done checking for legitimate player
 
     Next I
 
@@ -266,49 +306,13 @@ Sub CareerStats_Report (printDest, destFile$, carviewA$(), careerFile$)
 
 End Sub
 
-'----------------------------------------
-'        CareerStats_Screen Subroutine
-'----------------------------------------
-'This routine gives the user different 
-'categories of stats related to the roster.
-'It then calls a supplemental routine for 
-'each  that will format those stats and 
-'send them to the display screen
-Sub CareerStats_Screen (carviewA$(), careerFile$)
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Color 7: Print "VIEW ";
-        Color 12: Print "P";: Color 7: Print "LAYERS, ";
-        Color 12: Print "R";: Color 7: Print "OSTER IN SEQUENCE, OR ";
-        Color 12: Print "E";: Color 7: Print "XIT TO MAIN MENU"
-
-        I$ = GetKeyPress$
-
-        Select Case UCase$(I$)
-
-            Case "P":
-                Call ViewPlayer(carviewA$(), careerFile$)
-
-            Case "R":
-                Call ViewRosterSequence(carviewA$(), careerFile$)
-
-        End Select
-
-    Loop Until UCase$(I$) = "E" Or UCase$(I$) = "X" Or I$ = Chr$(27)
-
-End Sub
-
 
 '----------------------------------------
 '          ViewPlayer Subroutine
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file
-Sub ViewPlayer (carviewA$(), careerFile$)
+Sub ViewPlayer (careerPlayers$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -320,28 +324,28 @@ Sub ViewPlayer (carviewA$(), careerFile$)
         Locate I + 2: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print carviewA$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     For I = 16 To 31:
         Locate I - 14, 20: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print carviewA$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     For I = 32 To 46:
         Locate I - 30, 40: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print carviewA$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     For I = 47 To 61:
         Locate I - 45, 60: Color 3
         Print Using "##"; I;
         Print " ";
-        Color 7: Print carviewA$(I)
+        Color 7: Print careerPlayers$(I)
     Next
 
     Print
@@ -377,7 +381,7 @@ Sub ViewPlayer (carviewA$(), careerFile$)
     Color 12
     Locate 2: Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
     Color 15
-    Locate 3: Print Left$(carviewA$(B9), 13);
+    Locate 3: Print Left$(careerPlayers$(B9), 13);
 
     VV = ARS!(1, B9, 14) + ARS!(2, B9, 14) + ARS!(3, B9, 14) + ARS!(4, B9, 14) + ARS!(5, B9, 14) + ARS!(6, B9, 14) + ARS!(7, B9, 14) + ARS!(8, B9, 14) + ARS!(9, B9, 14) + ARS!(10, B9, 14) + ARS!(11, B9, 14) + ARS!(12, B9, 14) + ARS!(13, B9, 14) + ARS!(14, B9, 14) + ARS!(15, B9, 14)
 
@@ -426,6 +430,7 @@ Sub ViewPlayer (carviewA$(), careerFile$)
     Next V
 
     For V = 1 To VV
+
         TT1 = TT1 + ARS!(V, B9, 0)
         TT2 = TT2 + ARS!(V, B9, 2)
         TT3 = TT3 + ARS!(V, B9, 1)
@@ -434,6 +439,7 @@ Sub ViewPlayer (carviewA$(), careerFile$)
         TT6 = TT6 + (ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + W0S!(V, B9))
         TT7 = TT7 + W0S!(V, B9)
         TT8 = TT8 + W1S!(V, B9)
+
     Next V
 
     Print
@@ -474,7 +480,7 @@ Sub ViewPlayer (carviewA$(), careerFile$)
     Locate 1: Print careerFile$
     Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
     Color 15
-    Locate 3: Print Left$(carviewA$(B9), 13);
+    Locate 3: Print Left$(careerPlayers$(B9), 13);
 
     For V = 1 To VV
 
@@ -546,7 +552,6 @@ Sub ViewPlayer (carviewA$(), careerFile$)
     Color 14
     Input "HIT ENTER TO CONTINUE"; DUMMY$
 
-
 End Sub
 
 
@@ -555,7 +560,7 @@ End Sub
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file, in sequence
-Sub ViewRosterSequence (carviewA$(), careerFile$)
+Sub ViewRosterSequence (careerPlayers$(), careerFile$)
 
     Shared ARS!(), W0S!(), W1S!()
 
@@ -563,7 +568,8 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
 
         For I = 0 To 61
 
-            If carviewA$(I) <> "" And carviewA$(I) <> "XXX" Then
+            'Check for valid player
+            If careerPlayers$(I) <> "" And careerPlayers$(I) <> "XXX" Then
 
                 TT1 = 0
                 TT2 = 0
@@ -590,36 +596,52 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
                 Color 12
                 Locate 2: Print "PLAYER         YEAR  G FGM  FGA   PCT FTM FTA   PCT 3FGM 3FGA PCT  PTS  AVG"
                 Color 15
-                Locate 3: Print Left$(carviewA$(I), 13);
+                Locate 3: Print Left$(careerPlayers$(I), 13);
+
                 VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
 
                 For V = 1 To VV
 
-                    Color 7: Print Tab(15); ARS!(V, I, 15);
+                    Color 7
+                    'Year
+                    Print Tab(15); ARS!(V, I, 15);
 
+                    'Games
                     Print Tab(21); Using "##"; ARS!(V, I, 0);
+                    'FGM
                     Print Tab(24); Using "####"; ARS!(V, I, 2);
+                    'FGA
                     Print Tab(28); Using "####"; ARS!(V, I, 1);
 
+                    'FG PCT
                     If ARS!(V, I, 2) = 0 Then Print Tab(33); " --.-";
                     If ARS!(V, I, 2) > 0 Then Print Tab(33); Using "###.#"; (ARS!(V, I, 2) / ARS!(V, I, 1)) * 100;
 
+                    'FTM
                     Print Tab(39); Using "###"; ARS!(V, I, 4);
+                    'FTA
                     Print Tab(43); Using "###"; ARS!(V, I, 3);
 
+                    'FT PCT
                     If ARS!(V, I, 4) = 0 Then Print Tab(47); " --.-";
                     If ARS!(V, I, 4) > 0 Then Print Tab(47); Using "###.#"; (ARS!(V, I, 4) / ARS!(V, I, 3)) * 100;
 
+                    '3FGM
                     Print Tab(53); Using "###"; W0S!(V, I);
+                    '3FGA
                     Print Tab(57); Using "###"; W1S!(V, I);
 
+                    '3FG PCT
                     If W0S!(V, I) = 0 Then Print Tab(61); " --.-";
                     If W0S!(V, I) > 0 Then Print Tab(61); Using "###.#"; (W0S!(V, I) / W1S!(V, I)) * 100;
 
+                    'PTS
                     Print Tab(67); Using "####"; ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I);
 
+                    'AVG
                     If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I) = 0 Then Print Tab(72); " 0.0";
                     If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I) > 0 Then Print Tab(72); Using "##.#"; (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + W0S!(V, I)) / ARS!(V, I, 0);
+
                 Next V
 
                 VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
@@ -652,7 +674,6 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
                 If TT6 = 0 Then Print Tab(72); " 0.0"
                 If TT6 > 0 Then Print Tab(72); Using "##.#"; TT6 / TT1
 
-                Print
                 Print "TOTALS";
                 Print Tab(19); Using "####"; TT1;
                 Print Tab(27); Using "#####"; TT3;
@@ -663,22 +684,25 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
 
                 Print Tab(56); Using "####"; TT8;
                 Print Tab(67); Using "####"; TT6
-                Print
-                Print
-                Print
 
+                Print
+                Print
+                Print
                 Color 14: Line Input "HIT ENTER TO CONTINUE"; DUMMY$
 
                 Cls
+
                 Color 11
                 Locate 1: Print careerFile$
                 Color 12
                 Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
                 Color 15
-                Locate 3: Print Left$(carviewA$(I), 13);
+                Locate 3: Print Left$(careerPlayers$(I), 13);
 
                 For V = 1 To VV
-                    Color 7: Print Tab(15); ARS!(V, I, 15);
+
+                    Color 7
+                    Print Tab(15); ARS!(V, I, 15);
 
                     Print Tab(21); Using "####"; ARS!(V, I, 12);
                     Print Tab(26); Using "####"; ARS!(V, I, 5) - ARS!(V, I, 12);
@@ -696,13 +720,16 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
 
                     If ARS!(V, I, 10) = 0 Then Print Tab(65); "   0";
                     If ARS!(V, I, 10) > 0 Then Print Tab(66); Using "####"; Int((ARS!(V, I, 10) + 30) / 60);
+
                     If ARS!(V, I, 10) = 0 Then Print Tab(73); " 0";
                     If ARS!(V, I, 10) > 0 Then Print Tab(73); Using "##"; Int(((ARS!(V, I, 10) / 60) / ARS!(V, I, 0)) + .5);
+
                 Next V
 
                 VV = ARS!(1, I, 14) + ARS!(2, I, 14) + ARS!(3, I, 14) + ARS!(4, I, 14) + ARS!(5, I, 14) + ARS!(6, I, 14) + ARS!(7, I, 14) + ARS!(8, I, 14) + ARS!(9, I, 14) + ARS!(10, I, 14) + ARS!(11, I, 14) + ARS!(12, I, 14) + ARS!(13, I, 14) + ARS!(14, I, 14) + ARS!(15, I, 14)
 
                 For V = 1 To VV
+
                     TT9 = TT9 + ARS!(V, I, 5)
                     TT10 = TT10 + ARS!(V, I, 6)
                     TT11 = TT11 + ARS!(V, I, 8)
@@ -711,7 +738,9 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
                     TT14 = TT14 + ARS!(V, I, 10)
                     TT16 = TT16 + ARS!(V, I, 11)
                     TT17 = TT17 + ARS!(V, I, 12)
+
                     If ARS!(V, I, 13) > TT15 Then TT15 = ARS!(V, I, 13)
+
                 Next V
 
                 Print
@@ -763,13 +792,14 @@ Sub ViewRosterSequence (carviewA$(), careerFile$)
                 Print
                 Color 14
                 Print "HIT ENTER TO CONTINUE OR ESC TO GO TO MAIN MENU"
+
                 I$ = GetKeyPress$
 
                 If I$ = Chr$(27) Then Exit Sub
 
                 Cls
 
-            End If
+            End If 'Done checking for valid player
 
         Next I
 

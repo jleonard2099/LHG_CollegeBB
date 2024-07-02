@@ -8,9 +8,9 @@ Sub CREATCON ()
 
     _Title "Courtside College Basketball - Manage Conferences"
 
-    Shared scheduleZ1%()
+    Shared memberIdx()
 
-    Shared Z1$(), Z2$()
+    Shared memberName$(), memberYear$()
 
     ReDim menuChoices$(1 To 3)
 
@@ -45,7 +45,7 @@ Sub CREATCON ()
         If ExitCode% <> 27 Then
 
             For X = 1 To TEAMS_PER_CONFERENCE
-                Z1$(X) = "XXX"
+                memberName$(X) = "XXX"
             Next
 
             D1$ = ""
@@ -75,6 +75,7 @@ Sub CREATCON ()
     Loop Until Selection% = 3 Or ExitCode% = 27
 
     Color 15, 0
+    Cls
 
 End Sub
 
@@ -169,20 +170,20 @@ End Sub
 'teams from the conference
 Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
 
-    Shared scheduleZ1%()
+    Shared memberIdx()
 
-    Shared Z1$(), Z2$()
+    Shared memberName$(), memberYear$()
 
     If _FileExists(diskPaths$(2) + confFile$ + ".TMI") Then
 
         Open diskPaths$(2) + confFile$ + ".TMI" For Input As #1
 
-        Input #1, LG%, confName$, div1$, div2$
+        Input #1, statType, confName$, div1$, div2$
 
         For X = 1 To TEAMS_PER_CONFERENCE
-            Input #1, Z1$(X)
-            Input #1, scheduleZ1%(X)
-            Input #1, Z2$(X)
+            Input #1, memberName$(X)
+            Input #1, memberIdx(X)
+            Input #1, memberYear$(X)
         Next
 
         Close #1
@@ -205,11 +206,11 @@ Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
         For I = 1 To 15
 
             Color 2: Print Using "  ##"; I;
-            Color 15: Print " "; Left$(Z1$(I), 25);
+            Color 15: Print " "; Left$(memberName$(I), 25);
 
             Locate , 50
             Color 2: Print Using "##"; I + 15;
-            Color 15: Print " "; Left$(Z1$(I + 15), 25)
+            Color 15: Print " "; Left$(memberName$(I + 15), 25)
 
         Next I
 
@@ -239,10 +240,10 @@ Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
             If choice = 1 Then
                 'Add team
                 teamNbr = 0
-                Call ChooseTeam(Z2$(teamIndex), NTMS, scheduleZ1%(teamIndex), Z1$(teamIndex))
+                Call ChooseTeam(memberYear$(teamIndex), NTMS, memberIdx(teamIndex), memberName$(teamIndex))
             Else
                 'Remove team
-                Z1$(teamIndex) = "XXX"
+                memberName$(teamIndex) = "XXX"
             End If
 
         End If 'Done checking if ready to save
@@ -262,9 +263,11 @@ End Sub
 'each of the corresponding files (.TMI, .TMS)
 Sub SaveConferences (confFile$, confName$, div1$, div2$)
 
-    Shared scheduleZ1%()
+    Shared memberIdx()
 
-    Shared Z1$(), Z2$()
+    Shared memberName$(), memberYear$()
+    
+    Shared statFiles$()
 
     Open diskPaths$(2) + confFile$ + ".TMI" For Output As #1
 
@@ -275,21 +278,20 @@ Sub SaveConferences (confFile$, confName$, div1$, div2$)
     Print #1, div2$ 'Division 2 Name
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Print #1, Z1$(X) 'Team Name
-        Print #1, scheduleZ1%(X) 'Team Index ?
-        Print #1, Z2$(X) 'Year Number
+        Print #1, memberName$(X) 'Team Name
+        Print #1, memberIdx(X) 'Team Index ?
+        Print #1, memberYear$(X) 'Year Number
     Next
 
     Close #1
 
     For X = 1 To TEAMS_PER_CONFERENCE
 
-        If Z1$(X) = "XXX" Then
-            Z1$(X) = Chr$(42)
+        If memberName$(X) = "XXX" Then
+            memberName$(X) = Chr$(42)
         Else
-            teamName$ = Z1$(X)
-            statFile$ = nameStatFile$(teamName$)
-            Z1$(X) = statFile$
+            teamName$ = memberName$(X)
+            statFiles$(X) = nameStatFile$(teamName$)
         End If
 
     Next X
@@ -301,12 +303,9 @@ Sub SaveConferences (confFile$, confName$, div1$, div2$)
     Write #2, div2$
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Write #2, Z1$(X)
+        Write #2, statFiles$(X)
     Next
 
     Close #2
 
 End Sub
-
-
-

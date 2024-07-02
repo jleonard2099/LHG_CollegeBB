@@ -56,7 +56,7 @@ Dim replayLosses, replayWins
 '----------------------------------------
 Dim nbrGamesCurr, nbrGamesRoad
 
-Dim alignAR$(15), AN$(15)
+Dim roadPlyrNames$(15), AN$(15)
 
 Dim ARD(14, 14), mergeA%(14, 14)
 
@@ -94,8 +94,7 @@ Dim W0L!(600), W1L!(600)
 '----------------------------------------
 ' Used in COMPARE routines
 '----------------------------------------
-Dim statFiles$(40)
-
+Dim statFiles$(TEAMS_PER_CONFERENCE)
 
 '----------------------------------------
 ' Used in COMPILE routines
@@ -109,14 +108,14 @@ Dim natDefLeaders!(MAX_CONFERENCES, 1 To 20), natOffLeaders!(MAX_CONFERENCES, 1 
 Dim compS!(0 To 14, 0 To 26)
 
 Dim statCategoryAbbr$(25)
-Dim natDefLdrNames$(40), NZ0$(1 To 250), NZ1$(30), NZ3$(1 To 250)
+Dim natDefLdrNames$(40), natZ1$(1 To 250), NZ1$(30), natZ2$(1 To 250)
 Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
 
 
 '----------------------------------------
 ' Used in CREATE routines
 '----------------------------------------
-Dim creatZ1$(MAX_CONFERENCES)
+Dim memberConf$(MAX_CONFERENCES)
 
 
 '----------------------------------------
@@ -152,6 +151,8 @@ Dim totHomeLosses!(MAX_CONFERENCES), totAwayLosses!(MAX_CONFERENCES)
 Dim totHomeScoreTeam!(MAX_CONFERENCES), totHomeScoreOpp!(MAX_CONFERENCES)
 Dim totAwayScoreTeam!(MAX_CONFERENCES), totAwayScoreOpp!(MAX_CONFERENCES)
 
+Dim div1Name$, div2Name$
+
 
 '----------------------------------------
 ' Used in RECORDS routines
@@ -176,7 +177,7 @@ Dim values!(0 To 14, 24)
 '----------------------------------------
 ' Used in SEExxx routines
 '----------------------------------------
-Dim deffLeaderNames$(60), offLeaderNames$(60)
+Dim defLeaderNames$(60), offLeaderNames$(60)
 Dim natOffLdrNames$(1 To 60), PR$(1200)
 Dim seeT$(30)
 
@@ -194,13 +195,15 @@ Dim PT#(1200, 5)
 '----------------------------------------
 Dim BS%, NS%
 
-Dim scheduleAP%(1), scheduleZ1%(1 To 30)
-Dim scheduleNG%(MAX_SCHEDULE_GAMES, 18) 'number of Games
+Dim scheduleAP%(1)
+Dim scheduleNG%(1000, 18) 'number of Games
 
 Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
-Dim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+Dim scheduleYN$(1000, 1)
 
-Dim Z1$(1 To 30), Z2$(1 To 30)
+Dim memberIdx(TEAMS_PER_CONFERENCE)
+Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim memberYear$(TEAMS_PER_CONFERENCE)
 
 
 '----------------------------------------
@@ -297,7 +300,7 @@ Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
 Dim Shared playerDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), playerStat_GAME(0 To 1, 0 To 13, 0 To 15)
 Dim Shared plyrStamina(13)
-Dim Shared rosterStatus(1, 13), QQ(1, 8, 13, 14), QR(1, 7, 14), RB(9)
+Dim Shared rosterStatus(1, 13), QQ(1, 8, 13, 14), QR(1, 7, 14), rebRatings(9)
 Dim Shared schedGame(2), score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
 Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecLoss(1)
 Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1)

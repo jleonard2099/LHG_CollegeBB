@@ -16,11 +16,12 @@ Sub HD2HDCON ()
     Shared totAwayLosses!(), totAwayWin!(), totHomeLosses!(), totHomeWins!()
     Shared totHomeScoreTeam!(), totHomeScoreOpp!(), totAwayScoreTeam!(), totAwayScoreOpp!()
 
-    Shared locIndicator$(), oppName$(), Z1$()
+    Shared locIndicator$(), oppName$()
+    Shared memberName$(), memberYear$()
 
-    Dim Z1_HD2HD(MAX_CONFERENCES), Z2_HD2HD$(MAX_CONFERENCES)
-
-    Shared D1$, D2$
+    Shared memberIdx()
+    
+    Shared div1Name$, div2Name$
 
     newTeam = 1
 
@@ -108,15 +109,15 @@ Sub HD2HDCON ()
 
                 Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #2
 
-                Input #2, X
+                Input #2, statType
                 Input #2, conf$
-                Input #2, D1$
-                Input #2, D2$
+                Input #2, div1Name$
+                Input #2, div2Name$
 
                 For X = 1 To TEAMS_PER_CONFERENCE
-                    Input #2, Z1$(X)
-                    Input #2, Z1_HD2HD(X)
-                    Input #2, Z2_HD2HD$(X)
+                    Input #2, memberName$(X)
+                    Input #2, memberIdx(X)
+                    Input #2, memberYear$(X)
                 Next
 
                 Close #2
@@ -132,11 +133,11 @@ Sub HD2HDCON ()
                 'Calculations for 1st league
                 For K = 1 To TEAMS_PER_CONFERENCE
 
-                    If Z1$(K) <> "XXX" Then
+                    If memberName$(K) <> "XXX" Then
 
                         For I = 1 To nbrGames
 
-                            If Left$(locIndicator$(I), 1) = "V" And oppName$(I) = Z1$(K) Then
+                            If Left$(locIndicator$(I), 1) = "V" And oppName$(I) = memberName$(K) Then
 
                                 If teamScore(I) > oppScore(I) Then
                                     awayWins!(K) = awayWins!(K) + 1
@@ -151,7 +152,7 @@ Sub HD2HDCON ()
 
                             End If
 
-                            If (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = Z1$(K) Then
+                            If (Left$(locIndicator$(I), 1) = "H" Or Left$(locIndicator$(I), 1) = "N") And oppName$(I) = memberName$(K) Then
 
                                 If teamScore(I) > oppScore(I) Then
                                     homeWins!(K) = homeWins!(K) + 1
@@ -243,11 +244,11 @@ End Sub
 'comparison values to the default printer
 Sub Hd2HdColl_Report (teamName$, printDest)
 
-    Shared D1$, D2$
+    Shared div1Name$, div2Name$
 
     Shared teamRatings%()
 
-    Shared Z1$()
+    Shared memberName$()
 
     Shared awayLosses!(), awayWins!(), homeLosses!(), homeWins!()
     Shared homeScoreTeam!(), homeScoreOpp!(), awayScoreTeam!(), awayScoreOpp!()
@@ -260,8 +261,8 @@ Sub Hd2HdColl_Report (teamName$, printDest)
         destFile$ = "Comparison"
     End If
 
-    DV$(1) = D1$
-    DV$(2) = D2$
+    DV$(1) = div1Name$
+    DV$(2) = div2Name$
 
     Color 15, 0
     Cls
@@ -289,9 +290,9 @@ Sub Hd2HdColl_Report (teamName$, printDest)
 
         For K = DD To EE
 
-            If Z1$(K) <> "XXX" And Z1$(K) <> teamName$ Then
+            If memberName$(K) <> "XXX" And memberName$(K) <> teamName$ Then
 
-                Print #1, Z1$(K);
+                Print #1, memberName$(K);
                 Print #1, Tab(22); Using "#"; homeWins!(K);
                 Print #1, Tab(26); Using "#"; homeLosses!(K);
 
@@ -704,11 +705,11 @@ Sub Hd2HdColl_Screen (teamName$)
 
     Dim DV$(1 To 4)
 
-    Shared D1$, D2$
+    Shared div1Name$, div2Name$
 
     Shared teamRatings%()
 
-    Shared Z1$()
+    Shared memberName$()
 
     Shared awayLosses!(), awayWins!(), homeLosses!(), homeWins!()
     Shared homeScoreTeam!(), homeScoreOpp!(), awayScoreTeam!(), awayScoreOpp!()
@@ -717,8 +718,8 @@ Sub Hd2HdColl_Screen (teamName$)
 
     Color 15, 0
 
-    DV$(1) = D1$
-    DV$(2) = D2$
+    DV$(1) = div1Name$
+    DV$(2) = div2Name$
 
     div = 0
 
@@ -750,10 +751,10 @@ Sub Hd2HdColl_Screen (teamName$)
 
         For K = DD To EE
 
-            If Z1$(K) <> "XXX" And Z1$(K) <> "*" And Z1$(K) <> teamName$ Then
+            If memberName$(K) <> "XXX" And memberName$(K) <> "*" And memberName$(K) <> teamName$ Then
 
                 Color 15
-                Locate , 1: Print Left$(Z1$(K), 13);
+                Locate , 1: Print Left$(memberName$(K), 13);
 
                 Color 7
                 Locate , 15: Print Using "#"; homeWins!(K);

@@ -154,8 +154,8 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared teamRatings%(), teamStats!()
 
-    Shared statsA!(), playerStats!()
     Shared statsW0!(), statsW1!()
+    
     Shared statsZ!(), statsZ1!()
 
     Shared statPlyrNames$()
@@ -195,10 +195,10 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
         Next
 
         Color 12
-        Locate , 15: Print "15. ";
+        Locate 5, 15: Print "15. ";
         Color 3: Print "View Players In Sequence"
         Color 12
-        Locate , 15: Print "16. ";
+        Locate 6, 15: Print "16. ";
         Color 3: Print "View Another Team"
         Color 12
         Locate , 15: Print "17. ";
@@ -208,7 +208,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
             Color 15
             Locate 23, 15
-            Input "ENTER # TO VIEW"; B9
+            Input "ENTER # TO VIEW "; B9
 
             Select Case B9
 
@@ -283,7 +283,7 @@ End Sub
 
 
 '----------------------------------------
-'    TeamComparisons_Screen SubRoutine
+'   TeamComparisons_Screen Subroutine
 '----------------------------------------
 'This subroutine focuses on the formatting
 'of team stats for comparison. The stats
@@ -373,11 +373,11 @@ Sub TeamComparisons_Screen (teamName$)
 
     Color 3, 0
     Locate 6, 41: Print Using "####"; teamRatings%(7);
-    Locate 6, 45: Print Using "####"; teamRatings%(8);: Print " ";
+    Locate 6, 45: Print Using "#### "; teamRatings%(8);
 
     Color 14, 0
     Locate 7, 41: Print Using "####"; replayWins;
-    Locate 7, 45: Print Using "####"; replayLosses;: Print " ";
+    Locate 7, 45: Print Using "#### "; replayLosses;
 
     ' *** ACTUAL VALUES ***
 
@@ -465,8 +465,8 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using ".###"; statPCT!;
     End If
 
-
     '--> DEFENSE
+
     Color 3, 0
 
     'FGM
@@ -563,6 +563,7 @@ Sub TeamComparisons_Screen (teamName$)
 
     'FTM
     Locate 7, 16: Print Using "#########"; statsZ!(4);
+
     'FTA
     Locate 8, 16: Print Using "#########"; statsZ!(3);
 
@@ -605,7 +606,9 @@ Sub TeamComparisons_Screen (teamName$)
         Print Using ".###"; statPCT!;
     End If
 
+
     '--> DEFENSE
+
     'FGM
     Locate 4, 68: Print Using "########"; statsZ1!(2);
     
@@ -695,6 +698,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Color 12
     Locate 5, 2: Print "ACTUAL  "
     Locate 6, 2: Print "REPLAY  ";
+    
     Color 7, 0: Print String$(2, 177)
     Locate 7, 4: Print String$(8, 177)
 
@@ -1022,6 +1026,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Shared teamRatings%(), teamStats!()
 
     Shared playerStats!()
+
     Shared statsA!()
     Shared statsZ!(), statsZ1!()
     Shared statsW0!(), statsW1!()
@@ -1680,4 +1685,3 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     End If
 
 End Sub
-

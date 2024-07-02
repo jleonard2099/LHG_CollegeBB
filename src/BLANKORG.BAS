@@ -6,10 +6,11 @@
 ' all stats files for all associated teams
 Sub BLANKORG ()
 
-    _Title "Courtside College Basketball - Erase Org Stats"
+    _Title "Courtside College Basketball - Erase National Stats"
 
-    Dim statFiles$(MAX_CONFERENCES), Z4$(MAX_CONFERENCES)
-
+    Dim statFileNames$(MAX_CONFERENCES)
+    Shared memberConf$()
+    
     organizationFile$ = ChooseFile$ (diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
@@ -29,29 +30,29 @@ Sub BLANKORG ()
             Input #1, org$
 
             For X = 1 To MAX_CONFERENCES
-                Input #1, Z4$(X)
+                Input #1, memberConf$(X)
             Next
 
             Close #1
 
             For X = 1 To MAX_CONFERENCES
 
-                If Z4$(X) <> "XXX" Then
+                If memberConf$(X) <> "XXX" Then
 
-                    Open diskPaths$(2) + Z4$(X) + ".TMS" For Input As #2
+                    Open diskPaths$(2) + memberConf$(X) + ".TMS" For Input As #2
 
-                    Input #2, org$, D1$, D2$
+                    Input #2, org$, div1$, div2$
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, statFiles$(XW)
+                        Input #2, statFileNames$(XW)
                     Next
 
                     Close #2
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
-                        If statFiles$(XW) <> Chr$(42) Then
-                            Print "DELETING "; statFiles$(XW); " STATS"
-                            statFile$ = diskPaths$(1) + statFiles$(XW)
+                        If statFileNames$(XW) <> Chr$(42) Then
+                            Print "DELETING "; statFileNames$(XW); " STATS"
+                            statFile$ = diskPaths$(1) + statFileNames$(XW)
                             If _FileExists(statFile$) Then Kill statFile$
                             If _FileExists(statFile$ + "S") Then Kill statFile$ + "S"
                         End If

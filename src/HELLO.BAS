@@ -1,8 +1,9 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.02"
+Const GAME_VERSION$ = "5.03"
 Const MAX_SCHEDULE_GAMES = 6000
+Const MAX_TOURNAMENT_GAMES = 200
 Const MAX_TEAMS = 1000
 Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
@@ -25,10 +26,334 @@ DefInt A-Z
 ' For Utils
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
-'$Include: 'Variables.bi'
+'Include: 'Variables.bi'
+
+
+'----------------------------------------
+' Used in more than one source file
+'----------------------------------------
+Dim Shared findFile$
+
+Dim opSysType$
+
+Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
+Dim Shared teamNames$(MAX_TEAMS)
+Dim Shared teamIndex%(MAX_TEAMS)
+
+' *** Reading Stat Data ***
+' -------------------------
+Dim statsA!(15, 14)
+Dim statsW0!(15), statsW1!(15)
+Dim statsZ!(15), statsZ1!(15)
+Dim statsZ2!(13, 13)
+
+Dim gameAttendance&(MAX_SCHED_STATS), oppScore(MAX_SCHED_STATS)
+Dim powerRating(MAX_SCHED_STATS, 1), teamScore(MAX_SCHED_STATS)
+
+Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
+
+'-- For Road Data
+Dim gameAtt_Road&(MAX_SCHED_STATS)
+Dim oppScore_Road(MAX_SCHED_STATS), powerRating_Road(MAX_SCHED_STATS, 1)
+Dim teamScore_Road(MAX_SCHED_STATS)
+
+Dim gameAttRoad&(MAX_SCHED_STATS)
+
+Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppName_Road$(MAX_SCHED_STATS)
+
+
+' *** Schedule Data ***
+' -------------------------
+Dim homeTeam$(MAX_TOURNAMENT_GAMES), visitingTeam$(MAX_TOURNAMENT_GAMES)
+Dim homeScores(MAX_TOURNAMENT_GAMES), visitorScores(MAX_TOURNAMENT_GAMES)
+
+' *** Game Options ***
+' -------------------------
+Dim Shared DT$, TM$
+
+Dim coachMode$(0 To 1), foulShotOpt$(0 To 2)
+Dim location$(0 To 2), modeAbbrev$(0 To 3)
+Dim playMode$(0 To 3), sClockOpt$(0 To 3)
+Dim teamIndicator$(1)
+Dim yesNo$(0 To 1)
+
+' *** Miscellaneous Use ***
+' -------------------------
+'Dim doPostLeaders
+Dim replayLosses, replayWins
+
+'----------------------------------------
+' Used in ALIGN / MERGE routines
+'----------------------------------------
+Dim nbrGamesCurr, nbrGamesRoad
+
+Dim roadPlyrNames$(15), AN$(15)
+
+Dim ARD(14, 14), mergeA%(14, 14)
+
+Dim AN!(15, 14), AR!(15, 14)
+Dim W0N!(15), WN1!(15)
+Dim W0R!(15), WR1!(15)
+Dim W0RD!(15), W1RD!(15)
+Dim ZR!(15), ZR1!(15)
+Dim ZRD!(15), ZRD1!(15)
+
+'----------------------------------------
+' Used in CAREER / LEADER routines
+'----------------------------------------
+Dim ARS!(15, 62, 15)
+Dim BLYR(21), BL(21)
+Dim W0S!(15, 62), W1S!(15, 62)
+
+
+Dim AL$(600), expanTT$(MAX_CONFERENCES, 15)
+Dim BL$(21)
+Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), TT1$(MAX_CONFERENCES, 15)
+
+'-- does the "R" refer to "Replay"?
+'-- for instance, A$ is player Names; AR$ is player names in the replay stats?
+Dim careerAR$(62)
+Dim TMM$(600), TPP$(600)
+
+Dim GM!(MAX_CONFERENCES), GM1!(MAX_CONFERENCES), GMA!(600)
+Dim leadersAL!(0 To 600, 0 To 14)
+Dim TT!(MAX_CONFERENCES, 15), TT1!(MAX_CONFERENCES, 15)
+Dim TYP!(600)
+Dim W0L!(600), W1L!(600)
+
+
+'----------------------------------------
+' Used in COMPARE routines
+'----------------------------------------
+Dim statFiles$(TEAMS_PER_CONFERENCE)
+
+'----------------------------------------
+' Used in COMPILE routines
+'----------------------------------------
+Dim confWins, confLosses
+Dim fullWins, fullLosses
+
+Dim defTotals!(21), offTotals!(21)
+Dim leaderVals!(1 To 250, 0 To 2), natLeaderVals!(1 To 250, 1 To 2)
+Dim natDefLeaders!(MAX_CONFERENCES, 1 To 20), natOffLeaders!(MAX_CONFERENCES, 1 To 20)
+Dim compS!(0 To 14, 0 To 26)
+
+Dim statCategoryAbbr$(25)
+Dim natDefLdrNames$(40), natZ1$(1 To 250), NZ1$(30), natZ2$(1 To 250)
+Dim PT$(1 To 1200), Z0$(1 To 250), Z3$(1 To 250)
+
+
+'----------------------------------------
+' Used in CREATE routines
+'----------------------------------------
+Dim memberConf$(MAX_CONFERENCES)
+
+
+'----------------------------------------
+' Used in DRAFT routines
+'----------------------------------------
+Dim CK!(1)
+
+Dim dFGPctAdj_DRAFT!(1)
+
+Dim lgRat_DRAFT(1, 4), avgRat_DRAFT(1, 13, 12)
+Dim teamRat_DRAFT(1, 9)
+
+Dim plyrDef_DRAFT!(1, 13), plyrOff_DRAFT!(1, 13, 6)
+Dim plyrRat_DRAFT!(1, 13, 6), plyrStat_DRAFT!(1, 13, 13)
+Dim stamina_DRAFT!(1), teamStats_DRAFT!(1, 24)
+
+Dim att_DRAFT&(1)
+
+Dim coaches_DRAFT$(1), mascots_DRAFT$(1), stadiums_DRAFT$(1)
+Dim plyrNames_DRAFT$(0 To 1, 0 To 13), posn_DRAFT$(1, 13)
+Dim teamYears$(1), tmName_DRAFT$(1)
+
+
+'----------------------------------------
+'   Used in Head-To-Head routines
+'----------------------------------------
+Dim awayLosses!(50), awayWins!(50)
+Dim homeLosses!(50), homeWins!(50)
+Dim homeScoreTeam!(50), homeScoreOpp!(50)
+Dim awayScoreTeam!(50), awayScoreOpp!(50)
+Dim totAwayWin!(MAX_CONFERENCES), totHomeWins!(MAX_CONFERENCES)
+Dim totHomeLosses!(MAX_CONFERENCES), totAwayLosses!(MAX_CONFERENCES)
+Dim totHomeScoreTeam!(MAX_CONFERENCES), totHomeScoreOpp!(MAX_CONFERENCES)
+Dim totAwayScoreTeam!(MAX_CONFERENCES), totAwayScoreOpp!(MAX_CONFERENCES)
+
+Dim div1Name$, div2Name$
+
+
+'----------------------------------------
+' Used in RECORDS routines
+'----------------------------------------
+Dim plyrRecords!(32), offRecords!(1 To 21), defRecords!(1 To 21)
+Dim plyrRecDesc$(32, 1), offRecDesc$(1 To 21), defRecDesc$(1 To 21)
+
+Dim indRecords!(50, 2), teamRecords!(125, 2)
+Dim indRecordDesc$(25), teamRecordDesc$(20)
+Dim indRecDesc$(50, 4), teamRecDesc$(125, 3)
+
+
+'----------------------------------------
+' Used in STAT / INPUT routines
+'----------------------------------------
+Dim homeLosses, homeWins, neutralLosses, neutralWins
+Dim roadLosses, roadWins, totalLosses, totalWins
+
+Dim values!(0 To 14, 24)
+
+
+'----------------------------------------
+' Used in SEExxx routines
+'----------------------------------------
+Dim defLeaderNames$(60), offLeaderNames$(60)
+Dim natOffLdrNames$(1 To 60), PR$(1200)
+Dim seeT$(30)
+
+Dim defLeaders!(60, 20), offLeaders!(60, 20)
+Dim O1!(30), O2!(30), O3!(30), O4!(30), O5!(30), O6!(30)
+
+Dim seeZ!(260), seeZ1!(260)
+Dim seeZ1$(260), seeZ2$(260), seeZ3$(260)
+
+Dim PT#(1200, 5)
+
+
+'----------------------------------------
+' Used in SCHEDULE routines
+'----------------------------------------
+Dim BS%, NS%
+
+Dim scheduleAP%(1)
+Dim scheduleNG%(MAX_SCHEDULE_GAMES, 18) 'number of Games
+
+Dim scheduleH$(1 To 20), scheduleV$(1 To 20)
+Dim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
+
+Dim memberIdx(TEAMS_PER_CONFERENCE)
+Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim memberYear$(TEAMS_PER_CONFERENCE)
+
+
+'----------------------------------------
+' Used in InputTeam routine
+'----------------------------------------
+Dim nbrGmsPlayed!, opp3FGA!, opp3FGAPct!, oppAsst!, oppBlocks!
+Dim oppFGPct!, oppFouls!, oppFGA!, oppFTA!, oppFTPct!
+Dim oppReb!, oppSteal!, oppTO!
+Dim tm3FGA!, tm3FGAPct!, tmAsst!, tmBlocks!, tmFouls!
+Dim tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
+Dim tmReb!, tmSteal!, tmTO!
+
+
+'----------------------------------------
+' Used in ADDTOURN / BRACKET routines
+'----------------------------------------
+Dim TC!
+
+'           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
+Dim tourneyN%(1 To 17, 1 To 17, 0 To 3)
+
+'Number of Teams Per Region (up to 16 Regions)
+Dim nbrRegionalTeams(17)
+
+'Team Names for Each Seed Slot
+Dim slotName$(17, 17, 0 To 3)
+
+'Region Names
+Dim regionNames$(1 To 17)
+
+Dim yearNumber$(MAX_TEAMS, 3)
+
+'TOURNAMENT DEFAULTS
+Dim tourneyDefaults%(14)
+
+'0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
+Dim consolationSetting%(1)
+
+
+'----------------------------------------
+' Used in Game Routines
+'----------------------------------------
+Dim scheduleFile$, tourneyFile$
+Dim actualAttendance&
+Dim Shared whistle&, swish&, backboard&
+
+Dim FY%(0 To 1)
+
+Dim alpha$(4), tickerPeriod$(14), teamYrTourn$(0 To 3)
+
+Dim eventSettings(13)
+Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
+
+Dim avgAttendance&(1)
+
+'-- I doubt these are needed
+Dim Shared Q, I, J
+
+Dim Shared autoPlay, ballCarrier, C1, coachOpt, currHalf
+Dim Shared compTeam, currGame, D, endGame, endAllGames
+'Dim Shared desigFouler, desigdesigFouler
+Dim Shared fastBreak, FO, ftNumber
+Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
+Dim Shared halfTime
+Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul, foulsToDQ
+Dim Shared JY, IN, M5, MJ, nbrLines
+Dim Shared offStatus
+Dim Shared P, P9, playerMode, playerOpt, pbpOpt, pbpType
+Dim Shared rebFoulChance, S2, sClockVal, shotClock, shotType
+Dim Shared threePtOpt, threePtShotChance
+Dim Shared tickerIdx, TMT, TOU, willDunk, XM, XS
+
+Dim Shared GS%, FT%, J8%, LC%
+Dim Shared PA%, PASS, PT%, ST%
+Dim Shared X0%, X1%, XX%
+
+Dim Shared gameClock!, pbpDelay!
+Dim Shared shotChance!, timeElapsed!
+
+Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
+Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$, YN$
+
+Dim Shared CZ%(1), G9%(1), NG%(18), NG1%(18)
+Dim Shared pressureRating(1, 1), ST%(32), SX%(32, 1, 14)
+Dim Shared TM%(1, 13), TP%(1)
+
+Dim Shared defAdjVsPass(2, 4), defAdjVsShot(4, 3)
+Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defCategory(1), defCoverage(1)
+Dim Shared ft3PtFoul(1), F1(13)
+Dim Shared G4(13), G5(13), homeCtFactor(1, 6)
+Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), offStrat(1)
+Dim Shared P4(14), P5(14)
+Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
+Dim Shared playerDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
+Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), playerStat_GAME(0 To 1, 0 To 13, 0 To 15)
+Dim Shared plyrStamina(13)
+Dim Shared rosterStatus(1, 13), QQ(1, 8, 13, 14), QR(1, 7, 14), rebRatings(9)
+Dim Shared schedGame(2), score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
+Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecLoss(1)
+Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1)
+Dim Shared threeFG(1, 13, 1), timeouts(1), timePlayed(1, 13)
+Dim Shared tmFatigue(1, 13), totRebounds(1), turnovers(1)
+Dim Shared W2(1, 13), W3(1, 13)
+
+'Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25)
+Dim gameW0!(1, 13), gameW1!(1, 13)
+
+Dim Shared defStyles$(0 To 17), defStyles_brief$(0 To 17), diskIDs$(5)
+Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
+Dim Shared offStyles$(9), offStyles_brief$(9)
+Dim Shared pbpStyle$(1), players$(1, 13)
+Dim Shared positions_GAME$(0 To 1, 0 To 13), posnName$(0 To 4)
+Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
+Dim Shared teamGender$(0 To 1)
+
+
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
-
 
 ' For Game
 '$Include: 'GameRoutines.bi'
@@ -221,7 +546,6 @@ _AllowFullScreen
 
 opSysType$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
 
-
 'Default new folders to current path
 For I = 0 To 3
 
@@ -233,7 +557,6 @@ For I = 0 To 3
     End Select
 
 Next
-
 
 'Read-in existing DEV.BAS
 If _FileExists("DEV.BAS") Then
@@ -263,6 +586,7 @@ If Not _FileExists("FOLDERS.CFG") Then
 
 End If
 
+'Read in path values
 Open "FOLDERS.CFG" For Input As #3
 
 For I = 0 To 3
@@ -271,6 +595,7 @@ Next
 
 Close #3
 
+'Run main menu
 Selection% = 1
 
 'Screen 12
@@ -1241,6 +1566,7 @@ Sub COLHOOP ()
     250 '
     'Determine which team gets the ball 1st
     P = Int(Rnd(1) * 2) '0 or 1
+    D = 1 - P
     jumpBall = P
 
     Call ChangePossession
@@ -1495,7 +1821,7 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     300 '
-
+    'Last 5 secs, no timeout, offense is ahead
     If gameClock! <= 5 And timeouts(D) <= 0 And score(P, 0) > score(D, 0) Then
 
         timeElapsed! = gameClock!
@@ -1518,8 +1844,8 @@ Sub COLHOOP ()
 
     scoreDiffOp = score(D, 0) - score(P, 0)
 
+    'Last 5 seconds, down by 1 score!!!
     If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOp <= 3 Or threePtOpt = 0 And scoreDiffOp <= 2) And scoreDiffOp >= 0 And currHalf >= 2 Then
-        'Last 5 seconds, down by 1 score!!!
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
@@ -1903,15 +2229,15 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     350 '
+    A6 = 1
+    D6 = 0
     PASS = PASS + 1
+
     playChoice = 0
     assistShotBoost = 0
     shotChance! = 0
 
     offStatus = 0
-
-    D6 = 0
-    A6 = 1
 
     'Multi-Strategy Def And 2nd Pass ???
     If defCategory(D) > 0 And PASS = 2 Then
@@ -1940,18 +2266,15 @@ Sub COLHOOP ()
 
     End If
 
-    GoTo 400
-
-    '----- NOODLE -----
-
     400 '
-    assistShotBoost = 0
-
     D6 = 0
     P3 = 0
+    assistShotBoost = 0
 
     ballCarrier = Int(Rnd(1) * 5)
     Call BALLDISTRIBUTE
+
+    ' *** BRANCH TO AREA BASED ON DEFENSE ***
 
     'Multi-Strategy Defense and First Pass
     If defCategory(D) > 0 And PASS = 1 Then
@@ -2530,14 +2853,13 @@ Sub COLHOOP ()
 
         'Successful steal!
         plyrOff_GAME!(D, lineupIdx(D, rndCarrier), 18) = plyrOff_GAME!(D, lineupIdx(D, rndCarrier), 18) + 1
+        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) + 1
 
         If defCategory(D) <= 0 Or PASS <> 1 Then
             Call LASTSHOT
         End If
 
         Call ResetShotClock
-
-        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) + 1
 
         If pbpDelay! <> 0 Then
 
@@ -4119,6 +4441,7 @@ Sub COLHOOP ()
     Else
 
         If gameClock! <= 0 Then 170
+
         pbpString$ = "OFFENSIVE FOUL"
         Call SELECTPBP(P, 1)
 
@@ -4239,29 +4562,25 @@ Sub COLHOOP ()
 
     If (currHalf > 1 And gameClock! < 30 And score(D, 0) - score(P, 0) = 2 And RN0 <= 12) Or (currHalf > 1 And gameClock! < 30 And scoreDiff = 0 And RN0 <= 12) Then
 
-        Call OFFREBOUND
+        Call ReboundOffense
         GoTo 760
 
     Else
 
-        Call Rolld100(RN0)
+        Call Rolld100(RN1)
 
-        Select Case RN0
+        Select Case RN1
 
             Case 1 To 16
-                'Case 1 To 11
-                '--> Could this be where the wrong rebound team is tagged??
                 foulOnReb = 1
                 GoTo 707
 
             Case 17 To 24
-                'Case 12 To 19
-                Call OFFREBOUND
+                Call ReboundOffense
                 GoTo 760
 
             Case 25 To 100
-                'Case 20 To 100
-                Call DEFREBOUND
+                Call ReboundDefense
                 GoTo 800
 
         End Select
@@ -4279,7 +4598,7 @@ Sub COLHOOP ()
 
     Call ResetShotClock
 
-    '--- loop
+    '-- Start Loop
     700 '
     shotRoll = 0
     assistShotBoost = 0
@@ -4299,7 +4618,7 @@ Sub COLHOOP ()
 
     Select Case RN0
 
-        Case 0 To 1
+        Case 1
 
             If offStatus = 98 Then
             
@@ -4345,7 +4664,7 @@ Sub COLHOOP ()
                 Call UPDATESCREEN
 
                 pbpString$ = "RB KNOCKED O.B. TO " + gameTeams$(D)
-                Call SELECTPBP(P, 1)
+                Call SELECTPBP(D, 1)
                 Call DELAY
 
                 Call DEADBALLOPTIONS
@@ -4397,7 +4716,7 @@ Sub COLHOOP ()
                 
             Else
 
-                Call OFFREBOUND
+                Call ReboundOffense
 
                 plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) + 1
                 plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) + 1
@@ -4479,13 +4798,17 @@ Sub COLHOOP ()
 
     707 '
     TP% = 0
+
     RB = 0
 
-    For I = 0 To 9:
-        RB(I) = 0
-    Next
+    Erase rebRatings
 
-    'Calculate Offensive Rebounds
+    'Calculate rebound contributions
+    '-- RB is a total of "rebound ratings" for both teams
+    '-- rebRatings is an array to track "rebound ratings" for each player
+    '   0 - 4 is for team 1; 5 - 9 is for team 2
+    
+    'Team 1
     For I = 0 To 4
 
         XZ = plyrOff_GAME!(P, lineupIdx(P, I), 21)
@@ -4500,14 +4823,14 @@ Sub COLHOOP ()
             XZ = Int(XZ * .9 + .5)
         End If
 
-        RB(I) = RB(I) + XZ
+        rebRatings(I) = rebRatings(I) + XZ
         RB = RB + XZ
 
     Next
 
     ORB = RB
 
-    'Calculate Total Rebounds
+    'Team 2
     For I = 0 To 4
 
         XZ = plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 2)
@@ -4522,7 +4845,7 @@ Sub COLHOOP ()
             XZ = Int(XZ * .9 + .5)
         End If
 
-        RB(I + 5) = RB(I + 5) + XZ
+        rebRatings(I + 5) = rebRatings(I + 5) + XZ
         RB = RB + XZ
 
     Next
@@ -4560,14 +4883,15 @@ Sub COLHOOP ()
         XQ = Int((RB * .17) + .5)
     End If
 
-    rndReb = Rnd(1) * RB
+    rbChance = Rnd(1) * RB
 
-    If rndReb <= ORB + XQ Then
+    If rbChance <= ORB + XQ Then
 
         rndOReb = Rnd(1) * ORB
+
         For ballCarrier = 0 To 4
-            If rndOReb <= RB(ballCarrier) Then GoTo 760
-            RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+            If rndOReb <= rebRatings(ballCarrier) Then GoTo 760
+            rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
         Next
 
         ballCarrier = Int(Rnd(1) * 5)
@@ -4581,12 +4905,12 @@ Sub COLHOOP ()
 
     For ballCarrier = 5 To 9
 
-        If rndDReb <= RB(ballCarrier) Then
+        If rndDReb <= rebRatings(ballCarrier) Then
             ballCarrier = ballCarrier - 5
             skipRandom% = 1
             Exit For
         Else
-            RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+            rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
         End If
 
     Next
@@ -4594,7 +4918,6 @@ Sub COLHOOP ()
     If skipRandom% = 0 Then
         ballCarrier = Int(Rnd(1) * 5)
     End If
-
 
     800 '
     totRebounds(D) = totRebounds(D) + 1
@@ -4662,6 +4985,7 @@ Sub COLHOOP ()
         P9 = D
 
         fastBreak = 1
+
         'New offense
         prevBall$ = players$(P, lineupIdx(P, ballCarrier))
 
@@ -4693,6 +5017,10 @@ Sub COLHOOP ()
     '----- NOODLE -----
 
     760 '
+    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) + 1
+    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 24) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 24) + 1
+    totRebounds(P) = totRebounds(P) + 1
+
     If foulOnReb = 1 Then
 
         foulOnReb = 0
@@ -4711,10 +5039,6 @@ Sub COLHOOP ()
         pbpString$ = teamGender$(P) + "'S FOULED !!!"
         Call SELECTPBP(P, 1)
 
-        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) + 1
-        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 24) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 24) + 1
-        totRebounds(P) = totRebounds(P) + 1
-
         Call UPDATESCREEN
 
         Call FoulCalled(1)
@@ -4723,60 +5047,59 @@ Sub COLHOOP ()
 
         GoTo 9065
 
-    End If
-
-    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) + 1
-    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 24) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 24) + 1
-    totRebounds(P) = totRebounds(P) + 1
-
-    Call UPDATESCREEN
-
-    pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " HAS THE OFF RB"
-    If pbpDelay! <> 0 Then
-        If pbpOpt = 0 Then Call PBP(P)
-        If pbpOpt = 1 Then
-            Call WINDEX
-            Print pbpString$
-            Print "FOR " + gameTeams$(P)
-            Call DELAY
-        End If
-    End If
-
-    If gameClock! <= 0 Then
-
-        GoTo 170
-
     Else
+ 
+        Call UPDATESCREEN
 
-        RN0 = Int(Rnd(1) * 130) + 1
-        prevBall$ = players$(P, lineupIdx(P, ballCarrier))
+        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " HAS THE OFF RB"
+        If pbpDelay! <> 0 Then
+            If pbpOpt = 0 Then Call PBP(P)
+            If pbpOpt = 1 Then
+                Call WINDEX
+                Print pbpString$
+                Print "FOR " + gameTeams$(P)
+                Call DELAY
+            End If
+        End If
 
-        If RN0 = 32 Then
+        If gameClock! <= 0 Then
 
-            GoTo RBTIEUP
+            GoTo 170
 
         Else
 
-            RN1 = Int(Rnd(1) * 10) + 1
-            Call SHOTPERCENT
+            RN0 = Int(Rnd(1) * 130) + 1
+            prevBall$ = players$(P, lineupIdx(P, ballCarrier))
 
-            If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
-                    shotChance! = Int(shotChance! * .6 + .5)
-                End If
-            End If
+            If RN0 = 32 Then
 
-            If RN1 <= 7 Then
-                shotType = 9
-                playChoice = 1
-                GoTo 537
+                GoTo RBTIEUP
+
             Else
-                GoTo 520
+
+                RN1 = Int(Rnd(1) * 10) + 1
+                Call SHOTPERCENT
+
+                If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
+                    If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
+                        shotChance! = Int(shotChance! * .6 + .5)
+                    End If
+                End If
+
+                If RN1 <= 7 Then
+                    shotType = 9
+                    playChoice = 1
+                    GoTo 537
+                Else
+                    GoTo 520
+                End If
+
             End If
 
         End If
-
+        
     End If
+
 
     '----- NOODLE -----
 
@@ -5199,7 +5522,7 @@ Sub InitVar ()
     Erase teamFouls, teamScore
     Erase pbpFG, pbpBG
     Erase plyrStamina, powerRating, pressureRating
-    Erase QQ, QR, RB, schedGame
+    Erase QQ, QR, rebRatings, schedGame
     Erase score
     Erase teamAdj, teamRecWins, teamRecLoss
     Erase threeFG, timePlayed, tmFatigue
@@ -9775,16 +10098,17 @@ End Sub
 
 
 '----------------------------------------
-'         OFFREBOUND Subroutine
+'         ReboundOffense Subroutine
 '----------------------------------------
 'This subroutine clearly does something
 'related to offensive rebounds
-Sub OFFREBOUND ()
+Sub ReboundOffense ()
 
     RB = 0
 
     For I = 0 To 4:
-        RB(I) = 0
+
+        rebRatings(I) = 0
         XZ = plyrOff_GAME!(P, lineupIdx(P, I), 21)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
@@ -9794,8 +10118,10 @@ Sub OFFREBOUND ()
         End If
 
         If tmFatigue(P, lineupIdx(P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
-        RB(I) = RB(I) + XZ
+
+        rebRatings(I) = rebRatings(I) + XZ
         RB = RB + XZ
+
     Next
 
     rndReb = Rnd(1) * RB
@@ -9803,11 +10129,14 @@ Sub OFFREBOUND ()
     skipRandom% = 0
 
     For ballCarrier = 0 To 4
-        If rndReb <= RB(ballCarrier) Then
+
+        If rndReb <= rebRatings(ballCarrier) Then
             skipRandom% = 1
             Exit For
         End If
-        RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+
+        rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
+
     Next
 
     If skipRandom% = 0 Then
@@ -9818,18 +10147,18 @@ End Sub
 
 
 '----------------------------------------
-'         DEFREBOUND Subroutine
+'         ReboundDefense Subroutine
 '----------------------------------------
 'This subroutine determines which player
 'gets the rebound, based on the team's
 'distribution of total rebounds
-Sub DEFREBOUND ()
+Sub ReboundDefense ()
 
     RB = 0
 
     For I = 0 To 4
 
-        RB(I) = 0
+        rebRatings(I) = 0
         XZ = plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 2)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
@@ -9842,7 +10171,7 @@ Sub DEFREBOUND ()
             XZ = Int(XZ * .9 + .5)
         End If
 
-        RB(I) = RB(I) + XZ
+        rebRatings(I) = rebRatings(I) + XZ
         RB = RB + XZ
 
     Next
@@ -9853,12 +10182,12 @@ Sub DEFREBOUND ()
 
     For ballCarrier = 0 To 4
 
-        If rndReb <= RB(ballCarrier) Then
+        If rndReb <= rebRatings(ballCarrier) Then
             skipRandom% = 1
             Exit For
         End If
 
-        RB(ballCarrier + 1) = RB(ballCarrier + 1) + RB(ballCarrier)
+        rebRatings(ballCarrier + 1) = rebRatings(ballCarrier + 1) + rebRatings(ballCarrier)
 
     Next
 
@@ -11105,8 +11434,8 @@ End Sub
 '----------------------------------------
 '         WHOGESTBALL Subroutine
 '----------------------------------------
-'Determine ball carrier at random for when
-'being passed around
+'Determine ball carrier for the computer
+'control when a pass is happening
 Sub WHOGETSBALL ()
 
     CNT% = 0
@@ -11162,91 +11491,106 @@ End Sub
 '----------------------------------------
 '       BALLDISTRIBUTE Subroutine
 '----------------------------------------
-' ...explanation...
+'Determine how the ball gets distributed
+'when passing. Depending on the team
+'stamina, sometimes the user will be
+'presented with a choice and sometimes
+'they won't. The computer of course
+'has a routine for this separately.
 Sub BALLDISTRIBUTE ()
 
+    randomCarrier = 1
+    
     Call Rolld100(RN0)
 
-    If playerMode = 0 And coachOpt = 1 Or playerMode = 1 And D = compTeam And coachOpt = 1 Or playerMode = 1 And P = compTeam Or playerMode = 2 Then
+    If (playerMode = 0 And coachOpt = 1) Or (playerMode = 1 And D = compTeam And coachOpt = 1) Or (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        'Computer in charge - auto determine
 
         Call WHOGETSBALL
 
     Else
 
         'Select / Case statement
-        If defCoverage(D) = 2 Or defCoverage(D) = 3 Then 415
-        If gameAvgTmStamina <= 90 And RN0 <= 15 Then 424
-        If gameAvgTmStamina <= 100 And RN0 <= 20 Then 424
-        If gameAvgTmStamina <= 110 And RN0 <= 25 Then 424
-        If gameAvgTmStamina <= 120 And RN0 <= 30 Then 424
-        If gameAvgTmStamina <= 130 And RN0 <= 38 Then 424
-        If gameAvgTmStamina <= 140 And RN0 <= 53 Then 424
-        If gameAvgTmStamina <= 150 And RN0 <= 60 Then 424
-        If gameAvgTmStamina > 150 And RN0 <= 67 Then 424
-        GoTo 423
+        If Not (defCoverage(D) = 2 Or defCoverage(D) = 3) Then
 
-        '----------
+            If gameAvgTmStamina <= 90 And RN0 <= 15 Then randomCarrier = 0
+            If gameAvgTmStamina <= 100 And RN0 <= 20 Then randomCarrier = 0
+            If gameAvgTmStamina <= 110 And RN0 <= 25 Then randomCarrier = 0
+            If gameAvgTmStamina <= 120 And RN0 <= 30 Then randomCarrier = 0
+            If gameAvgTmStamina <= 130 And RN0 <= 38 Then randomCarrier = 0
+            If gameAvgTmStamina <= 140 And RN0 <= 53 Then randomCarrier = 0
+            If gameAvgTmStamina <= 150 And RN0 <= 60 Then randomCarrier = 0
+            If gameAvgTmStamina > 150 And RN0 <= 67 Then randomCarrier = 0
 
-        'Select / Case statement
-        415 '
-        If gameAvgTmStamina <= 90 And RN0 <= 8 Then 424
-        If gameAvgTmStamina <= 100 And RN0 <= 10 Then 424
-        If gameAvgTmStamina <= 110 And RN0 <= 13 Then 424
-        If gameAvgTmStamina <= 120 And RN0 <= 15 Then 424
-        If gameAvgTmStamina <= 130 And RN0 <= 18 Then 424
-        If gameAvgTmStamina <= 140 And RN0 <= 53 Then 424
-        If gameAvgTmStamina <= 150 And RN0 <= 60 Then 424
-        If gameAvgTmStamina > 150 And RN0 <= 67 Then 424
+        Else
 
-        423 '
-        ballCarrier = Int(Rnd(1) * 5)
-        GoTo 427
+            If gameAvgTmStamina <= 90 And RN0 <= 8 Then randomCarrier = 0
+            If gameAvgTmStamina <= 100 And RN0 <= 10 Then randomCarrier = 0
+            If gameAvgTmStamina <= 110 And RN0 <= 13 Then randomCarrier = 0
+            If gameAvgTmStamina <= 120 And RN0 <= 15 Then randomCarrier = 0
+            If gameAvgTmStamina <= 130 And RN0 <= 18 Then randomCarrier = 0
+            If gameAvgTmStamina <= 140 And RN0 <= 53 Then randomCarrier = 0
+            If gameAvgTmStamina <= 150 And RN0 <= 60 Then randomCarrier = 0
+            If gameAvgTmStamina > 150 And RN0 <= 67 Then randomCarrier = 0
 
-        '----------
+        End If
 
-        Do
-            424 '
-            If pbpDelay! <> 0 Then
-
-                If pbpOpt = 0 Then
-                    pbpString$ = "PASS TO CHOICE (0-4)"
-                    Call PBP(P)
-                End If
-
-            Else
-                Call WINDEX
-                Print "PASS TO CHOICE (0-4)"
-                Call DELAY
-            End If
-
-            I$ = GetKeyPress$
-
-            Select Case UCase$(I$)
-
-                Case "T"
-                    Call TICKER
-                    Call SCOREBOARD
-
-                Case "Q"
-                    Cls
-                    End
-
-                Case "O"
-                    Call OPTIONS
-
-                Case Else
-                    ballCarrier = Val(I$)
-
-            End Select
-
-        Loop Until ballCarrier >= 0 And ballCarrier <= 4
+        If randomCarrier = 0 Then
+            Call GetPassChoice
+        Else
+            ballCarrier = Int(Rnd(1) * 5)
+        End If
 
     End If
 
-    427 '
-
 End Sub
 
+
+'----------------------------------------
+'        GetPassChoice Subroutine
+'----------------------------------------
+'This routine prompts the user for a
+'player to pass to.
+Sub GetPassChoice ()
+
+    Do
+
+        If pbpDelay! <> 0 Then
+
+            If pbpOpt = 0 Then
+                pbpString$ = "PASS TO CHOICE (0-4)"
+                Call PBP(P)
+            End If
+
+        Else
+            Call WINDEX
+            Print "PASS TO CHOICE (0-4)"
+            Call DELAY
+        End If
+
+        I$ = GetKeyPress$
+
+        Select Case UCase$(I$)
+
+            Case "T"
+                Call TICKER
+                Call SCOREBOARD
+
+            Case "Q"
+                Cls
+                End
+
+            Case "O"
+                Call OPTIONS
+
+            Case Else
+                ballCarrier = Val(I$)
+
+        End Select
+
+    Loop Until ballCarrier >= 0 And ballCarrier <= 4
+
+End Sub
 
 '----------------------------------------
 '       DEADBALLOPTIONS Subroutine
@@ -11553,7 +11897,7 @@ End Sub
 '         PRESSGUARD Subroutine
 '----------------------------------------
 'This subroutine handles PBP and stats
-'for when a Guard is pressing
+'for when a team is pressing
 Sub PRESSGUARD ()
 
     Call WINDEX
@@ -12538,15 +12882,15 @@ Sub FreeThrow_One (missedLastFT)
 
     End If
 
-    baseShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
+    ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
 
     If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
-        baseShotChance = Int(baseShotChance * .9 + .5)
+        ftShotChance = Int(ftShotChance * .9 + .5)
     End If
 
     Call Rolld100(shotRoll)
 
-    If shotRoll <= baseShotChance Then
+    If shotRoll <= ftShotChance Then
 
         If pbpOpt = 0 Then
 
@@ -12592,7 +12936,7 @@ Sub FreeThrow_One (missedLastFT)
     'Increase FT ATT
     plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 9) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 9) + 1
 
-    If shotRoll > baseShotChance Then
+    If shotRoll > ftShotChance Then
         missedLastFT = 1
     Else
         missedLastFT = 0
@@ -12646,10 +12990,10 @@ Sub FreeThrow_OneAndOne (missedLastFT)
         Call Rolld100(shotRoll)
 
         'FT Success Chance
-        baseShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
-        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
+        ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then ftShotChance = Int(ftShotChance * .9 + .5)
 
-        If shotRoll <= baseShotChance Then
+        If shotRoll <= ftShotChance Then
 
             If pbpOpt = 0 Then
                 Call THREEFT(freethrow)
@@ -12683,7 +13027,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
 
     Next freethrow
 
-    If shotRoll > baseShotChance Then
+    If shotRoll > ftShotChance Then
         missedLastFT = 1
     Else
         missedLastFT = 0
@@ -12737,13 +13081,13 @@ Sub FreeThrow_Two (missedLastFT)
         Call Rolld100(shotRoll)
 
         'FT Success Chance
-        baseShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
+        ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
 
         If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
-            baseShotChance = Int(baseShotChance * .9 + .5)
+            ftShotChance = Int(ftShotChance * .9 + .5)
         End If
 
-        If shotRoll <= baseShotChance Then
+        If shotRoll <= ftShotChance Then
 
             If pbpOpt = 0 Then
                 Call THREEFT(freethrow)
@@ -12773,7 +13117,7 @@ Sub FreeThrow_Two (missedLastFT)
 
     Next freethrow
 
-    If shotRoll > baseShotChance Then
+    If shotRoll > ftShotChance Then
         missedLastFT = 1
     Else
         missedLastFT = 0
@@ -12828,10 +13172,10 @@ Sub FreeThrow_Three (missedLastFT)
         Call Rolld100(shotRoll)
 
         'FT Success Chance
-        baseShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
-        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then baseShotChance = Int(baseShotChance * .9 + .5)
+        ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then ftShotChance = Int(ftShotChance * .9 + .5)
 
-        If shotRoll <= baseShotChance Then
+        If shotRoll <= ftShotChance Then
             If pbpOpt = 0 Then
                 Call THREEFT(freethrow)
             Else
@@ -12844,7 +13188,7 @@ Sub FreeThrow_Three (missedLastFT)
             End If
 
         Else
-            'shotRoll > baseShotChance
+            'shotRoll > ftShotChance
             If pbpOpt = 0 Then
                 Call BADFT(freethrow)
             Else
@@ -12859,7 +13203,7 @@ Sub FreeThrow_Three (missedLastFT)
 
     Next freethrow
 
-    If shotRoll > baseShotChance Then
+    If shotRoll > ftShotChance Then
         missedLastFT = 1
     Else
         missedLastFT = 0
@@ -14312,7 +14656,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-                        MsgText$ = "NO TEAM FILES WERE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO MAIN MENU"
+                        MsgText$ = "NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID"
                         BoxWidth = 20
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
                         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
@@ -14363,6 +14707,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
                 If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
                     Do
+
                         YCoord = Int((80 - Len(teamName$)) / 2)
                         Locate 2, YCoord
                         Color teamRat_GAME(gameIdx, 0), teamRat_GAME(gameIdx, 1): Print teamName$
@@ -14401,9 +14746,9 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
         SELECTION% = 1
         Count% = numberTeams
         Start% = 1
-        FileFGColor% = 15: FileBGColor% = 4
-        HiLiteFGColor% = 0: HiLiteBGColor% = 7
-        Rows% = 20
+        FileFGColor = 15: FileBGColor = 4
+        HiLiteFGColor = 0: HiLiteBGColor = 7
+        Rows = 20
         Columns% = 4
         Spacing% = 6
         Row% = 4
@@ -14420,7 +14765,7 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
         Color 15: Print "-SELECTS TEAM";
 
         _MouseShow "DEFAULT"
-        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor, HiLiteBGColor, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% <> 27 Then
@@ -14456,15 +14801,13 @@ End Sub
 'This subroutine reads in the data for the
 'selected tema into each of the data arrays
 'needed by the game.
-Sub ReadGameTeam (YN$, targetTeam$, teamIdx, gameIdx)
+Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
 
     Shared FY%()
 
     Shared avgAttendance&()
 
     Shared d3FG_Adj(), d3FGA_Adj()
-
-    teamYear$ = RTrim$(YN$)
 
     Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYear$ For Random As #1 Len = TEAM_SIZE_BYTES
 
@@ -14597,10 +14940,9 @@ Sub ReadGameExtraData (teamYear$, teamIdx, gameIdx, dataOK)
             teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
         Next
 
-        'If CVI(Q$(249)) <> 999 Then
         If avgAttendance&(gameIdx) > 100000 Or (CheckString%(gameArena$(gameIdx)) = 1) Then
-            'If attendance is abnormally high, we ARE
-            'clearly not reading accurate data
+            'If attendance is abnormally high, or arena is not a string,
+            'we ARE clearly not reading accurate data
 
             dataOK = 0
 

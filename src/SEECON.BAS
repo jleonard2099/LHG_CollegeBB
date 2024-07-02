@@ -26,12 +26,12 @@ End Sub
 '----------------------------------------
 'This subroutine loads the conference stats
 'from the file into several arrays
-Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
+Sub LoadLeaderFiles_Coll (targetFile$, FF$, div1$, div2$)
 
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seeZ!(), seeZ1!()
-    Shared offLeaderNames$(), deffLeaderNames$()
+    Shared offLeaderNames$(), defLeaderNames$()
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
@@ -57,7 +57,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
     Next
 
     For X = 1 To MAX_CONFERENCES:
-        Input #1, deffLeaderNames$(X)
+        Input #1, defLeaderNames$(X)
         For M = 1 To 20:
             Input #1, defLeaders!(X, M)
         Next
@@ -66,11 +66,11 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, D1$, D2$)
     Close #1
 
     Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #2
-    Input #2, FF$, D1$, D2$
+    Input #2, conf$, div1$, div2$
     Close #2
 
-    D1$ = PadRight$(D1$, 8)
-    D2$ = PadRight$(D2$, 8)
+    div1$ = PadRight$(div1$, 8)
+    div2$ = PadRight$(div2$, 8)
 
     Cls
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
@@ -84,7 +84,7 @@ End Sub
 'This subroutine gives the user various
 'options for viewing the previously loaded
 'stats, and then calls routines for each
-Sub StatOptions_Con (confName$, D1$, D2$)
+Sub StatOptions_Con (confName$, div1$, div2$)
 
     Do
 
@@ -100,14 +100,14 @@ Sub StatOptions_Con (confName$, D1$, D2$)
                 Case "F"
                     userFile$ = _SAVEFILEDIALOG$("Save Conference Report",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
-                        Call LeaderStatsCon_Report(confName$, D1$, D2$, 0, userFile$)
+                        Call LeaderStatsCon_Report(confName$, div1$, div2$, 0, userFile$)
                     End If
 
                 Case "P"
-                    Call LeaderStatsCon_Report(confName$, D1$, D2$, 1, "REPORT")
+                    Call LeaderStatsCon_Report(confName$, div1$, div2$, 1, "REPORT")
 
                 Case "S"
-                    Call LeaderStatsCon_Screen(confName$, D1$, D2$)
+                    Call LeaderStatsCon_Screen(confName$, div1$, div2$)
 
             End Select
 
@@ -139,12 +139,12 @@ End Sub
 'This subroutine formats the previously
 'loaded stats and outputs them to the end
 'user display.
-Sub LeaderStatsCon_Screen (confName$, D1$, D2$)
+Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seeZ!(), seeZ1!()
-    Shared offLeaderNames$(), deffLeaderNames$()
+    Shared offLeaderNames$(), defLeaderNames$()
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
@@ -156,7 +156,7 @@ Sub LeaderStatsCon_Screen (confName$, D1$, D2$)
     Print confName$ + " CONFERENCE"
 
     Color 2
-    If D1$ <> "" Then Print RTrim$(D1$); " DIVISION"
+    If div1$ <> "" Then Print RTrim$(div1$); " DIVISION"
     Color 12
     Print "                 CONFERENCE                         FULL SEASON"
     Color 14
@@ -205,7 +205,7 @@ Sub LeaderStatsCon_Screen (confName$, D1$, D2$)
     Print confName$ + " CONFERENCE"
 
     Color 2
-    If D2$ <> "" Then Print RTrim$(D2$); " DIVISION"
+    If div2$ <> "" Then Print RTrim$(div2$); " DIVISION"
     Print "                 CONFERENCE                         FULL SEASON"
     Color 14
     Print "                W    L     PCT                          W    L     PCT"
@@ -628,8 +628,8 @@ Sub LeaderStatsCon_Screen (confName$, D1$, D2$)
 
     For X = 1 To 20
 
-        If deffLeaderNames$(X) <> "" And deffLeaderNames$(X) <> "*" And deffLeaderNames$(X) <> " " Then
-            Print Left$(deffLeaderNames$(X), 11); Tab(13);
+        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+            Print Left$(defLeaderNames$(X), 11); Tab(13);
             'G
             Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);
@@ -683,13 +683,13 @@ End Sub
 'loaded stats and outputs them to a file.
 'This file can then be looped through to
 'send to the default printer
-Sub LeaderStatsCon_Report (confName$, D1$, D2$, printDest, destFile$)
+Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Shared defLeaders!(), offLeaders!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
     Shared seeZ!(), seeZ1!()
 
-    Shared offLeaderNames$(), deffLeaderNames$()
+    Shared offLeaderNames$(), defLeaderNames$()
     Shared seeZ2$(), seeZ3$()
     Shared seeT$()
 
@@ -700,7 +700,7 @@ Sub LeaderStatsCon_Report (confName$, D1$, D2$, printDest, destFile$)
 
     Print #1, confName$ + " CONFERENCE"
 
-    If D1$ <> "" Then Print #1, D1$; " DIVISION"
+    If div1$ <> "" Then Print #1, div1$; " DIVISION"
     Print #1, "                 CONFERENCE                         FULL SEASON"
     Print #1, "                W    L     PCT                          W    L     PCT"
 
@@ -730,7 +730,7 @@ Sub LeaderStatsCon_Report (confName$, D1$, D2$, printDest, destFile$)
     Print #1,
     Print #1, confName$ + " CONFERENCE"
 
-    If D2$ <> "" Then Print #1, D2$; " DIVISION"
+    If div2$ <> "" Then Print #1, div2$; " DIVISION"
 
     Print #1, "                 CONFERENCE                         FULL SEASON"
     Print #1, "                W    L     PCT                          W    L     PCT"
@@ -1053,8 +1053,8 @@ Sub LeaderStatsCon_Report (confName$, D1$, D2$, printDest, destFile$)
 
     For X = 1 To 20
 
-        If deffLeaderNames$(X) <> "" And deffLeaderNames$(X) <> "*" And deffLeaderNames$(X) <> " " Then
-            Print #1, Left$(deffLeaderNames$(X), 11); Tab(13);
+        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+            Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
             Print #1, Using "##"; defLeaders!(X, 16);
             Print #1, Tab(16);
             Print #1, Using "####"; defLeaders!(X, 2);

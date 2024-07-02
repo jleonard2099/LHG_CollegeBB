@@ -11,7 +11,6 @@ Sub BRACKET ()
     Shared scheduleNG%(), nbrRegionalTeams()
 
     Shared consolationSetting%(), tourneyDefaults%()
-    Shared homeScores(), visitorScores()
     Shared homeTeam$(), visitingTeam$()
 
     ' TOURNAMENT DEFAULTS
@@ -184,12 +183,12 @@ Sub PrintFourTeamBracket ()
 
     Color 15
     For I = 0 To 3
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 5, 55: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 6, 55: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 7, 55: Print Chr$(195)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 8, 55: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 9, 55: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 4, 38: Print String$(17, Chr$(196)); Chr$(191)
+        If (I Mod 2) = 0 Then Locate 6 * I + 5, 55: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 6, 55: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 7, 55: Print Chr$(195)
+        If (I Mod 2) = 0 Then Locate 6 * I + 8, 55: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 9, 55: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 4, 38: Print String$(17, Chr$(196)); Chr$(191)
         If I / 2 <> Int(I / 2) Then Locate 6 * I + 4, 38: Print String$(17, Chr$(196)); Chr$(217)
     Next
 
@@ -418,10 +417,10 @@ Sub EditBracket (numberRegions, ACTION%)
                     Case 2: '3 Teams
                         ' 5 TEAM BRACKET
                         For I = 0 To 1
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -470,7 +469,7 @@ Sub EditBracket (numberRegions, ACTION%)
                     Case 3: '5 Teams
                         ' 6 TEAM BRACKET
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
                             If I / 2 = Int(I / 2) And (I <> 4 And I <> 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
                             If I / 2 = Int(I / 2) And (I <> 4 And I <> 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
@@ -532,7 +531,7 @@ Sub EditBracket (numberRegions, ACTION%)
                     Case 4: '6 Teams
                         ' 7 TEAM BRACKET
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
                             If I / 2 = Int(I / 2) And I <> 4 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
                             If I / 2 = Int(I / 2) And I <> 4 Then Locate 3 * I + 4, 37: Print Chr$(195)
@@ -604,10 +603,10 @@ Sub EditBracket (numberRegions, ACTION%)
                     Case 5: '7 Teams
                         ' 8 TEAM BRACKET
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -698,10 +697,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Call TeamColors(homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -818,10 +817,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Call TeamColors(homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -944,10 +943,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Call TeamColors(homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -1088,10 +1087,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Color 15
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -1242,10 +1241,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Print
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -1398,10 +1397,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Call TeamColors(homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -1561,10 +1560,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Call TeamColors(homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -1738,10 +1737,10 @@ Sub EditBracket (numberRegions, ACTION%)
                         Color 15
 
                         For I = 0 To 7
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 1, 22: Print bracketA$(I + 1)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
-                            If I / 2 = Int(I / 2) Then Locate 3 * I + 4, 37: Print Chr$(195)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 3, 21: Print String$(16, Chr$(196)); Chr$(191)
+                            If (I Mod 2) = 0 Then Locate 3 * I + 4, 37: Print Chr$(195)
                             If I / 2 <> Int(I / 2) Then Locate 3 * I + 2, 21: Print String$(16, Chr$(196)); Chr$(217)
                         Next
 
@@ -1876,13 +1875,13 @@ Sub BracketsNotUsed ()
 
     '3 TEAM BRACKET
     For I = 0 To 1
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 5, 47: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 6, 47: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 7, 47: Print Chr$(195)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 8, 47: Print Chr$(179)
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 9, 47: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 5, 47: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 6, 47: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 7, 47: Print Chr$(195)
+        If (I Mod 2) = 0 Then Locate 6 * I + 8, 47: Print Chr$(179)
+        If (I Mod 2) = 0 Then Locate 6 * I + 9, 47: Print Chr$(179)
 
-        If I / 2 = Int(I / 2) Then Locate 6 * I + 4, 32: Print String$(15, Chr$(196)); Chr$(191)
+        If (I Mod 2) = 0 Then Locate 6 * I + 4, 32: Print String$(15, Chr$(196)); Chr$(191)
         If I / 2 <> Int(I / 2) Then Locate 6 * I + 4, 32: Print String$(15, Chr$(196)); Chr$(217)
     Next
 

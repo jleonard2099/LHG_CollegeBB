@@ -118,16 +118,20 @@ End Sub
 'year's worth of stats to the career file
 Sub MergeFirstYear ()
 
-    Dim NB%, TMR
+    Dim NB, TMR
     
-    Dim careerA$(62)
     Dim A(62, 14)
+    Dim careerA$(62)
+
     Dim careerW0!(62), careerW1!(62)
-    Dim careerZ!(15), careerZ1!(15)
 
     Shared careerAR$()
     Shared ARS!()
+    Dim careerZ!(15), careerZ1!(15)
+
     Shared W0S!(), W1S!()
+
+    NB = -1
 
     Do
 
@@ -219,10 +223,10 @@ Sub MergeFirstYear ()
 
                         N = 1
 
-                        If careerA$(I) <> "END" And careerA$(I) <> "XXX" And careerA$(I) <> "" Then
-                            NB% = NB% + 1
-                        Else
+                        If careerA$(I) = "END" Or careerA$(I) = "XXX" Or careerA$(I) = "" Then
                             careerA$(I) = ""
+                        Else
+                            NB = NB + 1
                         End If
 
                         For J = 0 To 13
@@ -236,7 +240,9 @@ Sub MergeFirstYear ()
 
                     Next I
 
-                    For I = 0 To 61: careerAR$(I) = careerA$(I): Next
+                    For I = 0 To 61: 
+                        careerAR$(I) = careerA$(I)
+                    Next
 
                     If doPostLeaders = 1 Then Call UpdateCareerLeaders(careerFile$)
 
@@ -245,7 +251,7 @@ Sub MergeFirstYear ()
 
                     Open diskPaths$(1) + careerFile$ + ".CAR" For Output As #2
 
-                    Write #2, NB%, B$
+                    Write #2, NB, B$
 
                     For N = 1 To 15
 
@@ -292,8 +298,8 @@ End Sub
 'formats the results for them as directed.
 Sub ReviewCareerRecords ()
 
+    Shared BL(), BLYR()
     Shared BL$()
-    Shared BLYR(), BL()
 
     recordFile$ = ChooseFile$ (diskPaths$(2) + "*.CLD", "CAREER RECORD", ExitCode%)
 
@@ -393,8 +399,8 @@ End Sub
 'printer
 Sub CareerRecords_Report (printDest, destFile$)
 
+    Shared BL(), BLYR()
     Shared BL$()
-    Shared BLYR(), BL()
 
 	Color 15, 0
 	Cls
@@ -403,7 +409,8 @@ Sub CareerRecords_Report (printDest, destFile$)
 
     Print #1, "CATEGORY                     RECORD           PLAYER              YEAR"
     Print #1,
-    Print #1, "FIELD GOALS MADE";: Print #1, Tab(33); Using "####"; BL(0);
+    Print #1, "FIELD GOALS MADE";
+    Print #1, Tab(33); Using "####"; BL(0);
     Print #1, Tab(47); BL$(0);
     Print #1, Tab(66); BLYR(0)
     Print #1, "FIELD GOAL ATTEMPTS";
@@ -543,7 +550,8 @@ Sub MergeCareerFiles ()
         Print
         Print
 
-        Color 12: Locate , 25
+        Color 12
+        Locate , 25
         Print "DO YOU WISH TO CONTINUE? (Y/N)"
 
         I$ = GetKeyPress$
@@ -594,19 +602,6 @@ End Sub
 'with the new values. 
 Sub MergeAddYear (selectedFile$, statFile$)
 
-    Dim NB%, TMR1%
-
-    Dim careerA$(62)
-    Dim A(62, 14)
-    Dim careerW0!(62), careerW1!(62)
-    Dim careerZ!(15), careerZ1!(15)
-
-    Shared careerAR$()
-    Shared ARS!(), W0S!(), W1S!()
-
-    TMR1% = 1875
-    NB% = -1
-
     Color 15, 0
     Cls
 
@@ -627,161 +622,196 @@ Sub MergeAddYear (selectedFile$, statFile$)
 
         If finalUpdate$ = "Y" Then doPostLeaders = 1 Else doPostLeaders = 0
 
-        Locate 20, 5
-        Print "LOADING CAREER STATS . . . . PLEASE WAIT"
+        Call AddCareerYear(doPostLeaders, selectedFile$, statFile$)
 
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #1
+    End If 'Done checking user confirmation
+    
+End Sub
 
-        Input #1, NB%, B$
 
-        For N = 1 To 15
+'----------------------------------------
+'       AddCareerYear Subroutine
+'----------------------------------------
+'This routine loads the existing career
+'stats, adds the team's stats to them,
+'then overwrites the career file with the
+'new values. 
+Sub AddCareerYear (finalUpdate, careerFile$, statFile$)
 
-            For I = 0 To 61:
+    Dim NB, TMR1%
 
-                Input #1, careerAR$(I)
+    Dim careerA$(62)
+    Dim A(62, 14)
 
-                For J = 0 To 15:
-                    Input #1, ARS!(N, I, J)
-                Next J
+    Dim careerW0!(62), careerW1!(62)
+    Dim careerZ!(15), careerZ1!(15)
 
-                Input #1, W0S!(N, I)
-                Input #1, W1S!(N, I)
+    Shared careerAR$()
 
-                Color 5
-                Locate 21, 38
-                TMR1% = TMR1% - 1
-                Print Using "####"; TMR1%
+    Shared ARS!(), W0S!(), W1S!()
 
-            Next I
+    TMR1% = 1875
+    NB = -1
 
-        Next N
+    Locate 20, 5
+    Print "LOADING CAREER STATS . . . . PLEASE WAIT"
 
-        Close #1
+    Open diskPaths$(1) + selectedFile$ + ".CAR" For Input As #1
 
-        Locate 20, 5
-        Print "LOADING STATS FILE . . . . PLEASE WAIT"
+    Input #1, NB, B$
 
-        Open diskPaths$(1) + statFile$ For Input As #2
+    For N = 1 To 15
 
-        Input #2, B$
+        For I = 0 To 61:
 
-        For I = 0 To 13:
+            Input #1, careerAR$(I)
 
-            Input #2, careerA$(I)
+            For J = 0 To 15:
+                Input #1, ARS!(N, I, J)
+            Next J
 
-            For J = 0 To 13: Input #2, A(I, J): Next
-
-            Input #2, careerW0!(I)
-            Input #2, careerW1!(I)
+            Input #1, W0S!(N, I)
+            Input #1, W1S!(N, I)
 
             Color 5
             Locate 21, 38
             TMR1% = TMR1% - 1
             Print Using "####"; TMR1%
 
+        Next I
+
+    Next N
+
+    Close #1
+
+    Locate 20, 5
+    Print "LOADING STATS FILE . . . . PLEASE WAIT"
+
+    Open diskPaths$(1) + statFile$ For Input As #2
+
+    Input #2, B$
+
+    For I = 0 To 13:
+
+        Input #2, careerA$(I)
+
+        For J = 0 To 13: 
+            Input #2, A(I, J)
         Next
 
-        For L = 0 To 15: Input #2, careerZ!(L): Next
+        Input #2, careerW0!(I)
+        Input #2, careerW1!(I)
 
-        For L = 0 To 15: Input #2, careerZ1!(L): Next
+        Color 5
+        Locate 21, 38
+        TMR1% = TMR1% - 1
+        Print Using "####"; TMR1%
 
-        Close #2
+    Next
 
-        For I = 0 To 13
-            RR = 0
-            CHK = 0
+    For L = 0 To 15: 
+        Input #2, careerZ!(L)
+    Next
 
-            For J = 0 To 61
+    For L = 0 To 15: 
+        Input #2, careerZ1!(L)
+    Next
 
-                If careerAR$(J) = careerA$(I) Then
+    Close #2
 
-                    For W = 1 To 15
-                        If ARS!(W, J, 15) = statYear Then
-                            CHK = CHK + 1
-                        End If
-                    Next W
+    For I = 0 To 13
+        RR = 0
+        CHK = 0
 
-                    If CHK > 0 Then
-                        N = ARS!(1, J, 14) + ARS!(2, J, 14) + ARS!(3, J, 14) + ARS!(4, J, 14)
-                        N = N + ARS!(5, J, 14) + ARS!(6, J, 14) + ARS!(7, J, 14) + ARS!(8, J, 14)
-                        N = N + ARS!(9, J, 14) + ARS!(10, J, 14) + ARS!(11, J, 14)
-                        N = N + ARS!(12, J, 14) + ARS!(13, J, 14) + ARS!(14, J, 14) + ARS!(15, J, 14)
-                    Else
-                        N = ARS!(1, J, 14) + ARS!(2, J, 14) + ARS!(3, J, 14) + ARS!(4, J, 14)
-                        N = N + ARS!(5, J, 14) + ARS!(6, J, 14) + ARS!(7, J, 14) + ARS!(8, J, 14)
-                        N = N + ARS!(9, J, 14) + ARS!(10, J, 14) + ARS!(11, J, 14)
-                        N = N + ARS!(12, J, 14) + ARS!(13, J, 14) + ARS!(14, J, 14) + ARS!(15, J, 14) + 1
+        For J = 0 To 61
+
+            If careerAR$(J) = careerA$(I) Then
+
+                For W = 1 To 15
+                    If ARS!(W, J, 15) = statYear Then
+                        CHK = CHK + 1
                     End If
+                Next W
 
-                    For K = 0 To 13
-                        ARS!(N, J, K) = A(I, K)
-                    Next K
-
-                    ARS!(N, J, 14) = 1
-                    ARS!(N, J, 15) = statYear
-                    W0S!(N, J) = careerW0!(J)
-                    W1S!(N, J) = careerW1!(J)
-
+                If CHK > 0 Then
+                    N = ARS!(1, J, 14) + ARS!(2, J, 14) + ARS!(3, J, 14) + ARS!(4, J, 14)
+                    N = N + ARS!(5, J, 14) + ARS!(6, J, 14) + ARS!(7, J, 14) + ARS!(8, J, 14)
+                    N = N + ARS!(9, J, 14) + ARS!(10, J, 14) + ARS!(11, J, 14)
+                    N = N + ARS!(12, J, 14) + ARS!(13, J, 14) + ARS!(14, J, 14) + ARS!(15, J, 14)
                 Else
-                    RR = RR + 1
-                    If RR = 62 Then
+                    N = ARS!(1, J, 14) + ARS!(2, J, 14) + ARS!(3, J, 14) + ARS!(4, J, 14)
+                    N = N + ARS!(5, J, 14) + ARS!(6, J, 14) + ARS!(7, J, 14) + ARS!(8, J, 14)
+                    N = N + ARS!(9, J, 14) + ARS!(10, J, 14) + ARS!(11, J, 14)
+                    N = N + ARS!(12, J, 14) + ARS!(13, J, 14) + ARS!(14, J, 14) + ARS!(15, J, 14) + 1
+                End If
 
-                        If careerA$(I) <> "END" And careerA$(I) <> "XXX" And careerA$(I) <> "" Then
+                For K = 0 To 13
+                    ARS!(N, J, K) = A(I, K)
+                Next K
 
-                            NB% = NB% + 1
-                            careerAR$(NB%) = careerA$(I)
-                            N = 1
+                ARS!(N, J, 14) = 1
+                ARS!(N, J, 15) = statYear
+                W0S!(N, J) = careerW0!(J)
+                W1S!(N, J) = careerW1!(J)
 
-                            For K = 0 To 13: ARS!(N, NB%, K) = A(I, K): Next
+            Else
+                RR = RR + 1
+                If RR = 62 Then
 
-                            ARS!(N, NB%, 14) = 1
-                            ARS!(N, NB%, 15) = statYear
-                            W0S!(N, NB%) = careerW0!(NB%)
-                            W1S!(N, NB%) = careerW1!(NB%)
-                        End If
+                    If careerA$(I) <> "END" And careerA$(I) <> "XXX" And careerA$(I) <> "" Then
 
+                        NB = NB + 1
+                        careerAR$(NB) = careerA$(I)
+                        N = 1
+
+                        For K = 0 To 13: ARS!(N, NB, K) = A(I, K): Next
+
+                        ARS!(N, NB, 14) = 1
+                        ARS!(N, NB, 15) = statYear
+                        W0S!(N, NB) = careerW0!(NB)
+                        W1S!(N, NB) = careerW1!(NB)
                     End If
 
-                End If 'Done comparing careerAR$() to careerA$()
+                End If
 
+            End If 'Done comparing careerAR$() to careerA$()
+
+        Next J
+
+    Next I
+
+    If doPostLeaders = 1 Then Call UpdateCareerLeaders(selectedFile$)
+
+    Locate 20, 5
+    Print "MERGING CAREER STATS . . . . PLEASE WAIT"
+
+    Open diskPaths$(1) + selectedFile$ + ".CAR" For Output As #3
+
+    Write #3, NB, B$
+
+    For N = 1 To 15
+
+        For I = 0 To 61
+
+            Write #3, careerAR$(I)
+
+            For J = 0 To 15:
+                Write #3, ARS!(N, I, J)
             Next J
+
+            Write #3, W0S!(N, I)
+            Write #3, W1S!(N, I)
+
+            Color 5
+            Locate 21, 38
+            TMR1% = TMR1% - 1
+            Print Using "####"; TMR1%:
 
         Next I
 
-        If doPostLeaders = 1 Then Call UpdateCareerLeaders(selectedFile$)
+    Next N
 
-        Locate 20, 5
-        Print "MERGING CAREER STATS . . . . PLEASE WAIT"
-
-        Open diskPaths$(1) + selectedFile$ + ".CAR" For Output As #3
-
-        Write #3, NB%, B$
-
-        For N = 1 To 15
-
-            For I = 0 To 61
-
-                Write #3, careerAR$(I)
-
-                For J = 0 To 15:
-                    Write #3, ARS!(N, I, J)
-                Next J
-
-                Write #3, W0S!(N, I)
-                Write #3, W1S!(N, I)
-
-                Color 5
-                Locate 21, 38
-                TMR1% = TMR1% - 1
-                Print Using "####"; TMR1%:
-
-            Next I
-
-        Next N
-
-        Close #3
-
-    End If
+    Close #3
 
 End Sub
 
@@ -793,17 +823,17 @@ End Sub
 'leader files (.CLD), adds the new stats,
 'and then saves the changes back to the
 'career leader file (.CLD)
-Sub UpdateCareerLeaders (targetFile$)
+Sub UpdateCareerLeaders (careerFile$)
 
+    Dim BL(21), BLYR(21)
     Dim BL$(21)
-    Dim BLYR(21), BL(21)
 
     Shared careerAR$()
     Shared ARS!(), W0S!(), W1S!()
 
-    If _FileExists(diskPaths$(2) + targetFile$ + ".CLD") Then
+    If _FileExists(diskPaths$(2) + careerFile$ + ".CLD") Then
 
-        Open diskPaths$(2) + targetFile$ + ".CLD" For Input As #1
+        Open diskPaths$(2) + careerFile$ + ".CLD" For Input As #1
 
         For I = 0 To 20
             Input #1, BLYR(I), BL$(I), BL(I)
@@ -960,7 +990,7 @@ Sub UpdateCareerLeaders (targetFile$)
 
     Next I
 
-    Open diskPaths$(2) + targetFile$ + ".CLD" For Output As #2
+    Open diskPaths$(2) + careerFile$ + ".CLD" For Output As #2
 
     For I = 0 To 20
         Write #2, BLYR(I), BL$(I), BL(I)

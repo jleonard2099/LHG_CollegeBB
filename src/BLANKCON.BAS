@@ -1,5 +1,5 @@
 '----------------------------------------
-'            BLANK Subroutine
+'          BLANKCON Subroutine
 '----------------------------------------
 'This routine assists the user in choosing
 'a college conference, and then proceeds to 
@@ -9,7 +9,7 @@ Sub BLANKCON ()
 
     _Title "Courtside College Basketball - Erase Conference Stats"
 
-    Dim statFiles$(MAX_CONFERENCES)
+    Dim statFileNames$(TEAMS_PER_CONFERENCE)
 
     conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
@@ -27,23 +27,24 @@ Sub BLANKCON ()
 
             Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #1
 
-            Input #1, conf$, D1$, D2$ ', D3$, D4$
+            Input #1, conf$, div1$, div2$ ', D3$, D4$
 
             For XW = 1 To TEAMS_PER_CONFERENCE
-                Input #1, statFiles$(XW)
+                Input #1, statFileNames$(XW)
             Next
 
             Close #1
 
             For XW = 1 To TEAMS_PER_CONFERENCE
 
-                If statFiles$(XW) <> Chr$(42) Then
-                    statFileName$ = diskPaths$(1) + statFiles$(XW)
-                    Print "DELETING "; statFiles$(XW); " STATS"
-                    If _FileExists(statFileName$) Then Kill statFileName$
-                    If _FileExists(statFileName$ + "D") Then Kill statFileName$ + "D"
-                    If _FileExists(statFileName$ + "R") Then Kill statFileName$ + "R"
-                    If _FileExists(statFileName$ + "S") Then Kill statFileName$ + "S"
+                If statFileNames$(XW) <> Chr$(42) Then
+                    Print "DELETING "; statFileNames$(XW); " STATS"
+                    statFile$ = diskPaths$(1) + statFileNames$(XW)
+                    If _FileExists(statFile$) Then Kill statFile$
+                    If _FileExists(statFile$) Then Kill statFile$
+                    If _FileExists(statFile$ + "D") Then Kill statFile$ + "D"
+                    If _FileExists(statFile$ + "R") Then Kill statFile$ + "R"
+                    If _FileExists(statFile$ + "S") Then Kill statFile$ + "S"
                 End If
 
             Next

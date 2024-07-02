@@ -8,7 +8,7 @@ Sub CREATENATL ()
 
     _Title "Courtside College Basketball - Manage Organizations"
 
-    Shared creatZ1$()
+    Shared memberConf$()
 
     ReDim menuChoices$(1 To 3)
 
@@ -43,7 +43,7 @@ Sub CREATENATL ()
         If ExitCode% <> 27 Then
 
             For X = 1 To MAX_CONFERENCES
-                creatZ1$(X) = "XXX"
+                memberConf$(X) = "XXX"
             Next
 
             Select Case Selection%
@@ -66,9 +66,12 @@ Sub CREATENATL ()
 
             End Select
 
-        End If
+        End If 'Done checking for ESC
 
     Loop Until Selection% = 3 Or ExitCode% = 27
+
+    Color 15, 0
+    Cls
 
 End Sub
 
@@ -123,7 +126,7 @@ End Sub
 'conferences from the org definition.
 Sub ReviewEditNatOrg (orgFile$, orgName$)
 
-    Shared creatZ1$()
+    Shared memberConf$()
 
     If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
 
@@ -132,7 +135,7 @@ Sub ReviewEditNatOrg (orgFile$, orgName$)
         Input #1, orgName$
 
         For X = 1 To MAX_CONFERENCES
-            Input #1, creatZ1$(X)
+            Input #1, memberConf$(X)
         Next
 
         Close #1
@@ -153,19 +156,19 @@ Sub ReviewEditNatOrg (orgFile$, orgName$)
         For I = 1 To 10
 
             Color 2: Print Using "## "; I;
-            Color 15: Print Left$(creatZ1$(I), 17);
+            Color 15: Print Left$(memberConf$(I), 17);
 
             Locate , 21
             Color 2: Print Using "## "; I + 10;
-            Color 15: Print Left$(creatZ1$(I + 10), 17);
+            Color 15: Print Left$(memberConf$(I + 10), 17);
 
             Locate , 41
             Color 2: Print Using "## "; I + 20;
-            Color 15: Print Left$(creatZ1$(I + 20), 17);
+            Color 15: Print Left$(memberConf$(I + 20), 17);
 
             Locate , 61
             Color 2: Print Using "## "; I + 30;
-            Color 15: Print Left$(creatZ1$(I + 30), 17)
+            Color 15: Print Left$(memberConf$(I + 30), 17)
 
         Next I
 
@@ -194,10 +197,10 @@ Sub ReviewEditNatOrg (orgFile$, orgName$)
 
             If choice = 1 Then
                 'Add conference
-                creatZ1$(conferenceIndex) = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
+                memberConf$(conferenceIndex) = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
-                creatZ1$(conferenceIndex) = "XXX"
+                memberConf$(conferenceIndex) = "XXX"
             End If
 
         End If 'Done checking if ready to save
@@ -217,14 +220,14 @@ End Sub
 'each of the corresponding files (.CON)
 Sub SaveNatOrg (orgFile$, orgName$)
 
-    Shared creatZ1$()
+    Shared memberConf$()
 
     Open diskPaths$(2) + orgFile$ + ".CON" For Output As #1
 
     Print #1, orgName$
 
     For idx = 1 To MAX_CONFERENCES
-        Print #1, creatZ1$(idx)
+        Print #1, memberConf$(idx)
     Next
 
     Close #1

@@ -12,6 +12,8 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
     Shared teamRatings%()
 
+    'Shared teamNames$()
+
     Shared previousYear$
 
     Do
@@ -19,20 +21,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
         Color 15, 0
         Cls
 
-        JJ = 7
-
-        Locate 6, 8
-        Color 15, 4
-
-        Print " " + Chr$(214); String$(61, 196); Chr$(183) + " ";
-
-        For II = 1 To JJ
-            Locate 6 + II, 8
-            Print " " + Chr$(186); String$(61, 32); Chr$(186) + " ";
-        Next
-
-        Locate 7 + JJ, 8
-        Print " " + Chr$(211); String$(61, 196); Chr$(189) + " ";
+        Call MenuBox(6, 8, 61, 7, 15, 4)
 
         Locate 7, 32
 
@@ -83,10 +72,13 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-                        Locate 10, 8
-                        Call CSMsgBox("NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID", 20, PASS)
+                        MsgText$ = "NO TEAMS WERE FOUND MATCHING THAT ID... PRESS ANY KEY TO SELECT ANOTHER ID"
+                        BoxWidth = 20
+                        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Call CSMsgBox(MsgText$, BoxWidth, Pass)
                         I$ = GetKeyPress$
-                        Call CSMsgBox("", 0, PASS)
+                        Call CSMsgBox("", 0, Pass)
                         Exit Sub
 
                     Else
@@ -126,10 +118,12 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
             Do
 
                 Call SelectTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%)
+                'teamGender$(gameIdx) = GetTeamGender$(yearNumber$)
 
                 If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
                     Do
+
                         YCoord = Int((80 - Len(teamName$)) / 2)
                         Locate 2, YCoord
                         Color teamRatings%(0), teamRatings%(1): Print teamName$
@@ -143,6 +137,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                 End If
 
+                'chosenIdx = -1 means there was invalid data
             Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
 
         End If 'Done checking for ESC
@@ -170,9 +165,9 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
         SELECTION% = 1
         Count% = numberTeams
         Start% = 1
-        FileFGColor% = 15: FileBGColor% = 4
-        HiLiteFGColor% = 0: HiLiteBGColor% = 7
-        Rows% = 20
+        FileFGColor = 15: FileBGColor = 4
+        HiLiteFGColor = 0: HiLiteBGColor = 7
+        Rows = 20
         Columns% = 4
         Spacing% = 6
         Row% = 4
@@ -189,7 +184,7 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
         Color 15: Print "-SELECTS TEAM";
 
         _MouseShow "DEFAULT"
-        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor, HiLiteBGColor, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% <> 27 Then
@@ -344,10 +339,9 @@ Sub ReadExtraData (teamYear$, teamIdx, dataOK)
             teamStats!(I) = CVI(Q$(228 + I))
         Next
 
-        'If CVI(Q$(249)) <> 999 Then
         If teamAttendance& > 100000 Then
-            'If attendance is abnormally high, we ARE
-            'clearly not reading accurate data
+            'If attendance is abnormally high, or arena is not a string,
+            'we ARE clearly not reading accurate data
 
             dataOK = 0
 

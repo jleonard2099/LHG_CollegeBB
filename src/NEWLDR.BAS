@@ -9,7 +9,7 @@ Sub NEWLDR ()
     _Title "Courtside College Basketball - Expanded Leaders / Standings"
 
     Dim printOrView
-    Dim expanZ1$(MAX_CONFERENCES)
+    Dim statFileNames$(MAX_CONFERENCES)
 
     ReDim menuChoices$(1 To 3)
 
@@ -55,20 +55,20 @@ Sub NEWLDR ()
                         If FileExit% <> 27 And FileExit% <> 0 Then
 
                             For X = 1 To MAX_CONFERENCES
-                                expanZ1$(X) = "XXX"
+                                statFileNames$(X) = "XXX"
                             Next
 
                             Open diskPaths$(2) + confStatFile$ + ".TMS" For Input As #1
 
-                            Input #1, conf$, D1$, D2$
+                            Input #1, conf$, div1$, div2$
 
                             For X = 1 To TEAMS_PER_CONFERENCE
-                                Input #1, expanZ1$(X)
+                                Input #1, statFileNames$(X)
                             Next
 
                             Close #1
 
-                            Call UpdateExpandedLeaders(expanZ1$(), JB, TS, TTS)
+                            Call UpdateExpandedLeaders(statFileNames$(), JB, TS, TTS)
                             Call SAVELEADER(confStatFile$, JB, TS, TTS)
 
                         End If
@@ -107,12 +107,12 @@ End Sub
 Sub ViewExpandedStats ()
 
     Dim printOrView
-    Dim expanZ1$(MAX_CONFERENCES)
+    Dim statFileNames$(MAX_CONFERENCES)
 
     printOrView = 0
 
     For X = 1 To MAX_CONFERENCES
-        expanZ1$(X) = "XXX"
+        statFileNames$(X) = "XXX"
     Next
 
     conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", ExitCode%)
@@ -121,10 +121,10 @@ Sub ViewExpandedStats ()
 
         Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #1
 
-        Input #1, conf$, D1$, D2$
+        Input #1, conf$, div1$, div2$
 
         For X = 1 To TEAMS_PER_CONFERENCE
-            Input #1, expanZ1$(X)
+            Input #1, statFileNames$(X)
         Next
 
         Close #1
@@ -146,7 +146,7 @@ End Sub
 'stats from those previously read in to
 'a variety of arrays.
 
-Sub UpdateExpandedLeaders (Z1$(), JB, plyrTotalStats, teamTotalStats)
+Sub UpdateExpandedLeaders (statFiles$(), JB, plyrTotalStats, teamTotalStats)
 
     Shared statPlyrNames$(), AL$(), expanTT$()
     Shared TMA$(), TT1$()
@@ -166,13 +166,13 @@ Sub UpdateExpandedLeaders (Z1$(), JB, plyrTotalStats, teamTotalStats)
 
         YY = YY + 1
 
-        If Z1$(KK) <> "*" And Z1$(KK) <> "XXX" And Z1$(KK) <> "" Then
+        If statFiles$(KK) <> "*" And statFiles$(KK) <> "XXX" And statFiles$(KK) <> "" Then
 
-            Print "CONVERTING STAT FILE OF "; Z1$(KK)
+            Print "CONVERTING STAT FILE OF "; statFiles$(KK)
 
-            If _FileExists(diskPaths$(1) + Z1$(KK)) Then
+            If _FileExists(diskPaths$(1) + statFiles$(KK)) Then
 
-                Open diskPaths$(1) + Z1$(KK) For Input As #1
+                Open diskPaths$(1) + statFiles$(KK) For Input As #1
 
                 Input #1, B$
 
@@ -199,10 +199,8 @@ Sub UpdateExpandedLeaders (Z1$(), JB, plyrTotalStats, teamTotalStats)
 
                 Close #1
 
-                Open diskPaths$(1) + Z1$(KK) + "S" For Input As #2
-
+                Open diskPaths$(1) + statFiles$(KK) + "S" For Input As #2
                 Input #2, year
-
                 Close #2
 
                 plyrTotalStats = plyrTotalStats + 1
@@ -282,8 +280,8 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Color 14
         Locate 18, 38
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
 
         For I1 = 1 To 14:
             Write #1, leadersAL!(I, I1)
@@ -294,8 +292,8 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Color 14
         Locate 18, 38
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
 
     Next I
 
@@ -307,8 +305,8 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Color 14
         Locate 18, 38
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
         Write #1, GM!(I)
 
     Next
@@ -321,8 +319,8 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Color 14
         Locate 18, 45
-        TMR% = TMR% - 1
-        Print Using "#####"; TMR%
+        TMR = TMR - 1
+        Print Using "#####"; TMR
         Write #1, GM1!(I)
 
     Next
@@ -373,8 +371,8 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
             Color 14
             Locate 18, 38
-            TMR% = TMR% - 1
-            Print Using "#####"; TMR%
+            TMR = TMR - 1
+            Print Using "#####"; TMR
 
             For I1 = 1 To 14:
                 Input #1, leadersAL!(I, I1)
@@ -385,8 +383,8 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
             Color 14
             Locate 18, 38
-            TMR% = TMR% - 1
-            Print Using "#####"; TMR%
+            TMR = TMR - 1
+            Print Using "#####"; TMR
 
         Next I
 
@@ -398,8 +396,8 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
             Color 14
             Locate 18, 38
-            TMR% = TMR% - 1
-            Print Using "#####"; TMR%
+            TMR = TMR - 1
+            Print Using "#####"; TMR
             Input #1, GM!(I)
 
         Next
@@ -412,8 +410,8 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
             Color 14
             Locate 18, 45
-            TMR% = TMR% - 1
-            Print Using "#####"; TMR%
+            TMR = TMR - 1
+            Print Using "#####"; TMR
             Input #1, GM1!(I)
 
         Next

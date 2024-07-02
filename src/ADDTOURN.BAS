@@ -11,7 +11,6 @@ Sub ADDTOURN ()
     Shared slotName$(), regionNames$()
 
     Shared consolationSetting%()
-    Shared homeScores(), visitorScores()
     Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
 
     Dim NR$
@@ -3116,7 +3115,6 @@ Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
     Shared TC!
 
     Shared consolationSetting%(), scheduleNG%()
-    ' Shared homeScores(), visitorScores()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
 
     Select Case numberRegions
