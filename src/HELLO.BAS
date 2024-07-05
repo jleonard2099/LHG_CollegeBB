@@ -85,8 +85,6 @@ Dim replayLosses, replayWins
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-Dim nbrGamesCurr, nbrGamesRoad
-
 Dim roadPlyrNames$(15), AN$(15)
 
 Dim ARD(14, 14), mergeA%(14, 14)
@@ -106,17 +104,17 @@ Dim BLYR(21), BL(21)
 Dim W0S!(15, 62), W1S!(15, 62)
 
 
-Dim AL$(600), expanTT$(MAX_CONFERENCES, 15)
+Dim AL$(600), plyLeaderTeams$(MAX_CONFERENCES, 15)
 Dim BL$(21)
-Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), TT1$(MAX_CONFERENCES, 15)
+Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), tmLeaderTeams$(MAX_CONFERENCES, 15)
 
 '-- does the "R" refer to "Replay"?
 '-- for instance, A$ is player Names; AR$ is player names in the replay stats?
 Dim careerAR$(62)
 Dim TMM$(600), TPP$(600)
 
-Dim GM!(MAX_CONFERENCES), GM1!(MAX_CONFERENCES), GMA!(600)
-Dim leadersAL!(0 To 600, 0 To 14)
+Dim plyrLeaderYears!(MAX_CONFERENCES), tmLeaderYears!(MAX_CONFERENCES), GMA!(600)
+Dim plyrStatLeaders!(0 To 600, 0 To 14)
 Dim TT!(MAX_CONFERENCES, 15), TT1!(MAX_CONFERENCES, 15)
 Dim TYP!(600)
 Dim W0L!(600), W1L!(600)
@@ -706,7 +704,9 @@ End Sub
 '----------------------------------------
 '        TeamMgmt_Menu Subroutine
 '----------------------------------------
-'...explanation...
+'This subroutine provodes the user with
+'several options for managing a team and
+'it's roster.
 Sub TeamMgt_Menu ()
 
     Shared opSysType$
@@ -5585,66 +5585,72 @@ Sub AUTOSETUP (validTeam)
         Call ReadGameTeam(diskIDs$(tgtTeam), gameTeams$(tgtTeam), tgtId, tgtTeam)
         Call ReadGameExtraData(diskIDs$(tgtTeam), tgtId, tgtTeam, validTeam)
 
-        If tgtId <> 0 Then
-            Call TEAMSETUP(tgtTeam)
-        Else
+        NG%(tgtTeam) = tgtId
+
+        If tgtId = 0 Then
             'In case chosen team ends up with 0 value
             validTeam = 0
         End If
 
     Next tgtTeam
 
-    If validTeam = 1 And TOU = 1 Then
+    If validTeam = 1 Then 
+    
+        Call TEAMSETUP(tgtTeam)
 
-        'Read in tournament settings
-        tournFileNoExt$ = Mid$(tourneyFile$, 1, Len(tourneyFile$) - 4)
-        Open diskPaths$(1) + tournFileNoExt$ + ".INF" For Input As #1
+        If TOU = 1 Then
 
-        Input #1, X$
+            'Read in tournament settings
+            tournFileNoExt$ = Mid$(tourneyFile$, 1, Len(tourneyFile$) - 4)
+            Open diskPaths$(1) + tournFileNoExt$ + ".INF" For Input As #1
 
-        Input #1, X$ ' NUMBER OF REGIONS
+            Input #1, X$
 
-        For I = 1 To 16
-            Input #1, X$ ' NUMBER OF TEAMS IN REGION
-            Input #1, X$ ' NAME OF REGION
-        Next
+            Input #1, X$ ' NUMBER OF REGIONS
 
-        For I = 1 To 16
-            For I1 = 1 To 16
-                For I2 = 1 To 4
-                    Input #1, seedSlotName$(I, I1, I2) ' SEED SLOT NAME
-                    Input #1, tourneySettings(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+            For I = 1 To 16
+                Input #1, X$ ' NUMBER OF TEAMS IN REGION
+                Input #1, X$ ' NAME OF REGION
+            Next
+
+            For I = 1 To 16
+                For I1 = 1 To 16
+                    For I2 = 1 To 4
+                        Input #1, seedSlotName$(I, I1, I2) ' SEED SLOT NAME
+                        Input #1, tourneySettings(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                    Next
                 Next
             Next
-        Next
 
-        Close #1
+            Close #1
 
-        TOU = 0
+            TOU = 0
 
-        'Check if there are more games to play
-        For I = 1 To 16
+            'Check if there are more games to play
+            For I = 1 To 16
 
-            For I1 = 1 To 16
+                For I1 = 1 To 16
 
-                If NG%(0) = tourneySettings(I, I1, 0) And diskIDs$(0) = seedSlotName$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
-                    TOU = 1
-                    exitAll% = 1
-                    Exit For
-                End If
+                    If NG%(0) = tourneySettings(I, I1, 0) And diskIDs$(0) = seedSlotName$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
+                        TOU = 1
+                        exitAll% = 1
+                        Exit For
+                    End If
 
-                If NG%(1) = tourneySettings(I, I1, 0) And diskIDs$(1) = seedSlotName$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
-                    TOU = 1
-                    exitAll% = 1
-                    Exit For
-                End If
+                    If NG%(1) = tourneySettings(I, I1, 0) And diskIDs$(1) = seedSlotName$(I, I1, 1) And tourneySettings(I, I1, 1) = 0 Then
+                        TOU = 1
+                        exitAll% = 1
+                        Exit For
+                    End If
+                Next
+
+                If exitAll% = 1 Then Exit For
+
             Next
 
-            If exitAll% = 1 Then Exit For
+        End If 'Done checking for tournament
 
-        Next
-
-    End If
+    End If 'Done checking for valid team
 
 End Sub
 

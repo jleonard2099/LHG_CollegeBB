@@ -78,19 +78,19 @@ Sub InputTeam ()
         Print inputX$(choice); Tab(31); "LEAGUE INFORMATION"
         Color 15
 
-        Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerGm!
+        Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerplyrLeaderYears!
         'Locate 3, 17: Print " "
 
-        Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerGm!
+        Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerplyrLeaderYears!
         'Locate 4, 25: Print " "
 
         Locate 5, 1: Input "3. SEASON FG % "; leagFGPct!
         'Locate 5, 16: Print " "
 
-        Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerGm!
+        Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerplyrLeaderYears!
         'Locate 6, 23: Print " "
 
-        Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerGm!
+        Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerplyrLeaderYears!
         'Locate 7, 26: Print " "
 
         Locate 8, 1: Input "6. SEASON 3 FGA/FGA % "; leag3FGAPct!
@@ -112,12 +112,12 @@ Sub InputTeam ()
 
                 Case 1:
                     Locate 3, 17: Print Space$(10)
-                    Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerGm!
+                    Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerplyrLeaderYears!
                     Locate 3, 17: Print " "
 
                 Case 2:
                     Locate 4, 25: Print Space$(10)
-                    Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerGm!
+                    Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerplyrLeaderYears!
                     Locate 4, 25: Print " "
 
                 Case 3:
@@ -127,12 +127,12 @@ Sub InputTeam ()
 
                 Case 4
                     Locate 6, 23: Print Space$(10)
-                    Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerGm!
+                    Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerplyrLeaderYears!
                     Locate 6, 23: Print " "
 
                 Case 5
                     Locate 7, 26: Print Space$(10)
-                    Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerGm!
+                    Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerplyrLeaderYears!
                     Locate 7, 26: Print " "
 
                 Case 6
@@ -584,7 +584,7 @@ Sub InputTeam ()
         '---------------
         'Average FGA/G for this team (Off + Def)
         teamRatings%(3) = Int(((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) + .5)
-        teamRatings%(4) = leagFGAPerGm!
+        teamRatings%(4) = leagFGAPerplyrLeaderYears!
         teamRatings%(5) = nbrGmsPlayed!
 
         If choice = 1 Then
@@ -822,10 +822,10 @@ Sub InputTeam ()
         X2! = tmFGA! - ((tmFGA! * tmFGPct!) / 100) + tmFTA! - ((tmFTA! * tmFTPct!) / 100)
         RD! = (tmReb! - X1! + X2! - oppReb!) / (nbrGmsPlayed! * 2)
         HS! = tmReb! - X1! + X2! - oppReb!
-        M7! = ((35 + RD!) / leagRebPerGm!)
+        M7! = ((35 + RD!) / leagRebPerplyrLeaderYears!)
 
         If choice = 2 Then 
-            M7! = ((44 + RD!) / leagRebPerGm!)
+            M7! = ((44 + RD!) / leagRebPerplyrLeaderYears!)
         End If
 
         For I = 0 To 13
@@ -898,7 +898,7 @@ Sub InputTeam ()
 
         Next I
 
-        X! = leagFGAPerGm! + leagRebPerGm! + 20
+        X! = leagFGAPerplyrLeaderYears! + leagRebPerplyrLeaderYears! + 20
         inputY! = (tmFGA! + oppFGA! + tmReb! + oppReb! + tmFouls! + oppFouls!) / (2 * nbrGmsPlayed!)
         staminaRating! = Int(((2 * inputY!) - X!) + .5)
 

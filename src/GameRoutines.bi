@@ -1,6 +1,6 @@
 Declare Sub AdjustPlayTime ()
 Declare Sub AdjustShotClock ()
-Declare Sub AUTOSETUP ()
+Declare Sub AUTOSETUP (validTeam)
 Declare Sub BADFT (ftNumber)
 Declare Sub BALLDISTRIBUTE ()
 Declare Sub BLANKLINE ()

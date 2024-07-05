@@ -67,27 +67,25 @@ End Sub
 'perform the merge
 Sub MergeStats ()
 
-    Dim ARP$(14)
+    Dim statPlyrName_Road$(14)
 
-    Shared nbrGamesCurr, nbrGamesRoad
-
-    Shared gameSite$(), gameSite_Road$()
-    Shared  locIndicator$(), locIndicator_Road$()
-    Shared oppName$(), oppName_Road$()
-    Shared statPlyrNames$()
-
-    Shared ARD(), gameAttendance&(), gameAtt_Road&()
+    Shared gameAttendance&(), gameAtt_Road&()
 
     Shared powerRating_Road(), powerRating()
-    Shared teamScore(), oppScore()
-    Shared teamScore_Road(), oppScore_Road()
 
-    Shared mergeA%()
+    Shared oppScore(), oppScore_Road()
+    Shared teamScore(), teamScore_Road()
 
+    Shared ARD(), mergeA%()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
     Shared W0RD!(), W1RD!()
     Shared ZRD!(), ZRD1!()
+
+    Shared gameSite$(), gameSite_Road$()
+    Shared locIndicator$(), locIndicator_Road$()
+    Shared oppName$(), oppName_Road$()
+    Shared statPlyrNames$()
 
     Do
 
@@ -121,14 +119,13 @@ Sub MergeStats ()
 
                     For I = 0 To 13: 
 
-                        Input #1, ARP$(I)
+                        Input #1, statPlyrName_Road$(I)
 
                         For J = 0 To 13: 
                             Input #1, ARD(I, J)
                         Next
                         
                         Input #1, W0RD!(I)
-                        
                         Input #1, W1RD!(I)
                         
                     Next
@@ -256,14 +253,14 @@ Sub MergeStats ()
                         SEQ = 0
 
                         For K = 0 To 13
-                            If UCase$(ARP$(K)) <> UCase$(statPlyrNames$(K)) Then
+                            If UCase$(statPlyrName_Road$(K)) <> UCase$(statPlyrNames$(K)) Then
                                 SEQ = SEQ + 1
                             End If
                         Next
 
                         If SEQ = 0 Then
 
-                            Call DoTheMerge(pathCurrentStats$, statFile$, B$)
+                            Call DoTheMerge(pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
                             For J = 13 To 23
                                 Locate J
@@ -335,7 +332,7 @@ Sub MergeStats ()
 
         End If 'Done checking for ESC
 
-    Loop Until DUMMY$ <> "" Or UCase$(I$) = "N"
+    Loop Until DUMMY$ <> "" Or UCase$(J$) = "N" Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
 End Sub
 
@@ -347,17 +344,16 @@ End Sub
 'values together from each file and then
 'overwrites the current file with the
 'newly aggregated results.
-Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
+Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
 
-    Shared nbrGamesCurr, nbrGamesRoad
-
-    Shared ARD()
-    Shared powerRating(), powerRating_Road()
     Shared gameAttendance&(), gameAtt_Road&()
+
+    Shared powerRating(), powerRating_Road()
+
     Shared oppScore(), oppScore_Road() 
     Shared teamScore(), teamScore_Road()
 
-    Shared mergeA%()
+    Shared ARD(), mergeA%()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -381,7 +377,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
         gameSite$(nbrGamesCurr) = gameSite_Road$(nbrGamesCurr)
     Next
 
-    Locate 18, 20: Color 12: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
+    Color 12
+    Locate 18, 20: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
     For I = 0 To 13
 
@@ -470,7 +467,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$)
 
     Y = 0
 
-    Locate 20, 20: Color 12: Print "RESULTS SUCCESSFULLY MERGED!!"
+    Color 12
+    Locate 20, 20: Print "RESULTS SUCCESSFULLY MERGED!!"
 
 End Sub
 

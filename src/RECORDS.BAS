@@ -79,6 +79,7 @@ Sub GameRecords (menuChoice)
 
 End Sub
 
+
 '----------------------------------------
 '       ViewGameRecords Subroutine
 '----------------------------------------
@@ -138,7 +139,8 @@ Sub ViewGameRecords
 
     Print
 
-    Color 14: Print "MOST FIELD GOALS, NO MISSES, GAME"
+    Color 14
+    Print "MOST FIELD GOALS, NO MISSES, GAME"
     Color 15
     If indRecords!(5, 0) = 0 Then
         Print "NO RECORD AT THIS TIME"
@@ -147,7 +149,8 @@ Sub ViewGameRecords
     End If
     Print
 
-    Color 14: Print "MOST FIELD GOAL ATTEMPTS, NONE MADE, GAME"
+    Color 14
+    Print "MOST FIELD GOAL ATTEMPTS, NONE MADE, GAME"
     Color 15
     If indRecords!(6, 0) = 0 Then
         Print "NO RECORD AT THIS TIME"
@@ -159,7 +162,6 @@ Sub ViewGameRecords
     If I$ = Chr$(27) Then Exit Sub
 
     Cls
-
     Color 12: Print Tab(31); "INDIVIDUAL RECORDS"
 
     Color 14: Print "MOST FIELD GOALS, GAME"
@@ -262,7 +264,7 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
     Color 12: Print Tab(31); "INDIVIDUAL RECORDS"
@@ -296,6 +298,7 @@ Sub ViewGameRecords
 
     Color 14: Print "MOST FREE THROWS MADE, ONE HALF"
     Color 15
+    
     If indRecords!(26, 0) = 0 Then
         Print "NO RECORD AT THIS TIME"
     Else
@@ -305,6 +308,7 @@ Sub ViewGameRecords
 
     Color 14: Print "MOST FREE THROW ATTEMPTS, GAME"
     Color 15
+    
     If indRecords!(28, 0) = 0 Then
         Print "NO RECORD AT THIS TIME"
     Else
@@ -322,10 +326,9 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
-    
     Color 12: Print Tab(31); "INDIVIDUAL RECORDS"
 
     Color 14: Print "MOST REBOUNDS, GAME"
@@ -365,7 +368,7 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
 
@@ -501,7 +504,7 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
     Color 12: Print Tab(34); "TEAM RECORDS"
@@ -545,7 +548,7 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
     Color 12: Print Tab(34); "TEAM RECORDS"
@@ -591,7 +594,7 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
     Color 12: Print Tab(34); "TEAM RECORDS"
@@ -683,7 +686,7 @@ Sub ViewGameRecords
     Print teamRecDesc$(45, 2);: Print Using " (###)"; teamRecords!(45, 2);: Print ", " + teamRecDesc$(45, 3);
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
     Color 12: Print Tab(34); "TEAM RECORDS"
@@ -727,7 +730,7 @@ Sub ViewGameRecords
     End If
     Print
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
     Color 12: Print Tab(34); "TEAM RECORDS"
@@ -766,7 +769,7 @@ Sub ViewGameRecords
     Print teamRecords!(59, 0); "- "; teamRecDesc$(59, 0) + " " + teamRecDesc$(59, 1) + " " + teamRecDesc$(59, 2) + ", " + teamRecDesc$(59, 3); HALF$(teamRecords!(59, 1))
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
 
@@ -824,7 +827,7 @@ Sub ViewGameRecords
     Print teamRecDesc$(67, 2);: Print Using " (###)"; teamRecords!(67, 2);: Print ", " + teamRecDesc$(67, 3);
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
 
@@ -871,7 +874,7 @@ Sub ViewGameRecords
     Print teamRecDesc$(77, 2);: Print Using " (###)"; teamRecords!(77, 2);: Print ", " + teamRecDesc$(77, 3)
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
 
@@ -907,7 +910,7 @@ Sub ViewGameRecords
     Print
 
     I$ = GetKeyPress$
-    If I$ = Chr$(27) Then Exit Sub 'CALL RECCON
+    If I$ = Chr$(27) Then Exit Sub
 
     Cls
 
@@ -1890,4 +1893,4 @@ Sub GameRecords_Report (printDest, destFile$)
 	
     End If
 
-END SUB
+End Sub

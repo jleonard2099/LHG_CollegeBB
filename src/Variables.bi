@@ -75,17 +75,17 @@ Dim BLYR(21), BL(21)
 Dim W0S!(15, 62), W1S!(15, 62)
 
 
-Dim AL$(600), expanTT$(MAX_CONFERENCES, 15)
+Dim AL$(600), plyLeaderTeams$(MAX_CONFERENCES, 15)
 Dim BL$(21)
-Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), TT1$(MAX_CONFERENCES, 15)
+Dim TMA$(600), expIndCategory$(31), expTeamCategory$(39), tmLeaderTeams$(MAX_CONFERENCES, 15)
 
 '-- does the "R" refer to "Replay"?
 '-- for instance, A$ is player Names; AR$ is player names in the replay stats?
 Dim careerAR$(62)
 Dim TMM$(600), TPP$(600)
 
-Dim GM!(MAX_CONFERENCES), GM1!(MAX_CONFERENCES), GMA!(600)
-Dim leadersAL!(0 To 600, 0 To 14)
+Dim plyrLeaderYears!(MAX_CONFERENCES), tmLeaderYears!(MAX_CONFERENCES), GMA!(600)
+Dim plyrStatLeaders!(0 To 600, 0 To 14)
 Dim TT!(MAX_CONFERENCES, 15), TT1!(MAX_CONFERENCES, 15)
 Dim TYP!(600)
 Dim W0L!(600), W1L!(600)
