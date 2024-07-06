@@ -1,10 +1,10 @@
 '----------------------------------------
-'        SeasonRecords Subroutine
+'        Records_Menu Subroutine
 '----------------------------------------
 'This subroutine gives the user a number of
 'menu selections for viewing, updating and
 'printing records
-Sub SeasonRecords ()
+Sub Records_Menu ()
 
     _Title "Courtside College Basketball - Analyze Records"
 
@@ -15,7 +15,7 @@ Sub SeasonRecords ()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
     Do
-        
+
         Cls
 
         Call TITLE
@@ -38,7 +38,7 @@ Sub SeasonRecords ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -46,11 +46,11 @@ Sub SeasonRecords ()
 
         Color , 0
 
-        If ExitCode% <> 27 Then 
+        If ExitCode% <> 27 Then
 
             Select Case Selection%
 
-                Case 1, 2:
+                Case 1:
                     Call ViewSeasonRecords
 
                 Case 2:
@@ -61,7 +61,7 @@ Sub SeasonRecords ()
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SAVEFILEDIALOG$("Save Records Report",_CWD$ + "\Records","*.txt","Text File")          
+                                userFile$ = _SaveFileDialog$("Save Records Report", _CWD$ + "\Records", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call SeasonRecords_Report(0, userFile$)
                                 End If
@@ -70,22 +70,22 @@ Sub SeasonRecords ()
                                 Call SeasonRecords_Report(1, "RECORDS")
 
                         End Select
-                        
+
                     End If
 
-                Case 3: 
-                    If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
+                Case 3:
+                    If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
                         Kill diskPaths$(1) + "RECORDS.CBB"
                     End If
 
-                Case 4: 
-                    Call GameRecords (1)
+                Case 4:
+                    Call GameRecords(1)
 
-                Case 5: 
-                    Call GameRecords (2)
+                Case 5:
+                    Call GameRecords(2)
 
-                Case 6: 
-                    If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then 
+                Case 6:
+                    If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
                         Kill diskPaths$(1) + "RECORDS.GAM"
                     End If
 
@@ -93,7 +93,7 @@ Sub SeasonRecords ()
 
         End If
 
-    Loop Until Selection% = 7 OR ExitCode% = 27
+    Loop Until Selection% = 7 Or ExitCode% = 27
 
     Cls
 
@@ -110,15 +110,15 @@ Sub ViewSeasonRecords ()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
-    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
+    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
         MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 24
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
 
@@ -133,7 +133,7 @@ Sub ViewSeasonRecords ()
         For I = 1 To 21
             Input #1, offRecords!(I)
             Input #1, offRecDesc$(I)
-            If offRecords!(I) = 19999 Then 
+            If offRecords!(I) = 19999 Then
                 offRecords!(I) = 0
                 offRecDesc$(I) = ""
             End If
@@ -142,7 +142,7 @@ Sub ViewSeasonRecords ()
         For I = 1 To 21
             Input #1, defRecords!(I)
             Input #1, defRecDesc$(I)
-            If defRecords!(I) = 19999 Then 
+            If defRecords!(I) = 19999 Then
                 defRecords!(I) = 0
                 defRecDesc$(I) = ""
             End If
@@ -155,7 +155,6 @@ Sub ViewSeasonRecords ()
 
         Call ShadowBox(1, 1, 73, 20, 15, 4)
 
-        Color 15
         Locate 2, 23
         Print "******* INDIVIDUAL PLAYER RECORDS *******"
         Print
@@ -164,31 +163,31 @@ Sub ViewSeasonRecords ()
 
         Color 7
         'Games Played
-        Locate , 4: Print indRecordDesc$(1); Tab(28); plyrRecDesc$(1, 0); Tab(42); plyrRecDesc$(1, 1); Tab(62); Using "####"; plyrRecords!(1)
+        Locate , 4: Print indRecordDesc$(1); Tab(28); Left$(plyrRecDesc$(1, 0), 14); Tab(42); plyrRecDesc$(1, 1); Tab(62); Using "####"; plyrRecords!(1)
         'Field Goal Attempts
-        Locate , 4: Print indRecordDesc$(2); Tab(28); plyrRecDesc$(2, 0); Tab(42); plyrRecDesc$(2, 1); Tab(62); Using "####"; plyrRecords!(2)
+        Locate , 4: Print indRecordDesc$(2); Tab(28); Left$(plyrRecDesc$(2, 0), 14); Tab(42); plyrRecDesc$(2, 1); Tab(62); Using "####"; plyrRecords!(2)
         'Field Goals Made
-        Locate , 4: Print indRecordDesc$(3); Tab(28); plyrRecDesc$(3, 0); Tab(42); plyrRecDesc$(3, 1); Tab(62); Using "####"; plyrRecords!(3)
+        Locate , 4: Print indRecordDesc$(3); Tab(28); Left$(plyrRecDesc$(3, 0), 14); Tab(42); plyrRecDesc$(3, 1); Tab(62); Using "####"; plyrRecords!(3)
         'Field Goal %
-        Locate , 4: Print indRecordDesc$(4); Tab(28); plyrRecDesc$(4, 0); Tab(42); plyrRecDesc$(4, 1); Tab(62); Using "##.#"; plyrRecords!(4) * 100
+        Locate , 4: Print indRecordDesc$(4); Tab(28); Left$(plyrRecDesc$(4, 0), 14); Tab(42); plyrRecDesc$(4, 1); Tab(62); Using "##.#"; plyrRecords!(4) * 100
         '3 Field Goal Attempts
-        Locate , 4: Print indRecordDesc$(5); Tab(28); plyrRecDesc$(5, 0); Tab(42); plyrRecDesc$(5, 1); Tab(62); Using "####"; plyrRecords!(5)
+        Locate , 4: Print indRecordDesc$(5); Tab(28); Left$(plyrRecDesc$(5, 0), 14); Tab(42); plyrRecDesc$(5, 1); Tab(62); Using "####"; plyrRecords!(5)
         '3 Field Goal Made
-        Locate , 4: Print indRecordDesc$(6); Tab(28); plyrRecDesc$(6, 0); Tab(42); plyrRecDesc$(6, 1); Tab(62); Using "####"; plyrRecords!(6)
+        Locate , 4: Print indRecordDesc$(6); Tab(28); Left$(plyrRecDesc$(6, 0), 14); Tab(42); plyrRecDesc$(6, 1); Tab(62); Using "####"; plyrRecords!(6)
         '3 Field Goal %
-        Locate , 4: Print indRecordDesc$(7); Tab(28); plyrRecDesc$(7, 0); Tab(42); plyrRecDesc$(7, 1); Tab(62); Using "##.#"; plyrRecords!(7) * 100
+        Locate , 4: Print indRecordDesc$(7); Tab(28); Left$(plyrRecDesc$(7, 0), 14); Tab(42); plyrRecDesc$(7, 1); Tab(62); Using "##.#"; plyrRecords!(7) * 100
         'Free Throw Attempts
-        Locate , 4: Print indRecordDesc$(8); Tab(28); plyrRecDesc$(8, 0); Tab(42); plyrRecDesc$(8, 1); Tab(62); Using "####"; plyrRecords!(8)
+        Locate , 4: Print indRecordDesc$(8); Tab(28); Left$(plyrRecDesc$(8, 0), 14); Tab(42); plyrRecDesc$(8, 1); Tab(62); Using "####"; plyrRecords!(8)
         'Free Throws Made
-        Locate , 4: Print indRecordDesc$(9); Tab(28); plyrRecDesc$(9, 0); Tab(42); plyrRecDesc$(9, 1); Tab(62); Using "####"; plyrRecords!(9)
+        Locate , 4: Print indRecordDesc$(9); Tab(28); Left$(plyrRecDesc$(9, 0), 14); Tab(42); plyrRecDesc$(9, 1); Tab(62); Using "####"; plyrRecords!(9)
         'Free Throw %
-        Locate , 4: Print indRecordDesc$(10); Tab(28); plyrRecDesc$(10, 0); Tab(42); plyrRecDesc$(10, 1); Tab(62); Using "##.#"; plyrRecords!(10) * 100
+        Locate , 4: Print indRecordDesc$(10); Tab(28); Left$(plyrRecDesc$(10, 0), 14); Tab(42); plyrRecDesc$(10, 1); Tab(62); Using "##.#"; plyrRecords!(10) * 100
         'Minutes Played
-        Locate , 4: Print indRecordDesc$(11); Tab(28); plyrRecDesc$(11, 0); Tab(42); plyrRecDesc$(11, 1); Tab(62); Using "####"; plyrRecords!(11)
+        Locate , 4: Print indRecordDesc$(11); Tab(28); Left$(plyrRecDesc$(11, 0), 14); Tab(42); plyrRecDesc$(11, 1); Tab(62); Using "####"; plyrRecords!(11)
         'Points
-        Locate , 4: Print indRecordDesc$(12); Tab(28); plyrRecDesc$(12, 0); Tab(42); plyrRecDesc$(12, 1); Tab(62); Using "####"; plyrRecords!(12)
+        Locate , 4: Print indRecordDesc$(12); Tab(28); Left$(plyrRecDesc$(12, 0), 14); Tab(42); plyrRecDesc$(12, 1); Tab(62); Using "####"; plyrRecords!(12)
         'Scoring Average
-        Locate , 4: Print indRecordDesc$(13); Tab(28); plyrRecDesc$(13, 0); Tab(42); plyrRecDesc$(13, 1); Tab(62); Using "####"; plyrRecords!(13)
+        Locate , 4: Print indRecordDesc$(13); Tab(28); Left$(plyrRecDesc$(13, 0), 14); Tab(42); plyrRecDesc$(13, 1); Tab(62); Using "####"; plyrRecords!(13)
 
         Color 15
         Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
@@ -202,8 +201,7 @@ Sub ViewSeasonRecords ()
         Cls
 
         Call ShadowBox(1, 1, 73, 20, 15, 4)
-        
-        Color 15
+
         Locate 2, 23
         Print "******* INDIVIDUAL PLAYER RECORDS *******"
         Print
@@ -238,7 +236,6 @@ Sub ViewSeasonRecords ()
 
         Call ShadowBox(1, 1, 73, 20, 15, 1)
 
-        Color 15
         Locate 2, 23
         Print "*******  OFFENSIVE TEAM RECORDS *******"
         Print
@@ -276,7 +273,7 @@ Sub ViewSeasonRecords ()
         Locate 22, 30: Print "HIT ANY KEY TO CONTINUE"
         I$ = GetKeyPress$
 
-        For I = 4 To 21: 
+        For I = 4 To 21:
             Locate I, 4
             Print Space$(72)
         Next
@@ -286,7 +283,6 @@ Sub ViewSeasonRecords ()
 
         Call ShadowBox(1, 1, 73, 20, 15, 1)
 
-        Color 15
         Locate 2, 23
         Print "*******  OFFENSIVE TEAM RECORDS *******"
         Print
@@ -394,23 +390,51 @@ End Sub
 'This subroutine facilitates formatting
 'of the record data to a file, that is
 'subsequently either saved, or printed.
-Sub SeasonRecords_Report  (printDest, destFile$)
+Sub SeasonRecords_Report (printDest, destFile$)
 
     Shared teamRecordDesc$(), indRecordDesc$()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
-    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then 
+    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
         MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
         BoxWidth = 24
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, Pass)
+        Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
-        Call CSMsgBox("", 0, Pass)
+        Call CSMsgBox("", 0, PASS)
 
     Else
+
+        Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
+
+        For I = 1 To 25
+            Input #1, plyrRecords!(I)
+            Input #1, plyrRecDesc$(I, 0)
+            Input #1, plyrRecDesc$(I, 1)
+        Next
+
+        For I = 1 To 21
+            Input #1, offRecords!(I)
+            Input #1, offRecDesc$(I)
+            If offRecords!(I) = 19999 Then
+                offRecords!(I) = 0
+                offRecDesc$(I) = ""
+            End If
+        Next
+
+        For I = 1 To 21
+            Input #1, defRecords!(I)
+            Input #1, defRecDesc$(I)
+            If defRecords!(I) = 19999 Then
+                defRecords!(I) = 0
+                defRecDesc$(I) = ""
+            End If
+        Next
+
+        Close #1
 
         Color 15, 0
         Cls
@@ -418,10 +442,10 @@ Sub SeasonRecords_Report  (printDest, destFile$)
         Open destFile$ For Output As #1
 
         Print #1, Tab(23); "******* INDIVIDUAL PLAYER RECORDS *******"
-        Print #1, 
+        Print #1,
         Print #1, "CATEGORY                PLAYER           TEAM            RECORD"
 
-        For I = 1 to 3
+        For I = 1 To 3
             Print #1, indRecordDesc$(I); Tab(28); plyrRecDesc$(I, 0); Tab(42); plyrRecDesc$(I, 1); Tab(62); Using "####"; plyrRecords!(I)
         Next I
 
@@ -453,9 +477,9 @@ Sub SeasonRecords_Report  (printDest, destFile$)
 
         Print #1, indRecordDesc$(25); Tab(28); plyrRecDesc$(25, 0); Tab(42); plyrRecDesc$(25, 1); Tab(62); Using "####"; plyrRecords!(25)
 
-        Print #1, 
+        Print #1,
         Print #1, Tab(23); "*******  OFFENSIVE TEAM RECORDS *******"
-        Print #1, 
+        Print #1,
         Print #1, "CATEGORY                        TEAM             RECORD            "
 
         For I = 1 To 2
@@ -487,14 +511,13 @@ Sub SeasonRecords_Report  (printDest, destFile$)
         Next I
 
         Print #1, teamRecordDesc$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
-
         Print #1, teamRecordDesc$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
 
         Print #1, "WINS"; Tab(33); offRecDesc$(21); Tab(53); Using "####"; offRecords!(21)
 
-        Print #1, 
+        Print #1,
         Print #1, Tab(23); "*******  DEFENSIVE TEAM RECORDS *******"
-        Print #1, 
+        Print #1,
         Print #1, "CATEGORY                        TEAM             RECORD            "
 
         For I = 1 To 2
@@ -544,11 +567,11 @@ Sub SeasonRecords_Report  (printDest, destFile$)
             Close #2
 
             LPrint Chr$(12)
-            
+
             Kill destFile$
 
         End If
-        
+
     End If
 
 End Sub

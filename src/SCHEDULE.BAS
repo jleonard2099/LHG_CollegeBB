@@ -63,12 +63,16 @@ Sub SCHEDULE ()
             'Assign full array sizes for schedule games
             ReDim homeScores(MAX_SCHEDULE_GAMES)
             ReDim visitorScores(MAX_SCHEDULE_GAMES)
-            
-            scheduleNG%(0, 8) = 3
+
+            scheduleNG%(0, 2) = 1   'Home Court
             scheduleNG%(0, 3) = 1
-            scheduleNG%(0, 7) = 3
-            scheduleNG%(0, 2) = 1
             scheduleNG%(0, 5) = 5
+            scheduleNG%(0, 6) = 0
+            scheduleNG%(0, 7) = 3
+            scheduleNG%(0, 8) = 3
+            scheduleNG%(0, 9) = 1
+            scheduleNG%(0, 10) = 1
+            scheduleNG%(0, 14) = 0
 
             Select Case Selection%
 
@@ -87,6 +91,7 @@ Sub SCHEDULE ()
 
                     Do
 
+                        'Have the user pick a schedule
                         scheduleFile$ = ChooseFile$(diskPaths$(3) + "*.SCD", "SCHEDULE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
@@ -115,9 +120,6 @@ Sub SCHEDULE ()
                 Case 8:
                     Call BoxscoreMaintenance
 
-                Case 9:
-                    Cls
-
             End Select
 
         End If
@@ -142,7 +144,6 @@ Sub NewSchedule (scheduleFile$)
     Shared BS%, NS%
 
     Shared homeScores(), visitorScores()
-
     Shared scheduleAP%(), scheduleNG%()
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
@@ -531,6 +532,8 @@ End Sub
 'specified game in the schedule
 Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
 
+    Dim displayPause!
+
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
@@ -539,8 +542,6 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
     Shared coachMode$(), foulShotOpt$()
     Shared location$(), playMode$()
     Shared sClockOpt$(), yesNoText$()
-
-    Dim displayPause!
 
     Do
 
@@ -598,6 +599,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Color 15: Print "ACCEPT SETTINGS"
 
         Do
+
             I$ = GetKeyPress$
 
             Select Case UCase$(I$)
@@ -606,11 +608,13 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                 Case "C": I$ = "13"
                 Case "D": I$ = "14"
                 Case "E": I$ = "15"
+                Case "F": I$ = "16"
             End Select
 
             setting = Val(I$)
 
             Select Case setting
+            
                 Case 1:
                     scheduleNG%(gameIndex%, 8) = scheduleNG%(gameIndex%, 8) + 1
                     If scheduleNG%(gameIndex%, 8) > 3 Then scheduleNG%(gameIndex%, 8) = 0
@@ -656,7 +660,6 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                 Case 8:
                     scheduleNG%(gameIndex%, 7) = 1 + scheduleNG%(gameIndex%, 7)
                     If scheduleNG%(gameIndex%, 7) > 3 Then scheduleNG%(gameIndex%, 7) = 0
-                    'If scheduleNG%(gameIndex%, 7) > 2 Then scheduleNG%(gameIndex%, 7) = 0
 
                 Case 9:
                     scheduleNG%(gameIndex%, 3) = 1 - scheduleNG%(gameIndex%, 3)
@@ -731,21 +734,17 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
     Shared scheduleAP%()
     Shared scheduleNG%()
     Shared teamRatings%()
-
     Shared scheduleYN$()
 
     Shared memberIdx()
     Shared memberName$(), memberYear$()
 
-    'Do
-    I$ = ""
-
     Select Case scheduleAction%
 
         Case 6
             Call ChangeGlobalSettings
-            Call SaveScheduleFile(subSchedFile$)
-            Call NewSchedule(subSchedFile$)
+            Call SaveScheduleFile(scheduleFile$)
+            Call NewSchedule(scheduleFile$)
 
         Case 3, 4, 5
 
@@ -881,6 +880,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                             If T1 = scheduleNG%(I, 0) And YN$ = scheduleYN$(I, 0) Then
                                 scheduleNG%(I, 8) = 2
                             End If
+
                             If T1 = scheduleNG%(I, 1) And YN$ = scheduleYN$(I, 1) Then
                                 scheduleNG%(I, 8) = 1
                             End If
@@ -935,6 +935,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
     End Select 'Done with actions 2 -5
 
 End Sub
+
 
 '----------------------------------------
 '       EditParameters SubRoutine
@@ -1287,7 +1288,7 @@ Sub ChangeGlobalSettings ()
     ' GLOBAL SETTINGS FOR A SCHEDULE
     ' The code below would use default values based on the most recent rules
     'playerOpt = 3
-    'sClockVal = 2
+    'sClockVal = 3
     'coachOpt = 1
     'threePtOpt = 1
     'foulsToDQ = 5
@@ -1312,8 +1313,10 @@ Sub ChangeGlobalSettings ()
     TM$ = "07:30P"
 
     Do
+
         Color 15, 0
         Cls
+
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
         Locate 3, 2: Color 14: Print "(1) ";
@@ -1413,7 +1416,7 @@ Sub DeleteBoxscores (fileChoice%, fileSpec$)
         Select Case fileChoice%
 
             Case 3
-                MsgText$ = "NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU"
+                MsgText$ = "NO BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU"
 
             Case 4
                 MsgText$ = "NO SPECIAL EVENTS BOXSCORES WERE FOUND PRESS ANY KEY TO RETURN TO MENU"
@@ -1739,4 +1742,3 @@ Sub EditBoxscore (boxName$)
     End If
 
 End Sub
-

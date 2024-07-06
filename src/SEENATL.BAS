@@ -42,7 +42,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
     Open diskPaths$(2) + leagueFile$ + ".NLD" For Input As #1
 
-    For X = 1 To 30: 
+    For X = 1 To TEAMS_PER_CONFERENCE:
         Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
     Next
 
@@ -50,7 +50,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
         Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1$(X)
     Next
 
-    For X = 1 To MAX_CONFERENCES: 
+    For X = 1 To MAX_CONFERENCES:
         Input #1, offLeaderNames$(X)
         For M = 1 To 20: 
             Input #1, offLeaders!(X, M)
@@ -80,7 +80,7 @@ End Sub
 
 
 '----------------------------------------
-'         StatOptions_Nat Subroutine
+'       StatOptions_Nat Subroutine
 '----------------------------------------
 'This subroutine gives the user various
 'options for viewing the previously loaded
@@ -154,6 +154,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Cls
 
     Color 12
+    Locate , Int((80 - Len(confName$) - 17) / 2)
     Print orgName$ + " OVERALL RANKINGS"
 
     Locate , 1
@@ -166,7 +167,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         Print Using "###  "; P;
         Print PR$(P); Tab(22); Using "###.#    ##   ##          ###.#"; PT#(P, 1); PT#(P, 2); PT#(P, 3); PT#(P, 4)
 
-        If P / 20 = Int(P / 20) Then
+        If (P / 20) = Int(P / 20) Then
 
             Color 12
             'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
@@ -543,29 +544,29 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
             Print Left$(offLeaderNames$(X), 11); Tab(13);
-			Print Using "##"; offLeaders!(X, 16);
-			Print Tab(16);
-			Print Using "####"; offLeaders!(X, 2);
-			Print Tab(21);
-			Print Using "####"; offLeaders!(X, 3);
-			Print Tab(26);
+            Print Using "##"; offLeaders!(X, 16);
+            Print Tab(16);
+            Print Using "####"; offLeaders!(X, 2);
+            Print Tab(21);
+            Print Using "####"; offLeaders!(X, 3);
+            Print Tab(26);
             Print Using ".###"; offLeaders!(X, 17);
-			Print Tab(31);
-			Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+            Print Tab(31);
+            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
             Print Tab(46);
-			Print Using "####"; offLeaders!(X, 6);
-			Print Tab(51);
-			Print Using "####"; offLeaders!(X, 9);
-			Print Tab(56);
-			Print Using "####"; offLeaders!(X, 7);
-			Print Tab(61);
+            Print Using "####"; offLeaders!(X, 6);
+            Print Tab(51);
+            Print Using "####"; offLeaders!(X, 9);
+            Print Tab(56);
+            Print Using "####"; offLeaders!(X, 7);
+            Print Tab(61);
             Print Using "###"; offLeaders!(X, 8);
-			Print Tab(65);
-			Print Using "###"; offLeaders!(X, 10);
-			Print Tab(69);
-			Print Using "#####"; offLeaders!(X, 20);
+            Print Tab(65);
+            Print Using "###"; offLeaders!(X, 10);
+            Print Tab(69);
+            Print Using "#####"; offLeaders!(X, 20);
             Print Tab(75);
-			Print Using "###.#"; offLeaders!(X, 19)
+            Print Using "###.#"; offLeaders!(X, 19)
         End If
 
     Next
@@ -589,27 +590,27 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
         If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
             Print Left$(defLeaderNames$(X), 11); Tab(13);
-			Print Using "##"; defLeaders!(X, 16);
-			Print Tab(16);
-			Print Using "####"; defLeaders!(X, 2);
-			Print Tab(21);
-			Print Using "####"; defLeaders!(X, 3);
-			Print Tab(26);
+            Print Using "##"; defLeaders!(X, 16);
+            Print Tab(16);
+            Print Using "####"; defLeaders!(X, 2);
+            Print Tab(21);
+            Print Using "####"; defLeaders!(X, 3);
+            Print Tab(26);
             Print Using ".###"; defLeaders!(X, 17);
-			Print Tab(31);
-			Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+            Print Tab(31);
+            Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
             Print Tab(46);
-			Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
-			Print Tab(56);
-			Print Using "####"; defLeaders!(X, 7);
-			Print Tab(61);
+            Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+            Print Tab(56);
+            Print Using "####"; defLeaders!(X, 7);
+            Print Tab(61);
             Print Using "###"; defLeaders!(X, 8);
-			Print Tab(65);
-			Print Using "###"; defLeaders!(X, 10);
-			Print Tab(69);
-			Print Using "#####"; defLeaders!(X, 20);
+            Print Tab(65);
+            Print Using "###"; defLeaders!(X, 10);
+            Print Tab(69);
+            Print Using "#####"; defLeaders!(X, 20);
             Print Tab(75);
-			Print Using "###.#"; defLeaders!(X, 19)
+            Print Using "###.#"; defLeaders!(X, 19)
         End If
 
     Next
@@ -638,10 +639,10 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
     Shared seeZ1$(), seeZ2$(), seeZ3$()
     Shared PT#()
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, orgName$ + " OVERALL RANKINGS"
     Print #1, "                    RATING     W    L    STRENGTH OF SCHEDULE"
@@ -915,29 +916,29 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
             Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
-			Print #1, Using "##"; offLeaders!(X, 16);
-			Print #1, Tab(16);
-			Print #1, Using "####"; offLeaders!(X, 2);
-			Print #1, Tab(21);
-			Print #1, Using "####"; offLeaders!(X, 3);
-			Print #1, Tab(26);
+            Print #1, Using "##"; offLeaders!(X, 16);
+            Print #1, Tab(16);
+            Print #1, Using "####"; offLeaders!(X, 2);
+            Print #1, Tab(21);
+            Print #1, Using "####"; offLeaders!(X, 3);
+            Print #1, Tab(26);
             Print #1, Using ".###"; offLeaders!(X, 17);
-			Print #1, Tab(31);
-			Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+            Print #1, Tab(31);
+            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
             Print #1, Tab(46);
-			Print #1, Using "####"; offLeaders!(X, 6);
-			Print #1, Tab(51);
-			Print #1, Using "####"; offLeaders!(X, 9);
-			Print #1, Tab(56);
-			Print #1, Using "####"; offLeaders!(X, 7);
-			Print #1, Tab(61);
+            Print #1, Using "####"; offLeaders!(X, 6);
+            Print #1, Tab(51);
+            Print #1, Using "####"; offLeaders!(X, 9);
+            Print #1, Tab(56);
+            Print #1, Using "####"; offLeaders!(X, 7);
+            Print #1, Tab(61);
             Print #1, Using "###"; offLeaders!(X, 8);
-			Print #1, Tab(65);
-			Print #1, Using "###"; offLeaders!(X, 10);
-			Print #1, Tab(69);
-			Print #1, Using "#####"; offLeaders!(X, 20);
+            Print #1, Tab(65);
+            Print #1, Using "###"; offLeaders!(X, 10);
+            Print #1, Tab(69);
+            Print #1, Using "#####"; offLeaders!(X, 20);
             Print #1, Tab(75);
-			Print #1, Using "###.#"; offLeaders!(X, 19)
+            Print #1, Using "###.#"; offLeaders!(X, 19)
         End If
 
     Next
@@ -950,48 +951,48 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
         If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
             Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
-			Print #1, Using "##"; defLeaders!(X, 16);
-			Print #1, Tab(16);
-			Print #1, Using "####"; defLeaders!(X, 2);
-			Print #1, Tab(21);
-			Print #1, Using "####"; defLeaders!(X, 3);
-			Print #1, Tab(26);
+            Print #1, Using "##"; defLeaders!(X, 16);
+            Print #1, Tab(16);
+            Print #1, Using "####"; defLeaders!(X, 2);
+            Print #1, Tab(21);
+            Print #1, Using "####"; defLeaders!(X, 3);
+            Print #1, Tab(26);
             Print #1, Using ".###"; defLeaders!(X, 17);
-			Print #1, Tab(31);
-			Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+            Print #1, Tab(31);
+            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
             Print #1, Tab(46);
-			Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
-			Print #1, Tab(56);
-			Print #1, Using "####"; defLeaders!(X, 7);
-			Print #1, Tab(61);
+            Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+            Print #1, Tab(56);
+            Print #1, Using "####"; defLeaders!(X, 7);
+            Print #1, Tab(61);
             Print #1, Using "###"; defLeaders!(X, 8);
-			Print #1, Tab(65);
-			Print #1, Using "###"; defLeaders!(X, 10);
-			Print #1, Tab(69);
-			Print #1, Using "#####"; defLeaders!(X, 20);
+            Print #1, Tab(65);
+            Print #1, Using "###"; defLeaders!(X, 10);
+            Print #1, Tab(69);
+            Print #1, Using "#####"; defLeaders!(X, 20);
             Print #1, Tab(75);
-			Print #1, Using "###.#"; defLeaders!(X, 19)
+            Print #1, Using "###.#"; defLeaders!(X, 19)
         End If
 
     Next
 
     Close #1
 
- 	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub

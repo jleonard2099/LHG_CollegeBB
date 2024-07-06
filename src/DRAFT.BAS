@@ -69,7 +69,9 @@ Sub DRAFT ()
                 Case 2:
                     draftIdx = 0
                     Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmName_DRAFT$(draftIdx), draftIdx)
-                    If teamIdx > 0 Then Call DraftChoices(0, doneDraft, teamIdx)
+                    If teamIdx > 0 Then 
+                        Call DraftChoices(0, doneDraft, teamIdx)
+                    End If
 
             End Select
 
