@@ -10,11 +10,11 @@ Sub DRAFT ()
     Shared d3FG_Adj(), d3FGA_Adj()
     Shared dFGPctAdj_DRAFT!()
 
-    Shared lgRat_DRAFT()
+    Shared leagRat_DRAFT()
     Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
     Shared stamina_DRAFT!(), teamRat_DRAFT()
 
-    Shared teamYears$(), plyrNames_DRAFT$(), tmName_DRAFT$()
+    Shared tmYears_DRAFT$(), plyrNames_DRAFT$(), tmName_DRAFT$()
 
     ReDim menuChoices$(1 To 3)
 
@@ -25,31 +25,31 @@ Sub DRAFT ()
         menuChoices$(1) = "DRAFT A NEW TEAM         "
         menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
         menuChoices$(3) = "EXIT TO MAIN MENU        "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1:
 
                     Erase dFGPctAdj_DRAFT!, d3FGA_Adj, d3FG_Adj
-                    Erase lgRat_DRAFT, plyrOff_DRAFT!, plyrRat_DRAFT!
+                    Erase leagRat_DRAFT, plyrOff_DRAFT!, plyrRat_DRAFT!
                     Erase stamina_DRAFT!, teamRat_DRAFT
 
                     For I = 0 To 1
@@ -63,12 +63,12 @@ Sub DRAFT ()
                     Next
 
                     draftIdx = 0
-                    Call NewTeamParameters(teamYears$(draftIdx), tmName_DRAFT$(draftIdx), teamIdx)
+                    Call NewTeamParameters(tmYears_DRAFT$(draftIdx), tmName_DRAFT$(draftIdx), teamIdx)
                     Call DraftChoices(1, doneDraft, teamIdx)
 
                 Case 2:
                     draftIdx = 0
-                    Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, teamIdx, tmName_DRAFT$(draftIdx), draftIdx)
+                    Call ChooseDraftTeam(tmYears_DRAFT$(draftIdx), NTMS, teamIdx, tmName_DRAFT$(draftIdx), draftIdx)
                     If teamIdx > 0 Then 
                         Call DraftChoices(0, doneDraft, teamIdx)
                     End If
@@ -77,9 +77,9 @@ Sub DRAFT ()
 
         End If
 
-        If doneDraft = 1 Then Selection% = 3
+        If doneDraft = 1 Then SELECTION% = 3
 
-    Loop Until Selection% = 3 Or ExitCode% = 27
+    Loop Until SELECTION% = 3 Or ExitCode% = 27
 
     '1 Exit Sub
 End Sub
@@ -203,7 +203,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
     Shared plyrDef_DRAFT!(), plyrStat_DRAFT!()
     Shared plyrOff_DRAFT!(), plyrRat_DRAFT!()
 
-    Shared posn_DRAFT$(), teamYears$()
+    Shared posn_DRAFT$(), tmYears_DRAFT$()
     Shared plyrNames_DRAFT$(), tmName_DRAFT$()
 
     Do
@@ -245,7 +245,7 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                 Loop Until slot >= 0 And slot <= 14
 
                 draftIdx = 1
-                Call ChooseDraftTeam(teamYears$(draftIdx), NTMS, destIdx, tmName_DRAFT$(draftIdx), draftIdx)
+                Call ChooseDraftTeam(tmYears_DRAFT$(draftIdx), NTMS, destIdx, tmName_DRAFT$(draftIdx), draftIdx)
 
                 Color , 0
                 Cls
@@ -350,12 +350,13 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                 Loop Until X9 = 0 And (T3 > 98 And T3 < 101)
 
-                Call SaveTeamDraft(draftNew, teamYears$(0), tmName_DRAFT$(0), teamPosn)
+                Call SaveTeamDraft(draftNew, tmYears_DRAFT$(0), tmName_DRAFT$(0), teamPosn)
 
         End Select
 
     Loop Until I1 = 2
 
+    Color 15, 0
     Cls
 
     Call box0(6, 8, 8, 70, 2, 15, 1)
@@ -392,10 +393,10 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     Shared plyrNames_DRAFT$(), posn_DRAFT$(), tmName_DRAFT$()
     Shared mascots_DRAFT$(), coaches_DRAFT$(), stadiums_DRAFT$()
 
-    Shared plyrOff_DRAFT!(), att_DRAFT&(), dFGPctAdj_DRAFT!(), plyrDef_DRAFT!()
+    Shared plyrOff_DRAFT!(), tmAtt_DRAFT&(), dFGPctAdj_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrStat_DRAFT!(), plyrRat_DRAFT!(), stamina_DRAFT!()
 
-    Shared lgRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT!()
+    Shared leagRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT!()
     Shared avgRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
 
     Cls
@@ -411,9 +412,9 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
             dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + avgRat_DRAFT(0, I, 2)
             d3FGA_Adj(0) = d3FGA_Adj(0) + avgRat_DRAFT(0, I, 3)
             d3FG_Adj(0) = d3FG_Adj(0) + avgRat_DRAFT(0, I, 4)
-            lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) + avgRat_DRAFT(0, I, 5)
-            lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) + avgRat_DRAFT(0, I, 6)
-            lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 7)
+            leagRat_DRAFT(0, 0) = leagRat_DRAFT(0, 0) + avgRat_DRAFT(0, I, 5)
+            leagRat_DRAFT(0, 2) = leagRat_DRAFT(0, 2) + avgRat_DRAFT(0, I, 6)
+            leagRat_DRAFT(0, 3) = leagRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 7)
             teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) + avgRat_DRAFT(0, I, 9)
             teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) + avgRat_DRAFT(0, I, 10)
             teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) + avgRat_DRAFT(0, I, 11)
@@ -432,16 +433,16 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     d3FG_Adj(0) = d3FG_Adj(0) / (numPlayers - 1)
     If d3FG_Adj(0) > 20 Then d3FG_Adj(0) = 100 - d3FG_Adj(0)
 
-    lgRat_DRAFT(0, 0) = lgRat_DRAFT(0, 0) / (numPlayers - 1)
-    If lgRat_DRAFT(0, 0) > 20 Then lgRat_DRAFT(0, 0) = 100 - lgRat_DRAFT(0, 0)
+    leagRat_DRAFT(0, 0) = leagRat_DRAFT(0, 0) / (numPlayers - 1)
+    If leagRat_DRAFT(0, 0) > 20 Then leagRat_DRAFT(0, 0) = 100 - leagRat_DRAFT(0, 0)
 
-    lgRat_DRAFT(0, 2) = lgRat_DRAFT(0, 2) / (numPlayers - 1)
-    If lgRat_DRAFT(0, 2) > 20 Then lgRat_DRAFT(0, 2) = 100 - lgRat_DRAFT(0, 2)
+    leagRat_DRAFT(0, 2) = leagRat_DRAFT(0, 2) / (numPlayers - 1)
+    If leagRat_DRAFT(0, 2) > 20 Then leagRat_DRAFT(0, 2) = 100 - leagRat_DRAFT(0, 2)
 
-    lgRat_DRAFT(0, 3) = lgRat_DRAFT(0, 3) / (numPlayers - 1)
-    If lgRat_DRAFT(0, 3) > 20 Then lgRat_DRAFT(0, 3) = 100 - lgRat_DRAFT(0, 3)
+    leagRat_DRAFT(0, 3) = leagRat_DRAFT(0, 3) / (numPlayers - 1)
+    If leagRat_DRAFT(0, 3) > 20 Then leagRat_DRAFT(0, 3) = 100 - leagRat_DRAFT(0, 3)
 
-    lgRat_DRAFT(0, 4) = 99
+    leagRat_DRAFT(0, 4) = 99
     teamRat_DRAFT(0, 3) = teamRat_DRAFT(0, 3) / (numPlayers - 1)
     teamRat_DRAFT(0, 4) = teamRat_DRAFT(0, 4) / (numPlayers - 1)
     teamRat_DRAFT(0, 5) = teamRat_DRAFT(0, 5) / (numPlayers - 1)
@@ -451,7 +452,9 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
     fileLength& = LOF(1)
 
-    If draftNew = 1 Then teamPosn = fileLength& / TEAM_SIZE_BYTES + 1
+    If draftNew = 1 Then 
+        teamPosn = (fileLength& / TEAM_SIZE_BYTES) + 1
+    End If
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
     For I = 0 To 13
@@ -465,7 +468,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     LSet Q$(4) = MKI$(d3FGA_Adj(0))
 
     For I = 0 To 4:
-        LSet Q$(I + 5) = MKI$(lgRat_DRAFT(0, I))
+        LSet Q$(I + 5) = MKI$(leagRat_DRAFT(0, I))
     Next
 
     teamRat_DRAFT(0, 2) = 999
@@ -489,7 +492,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
 
     Close #1
 
-    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
+    If draftNew = 0 And Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
 
         MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
         BoxWidth = 20
@@ -514,7 +517,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
         LSet Q$(0) = coaches_DRAFT$(0)
         LSet Q$(1) = stadiums_DRAFT$(0)
         LSet Q$(2) = mascots_DRAFT$(0)
-        LSet Q$(3) = MKL$(att_DRAFT&(0))
+        LSet Q$(3) = MKL$(tmAtt_DRAFT&(0))
 
         For I = 0 To 13
 
@@ -554,6 +557,8 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
     Shared teamRat_DRAFT()
 
     Do
+
+        chosenIdx = 0
 
         Color 15, 0
         Cls
@@ -609,8 +614,8 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
                     If Not _FileExists(diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$) Then
 
-                        MsgText$ = "NO TEAM FILES WERE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO MAIN MENU"
-                        BoxWidth = 20
+                        MsgText$ = "NO TEAM FILES COULD BE FOUND MATCHING THIS ID. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
+                        BoxWidth = 24
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
                         Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                         Call CSMsgBox(MsgText$, BoxWidth, PASS)
@@ -678,7 +683,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
 
     Loop Until UCase$(J$) = "N" Or I$ = Chr$(27) 'Or J$ = Chr$(27)
 
-    If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
+    'If I$ = Chr$(27) Or J$ = Chr$(27) Then chosenIdx = 0
 
 End Sub
 
@@ -690,12 +695,15 @@ End Sub
 'selecting the team to draft players from
 Sub SelectDraftTeam (numberTeams, selectedIdx, ExitCode%, draftIdx)
 
-    If numberTeams > 0 Then
+    ExitCode% = -1
+    validData = 0
 
-        Selection% = 1
+    If numberTeams > 0 And CheckString%(teamNames$(numberTeams)) = 0 Then
+
+        SELECTION% = 1
         Count% = numberTeams
         Start% = 1
-        FileFGColor% = 15: FileBGColor% = 4
+        FileFGColor = 15: FileBGColor = 4
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Rows% = 20
         Columns% = 4
@@ -716,12 +724,12 @@ Sub SelectDraftTeam (numberTeams, selectedIdx, ExitCode%, draftIdx)
         Color 15: Print "-SELECTS TEAM";
 
         _MouseShow "DEFAULT"
-        MAMenu teamNames$(), Selection%, Start%, Count%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% <> 27 Then
 
-            selectedIdx = teamIndex%(Selection%)
+            selectedIdx = teamIndex%(SELECTION%)
 
             'Locate 2, 33
             'Color 31: Print "LOADING..."
@@ -753,18 +761,18 @@ End Sub
 'arrays for the selected team
 Sub ReadDraftTeam (teamIdx, draftIdx)
 
-    Shared att_DRAFT&(), CK!()
+    Shared tmAtt_DRAFT&(), CK!()
     Shared dFGPctAdj_DRAFT!(), d3FG_Adj(), d3FGA_Adj()
-    Shared lgRat_DRAFT(), avgRat_DRAFT()
+    Shared leagRat_DRAFT(), avgRat_DRAFT()
     Shared plyrOff_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrRat_DRAFT!(), plyrStat_DRAFT!(), stamina_DRAFT!()
 
     Shared teamRat_DRAFT(), teamStats_DRAFT!()
 
-    Shared plyrNames_DRAFT$(), tmName_DRAFT$(), posn_DRAFT$(), teamYears$()
+    Shared plyrNames_DRAFT$(), tmName_DRAFT$(), posn_DRAFT$(), tmYears_DRAFT$()
     Shared mascots_DRAFT$(), coaches_DRAFT$(), stadiums_DRAFT$()
 
-    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + teamYears$(draftIdx) For Random As #1 Len = TEAM_SIZE_BYTES
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + tmYears_DRAFT$(draftIdx) For Random As #1 Len = TEAM_SIZE_BYTES
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
@@ -781,7 +789,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     d3FGA_Adj(draftIdx) = CVI(Q$(4))
 
     For I = 0 To 4:
-        lgRat_DRAFT(draftIdx, I) = CVI(Q$(I + 5))
+        leagRat_DRAFT(draftIdx, I) = CVI(Q$(I + 5))
     Next
 
     For I = 0 To 9:
@@ -806,18 +814,18 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
 
     If d3FG_Adj(draftIdx) > 20 Then d3FG_Adj(draftIdx) = 100 - d3FG_Adj(draftIdx)
     If d3FGA_Adj(draftIdx) > 20 Then d3FGA_Adj(draftIdx) = 100 - d3FGA_Adj(draftIdx)
-    If lgRat_DRAFT(draftIdx, 0) > 20 Then lgRat_DRAFT(draftIdx, 0) = 100 - lgRat_DRAFT(draftIdx, 0)
-    If lgRat_DRAFT(draftIdx, 2) > 20 Then lgRat_DRAFT(draftIdx, 2) = 100 - lgRat_DRAFT(draftIdx, 2)
-    If lgRat_DRAFT(draftIdx, 3) > 20 Then lgRat_DRAFT(draftIdx, 3) = 100 - lgRat_DRAFT(draftIdx, 3)
+    If leagRat_DRAFT(draftIdx, 0) > 20 Then leagRat_DRAFT(draftIdx, 0) = 100 - leagRat_DRAFT(draftIdx, 0)
+    If leagRat_DRAFT(draftIdx, 2) > 20 Then leagRat_DRAFT(draftIdx, 2) = 100 - leagRat_DRAFT(draftIdx, 2)
+    If leagRat_DRAFT(draftIdx, 3) > 20 Then leagRat_DRAFT(draftIdx, 3) = 100 - leagRat_DRAFT(draftIdx, 3)
 
     For I = 0 To 13
         avgRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
         avgRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
         avgRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
         avgRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
-        avgRat_DRAFT(draftIdx, I, 5) = lgRat_DRAFT(draftIdx, 0)
-        avgRat_DRAFT(draftIdx, I, 6) = lgRat_DRAFT(draftIdx, 2)
-        avgRat_DRAFT(draftIdx, I, 7) = lgRat_DRAFT(draftIdx, 3)
+        avgRat_DRAFT(draftIdx, I, 5) = leagRat_DRAFT(draftIdx, 0)
+        avgRat_DRAFT(draftIdx, I, 6) = leagRat_DRAFT(draftIdx, 2)
+        avgRat_DRAFT(draftIdx, I, 7) = leagRat_DRAFT(draftIdx, 3)
         avgRat_DRAFT(draftIdx, I, 8) = 99
         avgRat_DRAFT(draftIdx, I, 9) = teamRat_DRAFT(draftIdx, 3)
         avgRat_DRAFT(draftIdx, I, 10) = teamRat_DRAFT(draftIdx, 4)
@@ -841,15 +849,15 @@ End Sub
 ' been included for.
 Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
 
-    Shared CK!(), att_DRAFT&()
+    Shared CK!(), tmAtt_DRAFT&()
 
     Shared coaches_DRAFT$(), stadiums_DRAFT$(), mascots_DRAFT$()
 
     Shared plyrDef_DRAFT!(), plyrStat_DRAFT!(), teamStats_DRAFT!()
 
-    Shared posn_DRAFT$(), teamYears$()
+    Shared posn_DRAFT$(), tmYears_DRAFT$()
 
-    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYears$(draftIdx)) Then
+    If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + tmYears_DRAFT$(draftIdx)) Then
 
         MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
         BoxWidth = 20
@@ -861,7 +869,7 @@ Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
 
     Else
 
-        Open diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYears$(draftIdx) For Random As #2 Len = DATA_SIZE_BYTES
+        Open diskPaths$(0) + DATA_FILE_NAME$ + "." + tmYears_DRAFT$(draftIdx) For Random As #2 Len = DATA_SIZE_BYTES
 
         Field #2, 15 As Q$(0), 40 As Q$(1), 15 As Q$(2), 4 As Q$(3)
 
@@ -876,7 +884,7 @@ Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
         coaches_DRAFT$(draftIdx) = RTrim$(Q$(0))
         stadiums_DRAFT$(draftIdx) = RTrim$(Q$(1))
         mascots_DRAFT$(draftIdx) = RTrim$(Q$(2))
-        att_DRAFT&(draftIdx) = CVL(Q$(3))
+        tmAtt_DRAFT&(draftIdx) = CVL(Q$(3))
 
         For I = 0 To 13
 
@@ -894,7 +902,7 @@ Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
         Next
 
         'If CVI(Q$(249)) <> 999 Then
-        If att_DRAFT&(draftIdx) > 100000 Then
+        If tmAtt_DRAFT&(draftIdx) > 100000 Then
         'If attendance is abnormally high, we ARE
         'clearly not reading accurate data
 
@@ -913,7 +921,7 @@ Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
                 coaches_DRAFT$(draftIdx) = ""
                 stadiums_DRAFT$(draftIdx) = ""
                 mascots_DRAFT$(draftIdx) = ""
-                att_DRAFT&(draftIdx) = 0
+                tmAtt_DRAFT&(draftIdx) = 0
 
                 For I = 0 To 13:
 
@@ -941,6 +949,3 @@ Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
     End If
 
 End Sub
-
-
-

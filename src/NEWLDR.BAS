@@ -24,21 +24,21 @@ Sub NEWLDR ()
         menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADER FILES"
         menuChoices$(2) = "VIEW EXPANDED LEAGUE STATISTICS    "
         menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU       "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
@@ -47,7 +47,7 @@ Sub NEWLDR ()
 
             printOrView = 0
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1:
                     Do
@@ -91,7 +91,7 @@ Sub NEWLDR ()
 
         End If
 
-    Loop Until Selection% = 3 Or ExitCode% = 27
+    Loop Until SELECTION% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -454,28 +454,28 @@ Sub ExpandedLeaders_Menu (printOrView, JB, plyrTotalStats, teamTotalStats)
         menuChoices$(1) = "VIEW INDIVIDUAL PLAYER LEADERS"
         menuChoices$(2) = "VIEW TEAM TOTALS              "
         menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU  "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1:
                     Call ViewIndividualLeaders(printOrView, JB)
@@ -487,7 +487,7 @@ Sub ExpandedLeaders_Menu (printOrView, JB, plyrTotalStats, teamTotalStats)
 
         End If
 
-    Loop Until Selection% = 3 Or ExitCode% = 27
+    Loop Until SELECTION% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -852,7 +852,7 @@ Sub ViewIndividualLeaders (printOrView, JB)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                                 If userFile$ <> "" Then
                                     Call Leaders_Report(0, userFile$, TVN, LG, categoryId)
                                 End If
@@ -1474,7 +1474,7 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
                 Select Case userKey$
 
                     Case "F"
-                        userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                        userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                         If userFile$ <> "" Then
                             printDest = 0
                         End If

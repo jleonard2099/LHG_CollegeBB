@@ -99,7 +99,7 @@ Sub StatOptions_Nat (NRT, leagueFile$)
             Select Case userKey$
 
                 Case "F":
-                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                    userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
                         Call LeaderStatsNat_Report(leagueFile$, NRT, 0, userFile$)
                     End If

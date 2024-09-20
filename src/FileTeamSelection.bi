@@ -5,6 +5,7 @@ Declare Sub ReadExtraData (teamYear$, teamIdx)
 Declare Sub UserFilePrompt (reportFile$)
 
 Declare Function nameStatFile$ (teamName$)
+Declare Function CheckString% (targetString$)
 Declare Function ChooseFile$(fileSpec$, fileDesc$)
 
 Const TEAM_SIZE_BYTES = 655
@@ -14,19 +15,20 @@ Const DATA_FILE_NAME$ = "COLBBTMS"
 
 Dim previousYear$
 
-'-- transition away from Dim Shared
-'-- fileLength for sure
+'-- transition away from this
 Dim Shared fileLength&
 
-Dim CK, defFGPctAdj!
-Dim def3FG_Adj, def3FGA_Adj
-Dim staminaRating!, teamAttendance&
+Dim CK
+Dim defFGPctAdj!, def3FG_Adj, def3FGA_Adj
+Dim staminaRating!
+
+Dim teamAttendance&
 
 Dim coach$, mascot$, arenaName$
 
 Dim d3FG_Adj(1), d3FGA_Adj(1)
 
-Dim leagueRatings%(0 To 4)
+Dim leagueRatings(0 To 4)
 Dim teamRatings%(0 To 9), teamStats!(0 to 24)
 
 'Why isn't this 0 to 13?

@@ -33,28 +33,28 @@ Sub ADDTOURN ()
         menuChoices$(4) = "RESET A TOURNAMENT           "
         menuChoices$(5) = "PLAY TOURNAMENT GAMES        "
         menuChoices$(6) = "RETURN TO COURTSIDE MAIN MENU"
-        Selection% = 1
+        SELECTION% = 1
         Count% = 6
         Start% = 1
         ExitCode% = 6
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 10
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1:
                     newTourneyName$ = ""
@@ -62,7 +62,7 @@ Sub ADDTOURN ()
                     tourneyFile$ = ""
                     Erase regionNames$
                     Erase slotName$
-                    Call SetupTourney(NR$, Selection%, newTourneyName$, tourneyFile$)
+                    Call SetupTourney(NR$, SELECTION%, newTourneyName$, tourneyFile$)
 
                 Case 2, 4:
                     Erase nbrRegionalTeams, tourneyN%
@@ -70,7 +70,7 @@ Sub ADDTOURN ()
                     consolationSetting%(0) = 0
                     consolationSetting%(1) = 0
 
-                    Call LoadTourney(NR%, Selection%, tn$)
+                    Call LoadTourney(NR%, SELECTION%, tn$)
 
                 Case 3:
                     Call BRACKET
@@ -82,7 +82,7 @@ Sub ADDTOURN ()
 
         End If
 
-    Loop Until Selection% = 6 Or ExitCode% = 27
+    Loop Until SELECTION% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -453,7 +453,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
                             If slotName$(currRegion, I, 0) = "" Then
 
-                                MsgText$ = "ALL SEEDS HAVE NOT BEEN FILLED PRESS ANY KEY TO CONTINUE SELECTING"
+                                MsgText$ = "NOT ALL TOURNAMENT SEEDS ARE FILLED. PRESS ANY KEY TO CONTINUE SELECTING"
                                 BoxWidth = 18
                                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
                                 Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
@@ -567,11 +567,11 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
             menuChoices$(I) = regionNames$(I)
         Next
 
-        Selection% = 1
+        SELECTION% = 1
         Count% = numberRegions + 1
         Start% = 1
         ExitCode% = numberRegions + 1
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 4
@@ -581,22 +581,22 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         Call box0(3, 31, 3 + numberRegions + 2, 48, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
             'Save and Exit
-            If Selection% < numberRegions + 1 Then
-                numberTeams$ = _Trim$(Str$(nbrRegionalTeams(Selection%)))
-                Call SeedBrackets(Selection%, numberTeams$, saveFile$, numberRegions, tourneyName$)
+            If SELECTION% < numberRegions + 1 Then
+                numberTeams$ = _Trim$(Str$(nbrRegionalTeams(SELECTION%)))
+                Call SeedBrackets(SELECTION%, numberTeams$, saveFile$, numberRegions, tourneyName$)
 
             End If
 
         End If
 
-    Loop Until Selection% = numberRegions + 1 Or ExitCode% = 27
+    Loop Until SELECTION% = numberRegions + 1 Or ExitCode% = 27
 
     If ExitCode% <> 27 Then Call ScheduleAndSaveTourney(saveFile$, numberRegions, tourneyName$)
 

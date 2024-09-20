@@ -19,28 +19,28 @@ Sub MERGE ()
         menuChoices$(1) = "MERGE STATISTICAL FILES"
         menuChoices$(2) = "ALIGN STATISTICAL FILES"
         menuChoices$(3) = "EXIT TO MAIN MENU      "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1: 
                     Call MergeStats
@@ -52,7 +52,7 @@ Sub MERGE ()
 
         End If
 
-    Loop Until Selection% = 3 Or ExitCode% = 27
+    Loop Until SELECTION% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -76,7 +76,7 @@ Sub MergeStats ()
     Shared oppScore(), oppScore_Road()
     Shared teamScore(), teamScore_Road()
 
-    Shared ARD(), mergeA%()
+    Shared ARD(), plyrRat_MERGE()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
     Shared W0RD!(), W1RD!()
@@ -194,7 +194,7 @@ Sub MergeStats ()
                             Input #3, statPlyrNames$(I)
 
                             For J = 0 To 13: 
-                                Input #3, mergeA%(I, J)
+                                Input #3, plyrRat_MERGE(I, J)
                             Next
 
                             Input #3, statsW0!(I)
@@ -353,7 +353,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
     Shared oppScore(), oppScore_Road() 
     Shared teamScore(), teamScore_Road()
 
-    Shared ARD(), mergeA%()
+    Shared ARD(), plyrRat_MERGE()
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
@@ -383,16 +383,16 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
     For I = 0 To 13
 
         For J = 0 To 12: 
-            mergeA%(I, J) = mergeA%(I, J) + ARD(I, J)
+            plyrRat_MERGE(I, J) = plyrRat_MERGE(I, J) + ARD(I, J)
         Next J
 
         statsW0!(I) = statsW0!(I) + W0RD!(I)
         statsW1!(I) = statsW1!(I) + W1RD!(I)
 
-        If mergeA%(I, 13) < ARD(I, 13) Then 
-            mergeA%(I, 13) = ARD(I, 13) 
+        If plyrRat_MERGE(I, 13) < ARD(I, 13) Then 
+            plyrRat_MERGE(I, 13) = ARD(I, 13) 
         Else 
-            mergeA%(I, 13) = mergeA%(I, 13)
+            plyrRat_MERGE(I, 13) = plyrRat_MERGE(I, 13)
         End If
 
     Next I
@@ -411,7 +411,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, B$, nbrGamesCurr, nbrGamesRoad)
         Write #1, statPlyrNames$(I)
 
         For J = 0 To 13: 
-            Write #1, mergeA%(I, J)
+            Write #1, plyrRat_MERGE(I, J)
         Next
 
         Write #1, statsW0!(I)

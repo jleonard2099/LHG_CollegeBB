@@ -23,7 +23,7 @@ Sub InputTeam ()
 
     Shared teamRatings%()
 
-    Shared playerOff!(), playerDef!(), leagueRatings%()
+    Shared playerOff!(), playerDef!(), leagueRatings()
     Shared playerStats!(), playerRatings!()
 
     Shared playerNames$(), position$()
@@ -78,19 +78,19 @@ Sub InputTeam ()
         Print inputX$(choice); Tab(31); "LEAGUE INFORMATION"
         Color 15
 
-        Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerplyrLeaderYears!
+        Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerGame!
         'Locate 3, 17: Print " "
 
-        Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerplyrLeaderYears!
+        Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerGame!
         'Locate 4, 25: Print " "
 
         Locate 5, 1: Input "3. SEASON FG % "; leagFGPct!
         'Locate 5, 16: Print " "
 
-        Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerplyrLeaderYears!
+        Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerGame!
         'Locate 6, 23: Print " "
 
-        Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerplyrLeaderYears!
+        Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerGame!
         'Locate 7, 26: Print " "
 
         Locate 8, 1: Input "6. SEASON 3 FGA/FGA % "; leag3FGAPct!
@@ -112,12 +112,12 @@ Sub InputTeam ()
 
                 Case 1:
                     Locate 3, 17: Print Space$(10)
-                    Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerplyrLeaderYears!
+                    Locate 3, 1: Input "1. SEASON FGA/G "; leagFGAPerGame!
                     Locate 3, 17: Print " "
 
                 Case 2:
                     Locate 4, 25: Print Space$(10)
-                    Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerplyrLeaderYears!
+                    Locate 4, 1: Input "2. SEASON REBOUNDS/GAME "; leagRebPerGame!
                     Locate 4, 25: Print " "
 
                 Case 3:
@@ -127,12 +127,12 @@ Sub InputTeam ()
 
                 Case 4
                     Locate 6, 23: Print Space$(10)
-                    Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerplyrLeaderYears!
+                    Locate 6, 1: Input "4. SEASON STEALS/GAME "; leagStlsPerGame!
                     Locate 6, 23: Print " "
 
                 Case 5
                     Locate 7, 26: Print Space$(10)
-                    Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerplyrLeaderYears!
+                    Locate 7, 1: Input "5. SEASON TURNOVERS/GAME "; leagTOPerGame!
                     Locate 7, 26: Print " "
 
                 Case 6
@@ -584,7 +584,7 @@ Sub InputTeam ()
         '---------------
         'Average FGA/G for this team (Off + Def)
         teamRatings%(3) = Int(((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) + .5)
-        teamRatings%(4) = leagFGAPerplyrLeaderYears!
+        teamRatings%(4) = leagFGAPerGame!
         teamRatings%(5) = nbrGmsPlayed!
 
         If choice = 1 Then
@@ -822,10 +822,10 @@ Sub InputTeam ()
         X2! = tmFGA! - ((tmFGA! * tmFGPct!) / 100) + tmFTA! - ((tmFTA! * tmFTPct!) / 100)
         RD! = (tmReb! - X1! + X2! - oppReb!) / (nbrGmsPlayed! * 2)
         HS! = tmReb! - X1! + X2! - oppReb!
-        M7! = ((35 + RD!) / leagRebPerplyrLeaderYears!)
+        M7! = ((35 + RD!) / leagRebPerGame!)
 
         If choice = 2 Then 
-            M7! = ((44 + RD!) / leagRebPerplyrLeaderYears!)
+            M7! = ((44 + RD!) / leagRebPerGame!)
         End If
 
         For I = 0 To 13
@@ -898,7 +898,7 @@ Sub InputTeam ()
 
         Next I
 
-        X! = leagFGAPerplyrLeaderYears! + leagRebPerplyrLeaderYears! + 20
+        X! = leagFGAPerGame! + leagRebPerGame! + 20
         inputY! = (tmFGA! + oppFGA! + tmReb! + oppReb! + tmFouls! + oppFouls!) / (2 * nbrGmsPlayed!)
         staminaRating! = Int(((2 * inputY!) - X!) + .5)
 
@@ -985,7 +985,7 @@ Sub InputTeam ()
 
         Next I
 
-        leagueRatings%(4) = 99
+        leagueRatings(4) = 99
 
         For I = 0 To 13
 
@@ -1021,8 +1021,8 @@ Sub InputTeam ()
         X! = (inputY! - 7) / .4
         X! = Int(X! + .5)
 
-        If X! < 0 Then leagueRatings%(0) = 100 + X!
-        If X! > 0 Then leagueRatings%(0) = X!
+        If X! < 0 Then leagueRatings(0) = 100 + X!
+        If X! > 0 Then leagueRatings(0) = X!
 
         'Off TO Rating
         R! = 1200 - (((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) * 4)
@@ -1030,7 +1030,7 @@ Sub InputTeam ()
         inputY! = (tmTO! - oppSteal!) / nbrGmsPlayed!
         X! = (inputY! / R!) - .01
         X! = Int((X! * 100) + .5)
-        leagueRatings%(1) = X!
+        leagueRatings(1) = X!
 
         'Def TO Adj
         inputY! = (oppTO! - tmSteal!) / nbrGmsPlayed!
@@ -1038,8 +1038,8 @@ Sub InputTeam ()
         X! = Int((X! * 100) + .5)
         X! = X! - 4
 
-        If X! < 0 Then leagueRatings%(2) = 100 + X!
-        If X! > 0 Then leagueRatings%(2) = X!
+        If X! < 0 Then leagueRatings(2) = 100 + X!
+        If X! > 0 Then leagueRatings(2) = X!
 
         'Def Foul Adj
         homeScoreTeam! = Int(((oppFGA! * oppFGPct!) / 100) + .5)
@@ -1048,8 +1048,8 @@ Sub InputTeam ()
         X! = (X! / (oppFGA! + X!)) - .09
         X! = Int((X! * 100) + .5)
 
-        If X! > 0 Then leagueRatings%(3) = X!
-        If X! < 0 Then leagueRatings%(3) = X! + 100
+        If X! > 0 Then leagueRatings(3) = X!
+        If X! < 0 Then leagueRatings(3) = X! + 100
 
         '---------------
         ' Assists
@@ -1181,7 +1181,7 @@ Sub InputTeam ()
             HX = Int(((HX / nbrGmsPlayed!) * 10) + .5)
 
             Cls
-            leagueRatings%(4) = 99
+            leagueRatings(4) = 99
 
             Color 14
             Print "INPUT STEALS & TURNOVERS RATINGS."
@@ -1266,7 +1266,7 @@ Sub InputTeam ()
             If inputRatings(16) < 0 Then inputRatings(16) = 100 + inputRatings(16)
 
             For I = 0 To 2
-                leagueRatings%(I) = inputRatings(I + 14)
+                leagueRatings(I) = inputRatings(I + 14)
             Next
 
             I$ = GetKeyPress$
@@ -1343,7 +1343,7 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
 
     Shared teamRatings%()
 
-    Shared playerOff!(), playerDef!(), leagueRatings%()
+    Shared playerOff!(), playerDef!(), leagueRatings()
     Shared playerStats!(), playerRatings!()
 
     Shared playerNames$(), position$()
@@ -1356,7 +1356,9 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
 
     fileLength& = LOF(1)
 
-    If newID = 1 Or teamIdx = 0 Then teamIdx = fileLength& / TEAM_SIZE_BYTES + 1
+    If newID = 1 Or teamIdx = 0 Then 
+        teamIdx = (fileLength& / TEAM_SIZE_BYTES) + 1
+    End If
 
     Field #1, 15 As Q$(0), 2 As Q$(1), 2 As Q$(2), 2 As Q$(3), 2 As Q$(4), 2 As Q$(5), 2 As Q$(6), 2 As Q$(7), 2 As Q$(8), 2 As Q$(9), 2 As Q$(10), 2 As Q$(11), 2 As Q$(12), 2 As Q$(13), 2 As Q$(14), 2 As Q$(15), 2 As Q$(16), 2 As Q$(17), 2 As Q$(18), 2 As Q$(19), 602 As X$
 
@@ -1371,7 +1373,7 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
     LSet Q$(4) = MKI$(def3FGA_Adj)
 
     For I = 0 To 4:
-        LSet Q$(I + 5) = MKI$(leagueRatings%(I))
+        LSet Q$(I + 5) = MKI$(leagueRatings(I))
     Next
 
     teamRatings%(2) = 999

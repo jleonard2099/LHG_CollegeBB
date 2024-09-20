@@ -98,7 +98,7 @@ Sub StatOptions_Con (confName$, div1$, div2$)
             Select Case userKey$
 
                 Case "F"
-                    userFile$ = _SAVEFILEDIALOG$("Save Conference Report",_CWD$ + "\Report","*.txt","Text File")
+                    userFile$ = _SaveFileDialog$("Save Conference Report",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
                         Call LeaderStatsCon_Report(confName$, div1$, div2$, 0, userFile$)
                     End If

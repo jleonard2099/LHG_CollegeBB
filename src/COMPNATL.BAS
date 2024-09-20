@@ -20,7 +20,7 @@ Sub CompileNatlOrg ()
     Shared defLeaderNames$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
     Shared plyrRecDesc$(), statFiles$()
-    Shared Z0$(), Z3$()
+    Shared Z2$(), Z3$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -40,14 +40,6 @@ Sub CompileNatlOrg ()
 
     For I = 19 To 20:
         defRecords!(I) = 19999
-    Next
-
-    'Initialize values first
-    Erase natLeaderVals!
-    Erase natZ1$, NZ1$, natZ2$
-
-    For X = 1 To MAX_CONFERENCES
-        natDefLeaders!(X, 19) = 9999
     Next
 
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
@@ -78,6 +70,17 @@ Sub CompileNatlOrg ()
         Erase plyrRecDesc$, offRecDesc$, defRecDesc$
 
     End If
+
+    'Initialize values first
+    Erase natDefLeaders!, natLeaderVals!, natOffLeaders!
+
+    Erase natDefLdrNames$, natOffLdrNames$
+    Erase natZ1$, NZ1$, natZ2$
+
+    For X = 1 To MAX_CONFERENCES
+        natDefLeaders!(X, 19) = 9999
+    Next
+
 
     C$ = ","
 
@@ -117,7 +120,7 @@ Sub CompileNatlOrg ()
                 Erase leaderVals!
                 Erase O1!, O2!, O3!, O4!, O5!, O6!
                 Erase defLeaderNames$, offLeaderNames$
-                Erase statFiles$, Z0$, Z3$
+                Erase statFiles$, Z2$, Z3$
 
                 targetConf$ = diskPaths$(2) + memberConf$(currConf) + ".TMS"
 
@@ -829,7 +832,9 @@ End Sub
 '----------------------------------------
 '         FindStatsNat Function
 '----------------------------------------
-'...explanation...
+'Looks for schedule stats for a specified
+'team in the organization and loads them if
+'found, notifying the user
 Function FindStatsNat% (statFile$, numberGames, NRT)
 
     Shared oppScore(), powerRating(), teamScore()
@@ -852,41 +857,7 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
 
     Else
 
-        Open findFile$ For Input As #1
-
-        Input #1, numberGames
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, teamScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, oppName$(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, oppScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, locIndicator$(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS
-            For I1 = 0 To 1
-                Input #1, powerRating(I, I1)
-            Next
-        Next
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, gameAttendance&(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, gameSite$(I)
-        Next I
-
-        Close #1
+        Call ReadScheduleStats (statFile$, numberGames)
 
         confWins = 0
         confLosses = 0
@@ -953,8 +924,12 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
 
         For I = 1 To numberGames
             RAT = teamScore(I) - oppScore(I) + powerRating(I, 1)
-            If Left$(locIndicator$(I), 1) = "H" Then RAT = RAT - 4.5
-            If Left$(locIndicator$(I), 1) = "A" Then RAT = RAT + 4.5
+            If Left$(locIndicator$(I), 1) = "H" Then 
+                RAT = RAT - 4.5
+            End If
+            If Left$(locIndicator$(I), 1) = "A" Then 
+                RAT = RAT + 4.5
+            End If
             teamPower = teamPower + RAT
         Next
 
@@ -1065,3 +1040,35 @@ Sub PostLeadersOrg (organization$, NRT)
 
 End Sub
 
+
+'----------------------------------------
+'      ReadScheduleStats Subroutine
+'----------------------------------------
+'This subroutine reads in all data from the
+'team's schedule stats file.
+Sub ReadScheduleStats (statFile$, numberGames)
+
+    Shared teamScore(), oppScore()
+    Shared oppName$()
+
+    findFile$ = diskPaths$(1) + statFile$ + "S"
+
+    Open findFile$ For Input As #1
+
+    Input #1, numberGames
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, teamScore(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, oppName$(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, oppScore(I)
+    Next I
+
+    Close #1
+
+End Sub

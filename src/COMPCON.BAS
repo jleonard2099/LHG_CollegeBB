@@ -18,7 +18,7 @@ Sub CompileCollege ()
     Shared defLeaderNames$(), offLeaderNames$()
     Shared defRecDesc$(), offRecDesc$()
     Shared plyrRecDesc$(), statFiles$()
-    Shared Z0$(), Z3$()
+    Shared Z2$(), Z3$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -53,6 +53,12 @@ Sub CompileCollege ()
     End If
 
     'Initialize values first
+    Erase defLeaders!, offLeaders!
+    Erase leaderVals!
+    Erase O1!, O2!, O3!, O4!, O5!, O6!
+
+    Erase defLeaderNames$, offLeaderNames$
+    Erase statFiles$, Z2$, Z3$
 
     'These are defensive record values, so they should be really high
     'To determine if a "record" was broken, the stat values will be
@@ -73,20 +79,9 @@ Sub CompileCollege ()
         defRecords!(I) = 19999
     Next
 
-    'These are defensive record values, so they should be really high
-    'To determine if a "record" was broken, the stat values will be
-    'compared to see if they are lower than this.
-    'If we initialized to 0, the "record" would always be 0
-    Erase defLeaders!, offLeaders!
-
     For X = 1 To MAX_CONFERENCES
         defLeaders!(X, 19) = 9999
     Next
-
-    Erase leaderVals!
-    Erase O1!, O2!, O3!, O4!, O5!, O6!
-    Erase defLeaderNames$, offLeaderNames$
-    Erase statFiles$, Z0$, Z3$
 
     C$ = ","
 
@@ -251,7 +246,7 @@ Sub CalcStatLeadersConf (teamName$)
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared statPlyrNames$()
-    Shared Z0$(), Z3$()
+    Shared Z2$(), Z3$()
 
     For X = 0 To 14:
 
@@ -265,14 +260,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(20, 1) = compS!(X, 22)
             leaderVals!(20, 2) = 0
-            Z0$(20) = statPlyrNames$(X)
+            Z2$(20) = statPlyrNames$(X)
             Z3$(20) = teamName$
 
             For Z = 1 To 19:
                 For Z1 = Z + 1 To 20:
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -289,14 +284,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(40, 1) = compS!(X, 12)
             leaderVals!(40, 2) = 0
-            Z0$(40) = statPlyrNames$(X)
+            Z2$(40) = statPlyrNames$(X)
             Z3$(40) = teamName$
 
             For Z = 21 To 39
                 For Z1 = Z + 1 To 40
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -313,14 +308,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(60, 1) = compS!(X, 19)
             leaderVals!(60, 2) = compS!(X, 1)
-            Z0$(60) = statPlyrNames$(X)
+            Z2$(60) = statPlyrNames$(X)
             Z3$(60) = teamName$
 
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -337,14 +332,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(80, 1) = compS!(X, 20)
             leaderVals!(80, 2) = compS!(X, 3)
-            Z0$(80) = statPlyrNames$(X)
+            Z2$(80) = statPlyrNames$(X)
             Z3$(80) = teamName$
 
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -361,14 +356,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(90, 1) = compS!(X, 15)
             leaderVals!(90, 2) = compS!(X, 7)
-            Z0$(90) = statPlyrNames$(X)
+            Z2$(90) = statPlyrNames$(X)
             Z3$(90) = teamName$
 
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -385,14 +380,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(100, 1) = compS!(X, 7)
             leaderVals!(100, 2) = 0
-            Z0$(100) = statPlyrNames$(X)
+            Z2$(100) = statPlyrNames$(X)
             Z3$(100) = teamName$
 
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -409,14 +404,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(110, 1) = compS!(X, 16)
             leaderVals!(110, 2) = compS!(X, 8)
-            Z0$(110) = statPlyrNames$(X)
+            Z2$(110) = statPlyrNames$(X)
             Z3$(110) = teamName$
 
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -433,14 +428,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(120, 1) = compS!(X, 8)
             leaderVals!(120, 2) = compS!(X, 8)
-            Z0$(120) = statPlyrNames$(X)
+            Z2$(120) = statPlyrNames$(X)
             Z3$(120) = teamName$
 
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -457,14 +452,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(130, 1) = compS!(X, 21)
             leaderVals!(130, 2) = statsW1!(X)
-            Z0$(130) = statPlyrNames$(X)
+            Z2$(130) = statPlyrNames$(X)
             Z3$(130) = teamName$
 
             For Z = 121 To 129
                 For Z1 = Z + 1 To 130
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -481,14 +476,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(140, 1) = statsW0!(X)
             leaderVals!(140, 2) = 0
-            Z0$(140) = statPlyrNames$(X)
+            Z2$(140) = statPlyrNames$(X)
             Z3$(140) = teamName$
 
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -505,14 +500,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(150, 1) = compS!(X, 18)
             leaderVals!(150, 2) = 0
-            Z0$(150) = statPlyrNames$(X)
+            Z2$(150) = statPlyrNames$(X)
             Z3$(150) = teamName$
 
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -529,14 +524,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(160, 1) = compS!(X, 10) / 60
             leaderVals!(160, 2) = 0
-            Z0$(160) = statPlyrNames$(X)
+            Z2$(160) = statPlyrNames$(X)
             Z3$(160) = teamName$
 
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -553,14 +548,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(170, 1) = compS!(X, 13)
             leaderVals!(170, 2) = compS!(X, 5)
-            Z0$(170) = statPlyrNames$(X)
+            Z2$(170) = statPlyrNames$(X)
             Z3$(170) = teamName$
 
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -577,14 +572,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(180, 1) = compS!(X, 5)
             leaderVals!(18, 2) = 0
-            Z0$(180) = statPlyrNames$(X)
+            Z2$(180) = statPlyrNames$(X)
             Z3$(180) = teamName$
 
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -601,14 +596,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(190, 1) = compS!(X, 17)
             leaderVals!(190, 2) = 0
-            Z0$(190) = statPlyrNames$(X)
+            Z2$(190) = statPlyrNames$(X)
             Z3$(190) = teamName$
 
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -625,14 +620,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(200, 1) = compS!(X, 9)
             leaderVals!(200, 2) = 0
-            Z0$(200) = statPlyrNames$(X)
+            Z2$(200) = statPlyrNames$(X)
             Z3$(200) = teamName$
 
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -649,14 +644,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(210, 1) = compS!(X, 2)
             leaderVals!(210, 2) = 0
-            Z0$(210) = statPlyrNames$(X)
+            Z2$(210) = statPlyrNames$(X)
             Z3$(210) = teamName$
 
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -673,14 +668,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(220, 1) = compS!(X, 4)
             leaderVals!(220, 2) = 0
-            Z0$(220) = statPlyrNames$(X)
+            Z2$(220) = statPlyrNames$(X)
             Z3$(220) = teamName$
 
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -697,14 +692,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(230, 1) = compS!(X, 14)
             leaderVals!(230, 2) = 0
-            Z0$(230) = statPlyrNames$(X)
+            Z2$(230) = statPlyrNames$(X)
             Z3$(230) = teamName$
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -721,14 +716,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(240, 1) = compS!(X, 6)
             leaderVals!(240, 2) = 0
-            Z0$(240) = statPlyrNames$(X)
+            Z2$(240) = statPlyrNames$(X)
             Z3$(240) = teamName$
 
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -745,14 +740,14 @@ Sub CalcStatLeadersConf (teamName$)
 
             leaderVals!(250, 1) = compS!(X, 24)
             leaderVals!(250, 2) = 0
-            Z0$(250) = statPlyrNames$(X)
+            Z2$(250) = statPlyrNames$(X)
             Z3$(250) = teamName$
 
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
 
                     If leaderVals!(Z, 1) < leaderVals!(Z1, 1) Then
-                        Swap Z0$(Z1), Z0$(Z)
+                        Swap Z2$(Z1), Z2$(Z)
                         Swap Z3$(Z1), Z3$(Z)
                         For M = 1 To 2:
                             Swap leaderVals!(Z1, M), leaderVals!(Z, M)
@@ -1043,7 +1038,7 @@ Sub PostLeadersConf (conferenceName$)
     Shared leaderVals!()
     Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
 
-    Shared Z0$(), statFiles$(), Z3$()
+    Shared Z2$(), statFiles$(), Z3$()
 
     Cls
 
@@ -1058,7 +1053,7 @@ Sub PostLeadersConf (conferenceName$)
     Next
 
     For X = 1 To 250
-        Write #1, Z0$(X), Z3$(X), leaderVals!(X, 1), leaderVals!(X, 2)
+        Write #1, Z2$(X), Z3$(X), leaderVals!(X, 1), leaderVals!(X, 2)
     Next X
 
     For X = 1 To MAX_CONFERENCES:
@@ -1137,27 +1132,7 @@ Function FindStatsCon% (statFile$, numberGames)
 
     Else
 
-        Open findFile$ For Input As #1
-
-        Input #1, numberGames
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, teamScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, oppName$(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, oppScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #1, locIndicator$(I)
-        Next I
-
-        Close #1
+        Call ReadScheduleStats (statFile$, numberGames)
 
         confWins = 0
         confLosses = 0
@@ -1224,5 +1199,3 @@ Function FindStatsCon% (statFile$, numberGames)
     End If
 
 End Function
-
-

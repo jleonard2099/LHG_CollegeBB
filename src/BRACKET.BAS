@@ -26,36 +26,36 @@ Sub BRACKET ()
         menuChoices$(1) = "VIEW BRACKETS            "
         menuChoices$(2) = "VIEW SEEDINGS            "
         menuChoices$(3) = "RETURN TO TOURNAMENT MENU"
-        Selection% = 1
+        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 10
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case Selection%
+            Select Case SELECTION%
 
                 Case 1, 2:
-                    Call ViewTourneyInfo(Selection%)
+                    Call ViewTourneyInfo(SELECTION%)
 
             End Select
         End If
 
-    Loop Until Selection% = 3 Or ExitCode% = 27
+    Loop Until SELECTION% = 3 Or ExitCode% = 27
 
 End Sub
 
@@ -301,12 +301,12 @@ Sub EditBracket (numberRegions, ACTION%)
             menuChoices$(I) = regionNames$(I)
         Next
 
-        Selection% = 1
+        SELECTION% = 1
         Count% = numberRegions + 2
         Start% = 1
         ExitCode% = numberRegions + 2
         FileColr% = 15
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 4
@@ -317,14 +317,14 @@ Sub EditBracket (numberRegions, ACTION%)
         Call box0(3, 31, 3 + numberRegions + 3, 52, 2, 15, 1)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-            regionNbr = Selection%
+            regionNbr = SELECTION%
 
             'Championship Bracket
             If regionNbr = numberRegions + 1 Then regionNbr = 17
@@ -1857,7 +1857,7 @@ Sub EditBracket (numberRegions, ACTION%)
         End If 'Done checking for ESC
 
         'menu until they choose exit
-    Loop Until ExitCode% = 27 Or Selection% = numberRegions + 2 'ACTION% = 2
+    Loop Until ExitCode% = 27 Or SELECTION% = numberRegions + 2 'ACTION% = 2
 
 End Sub
 

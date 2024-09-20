@@ -29,19 +29,31 @@ Next
 
 Close #2
 
-fileSpec$ = diskPaths$(0) + "COLBBTMS.*"
 
-Count% = FileCount%(fileSpec$)
-ReDim foundFiles$(0 To Count%)
-foundFiles$(0) = fileSpec$
-Call ReadFile(foundFiles$())
 
-For X = 1 To Count%
-    target$ = diskPaths$(0) + foundFiles$(X)
-    Print "Converting "; target$
-    Call ConvertTeam4to5(target$, 1)
-    'Call ConvertTeam5to4 (target$, 1)
-Next X
+'----------------------------------------
+'       ConvertAllTeam Subroutine
+'----------------------------------------
+' Quick and dirty script to convert all
+' team files in the "Schedule" folder
+Sub ConvertAllTeam ()
+
+    fileSpec$ = diskPaths$(0) + "COLBBTMS.*"
+
+    Count% = FileCount%(fileSpec$)
+    ReDim foundFiles$(0 To Count%)
+    foundFiles$(0) = fileSpec$
+    Call ReadFile(foundFiles$())
+
+    For X = 1 To Count%
+        target$ = diskPaths$(0) + foundFiles$(X)
+        Print "Converting "; target$
+        Call ConvertTeam4to5(target$, 1)
+        'Call ConvertTeam5to4 (target$, 1)
+    Next X
+
+End Sub
+
 
 '$Include: 'Convert.BAS'
 '$Include: 'BoxRoutines.bm'

@@ -20,11 +20,11 @@ Sub CNGTM (userChoice)
         menuChoices$(2) = "PRINT A TEAM ROSTER  "
         menuChoices$(3) = "VIEW A TEAM ROSTER   "
         menuChoices$(4) = "EXIT TO MAIN MENU    "
-        Selection% = 1
+        SELECTION% = 1
         Count% = 4
         Start% = 1
         ExitCode% = 4
-        FileFGColor% = 15: FileBGColor% = 1
+        FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 8
@@ -32,26 +32,26 @@ Sub CNGTM (userChoice)
         Column% = (80 - menuWidth% - 2) / 2
 
         If (userChoice <> 0) Then
-            Selection% = userChoice
+            SELECTION% = userChoice
         Else
 
-            Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor%, FileBGColor%)
+            Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
             _MouseShow "DEFAULT"
-            MMenuVert menuChoices$(), Selection%, Start%, ExitCode%, FileFGColor%, FileBGColor%, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+            MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
             _MouseHide
 
             Color , 0
         End If
 
-        If ExitCode% <> 27 And Selection% <> 4 Then
+        If ExitCode% <> 27 And SELECTION% <> 4 Then
 
             teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
 
             If teamNbr <> 0 Then
 
-                Select Case Selection%
+                Select Case SELECTION%
 
                     Case 1:
                         Call EditTeam(team$, YN$, teamNbr)
@@ -64,7 +64,7 @@ Sub CNGTM (userChoice)
                             Select Case userKey$
 
                                 Case "F"
-                                    userFile$ = _SAVEFILEDIALOG$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                    userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                                     If userFile$ <> "" Then
                                         Call Roster_Report(0, userFile$, team$)
                                     End If
@@ -89,7 +89,7 @@ Sub CNGTM (userChoice)
 
         End If
 
-    Loop Until Selection% = 4 Or ExitCode% = 27
+    Loop Until SELECTION% = 4 Or ExitCode% = 27
 
 End Sub
 
@@ -109,7 +109,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), teamStats!()
+    Shared leagueRatings(), teamRatings%(), teamStats!()
     Shared playerNames$(), position$()
     Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
@@ -127,11 +127,11 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print " 5. DEF FG% ADJ  "; defFGPctAdj!; Tab(40); "24. LOSSES  "; teamRatings%(8)
     Print " 6. DEF 3FGA/FGA ADJ  "; def3FGA_Adj; Tab(40); "25. POWER RATING  "; teamRatings%(9)
     Print " 7. DEF 3FG% ADJ  "; def3FG_Adj
-    Print " 8. OFF STEAL RATING  "; leagueRatings%(0)
-    Print " 9. OFF TURNOVER RATING  "; leagueRatings%(1)
-    Print "10. DEF TURNOVER ADJ  "; leagueRatings%(2)
-    Print "11. DEF FOUL ADJ  "; leagueRatings%(3)
-    Print "12. ENTER 99 IF USING 6-9  "; leagueRatings%(4)
+    Print " 8. OFF STEAL RATING  "; leagueRatings(0)
+    Print " 9. OFF TURNOVER RATING  "; leagueRatings(1)
+    Print "10. DEF TURNOVER ADJ  "; leagueRatings(2)
+    Print "11. DEF FOUL ADJ  "; leagueRatings(3)
+    Print "12. ENTER 99 IF USING 6-9  "; leagueRatings(4)
     Print "13. TEXT COLOR (0-15)  "; teamRatings%(0)
     Print "14. BACKGROUND COLOR (0-7)  "; teamRatings%(1)
     Print "15. TEAM FGA/G  "; teamRatings%(3)
@@ -192,27 +192,27 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
             Case 8
                 Locate 9, 22: Print Space$(10)
-                Locate 9, 1: Input " 8. OFF STEAL RATING "; leagueRatings%(0)
+                Locate 9, 1: Input " 8. OFF STEAL RATING "; leagueRatings(0)
                 Locate 9, 22: Print " "
 
             Case 9
                 Locate 10, 25: Print Space$(10)
-                Locate 10, 1: Input " 9. OFF TURNOVER RATING "; leagueRatings%(1)
+                Locate 10, 1: Input " 9. OFF TURNOVER RATING "; leagueRatings(1)
                 Locate 10, 25: Print " "
 
             Case 10
                 Locate 11, 22: Print Space$(10)
-                Locate 11, 1: Input "10. DEF TURNOVER ADJ "; leagueRatings%(2)
+                Locate 11, 1: Input "10. DEF TURNOVER ADJ "; leagueRatings(2)
                 Locate 11, 22: Print " "
 
             Case 11
                 Locate 12, 18: Print Space$(10)
-                Locate 12, 1: Input "11. DEF FOUL ADJ "; leagueRatings%(3)
+                Locate 12, 1: Input "11. DEF FOUL ADJ "; leagueRatings(3)
                 Locate 12, 18: Print " "
 
             Case 12
                 Locate 13, 27: Print Space$(10)
-                Locate 13, 1: Input "12. ENTER 99 IF USING 6-9 "; leagueRatings%(4)
+                Locate 13, 1: Input "12. ENTER 99 IF USING 6-9 "; leagueRatings(4)
                 Locate 13, 27: Print " "
 
             Case 13
@@ -821,7 +821,7 @@ Sub Roster_Report (printDest, destFile$, teamName$)
 
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), teamStats!()
+    Shared leagueRatings(), teamRatings%(), teamStats!()
 
     Shared playerOff!(), playerDef!(), playerRatings!()
 
@@ -837,10 +837,10 @@ Sub Roster_Report (printDest, destFile$, teamName$)
     Print #1, "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj!
     Print #1, "OPP PCT OF 3FG ATT ADJ = "; def3FGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
     Print #1,
-    Print #1, "DEF STEAL ADJ "; leagueRatings%(0)
-    Print #1, "OFF TURNOVER ADJ "; leagueRatings%(1)
-    Print #1, "DEF TURNOVER ADJ "; leagueRatings%(2)
-    Print #1, "OFF FOUL ADJ "; leagueRatings%(3)
+    Print #1, "DEF STEAL ADJ "; leagueRatings(0)
+    Print #1, "OFF TURNOVER ADJ "; leagueRatings(1)
+    Print #1, "DEF TURNOVER ADJ "; leagueRatings(2)
+    Print #1, "OFF FOUL ADJ "; leagueRatings(3)
     Print #1,
     Print #1, "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
     Print #1,
@@ -893,7 +893,7 @@ Sub ViewRoster (teamName$)
 
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), teamStats!()
+    Shared leagueRatings(), teamRatings%(), teamStats!()
 
     Shared playerOff!(), playerDef!(), playerRatings!()
 
@@ -921,16 +921,16 @@ Sub ViewRoster (teamName$)
     Color 15, 0: Print def3FG_Adj;
 
     Color 14, 0: Print "   DEF STEAL ADJ ";
-    Color 15, 0: Print leagueRatings%(0)
+    Color 15, 0: Print leagueRatings(0)
 
     Color 14, 0: Print "OFF TURNOVER ADJ ";
-    Color 15, 0: Print leagueRatings%(1);
+    Color 15, 0: Print leagueRatings(1);
 
     Color 14, 0: Print "    DEF TURNOVER ADJ ";
-    Color 15, 0: Print leagueRatings%(2);
+    Color 15, 0: Print leagueRatings(2);
 
     Color 14, 0: Print "    OFF FOUL ADJ ";
-    Color 15, 0: Print leagueRatings%(3)
+    Color 15, 0: Print leagueRatings(3)
     Print
 
     Color 2, 0: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
@@ -968,7 +968,7 @@ Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings%(), teamRatings%(), teamStats!()
+    Shared leagueRatings(), teamRatings%(), teamStats!()
     Shared playerNames$(), position$()
     Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
@@ -995,7 +995,7 @@ Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
     LSet Q$(4) = MKI$(def3FGA_Adj)
 
     For I = 0 To 4:
-        LSet Q$(I + 5) = MKI$(leagueRatings%(I))
+        LSet Q$(I + 5) = MKI$(leagueRatings(I))
     Next
 
     teamRatings%(2) = 999
