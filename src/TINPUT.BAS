@@ -14,7 +14,7 @@ Sub InputTeam ()
     Shared tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
     Shared tmReb!, tmSteal!, tmTO!
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -922,13 +922,13 @@ Sub InputTeam ()
         defFGPctAdj! = opp2FGPct! - leagFGPct! + BY - U7
 
         V% = Int(((opp3FGA! / oppFGA!) + .005) * 100)
-        def3FGA_Adj = V% - leag3FGAPct!
+        defthreeFGA_Adj = V% - leag3FGAPct!
 
         'DEF 3FGA/3FGA ADJ
         '-- Here is where 100 is being added to the value
         '-- This is why our team files and viewer later
         '-- will show values as 95-99
-        If def3FGA_Adj < 0 Then def3FGA_Adj = 100 + def3FGA_Adj
+        If defthreeFGA_Adj < 0 Then defthreeFGA_Adj = 100 + defthreeFGA_Adj
 
         def3FG_Adj = opp3FGAPct! - leag3FGPct!
 
@@ -1061,7 +1061,7 @@ Sub InputTeam ()
             Print "INPUT ASSIST RATINGS"
             Color 15
             Print "AA SHOULD = APPROX. 3 WHEN FINISHED"
-            Print "FORWARDS,CENTERS ARE USUALLY 0,1,2,3 ; GUARDS ARE USUALLY 3,4,5,6"
+            Print "FORWARD!S,CENTERS ARE USUALLY 0,1,2,3 ; GUARD!S ARE USUALLY 3,4,5,6"
 
             Print
 
@@ -1282,7 +1282,7 @@ Sub InputTeam ()
             Color 14
             Print "INPUT BLOCK RATINGS"
             Color 15
-            Print "GUARDS ARE USUALLY 0,1 ; FORWARDS,CENTERS ARE USUALLY 0,1,2,3"
+            Print "GUARD!S ARE USUALLY 0,1 ; FORWARD!S,CENTERS ARE USUALLY 0,1,2,3"
             Print "THE GREAT SHOT BLOCKERS ARE USUALLY 5,6,7"
             Print
 
@@ -1337,7 +1337,7 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
     Shared tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
     Shared tmReb!, tmSteal!, tmTO!
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -1370,7 +1370,7 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
     LSet Q$(1) = MKI$(staminaRating!)
     LSet Q$(2) = MKI$(defFGPctAdj!)
     LSet Q$(3) = MKI$(def3FG_Adj)
-    LSet Q$(4) = MKI$(def3FGA_Adj)
+    LSet Q$(4) = MKI$(defthreeFGA_Adj)
 
     For I = 0 To 4:
         LSet Q$(I + 5) = MKI$(leagueRatings(I))

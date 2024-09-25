@@ -82,7 +82,7 @@ End Sub
 'the only file we will save.
 Sub SaveTeamDataOld (newID, yearNumber$, teamName$, teamIdx)
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 

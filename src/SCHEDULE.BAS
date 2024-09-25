@@ -67,14 +67,14 @@ Sub SCHEDULE ()
             ReDim scheduleV$(MAX_SCHEDULE_GAMES)
 
             scheduleNG%(0, 2) = 1 'Home Court
-            scheduleNG%(0, 3) = 1
-            scheduleNG%(0, 5) = 5
-            scheduleNG%(0, 6) = 0
-            scheduleNG%(0, 7) = 3
-            scheduleNG%(0, 8) = 3
-            scheduleNG%(0, 9) = 1
-            scheduleNG%(0, 10) = 1
-            scheduleNG%(0, 14) = 0
+            scheduleNG%(0, 3) = 1 '3 Pt Opt
+            scheduleNG%(0, 5) = 5 'Fouls to DQ
+            scheduleNG%(0, 6) = 0 'FT 10th Foul 
+            scheduleNG%(0, 7) = 3 'Shot Clock
+            scheduleNG%(0, 8) = 3 'Team Control
+            scheduleNG%(0, 9) = 1 'Coach Opt
+            scheduleNG%(0, 10) = 1 'Foul on 3 PT
+            scheduleNG%(0, 14) = 0 'FT on 6 Floor
 
             Select Case SELECTION%
 

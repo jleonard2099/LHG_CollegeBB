@@ -7,6 +7,8 @@ Dim Shared teamIndex%(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
+Dim teamNameStats$
+
 Dim gameAttendance&(MAX_SCHED_STATS)
 
 Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
@@ -72,16 +74,18 @@ Dim yesNo$(0 To 1), yesNoText$(1)
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
-Dim ARD(14, 14), plyrRat_MERGE(14, 14)
+Dim plyrRat_MERGE(14, 14)
 
-Dim AN!(15, 14), AR!(15, 14)
-Dim W0N!(15), WN1!(15)
-Dim W0R!(15), WR1!(15)
-Dim W0RD!(15), W1RD!(15)
+Dim plyrStat_Align!(15, 14), plyrStat_Merge!(14, 14), plyrStat_Road!(15, 14)
+
+Dim threeFGM_Align!(15), threeFGA_Align!(15)
+Dim threeFGM_Merge!(15), threeFGA_Merge!(15)
+Dim threeFGM_Road!(15), threeFGA_Road!(15)
+
 Dim ZR!(15), ZR1!(15)
 Dim ZRD!(15), ZRD1!(15)
 
-Dim roadPlyrNames$(15), alignName$(15)
+Dim plyrName_Road$(15), plyrName_Align$(15)
 
 
 '----------------------------------------
@@ -89,9 +93,15 @@ Dim roadPlyrNames$(15), alignName$(15)
 '----------------------------------------
 Dim NB, NP
 
-Dim ARS!(MAX_CAREER_YEARS, 62, 15)
+Dim carLdrPlyrName$(19, 20)
+Dim carLdrVal!(19, 20)
+
+Dim plyrStat_Career!(MAX_CAREER_YEARS, 62, 15)
 Dim BL!(21), BLYR!(21)
 Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
+
+Dim GMA!(600), TYP!(600)
+Dim leader3FGM!(600), leader3FGA!(600)
 
 Dim plyrStatLeaders!(0 To 600, 0 To 14)
 Dim plyrLeaderYears!(MAX_CONFERENCES), tmLeaderYears!(MAX_CONFERENCES)
@@ -100,9 +110,6 @@ Dim TT!(MAX_CONFERENCES, 15), TT1!(MAX_CONFERENCES, 15)
 Dim careerPlayers$(62), BL$(21)
 Dim expIndCategory$(31), expTeamCategory$(39)
 Dim plyLeaderTeams$(MAX_CONFERENCES, 15), tmLeaderTeams$(MAX_CONFERENCES, 15)
-
-Dim GMA!(600), TYP!(600)
-Dim W0L!(600), W1L!(600)
 
 Dim AL$(600), TMA$(600), TMM$(600), TPP$(600)
 
@@ -269,7 +276,7 @@ Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defCategory(1), defCoverage(1)
 Dim Shared ft3PtFoul(1), F1(13)
 Dim Shared G4(13), G5(13), homeCtFactor(1, 6)
 Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), offStrat(1)
-Dim Shared mandatoryTO(0 to 1), P4(14), P5(14)
+Dim Shared mandatoryTO(0 To 1), P4(14), P5(14)
 Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
 Dim Shared playerDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), playerStat_GAME(0 To 1, 0 To 13, 0 To 15)

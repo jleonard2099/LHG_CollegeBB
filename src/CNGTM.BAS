@@ -105,7 +105,7 @@ End Sub
 'faster and easier to proceed through screens
 Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -125,7 +125,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print " 3. TEAM NAME   "; teamName$; Tab(40); "22. AVG ATTENDANCE  "; teamAttendance&
     Print " 4. TEAM STAMINA RATING  "; staminaRating!; Tab(40); "23. WINS  "; teamRatings%(7)
     Print " 5. DEF FG% ADJ  "; defFGPctAdj!; Tab(40); "24. LOSSES  "; teamRatings%(8)
-    Print " 6. DEF 3FGA/FGA ADJ  "; def3FGA_Adj; Tab(40); "25. POWER RATING  "; teamRatings%(9)
+    Print " 6. DEF 3FGA/FGA ADJ  "; defthreeFGA_Adj; Tab(40); "25. POWER RATING  "; teamRatings%(9)
     Print " 7. DEF 3FG% ADJ  "; def3FG_Adj
     Print " 8. OFF STEAL RATING  "; leagueRatings(0)
     Print " 9. OFF TURNOVER RATING  "; leagueRatings(1)
@@ -182,7 +182,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
             Case 6
                 Locate 7, 22: Print Space$(10)
-                Locate 7, 1: Input " 6. DEF 3FGA/FGA ADJ "; def3FGA_Adj
+                Locate 7, 1: Input " 6. DEF 3FGA/FGA ADJ "; defthreeFGA_Adj
                 Locate 7, 22: Print " "
 
             Case 7
@@ -816,7 +816,7 @@ End Sub
 'team roster to the default printer
 Sub Roster_Report (printDest, destFile$, teamName$)
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared defFGPctAdj!, staminaRating!
 
     Shared mascot$, coach$, arenaName$
@@ -835,7 +835,7 @@ Sub Roster_Report (printDest, destFile$, teamName$)
     Print #1, "TEAM ROSTER FOR "; teamName$
     Print #1,
     Print #1, "AVG SHOTS PER GAME = "; teamRatings%(3); "      DEF FG ADJ = "; defFGPctAdj!
-    Print #1, "OPP PCT OF 3FG ATT ADJ = "; def3FGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
+    Print #1, "OPP PCT OF 3FG ATT ADJ = "; defthreeFGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
     Print #1,
     Print #1, "DEF STEAL ADJ "; leagueRatings(0)
     Print #1, "OFF TURNOVER ADJ "; leagueRatings(1)
@@ -888,7 +888,7 @@ End Sub
 'team roster to the user's display
 Sub ViewRoster (teamName$)
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared defFGPctAdj!, staminaRating!
 
     Shared mascot$, coach$, arenaName$
@@ -915,7 +915,7 @@ Sub ViewRoster (teamName$)
     Color 15, 0: Print defFGPctAdj!
 
     Color 14, 0: Print "OPP PCT OF 3FG ATT ADJ = ";
-    Color 15, 0: Print def3FGA_Adj;
+    Color 15, 0: Print defthreeFGA_Adj;
 
     Color 14, 0: Print "  OPP 3FG PCT ADJ = ";
     Color 15, 0: Print def3FG_Adj;
@@ -964,7 +964,7 @@ End Sub
 'to the original team file
 Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
 
-    Shared def3FG_Adj, def3FGA_Adj
+    Shared def3FG_Adj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -992,7 +992,7 @@ Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
     LSet Q$(1) = MKI$(staminaRating!)
     LSet Q$(2) = MKI$(defFGPctAdj!)
     LSet Q$(3) = MKI$(def3FG_Adj)
-    LSet Q$(4) = MKI$(def3FGA_Adj)
+    LSet Q$(4) = MKI$(defthreeFGA_Adj)
 
     For I = 0 To 4:
         LSet Q$(I + 5) = MKI$(leagueRatings(I))

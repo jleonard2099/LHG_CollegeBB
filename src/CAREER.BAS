@@ -130,7 +130,7 @@ Sub MergeFirstYear ()
     Dim careerW0!(62), careerW1!(62)
 
     Shared careerPlayers$()
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
     Shared statsZ!(), statsZ1!()
 
     NB = -1
@@ -242,11 +242,11 @@ Sub MergeFirstYear ()
                         End If
 
                         For J = 0 To 13
-                            ARS!(N, I, J) = carStatVal!(I, J)
+                            plyrStat_Career!(N, I, J) = carStatVal!(I, J)
                         Next J
 
-                        ARS!(N, I, 14) = 1
-                        ARS!(N, I, 15) = statYear
+                        plyrStat_Career!(N, I, 14) = 1
+                        plyrStat_Career!(N, I, 15) = statYear
 
                         car3FGM!(N, I) = careerW0!(I)
                         car3FGA!(N, I) = careerW1!(I)
@@ -652,7 +652,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
     Shared statsZ!(), statsZ1!()
 
     NB = -1
@@ -707,14 +707,14 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
 
                 'Find next stat year to save
                 For W = 1 To MAX_CAREER_YEARS
-                    If ARS!(W, J, 15) = statYear Then
+                    If plyrStat_Career!(W, J, 15) = statYear Then
                         CHK = CHK + 1
                     End If
                 Next W
 
                 'Look at number of years from previous
                 For Z = 1 To MAX_CAREER_YEARS
-                    N = N + ARS!(Z, J, 14)
+                    N = N + plyrStat_Career!(Z, J, 14)
                 Next Z
 
                 If CHK = 0 Then
@@ -723,11 +723,11 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
                 End If
 
                 For K = 0 To 13
-                    ARS!(N, J, K) = carStatVal!(I, K)
+                    plyrStat_Career!(N, J, K) = carStatVal!(I, K)
                 Next K
 
-                ARS!(N, J, 14) = 1
-                ARS!(N, J, 15) = statYear
+                plyrStat_Career!(N, J, 14) = 1
+                plyrStat_Career!(N, J, 15) = statYear
                 car3FGM!(N, J) = careerW0!(J)
                 car3FGA!(N, J) = careerW1!(J)
 
@@ -744,11 +744,11 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
                         N = 1
 
                         For K = 0 To 13: 
-                            ARS!(N, NB, K) = carStatVal!(I, K)
+                            plyrStat_Career!(N, NB, K) = carStatVal!(I, K)
                         Next K
 
-                        ARS!(N, NB, 14) = 1
-                        ARS!(N, NB, 15) = statYear
+                        plyrStat_Career!(N, NB, 14) = 1
+                        plyrStat_Career!(N, NB, 15) = statYear
                         car3FGM!(N, NB) = careerW0!(NB)
                         car3FGA!(N, NB) = careerW1!(NB)
                     End If
@@ -779,7 +779,7 @@ Sub LoadCareerFile (loadFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
 
     Color 15, 0
     Cls
@@ -799,7 +799,7 @@ Sub LoadCareerFile (loadFile$)
             Input #1, careerPlayers$(I)
 
             For J = 0 To 15
-                Input #1, ARS!(N, I, J)
+                Input #1, plyrStat_Career!(N, I, J)
             Next J
 
             Input #1, car3FGM!(N, I)
@@ -831,7 +831,7 @@ Sub SaveCareerFile (saveFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
 
     Cls
     Color 15
@@ -850,7 +850,7 @@ Sub SaveCareerFile (saveFile$)
             Write #3, careerPlayers$(I)
 
             For J = 0 To 15
-                Write #3, ARS!(N, I, J)
+                Write #3, plyrStat_Career!(N, I, J)
             Next J
 
             Write #3, car3FGM!(N, I)
@@ -884,7 +884,7 @@ Sub UpdateCareerRecords (careerFile$)
     Dim BL$(21)
 
     Shared careerPlayers$()
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
 
     If _FileExists(diskPaths$(2) + careerFile$ + ".CLD") Then
 
@@ -904,142 +904,142 @@ Sub UpdateCareerRecords (careerFile$)
 
             For J = 1 To MAX_CAREER_YEARS
 
-                If ARS!(J, I, 15) <> 0 Then
+                If plyrStat_Career!(J, I, 15) <> 0 Then
 
-                    If ARS!(J, I, 1) > BL!(0) Then
-                        BL!(0) = ARS!(J, I, 1)
+                    If plyrStat_Career!(J, I, 1) > BL!(0) Then
+                        BL!(0) = plyrStat_Career!(J, I, 1)
                         BL$(0) = careerPlayers$(I)
-                        BLYR!(0) = ARS!(J, I, 15)
+                        BLYR!(0) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 2) > BL!(1) Then
-                        BL!(1) = ARS!(J, I, 2)
+                    If plyrStat_Career!(J, I, 2) > BL!(1) Then
+                        BL!(1) = plyrStat_Career!(J, I, 2)
                         BL$(1) = careerPlayers$(I)
-                        BLYR!(1) = ARS!(J, I, 15)
+                        BLYR!(1) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 1) <> 0 And ARS!(J, I, 1) / ARS!(J, I, 0) >= 3.65 Then
-                        If ARS!(J, I, 2) / ARS!(J, I, 1) > BL!(2) Then
-                            BL!(2) = ARS!(J, I, 2) / ARS!(J, I, 1)
+                    If plyrStat_Career!(J, I, 1) <> 0 And plyrStat_Career!(J, I, 1) / plyrStat_Career!(J, I, 0) >= 3.65 Then
+                        If plyrStat_Career!(J, I, 2) / plyrStat_Career!(J, I, 1) > BL!(2) Then
+                            BL!(2) = plyrStat_Career!(J, I, 2) / plyrStat_Career!(J, I, 1)
                             BL$(2) = careerPlayers$(I)
-                            BLYR!(2) = ARS!(J, I, 15)
+                            BLYR!(2) = plyrStat_Career!(J, I, 15)
                         End If
                     End If
 
-                    If ARS!(J, I, 4) > BL!(3) Then
-                        BL!(3) = ARS!(J, I, 4)
+                    If plyrStat_Career!(J, I, 4) > BL!(3) Then
+                        BL!(3) = plyrStat_Career!(J, I, 4)
                         BL$(3) = careerPlayers$(I)
-                        BLYR!(3) = ARS!(J, I, 15)
+                        BLYR!(3) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 3) > BL!(4) Then
-                        BL!(4) = ARS!(J, I, 3)
+                    If plyrStat_Career!(J, I, 3) > BL!(4) Then
+                        BL!(4) = plyrStat_Career!(J, I, 3)
                         BL$(4) = careerPlayers$(I)
-                        BLYR!(4) = ARS!(J, I, 15)
+                        BLYR!(4) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 3) <> 0 And ARS!(J, I, 3) / ARS!(J, I, 0) >= 1.5 Then
-                        If ARS!(J, I, 4) / ARS!(J, I, 3) > BL!(5) Then
-                            BL!(5) = ARS!(J, I, 4) / ARS!(J, I, 3)
+                    If plyrStat_Career!(J, I, 3) <> 0 And plyrStat_Career!(J, I, 3) / plyrStat_Career!(J, I, 0) >= 1.5 Then
+                        If plyrStat_Career!(J, I, 4) / plyrStat_Career!(J, I, 3) > BL!(5) Then
+                            BL!(5) = plyrStat_Career!(J, I, 4) / plyrStat_Career!(J, I, 3)
                             BL$(5) = careerPlayers$(I)
-                            BLYR!(5) = ARS!(J, I, 15)
+                            BLYR!(5) = plyrStat_Career!(J, I, 15)
                         End If
                     End If
 
                     If car3FGM!(J, I) > BL!(6) Then
                         BL!(6) = car3FGM!(J, I)
                         BL$(6) = careerPlayers$(I)
-                        BLYR!(6) = ARS!(J, I, 15)
+                        BLYR!(6) = plyrStat_Career!(J, I, 15)
                     End If
 
                     If car3FGA!(J, I) > BL!(7) Then
                         BL!(7) = car3FGA!(J, I)
                         BL$(7) = careerPlayers$(I)
-                        BLYR!(7) = ARS!(J, I, 15)
+                        BLYR!(7) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If car3FGA!(J, I) <> 0 And car3FGA!(J, I) / ARS!(J, I, 0) >= 0.3 Then
+                    If car3FGA!(J, I) <> 0 And car3FGA!(J, I) / plyrStat_Career!(J, I, 0) >= 0.3 Then
                         If car3FGM!(J, I) / car3FGA!(J, I) > BL!(8) Then
                             BL!(8) = car3FGM!(J, I) / car3FGA!(J, I)
                             BL$(8) = careerPlayers$(I)
-                            BLYR!(8) = ARS!(J, I, 15)
+                            BLYR!(8) = plyrStat_Career!(J, I, 15)
                         End If
                     End If
 
-                    If ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + car3FGM!(J, I) > BL!(9) Then
-                        BL!(9) = ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + car3FGM!(J, I)
+                    If plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I) > BL!(9) Then
+                        BL!(9) = plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I)
                         BL$(9) = careerPlayers$(I)
-                        BLYR!(9) = ARS!(J, I, 15)
+                        BLYR!(9) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 0) <> 0 Then
-                        If (ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + car3FGM!(J, I)) / ARS!(J, I, 0) > BL!(10) Then
-                            BL!(10) = (ARS!(J, I, 2) * 2 + ARS!(J, I, 4) + car3FGM!(J, I)) / ARS!(J, I, 0)
+                    If plyrStat_Career!(J, I, 0) <> 0 Then
+                        If (plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I)) / plyrStat_Career!(J, I, 0) > BL!(10) Then
+                            BL!(10) = (plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I)) / plyrStat_Career!(J, I, 0)
                             BL$(10) = careerPlayers$(I)
-                            BLYR!(10) = ARS!(J, I, 15)
+                            BLYR!(10) = plyrStat_Career!(J, I, 15)
                         End If
                     End If
 
-                    If ARS!(J, I, 12) > BL!(11) Then
-                        BL!(11) = ARS!(J, I, 12)
+                    If plyrStat_Career!(J, I, 12) > BL!(11) Then
+                        BL!(11) = plyrStat_Career!(J, I, 12)
                         BL$(11) = careerPlayers$(I)
-                        BLYR!(11) = ARS!(J, I, 15)
+                        BLYR!(11) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 5) - ARS!(J, I, 12) > BL!(12) Then
-                        BL!(12) = ARS!(J, I, 5) - ARS!(J, I, 12)
+                    If plyrStat_Career!(J, I, 5) - plyrStat_Career!(J, I, 12) > BL!(12) Then
+                        BL!(12) = plyrStat_Career!(J, I, 5) - plyrStat_Career!(J, I, 12)
                         BL$(12) = careerPlayers$(I)
-                        BLYR!(12) = ARS!(J, I, 15)
+                        BLYR!(12) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 5) > BL!(13) Then
-                        BL!(13) = ARS!(J, I, 5)
+                    If plyrStat_Career!(J, I, 5) > BL!(13) Then
+                        BL!(13) = plyrStat_Career!(J, I, 5)
                         BL$(13) = careerPlayers$(I)
-                        BLYR!(13) = ARS!(J, I, 15)
+                        BLYR!(13) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 0) <> 0 Then
-                        If ARS!(J, I, 5) / ARS!(J, I, 0) > BL!(14) Then
-                            BL!(14) = ARS!(J, I, 5) / ARS!(J, I, 0)
+                    If plyrStat_Career!(J, I, 0) <> 0 Then
+                        If plyrStat_Career!(J, I, 5) / plyrStat_Career!(J, I, 0) > BL!(14) Then
+                            BL!(14) = plyrStat_Career!(J, I, 5) / plyrStat_Career!(J, I, 0)
                             BL$(14) = careerPlayers$(I)
-                            BLYR!(14) = ARS!(J, I, 15)
+                            BLYR!(14) = plyrStat_Career!(J, I, 15)
                         End If
                     End If
 
-                    If ARS!(J, I, 6) > BL!(15) Then
-                        BL!(15) = ARS!(J, I, 6)
+                    If plyrStat_Career!(J, I, 6) > BL!(15) Then
+                        BL!(15) = plyrStat_Career!(J, I, 6)
                         BL$(15) = careerPlayers$(I)
-                        BLYR!(15) = ARS!(J, I, 15)
+                        BLYR!(15) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 8) > BL!(16) Then
-                        BL!(16) = ARS!(J, I, 8)
+                    If plyrStat_Career!(J, I, 8) > BL!(16) Then
+                        BL!(16) = plyrStat_Career!(J, I, 8)
                         BL$(16) = careerPlayers$(I)
-                        BLYR!(16) = ARS!(J, I, 15)
+                        BLYR!(16) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 9) > BL!(17) Then
-                        BL!(17) = ARS!(J, I, 9)
+                    If plyrStat_Career!(J, I, 9) > BL!(17) Then
+                        BL!(17) = plyrStat_Career!(J, I, 9)
                         BL$(17) = careerPlayers$(I)
-                        BLYR!(17) = ARS!(J, I, 15)
+                        BLYR!(17) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 7) > BL!(18) Then
-                        BL!(18) = ARS!(J, I, 7)
+                    If plyrStat_Career!(J, I, 7) > BL!(18) Then
+                        BL!(18) = plyrStat_Career!(J, I, 7)
                         BL$(18) = careerPlayers$(I)
-                        BLYR!(18) = ARS!(J, I, 15)
+                        BLYR!(18) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 11) > BL!(19) Then
-                        BL!(19) = ARS!(J, I, 11)
+                    If plyrStat_Career!(J, I, 11) > BL!(19) Then
+                        BL!(19) = plyrStat_Career!(J, I, 11)
                         BL$(19) = careerPlayers$(I)
-                        BLYR!(19) = ARS!(J, I, 15)
+                        BLYR!(19) = plyrStat_Career!(J, I, 15)
                     End If
 
-                    If ARS!(J, I, 13) > BL!(20) Then
-                        BL!(20) = ARS!(J, I, 13)
+                    If plyrStat_Career!(J, I, 13) > BL!(20) Then
+                        BL!(20) = plyrStat_Career!(J, I, 13)
                         BL$(20) = careerPlayers$(I)
-                        BLYR!(20) = ARS!(J, I, 15)
+                        BLYR!(20) = plyrStat_Career!(J, I, 15)
                     End If
 
                 End If

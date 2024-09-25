@@ -160,7 +160,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
-    Shared W0L!(), W1L!()
+    Shared leader3FGM!(), leader3FGA!()
 
     Shared playerOff!()
 
@@ -242,8 +242,8 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                             plyrStatLeaders!(JB, K1) = playerOff!(I, I1)
                         Next I1
 
-                        W0L!(JB) = statsW0!(I)
-                        W1L!(JB) = statsW1!(I)
+                        leader3FGM!(JB) = statsW0!(I)
+                        leader3FGA!(JB) = statsW1!(I)
                     
                     End If
 
@@ -271,7 +271,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
     Shared plyrStatLeaders!()
     Shared plyrLeaderYears!(), GMA!(), tmLeaderYears!()
     Shared TT!(), TT1!()
-    Shared W0L!(), W1L!()
+    Shared leader3FGM!(), leader3FGA!()
 
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
@@ -297,8 +297,8 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
             Write #1, plyrStatLeaders!(I, I1)
         Next I1
 
-        Write #1, W0L!(I)
-        Write #1, W1L!(I)
+        Write #1, leader3FGM!(I)
+        Write #1, leader3FGA!(I)
 
         Color 14
         Locate 18, 38
@@ -353,7 +353,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
     Shared plyrStatLeaders!()
     Shared plyrLeaderYears!(), GMA!(), tmLeaderYears!()
     Shared TT!(), TT1!()
-    Shared W0L!(), W1L!()
+    Shared leader3FGM!(), leader3FGA!()
 
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
@@ -391,8 +391,8 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
                 Input #1, plyrStatLeaders!(I, I1)
             Next I1
 
-            Input #1, W0L!(I)
-            Input #1, W1L!(I)
+            Input #1, leader3FGM!(I)
+            Input #1, leader3FGA!(I)
 
             Color 14
             Locate 18, 38
@@ -503,7 +503,7 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
     Shared GMA!()
     Shared plyrStatLeaders!(), TYP!()
-    Shared W0L!(), W1L!()
+    Shared leader3FGM!(), leader3FGA!()
 
     Shared AL$(), expIndCategory$()
     Shared TMA$(), TMM$(), TPP$()
@@ -642,12 +642,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
  
                     For I = 1 To JB
 
-                        If W0L!(I) <> 0 Then
+                        If leader3FGM!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = W0L!(I)
+                            TYP!(PPP) = leader3FGM!(I)
                         End If
 
                     Next I
@@ -659,12 +659,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
                     
                     For I = 1 To JB
 
-                        If W1L!(I) <> 0 Then
+                        If leader3FGA!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = W1L!(I)
+                            TYP!(PPP) = leader3FGA!(I)
                         End If
 
                     Next I
@@ -676,12 +676,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If W0L!(I) >= GMA!(I) * .3 Then
+                        If leader3FGM!(I) >= GMA!(I) * .3 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = W0L!(I) / W1L!(I)
+                            TYP!(PPP) = leader3FGM!(I) / leader3FGA!(I)
                         End If
 
                     Next I
@@ -711,13 +711,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) <> 0 Then
+                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)
+                            TYP!(PPP) = (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I)
                         End If
 
                     Next I
@@ -729,13 +729,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) <> 0 And plyrStatLeaders!(I, X2) <> 0 Then
+                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I) <> 0 And plyrStatLeaders!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I)) / plyrStatLeaders!(I, X2)
+                            TYP!(PPP) = ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I)) / plyrStatLeaders!(I, X2)
                         End If
 
                     Next I
@@ -783,13 +783,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I) <> 0 And plyrStatLeaders!(I, X2) <> 0 Then
+                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I) <> 0 And plyrStatLeaders!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
                             TPP$(PPP) = AL$(I)
                             TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + W0L!(I))) * 48 / ((plyrStatLeaders!(I, X2) + 30) / 60)
+                            TYP!(PPP) = (((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I))) * 48 / ((plyrStatLeaders!(I, X2) + 30) / 60)
                         End If
 
                     Next I

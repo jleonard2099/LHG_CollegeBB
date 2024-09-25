@@ -95,7 +95,7 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
 
     PTN = 0
 
@@ -134,7 +134,7 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
             VV = 0
 
             For Z = 1 To MAX_CAREER_YEARS1
-                VV = VV + ARS!(Z, I, 14)
+                VV = VV + plyrStat_Career!(Z, I, 14)
             Next Z
 
             If 55 - PTN < VV Then
@@ -151,44 +151,44 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
 
                 PTN = PTN + 1
                 'Year?
-                Print #1, Tab(12); ARS!(V, I, 15);
+                Print #1, Tab(12); plyrStat_Career!(V, I, 15);
                 'G
-                Print #1, Tab(19); Using "##"; ARS!(V, I, 0);
+                Print #1, Tab(19); Using "##"; plyrStat_Career!(V, I, 0);
                 'FGM
-                Print #1, Tab(23); Using "###"; ARS!(V, I, 2);
+                Print #1, Tab(23); Using "###"; plyrStat_Career!(V, I, 2);
                 'FGA
-                Print #1, Tab(28); Using "####"; ARS!(V, I, 1);
+                Print #1, Tab(28); Using "####"; plyrStat_Career!(V, I, 1);
 
                 'FG Pct
-                If ARS!(V, I, 2) = 0 Then 
+                If plyrStat_Career!(V, I, 2) = 0 Then 
                     Print #1, Tab(34); "--.-";
                 End If
-                If ARS!(V, I, 2) > 0 Then 
-                    Print #1, Tab(33); Using "###.#"; (ARS!(V, I, 2) / ARS!(V, I, 1)) * 100;
+                If plyrStat_Career!(V, I, 2) > 0 Then 
+                    Print #1, Tab(33); Using "###.#"; (plyrStat_Career!(V, I, 2) / plyrStat_Career!(V, I, 1)) * 100;
                 End If
 
                 'FTM
-                Print #1, Tab(39); Using "###"; ARS!(V, I, 4);
+                Print #1, Tab(39); Using "###"; plyrStat_Career!(V, I, 4);
                 'FTA
-                Print #1, Tab(45); Using "###"; ARS!(V, I, 3);
+                Print #1, Tab(45); Using "###"; plyrStat_Career!(V, I, 3);
 
                 'FT %
-                If ARS!(V, I, 4) = 0 Then 
+                If plyrStat_Career!(V, I, 4) = 0 Then 
                     Print #1, Tab(50); "--.-";
                 End If
-                If ARS!(V, I, 4) > 0 Then 
-                    Print #1, Tab(49); Using "###.#"; (ARS!(V, I, 4) / ARS!(V, I, 3)) * 100;
+                If plyrStat_Career!(V, I, 4) > 0 Then 
+                    Print #1, Tab(49); Using "###.#"; (plyrStat_Career!(V, I, 4) / plyrStat_Career!(V, I, 3)) * 100;
                 End If
 
                 'Pts
-                Print #1, Tab(55); Using "####"; ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I);
+                Print #1, Tab(55); Using "####"; plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I);
 
                 'Average
-                If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I) = 0 Then 
+                If plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I) = 0 Then 
                     Print #1, Tab(61); " 0.0";
                 End If
-                If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I) > 0 Then 
-                    Print #1, Tab(61); Using "##.#"; (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I)) / ARS!(V, I, 0);
+                If plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I) > 0 Then 
+                    Print #1, Tab(61); Using "##.#"; (plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I)) / plyrStat_Career!(V, I, 0);
                 End If
 
                 '3FGM
@@ -205,41 +205,41 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
                 End If
 
                 'RB
-                Print #1, Tab(83); Using "###"; ARS!(V, I, 5);
+                Print #1, Tab(83); Using "###"; plyrStat_Career!(V, I, 5);
 
                 'Avg RB
-                If ARS!(V, I, 5) = 0 Then 
+                If plyrStat_Career!(V, I, 5) = 0 Then 
                     Print #1, Tab(88); " 0.0";
                 End If
-                If ARS!(V, I, 5) > 0 Then 
-                    Print #1, Tab(88); Using "##.#"; ARS!(V, I, 5) / ARS!(V, I, 0);
+                If plyrStat_Career!(V, I, 5) > 0 Then 
+                    Print #1, Tab(88); Using "##.#"; plyrStat_Career!(V, I, 5) / plyrStat_Career!(V, I, 0);
                 End If
 
                 'PF
-                Print #1, Tab(94); Using "###"; ARS!(V, I, 6);
+                Print #1, Tab(94); Using "###"; plyrStat_Career!(V, I, 6);
                 'Ast
-                Print #1, Tab(99); Using "###"; ARS!(V, I, 8);
+                Print #1, Tab(99); Using "###"; plyrStat_Career!(V, I, 8);
                 'Blk
-                Print #1, Tab(104); Using "###"; ARS!(V, I, 9);
+                Print #1, Tab(104); Using "###"; plyrStat_Career!(V, I, 9);
                 'Stl
-                Print #1, Tab(109); Using "###"; ARS!(V, I, 7);
+                Print #1, Tab(109); Using "###"; plyrStat_Career!(V, I, 7);
                 'Hi-Game
-                Print #1, Tab(113); Using "###"; ARS!(V, I, 13);
+                Print #1, Tab(113); Using "###"; plyrStat_Career!(V, I, 13);
 
                 'Mins
-                If ARS!(V, I, 10) = 0 Then 
+                If plyrStat_Career!(V, I, 10) = 0 Then 
                     Print #1, Tab(118); "   0";
                 End If
-                If ARS!(V, I, 10) > 0 Then 
-                    Print #1, Tab(118); Using "####"; Int((ARS!(V, I, 10) + 30) / 60);
+                If plyrStat_Career!(V, I, 10) > 0 Then 
+                    Print #1, Tab(118); Using "####"; Int((plyrStat_Career!(V, I, 10) + 30) / 60);
                 End If
 
                 'Avg Mins
-                If ARS!(V, I, 10) = 0 Then 
+                If plyrStat_Career!(V, I, 10) = 0 Then 
                     Print #1, Tab(125); " 0"
                 End If
-                If ARS!(V, I, 10) > 0 Then 
-                    Print #1, Tab(125); Using "##"; Int(((ARS!(V, I, 10) / 60) / ARS!(V, I, 0)) + .5)
+                If plyrStat_Career!(V, I, 10) > 0 Then 
+                    Print #1, Tab(125); Using "##"; Int(((plyrStat_Career!(V, I, 10) / 60) / plyrStat_Career!(V, I, 0)) + .5)
                 End If
 
             Next V
@@ -247,28 +247,28 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
             VV = 0
 
             For Z = 1 To MAX_CAREER_YEARS1
-                VV = VV + ARS!(Z, I, 14)
+                VV = VV + plyrStat_Career!(Z, I, 14)
             Next Z
 
             For V = 1 To VV
-                TT1 = TT1 + ARS!(V, I, 0)
-                TT2 = TT2 + ARS!(V, I, 2)
-                TT3 = TT3 + ARS!(V, I, 1)
-                TT4 = TT4 + ARS!(V, I, 4)
-                TT5 = TT5 + ARS!(V, I, 3)
-                TT6 = TT6 + (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I))
+                TT1 = TT1 + plyrStat_Career!(V, I, 0)
+                TT2 = TT2 + plyrStat_Career!(V, I, 2)
+                TT3 = TT3 + plyrStat_Career!(V, I, 1)
+                TT4 = TT4 + plyrStat_Career!(V, I, 4)
+                TT5 = TT5 + plyrStat_Career!(V, I, 3)
+                TT6 = TT6 + (plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I))
                 TT7 = TT7 + car3FGM!(V, I)
                 TT8 = TT8 + car3FGA!(V, I)
-                TT9 = TT9 + ARS!(V, I, 5)
-                TT10 = TT10 + ARS!(V, I, 6)
-                TT11 = TT11 + ARS!(V, I, 8)
-                TT12 = TT12 + ARS!(V, I, 9)
-                TT13 = TT13 + ARS!(V, I, 7)
-                TT14 = TT14 + ARS!(V, I, 10)
-                TT16 = TT16 + ARS!(V, I, 11)
-                TT17 = TT17 + ARS!(V, I, 12)
-                If ARS!(V, I, 13) > TT15 Then 
-                    TT15 = ARS!(V, I, 13)
+                TT9 = TT9 + plyrStat_Career!(V, I, 5)
+                TT10 = TT10 + plyrStat_Career!(V, I, 6)
+                TT11 = TT11 + plyrStat_Career!(V, I, 8)
+                TT12 = TT12 + plyrStat_Career!(V, I, 9)
+                TT13 = TT13 + plyrStat_Career!(V, I, 7)
+                TT14 = TT14 + plyrStat_Career!(V, I, 10)
+                TT16 = TT16 + plyrStat_Career!(V, I, 11)
+                TT17 = TT17 + plyrStat_Career!(V, I, 12)
+                If plyrStat_Career!(V, I, 13) > TT15 Then 
+                    TT15 = plyrStat_Career!(V, I, 13)
                 End If
             Next V
 
@@ -379,7 +379,7 @@ Sub ViewPlayer (careerFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
 
     Cls
 
@@ -451,7 +451,7 @@ Sub ViewPlayer (careerFile$)
     Locate 3: Print Left$(careerPlayers$(B9), 13);
 
     For Z = 1 To MAX_CAREER_YEARS
-        VV = VV + ARS!(Z, B9, 14)
+        VV = VV + plyrStat_Career!(Z, B9, 14)
     Next Z
 
     For V = 1 To VV
@@ -459,33 +459,33 @@ Sub ViewPlayer (careerFile$)
         Color 7
 
         'Year
-        Print Tab(15); ARS!(V, B9, 15);
+        Print Tab(15); plyrStat_Career!(V, B9, 15);
         'G
-        Print Tab(21); Using "##"; ARS!(V, B9, 0);
+        Print Tab(21); Using "##"; plyrStat_Career!(V, B9, 0);
         'FGM
-        Print Tab(24); Using "####"; ARS!(V, B9, 2);
+        Print Tab(24); Using "####"; plyrStat_Career!(V, B9, 2);
         'FGA
-        Print Tab(29); Using "####"; ARS!(V, B9, 1);
+        Print Tab(29); Using "####"; plyrStat_Career!(V, B9, 1);
 
         'FG PCT
-        If ARS!(V, B9, 2) = 0 Then
+        If plyrStat_Career!(V, B9, 2) = 0 Then
             Print Tab(35); "--.-";
         End If
-        If ARS!(V, B9, 2) > 0 Then
-            Print Tab(34); Using "###.#"; (ARS!(V, B9, 2) / ARS!(V, B9, 1)) * 100;
+        If plyrStat_Career!(V, B9, 2) > 0 Then
+            Print Tab(34); Using "###.#"; (plyrStat_Career!(V, B9, 2) / plyrStat_Career!(V, B9, 1)) * 100;
         End If
 
         'FTM
-        Print Tab(39); Using "###"; ARS!(V, B9, 4);
+        Print Tab(39); Using "###"; plyrStat_Career!(V, B9, 4);
         'FTA
-        Print Tab(44); Using "###"; ARS!(V, B9, 3);
+        Print Tab(44); Using "###"; plyrStat_Career!(V, B9, 3);
 
         'FT PCT
-        If ARS!(V, B9, 4) = 0 Then
+        If plyrStat_Career!(V, B9, 4) = 0 Then
             Print Tab(49); "--.-";
         End If
-        If ARS!(V, B9, 4) > 0 Then
-            Print Tab(48); Using "###.#"; (ARS!(V, B9, 4) / ARS!(V, B9, 3)) * 100;
+        If plyrStat_Career!(V, B9, 4) > 0 Then
+            Print Tab(48); Using "###.#"; (plyrStat_Career!(V, B9, 4) / plyrStat_Career!(V, B9, 3)) * 100;
         End If
 
         '3FGM
@@ -502,14 +502,14 @@ Sub ViewPlayer (careerFile$)
         End If
 
         'PTS
-        Print Tab(68); Using "####"; ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + car3FGM!(V, B9);
+        Print Tab(68); Using "####"; plyrStat_Career!(V, B9, 2) * 2 + plyrStat_Career!(V, B9, 4) + car3FGM!(V, B9);
 
         'AVG
-        If ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + car3FGM!(V, B9) = 0 Then
+        If plyrStat_Career!(V, B9, 2) * 2 + plyrStat_Career!(V, B9, 4) + car3FGM!(V, B9) = 0 Then
             Print Tab(74); " 0.0"
         End If
-        If ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + car3FGM!(V, B9) > 0 Then
-            Print Tab(74); Using "##.#"; (ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + car3FGM!(V, B9)) / ARS!(V, B9, 0)
+        If plyrStat_Career!(V, B9, 2) * 2 + plyrStat_Career!(V, B9, 4) + car3FGM!(V, B9) > 0 Then
+            Print Tab(74); Using "##.#"; (plyrStat_Career!(V, B9, 2) * 2 + plyrStat_Career!(V, B9, 4) + car3FGM!(V, B9)) / plyrStat_Career!(V, B9, 0)
         End If
 
     Next V
@@ -517,17 +517,17 @@ Sub ViewPlayer (careerFile$)
     For V = 1 To VV
 
         'Games
-        TT1 = TT1 + ARS!(V, B9, 0)
+        TT1 = TT1 + plyrStat_Career!(V, B9, 0)
         'FGM
-        TT2 = TT2 + ARS!(V, B9, 2)
+        TT2 = TT2 + plyrStat_Career!(V, B9, 2)
         'FGA
-        TT3 = TT3 + ARS!(V, B9, 1)
+        TT3 = TT3 + plyrStat_Career!(V, B9, 1)
         'FTM
-        TT4 = TT4 + ARS!(V, B9, 4)
+        TT4 = TT4 + plyrStat_Career!(V, B9, 4)
         'FTA
-        TT5 = TT5 + ARS!(V, B9, 3)
+        TT5 = TT5 + plyrStat_Career!(V, B9, 3)
         'Points
-        TT6 = TT6 + (ARS!(V, B9, 2) * 2 + ARS!(V, B9, 4) + car3FGM!(V, B9))
+        TT6 = TT6 + (plyrStat_Career!(V, B9, 2) * 2 + plyrStat_Career!(V, B9, 4) + car3FGM!(V, B9))
         '3FGM
         TT7 = TT7 + car3FGM!(V, B9)
         '3FGA
@@ -598,72 +598,72 @@ Sub ViewPlayer (careerFile$)
         Color 7
 
         'Year
-        Print Tab(15); ARS!(V, B9, 15);
+        Print Tab(15); plyrStat_Career!(V, B9, 15);
         'Off Rebounds
-        Print Tab(21); Using "####"; ARS!(V, B9, 12);
+        Print Tab(21); Using "####"; plyrStat_Career!(V, B9, 12);
         'Def Rebounds
-        Print Tab(26); Using "####"; ARS!(V, B9, 5) - ARS!(V, B9, 12);
+        Print Tab(26); Using "####"; plyrStat_Career!(V, B9, 5) - plyrStat_Career!(V, B9, 12);
         'Tot Rebounds
-        Print Tab(31); Using "####"; ARS!(V, B9, 5);
+        Print Tab(31); Using "####"; plyrStat_Career!(V, B9, 5);
 
         'Avg Rebounds
-        If ARS!(V, B9, 5) = 0 Then 
+        If plyrStat_Career!(V, B9, 5) = 0 Then 
             Print Tab(36); " 0.0";
         End If
-        If ARS!(V, B9, 5) > 0 Then 
-            Print Tab(36); Using "##.#"; ARS!(V, B9, 5) / ARS!(V, B9, 0);
+        If plyrStat_Career!(V, B9, 5) > 0 Then 
+            Print Tab(36); Using "##.#"; plyrStat_Career!(V, B9, 5) / plyrStat_Career!(V, B9, 0);
         End If
 
         'PF
-        Print Tab(41); Using "###"; ARS!(V, B9, 6);
+        Print Tab(41); Using "###"; plyrStat_Career!(V, B9, 6);
         'ASST
-        Print Tab(46); Using "###"; ARS!(V, B9, 8);
+        Print Tab(46); Using "###"; plyrStat_Career!(V, B9, 8);
         'BLK
-        Print Tab(50); Using "###"; ARS!(V, B9, 9);
+        Print Tab(50); Using "###"; plyrStat_Career!(V, B9, 9);
         'STL
-        Print Tab(54); Using "###"; ARS!(V, B9, 7);
+        Print Tab(54); Using "###"; plyrStat_Career!(V, B9, 7);
         'TO
-        Print Tab(58); Using "###"; ARS!(V, B9, 11);
+        Print Tab(58); Using "###"; plyrStat_Career!(V, B9, 11);
         'Highest Points
-        Print Tab(61); Using "###"; ARS!(V, B9, 13);
+        Print Tab(61); Using "###"; plyrStat_Career!(V, B9, 13);
 
-        If ARS!(V, B9, 10) = 0 Then 
+        If plyrStat_Career!(V, B9, 10) = 0 Then 
             Print Tab(65); "   0";
         End If
-        If ARS!(V, B9, 10) > 0 Then 
-            Print Tab(66); Using "####"; Int((ARS!(V, B9, 10) + 30) / 60);
+        If plyrStat_Career!(V, B9, 10) > 0 Then 
+            Print Tab(66); Using "####"; Int((plyrStat_Career!(V, B9, 10) + 30) / 60);
         End If
 
-        If ARS!(V, B9, 10) = 0 Then 
+        If plyrStat_Career!(V, B9, 10) = 0 Then 
             Print Tab(73); " 0";
         End If
-        If ARS!(V, B9, 10) > 0 Then 
-            Print Tab(73); Using "##"; Int(((ARS!(V, B9, 10) / 60) / ARS!(V, B9, 0)) + .5);
+        If plyrStat_Career!(V, B9, 10) > 0 Then 
+            Print Tab(73); Using "##"; Int(((plyrStat_Career!(V, B9, 10) / 60) / plyrStat_Career!(V, B9, 0)) + .5);
         End If
 
     Next V
 
     For V = 1 To VV
         'TRB
-        TT9 = TT9 + ARS!(V, B9, 5)
+        TT9 = TT9 + plyrStat_Career!(V, B9, 5)
         'PF
-        TT10 = TT10 + ARS!(V, B9, 6)
+        TT10 = TT10 + plyrStat_Career!(V, B9, 6)
         'ASST
-        TT11 = TT11 + ARS!(V, B9, 8)
+        TT11 = TT11 + plyrStat_Career!(V, B9, 8)
         'BLK
-        TT12 = TT12 + ARS!(V, B9, 9)
+        TT12 = TT12 + plyrStat_Career!(V, B9, 9)
         'STL
-        TT13 = TT13 + ARS!(V, B9, 7)
+        TT13 = TT13 + plyrStat_Career!(V, B9, 7)
         'MINS
-        TT14 = TT14 + ARS!(V, B9, 10)
+        TT14 = TT14 + plyrStat_Career!(V, B9, 10)
         'TO
-        TT16 = TT16 + ARS!(V, B9, 11)
+        TT16 = TT16 + plyrStat_Career!(V, B9, 11)
         'ORB
-        TT17 = TT17 + ARS!(V, B9, 12)
+        TT17 = TT17 + plyrStat_Career!(V, B9, 12)
         
         'HIGHEST POINTS
-        If ARS!(V, B9, 13) > TT15 Then 
-            TT15 = ARS!(V, B9, 13)
+        If plyrStat_Career!(V, B9, 13) > TT15 Then 
+            TT15 = plyrStat_Career!(V, B9, 13)
         End If
     Next V
 
@@ -723,7 +723,7 @@ Sub ViewRosterSequence (careerFile$)
 
     Shared careerPlayers$()
 
-    Shared ARS!(), car3FGM!(), car3FGA!()
+    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
 
     Do
 
@@ -762,7 +762,7 @@ Sub ViewRosterSequence (careerFile$)
                 Locate 3: Print Left$(careerPlayers$(I), 13);
 
                 For Z = 1 To MAX_CAREER_YEARS
-                    VV = VV + ARS!(Z, I, 14)
+                    VV = VV + plyrStat_Career!(Z, I, 14)
                 Next Z
 
                 For V = 1 To VV
@@ -770,33 +770,33 @@ Sub ViewRosterSequence (careerFile$)
                     Color 7
 
                     'Year
-                    Print Tab(15); ARS!(V, I, 15);
+                    Print Tab(15); plyrStat_Career!(V, I, 15);
                     'Games
-                    Print Tab(21); Using "##"; ARS!(V, I, 0);
+                    Print Tab(21); Using "##"; plyrStat_Career!(V, I, 0);
                     'FGM
-                    Print Tab(24); Using "####"; ARS!(V, I, 2);
+                    Print Tab(24); Using "####"; plyrStat_Career!(V, I, 2);
                     'FGA
-                    Print Tab(28); Using "####"; ARS!(V, I, 1);
+                    Print Tab(28); Using "####"; plyrStat_Career!(V, I, 1);
 
                     'FG PCT
-                    If ARS!(V, I, 2) = 0 Then 
+                    If plyrStat_Career!(V, I, 2) = 0 Then 
                         Print Tab(33); " --.-";
                     End If
-                    If ARS!(V, I, 2) > 0 Then 
-                        Print Tab(33); Using "###.#"; (ARS!(V, I, 2) / ARS!(V, I, 1)) * 100;
+                    If plyrStat_Career!(V, I, 2) > 0 Then 
+                        Print Tab(33); Using "###.#"; (plyrStat_Career!(V, I, 2) / plyrStat_Career!(V, I, 1)) * 100;
                     End If
 
                     'FTM
-                    Print Tab(39); Using "###"; ARS!(V, I, 4);
+                    Print Tab(39); Using "###"; plyrStat_Career!(V, I, 4);
                     'FTA
-                    Print Tab(43); Using "###"; ARS!(V, I, 3);
+                    Print Tab(43); Using "###"; plyrStat_Career!(V, I, 3);
 
                     'FT PCT
-                    If ARS!(V, I, 4) = 0 Then 
+                    If plyrStat_Career!(V, I, 4) = 0 Then 
                         Print Tab(47); " --.-";
                     End If
-                    If ARS!(V, I, 4) > 0 Then 
-                        Print Tab(47); Using "###.#"; (ARS!(V, I, 4) / ARS!(V, I, 3)) * 100;
+                    If plyrStat_Career!(V, I, 4) > 0 Then 
+                        Print Tab(47); Using "###.#"; (plyrStat_Career!(V, I, 4) / plyrStat_Career!(V, I, 3)) * 100;
                     End If
 
                     '3FGM
@@ -813,14 +813,14 @@ Sub ViewRosterSequence (careerFile$)
                     End If
 
                     'PTS
-                    Print Tab(67); Using "####"; ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I);
+                    Print Tab(67); Using "####"; plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I);
 
                     'AVG
-                    If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I) = 0 Then 
+                    If plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I) = 0 Then 
                         Print Tab(72); " 0.0";
                     End If
-                    If ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I) > 0 Then 
-                        Print Tab(72); Using "##.#"; (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I)) / ARS!(V, I, 0);
+                    If plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I) > 0 Then 
+                        Print Tab(72); Using "##.#"; (plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I)) / plyrStat_Career!(V, I, 0);
                     End If
 
                 Next V
@@ -828,16 +828,16 @@ Sub ViewRosterSequence (careerFile$)
                 VV = 0
 
                 For Z = 1 To MAX_CAREER_YEARS
-                    VV = VV + ARS!(Z, I, 14)
+                    VV = VV + plyrStat_Career!(Z, I, 14)
                 Next Z
 
                 For V = 1 To VV
-                    TT1 = TT1 + ARS!(V, I, 0)
-                    TT2 = TT2 + ARS!(V, I, 2)
-                    TT3 = TT3 + ARS!(V, I, 1)
-                    TT4 = TT4 + ARS!(V, I, 4)
-                    TT5 = TT5 + ARS!(V, I, 3)
-                    TT6 = TT6 + (ARS!(V, I, 2) * 2 + ARS!(V, I, 4) + car3FGM!(V, I))
+                    TT1 = TT1 + plyrStat_Career!(V, I, 0)
+                    TT2 = TT2 + plyrStat_Career!(V, I, 2)
+                    TT3 = TT3 + plyrStat_Career!(V, I, 1)
+                    TT4 = TT4 + plyrStat_Career!(V, I, 4)
+                    TT5 = TT5 + plyrStat_Career!(V, I, 3)
+                    TT6 = TT6 + (plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I))
                     TT7 = TT7 + car3FGM!(V, I)
                     TT8 = TT8 + car3FGA!(V, I)
                 Next V
@@ -905,49 +905,49 @@ Sub ViewRosterSequence (careerFile$)
                     Color 7
 
                     'Year
-                    Print Tab(15); ARS!(V, I, 15);
+                    Print Tab(15); plyrStat_Career!(V, I, 15);
                     'Off Reb
-                    Print Tab(21); Using "####"; ARS!(V, I, 12);
+                    Print Tab(21); Using "####"; plyrStat_Career!(V, I, 12);
                     'Def Reb
-                    Print Tab(26); Using "####"; ARS!(V, I, 5) - ARS!(V, I, 12);
+                    Print Tab(26); Using "####"; plyrStat_Career!(V, I, 5) - plyrStat_Career!(V, I, 12);
                     'Total Reb
-                    Print Tab(31); Using "####"; ARS!(V, I, 5);
+                    Print Tab(31); Using "####"; plyrStat_Career!(V, I, 5);
 
                     'Average
-                    If ARS!(V, I, 5) = 0 Then 
+                    If plyrStat_Career!(V, I, 5) = 0 Then 
                         Print Tab(36); " 0.0";
                     End If
-                    If ARS!(V, I, 5) > 0 Then 
-                        Print Tab(36); Using "##.#"; ARS!(V, I, 5) / ARS!(V, I, 0);
+                    If plyrStat_Career!(V, I, 5) > 0 Then 
+                        Print Tab(36); Using "##.#"; plyrStat_Career!(V, I, 5) / plyrStat_Career!(V, I, 0);
                     End If
 
                     'Personal Fouls
-                    Print Tab(41); Using "###"; ARS!(V, I, 6);
+                    Print Tab(41); Using "###"; plyrStat_Career!(V, I, 6);
                     'Assists
-                    Print Tab(46); Using "###"; ARS!(V, I, 8);
+                    Print Tab(46); Using "###"; plyrStat_Career!(V, I, 8);
                     'Blocks
-                    Print Tab(50); Using "###"; ARS!(V, I, 9);
+                    Print Tab(50); Using "###"; plyrStat_Career!(V, I, 9);
                     'Steals
-                    Print Tab(54); Using "###"; ARS!(V, I, 7);
+                    Print Tab(54); Using "###"; plyrStat_Career!(V, I, 7);
                     'Turnovers
-                    Print Tab(58); Using "###"; ARS!(V, I, 11);
+                    Print Tab(58); Using "###"; plyrStat_Career!(V, I, 11);
                     'Highest Points
-                    Print Tab(61); Using "###"; ARS!(V, I, 13);
+                    Print Tab(61); Using "###"; plyrStat_Career!(V, I, 13);
 
                     'Minutes
-                    If ARS!(V, I, 10) = 0 Then 
+                    If plyrStat_Career!(V, I, 10) = 0 Then 
                         Print Tab(65); "   0";
                     End If
-                    If ARS!(V, I, 10) > 0 Then 
-                        Print Tab(66); Using "####"; Int((ARS!(V, I, 10) + 30) / 60);
+                    If plyrStat_Career!(V, I, 10) > 0 Then 
+                        Print Tab(66); Using "####"; Int((plyrStat_Career!(V, I, 10) + 30) / 60);
                     End If
 
                     'Average Mins
-                    If ARS!(V, I, 10) = 0 Then 
+                    If plyrStat_Career!(V, I, 10) = 0 Then 
                         Print Tab(73); " 0";
                     End If
-                    If ARS!(V, I, 10) > 0 Then 
-                        Print Tab(73); Using "##"; Int(((ARS!(V, I, 10) / 60) / ARS!(V, I, 0)) + .5);
+                    If plyrStat_Career!(V, I, 10) > 0 Then 
+                        Print Tab(73); Using "##"; Int(((plyrStat_Career!(V, I, 10) / 60) / plyrStat_Career!(V, I, 0)) + .5);
                     End If
 
                 Next V
@@ -955,22 +955,22 @@ Sub ViewRosterSequence (careerFile$)
                 VV = 0
 
                 For Z = 1 To MAX_CAREER_YEARS
-                    VV = VV + ARS!(Z, I, 14)
+                    VV = VV + plyrStat_Career!(Z, I, 14)
                 Next Z
 
                 For V = 1 To VV
 
-                    TT9 = TT9 + ARS!(V, I, 5)
-                    TT10 = TT10 + ARS!(V, I, 6)
-                    TT11 = TT11 + ARS!(V, I, 8)
-                    TT12 = TT12 + ARS!(V, I, 9)
-                    TT13 = TT13 + ARS!(V, I, 7)
-                    TT14 = TT14 + ARS!(V, I, 10)
-                    TT16 = TT16 + ARS!(V, I, 11)
-                    TT17 = TT17 + ARS!(V, I, 12)
+                    TT9 = TT9 + plyrStat_Career!(V, I, 5)
+                    TT10 = TT10 + plyrStat_Career!(V, I, 6)
+                    TT11 = TT11 + plyrStat_Career!(V, I, 8)
+                    TT12 = TT12 + plyrStat_Career!(V, I, 9)
+                    TT13 = TT13 + plyrStat_Career!(V, I, 7)
+                    TT14 = TT14 + plyrStat_Career!(V, I, 10)
+                    TT16 = TT16 + plyrStat_Career!(V, I, 11)
+                    TT17 = TT17 + plyrStat_Career!(V, I, 12)
 
-                    If ARS!(V, I, 13) > TT15 Then 
-                        TT15 = ARS!(V, I, 13)
+                    If plyrStat_Career!(V, I, 13) > TT15 Then 
+                        TT15 = plyrStat_Career!(V, I, 13)
                     End If
 
                 Next V

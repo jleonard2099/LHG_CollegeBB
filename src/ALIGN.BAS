@@ -11,12 +11,14 @@ Sub ALIGN ()
 
     _Title "Courtside College Basketball - Align Stats"
 
-    Shared statPlyrNames$(), roadPlyrNames$()
+    Shared teamNameStats$
 
-    Shared AR!(), statsA!()
+    Shared statPlyrNames$(), plyrName_Road$()
+
+    Shared plyrStat_Road!(), statsA!()
     Shared statsW0!(), statsW1!()
     Shared statsZ!(), statsZ1!()
-    Shared W0R!(), WR1!()
+    Shared threeFGM_Road!(), threeFGA_Road!()
     Shared ZR!(), ZR1!()
 
     Do
@@ -43,18 +45,18 @@ Sub ALIGN ()
 
                 Open pathRoadStats$ + statFile$ For Input As #1
 
-                Input #1, BR$
+                Input #1, teamNameRoad$
 
                 For I = 0 To 13:
 
-                    Input #1, roadPlyrNames$(I)
+                    Input #1, plyrName_Road$(I)
 
                     For J = 0 To 13: 
-                        Input #1, AR!(I, J)
+                        Input #1, plyrStat_Road!(I, J)
                     Next
 
-                    Input #1, W0R!(I)
-                    Input #1, WR1!(I)
+                    Input #1, threeFGM_Road!(I)
+                    Input #1, threeFGA_Road!(I)
 
                 Next
 
@@ -72,7 +74,7 @@ Sub ALIGN ()
 
                     Open pathCurrentStats$ + statFile$ For Input As #2
 
-                    Input #2, B$
+                    Input #2, teamNameStats$
 
                     For I = 0 To 13:
 
@@ -143,15 +145,15 @@ End Sub
 'the results.
 Sub AlignStats (pathRoadStats$, statFile$)
 
+    Shared plyrName_Road$()
+    Shared plyrName_Align$()
     Shared statPlyrNames$()
-    Shared roadPlyrNames$()
-    Shared alignName$()
 
-    Shared AR!()
-    Shared W0R!(), WR1!()
+    Shared plyrStat_Road!()
+    Shared threeFGM_Road!(), threeFGA_Road!()
 
-    Shared AN!()
-    Shared W0N!(), WN1!()
+    Shared plyrStat_Align!()
+    Shared threeFGM_Align!(), threeFGA_Align!()
 
     Cls
 
@@ -171,7 +173,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
         Print " ";
-        Color 7: Print roadPlyrNames$(I)
+        Color 7: Print plyrName_Road$(I)
 
     Next
 
@@ -185,14 +187,14 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
         For J = 0 To 13
 
-            If statPlyrNames$(N) = roadPlyrNames$(J) Then
+            If statPlyrNames$(N) = plyrName_Road$(J) Then
 
-                alignName$(N) = roadPlyrNames$(J)
+                plyrName_Align$(N) = plyrName_Road$(J)
 
                 For K = 0 To 13
-                    AN!(N, K) = AR!(J, K)
-                    W0N!(N) = W0R!(J)
-                    WN1!(N) = WR1!(J)
+                    plyrStat_Align!(N, K) = plyrStat_Road!(J, K)
+                    threeFGM_Align!(N) = threeFGM_Road!(J)
+                    threeFGA_Align!(N) = threeFGA_Road!(J)
                 Next K
 
             End If
@@ -209,7 +211,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
 
             For K = 0 To 13
 
-                If alignName$(K) <> statPlyrNames$(K) Then
+                If plyrName_Align$(K) <> statPlyrNames$(K) Then
                     SEQ = SEQ + 1
                 End If
 
@@ -243,13 +245,14 @@ End Sub
 'user a chance to actually save the results 
 Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
+    Shared teamNameStats$
+
+    Shared plyrName_Align$()
     Shared statPlyrNames$()
 
+    Shared plyrStat_Align!()
+    Shared threeFGM_Align!(), threeFGA_Align!()
     Shared ZR!(), ZR1!()
-
-    Shared alignName$()
-    Shared AN!()
-    Shared W0N!(), WN1!()
 
     Cls
 
@@ -267,7 +270,7 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
         Color 15: Print statPlyrNames$(I);
         Color 12: Print Tab(44); Using "##"; I;
         Print " ";
-        Color 7: Print alignName$(I)
+        Color 7: Print plyrName_Align$(I)
     Next
 
     Color 11
@@ -276,18 +279,18 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Open pathRoadStats$ + statFile$ For Output As #1
 
-    Write #1, BR$
+    Write #1, teamNameStats$
 
     For I = 0 To 13:
 
-        Write #1, alignName$(I)
+        Write #1, plyrName_Align$(I)
 
         For J = 0 To 13:
-            Write #1, AN!(I, J)
+            Write #1, plyrStat_Align!(I, J)
         Next
 
-        Write #1, W0N!(I)
-        Write #1, WN1!(I)
+        Write #1, threeFGM_Align!(I)
+        Write #1, threeFGA_Align!(I)
 
     Next
 
