@@ -9,7 +9,7 @@ Sub EditStats ()
     _Title "Courtside College Basketball - Stats Input"
 
     Shared statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!()
+    Shared statsZ0!(), statsZ1!()
 
     Shared statPlyrNames$()
     Dim Z2(14, 14)
@@ -48,7 +48,7 @@ Sub EditStats ()
         Next I
 
         For L = 0 To 15:
-            Input #1, statsZ!(L)
+            Input #1, statsZ0!(L)
         Next L
 
         For L = 0 To 15:
@@ -69,21 +69,21 @@ Sub EditStats ()
         Locate 3, 1
         Print "1. STAT FILE NAME  "; statFile$
         Print "2. TM MINUTES ";
-        Print Using "#####"; Int(statsZ!(0)/60)
-        Print "3. TM FGA "; statsZ!(1)
-        Print "4. TM FGM "; statsZ!(2)
-        Print "5. TM 3FGA "; statsZ!(14)
-        Print "6. TM 3FGM "; statsZ!(13)
-        Print "7. TM FTA "; statsZ!(3)
-        Print "8. TM FTM "; statsZ!(4)
-        Print "9. TM OFF RB  "; statsZ!(12)
-        Print "10. TM TOT RB "; statsZ!(5)
-        Print "11. TM FOULS "; statsZ!(6)
-        Print "12. TM STEALS "; statsZ!(7)
-        Print "13. TM ASSISTS "; statsZ!(8)
-        Print "14. TM BLOCKS "; statsZ!(9)
-        Print "15. TM TURNOVERS "; statsZ!(11)
-        Print "16. TM POINTS  "; statsZ!(10)
+        Print Using "#####"; Int(statsZ0!(0)/60)
+        Print "3. TM FGA "; statsZ0!(1)
+        Print "4. TM FGM "; statsZ0!(2)
+        Print "5. TM 3FGA "; statsZ0!(14)
+        Print "6. TM 3FGM "; statsZ0!(13)
+        Print "7. TM FTA "; statsZ0!(3)
+        Print "8. TM FTM "; statsZ0!(4)
+        Print "9. TM OFF RB  "; statsZ0!(12)
+        Print "10. TM TOT RB "; statsZ0!(5)
+        Print "11. TM FOULS "; statsZ0!(6)
+        Print "12. TM STEALS "; statsZ0!(7)
+        Print "13. TM ASSISTS "; statsZ0!(8)
+        Print "14. TM BLOCKS "; statsZ0!(9)
+        Print "15. TM TURNOVERS "; statsZ0!(11)
+        Print "16. TM POINTS  "; statsZ0!(10)
 
         Do
 
@@ -100,78 +100,78 @@ Sub EditStats ()
 
                 Case 2
                     Locate 4, 16: Print Space$(10)
-                    Locate 4, 1: Input " 2. TM MINUTES "; statsZ!(0)
+                    Locate 4, 1: Input " 2. TM MINUTES "; statsZ0!(0)
                     Locate 4, 16: Print " "
-                    statsZ!(0) = statsZ!(0) * 60
+                    statsZ0!(0) = statsZ0!(0) * 60
 
                 Case 3
                     Locate 5, 12: Print Space$(10)
-                    Locate 5, 1: Input " 3. TM FGA "; statsZ!(1)
+                    Locate 5, 1: Input " 3. TM FGA "; statsZ0!(1)
                     Locate 5, 12: Print " "
 
                 Case 4
                     Locate 6, 12: Print Space$(10)
-                    Locate 6, 1: Input " 4. TM FGM "; statsZ!(2)
+                    Locate 6, 1: Input " 4. TM FGM "; statsZ0!(2)
                     Locate 6, 12: Print " "
 
                 Case 5
                     Locate 7, 13: Print Space$(10)
-                    Locate 7, 1: Input " 5. TM 3FGA "; statsZ!(14)
+                    Locate 7, 1: Input " 5. TM 3FGA "; statsZ0!(14)
                     Locate 7, 13: Print " "
 
                 Case 6
                     Locate 8, 13: Print Space$(10)
-                    Locate 8, 1: Input " 6. TM 3FGM "; statsZ!(13)
+                    Locate 8, 1: Input " 6. TM 3FGM "; statsZ0!(13)
                     Locate 8, 13: Print " "
 
                 Case 7
                     Locate 9, 12: Print Space$(10)
-                    Locate 9, 1: Input " 7. TM FTA "; statsZ!(3)
+                    Locate 9, 1: Input " 7. TM FTA "; statsZ0!(3)
                     Locate 9, 12: Print " "
 
                 Case 8
                     Locate 10, 12: Print Space$(10)
-                    Locate 10, 1: Input " 8. TM FTM "; statsZ!(4)
+                    Locate 10, 1: Input " 8. TM FTM "; statsZ0!(4)
                     Locate 10, 12: Print " "
 
                 Case 9
                     Locate 11, 15: Print Space$(10)
-                    Locate 11, 1: Input " 9. TM OFF RB "; statsZ!(12)
+                    Locate 11, 1: Input " 9. TM OFF RB "; statsZ0!(12)
                     Locate 11, 15: Print " "
 
                 Case 10
                     Locate 12, 14: Print Space$(10)
-                    Locate 12, 1: Input "10. TM TOT RB "; statsZ!(5)
+                    Locate 12, 1: Input "10. TM TOT RB "; statsZ0!(5)
                     Locate 12, 14: Print " "
 
                 Case 11
                     Locate 13, 14: Print Space$(10)
-                    Locate 13, 1: Input "11. TM FOULS "; statsZ!(6)
+                    Locate 13, 1: Input "11. TM FOULS "; statsZ0!(6)
                     Locate 13, 14: Print " "
 
                 Case 12
                     Locate 14, 15: Print Space$(10)
-                    Locate 14, 1: Input "12. TM STEALS "; statsZ!(7)
+                    Locate 14, 1: Input "12. TM STEALS "; statsZ0!(7)
                     Locate 14, 15: Print " "
 
                 Case 13
                     Locate 15, 16: Print Space$(10)
-                    Locate 15, 1: Input "13. TM ASSISTS "; statsZ!(8)
+                    Locate 15, 1: Input "13. TM ASSISTS "; statsZ0!(8)
                     Locate 15, 16: Print " "
 
                 Case 14
                     Locate 16, 15: Print Space$(10)
-                    Locate 16, 1: Input "14. TM BLOCKS "; statsZ!(9)
+                    Locate 16, 1: Input "14. TM BLOCKS "; statsZ0!(9)
                     Locate 16, 15: Print " "
 
                 Case 15
                     Locate 17, 18: Print Space$(10)
-                    Locate 17, 1: Input "15. TM TURNOVERS "; statsZ!(11)
+                    Locate 17, 1: Input "15. TM TURNOVERS "; statsZ0!(11)
                     Locate 17, 18: Print " "
 
                 Case 16
                     Locate 18, 15: Print Space$(10)
-                    Locate 18, 1: Input "16. TM POINTS "; statsZ!(10)
+                    Locate 18, 1: Input "16. TM POINTS "; statsZ0!(10)
                     Locate 18, 15: Print " "
 
             End Select
@@ -468,7 +468,7 @@ Sub EditStats ()
         Next I
 
         For L = 0 To 15: 
-            Print #2, statsZ!(L)
+            Print #2, statsZ0!(L)
         Next L
 
         For L = 0 To 15: 

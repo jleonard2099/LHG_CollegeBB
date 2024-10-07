@@ -1201,12 +1201,17 @@ Sub COLHOOP ()
         'Neutral Site
         'Random # 2,000 - 14,000
         '-- Yes, some teams struggle to get 1,500
-        '-- but it's rare, or defCoverage, or an outlier
+        '-- but it's rare or an outlier
         '-- Original game ranged 9,000 to 11,000
         actualAttendance& = Int(Rnd(1) * 12000) + 2000
     Else
-        'Random # +/ 1,000 of team's average attendance
-        actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 2000) - 1000
+        'Average attendance +/ 12%
+        'College attendance ranges 70% to 95% of max capacity
+        margin = Int(avgAttendance&(1) * .12)
+        actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * margin * 2) - margin
+
+        'Average attendance +/- 1,000
+        'actualAttendance& = avgAttendance&(1) + Int(Rnd(1) * 2000) - 1000
     End If
 
     For I = 0 To 1
@@ -5136,7 +5141,7 @@ Sub InitVar ()
     Shared FY%()
 
     Shared gameW0!(), gameW1!()
-    Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared statsZ0!(), statsZ1!(), statsZ2!()
     Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
@@ -5279,7 +5284,7 @@ Sub InitVar ()
     Erase teamNames$, teamRecDesc$, teamYrTourn$
 
     Erase gameW0!, gameW1!
-    Erase statsZ!, statsZ1!, statsZ2!
+    Erase statsZ0!, statsZ1!, statsZ2!
     Erase indRecords!, teamRecords!
 
     actualAttendance& = 0
@@ -13895,7 +13900,7 @@ End Sub
 'considered fully complete.
 Sub SAVESTATS ()
 
-    Shared gameW0!(), gameW1!(), statsZ!()
+    Shared gameW0!(), gameW1!(), statsZ0!()
 
     Shared scheduleFile$, tourneyFile$
 
@@ -14068,7 +14073,7 @@ Sub SAVESTATS ()
 
             End If
 
-            statsZ!(12) = 0
+            statsZ0!(12) = 0
 
         Next idx
 
@@ -14090,7 +14095,7 @@ Sub COMPILESTATFILES (teamIdx)
     Shared gameAttendance&()
 
     Shared gameW0!(), gameW1!()
-    Shared statsZ!(), statsZ1!(), statsZ2!()
+    Shared statsZ0!(), statsZ1!(), statsZ2!()
 
     Shared powerRating(), teamScore(), oppScore()
 
@@ -14118,7 +14123,7 @@ Sub COMPILESTATFILES (teamIdx)
         Next I
 
         For L = 0 To 15:
-            Input #1, statsZ!(L)
+            Input #1, statsZ0!(L)
         Next L
 
         For L = 0 To 15:
@@ -14144,13 +14149,13 @@ Sub COMPILESTATFILES (teamIdx)
             statsZ2!(I, J) = statsZ2!(I, J) + plyrOff_GAME!(teamIdx, I, J)
 
             If J <> 5 And J <> 10 And J <> 11 Then
-                statsZ!(J) = statsZ!(J) + plyrOff_GAME!(teamIdx, I, J)
+                statsZ0!(J) = statsZ0!(J) + plyrOff_GAME!(teamIdx, I, J)
                 statsZ1!(J) = statsZ1!(J) + plyrOff_GAME!(1 - teamIdx, I, J)
             End If
 
         Next J
 
-        statsZ!(0) = statsZ!(0) + plyrOff_GAME!(teamIdx, I, 10)
+        statsZ0!(0) = statsZ0!(0) + plyrOff_GAME!(teamIdx, I, 10)
         TG! = TG! + plyrOff_GAME!(teamIdx, I, 10)
 
     Next I
@@ -14167,27 +14172,27 @@ Sub COMPILESTATFILES (teamIdx)
     Next
 
     'Total Steals
-    statsZ!(15) = statsZ!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+    statsZ0!(15) = statsZ0!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
     statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
     'Total Rebounds
-    statsZ!(5) = statsZ!(5) + totRebounds(teamIdx)
+    statsZ0!(5) = statsZ0!(5) + totRebounds(teamIdx)
     statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
 
     'Total Turnovers
-    statsZ!(11) = statsZ!(11) + turnovers(teamIdx)
+    statsZ0!(11) = statsZ0!(11) + turnovers(teamIdx)
     statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
 
     For J = 0 To 13:
-        statsZ!(13) = statsZ!(13) + gameW0!(teamIdx, J)
-        statsZ!(14) = statsZ!(14) + gameW1!(teamIdx, J)
+        statsZ0!(13) = statsZ0!(13) + gameW0!(teamIdx, J)
+        statsZ0!(14) = statsZ0!(14) + gameW1!(teamIdx, J)
         statsZ1!(13) = statsZ1!(13) + gameW0!(1 - teamIdx, J)
         statsZ1!(14) = statsZ1!(14) + gameW1!(1 - teamIdx, J)
         W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
         W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
     Next J
 
-    statsZ!(10) = statsZ!(10) + score(teamIdx, 0)
+    statsZ0!(10) = statsZ0!(10) + score(teamIdx, 0)
     statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
 
     Call TEAMBOX(1, teamIdx)
@@ -14215,7 +14220,7 @@ Sub COMPILESTATFILES (teamIdx)
     Next I
 
     For L = 0 To 15:
-        Print #2, statsZ!(L)
+        Print #2, statsZ0!(L)
     Next L
 
     For L = 0 To 15:
@@ -14382,7 +14387,7 @@ Sub COMPILESTATFILES (teamIdx)
 
     Erase powerRating, oppScore, teamScore
     Erase gameAttendance&
-    Erase statsZ!, statsZ1!, statsZ2!
+    Erase statsZ0!, statsZ1!, statsZ2!
     Erase gameSite$, locIndicator$, oppName$
 
 End Sub

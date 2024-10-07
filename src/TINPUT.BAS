@@ -21,7 +21,7 @@ Sub InputTeam ()
     Dim inputRatings(16)
     Dim inputQQ(3), inputX$(3)
 
-    Shared teamRatings%()
+    Shared teamRatings()
 
     Shared playerOff!(), playerDef!(), leagueRatings()
     Shared playerStats!(), playerRatings!()
@@ -99,7 +99,7 @@ Sub InputTeam ()
         Locate 9, 1: Input "7. SEASON 3 FG % "; leag3FGPct!
         'Locate 9, 18: Print " "
 
-        teamRatings%(2) = 999
+        teamRatings(2) = 999
 
         Do
 
@@ -285,20 +285,20 @@ Sub InputTeam ()
         Locate 4: Input " 2. TEAM NAME "; teamName$
         Locate 5: Input " 3. TEAM NICKNAME "; mascot$
         Locate 6: Input " 4. STRENGTH OF SCHEDULE ADJ "; sosAdj
-        Locate 7: Input " 5. HOMECOURT FACTOR (0-6) "; teamRatings%(6)
-        Locate 8: Input " 6. TEXT COLOR (0-15) "; teamRatings%(0)
-        Locate 9: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+        Locate 7: Input " 5. HOMECOURT FACTOR (0-6) "; teamRatings(6)
+        Locate 8: Input " 6. TEXT COLOR (0-15) "; teamRatings(0)
+        Locate 9: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings(1)
         'Locate 8, 40
         'Print "TEAM APPEARANCE: ";
         Locate 9, 40
-        Color teamRatings%(0), teamRatings%(1)
+        Color teamRatings(0), teamRatings(1)
         Print teamName$ + " " + mascot$
         Color 15, 0
 
         Locate 2, 40: Input "21. GAMES PLAYED "; nbrGmsPlayed!
-        Locate 3, 40: Input "22. WINS "; teamRatings%(7)
-        Locate 4, 40: Input "23. LOSSES "; teamRatings%(8)
-        Locate 5, 40: Input "24. POWER RATING "; teamRatings%(9)
+        Locate 3, 40: Input "22. WINS "; teamRatings(7)
+        Locate 4, 40: Input "23. LOSSES "; teamRatings(8)
+        Locate 5, 40: Input "24. POWER RATING "; teamRatings(9)
         Locate 6, 40: Input "25. COACH "; coach$
         Locate 7, 40: Input "26. ARENA "; arenaName$
         Locate 8, 40: Input "27. AVG ATTENDANCE "; teamAttendance&
@@ -379,33 +379,33 @@ Sub InputTeam ()
 
                 Case 5
                     Locate 7, 28: Print Space$(10)
-                    Locate 7, 1: Input " 5. HOMECOURT FACTOR (0-6) "; teamRatings%(6)
+                    Locate 7, 1: Input " 5. HOMECOURT FACTOR (0-6) "; teamRatings(6)
                     Locate 7, 28: Print " "
 
                 Case 6
                     Locate 8, 23: Print Space$(10)
-                    Locate 8, 1: Input " 6. TEXT COLOR (0-15) "; teamRatings%(0)
+                    Locate 8, 1: Input " 6. TEXT COLOR (0-15) "; teamRatings(0)
                     Locate 8, 23: Print " "
 
-                    If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
+                    If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
                         'Locate 8, 40
                         'Print "TEAM APPEARANCE: ";
                         Locate 9, 40
-                        Color teamRatings%(0), teamRatings%(1)
+                        Color teamRatings(0), teamRatings(1)
                         Print teamName$ + " " + mascot$
                         Color 15, 0
                     End If
 
                 Case 7
                     Locate 9, 28: Print Space$(10)
-                    Locate 9, 1: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings%(1)
+                    Locate 9, 1: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings(1)
                     Locate 9, 28: Print " "
 
-                    If teamRatings%(0) >= 0 And teamRatings%(1) >= 0 Then
+                    If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
                         'Locate 8, 37
                         'Print "TEAM APPEARANCE: ";
                         Locate 9, 40
-                        Color teamRatings%(0), teamRatings%(1)
+                        Color teamRatings(0), teamRatings(1)
                         Print teamName$ + " " + mascot$
                         Color 15, 0
                     End If
@@ -545,17 +545,17 @@ Sub InputTeam ()
 
                 Case 22
                     Locate 3, 49: Print Space$(10)
-                    Locate 3, 40: Input "22. WINS "; teamRatings%(7)
+                    Locate 3, 40: Input "22. WINS "; teamRatings(7)
                     Locate 3, 49: Print " "
 
                 Case 23
                     Locate 4, 51: Print Space$(10)
-                    Locate 4, 40: Input "23. LOSSES "; teamRatings%(8)
+                    Locate 4, 40: Input "23. LOSSES "; teamRatings(8)
                     Locate 4, 51: Print " "
 
                 Case 24
                     Locate 5, 57: Print Space$(10)
-                    Locate 5, 40: Input "24. POWER RATING "; teamRatings%(9)
+                    Locate 5, 40: Input "24. POWER RATING "; teamRatings(9)
                     Locate 5, 57: Print " "
 
                 Case 25
@@ -583,9 +583,9 @@ Sub InputTeam ()
         ' Players
         '---------------
         'Average FGA/G for this team (Off + Def)
-        teamRatings%(3) = Int(((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) + .5)
-        teamRatings%(4) = leagFGAPerGame!
-        teamRatings%(5) = nbrGmsPlayed!
+        teamRatings(3) = Int(((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) + .5)
+        teamRatings(4) = leagFGAPerGame!
+        teamRatings(5) = nbrGmsPlayed!
 
         If choice = 1 Then
             F3 = 32
@@ -1341,7 +1341,7 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
-    Shared teamRatings%()
+    Shared teamRatings()
 
     Shared playerOff!(), playerDef!(), leagueRatings()
     Shared playerStats!(), playerRatings!()
@@ -1376,10 +1376,10 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
         LSet Q$(I + 5) = MKI$(leagueRatings(I))
     Next
 
-    teamRatings%(2) = 999
+    teamRatings(2) = 999
 
     For I = 0 To 9:
-        LSet Q$(I + 10) = MKI$(teamRatings%(I))
+        LSet Q$(I + 10) = MKI$(teamRatings(I))
     Next
 
     For I = 0 To 13

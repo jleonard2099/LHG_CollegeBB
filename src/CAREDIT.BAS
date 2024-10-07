@@ -64,7 +64,7 @@ Sub EditPlayers (careerFile$)
 
     Shared careerPlayers$()
 
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     Do
 
@@ -173,7 +173,7 @@ Sub EditPlayers (careerFile$)
                 For J = 1 To MAX_CAREER_YEARS
                     For I = B9 To 60
                         For I1 = 0 To 15
-                            plyrStat_Career!(J, I + 1, I1) = plyrStat_Career!(J, I + 1, I1)
+                            carPlyrStat!(J, I + 1, I1) = carPlyrStat!(J, I + 1, I1)
                         Next I1
 
                         car3FGM!(N, I) = car3FGM!(N, I + 1)
@@ -191,7 +191,7 @@ Sub EditPlayers (careerFile$)
                 careerPlayers$(61) = ""
                 For J = 1 To MAX_CAREER_YEARS
                     For I1 = 0 To 15
-                        plyrStat_Career!(J, 61, I1) = 0
+                        carPlyrStat!(J, 61, I1) = 0
                         car3FGM!(J, 61) = 0
                         car3FGA!(J, 61) = 0
                     Next
@@ -214,7 +214,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
 
     Shared careerPlayers$()
 
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     B9 = playerIdx
 
@@ -247,7 +247,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
     VV = 0
 
     For Z = 1 To MAX_CAREER_YEARS
-        VV = VV + plyrStat_Career!(Z, I, 14)
+        VV = VV + carPlyrStat!(Z, I, 14)
     Next Z
 
     If 55 - PTN < VV Then
@@ -264,44 +264,44 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
 
         PTN = PTN + 1
         'Year
-        Print #1, Tab(12); plyrStat_Career!(V, I, 15);
+        Print #1, Tab(12); carPlyrStat!(V, I, 15);
         'G
-        Print #1, Tab(19); Using "##"; plyrStat_Career!(V, I, 0);
+        Print #1, Tab(19); Using "##"; carPlyrStat!(V, I, 0);
         'FGM
-        Print #1, Tab(23); Using "###"; plyrStat_Career!(V, I, 2);
+        Print #1, Tab(23); Using "###"; carPlyrStat!(V, I, 2);
         'FGA
-        Print #1, Tab(28); Using "####"; plyrStat_Career!(V, I, 1);
+        Print #1, Tab(28); Using "####"; carPlyrStat!(V, I, 1);
 
         'FG Pct
-        If plyrStat_Career!(V, I, 2) = 0 Then 
+        If carPlyrStat!(V, I, 2) = 0 Then 
             Print #1, Tab(34); "--.-";
         End If
-        If plyrStat_Career!(V, I, 2) > 0 Then 
-            Print #1, Tab(33); Using "###.#"; (plyrStat_Career!(V, I, 2) / plyrStat_Career!(V, I, 1)) * 100;
+        If carPlyrStat!(V, I, 2) > 0 Then 
+            Print #1, Tab(33); Using "###.#"; (carPlyrStat!(V, I, 2) / carPlyrStat!(V, I, 1)) * 100;
         End If
 
         'FTM
-        Print #1, Tab(39); Using "###"; plyrStat_Career!(V, I, 4);
+        Print #1, Tab(39); Using "###"; carPlyrStat!(V, I, 4);
         'FTA
-        Print #1, Tab(45); Using "###"; plyrStat_Career!(V, I, 3);
+        Print #1, Tab(45); Using "###"; carPlyrStat!(V, I, 3);
 
         'FT %
-        If plyrStat_Career!(V, I, 4) = 0 Then 
+        If carPlyrStat!(V, I, 4) = 0 Then 
             Print #1, Tab(50); "--.-";
         End If
-        If plyrStat_Career!(V, I, 4) > 0 Then 
-            Print #1, Tab(49); Using "###.#"; (plyrStat_Career!(V, I, 4) / plyrStat_Career!(V, I, 3)) * 100;
+        If carPlyrStat!(V, I, 4) > 0 Then 
+            Print #1, Tab(49); Using "###.#"; (carPlyrStat!(V, I, 4) / carPlyrStat!(V, I, 3)) * 100;
         End If
 
         'Pts
-        Print #1, Tab(55); Using "####"; plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I);
+        Print #1, Tab(55); Using "####"; carPlyrStat!(V, I, 2) * 2 + carPlyrStat!(V, I, 4) + car3FGM!(V, I);
 
         'Average
-        If plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I) = 0 Then 
+        If carPlyrStat!(V, I, 2) * 2 + carPlyrStat!(V, I, 4) + car3FGM!(V, I) = 0 Then 
             Print #1, Tab(61); " 0.0";
         End If
-        If plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I) > 0 Then 
-            Print #1, Tab(61); Using "##.#"; (plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I)) / plyrStat_Career!(V, I, 0);
+        If carPlyrStat!(V, I, 2) * 2 + carPlyrStat!(V, I, 4) + car3FGM!(V, I) > 0 Then 
+            Print #1, Tab(61); Using "##.#"; (carPlyrStat!(V, I, 2) * 2 + carPlyrStat!(V, I, 4) + car3FGM!(V, I)) / carPlyrStat!(V, I, 0);
         End If
 
         '3FGM
@@ -318,41 +318,41 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
         End If
         
         'RB
-        Print #1, Tab(83); Using "###"; plyrStat_Career!(V, I, 5);
+        Print #1, Tab(83); Using "###"; carPlyrStat!(V, I, 5);
 
         'Avg RB
-        If plyrStat_Career!(V, I, 5) = 0 Then 
+        If carPlyrStat!(V, I, 5) = 0 Then 
             Print #1, Tab(88); " 0.0";
         End If
-        If plyrStat_Career!(V, I, 5) > 0 Then 
-            Print #1, Tab(88); Using "##.#"; plyrStat_Career!(V, I, 5) / plyrStat_Career!(V, I, 0);
+        If carPlyrStat!(V, I, 5) > 0 Then 
+            Print #1, Tab(88); Using "##.#"; carPlyrStat!(V, I, 5) / carPlyrStat!(V, I, 0);
         End If
 
         'PF
-        Print #1, Tab(94); Using "###"; plyrStat_Career!(V, I, 6);
+        Print #1, Tab(94); Using "###"; carPlyrStat!(V, I, 6);
         'Ast
-        Print #1, Tab(99); Using "###"; plyrStat_Career!(V, I, 8);
+        Print #1, Tab(99); Using "###"; carPlyrStat!(V, I, 8);
         'Blk
-        Print #1, Tab(104); Using "###"; plyrStat_Career!(V, I, 9);
+        Print #1, Tab(104); Using "###"; carPlyrStat!(V, I, 9);
         'Stl
-        Print #1, Tab(109); Using "###"; plyrStat_Career!(V, I, 7);
+        Print #1, Tab(109); Using "###"; carPlyrStat!(V, I, 7);
         'Highest Points
-        Print #1, Tab(113); Using "###"; plyrStat_Career!(V, I, 13);
+        Print #1, Tab(113); Using "###"; carPlyrStat!(V, I, 13);
 
         'Mins
-        If plyrStat_Career!(V, I, 10) = 0 Then 
+        If carPlyrStat!(V, I, 10) = 0 Then 
             Print #1, Tab(118); "   0";
         End If
-        If plyrStat_Career!(V, I, 10) > 0 Then 
-            Print #1, Tab(118); Using "####"; Int((plyrStat_Career!(V, I, 10) + 30) / 60);
+        If carPlyrStat!(V, I, 10) > 0 Then 
+            Print #1, Tab(118); Using "####"; Int((carPlyrStat!(V, I, 10) + 30) / 60);
         End If
 
         'Avg Mins
-        If plyrStat_Career!(V, I, 10) = 0 Then 
+        If carPlyrStat!(V, I, 10) = 0 Then 
             Print #1, Tab(125); " 0"
         End If
-        If plyrStat_Career!(V, I, 10) > 0 Then 
-            Print #1, Tab(125); Using "##"; Int(((plyrStat_Career!(V, I, 10) / 60) / plyrStat_Career!(V, I, 0)) + .5)
+        If carPlyrStat!(V, I, 10) > 0 Then 
+            Print #1, Tab(125); Using "##"; Int(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)) + .5)
         End If
 
     Next V
@@ -360,28 +360,28 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
     VV = 0
 
     For Z = 1 To MAX_CAREER_YEARS1
-        VV = VV + plyrStat_Career!(Z, I, 14)
+        VV = VV + carPlyrStat!(Z, I, 14)
     Next Z
 
     For V = 1 To VV
-        TT1 = TT1 + plyrStat_Career!(V, I, 0)
-        TT2 = TT2 + plyrStat_Career!(V, I, 2)
-        TT3 = TT3 + plyrStat_Career!(V, I, 1)
-        TT4 = TT4 + plyrStat_Career!(V, I, 4)
-        TT5 = TT5 + plyrStat_Career!(V, I, 3)
-        TT6 = TT6 + (plyrStat_Career!(V, I, 2) * 2 + plyrStat_Career!(V, I, 4) + car3FGM!(V, I))
+        TT1 = TT1 + carPlyrStat!(V, I, 0)
+        TT2 = TT2 + carPlyrStat!(V, I, 2)
+        TT3 = TT3 + carPlyrStat!(V, I, 1)
+        TT4 = TT4 + carPlyrStat!(V, I, 4)
+        TT5 = TT5 + carPlyrStat!(V, I, 3)
+        TT6 = TT6 + (carPlyrStat!(V, I, 2) * 2 + carPlyrStat!(V, I, 4) + car3FGM!(V, I))
         TT7 = TT7 + car3FGM!(V, I)
         TT8 = TT8 + car3FGA!(V, I)
-        TT9 = TT9 + plyrStat_Career!(V, I, 5)
-        TT10 = TT10 + plyrStat_Career!(V, I, 6)
-        TT11 = TT11 + plyrStat_Career!(V, I, 8)
-        TT12 = TT12 + plyrStat_Career!(V, I, 9)
-        TT13 = TT13 + plyrStat_Career!(V, I, 7)
-        TT14 = TT14 + plyrStat_Career!(V, I, 10)
-        TT16 = TT16 + plyrStat_Career!(V, I, 11)
-        TT17 = TT17 + plyrStat_Career!(V, I, 12)
-        If plyrStat_Career!(V, I, 13) > TT15 Then 
-            TT15 = plyrStat_Career!(V, I, 13)
+        TT9 = TT9 + carPlyrStat!(V, I, 5)
+        TT10 = TT10 + carPlyrStat!(V, I, 6)
+        TT11 = TT11 + carPlyrStat!(V, I, 8)
+        TT12 = TT12 + carPlyrStat!(V, I, 9)
+        TT13 = TT13 + carPlyrStat!(V, I, 7)
+        TT14 = TT14 + carPlyrStat!(V, I, 10)
+        TT16 = TT16 + carPlyrStat!(V, I, 11)
+        TT17 = TT17 + carPlyrStat!(V, I, 12)
+        If carPlyrStat!(V, I, 13) > TT15 Then 
+            TT15 = carPlyrStat!(V, I, 13)
         End If
     Next V
 

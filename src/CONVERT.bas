@@ -86,7 +86,7 @@ Sub SaveTeamDataOld (newID, yearNumber$, teamName$, teamIdx)
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
-    Shared leagueRatings(), teamRatings%(), teamStats!()
+    Shared leagueRatings(), teamRatings(), teamStats!()
     Shared playerNames$(), position$()
     Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 

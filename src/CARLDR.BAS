@@ -74,7 +74,7 @@ Sub UpdateCareerLeaders ()
 
     'Arrays to store data loaded from files
     Shared careerPlayers$()
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     TMR1 = 15 * 62
 
@@ -102,7 +102,7 @@ Sub UpdateCareerLeaders ()
                     '# Stats
                     For J = 0 To 15
 
-                        plyrCarVals!(I, J) = plyrCarVals!(I, J) + plyrStat_Career!(N, I, J)
+                        plyrCarVals!(I, J) = plyrCarVals!(I, J) + carPlyrStat!(N, I, J)
 
                         car3FGMVals!(J, I) = car3FGMVals!(J, I) + car3FGM!(J, I)
                         car3FGAVals!(J, I) = car3FGAVals!(J, I) + car3FGA!(J, I)

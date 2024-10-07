@@ -149,17 +149,17 @@ End Sub
 'a variety of arrays.
 Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
-    Shared AL$(), plyLeaderTeams$()
+    Shared expPlyrLdrName$(), plyLeaderTeams$()
     Shared statFiles$(), statPlyrNames$()
-    Shared TMA$(), tmLeaderTeams$()
+    Shared expPlyrLdrTeam$(), tmLeaderTeams$()
 
-    Shared plyrStatLeaders!()
+    Shared plyrLdrStats!()
 
-    Shared plyrLeaderYears!(), GMA!(), tmLeaderYears!()
-    Shared TT!(), TT1!()
+    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
+    Shared plyrLdrVal!(), teamLdrVal!()
 
     Shared statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!()
+    Shared statsZ0!(), statsZ1!()
     Shared leader3FGM!(), leader3FGA!()
 
     Shared playerOff!()
@@ -197,7 +197,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ!(L)
+                    Input #1, statsZ0!(L)
                 Next
 
                 For L = 0 To 15:
@@ -213,7 +213,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 plyrTotalStats = plyrTotalStats + 1
 
                 For I = 0 To 14
-                    TT!(plyrTotalStats, I) = statsZ!(I)
+                    plyrLdrVal!(plyrTotalStats, I) = statsZ0!(I)
                     plyLeaderTeams$(plyrTotalStats, I) = teamName$
                     plyrLeaderYears!(plyrTotalStats) = year
                 Next
@@ -221,7 +221,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 teamTotalStats = teamTotalStats + 1
 
                 For I = 0 To 14:
-                    TT1!(teamTotalStats, I) = statsZ1!(I)
+                    teamLdrVal!(teamTotalStats, I) = statsZ1!(I)
                     tmLeaderTeams$(teamTotalStats, I) = teamName$
                     tmLeaderYears!(teamTotalStats) = year
                 Next
@@ -231,15 +231,15 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                     If statPlyrNames$(I) <> "XXX" Then
 
                         JB = JB + 1
-                        AL$(JB) = statPlyrNames$(I)
+                        expPlyrLdrName$(JB) = statPlyrNames$(I)
                         TBN = TBN + 1
-                        TMA$(TBN) = teamName$
-                        GMA!(JB) = year
+                        expPlyrLdrTeam$(TBN) = teamName$
+                        totGames!(JB) = year
                         K1 = 0
 
                         For I1 = 0 To 13
                             K1 = K1 + 1
-                            plyrStatLeaders!(JB, K1) = playerOff!(I, I1)
+                            plyrLdrStats!(JB, K1) = playerOff!(I, I1)
                         Next I1
 
                         leader3FGM!(JB) = statsW0!(I)
@@ -265,12 +265,12 @@ End Sub
 '(.LDS) for the expanded standings modules
 Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
-    Shared AL$(), plyLeaderTeams$()
-    Shared TMA$(), tmLeaderTeams$()
+    Shared expPlyrLdrName$(), plyLeaderTeams$()
+    Shared expPlyrLdrTeam$(), tmLeaderTeams$()
 
-    Shared plyrStatLeaders!()
-    Shared plyrLeaderYears!(), GMA!(), tmLeaderYears!()
-    Shared TT!(), TT1!()
+    Shared plyrLdrStats!()
+    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
+    Shared plyrLdrVal!(), teamLdrVal!()
     Shared leader3FGM!(), leader3FGA!()
 
     'Our first set of stats is 600 entries
@@ -286,7 +286,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     For I = 1 To 600:
 
-        Write #1, AL$(I), TMA$(I), GMA!(I)
+        Write #1, expPlyrLdrName$(I), expPlyrLdrTeam$(I), totGames!(I)
 
         Color 14
         Locate 18, 38
@@ -294,7 +294,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
         Print Using "#####"; TMR
 
         For I1 = 1 To 14:
-            Write #1, plyrStatLeaders!(I, I1)
+            Write #1, plyrLdrStats!(I, I1)
         Next I1
 
         Write #1, leader3FGM!(I)
@@ -310,7 +310,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
     For I = 1 To MAX_CONFERENCES
 
         For I1 = 0 To 14
-            Write #1, TT!(I, I1), plyLeaderTeams$(I, I1)
+            Write #1, plyrLdrVal!(I, I1), plyLeaderTeams$(I, I1)
         Next
 
         Color 14
@@ -324,7 +324,7 @@ Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
     For I = 1 To MAX_CONFERENCES
 
         For I1 = 0 To 14
-            Write #1, TT1!(I, I1), tmLeaderTeams$(I, I1)
+            Write #1, teamLdrVal!(I, I1), tmLeaderTeams$(I, I1)
         Next
 
         Color 14
@@ -347,12 +347,12 @@ End Sub
 '(.LDS) for the expanded standings modules
 Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
-    Shared statPlyrNames$(), AL$(), plyLeaderTeams$()
-    Shared TMA$(), tmLeaderTeams$()
+    Shared statPlyrNames$(), expPlyrLdrName$(), plyLeaderTeams$()
+    Shared expPlyrLdrTeam$(), tmLeaderTeams$()
 
-    Shared plyrStatLeaders!()
-    Shared plyrLeaderYears!(), GMA!(), tmLeaderYears!()
-    Shared TT!(), TT1!()
+    Shared plyrLdrStats!()
+    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
+    Shared plyrLdrVal!(), teamLdrVal!()
     Shared leader3FGM!(), leader3FGA!()
 
     'Our first set of stats is 600 entries
@@ -380,7 +380,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         For I = 1 To 600:
 
-            Input #1, AL$(I), TMA$(I), GMA!(I)
+            Input #1, expPlyrLdrName$(I), expPlyrLdrTeam$(I), totGames!(I)
 
             Color 14
             Locate 18, 38
@@ -388,7 +388,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
             Print Using "#####"; TMR
 
             For I1 = 1 To 14:
-                Input #1, plyrStatLeaders!(I, I1)
+                Input #1, plyrLdrStats!(I, I1)
             Next I1
 
             Input #1, leader3FGM!(I)
@@ -404,7 +404,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
         For I = 1 To MAX_CONFERENCES
 
             For I1 = 0 To 14
-                Input #1, TT!(I, I1), plyLeaderTeams$(I, I1)
+                Input #1, plyrLdrVal!(I, I1), plyLeaderTeams$(I, I1)
             Next
 
             Color 14
@@ -418,7 +418,7 @@ Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
         For I = 1 To MAX_CONFERENCES
 
             For I1 = 0 To 14
-                Input #1, TT1!(I, I1), tmLeaderTeams$(I, I1)
+                Input #1, teamLdrVal!(I, I1), tmLeaderTeams$(I, I1)
             Next
 
             Color 14
@@ -501,12 +501,12 @@ End Sub
 'display the results.
 Sub ViewIndividualLeaders (printOrView, JB)
 
-    Shared GMA!()
-    Shared plyrStatLeaders!(), TYP!()
+    Shared totGames!()
+    Shared plyrLdrStats!(), expLdrVal!()
     Shared leader3FGM!(), leader3FGA!()
 
-    Shared AL$(), expIndCategory$()
-    Shared TMA$(), TMM$(), TPP$()
+    Shared expPlyrLdrName$(), expIndCategory$()
+    Shared expPlyrLdrTeam$(), expLdrTeam$(), expLdrPlyrName$()
 
     Do
 
@@ -591,12 +591,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) <> 0 Then
+                        If plyrLdrStats!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X)
                         End If
 
                     Next I
@@ -608,12 +608,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) <> 0 Then
+                        If plyrLdrStats!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X) + 30) / 60
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = (plyrLdrStats!(I, X) + 30) / 60
                         End If
 
                     Next I
@@ -625,12 +625,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) >= GMA!(I) * 3.65 Then
+                        If plyrLdrStats!(I, X) >= totGames!(I) * 3.65 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -645,9 +645,9 @@ Sub ViewIndividualLeaders (printOrView, JB)
                         If leader3FGM!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = leader3FGM!(I)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = leader3FGM!(I)
                         End If
 
                     Next I
@@ -662,9 +662,9 @@ Sub ViewIndividualLeaders (printOrView, JB)
                         If leader3FGA!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = leader3FGA!(I)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = leader3FGA!(I)
                         End If
 
                     Next I
@@ -676,12 +676,12 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If leader3FGM!(I) >= GMA!(I) * .3 Then
+                        If leader3FGM!(I) >= totGames!(I) * .3 Then
                             PPP = PPP + 1
                             Locate 1, 5: Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = leader3FGM!(I) / leader3FGA!(I)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = leader3FGM!(I) / leader3FGA!(I)
                         End If
 
                     Next I
@@ -693,13 +693,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) >= GMA!(I) * 1.52 Then
+                        If plyrLdrStats!(I, X) >= totGames!(I) * 1.52 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -711,13 +711,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I) <> 0 Then
+                        If (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I)
                         End If
 
                     Next I
@@ -729,13 +729,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I) <> 0 And plyrStatLeaders!(I, X2) <> 0 Then
+                        If (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 And plyrLdrStats!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I)) / plyrStatLeaders!(I, X2)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = ((plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I)) / plyrLdrStats!(I, X2)
                         End If
 
                     Next I
@@ -747,13 +747,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1) <> 0 Then
+                        If plyrLdrStats!(I, X) - plyrLdrStats!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) - plyrStatLeaders!(I, X1)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X) - plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -765,13 +765,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) <> 0 Then
+                        If plyrLdrStats!(I, X) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = plyrStatLeaders!(I, X) / plyrStatLeaders!(I, X1)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = plyrLdrStats!(I, X) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -783,13 +783,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If (plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I) <> 0 And plyrStatLeaders!(I, X2) <> 0 Then
+                        If (plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I) <> 0 And plyrLdrStats!(I, X2) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (((plyrStatLeaders!(I, X) * 2) + plyrStatLeaders!(I, X1) + leader3FGM!(I))) * 48 / ((plyrStatLeaders!(I, X2) + 30) / 60)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = (((plyrLdrStats!(I, X) * 2) + plyrLdrStats!(I, X1) + leader3FGM!(I))) * 48 / ((plyrLdrStats!(I, X2) + 30) / 60)
                         End If
 
                     Next I
@@ -801,13 +801,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) <> 0 And plyrStatLeaders!(I, X1) <> 0 Then
+                        If plyrLdrStats!(I, X) <> 0 And plyrLdrStats!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = (plyrStatLeaders!(I, X)) * 48 / ((plyrStatLeaders!(I, X1) + 30) / 60)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = (plyrLdrStats!(I, X)) * 48 / ((plyrLdrStats!(I, X1) + 30) / 60)
                         End If
 
                     Next I
@@ -819,13 +819,13 @@ Sub ViewIndividualLeaders (printOrView, JB)
 
                     For I = 1 To JB
 
-                        If plyrStatLeaders!(I, X) <> 0 And plyrStatLeaders!(I, X1) <> 0 Then
+                        If plyrLdrStats!(I, X) <> 0 And plyrLdrStats!(I, X1) <> 0 Then
                             PPP = PPP + 1
                             Locate 1, 5
                             Print "CHANGING PLAYER "; PPP
-                            TPP$(PPP) = AL$(I)
-                            TMM$(PPP) = TMA$(I)
-                            TYP!(PPP) = ((plyrStatLeaders!(I, X) + 30) / 60) / plyrStatLeaders!(I, X1)
+                            expLdrPlyrName$(PPP) = expPlyrLdrName$(I)
+                            expLdrTeam$(PPP) = expPlyrLdrTeam$(I)
+                            expLdrVal!(PPP) = ((plyrLdrStats!(I, X) + 30) / 60) / plyrLdrStats!(I, X1)
                         End If
 
                     Next I
@@ -882,10 +882,10 @@ End Sub
 Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
     Shared plyrLeaderYears!(), tmLeaderYears!()
-    Shared TT!(), TYP!(), TT1!()
+    Shared plyrLdrVal!(), expLdrVal!(), teamLdrVal!()
 
     Shared expTeamCategory$(), plyLeaderTeams$()
-    Shared TMM$(), tmLeaderTeams$()
+    Shared expLdrTeam$(), tmLeaderTeams$()
 
     Do
 
@@ -978,8 +978,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 0 To 1, 3 To 4, 6 To 7, 9, 11, 13 To 17:
 
                     For I = 1 To plyrTotalStats
-                        TMM$(I) = plyLeaderTeams$(I, X)
-                        TYP!(I) = TT!(I, X)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                        expLdrVal!(I) = plyrLdrVal!(I, X)
                     Next
 
                     Call SortTeam(plyrTotalStats, stpl, sortType)
@@ -989,12 +989,12 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 2, 5, 8:
 
                     For I = 1 To plyrTotalStats
-                        If TT!(I, X1) = 0 Then
-                            TMM$(I) = plyLeaderTeams$(I, X)
-                            TYP!(I) = 0
+                        If plyrLdrVal!(I, X1) = 0 Then
+                            expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                            expLdrVal!(I) = 0
                         Else
-                            TMM$(I) = plyLeaderTeams$(I, X)
-                            TYP!(I) = TT!(I, X) / TT!(I, X1)
+                            expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                            expLdrVal!(I) = plyrLdrVal!(I, X) / plyrLdrVal!(I, X1)
                         End If
                     Next
 
@@ -1004,8 +1004,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 10:
                     For I = 1 To plyrTotalStats
-                        TMM$(I) = plyLeaderTeams$(I, X)
-                        TYP!(I) = TT!(I, X) - TT!(I, X1)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                        expLdrVal!(I) = plyrLdrVal!(I, X) - plyrLdrVal!(I, X1)
                     Next
 
                     Call SortTeam(plyrTotalStats, stpl, sortType)
@@ -1014,8 +1014,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 12:
                     For I = 1 To plyrTotalStats
-                        TMM$(I) = plyLeaderTeams$(I, X)
-                        TYP!(I) = TT!(I, X) / plyrLeaderYears!(I)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                        expLdrVal!(I) = plyrLdrVal!(I, X) / plyrLeaderYears!(I)
                     Next
 
                     Call SortTeam(plyrTotalStats, stpl, sortType)
@@ -1024,8 +1024,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 18:
                     For I = 1 To plyrTotalStats
-                        TMM$(I) = plyLeaderTeams$(I, X)
-                        TYP!(I) = ((TT!(I, X) * 2) + TT!(I, X1) + TT!(I, X2)) / plyrLeaderYears!(I)
+                        expLdrTeam$(I) = plyLeaderTeams$(I, X)
+                        expLdrVal!(I) = ((plyrLdrVal!(I, X) * 2) + plyrLdrVal!(I, X1) + plyrLdrVal!(I, X2)) / plyrLeaderYears!(I)
                     Next
 
                     Call SortTeam(plyrTotalStats, stpl, sortType)
@@ -1035,8 +1035,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 19 To 20, 22 To 23, 25 To 26, 28, 30, 32 To 36:
  
                     For I = 1 To teamTotalStats
-                        TMM$(I) = tmLeaderTeams$(I, X)
-                        TYP!(I) = TT1!(I, X)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                        expLdrVal!(I) = teamLdrVal!(I, X)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1046,12 +1046,12 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
                 Case 21, 24, 27:
                 
                     For I = 1 To teamTotalStats
-                        If TT1!(I, X1) = 0 Then
-                            TMM$(I) = tmLeaderTeams$(I, X)
-                            TYP!(I) = 0
+                        If teamLdrVal!(I, X1) = 0 Then
+                            expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                            expLdrVal!(I) = 0
                         Else
-                            TMM$(I) = tmLeaderTeams$(I, X)
-                            TYP!(I) = TT1!(I, X) / TT1!(I, X1)
+                            expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                            expLdrVal!(I) = teamLdrVal!(I, X) / teamLdrVal!(I, X1)
                         End If
                     Next
 
@@ -1061,8 +1061,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 29:
                     For I = 1 To teamTotalStats
-                        TMM$(I) = tmLeaderTeams$(I, X)
-                        TYP!(I) = TT1!(I, X) - TT1!(I, X1)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                        expLdrVal!(I) = teamLdrVal!(I, X) - teamLdrVal!(I, X1)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1071,8 +1071,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 31:
                     For I = 1 To teamTotalStats
-                        TMM$(I) = tmLeaderTeams$(I, X)
-                        TYP!(I) = TT1!(I, X) / tmLeaderYears!(I)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                        expLdrVal!(I) = teamLdrVal!(I, X) / tmLeaderYears!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1081,8 +1081,8 @@ Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 
                 Case 37:
                     For I = 1 To teamTotalStats
-                        TMM$(I) = tmLeaderTeams$(I, X)
-                        TYP!(I) = ((TT1!(I, X) * 2) + TT1!(I, X1) + TT1!(I, X2)) / tmLeaderYears!(I)
+                        expLdrTeam$(I) = tmLeaderTeams$(I, X)
+                        expLdrVal!(I) = ((teamLdrVal!(I, X) * 2) + teamLdrVal!(I, X1) + teamLdrVal!(I, X2)) / tmLeaderYears!(I)
                     Next
 
                     Call SortTeam(teamTotalStats, stpl, sortType)
@@ -1204,8 +1204,8 @@ End Sub
 'in the chosen stat category
 Sub SortPlayer (PPP, stpl, sortType)
 
-    Shared TYP!()
-    Shared TMM$(), TPP$()
+    Shared expLdrVal!()
+    Shared expLdrTeam$(), expLdrPlyrName$()
 
     For I = 2 To PPP
 
@@ -1215,18 +1215,18 @@ Sub SortPlayer (PPP, stpl, sortType)
         For J = PPP To I Step -1
 
             If sortType = 1 Then
-                If TYP!(J - 1) < TYP!(J) Then
-                    Swap TPP$(J - 1), TPP$(J)
-                    Swap TMM$(J - 1), TMM$(J)
-                    Swap TYP!(J - 1), TYP!(J)
+                If expLdrVal!(J - 1) < expLdrVal!(J) Then
+                    Swap expLdrPlyrName$(J - 1), expLdrPlyrName$(J)
+                    Swap expLdrTeam$(J - 1), expLdrTeam$(J)
+                    Swap expLdrVal!(J - 1), expLdrVal!(J)
                 End If
             End If
 
             If sortType = 2 Then
-                If TYP!(J - 1) > TYP!(J) Then
-                    Swap TPP$(J - 1), TPP$(J)
-                    Swap TMM$(J - 1), TMM$(J)
-                    Swap TYP!(J - 1), TYP!(J)
+                If expLdrVal!(J - 1) > expLdrVal!(J) Then
+                    Swap expLdrPlyrName$(J - 1), expLdrPlyrName$(J)
+                    Swap expLdrTeam$(J - 1), expLdrTeam$(J)
+                    Swap expLdrVal!(J - 1), expLdrVal!(J)
                 End If
             End If
 
@@ -1244,8 +1244,8 @@ End Sub
 'in the chosen stat category
 Sub SortTeam (sortMax, stpl, sortType)
 
-    Shared TYP!()
-    Shared TMM$()
+    Shared expLdrVal!()
+    Shared expLdrTeam$()
 
     For I = 2 To sortMax
 
@@ -1256,16 +1256,16 @@ Sub SortTeam (sortMax, stpl, sortType)
         For J = sortMax To I Step -1
 
             If sortType = 1 Then
-                If TYP!(J - 1) < TYP!(J) Then
-                    Swap TMM$(J - 1), TMM$(J)
-                    Swap TYP!(J - 1), TYP!(J)
+                If expLdrVal!(J - 1) < expLdrVal!(J) Then
+                    Swap expLdrTeam$(J - 1), expLdrTeam$(J)
+                    Swap expLdrVal!(J - 1), expLdrVal!(J)
                 End If
             End If
 
             If sortType = 2 Then
-                If TYP!(J - 1) > TYP!(J) Then
-                    Swap TMM$(J - 1), TMM$(J)
-                    Swap TYP!(J - 1), TYP!(J)
+                If expLdrVal!(J - 1) > expLdrVal!(J) Then
+                    Swap expLdrTeam$(J - 1), expLdrTeam$(J)
+                    Swap expLdrVal!(J - 1), expLdrVal!(J)
                 End If
             End If
 
@@ -1283,8 +1283,8 @@ End Sub
 'stat categories to the user display
 Sub DisplayLeaders (TVN, maxRecords, categoryId)
 
-    Shared TYP!()
-    Shared expIndCategory$(), TMM$(), TPP$()
+    Shared expLdrVal!()
+    Shared expIndCategory$(), expLdrTeam$(), expLdrPlyrName$()
 
     userExit% = 0
 
@@ -1319,20 +1319,20 @@ Sub DisplayLeaders (TVN, maxRecords, categoryId)
                 Color 12
                 Print Using "###"; W;
                 Print " ";
-                Color 3: Print TPP$(W);
+                Color 3: Print expLdrPlyrName$(W);
                 Color 15
-                Print Tab(25); TMM$(W);
+                Print Tab(25); expLdrTeam$(W);
 
                 Select Case TVN
 
                     Case 1
-                        Print Tab(58); Using "#####"; TYP!(W)
+                        Print Tab(58); Using "#####"; expLdrVal!(W)
 
                     Case 2
-                        Print Tab(58); Using ".###"; TYP!(W)
+                        Print Tab(58); Using ".###"; expLdrVal!(W)
 
                     Case 3
-                        Print Tab(58); Using "###.#"; TYP!(W)
+                        Print Tab(58); Using "###.#"; expLdrVal!(W)
 
                 End Select
 
@@ -1377,8 +1377,8 @@ End Sub
 'stat category to the user display
 Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
 
-    Shared TYP!()
-    Shared TMM$(), expTeamCategory$()
+    Shared expLdrVal!()
+    Shared expLdrTeam$(), expTeamCategory$()
 
     userExit% = 0
 
@@ -1421,19 +1421,19 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
                         Color 12
                         Print Using "###"; W;
                         Print " ";
-                        Color 3: Print TMM$(W);
+                        Color 3: Print expLdrTeam$(W);
                         Color 15
 
                         Select Case TVN
 
                             Case 1:
-                                Print Tab(32); Using "#####"; TYP!(W)
+                                Print Tab(32); Using "#####"; expLdrVal!(W)
 
                             Case 2:
-                                Print Tab(33); Using ".###"; TYP!(W)
+                                Print Tab(33); Using ".###"; expLdrVal!(W)
 
                             Case 3:
-                                Print Tab(33); Using "###.#"; TYP!(W)
+                                Print Tab(33); Using "###.#"; expLdrVal!(W)
 
                         End Select
 
@@ -1495,19 +1495,19 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
                 For W = 1 To maxRecords
 
                     Print #1, Using "###"; W;
-                    Print #1, " "; TMM$(W);
+                    Print #1, " "; expLdrTeam$(W);
                     Color 15
 
                     Select Case TVN
 
                         Case 1:
-                            Print #1, Tab(32); Using "#####"; TYP!(W)
+                            Print #1, Tab(32); Using "#####"; expLdrVal!(W)
 
                         Case 2:
-                            Print #1, Tab(33); Using ".###"; TYP!(W)
+                            Print #1, Tab(33); Using ".###"; expLdrVal!(W)
 
                         Case 3:
-                            Print #1, Tab(33); Using "###.#"; TYP!(W)
+                            Print #1, Tab(33); Using "###.#"; expLdrVal!(W)
 
                     End Select
 
@@ -1544,8 +1544,8 @@ End Sub
 'stat categories to the default printer
 Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryID)
 
-    Shared TYP!()
-    Shared expIndCategory$(), TMM$(), TPP$()
+    Shared expLdrVal!()
+    Shared expIndCategory$(), expLdrTeam$(), expLdrPlyrName$()
 
     Color 15, 0
     Cls
@@ -1563,19 +1563,19 @@ Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryID)
 
         Print #1, Using "###"; W;
         Print #1, " ";
-        Print #1, TPP$(W);
-        Print #1, Tab(25); TMM$(W);
+        Print #1, expLdrPlyrName$(W);
+        Print #1, Tab(25); expLdrTeam$(W);
 
         Select Case TVN
 
             Case 1:
-                Print #1, Tab(58); Using "#####"; TYP!(W)
+                Print #1, Tab(58); Using "#####"; expLdrVal!(W)
 
             Case 2:
-                Print #1, Tab(58); Using ".###"; TYP!(W)
+                Print #1, Tab(58); Using ".###"; expLdrVal!(W)
 
             Case 3:
-                Print #1, Tab(58); Using "###.#"; TYP!(W)
+                Print #1, Tab(58); Using "###.#"; expLdrVal!(W)
 
         End Select
 

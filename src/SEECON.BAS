@@ -29,11 +29,11 @@ End Sub
 Sub LoadLeaderFiles_Coll (targetFile$, FF$, div1$, div2$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared seeZ!(), seeZ1!()
+    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
+    Shared confLdrVal!(), confLdrAtt!()
     Shared offLeaderNames$(), defLeaderNames$()
-    Shared seeZ2$(), seeZ3$()
-    Shared seeT$()
+    Shared leaderName$(), leaderTeam$()
+    Shared confLdrName$()
 
     Cls
 
@@ -42,11 +42,11 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, div1$, div2$)
     Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #1
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+        Input #1, confLdrName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
     Next
 
     For X = 1 To 250:
-        Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1!(X)
+        Input #1, leaderName$(X), leaderTeam$(X), confLdrVal!(X), confLdrAtt!(X)
     Next
 
     For X = 1 To MAX_CONFERENCES:
@@ -134,7 +134,7 @@ End Sub
 
 
 '----------------------------------------
-'       LeaderStatsCon_Screen Subroutine
+'    LeaderStatsCon_Screen Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to the end
@@ -142,11 +142,11 @@ End Sub
 Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared seeZ!(), seeZ1!()
+    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
+    Shared confLdrVal!(), confLdrAtt!()
     Shared offLeaderNames$(), defLeaderNames$()
-    Shared seeZ2$(), seeZ3$()
-    Shared seeT$()
+    Shared leaderName$(), leaderTeam$()
+    Shared confLdrName$()
 
     Color 15, 0
     Cls
@@ -165,27 +165,43 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     For P = 1 To 15
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
+        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
 
-            Print seeT$(P); Tab(16);
+            Print confLdrName$(P); Tab(16);
 
             'Conference Record
-            Print Using "##   ##   "; O4!(P); O5!(P);
+            Print Using "##   ##   "; compConfWins!(P); compConfLosses!(P);
 
-            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
-            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print " .000";
-            If O6!(P) = 1 Then Print "1.000";
-            If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
+            If compConfWinPct!(P) = 0 And compConfWins!(P) = 0 And compConfLosses!(P) = 0 Then 
+                Print " .---";
+            End If
+            If compConfWinPct!(P) = 0 And (compConfWins!(P) <> 0 Or compConfLosses!(P) <> 0) Then 
+                Print " .000";
+            End If
+            If compConfWinPct!(P) = 1  Then
+                Print "1.000";
+            End If
+            If compConfWinPct!(P) <> 0 And compConfWinPct!(P) <> 1 Then 
+                Print Using " .###"; compConfWinPct!(P);
+            End If
 
             'Season Record
             Locate , 41
-            Print seeT$(P); Tab(56);
-            Print Using "##   ##   "; O1!(P); O2!(P);
+            Print confLdrName$(P); Tab(56);
+            Print Using "##   ##   "; compSeasonWins!(P); compSeasonLosses!(P);
 
-            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print " .---"
-            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print " .000"
-            If O3!(P) = 1 Then Print "1.000"
-            If O3!(P) <> 0 And O3!(P) <> 1 Then Print Using " .###"; O3!(P)
+            If compSeasonWinPct!(P) = 0 And compSeasonWins!(P) = 0 And compSeasonLosses!(P) = 0 Then 
+                Print " .---"
+            End If
+            If compSeasonWinPct!(P) = 0 And (compSeasonWins!(P) <> 0 Or compSeasonLosses!(P) <> 0) Then 
+                Print " .000"
+            End If
+            If compSeasonWinPct!(P) = 1 Then 
+                Print "1.000"
+            End If
+            If compSeasonWinPct!(P) <> 0 And compSeasonWinPct!(P) <> 1 Then 
+                Print Using " .###"; compSeasonWinPct!(P)
+            End If
 
         End If
 
@@ -213,23 +229,41 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     For P = 16 To 30
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            Print seeT$(P); Tab(16);
-            Print Using "##   ##   "; O4!(P); O5!(P);
+        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+            Print confLdrName$(P); Tab(16);
+            Print Using "##   ##   "; compConfWins!(P); compConfLosses!(P);
 
-            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print " .---";
-            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print " .000";
-            If O6!(P) = 1 Then Print "1.000";
-            If O6!(P) <> 0 And O6!(P) <> 1 Then Print Using " .###"; O6!(P);
+            'Conference Record
+            If compConfWinPct!(P) = 0 And compConfWins!(P) = 0 And compConfLosses!(P) = 0 Then 
+                Print " .---";
+            End If
+            If compConfWinPct!(P) = 0 And (compConfWins!(P) <> 0 Or compConfLosses!(P) <> 0) Then 
+                Print " .000";
+            End If
+            If compConfWinPct!(P) = 1 Then 
+                Print "1.000";
+            End If
+            If compConfWinPct!(P) <> 0 And compConfWinPct!(P) <> 1 Then 
+                Print Using " .###"; compConfWinPct!(P);
+            End If
 
             Locate , 41
-            Print seeT$(P); Tab(56);
-            Print Using "##   ##   "; O1!(P); O2!(P);
+            Print confLdrName$(P); Tab(56);
+            Print Using "##   ##   "; compSeasonWins!(P); compSeasonLosses!(P);
 
-            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print " .---"
-            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print " .000"
-            If O3!(P) = 1 Then Print "1.000"
-            If O3!(P) <> 0 And O3!(P) <> 1 Then Print Using " .###"; O3!(P)
+            'Season Record
+            If compSeasonWinPct!(P) = 0 And compSeasonWins!(P) = 0 And compSeasonLosses!(P) = 0 Then 
+                Print " .---"
+            End If
+            If compSeasonWinPct!(P) = 0 And (compSeasonWins!(P) <> 0 Or compSeasonLosses!(P) <> 0) Then 
+                Print " .000"
+            End If
+            If compSeasonWinPct!(P) = 1 Then 
+                Print "1.000"
+            End If
+            If compSeasonWinPct!(P) <> 0 And compSeasonWinPct!(P) <> 1 Then 
+                Print Using " .###"; compSeasonWinPct!(P)
+            End If
         End If
 
     Next P
@@ -249,10 +283,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 41 To 60
-        If seeZ2$(P) <> "" Then
-            Print Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Locate , 28
-            Print Using "###.#  ####"; seeZ!(P) * 100; seeZ1!(P)
+            Print Using "###.#  ####"; confLdrVal!(P) * 100; confLdrAtt!(P)
         End If
     Next
 
@@ -264,11 +298,11 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 61 To 80
-        If seeZ2$(P) <> "" Then
+        If leaderName$(P) <> "" Then
             Locate , 41
-            Print Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
+            Print Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Locate , 68
-            Print Using "###.#  ####"; seeZ!(P) * 100; seeZ1!(P)
+            Print Using "###.#  ####"; confLdrVal!(P) * 100; confLdrAtt!(P)
         End If
     Next
 
@@ -287,10 +321,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 1 To 20
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -302,10 +336,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 21 To 40
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -323,10 +357,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 81 To 90
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -337,10 +371,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     For P = 91 To 100
 
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -350,10 +384,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 101 To 110
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
 
     Next
@@ -364,10 +398,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 111 To 120
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -386,10 +420,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 121 To 130
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "###.#"; seeZ!(P) * 100
+            Print Using "###.#"; confLdrVal!(P) * 100
         End If
     Next P
 
@@ -399,10 +433,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 141 To 150
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
 
     Next P
@@ -412,10 +446,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 131 To 140
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -426,10 +460,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 151 To 160
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -447,10 +481,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 161 To 170
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
 
     Next
@@ -461,9 +495,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 171 To 180
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);: Locate , 74
-            Print Using "####"; seeZ!(P)
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);: Locate , 74
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -472,10 +506,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 181 To 190
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -485,10 +519,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 191 To 200
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -507,10 +541,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 201 To 210
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -521,10 +555,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 211 To 220
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -534,10 +568,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 221 To 230
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
 
     Next
@@ -548,10 +582,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 231 To 240
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -570,10 +604,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 15
 
     For P = 241 To 250
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -597,15 +631,54 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
 
-            Print Left$(offLeaderNames$(X), 11); Tab(13);: Print Using "##"; offLeaders!(X, 16);: Print Tab(16);: Print Using "####"; offLeaders!(X, 2);: Print Tab(21);: Print Using "####"; offLeaders!(X, 3);: Print Tab(26);
+            Print Left$(offLeaderNames$(X), 11); Tab(13);
 
-            Print Using ".###"; offLeaders!(X, 17);: Print Tab(31);: Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+            'Games
+            Print Using "##"; offLeaders!(X, 16);
+            Print Tab(16);
 
-            Print Tab(46);: Print Using "####"; offLeaders!(X, 6);: Print Tab(51);: Print Using "####"; offLeaders!(X, 9);: Print Tab(56);: Print Using "####"; offLeaders!(X, 7);: Print Tab(61);
+            'FGA
+            Print Using "####"; offLeaders!(X, 2);
+            Print Tab(21);
 
-            Print Using "###"; offLeaders!(X, 8);: Print Tab(65);: Print Using "###"; offLeaders!(X, 10);: Print Tab(69);: Print Using "#####"; offLeaders!(X, 20);
+            'FGM
+            Print Using "####"; offLeaders!(X, 3);
+            Print Tab(26); 
 
-            Print Tab(75);: Print Using "###.#"; offLeaders!(X, 19)
+            'FG PCT
+            Print Using ".###"; offLeaders!(X, 17);
+            Print Tab(31);
+
+            'FTA / FTM / FT%
+            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+            Print Tab(46);
+            
+            'Rebounds
+            Print Using "####"; offLeaders!(X, 6);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; offLeaders!(X, 9);
+            Print Tab(56);
+
+            'Personal Fouls
+            Print Using "####"; offLeaders!(X, 7);
+            Print Tab(61);
+            
+            'Steals
+            Print Using "###"; offLeaders!(X, 8);
+            Print Tab(65);
+
+            'Blocks
+            Print Using "###"; offLeaders!(X, 10);
+            Print Tab(69);
+
+            'Points
+            Print Using "#####"; offLeaders!(X, 20);
+            Print Tab(75);
+
+            'Average
+            Print Using "###.#"; offLeaders!(X, 19)
 
         End If
 
@@ -629,39 +702,52 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     For X = 1 To 20
 
         If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+
             Print Left$(defLeaderNames$(X), 11); Tab(13);
-            'G
+
+            'Games
             Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);
+
             'FGA
             Print Using "####"; defLeaders!(X, 2);
             Print Tab(21);
+
             'FGM
             Print Using "####"; defLeaders!(X, 3);
             Print Tab(26);
+
             'FG PCT
             Print Using ".###"; defLeaders!(X, 17);
             Print Tab(31);
-            'FTA / FTM / FT PCT
+
+            'FTA / FTM / FT %
             Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
             Print Tab(46);
-            'REB / AST
+
+            'Rebounds / Assists
             Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
             Print Tab(56);
-            'PF
+
+            'Personal FOuls
             Print Using "####"; defLeaders!(X, 7);
             Print Tab(61);
-            'STL
+
+            'Steals
             Print Using "###"; defLeaders!(X, 8);
             Print Tab(65);
-            'BLK
+
+            'Blocks
             Print Using "###"; defLeaders!(X, 10);
             Print Tab(69);
-            'PTS
+
+            'Points
             Print Using "#####"; defLeaders!(X, 20);
             Print Tab(75);
-            'AVG
+
+            'Average
             Print Using "###.#"; defLeaders!(X, 19)
+
         End If
 
     Next
@@ -686,17 +772,17 @@ End Sub
 Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
-    Shared seeZ!(), seeZ1!()
+    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
+    Shared confLdrVal!(), confLdrAtt!()
 
     Shared offLeaderNames$(), defLeaderNames$()
-    Shared seeZ2$(), seeZ3$()
-    Shared seeT$()
+    Shared leaderName$(), leaderTeam$()
+    Shared confLdrName$()
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, confName$ + " CONFERENCE"
 
@@ -706,23 +792,39 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 1 To 15
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            Print #1, seeT$(P); Tab(16);
-            Print #1, Using "##   ##   "; O4!(P); O5!(P);
+        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+            Print #1, confLdrName$(P); Tab(16);
+            Print #1, Using "##   ##   "; compConfWins!(P); compConfLosses!(P);
 
-            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #1, " .---";
-            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #1, " .000";
-            If O6!(P) = 1 Then Print #1, "1.000";
-            If O6!(P) <> 0 And O6!(P) <> 1 Then Print #1, Using " .###"; O6!(P);
+            If compConfWinPct!(P) = 0 And compConfWins!(P) = 0 And compConfLosses!(P) = 0 Then 
+                Print #1, " .---";
+            End If
+            If compConfWinPct!(P) = 0 And (compConfWins!(P) <> 0 Or compConfLosses!(P) <> 0) Then 
+                Print #1, " .000";
+            End If
+            If compConfWinPct!(P) = 1 Then 
+                Print #1, "1.000";
+            End If
+            If compConfWinPct!(P) <> 0 And compConfWinPct!(P) <> 1 Then 
+                Print #1, Using " .###"; compConfWinPct!(P);
+            End If
 
             Print #1, Tab(41);
-            Print #1, seeT$(P); Tab(56);
-            Print #1, Using "##   ##   "; O1!(P); O2!(P);
+            Print #1, confLdrName$(P); Tab(56);
+            Print #1, Using "##   ##   "; compSeasonWins!(P); compSeasonLosses!(P);
 
-            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #1, " .---"
-            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #1, " .000"
-            If O3!(P) = 1 Then Print #1, "1.000"
-            If O3!(P) <> 0 And O3!(P) <> 1 Then Print #1, Using " .###"; O3!(P)
+            If compSeasonWinPct!(P) = 0 And compSeasonWins!(P) = 0 And compSeasonLosses!(P) = 0 Then 
+                Print #1, " .---"
+            End If
+            If compSeasonWinPct!(P) = 0 And (compSeasonWins!(P) <> 0 Or compSeasonLosses!(P) <> 0) Then 
+                Print #1, " .000"
+            End If
+            If compSeasonWinPct!(P) = 1 Then 
+                Print #1, "1.000"
+            End If
+            If compSeasonWinPct!(P) <> 0 And compSeasonWinPct!(P) <> 1 Then 
+                Print #1, Using " .###"; compSeasonWinPct!(P)
+            End If
         End If
 
     Next P
@@ -737,23 +839,39 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 16 To 30
 
-        If seeT$(P) <> "" And seeT$(P) <> "*" Then
-            Print #1, seeT$(P); Tab(16);
-            Print #1, Using "##   ##   "; O4!(P); O5!(P);
+        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+            Print #1, confLdrName$(P); Tab(16);
+            Print #1, Using "##   ##   "; compConfWins!(P); compConfLosses!(P);
 
-            If O6!(P) = 0 And O4!(P) = 0 And O5!(P) = 0 Then Print #1, " .---";
-            If O6!(P) = 0 And (O4!(P) <> 0 Or O5!(P) <> 0) Then Print #1, " .000";
-            If O6!(P) = 1 Then Print #1, "1.000";
-            If O6!(P) <> 0 And O6!(P) <> 1 Then Print #1, Using " .###"; O6!(P);
+            If compConfWinPct!(P) = 0 And compConfWins!(P) = 0 And compConfLosses!(P) = 0 Then 
+                Print #1, " .---";
+            End If
+            If compConfWinPct!(P) = 0 And (compConfWins!(P) <> 0 Or compConfLosses!(P) <> 0) Then 
+                Print #1, " .000";
+            End If
+            If compConfWinPct!(P) = 1 Then 
+                Print #1, "1.000";
+            End If
+            If compConfWinPct!(P) <> 0 And compConfWinPct!(P) <> 1 Then 
+                Print #1, Using " .###"; compConfWinPct!(P);
+            End If
 
             Print #1, Tab(41);
-            Print #1, seeT$(P); Tab(56);
-            Print #1, Using "##   ##   "; O1!(P); O2!(P);
+            Print #1, confLdrName$(P); Tab(56);
+            Print #1, Using "##   ##   "; compSeasonWins!(P); compSeasonLosses!(P);
 
-            If O3!(P) = 0 And O1!(P) = 0 And O2!(P) = 0 Then Print #1, " .---"
-            If O3!(P) = 0 And (O1!(P) <> 0 Or O2!(P) <> 0) Then Print #1, " .000"
-            If O3!(P) = 1 Then Print #1, "1.000"
-            If O3!(P) <> 0 And O3!(P) <> 1 Then Print #1, Using " .###"; O3!(P)
+            If compSeasonWinPct!(P) = 0 And compSeasonWins!(P) = 0 And compSeasonLosses!(P) = 0 Then 
+                Print #1, " .---"
+            End If
+            If compSeasonWinPct!(P) = 0 And (compSeasonWins!(P) <> 0 Or compSeasonLosses!(P) <> 0) Then 
+                Print #1, " .000"
+            End If
+            If compSeasonWinPct!(P) = 1 Then 
+                Print #1, "1.000"
+            End If
+            If compSeasonWinPct!(P) <> 0 And compSeasonWinPct!(P) <> 1 Then 
+                Print #1, Using " .###"; compSeasonWinPct!(P)
+            End If
         End If
 
     Next P
@@ -765,21 +883,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 41 To 60
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
+            Print #1, Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Print #1, Tab(28);
-            Print #1, Using "##.#  ####"; seeZ!(P) * 100; seeZ1!(P);
+            Print #1, Using "##.#  ####"; confLdrVal!(P) * 100; confLdrAtt!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Left$(seeZ2$(P + 20), 10) + ", " + seeZ3$(P + 20);
+            Print #1, Left$(leaderName$(P + 20), 10) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(67);
-            Print #1, Using "###.#  ####"; seeZ!(P + 20) * 100; seeZ1!(P)
+            Print #1, Using "###.#  ####"; confLdrVal!(P + 20) * 100; confLdrAtt!(P)
         End If
 
     Next
@@ -789,20 +907,20 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 1 To 20
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
+            Print #1, leaderName$(P + 20) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -812,21 +930,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 81 To 90
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -836,21 +954,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 101 To 110
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -860,21 +978,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 121 To 130
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P) * 100;
+            Print #1, Using "##.#"; confLdrVal!(P) * 100;
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
+            Print #1, leaderName$(P + 20) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "##.#"; seeZ!(P + 20)
+            Print #1, Using "##.#"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -884,21 +1002,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 131 To 140
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P);
+            Print #1, Using "####"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
+            Print #1, leaderName$(P + 20) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -909,21 +1027,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 161 To 170
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -933,20 +1051,20 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 181 To 190
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -956,20 +1074,20 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 201 To 210
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P);
+            Print #1, Using "####"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -979,21 +1097,21 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 221 To 230
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -1003,10 +1121,10 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For P = 241 To 250
 
-        If seeZ2$(P) <> "" Then
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P)
+            Print #1, Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -1082,22 +1200,22 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Close #1
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 

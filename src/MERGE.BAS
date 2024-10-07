@@ -76,9 +76,9 @@ Sub MergeStats ()
 
     Shared plyrStat_Merge!(), plyrRat_MERGE()
     Shared statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!()
+    Shared statsZ0!(), statsZ1!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
-    Shared ZRD!(), ZRD1!()
+    Shared statsZ0_Road!(), statsZ1_Road!()
 
     Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
@@ -129,11 +129,11 @@ Sub MergeStats ()
                     Next
 
                     For L = 0 To 15: 
-                        Input #1, ZRD!(L)
+                        Input #1, statsZ0_Road!(L)
                     Next
 
                     For L = 0 To 15: 
-                        Input #1, ZRD1!(L)
+                        Input #1, statsZ1_Road!(L)
                     Next
 
                     Close #1
@@ -201,7 +201,7 @@ Sub MergeStats ()
                         Next
 
                         For L = 0 To 15: 
-                            Input #3, statsZ!(L)
+                            Input #3, statsZ0!(L)
                         Next
 
                         For L = 0 To 15: 
@@ -354,9 +354,9 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Shared plyrStat_Merge!(), plyrRat_MERGE()
 
     Shared statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!()
+    Shared statsZ0!(), statsZ1!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
-    Shared ZRD!(), ZRD1!()
+    Shared statsZ0_Road!(), statsZ1_Road!()
 
     Shared gameSite$(), gameSite_Road$()
     Shared locIndicator$(), locIndicator_Road$()
@@ -396,8 +396,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Next I
 
     For L = 0 To 15:
-        statsZ!(L) = statsZ!(L) + ZRD!(L)
-        statsZ1!(L) = statsZ1!(L) + ZRD1!(L)
+        statsZ0!(L) = statsZ0!(L) + statsZ0_Road!(L)
+        statsZ1!(L) = statsZ1!(L) + statsZ1_Road!(L)
     Next
 
     Open pathCurrentStats$ + statFile$ For Output As #1
@@ -418,7 +418,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Next
 
     For L = 0 To 15: 
-        Write #1, statsZ!(L)
+        Write #1, statsZ0!(L)
     Next
 
     For L = 0 To 15: 

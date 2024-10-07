@@ -10,9 +10,7 @@
 ' reading in data for the chosen team
 Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
-    Shared teamRatings%()
-
-    'Shared teamNames$()
+    Shared teamRatings()
 
     Shared previousYear$
 
@@ -126,7 +124,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
 
                         YCoord = Int((80 - Len(teamName$)) / 2)
                         Locate 2, YCoord
-                        Color teamRatings%(0), teamRatings%(1): Print teamName$
+                        Color teamRatings(0), teamRatings(1): Print teamName$
 
                         Color 15, 4
                         Locate 3, 32: Print "ANY CHANGE? (Y/N)";
@@ -230,7 +228,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
     Shared defFGPctAdj!, def3FG_Adj, defthreeFGA_Adj
     Shared staminaRating!
 
-    Shared leagueRatings(), teamRatings%()
+    Shared leagueRatings(), teamRatings()
 
     Shared playerOff!(), playerRatings!()
 
@@ -257,7 +255,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
     Next
 
     For I = 0 To 9:
-        teamRatings%(I) = CVI(Q$(I + 10))
+        teamRatings(I) = CVI(Q$(I + 10))
     Next
 
     For I = 0 To 13

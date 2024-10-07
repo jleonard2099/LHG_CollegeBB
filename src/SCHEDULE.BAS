@@ -568,7 +568,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
 
-    Shared scheduleNG%(), teamRatings%()
+    Shared scheduleNG%(), teamRatings()
 
     Shared coachMode$(), foulShotOpt$()
     Shared location$(), playMode$()
@@ -760,7 +760,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
     Shared scheduleAP%()
     Shared scheduleNG%()
-    Shared teamRatings%()
+    Shared teamRatings()
     Shared scheduleYN$()
 
     Shared memberIdx()
@@ -872,7 +872,7 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
                     'Change mode of play
                     If scheduleAction% = 5 Then
 
-                        Color teamRatings%(0), teamRatings%(1): Print teamName$;
+                        Color teamRatings(0), teamRatings(1): Print teamName$;
                         Color 15, 0
                         Print " IS TO BE:"
                         Print

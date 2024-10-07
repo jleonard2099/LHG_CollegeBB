@@ -18,7 +18,7 @@ Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCH
 
 Dim statsA!(15, 14)
 Dim statsW0!(15), statsW1!(15)
-Dim statsZ!(15), statsZ1!(15)
+Dim statsZ0!(15), statsZ1!(15)
 Dim statsZ2!(13, 13)
 
 'Record / Standings
@@ -82,8 +82,7 @@ Dim threeFGM_Align!(15), threeFGA_Align!(15)
 Dim threeFGM_Merge!(15), threeFGA_Merge!(15)
 Dim threeFGM_Road!(15), threeFGA_Road!(15)
 
-Dim ZR!(15), ZR1!(15)
-Dim ZRD!(15), ZRD1!(15)
+Dim statsZ0_Road!(15), statsZ1_Road!(15)
 
 Dim plyrName_Road$(15), plyrName_Align$(15)
 
@@ -91,54 +90,59 @@ Dim plyrName_Road$(15), plyrName_Align$(15)
 '----------------------------------------
 ' Used in CAREER / LEADER routines
 '----------------------------------------
+'-- 600 = 15 * 40
 Dim NB, NP
+
+Dim careerPlayers$(62), BL$(21)
+
+Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
+Dim carPlyrStat!(MAX_CAREER_YEARS, 62, 15)
+Dim leader3FGM!(600), leader3FGA!(600)
 
 Dim carLdrPlyrName$(19, 20)
 Dim carLdrVal!(19, 20)
 
-Dim plyrStat_Career!(MAX_CAREER_YEARS, 62, 15)
-Dim BL!(21), BLYR!(21)
-Dim car3FGM!(MAX_CAREER_YEARS, 62), car3FGA!(MAX_CAREER_YEARS, 62)
+Dim carRecVal!(21), carRecYear!(21)
 
-Dim GMA!(600), TYP!(600)
-Dim leader3FGM!(600), leader3FGA!(600)
-
-Dim plyrStatLeaders!(0 To 600, 0 To 14)
-Dim plyrLeaderYears!(MAX_CONFERENCES), tmLeaderYears!(MAX_CONFERENCES)
-Dim TT!(MAX_CONFERENCES, 15), TT1!(MAX_CONFERENCES, 15)
-
-Dim careerPlayers$(62), BL$(21)
-Dim expIndCategory$(31), expTeamCategory$(39)
 Dim plyLeaderTeams$(MAX_CONFERENCES, 15), tmLeaderTeams$(MAX_CONFERENCES, 15)
 
-Dim AL$(600), TMA$(600), TMM$(600), TPP$(600)
+Dim plyrLdrStats!(0 To 600, 0 To 14)
+Dim plyrLeaderYears!(MAX_CONFERENCES), tmLeaderYears!(MAX_CONFERENCES)
+Dim plyrLdrVal!(MAX_CONFERENCES, 15), teamLdrVal!(MAX_CONFERENCES, 15)
+
+' For Expanded Leaders
+Dim expIndCategory$(31), expTeamCategory$(39)
+Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
+
+Dim totGames!(600), expLdrVal!(600)
 
 
 '----------------------------------------
-' Used in COMPARE / COMPILE / SEE
+' Used in COMPILE / SEE routines
 '----------------------------------------
 Dim defTotals!(21), offTotals!(21)
+Dim defLeaders!(60, 20), offLeaders!(60, 20)
 Dim leaderVals!(1 To 250, 0 To 2), natLeaderVals!(1 To 250, 1 To 2)
 Dim natDefLeaders!(MAX_CONFERENCES, 1 To 20), natOffLeaders!(MAX_CONFERENCES, 1 To 20)
-Dim compS!(0 To 14, 0 To 26)
+Dim compStats!(0 To 14, 0 To 26)
 
-Dim defLeaders!(60, 20), offLeaders!(60, 20)
-Dim O1!(30), O2!(30), O3!(30), O4!(30), O5!(30), O6!(30)
-Dim PT#(1200, 5)
+Dim compSeasonWins!(30), compSeasonLosses!(30), compSeasonWinPct!(30), compConfWins!(30), compConfLosses!(30), compConfWinPct!(30)
 
-Dim defLeaderNames$(60)
-Dim offLeaderNames$(60)
+Dim defLeaderNames$(60), offLeaderNames$(60)
 Dim statCategoryAbbr$(25)
 
-Dim natDefLdrNames$(40)
-Dim natOffLdrNames$(1 To 60)
-Dim natZ1$(1 To 250), NZ1$(30), natZ2$(1 To 250)
-Dim PT$(1 To 1200), Z2$(1 To 250), Z3$(1 To 250)
+Dim leaderName$(1 To 250), leaderTeam$(1 To 250)
+Dim leaderText$(250)
 
-Dim PR$(1200), seeT$(30)
+Dim pollTeam$(1200)
+Dim pollRatings#(1200, 5)
 
-Dim seeZ!(260), seeZ1!(260)
-Dim seeZ1$(260), seeZ2$(260), seeZ3$(260)
+Dim confLdrName$(30)
+Dim confLdrVal!(260), confLdrAtt!(260)
+
+Dim natDefLdrNames$(40), natOffLdrNames$(1 To 60)
+
+Dim natLdrName$(1 To 250), natLdrTeam$(1 To 250)
 
 
 '----------------------------------------
@@ -178,7 +182,6 @@ Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
 
 
-
 '----------------------------------------
 ' Used in RECORDS routines
 '----------------------------------------
@@ -200,7 +203,7 @@ Dim tm3FGA!, tm3FGAPct!, tmAsst!, tmBlocks!, tmFouls!
 Dim tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
 Dim tmReb!, tmSteal!, tmTO!
 
-Dim values!(0 To 14, 24)
+Dim statPlyrVal!(0 To 14, 24)
 
 
 '----------------------------------------
@@ -209,7 +212,7 @@ Dim values!(0 To 14, 24)
 Dim TC!
 
 '           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-Dim tourneyN%(1 To 17, 1 To 17, 0 To 3)
+Dim tourneyParams(1 To 17, 1 To 17, 0 To 3)
 
 'Number of Teams Per Region (up to 16 Regions)
 Dim nbrRegionalTeams(17)
@@ -281,7 +284,8 @@ Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
 Dim Shared playerDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), playerStat_GAME(0 To 1, 0 To 13, 0 To 15)
 Dim Shared plyrStamina(13)
-Dim Shared rosterStatus(1, 13), QQ(1, 8, 13, 14), QR(1, 7, 14), rebRatings(9)
+Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14)
+Dim Shared rosterStatus(1, 13), rebRatings(9)
 Dim Shared schedGame(2), score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
 Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecLoss(1)
 Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1), teamYears(1)

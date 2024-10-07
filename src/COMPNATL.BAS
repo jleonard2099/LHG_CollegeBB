@@ -15,17 +15,17 @@ Sub CompileNatlOrg ()
     Shared leaderVals!(), plyrRecords!()
     Shared defLeaders!(), defRecords!()
     Shared offLeaders!(), offRecords!()
-    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
+    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
     Shared plyrRecDesc$(), statFiles$()
-    Shared Z2$(), Z3$()
+    Shared leaderName$(), leaderTeam$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
     Shared natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
-    Shared natDefLdrNames$(), natOffLdrNames$(), natZ1$(), NZ1$(), natZ2$()
+    Shared natDefLdrNames$(), natOffLdrNames$(), natLdrName$(), confLdrName$(), natLdrTeam$()
 
     offRecords!(14) = 19999
     offRecords!(18) = 19999
@@ -75,7 +75,7 @@ Sub CompileNatlOrg ()
     Erase natDefLeaders!, natLeaderVals!, natOffLeaders!
 
     Erase natDefLdrNames$, natOffLdrNames$
-    Erase natZ1$, NZ1$, natZ2$
+    Erase natLdrName$, confLdrName$, natLdrTeam$
 
     For X = 1 To MAX_CONFERENCES
         natDefLeaders!(X, 19) = 9999
@@ -118,9 +118,9 @@ Sub CompileNatlOrg ()
                 Next
 
                 Erase leaderVals!
-                Erase O1!, O2!, O3!, O4!, O5!, O6!
+                Erase compSeasonWins!, compSeasonLosses!, compSeasonWinPct!, compConfWins!, compConfLosses!, compConfWinPct!
                 Erase defLeaderNames$, offLeaderNames$
-                Erase statFiles$, Z2$, Z3$
+                Erase statFiles$, leaderName$, leaderTeam$
 
                 targetConf$ = diskPaths$(2) + memberConf$(currConf) + ".TMS"
 
@@ -178,29 +178,29 @@ Sub CompileNatlOrg ()
 
                                         If statFiles$(X) = WT$ Then
 
-                                            If O1!(X) = fullWins And O2!(X) = fullLosses Then
+                                            If compSeasonWins!(X) = fullWins And compSeasonLosses!(X) = fullLosses Then
 
                                                 nonConfGame = 1
                                                 Exit For
 
                                             Else
 
-                                                O1!(X) = fullWins
-                                                O2!(X) = fullLosses
+                                                compSeasonWins!(X) = fullWins
+                                                compSeasonLosses!(X) = fullLosses
 
-                                                O4!(X) = confWins
-                                                O5!(X) = confLosses
+                                                compConfWins!(X) = confWins
+                                                compConfLosses!(X) = confLosses
 
-                                                If O1!(X) + O2!(X) = 0 Then
-                                                    O3!(X) = 0
+                                                If compSeasonWins!(X) + compSeasonLosses!(X) = 0 Then
+                                                    compSeasonWinPct!(X) = 0
                                                 Else
-                                                    O3!(X) = O1!(X) / (O1!(X) + O2!(X))
+                                                    compSeasonWinPct!(X) = compSeasonWins!(X) / (compSeasonWins!(X) + compSeasonLosses!(X))
                                                 End If
 
-                                                If O4!(X) + O5!(X) = 0 Then
-                                                    O6!(X) = 0
+                                                If compConfWins!(X) + compConfLosses!(X) = 0 Then
+                                                    compConfWinPct!(X) = 0
                                                 Else
-                                                    O6!(X) = O4!(X) / (O4!(X) + O5!(X))
+                                                    compConfWinPct!(X) = compConfWins!(X) / (compConfWins!(X) + compConfLosses!(X))
                                                 End If
 
                                             End If
@@ -254,12 +254,12 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
 
     Shared defTotals!(), offTotals!()
     Shared natDefLeaders!(), natOffLeaders!()
-    Shared natLeaderVals!(), compS!()
+    Shared natLeaderVals!(), compStats!()
     Shared statsW0!(), statsW1!()
 
     Shared natDefLdrNames$(), natOffLdrNames$()
     Shared statPlyrNames$()
-    Shared natZ1$(), natZ2$()
+    Shared natLdrName$(), natLdrTeam$()
 
     Cls
     Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
@@ -272,19 +272,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         Print statPlyrNames$(X)
 
         'Points Per Game
-        If compS!(X, 22) > natLeaderVals!(20, 1) Then
+        If compStats!(X, 22) > natLeaderVals!(20, 1) Then
 
-            natLeaderVals!(20, 1) = compS!(X, 22)
+            natLeaderVals!(20, 1) = compStats!(X, 22)
             natLeaderVals!(20, 2) = 0
-            natZ1$(20) = statPlyrNames$(X)
-            natZ2$(20) = teamName$
+            natLdrName$(20) = statPlyrNames$(X)
+            natLdrTeam$(20) = teamName$
 
             For Z = 1 To 19
                 For Z1 = Z + 1 To 20
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2: Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M): Next
                     End If
 
@@ -294,19 +294,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Offensive Rebounds
-        If compS!(X, 12) > natLeaderVals!(40, 1) Then
+        If compStats!(X, 12) > natLeaderVals!(40, 1) Then
 
-            natLeaderVals!(40, 1) = compS!(X, 12)
+            natLeaderVals!(40, 1) = compStats!(X, 12)
             natLeaderVals!(40, 2) = 0
-            natZ1$(40) = statPlyrNames$(X)
-            natZ2$(40) = teamName$
+            natLdrName$(40) = statPlyrNames$(X)
+            natLdrTeam$(40) = teamName$
 
             For Z = 21 To 39
                 For Z1 = Z + 1 To 40
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -318,19 +318,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Field Goal %
-        If compS!(X, 19) > natLeaderVals!(60, 1) Then
+        If compStats!(X, 19) > natLeaderVals!(60, 1) Then
 
-            natLeaderVals!(60, 1) = compS!(X, 19)
-            natLeaderVals!(60, 2) = compS!(X, 1)
-            natZ1$(60) = statPlyrNames$(X)
-            natZ2$(60) = teamName$
+            natLeaderVals!(60, 1) = compStats!(X, 19)
+            natLeaderVals!(60, 2) = compStats!(X, 1)
+            natLdrName$(60) = statPlyrNames$(X)
+            natLdrTeam$(60) = teamName$
 
             For Z = 41 To 59
                 For Z1 = Z + 1 To 60
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -342,19 +342,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Free Throw %
-        If compS!(X, 20) > natLeaderVals!(80, 1) Then
+        If compStats!(X, 20) > natLeaderVals!(80, 1) Then
 
-            natLeaderVals!(80, 1) = compS!(X, 20)
-            natLeaderVals!(80, 2) = compS!(X, 3)
-            natZ1$(80) = statPlyrNames$(X)
-            natZ2$(80) = teamName$
+            natLeaderVals!(80, 1) = compStats!(X, 20)
+            natLeaderVals!(80, 2) = compStats!(X, 3)
+            natLdrName$(80) = statPlyrNames$(X)
+            natLdrTeam$(80) = teamName$
 
             For Z = 61 To 79
                 For Z1 = Z + 1 To 80
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -366,19 +366,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Steals Per Game
-        If compS!(X, 15) > natLeaderVals!(90, 1) Then
+        If compStats!(X, 15) > natLeaderVals!(90, 1) Then
 
-            natLeaderVals!(90, 1) = compS!(X, 15)
-            natLeaderVals!(90, 2) = compS!(X, 7)
-            natZ1$(90) = statPlyrNames$(X)
-            natZ2$(90) = teamName$
+            natLeaderVals!(90, 1) = compStats!(X, 15)
+            natLeaderVals!(90, 2) = compStats!(X, 7)
+            natLdrName$(90) = statPlyrNames$(X)
+            natLdrTeam$(90) = teamName$
 
             For Z = 81 To 89
                 For Z1 = Z + 1 To 90
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -390,19 +390,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Steals
-        If compS!(X, 7) > natLeaderVals!(100, 1) Then
+        If compStats!(X, 7) > natLeaderVals!(100, 1) Then
 
-            natLeaderVals!(100, 1) = compS!(X, 7)
+            natLeaderVals!(100, 1) = compStats!(X, 7)
             natLeaderVals!(100, 2) = 0
-            natZ1$(100) = statPlyrNames$(X)
-            natZ2$(100) = teamName$
+            natLdrName$(100) = statPlyrNames$(X)
+            natLdrTeam$(100) = teamName$
 
             For Z = 91 To 99
                 For Z1 = Z + 1 To 100
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -414,19 +414,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Assist Per Game
-        If compS!(X, 16) > natLeaderVals!(110, 1) Then
+        If compStats!(X, 16) > natLeaderVals!(110, 1) Then
 
-            natLeaderVals!(110, 1) = compS!(X, 16)
-            natLeaderVals!(110, 2) = compS!(X, 8)
-            natZ1$(110) = statPlyrNames$(X)
-            natZ2$(110) = teamName$
+            natLeaderVals!(110, 1) = compStats!(X, 16)
+            natLeaderVals!(110, 2) = compStats!(X, 8)
+            natLdrName$(110) = statPlyrNames$(X)
+            natLdrTeam$(110) = teamName$
 
             For Z = 101 To 109
                 For Z1 = Z + 1 To 110
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -438,19 +438,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Assists
-        If compS!(X, 8) > natLeaderVals!(120, 1) Then
+        If compStats!(X, 8) > natLeaderVals!(120, 1) Then
 
-            natLeaderVals!(120, 1) = compS!(X, 8)
-            natLeaderVals!(120, 2) = compS!(X, 8)
-            natZ1$(120) = statPlyrNames$(X)
-            natZ2$(120) = teamName$
+            natLeaderVals!(120, 1) = compStats!(X, 8)
+            natLeaderVals!(120, 2) = compStats!(X, 8)
+            natLdrName$(120) = statPlyrNames$(X)
+            natLdrTeam$(120) = teamName$
 
             For Z = 111 To 119
                 For Z1 = Z + 1 To 120
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -462,19 +462,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         '3 Field Goal %
-        If compS!(X, 21) > natLeaderVals!(130, 1) Then
+        If compStats!(X, 21) > natLeaderVals!(130, 1) Then
 
-            natLeaderVals!(130, 1) = compS!(X, 21)
+            natLeaderVals!(130, 1) = compStats!(X, 21)
             natLeaderVals!(130, 2) = statsW1!(X)
-            natZ1$(130) = statPlyrNames$(X)
-            natZ2$(130) = teamName$
+            natLdrName$(130) = statPlyrNames$(X)
+            natLdrTeam$(130) = teamName$
 
             For Z = 121 To 129
                 For Z1 = Z + 1 To 130
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -490,15 +490,15 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
 
             natLeaderVals!(140, 1) = statsW0!(X)
             natLeaderVals!(140, 2) = 0
-            natZ1$(140) = statPlyrNames$(X)
-            natZ2$(140) = teamName$
+            natLdrName$(140) = statPlyrNames$(X)
+            natLdrTeam$(140) = teamName$
 
             For Z = 131 To 139
                 For Z1 = Z + 1 To 140
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -510,19 +510,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Minutes Per Game
-        If compS!(X, 18) > natLeaderVals!(150, 1) Then
+        If compStats!(X, 18) > natLeaderVals!(150, 1) Then
 
-            natLeaderVals!(150, 1) = compS!(X, 18)
+            natLeaderVals!(150, 1) = compStats!(X, 18)
             natLeaderVals!(150, 2) = 0
-            natZ1$(150) = statPlyrNames$(X)
-            natZ2$(150) = teamName$
+            natLdrName$(150) = statPlyrNames$(X)
+            natLdrTeam$(150) = teamName$
 
             For Z = 141 To 149
                 For Z1 = Z + 1 To 150
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -534,19 +534,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Total Minutes
-        If compS!(X, 10) / 60 > natLeaderVals!(160, 1) Then
+        If compStats!(X, 10) / 60 > natLeaderVals!(160, 1) Then
 
-            natLeaderVals!(160, 1) = compS!(X, 10) / 60
+            natLeaderVals!(160, 1) = compStats!(X, 10) / 60
             natLeaderVals!(160, 2) = 0
-            natZ1$(160) = statPlyrNames$(X)
-            natZ2$(160) = teamName$
+            natLdrName$(160) = statPlyrNames$(X)
+            natLdrTeam$(160) = teamName$
 
             For Z = 151 To 159
                 For Z1 = Z + 1 To 160
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -558,19 +558,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Rebounds Per Game
-        If compS!(X, 13) > natLeaderVals!(170, 1) Then
+        If compStats!(X, 13) > natLeaderVals!(170, 1) Then
 
-            natLeaderVals!(170, 1) = compS!(X, 13)
-            natLeaderVals!(170, 2) = compS!(X, 5)
-            natZ1$(170) = statPlyrNames$(X)
-            natZ2$(170) = teamName$
+            natLeaderVals!(170, 1) = compStats!(X, 13)
+            natLeaderVals!(170, 2) = compStats!(X, 5)
+            natLdrName$(170) = statPlyrNames$(X)
+            natLdrTeam$(170) = teamName$
 
             For Z = 161 To 169
                 For Z1 = Z + 1 To 170
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -582,19 +582,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Avg Rebounds
-        If compS!(X, 5) > natLeaderVals!(180, 1) Then
+        If compStats!(X, 5) > natLeaderVals!(180, 1) Then
 
-            natLeaderVals!(180, 1) = compS!(X, 5)
+            natLeaderVals!(180, 1) = compStats!(X, 5)
             natLeaderVals!(18, 2) = 0
-            natZ1$(180) = statPlyrNames$(X)
-            natZ2$(180) = teamName$
+            natLdrName$(180) = statPlyrNames$(X)
+            natLdrTeam$(180) = teamName$
 
             For Z = 171 To 179
                 For Z1 = Z + 1 To 180
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -606,19 +606,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Blocks Per Game
-        If compS!(X, 17) > natLeaderVals!(190, 1) Then
+        If compStats!(X, 17) > natLeaderVals!(190, 1) Then
 
-            natLeaderVals!(190, 1) = compS!(X, 17)
+            natLeaderVals!(190, 1) = compStats!(X, 17)
             natLeaderVals!(190, 2) = 0
-            natZ1$(190) = statPlyrNames$(X)
-            natZ2$(190) = teamName$
+            natLdrName$(190) = statPlyrNames$(X)
+            natLdrTeam$(190) = teamName$
 
             For Z = 181 To 189
                 For Z1 = Z + 1 To 190
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -630,19 +630,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Blocks
-        If compS!(X, 9) > natLeaderVals!(200, 1) Then
+        If compStats!(X, 9) > natLeaderVals!(200, 1) Then
 
-            natLeaderVals!(200, 1) = compS!(X, 9)
+            natLeaderVals!(200, 1) = compStats!(X, 9)
             natLeaderVals!(200, 2) = 0
-            natZ1$(200) = statPlyrNames$(X)
-            natZ2$(200) = teamName$
+            natLdrName$(200) = statPlyrNames$(X)
+            natLdrTeam$(200) = teamName$
 
             For Z = 191 To 199
                 For Z1 = Z + 1 To 200
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -654,19 +654,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Field Goals Made
-        If compS!(X, 2) > natLeaderVals!(210, 1) Then
+        If compStats!(X, 2) > natLeaderVals!(210, 1) Then
 
-            natLeaderVals!(210, 1) = compS!(X, 2)
+            natLeaderVals!(210, 1) = compStats!(X, 2)
             natLeaderVals!(210, 2) = 0
-            natZ1$(210) = statPlyrNames$(X)
-            natZ2$(210) = teamName$
+            natLdrName$(210) = statPlyrNames$(X)
+            natLdrTeam$(210) = teamName$
 
             For Z = 201 To 209
                 For Z1 = Z + 1 To 210
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -678,19 +678,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Free Throws Made
-        If compS!(X, 4) > natLeaderVals!(220, 1) Then
+        If compStats!(X, 4) > natLeaderVals!(220, 1) Then
 
-            natLeaderVals!(220, 1) = compS!(X, 4)
+            natLeaderVals!(220, 1) = compStats!(X, 4)
             natLeaderVals!(220, 2) = 0
-            natZ1$(220) = statPlyrNames$(X)
-            natZ2$(220) = teamName$
+            natLdrName$(220) = statPlyrNames$(X)
+            natLdrTeam$(220) = teamName$
 
             For Z = 211 To 219
                 For Z1 = Z + 1 To 220
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -702,22 +702,22 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Fouls Per Game
-        If compS!(X, 14) > natLeaderVals!(230, 1) Then
+        If compStats!(X, 14) > natLeaderVals!(230, 1) Then
 
-            natLeaderVals!(230, 1) = compS!(X, 14)
+            natLeaderVals!(230, 1) = compStats!(X, 14)
             natLeaderVals!(230, 2) = 0
-            natZ1$(230) = statPlyrNames$(X)
-            natZ2$(230) = teamName$
+            natLdrName$(230) = statPlyrNames$(X)
+            natLdrTeam$(230) = teamName$
 
-            fpg! = compS!(X, 14)
+            fpg! = compStats!(X, 14)
             test$ = statPlyrNames$(X)
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -729,19 +729,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Fouls
-        If compS!(X, 6) > natLeaderVals!(240, 1) Then
+        If compStats!(X, 6) > natLeaderVals!(240, 1) Then
 
-            natLeaderVals!(240, 1) = compS!(X, 6)
+            natLeaderVals!(240, 1) = compStats!(X, 6)
             natLeaderVals!(240, 2) = 0
-            natZ1$(240) = statPlyrNames$(X)
-            natZ2$(240) = teamName$
+            natLdrName$(240) = statPlyrNames$(X)
+            natLdrTeam$(240) = teamName$
 
             For Z = 231 To 239
                 For Z1 = Z + 1 To 240
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -753,19 +753,19 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'MVP Points
-        If compS!(X, 24) > natLeaderVals!(250, 1) Then
+        If compStats!(X, 24) > natLeaderVals!(250, 1) Then
 
-            natLeaderVals!(250, 1) = compS!(X, 24)
+            natLeaderVals!(250, 1) = compStats!(X, 24)
             natLeaderVals!(250, 2) = 0
-            natZ1$(250) = statPlyrNames$(X)
-            natZ2$(250) = teamName$
+            natLdrName$(250) = statPlyrNames$(X)
+            natLdrTeam$(250) = teamName$
 
             For Z = 241 To 249
                 For Z1 = Z + 1 To 250
 
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
-                        Swap natZ1$(Z1), natZ1$(Z)
-                        Swap natZ2$(Z1), natZ2$(Z)
+                        Swap natLdrName$(Z1), natLdrName$(Z)
+                        Swap natLdrTeam$(Z1), natLdrTeam$(Z)
                         For M = 1 To 2:
                             Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
                         Next
@@ -839,13 +839,15 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
 
     Shared oppScore(), powerRating(), teamScore()
 
-    Shared gameSite$(), PT$()
+    Shared gameSite$()
     Shared locIndicator$(), oppName$(), statFiles$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
-    Shared PT#()
     Shared gameAttendance&()
+
+    Shared pollTeam$()
+    Shared pollRatings#()
 
     findFile$ = diskPaths$(1) + statFile$ + "S"
 
@@ -940,11 +942,11 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
 
         teamPower = teamPower / (numberGames + GL)
         NRT = NRT + 1
-        PT$(NRT) = statFile$
-        PT#(NRT, 1) = teamPower
-        PT#(NRT, 2) = fullWins
-        PT#(NRT, 3) = fullLosses
-        PT#(NRT, 4) = SS
+        pollTeam$(NRT) = statFile$
+        pollRatings#(NRT, 1) = teamPower
+        pollRatings#(NRT, 2) = fullWins
+        pollRatings#(NRT, 3) = fullLosses
+        pollRatings#(NRT, 4) = SS
 
         Cls
 
@@ -973,17 +975,18 @@ End Function
 'This includes the national poll.
 Sub PostLeadersOrg (organization$, NRT)
 
-    Dim NO1(30), NO2(30), NO3(30), NO4(30), NO5(30), NO6(30)
-
-    Shared PT#()
+    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
 
     Shared plyrRecords!()
     Shared natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
     Shared offRecords!(), defRecords!()
 
     Shared plyrRecDesc$()
-    Shared natDefLdrNames$(), natOffLdrNames$(), natZ1$(), NZ1$(), natZ2$()
-    Shared PT$(), offRecDesc$(), defRecDesc$()
+    Shared natDefLdrNames$(), natOffLdrNames$(), natLdrName$(), confLdrName$(), natLdrTeam$()
+    Shared offRecDesc$(), defRecDesc$()
+
+    Shared pollTeam$()
+    Shared pollRatings#()
 
     Cls
 
@@ -992,11 +995,11 @@ Sub PostLeadersOrg (organization$, NRT)
     Print "    POSTING NEW "; organization$; " LEADERS"
 
     For X = 1 To 30
-        Write #1, NZ1$(X), NO1(X), NO2(X), NO3(X), NO4(X), NO5(X), NO6(X)
+        Write #1, confLdrName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
     Next
 
     For X = 1 To 250
-        Write #1, natZ1$(X), natZ2$(X), natLeaderVals!(X, 1), natLeaderVals!(X, 2)
+        Write #1, natLdrName$(X), natLdrTeam$(X), natLeaderVals!(X, 1), natLeaderVals!(X, 2)
     Next X
 
     For X = 1 To MAX_CONFERENCES
@@ -1017,10 +1020,10 @@ Sub PostLeadersOrg (organization$, NRT)
 
     For Z = 1 To NRT - 1
         For Z1 = Z + 1 To NRT
-            If PT#(Z, 1) < PT#(Z1, 1) Then
-                Swap PT$(Z1), PT$(Z)
+            If pollRatings#(Z, 1) < pollRatings#(Z1, 1) Then
+                Swap pollTeam$(Z1), pollTeam$(Z)
                 For MN = 1 To 4
-                    Swap PT#(Z1, MN), PT#(Z, MN)
+                    Swap pollRatings#(Z1, MN), pollRatings#(Z, MN)
                 Next MN
             End If
         Next Z1
@@ -1033,7 +1036,7 @@ Sub PostLeadersOrg (organization$, NRT)
     Write #2, NRT
 
     For X = 1 To 1200
-        Write #2, PT$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
+        Write #2, pollTeam$(X), pollRatings#(X, 1), pollRatings#(X, 2), pollRatings#(X, 3), pollRatings#(X, 4)
     Next
 
     Close #2

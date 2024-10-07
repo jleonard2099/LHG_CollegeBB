@@ -29,7 +29,7 @@ Dim coach$, mascot$, arenaName$
 Dim d3FG_Adj(1), dthreeFGA_Adj(1)
 
 Dim leagueRatings(0 To 4)
-Dim teamRatings%(0 To 9), teamStats!(0 to 24)
+Dim teamRatings(0 To 9), teamStats!(0 to 24)
 
 'Why isn't this 0 to 13?
 Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)

@@ -11,7 +11,7 @@ Sub ADDTOURN ()
     Shared slotName$(), regionNames$()
 
     Shared consolationSetting%()
-    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
+    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
 
     Dim NR$
 
@@ -65,7 +65,7 @@ Sub ADDTOURN ()
                     Call SetupTourney(NR$, SELECTION%, newTourneyName$, tourneyFile$)
 
                 Case 2, 4:
-                    Erase nbrRegionalTeams, tourneyN%
+                    Erase nbrRegionalTeams, tourneyParams
                     Erase regionNames$, slotName$
                     consolationSetting%(0) = 0
                     consolationSetting%(1) = 0
@@ -108,8 +108,8 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Dim pbpDelayTourn!
 
     Shared slotName$(), regionNames$()
-    Shared consolationSetting%(), teamRatings%()
-    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
+    Shared consolationSetting%(), teamRatings()
+    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
 
     tourneyDefaults%(3) = 1
     tourneyDefaults%(7) = 3
@@ -341,8 +341,8 @@ End Sub
 Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Shared slotName$(), regionNames$()
-    Shared consolationSetting%(), teamRatings%()
-    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
+    Shared consolationSetting%(), teamRatings()
+    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
 
     Cls
     Color 15, 1
@@ -501,11 +501,11 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
                             slotName$(currRegion, seed, 0) = team$
                             slotName$(currRegion, seed, 1) = YN$
-                            tourneyN%(currRegion, seed, 0) = teamNbr
-                            tourneyN%(currRegion, seed, 1) = 3
-                            tourneyN%(currRegion, seed, 2) = teamRatings%(0)
-                            tourneyN%(currRegion, seed, 3) = teamRatings%(1)
-                            tourneyN%(currRegion, seed, 1) = 1
+                            tourneyParams(currRegion, seed, 0) = teamNbr
+                            tourneyParams(currRegion, seed, 1) = 3
+                            tourneyParams(currRegion, seed, 2) = teamRatings(0)
+                            tourneyParams(currRegion, seed, 3) = teamRatings(1)
+                            tourneyParams(currRegion, seed, 1) = 1
 
                         End If
 
@@ -642,7 +642,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
     Shared slotName$(), regionNames$()
     Shared consolationSetting%()
-    Shared tourneyN%(), nbrRegionalTeams()
+    Shared tourneyParams(), nbrRegionalTeams()
     Shared tourneyDefaults%()
 
     tourneyFile$ = ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
@@ -682,7 +682,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                 For I1 = 1 To 16
                     For I2 = 0 To 3
                         Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
-                        Input #1, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                        Input #1, tourneyParams(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                     Next
                 Next
             Next
@@ -725,7 +725,7 @@ Sub PickIt (var%, currRegion, saveFile$)
     Shared homeTeam$(), visitingTeam$()
     Shared regionNames$(), slotName$(), yearNumber$()
     Shared consolationSetting%()
-    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
+    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
 
     Select Case var%
 
@@ -738,8 +738,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 1
             Call SETTINGS
 
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 3, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -755,8 +755,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 4, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -826,8 +826,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -843,7 +843,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -858,8 +858,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 3, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -929,8 +929,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -945,8 +945,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -962,7 +962,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -978,7 +978,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1047,8 +1047,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1063,8 +1063,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 7, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1079,8 +1079,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1112,7 +1112,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1181,8 +1181,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 7, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1197,8 +1197,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1213,8 +1213,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1229,8 +1229,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 8, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1331,8 +1331,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1347,8 +1347,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 7, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1363,8 +1363,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1379,8 +1379,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1396,7 +1396,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1497,8 +1497,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1513,8 +1513,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1530,7 +1530,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1545,8 +1545,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1561,8 +1561,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1578,7 +1578,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1679,8 +1679,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1695,8 +1695,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1711,8 +1711,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1728,7 +1728,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1744,7 +1744,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1759,8 +1759,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 2
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1776,7 +1776,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1877,8 +1877,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1893,8 +1893,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1909,8 +1909,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1925,8 +1925,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1942,7 +1942,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1958,7 +1958,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1974,7 +1974,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -1990,7 +1990,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2091,8 +2091,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2107,8 +2107,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2123,8 +2123,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2139,8 +2139,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2155,8 +2155,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2188,7 +2188,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2204,7 +2204,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2220,7 +2220,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2321,8 +2321,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 14, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 14, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2337,8 +2337,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2353,8 +2353,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2369,8 +2369,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2385,8 +2385,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2401,8 +2401,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2434,7 +2434,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2466,7 +2466,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 906
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2567,8 +2567,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 15, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 15, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2583,8 +2583,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 14, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 14, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2599,8 +2599,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2615,8 +2615,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2631,8 +2631,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2647,8 +2647,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2663,8 +2663,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2728,7 +2728,7 @@ Sub PickIt (var%, currRegion, saveFile$)
             ROUND = 2
             Call SETTINGS
             scheduleNG%(TC!, 0) = 907
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2829,8 +2829,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 1
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 16, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 1, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 16, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2845,8 +2845,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 2
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 15, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 2, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 15, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2861,8 +2861,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 3
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 14, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 3, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 14, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2877,8 +2877,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 4
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 4, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2893,8 +2893,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 5
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 5, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2909,8 +2909,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 6
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 6, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2925,8 +2925,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 7
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 7, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -2941,8 +2941,8 @@ Sub PickIt (var%, currRegion, saveFile$)
             GAME = 8
             ROUND = 1
             Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyN%(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyN%(currRegion, 8, 0)
+            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
             scheduleNG%(TC!, 15) = REGION
             scheduleNG%(TC!, 16) = ROUND
             scheduleNG%(TC!, 17) = GAME
@@ -5860,7 +5860,7 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
 
     Shared TC!
 
-    Shared consolationSetting%(), tourneyN%(), nbrRegionalTeams()
+    Shared consolationSetting%(), tourneyParams(), nbrRegionalTeams()
     Shared slotName$(), regionNames$()
 
     'SAVE TOURNAMENT INFO AND QUIT
@@ -5878,7 +5878,7 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
         For I1 = 1 To 16
             For I2 = 0 To 3
                 Print #2, slotName$(I, I1, I2) ' SEED SLOT NAME
-                Print #2, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                Print #2, tourneyParams(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
             Next
         Next
     Next

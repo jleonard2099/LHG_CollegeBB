@@ -246,7 +246,7 @@ Sub Hd2HdColl_Report (teamName$, printDest)
 
     Shared div1Name$, div2Name$
 
-    Shared teamRatings%()
+    Shared teamRatings()
 
     Shared memberName$()
 
@@ -707,7 +707,7 @@ Sub Hd2HdColl_Screen (teamName$)
 
     Shared div1Name$, div2Name$
 
-    Shared teamRatings%()
+    Shared teamRatings()
 
     Shared memberName$()
 
@@ -730,7 +730,7 @@ Sub Hd2HdColl_Screen (teamName$)
         Cls
 
         Locate 2, 35
-        Color teamRatings%(0), teamRatings%(1): Print teamName$
+        Color teamRatings(0), teamRatings(1): Print teamName$
         Color 3, 0
 
         'Table header
@@ -965,7 +965,7 @@ Sub Hd2HdColl_Screen (teamName$)
     Cls
 
     Locate 2, 35
-    Color teamRatings%(0), teamRatings%(1): Print teamName$
+    Color teamRatings(0), teamRatings(1): Print teamName$
     Color 3, 0
 
     Locate 4

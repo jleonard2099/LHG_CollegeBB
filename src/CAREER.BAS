@@ -130,8 +130,8 @@ Sub MergeFirstYear ()
     Dim careerW0!(62), careerW1!(62)
 
     Shared careerPlayers$()
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
-    Shared statsZ!(), statsZ1!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
+    Shared statsZ0!(), statsZ1!()
 
     NB = -1
 
@@ -222,7 +222,7 @@ Sub MergeFirstYear ()
                     Next
 
                     For L = 0 To 15: 
-                        Input #1, statsZ!(L)
+                        Input #1, statsZ0!(L)
                     Next
 
                     For L = 0 To 15: 
@@ -242,11 +242,11 @@ Sub MergeFirstYear ()
                         End If
 
                         For J = 0 To 13
-                            plyrStat_Career!(N, I, J) = carStatVal!(I, J)
+                            carPlyrStat!(N, I, J) = carStatVal!(I, J)
                         Next J
 
-                        plyrStat_Career!(N, I, 14) = 1
-                        plyrStat_Career!(N, I, 15) = statYear
+                        carPlyrStat!(N, I, 14) = 1
+                        carPlyrStat!(N, I, 15) = statYear
 
                         car3FGM!(N, I) = careerW0!(I)
                         car3FGA!(N, I) = careerW1!(I)
@@ -278,7 +278,7 @@ End Sub
 'formats the results for them as directed.
 Sub ReviewCareerRecords ()
 
-    Shared BL!(), BLYR!()
+    Shared carRecVal!(), carRecYear!()
     Shared BL$()
 
     recordFile$ = ChooseFile$ (diskPaths$(2) + "*.CLD", "CAREER RECORD", ExitCode%)
@@ -291,7 +291,7 @@ Sub ReviewCareerRecords ()
         Open diskPaths$(2) + recordFile$ + ".CLD" For Input As #1
 
         For I = 0 To 20:
-            Input #1, BLYR!(I), BL$(I), BL!(I)
+            Input #1, carRecYear!(I), BL$(I), carRecVal!(I)
         Next
 
         Close #1
@@ -321,35 +321,35 @@ Sub ReviewCareerRecords ()
                         Print
 
                         Color 3: Print "FIELD GOALS MADE";
-                        Color 7: Print Tab(33); Using "####"; BL!(0);: Print Tab(47); BL$(0);: Print Tab(66); BLYR!(0)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(0);: Print Tab(47); BL$(0);: Print Tab(66); carRecYear!(0)
                         Color 3: Print "FIELD GOAL ATTEMPTS";
-                        Color 7: Print Tab(33); Using "####"; BL!(1);: Print Tab(47); BL$(1);: Print Tab(66); BLYR!(1)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(1);: Print Tab(47); BL$(1);: Print Tab(66); carRecYear!(1)
                         Color 3: Print "FIELD GOAL PCT.";
-                        Color 7: Print Tab(32); Using "#.###"; BL!(2);: Print Tab(47); BL$(2);: Print Tab(66); BLYR!(2)
+                        Color 7: Print Tab(32); Using "#.###"; carRecVal!(2);: Print Tab(47); BL$(2);: Print Tab(66); carRecYear!(2)
                         Color 3: Print "FREE THROWS MADE";
-                        Color 7: Print Tab(33); Using "####"; BL!(3);: Print Tab(47); BL$(3);: Print Tab(66); BLYR!(3)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(3);: Print Tab(47); BL$(3);: Print Tab(66); carRecYear!(3)
                         Color 3: Print "FREE THROW ATTEMPTS";
-                        Color 7: Print Tab(33); Using "####"; BL!(4);: Print Tab(47); BL$(4);: Print Tab(66); BLYR!(4)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(4);: Print Tab(47); BL$(4);: Print Tab(66); carRecYear!(4)
                         Color 3: Print "FREE THROW PCT.";
-                        Color 7: Print Tab(32); Using "#.###"; BL!(5);: Print Tab(47); BL$(5);: Print Tab(66); BLYR!(5)
+                        Color 7: Print Tab(32); Using "#.###"; carRecVal!(5);: Print Tab(47); BL$(5);: Print Tab(66); carRecYear!(5)
                         Color 3: Print "3 PT. FIELD GOALS MADE";
-                        Color 7: Print Tab(33); Using "####"; BL!(6);: Print Tab(47); BL$(6);: Print Tab(66); BLYR!(6)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(6);: Print Tab(47); BL$(6);: Print Tab(66); carRecYear!(6)
                         Color 3: Print "3 PT. FILED GOAL ATTEMPTS";
-                        Color 7: Print Tab(33); Using "####"; BL!(7);: Print Tab(47); BL$(7);: Print Tab(66); BLYR!(7)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(7);: Print Tab(47); BL$(7);: Print Tab(66); carRecYear!(7)
                         Color 3: Print "3 PT. FIELD GOAL PCT.";
-                        Color 7: Print Tab(32); Using "#.###"; BL!(8);: Print Tab(47); BL$(8);: Print Tab(66); BLYR!(8)
+                        Color 7: Print Tab(32); Using "#.###"; carRecVal!(8);: Print Tab(47); BL$(8);: Print Tab(66); carRecYear!(8)
                         Color 3: Print "POINTS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(9);: Print Tab(47); BL$(9);: Print Tab(66); BLYR!(9)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(9);: Print Tab(47); BL$(9);: Print Tab(66); carRecYear!(9)
                         Color 3: Print "POINTS PER GAME";
-                        Color 7: Print Tab(32); Using "###.#"; BL!(10);: Print Tab(47); BL$(10);: Print Tab(66); BLYR!(10)
+                        Color 7: Print Tab(32); Using "###.#"; carRecVal!(10);: Print Tab(47); BL$(10);: Print Tab(66); carRecYear!(10)
                         Color 3: Print "OFFENSIVE REBOUNDS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(11);: Print Tab(47); BL$(11);: Print Tab(66); BLYR!(11)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(11);: Print Tab(47); BL$(11);: Print Tab(66); carRecYear!(11)
                         Color 3: Print "DEFENSIVE REBOUNDS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(12);: Print Tab(47); BL$(12);: Print Tab(66); BLYR!(12)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(12);: Print Tab(47); BL$(12);: Print Tab(66); carRecYear!(12)
                         Color 3: Print "TOTAL REBOUNDS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(13);: Print Tab(47); BL$(13);: Print Tab(66); BLYR!(13)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(13);: Print Tab(47); BL$(13);: Print Tab(66); carRecYear!(13)
                         Color 3: Print "REBOUNDS PER GAME";
-                        Color 7: Print Tab(32); Using "###.#"; BL!(14);: Print Tab(47); BL$(14);: Print Tab(66); BLYR!(14)
+                        Color 7: Print Tab(32); Using "###.#"; carRecVal!(14);: Print Tab(47); BL$(14);: Print Tab(66); carRecYear!(14)
 
                         Color 15
                         Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
@@ -359,17 +359,17 @@ Sub ReviewCareerRecords ()
                         Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
                         Print
                         Color 3: Print "PERSONAL FOULS";
-                        Color 7: Print Tab(33); Using "####"; BL!(15);: Print Tab(47); BL$(15);: Print Tab(66); BLYR!(15)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(15);: Print Tab(47); BL$(15);: Print Tab(66); carRecYear!(15)
                         Color 3: Print "ASSISTS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(16);: Print Tab(47); BL$(16);: Print Tab(66); BLYR!(16)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(16);: Print Tab(47); BL$(16);: Print Tab(66); carRecYear!(16)
                         Color 3: Print "SHOTS BLOCKED";
-                        Color 7: Print Tab(33); Using "####"; BL!(17);: Print Tab(47); BL$(17);: Print Tab(66); BLYR!(17)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(17);: Print Tab(47); BL$(17);: Print Tab(66); carRecYear!(17)
                         Color 3: Print "STEALS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(18);: Print Tab(47); BL$(18);: Print Tab(66); BLYR!(18)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(18);: Print Tab(47); BL$(18);: Print Tab(66); carRecYear!(18)
                         Color 3: Print "TURNOVERS";
-                        Color 7: Print Tab(32); Using "#####"; BL!(19);: Print Tab(47); BL$(19);: Print Tab(66); BLYR!(19)
+                        Color 7: Print Tab(32); Using "#####"; carRecVal!(19);: Print Tab(47); BL$(19);: Print Tab(66); carRecYear!(19)
                         Color 3: Print "HI-GAME (POINTS)";
-                        Color 7: Print Tab(33); Using "####"; BL!(20);: Print Tab(47); BL$(20);: Print Tab(66); BLYR!(20)
+                        Color 7: Print Tab(33); Using "####"; carRecVal!(20);: Print Tab(47); BL$(20);: Print Tab(66); carRecYear!(20)
 
                         Color 15
 
@@ -400,7 +400,7 @@ End Sub
 'printer
 Sub CareerRecords_Report (printDest, destFile$)
 
-    Shared BL!(), BLYR!()
+    Shared carRecVal!(), carRecYear!()
     Shared BL$()
 
     Color 0, 15
@@ -411,89 +411,89 @@ Sub CareerRecords_Report (printDest, destFile$)
     Print #1, "CATEGORY                     RECORD           PLAYER              YEAR"
     Print #1,
     Print #1, "FIELD GOALS MADE";
-    Print #1, Tab(33); Using "####"; BL!(0);
+    Print #1, Tab(33); Using "####"; carRecVal!(0);
     Print #1, Tab(47); BL$(0);
-    Print #1, Tab(66); BLYR!(0)
+    Print #1, Tab(66); carRecYear!(0)
     Print #1, "FIELD GOAL ATTEMPTS";
-    Print #1, Tab(33); Using "####"; BL!(1);
+    Print #1, Tab(33); Using "####"; carRecVal!(1);
     Print #1, Tab(47); BL$(1);
-    Print #1, Tab(66); BLYR!(1)
+    Print #1, Tab(66); carRecYear!(1)
     Print #1, "FIELD GOAL PCT.";
-    Print #1, Tab(32); Using "#.###"; BL!(2);
+    Print #1, Tab(32); Using "#.###"; carRecVal!(2);
     Print #1, Tab(47); BL$(2);
-    Print #1, Tab(66); BLYR!(2)
+    Print #1, Tab(66); carRecYear!(2)
     Print #1, "FREE THROWS MADE";
-    Print #1, Tab(33); Using "####"; BL!(3);
+    Print #1, Tab(33); Using "####"; carRecVal!(3);
     Print #1, Tab(47); BL$(3);
-    Print #1, Tab(66); BLYR!(3)
+    Print #1, Tab(66); carRecYear!(3)
     Print #1, "FREE THROW ATTEMPTS";
-    Print #1, Tab(33); Using "####"; BL!(4);
+    Print #1, Tab(33); Using "####"; carRecVal!(4);
     Print #1, Tab(47); BL$(4);
-    Print #1, Tab(66); BLYR!(4)
+    Print #1, Tab(66); carRecYear!(4)
     Print #1, "FREE THROW PCT.";
-    Print #1, Tab(32); Using "#.###"; BL!(5);
+    Print #1, Tab(32); Using "#.###"; carRecVal!(5);
     Print #1, Tab(47); BL$(5);
-    Print #1, Tab(66); BLYR!(5)
+    Print #1, Tab(66); carRecYear!(5)
     Print #1, "3 PT. FIELD GOALS MADE";
-    Print #1, Tab(33); Using "####"; BL!(6);
+    Print #1, Tab(33); Using "####"; carRecVal!(6);
     Print #1, Tab(47); BL$(6);
-    Print #1, Tab(66); BLYR!(6)
+    Print #1, Tab(66); carRecYear!(6)
     Print #1, "3 PT. FILED GOAL ATTEMPTS";
-    Print #1, Tab(33); Using "####"; BL!(7);
+    Print #1, Tab(33); Using "####"; carRecVal!(7);
     Print #1, Tab(47); BL$(7);
-    Print #1, Tab(66); BLYR!(7)
+    Print #1, Tab(66); carRecYear!(7)
     Print #1, "3 PT. FIELD GOAL PCT.";
-    Print #1, Tab(32); Using "#.###"; BL!(8);
+    Print #1, Tab(32); Using "#.###"; carRecVal!(8);
     Print #1, Tab(47); BL$(8);
-    Print #1, Tab(66); BLYR!(8)
+    Print #1, Tab(66); carRecYear!(8)
     Print #1, "POINTS";
-    Print #1, Tab(32); Using "#####"; BL!(9);
+    Print #1, Tab(32); Using "#####"; carRecVal!(9);
     Print #1, Tab(47); BL$(9);
-    Print #1, Tab(66); BLYR!(9)
+    Print #1, Tab(66); carRecYear!(9)
     Print #1, "POINTS PER GAME";
-    Print #1, Tab(32); Using "###.#"; BL!(10);
+    Print #1, Tab(32); Using "###.#"; carRecVal!(10);
     Print #1, Tab(47); BL$(10);
-    Print #1, Tab(66); BLYR!(10)
+    Print #1, Tab(66); carRecYear!(10)
     Print #1, "OFFENSIVE REBOUNDS";
-    Print #1, Tab(32); Using "#####"; BL!(11);
+    Print #1, Tab(32); Using "#####"; carRecVal!(11);
     Print #1, Tab(47); BL$(11);
-    Print #1, Tab(66); BLYR!(11)
+    Print #1, Tab(66); carRecYear!(11)
     Print #1, "DEFENSIVE REBOUNDS";
-    Print #1, Tab(32); Using "#####"; BL!(12);
+    Print #1, Tab(32); Using "#####"; carRecVal!(12);
     Print #1, Tab(47); BL$(12);
-    Print #1, Tab(66); BLYR!(12)
+    Print #1, Tab(66); carRecYear!(12)
     Print #1, "TOTAL REBOUNDS";
-    Print #1, Tab(32); Using "#####"; BL!(13);
+    Print #1, Tab(32); Using "#####"; carRecVal!(13);
     Print #1, Tab(47); BL$(13);
-    Print #1, Tab(66); BLYR!(13)
+    Print #1, Tab(66); carRecYear!(13)
     Print #1, "REBOUNDS PER GAME";
-    Print #1, Tab(32); Using "###.#"; BL!(14);
+    Print #1, Tab(32); Using "###.#"; carRecVal!(14);
     Print #1, Tab(47); BL$(14);
-    Print #1, Tab(66); BLYR!(14)
+    Print #1, Tab(66); carRecYear!(14)
     Print #1, "PERSONAL FOULS";
-    Print #1, Tab(33); Using "####"; BL!(15);
+    Print #1, Tab(33); Using "####"; carRecVal!(15);
     Print #1, Tab(47); BL$(15);
-    Print #1, Tab(66); BLYR!(15)
+    Print #1, Tab(66); carRecYear!(15)
     Print #1, "ASSISTS";
-    Print #1, Tab(32); Using "#####"; BL!(16);
+    Print #1, Tab(32); Using "#####"; carRecVal!(16);
     Print #1, Tab(47); BL$(16);
-    Print #1, Tab(66); BLYR!(16)
+    Print #1, Tab(66); carRecYear!(16)
     Print #1, "SHOTS BLOCKED";
-    Print #1, Tab(33); Using "####"; BL!(17);
+    Print #1, Tab(33); Using "####"; carRecVal!(17);
     Print #1, Tab(47); BL$(17);
-    Print #1, Tab(66); BLYR!(17)
+    Print #1, Tab(66); carRecYear!(17)
     Print #1, "STEALS";
-    Print #1, Tab(32); Using "#####"; BL!(18);
+    Print #1, Tab(32); Using "#####"; carRecVal!(18);
     Print #1, Tab(47); BL$(18);
-    Print #1, Tab(66); BLYR!(18)
+    Print #1, Tab(66); carRecYear!(18)
     Print #1, "TURNOVERS";
-    Print #1, Tab(32); Using "#####"; BL!(19);
+    Print #1, Tab(32); Using "#####"; carRecVal!(19);
     Print #1, Tab(47); BL$(19);
-    Print #1, Tab(66); BLYR!(19)
+    Print #1, Tab(66); carRecYear!(19)
     Print #1, "HI-GAME (POINTS)";
-    Print #1, Tab(33); Using "####"; BL!(20);
+    Print #1, Tab(33); Using "####"; carRecVal!(20);
     Print #1, Tab(47); BL$(20);
-    Print #1, Tab(66); BLYR!(20)
+    Print #1, Tab(66); carRecYear!(20)
 
 	If printDest = 1 Then
 
@@ -652,8 +652,8 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
 
     Shared careerPlayers$()
 
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
-    Shared statsZ!(), statsZ1!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
+    Shared statsZ0!(), statsZ1!()
 
     NB = -1
 
@@ -687,7 +687,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
     Next
 
     For L = 0 To 15: 
-        Input #2, statsZ!(L)
+        Input #2, statsZ0!(L)
     Next
 
     For L = 0 To 15: 
@@ -707,14 +707,14 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
 
                 'Find next stat year to save
                 For W = 1 To MAX_CAREER_YEARS
-                    If plyrStat_Career!(W, J, 15) = statYear Then
+                    If carPlyrStat!(W, J, 15) = statYear Then
                         CHK = CHK + 1
                     End If
                 Next W
 
                 'Look at number of years from previous
                 For Z = 1 To MAX_CAREER_YEARS
-                    N = N + plyrStat_Career!(Z, J, 14)
+                    N = N + carPlyrStat!(Z, J, 14)
                 Next Z
 
                 If CHK = 0 Then
@@ -723,11 +723,11 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
                 End If
 
                 For K = 0 To 13
-                    plyrStat_Career!(N, J, K) = carStatVal!(I, K)
+                    carPlyrStat!(N, J, K) = carStatVal!(I, K)
                 Next K
 
-                plyrStat_Career!(N, J, 14) = 1
-                plyrStat_Career!(N, J, 15) = statYear
+                carPlyrStat!(N, J, 14) = 1
+                carPlyrStat!(N, J, 15) = statYear
                 car3FGM!(N, J) = careerW0!(J)
                 car3FGA!(N, J) = careerW1!(J)
 
@@ -744,11 +744,11 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
                         N = 1
 
                         For K = 0 To 13: 
-                            plyrStat_Career!(N, NB, K) = carStatVal!(I, K)
+                            carPlyrStat!(N, NB, K) = carStatVal!(I, K)
                         Next K
 
-                        plyrStat_Career!(N, NB, 14) = 1
-                        plyrStat_Career!(N, NB, 15) = statYear
+                        carPlyrStat!(N, NB, 14) = 1
+                        carPlyrStat!(N, NB, 15) = statYear
                         car3FGM!(N, NB) = careerW0!(NB)
                         car3FGA!(N, NB) = careerW1!(NB)
                     End If
@@ -779,7 +779,7 @@ Sub LoadCareerFile (loadFile$)
 
     Shared careerPlayers$()
 
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     Color 15, 0
     Cls
@@ -799,7 +799,7 @@ Sub LoadCareerFile (loadFile$)
             Input #1, careerPlayers$(I)
 
             For J = 0 To 15
-                Input #1, plyrStat_Career!(N, I, J)
+                Input #1, carPlyrStat!(N, I, J)
             Next J
 
             Input #1, car3FGM!(N, I)
@@ -831,7 +831,7 @@ Sub SaveCareerFile (saveFile$)
 
     Shared careerPlayers$()
 
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     Cls
     Color 15
@@ -850,7 +850,7 @@ Sub SaveCareerFile (saveFile$)
             Write #3, careerPlayers$(I)
 
             For J = 0 To 15
-                Write #3, plyrStat_Career!(N, I, J)
+                Write #3, carPlyrStat!(N, I, J)
             Next J
 
             Write #3, car3FGM!(N, I)
@@ -880,18 +880,18 @@ End Sub
 'career leader file (.CLD)
 Sub UpdateCareerRecords (careerFile$)
 
-    Dim BL!(21), BLYR!(21)
+    Dim carRecVal!(21), carRecYear!(21)
     Dim BL$(21)
 
     Shared careerPlayers$()
-    Shared plyrStat_Career!(), car3FGM!(), car3FGA!()
+    Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     If _FileExists(diskPaths$(2) + careerFile$ + ".CLD") Then
 
         Open diskPaths$(2) + careerFile$ + ".CLD" For Input As #1
 
         For I = 0 To 20
-            Input #1, BLYR!(I), BL$(I), BL!(I)
+            Input #1, carRecYear!(I), BL$(I), carRecVal!(I)
         Next
 
         Close #1
@@ -904,142 +904,142 @@ Sub UpdateCareerRecords (careerFile$)
 
             For J = 1 To MAX_CAREER_YEARS
 
-                If plyrStat_Career!(J, I, 15) <> 0 Then
+                If carPlyrStat!(J, I, 15) <> 0 Then
 
-                    If plyrStat_Career!(J, I, 1) > BL!(0) Then
-                        BL!(0) = plyrStat_Career!(J, I, 1)
+                    If carPlyrStat!(J, I, 1) > carRecVal!(0) Then
+                        carRecVal!(0) = carPlyrStat!(J, I, 1)
                         BL$(0) = careerPlayers$(I)
-                        BLYR!(0) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(0) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 2) > BL!(1) Then
-                        BL!(1) = plyrStat_Career!(J, I, 2)
+                    If carPlyrStat!(J, I, 2) > carRecVal!(1) Then
+                        carRecVal!(1) = carPlyrStat!(J, I, 2)
                         BL$(1) = careerPlayers$(I)
-                        BLYR!(1) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(1) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 1) <> 0 And plyrStat_Career!(J, I, 1) / plyrStat_Career!(J, I, 0) >= 3.65 Then
-                        If plyrStat_Career!(J, I, 2) / plyrStat_Career!(J, I, 1) > BL!(2) Then
-                            BL!(2) = plyrStat_Career!(J, I, 2) / plyrStat_Career!(J, I, 1)
+                    If carPlyrStat!(J, I, 1) <> 0 And carPlyrStat!(J, I, 1) / carPlyrStat!(J, I, 0) >= 3.65 Then
+                        If carPlyrStat!(J, I, 2) / carPlyrStat!(J, I, 1) > carRecVal!(2) Then
+                            carRecVal!(2) = carPlyrStat!(J, I, 2) / carPlyrStat!(J, I, 1)
                             BL$(2) = careerPlayers$(I)
-                            BLYR!(2) = plyrStat_Career!(J, I, 15)
+                            carRecYear!(2) = carPlyrStat!(J, I, 15)
                         End If
                     End If
 
-                    If plyrStat_Career!(J, I, 4) > BL!(3) Then
-                        BL!(3) = plyrStat_Career!(J, I, 4)
+                    If carPlyrStat!(J, I, 4) > carRecVal!(3) Then
+                        carRecVal!(3) = carPlyrStat!(J, I, 4)
                         BL$(3) = careerPlayers$(I)
-                        BLYR!(3) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(3) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 3) > BL!(4) Then
-                        BL!(4) = plyrStat_Career!(J, I, 3)
+                    If carPlyrStat!(J, I, 3) > carRecVal!(4) Then
+                        carRecVal!(4) = carPlyrStat!(J, I, 3)
                         BL$(4) = careerPlayers$(I)
-                        BLYR!(4) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(4) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 3) <> 0 And plyrStat_Career!(J, I, 3) / plyrStat_Career!(J, I, 0) >= 1.5 Then
-                        If plyrStat_Career!(J, I, 4) / plyrStat_Career!(J, I, 3) > BL!(5) Then
-                            BL!(5) = plyrStat_Career!(J, I, 4) / plyrStat_Career!(J, I, 3)
+                    If carPlyrStat!(J, I, 3) <> 0 And carPlyrStat!(J, I, 3) / carPlyrStat!(J, I, 0) >= 1.5 Then
+                        If carPlyrStat!(J, I, 4) / carPlyrStat!(J, I, 3) > carRecVal!(5) Then
+                            carRecVal!(5) = carPlyrStat!(J, I, 4) / carPlyrStat!(J, I, 3)
                             BL$(5) = careerPlayers$(I)
-                            BLYR!(5) = plyrStat_Career!(J, I, 15)
+                            carRecYear!(5) = carPlyrStat!(J, I, 15)
                         End If
                     End If
 
-                    If car3FGM!(J, I) > BL!(6) Then
-                        BL!(6) = car3FGM!(J, I)
+                    If car3FGM!(J, I) > carRecVal!(6) Then
+                        carRecVal!(6) = car3FGM!(J, I)
                         BL$(6) = careerPlayers$(I)
-                        BLYR!(6) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(6) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If car3FGA!(J, I) > BL!(7) Then
-                        BL!(7) = car3FGA!(J, I)
+                    If car3FGA!(J, I) > carRecVal!(7) Then
+                        carRecVal!(7) = car3FGA!(J, I)
                         BL$(7) = careerPlayers$(I)
-                        BLYR!(7) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(7) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If car3FGA!(J, I) <> 0 And car3FGA!(J, I) / plyrStat_Career!(J, I, 0) >= 0.3 Then
-                        If car3FGM!(J, I) / car3FGA!(J, I) > BL!(8) Then
-                            BL!(8) = car3FGM!(J, I) / car3FGA!(J, I)
+                    If car3FGA!(J, I) <> 0 And car3FGA!(J, I) / carPlyrStat!(J, I, 0) >= 0.3 Then
+                        If car3FGM!(J, I) / car3FGA!(J, I) > carRecVal!(8) Then
+                            carRecVal!(8) = car3FGM!(J, I) / car3FGA!(J, I)
                             BL$(8) = careerPlayers$(I)
-                            BLYR!(8) = plyrStat_Career!(J, I, 15)
+                            carRecYear!(8) = carPlyrStat!(J, I, 15)
                         End If
                     End If
 
-                    If plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I) > BL!(9) Then
-                        BL!(9) = plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I)
+                    If carPlyrStat!(J, I, 2) * 2 + carPlyrStat!(J, I, 4) + car3FGM!(J, I) > carRecVal!(9) Then
+                        carRecVal!(9) = carPlyrStat!(J, I, 2) * 2 + carPlyrStat!(J, I, 4) + car3FGM!(J, I)
                         BL$(9) = careerPlayers$(I)
-                        BLYR!(9) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(9) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 0) <> 0 Then
-                        If (plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I)) / plyrStat_Career!(J, I, 0) > BL!(10) Then
-                            BL!(10) = (plyrStat_Career!(J, I, 2) * 2 + plyrStat_Career!(J, I, 4) + car3FGM!(J, I)) / plyrStat_Career!(J, I, 0)
+                    If carPlyrStat!(J, I, 0) <> 0 Then
+                        If (carPlyrStat!(J, I, 2) * 2 + carPlyrStat!(J, I, 4) + car3FGM!(J, I)) / carPlyrStat!(J, I, 0) > carRecVal!(10) Then
+                            carRecVal!(10) = (carPlyrStat!(J, I, 2) * 2 + carPlyrStat!(J, I, 4) + car3FGM!(J, I)) / carPlyrStat!(J, I, 0)
                             BL$(10) = careerPlayers$(I)
-                            BLYR!(10) = plyrStat_Career!(J, I, 15)
+                            carRecYear!(10) = carPlyrStat!(J, I, 15)
                         End If
                     End If
 
-                    If plyrStat_Career!(J, I, 12) > BL!(11) Then
-                        BL!(11) = plyrStat_Career!(J, I, 12)
+                    If carPlyrStat!(J, I, 12) > carRecVal!(11) Then
+                        carRecVal!(11) = carPlyrStat!(J, I, 12)
                         BL$(11) = careerPlayers$(I)
-                        BLYR!(11) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(11) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 5) - plyrStat_Career!(J, I, 12) > BL!(12) Then
-                        BL!(12) = plyrStat_Career!(J, I, 5) - plyrStat_Career!(J, I, 12)
+                    If carPlyrStat!(J, I, 5) - carPlyrStat!(J, I, 12) > carRecVal!(12) Then
+                        carRecVal!(12) = carPlyrStat!(J, I, 5) - carPlyrStat!(J, I, 12)
                         BL$(12) = careerPlayers$(I)
-                        BLYR!(12) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(12) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 5) > BL!(13) Then
-                        BL!(13) = plyrStat_Career!(J, I, 5)
+                    If carPlyrStat!(J, I, 5) > carRecVal!(13) Then
+                        carRecVal!(13) = carPlyrStat!(J, I, 5)
                         BL$(13) = careerPlayers$(I)
-                        BLYR!(13) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(13) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 0) <> 0 Then
-                        If plyrStat_Career!(J, I, 5) / plyrStat_Career!(J, I, 0) > BL!(14) Then
-                            BL!(14) = plyrStat_Career!(J, I, 5) / plyrStat_Career!(J, I, 0)
+                    If carPlyrStat!(J, I, 0) <> 0 Then
+                        If carPlyrStat!(J, I, 5) / carPlyrStat!(J, I, 0) > carRecVal!(14) Then
+                            carRecVal!(14) = carPlyrStat!(J, I, 5) / carPlyrStat!(J, I, 0)
                             BL$(14) = careerPlayers$(I)
-                            BLYR!(14) = plyrStat_Career!(J, I, 15)
+                            carRecYear!(14) = carPlyrStat!(J, I, 15)
                         End If
                     End If
 
-                    If plyrStat_Career!(J, I, 6) > BL!(15) Then
-                        BL!(15) = plyrStat_Career!(J, I, 6)
+                    If carPlyrStat!(J, I, 6) > carRecVal!(15) Then
+                        carRecVal!(15) = carPlyrStat!(J, I, 6)
                         BL$(15) = careerPlayers$(I)
-                        BLYR!(15) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(15) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 8) > BL!(16) Then
-                        BL!(16) = plyrStat_Career!(J, I, 8)
+                    If carPlyrStat!(J, I, 8) > carRecVal!(16) Then
+                        carRecVal!(16) = carPlyrStat!(J, I, 8)
                         BL$(16) = careerPlayers$(I)
-                        BLYR!(16) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(16) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 9) > BL!(17) Then
-                        BL!(17) = plyrStat_Career!(J, I, 9)
+                    If carPlyrStat!(J, I, 9) > carRecVal!(17) Then
+                        carRecVal!(17) = carPlyrStat!(J, I, 9)
                         BL$(17) = careerPlayers$(I)
-                        BLYR!(17) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(17) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 7) > BL!(18) Then
-                        BL!(18) = plyrStat_Career!(J, I, 7)
+                    If carPlyrStat!(J, I, 7) > carRecVal!(18) Then
+                        carRecVal!(18) = carPlyrStat!(J, I, 7)
                         BL$(18) = careerPlayers$(I)
-                        BLYR!(18) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(18) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 11) > BL!(19) Then
-                        BL!(19) = plyrStat_Career!(J, I, 11)
+                    If carPlyrStat!(J, I, 11) > carRecVal!(19) Then
+                        carRecVal!(19) = carPlyrStat!(J, I, 11)
                         BL$(19) = careerPlayers$(I)
-                        BLYR!(19) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(19) = carPlyrStat!(J, I, 15)
                     End If
 
-                    If plyrStat_Career!(J, I, 13) > BL!(20) Then
-                        BL!(20) = plyrStat_Career!(J, I, 13)
+                    If carPlyrStat!(J, I, 13) > carRecVal!(20) Then
+                        carRecVal!(20) = carPlyrStat!(J, I, 13)
                         BL$(20) = careerPlayers$(I)
-                        BLYR!(20) = plyrStat_Career!(J, I, 15)
+                        carRecYear!(20) = carPlyrStat!(J, I, 15)
                     End If
 
                 End If
@@ -1053,7 +1053,7 @@ Sub UpdateCareerRecords (careerFile$)
     Open diskPaths$(2) + careerFile$ + ".CLD" For Output As #2
 
     For I = 0 To 20
-        Write #2, BLYR!(I), BL$(I), BL!(I)
+        Write #2, carRecYear!(I), BL$(I), carRecVal!(I)
     Next
 
     Close #2

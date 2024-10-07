@@ -17,9 +17,9 @@ Sub ALIGN ()
 
     Shared plyrStat_Road!(), statsA!()
     Shared statsW0!(), statsW1!()
-    Shared statsZ!(), statsZ1!()
+    Shared statsZ0!(), statsZ1!()
     Shared threeFGM_Road!(), threeFGA_Road!()
-    Shared ZR!(), ZR1!()
+    Shared statsZ0_Road!(), statsZ1_Road!()
 
     Do
 
@@ -61,11 +61,11 @@ Sub ALIGN ()
                 Next
 
                 For L = 0 To 15: 
-                    Input #1, ZR!(L)
+                    Input #1, statsZ0_Road!(L)
                 Next
 
                 For L = 0 To 15: 
-                    Input #1, ZR1!(L)
+                    Input #1, statsZ1_Road!(L)
                 Next
 
                 Close #1
@@ -90,7 +90,7 @@ Sub ALIGN ()
                     Next
 
                     For L = 0 To 15: 
-                        Input #2, statsZ!(L)
+                        Input #2, statsZ0!(L)
                     Next
 
                     For L = 0 To 15: 
@@ -252,7 +252,7 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Shared plyrStat_Align!()
     Shared threeFGM_Align!(), threeFGA_Align!()
-    Shared ZR!(), ZR1!()
+    Shared statsZ0_Road!(), statsZ1_Road!()
 
     Cls
 
@@ -295,11 +295,11 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
     Next
 
     For L = 0 To 15: 
-        Write #1, ZR!(L)
+        Write #1, statsZ0_Road!(L)
     Next
 
     For L = 0 To 15: 
-        Write #1, ZR1!(L)
+        Write #1, statsZ1_Road!(L)
     Next
 
     Close #1

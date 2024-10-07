@@ -28,13 +28,16 @@ End Sub
 'stats from the file into several arrays
 Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
-    Shared defLeaderNames$(), offLeaderNames$(), PR$()
-    Shared defLeaders!(), offLeaders!()
-    Shared seeZ!()
-    Shared seeZ1$(), seeZ2$(), seeZ3$(), seeT$()
-    Shared PT#()
+    Shared defLeaderNames$(), offLeaderNames$()
 
-    Shared O1!(), O2!(), O3!(), O4!(), O5!(), O6!()
+    Shared defLeaders!(), offLeaders!()
+    Shared confLdrVal!()
+    Shared leaderText$(), leaderName$(), leaderTeam$(), confLdrName$()
+
+    Shared pollTeam$()
+    Shared pollRatings#()
+
+    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
 
     Cls
 
@@ -43,11 +46,11 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
     Open diskPaths$(2) + leagueFile$ + ".NLD" For Input As #1
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Input #1, seeT$(X), O1!(X), O2!(X), O3!(X), O4!(X), O5!(X), O6!(X)
+        Input #1, confLdrName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
     Next
 
     For X = 1 To 250: 
-        Input #1, seeZ2$(X), seeZ3$(X), seeZ!(X), seeZ1$(X)
+        Input #1, leaderName$(X), leaderTeam$(X), confLdrVal!(X), leaderText$(X)
     Next
 
     For X = 1 To MAX_CONFERENCES:
@@ -71,7 +74,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
     Input #2, NRT
 
     For X = 1 To NRT
-        Input #2, PR$(X), PT#(X, 1), PT#(X, 2), PT#(X, 3), PT#(X, 4)
+        Input #2, pollTeam$(X), pollRatings#(X, 1), pollRatings#(X, 2), pollRatings#(X, 3), pollRatings#(X, 4)
     Next
 
     Close #2
@@ -144,11 +147,12 @@ End Sub
 'user display.
 Sub LeaderStatsNat_Screen (orgName$, NRT)
 
-    Shared defLeaderNames$(), offLeaderNames$(), PR$()
-    Shared defLeaders!(), offLeaders!(), seeZ!()
-    Shared seeZ1$(), seeZ2$(), seeZ3$()
+    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaders!(), offLeaders!(), confLdrVal!()
+    Shared leaderText$(), leaderName$(), leaderTeam$()
 
-    Shared PT#()
+    Shared pollTeam$()
+    Shared pollRatings#()
 
     Color 15, 0
     Cls
@@ -165,7 +169,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     For P = 1 To NRT
 
         Print Using "###  "; P;
-        Print PR$(P); Tab(22); Using "###.#    ##   ##          ###.#"; PT#(P, 1); PT#(P, 2); PT#(P, 3); PT#(P, 4)
+        Print pollTeam$(P); Tab(22); Using "###.#    ##   ##          ###.#"; pollRatings#(P, 1); pollRatings#(P, 2); pollRatings#(P, 3); pollRatings#(P, 4)
 
         If (P / 20) = Int(P / 20) Then
 
@@ -202,11 +206,11 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 41 To 60
-        If seeZ2$(P) <> "" Then
-            Print Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Locate , 28
-            Print Using "###.#  "; seeZ!(P) * 100;
-            Print "  " + seeZ1$(P)
+            Print Using "###.#  "; confLdrVal!(P) * 100;
+            Print "  " + leaderText$(P)
         End If
     Next
 
@@ -218,12 +222,12 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 61 To 80
-        If seeZ2$(P) <> "" Then
+        If leaderName$(P) <> "" Then
             Locate , 41
-            Print Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
+            Print Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Locate , 68
-            Print Using "###.#  "; seeZ!(P) * 100;
-            Print "  " + seeZ1$(P)
+            Print Using "###.#  "; confLdrVal!(P) * 100;
+            Print "  " + leaderText$(P)
         End If
     Next
 
@@ -242,10 +246,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 1 To 20
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -257,10 +261,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 21 To 40
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -278,10 +282,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 81 To 90
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -291,10 +295,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 91 To 100
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -304,10 +308,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 101 To 110
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -317,10 +321,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 111 To 120
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -339,10 +343,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     For P = 121 To 130
 
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 33
-            Print Using "###.#"; seeZ!(P) * 100
+            Print Using "###.#"; confLdrVal!(P) * 100
         End If
 
     Next P
@@ -353,10 +357,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 141 To 150
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next P
 
@@ -366,10 +370,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 131 To 140
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -379,10 +383,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 151 To 160
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -400,10 +404,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 161 To 170
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -413,10 +417,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 171 To 180
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -426,10 +430,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 181 To 190
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "##.#"; seeZ!(P)
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -439,10 +443,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 191 To 200
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -460,9 +464,9 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 201 To 210
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);: Locate , 34
-            Print Using "####"; seeZ!(P)
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);: Locate , 34
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -471,10 +475,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 211 To 220
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -484,9 +488,9 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 221 To 230
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);: Locate , 34
-            Print Using "##.#"; seeZ!(P)
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);: Locate , 34
+            Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
@@ -496,10 +500,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 231 To 240
-        If seeZ2$(P) <> "" Then
-            Locate , 41: Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
 
     Next
@@ -518,10 +522,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
 
     For P = 241 To 250
-        If seeZ2$(P) <> "" Then
-            Print seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 34
-            Print Using "####"; seeZ!(P)
+            Print Using "####"; confLdrVal!(P)
         End If
     Next
 
@@ -634,10 +638,12 @@ End Sub
 'send to the default printer
 Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
-    Shared defLeaderNames$(), offLeaderNames$(), PR$()
-    Shared defLeaders!(), offLeaders!(), seeZ!()
-    Shared seeZ1$(), seeZ2$(), seeZ3$()
-    Shared PT#()
+    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaders!(), offLeaders!(), confLdrVal!()
+    Shared leaderText$(), leaderName$(), leaderTeam$()
+
+    Shared pollTeam$()
+    Shared pollRatings#()
 
     Color 15, 0
     Cls
@@ -649,7 +655,7 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 1 To NRT
         Print #1, Using "###  "; P;
-        Print #1, PR$(P); Tab(22); Using "###.#    ##   ##          ###.#"; PT#(P, 1); PT#(P, 2); PT#(P, 3); PT#(P, 4)
+        Print #1, pollTeam$(P); Tab(22); Using "###.#    ##   ##          ###.#"; pollRatings#(P, 1); pollRatings#(P, 2); pollRatings#(P, 3); pollRatings#(P, 4)
     Next
 
     Print #1, Chr$(12)
@@ -659,21 +665,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 41 To 60
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, Left$(seeZ2$(P), 10) + ", " + seeZ3$(P);
+            Print #1, Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Print #1, Tab(28);
-            Print #1, Using "##.#  ####"; seeZ!(P) * 100; seeZ1$(P);
+            Print #1, Using "##.#  ####"; confLdrVal!(P) * 100; leaderText$(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, Left$(seeZ2$(P + 20), 10) + ", " + seeZ3$(P + 20);
+            Print #1, Left$(leaderName$(P + 20), 10) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(67);
-            Print #1, Using "###.#  ####"; seeZ!(P + 20) * 100; seeZ1$(P)
+            Print #1, Using "###.#  ####"; confLdrVal!(P + 20) * 100; leaderText$(P)
         End If
 
     Next
@@ -683,21 +689,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 1 To 20
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
+            Print #1, leaderName$(P + 20) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -707,20 +713,20 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 81 To 90
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -730,21 +736,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 101 To 110
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -754,21 +760,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 121 To 130
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(33);
-            Print #1, Using "###.#"; seeZ!(P) * 100;
+            Print #1, Using "###.#"; confLdrVal!(P) * 100;
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
+            Print #1, leaderName$(P + 20) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "##.#"; seeZ!(P + 20)
+            Print #1, Using "##.#"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -778,21 +784,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 131 To 140
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P);
+            Print #1, Using "####"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 20) = "" Then
+        If leaderName$(P + 20) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 20) + ", " + seeZ3$(P + 20);
+            Print #1, leaderName$(P + 20) + ", " + leaderTeam$(P + 20);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -803,21 +809,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 161 To 170
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -827,21 +833,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 181 To 190
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 20)
+            Print #1, Using "####"; confLdrVal!(P + 20)
         End If
 
     Next
@@ -851,21 +857,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 201 To 210
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P);
+            Print #1, Using "####"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -875,21 +881,21 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 221 To 230
 
-        If seeZ2$(P) = "" Then
+        If leaderName$(P) = "" Then
             Print #1, Tab(41);
         Else
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "##.#"; seeZ!(P);
+            Print #1, Using "##.#"; confLdrVal!(P);
             Print #1, Tab(41);
         End If
 
-        If seeZ2$(P + 10) = "" Then
+        If leaderName$(P + 10) = "" Then
             Print #1,
         Else
-            Print #1, seeZ2$(P + 10) + ", " + seeZ3$(P + 10);
+            Print #1, leaderName$(P + 10) + ", " + leaderTeam$(P + 10);
             Print #1, Tab(74);
-            Print #1, Using "####"; seeZ!(P + 10)
+            Print #1, Using "####"; confLdrVal!(P + 10)
         End If
 
     Next
@@ -899,10 +905,10 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 241 To 250
 
-        If seeZ2$(P) <> "" Then
-            Print #1, seeZ2$(P) + ", " + seeZ3$(P);
+        If leaderName$(P) <> "" Then
+            Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
-            Print #1, Using "####"; seeZ!(P)
+            Print #1, Using "####"; confLdrVal!(P)
         End If
 
     Next

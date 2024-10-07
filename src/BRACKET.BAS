@@ -72,7 +72,7 @@ Sub ViewTourneyInfo (ACTION%)
     Shared BS%, NS%
 
     Shared consolationSetting%(), tourneyDefaults%()
-    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
+    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
     Shared homeScores(), visitorScores()
     Shared scheduleAP%()
 
@@ -99,7 +99,7 @@ Sub ViewTourneyInfo (ACTION%)
             For I1 = 1 To 16
                 For I2 = 0 To 3
                     Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
-                    Input #1, tourneyN%(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
+                    Input #1, tourneyParams(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
                 Next
             Next
         Next
@@ -218,7 +218,7 @@ End Sub
 'corresponding colors.
 Sub TeamColors (currentTeam$, currentScore%)
 
-    Shared slotName$(), tourneyN%(), scheduleNG%()
+    Shared slotName$(), tourneyParams(), scheduleNG%()
 
     Dim found
 
@@ -236,7 +236,7 @@ Sub TeamColors (currentTeam$, currentScore%)
 
             For X1 = 1 To 16
                 If X$ = slotName$(X, X1, 0) Then
-                    Color tourneyN%(X, X1, 2), tourneyN%(X, X1, 3)
+                    Color tourneyParams(X, X1, 2), tourneyParams(X, X1, 3)
                     found = 1
                     Exit For
                 End If
@@ -271,7 +271,7 @@ Sub EditBracket (numberRegions, ACTION%)
 
     Dim bracketA$(9)
 
-    Shared tourneyN%(), scheduleNG%(), nbrRegionalTeams()
+    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
     Shared scheduleAP%()
     Shared consolationSetting%(), tourneyDefaults%()
     Shared regionNames$(), slotName$()
@@ -1836,7 +1836,7 @@ Sub EditBracket (numberRegions, ACTION%)
                     For X = 1 To 16
                         For X1 = 1 To 16
                             If X$ = slotName$(X, X1, 0) Then
-                                Color tourneyN%(X, X1, 2), tourneyN%(X, X1, 3)
+                                Color tourneyParams(X, X1, 2), tourneyParams(X, X1, 3)
                                 found = 1
                                 Exit For
                             End If
