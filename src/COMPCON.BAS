@@ -17,7 +17,7 @@ Sub CompileCollege ()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared defRecDesc$(), offRecDesc$()
-    Shared plyrRecDesc$(), statFiles$()
+    Shared plyrRecDesc$(), memberName$()
     Shared leaderName$(), leaderTeam$()
 
     Shared confWins, confLosses, fullWins, fullLosses
@@ -58,7 +58,7 @@ Sub CompileCollege ()
     Erase compSeasonWins!, compSeasonLosses!, compSeasonWinPct!, compConfWins!, compConfLosses!, compConfWinPct!
 
     Erase defLeaderNames$, offLeaderNames$
-    Erase statFiles$, leaderName$, leaderTeam$
+    Erase memberName$, leaderName$, leaderTeam$
 
     'These are defensive record values, so they should be really high
     'To determine if a "record" was broken, the stat values will be
@@ -104,7 +104,7 @@ Sub CompileCollege ()
         Input #2, div2$
 
         For XW = 1 To TEAMS_PER_CONFERENCE
-            Input #2, statFiles$(XW)
+            Input #2, memberName$(XW)
         Next
 
         Close #2
@@ -112,17 +112,17 @@ Sub CompileCollege ()
         For XW = 1 To TEAMS_PER_CONFERENCE
 
             'Look for * as terminating char
-            If statFiles$(XW) <> Chr$(42) Then
+            If memberName$(XW) <> Chr$(42) Then
 
-                haveStats = FindStatsCon%(statFiles$(XW), numberGames)
+                haveStats = FindStatsCon%(memberName$(XW), numberGames)
 
                 If (haveStats) Then
 
-                    L = Len(statFiles$(XW))
+                    L = Len(memberName$(XW))
                     WT$ = ""
 
                     For X = 1 To L
-                        A = Asc(Mid$(statFiles$(XW), X, 1))
+                        A = Asc(Mid$(memberName$(XW), X, 1))
                         WT$ = WT$ + Chr$(A)
                     Next X
 
@@ -130,7 +130,7 @@ Sub CompileCollege ()
 
                     For X = 1 To TEAMS_PER_CONFERENCE
 
-                        If statFiles$(X) = WT$ Then
+                        If memberName$(X) = WT$ Then
 
                             If compSeasonWins!(X) = fullWins And compSeasonLosses!(X) = fullLosses Then
 
@@ -163,9 +163,9 @@ Sub CompileCollege ()
 
                     Next X
 
-                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
+                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
-                        Call ReadStatsConf(statFiles$(XW), TN$)
+                        Call ReadStatsConf(memberName$(XW), TN$)
                         Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
                         Call CalcStatLeadersConf(TN$)
 
@@ -1197,7 +1197,7 @@ Sub SortStandingsConference
 
     Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
 
-    Shared statFiles$()
+    Shared memberName$()
 
     'Currently sorts by Conference Record
     '   To sort by Season Record, change O4 / O5 to O1 / O2
@@ -1218,7 +1218,7 @@ Sub SortStandingsConference
                 If diffX <= diffY Then
                     If diffX <> diffY Then
                         If Not (compConfWins!(X) <= compConfWins!(Y) And compConfWins!(X) > compConfLosses!(X)) Or Not (compConfWins!(X) >= compConfWins!(Y) And compConfWins!(X) < compConfLosses!(X)) Then
-                            Swap statFiles$(X), statFiles$(Y)
+                            Swap memberName$(X), memberName$(Y)
                             Swap compSeasonWins!(X), compSeasonWins!(Y)
                             Swap compSeasonLosses!(X), compSeasonLosses!(Y)
                             Swap compSeasonWinPct!(X), compSeasonWinPct!(Y)
@@ -1251,7 +1251,7 @@ Sub PostLeadersConf (conferenceName$)
     Shared leaderVals!()
     Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
 
-    Shared leaderName$(), statFiles$(), leaderTeam$()
+    Shared leaderName$(), memberName$(), leaderTeam$()
 
     Cls
 
@@ -1262,7 +1262,7 @@ Sub PostLeadersConf (conferenceName$)
     Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Write #1, statFiles$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
+        Write #1, memberName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
     Next
 
     For X = 1 To 250
@@ -1332,7 +1332,7 @@ Function FindStatsCon% (statFile$, numberGames)
 
     Shared oppScore(), teamScore()
 
-    Shared locIndicator$(), oppName$(), statFiles$()
+    Shared locIndicator$(), oppName$(), memberName$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -1361,7 +1361,7 @@ Function FindStatsCon% (statFile$, numberGames)
 
             For EC = 1 To TEAMS_PER_CONFERENCE
 
-                If statName$ = statFiles$(EC) Then
+                If statName$ = memberName$(EC) Then
                     nonConfGame = 1
                     Exit For
                 End If

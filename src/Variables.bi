@@ -34,7 +34,6 @@ Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
 Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
-Dim statFiles$(TEAMS_PER_CONFERENCE)
 
 '-- For Road Data
 Dim gameAtt_Road&(MAX_SCHED_STATS)

@@ -19,7 +19,7 @@ Sub CompileNatlOrg ()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
-    Shared plyrRecDesc$(), statFiles$()
+    Shared plyrRecDesc$(), memberName$()
     Shared leaderName$(), leaderTeam$()
 
     Shared confWins, confLosses, fullWins, fullLosses
@@ -120,7 +120,7 @@ Sub CompileNatlOrg ()
                 Erase leaderVals!
                 Erase compSeasonWins!, compSeasonLosses!, compSeasonWinPct!, compConfWins!, compConfLosses!, compConfWinPct!
                 Erase defLeaderNames$, offLeaderNames$
-                Erase statFiles$, leaderName$, leaderTeam$
+                Erase memberName$, leaderName$, leaderTeam$
 
                 targetConf$ = diskPaths$(2) + memberConf$(currConf) + ".TMS"
 
@@ -150,7 +150,7 @@ Sub CompileNatlOrg ()
                         Input #3, div2$
 
                         For XW = 1 To TEAMS_PER_CONFERENCE
-                            Input #3, statFiles$(XW)
+                            Input #3, memberName$(XW)
                         Next
 
                         Close #3
@@ -158,17 +158,17 @@ Sub CompileNatlOrg ()
                         For XW = 1 To TEAMS_PER_CONFERENCE
 
                             'Look for * as terminating char
-                            If statFiles$(XW) <> Chr$(42) Then
+                            If memberName$(XW) <> Chr$(42) Then
 
-                                haveStats = FindStatsNat%(statFiles$(XW), numberGames, NRT)
+                                haveStats = FindStatsNat%(memberName$(XW), numberGames, NRT)
 
                                 If (haveStats) Then
 
-                                    L = Len(statFiles$(XW))
+                                    L = Len(memberName$(XW))
                                     WT$ = ""
 
                                     For X = 1 To L
-                                        A = Asc(Mid$(statFiles$(XW), X, 1))
+                                        A = Asc(Mid$(memberName$(XW), X, 1))
                                         WT$ = WT$ + Chr$(A)
                                     Next X
 
@@ -176,7 +176,7 @@ Sub CompileNatlOrg ()
 
                                     For X = 1 To TEAMS_PER_CONFERENCE
 
-                                        If statFiles$(X) = WT$ Then
+                                        If memberName$(X) = WT$ Then
 
                                             If compSeasonWins!(X) = fullWins And compSeasonLosses!(X) = fullLosses Then
 
@@ -210,12 +210,12 @@ Sub CompileNatlOrg ()
                                     Next X
 
 
-                                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + statFiles$(XW)) Then
+                                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
-                                        Call ReadStatsConf(statFiles$(XW), TN$)
+                                        Call ReadStatsConf(memberName$(XW), TN$)
                                         Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
                                         Call CalcStatLeadersConf(TN$)
-                                        Call CalcStatLeadersNat(statFiles$(XW), TN$)
+                                        Call CalcStatLeadersNat(memberName$(XW), TN$)
 
                                     End If
 
@@ -840,7 +840,7 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
     Shared oppScore(), powerRating(), teamScore()
 
     Shared gameSite$()
-    Shared locIndicator$(), oppName$(), statFiles$()
+    Shared locIndicator$(), oppName$(), memberName$()
 
     Shared confWins, confLosses, fullWins, fullLosses
 
@@ -875,7 +875,7 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
 
             For EC = 1 To TEAMS_PER_CONFERENCE
                 'If team stat file = opponent of a conference game?
-                If statName$ = statFiles$(EC) Then
+                If statName$ = memberName$(EC) Then
                     nonConfGame = 1
                     Exit For
                 End If

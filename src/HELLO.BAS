@@ -722,12 +722,14 @@ Sub COLHOOP ()
 
         'Location
         Print #3, 1
-        
+
         'Fouls to DQ
         Print #3, 5
 
-        'PBP Delay / Coach / FT Options
-        For I = 6 To 10:
+        Print #3, 1.2
+
+        'Coach / FT Options
+        For I = 7 To 10:
             Print #3, 1
         Next
 
@@ -1186,7 +1188,15 @@ Sub COLHOOP ()
     '   2 = PC vs. PC
 
     For I = 0 To 1:
-        teamYears(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
+        'If disk ID has alpha-char, or
+        'we only have 2 digits, then
+        'use the year from the team data
+        If CheckString%(diskIDs$(I)) = 1 Or Len(diskIDs$(I)) <= 2 Then
+            teamYears(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
+        Else
+            'Just use the disk ID since we should have 4 digits
+            teamYears(I) = Val(RTrim$(diskIDs$(I)))
+        End If
     Next I
 
     Call ChangeContributions
@@ -2459,8 +2469,10 @@ Sub COLHOOP ()
         GS% = GS% - 21
     End If
 
-    'Total Stall | Hold Ball | Milk Clock and 15+ Secs on Shot Clock | Difficult Shot
-    If offStrat(P) = 7 Or offStrat(P) = 8 Or (sClockVal >= 1 And offStrat(P) = 5 And shotClock > 15) Or (d100% > GS%) Then
+    'Total Stall | Hold Ball | Milk Clock and 15+ Secs on Shot Clock
+    'Shot Clock + Difficult Shot | No Shot Clock + Difficult Shot OR 25% of the time
+    'If offStrat(P) = 7 Or offStrat(P) = 8 Or (sClockVal >= 1 And offStrat(P) = 5 And shotClock > 15) Or (d100% > GS%) Then
+    If offStrat(P) = 7 Or offStrat(P) = 8 Or (sClockVal >= 1 And offStrat(P) = 5 And shotClock > 15) Or (sClockVal >= 1 And d100% > GS%) Or ((sClockVal = 0 And d100% > GS% And d100% <= 80)) Then
 
         'No Shot / Difficult Shot
         GoTo 437
@@ -2972,17 +2984,17 @@ Sub COLHOOP ()
                     Case 1:
 
                         If (autoPlay = 0 Or pbpDelay! > 0) Then
-                    
+
                             RN0 = Int(Rnd(1) * 12) + 1
 
                             Select Case RN0
 
                                 Case 1
-                                    pbpString$ = teamGender$(P) + "'S HEAVILY GUARD!ED"
+                                    pbpString$ = teamGender$(P) + "'S HEAVILY GUARDED"
                                 Case 2
-                                    pbpString$ = teamGender$(P) + "'S GUARD!ED"
+                                    pbpString$ = teamGender$(P) + "'S GUARDED"
                                 Case 3
-                                    pbpString$ = teamGender$(P) + "'S GUARD!ED BY " + players$(D, lineupIdx(D, ballCarrier))
+                                    pbpString$ = teamGender$(P) + "'S GUARDED BY " + players$(D, lineupIdx(D, ballCarrier))
 
                                 Case 4, 5
                                     pbpString$ = teamGender$(P) + " HAS A DEFENDER ON "

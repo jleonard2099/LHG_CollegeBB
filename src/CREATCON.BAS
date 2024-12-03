@@ -267,8 +267,8 @@ Sub SaveConferences (confFile$, confName$, div1$, div2$)
 
     Shared memberName$(), memberYear$()
     
-    Shared statFiles$()
-
+    Dim statFileNames$(TEAMS_PER_CONFERENCE)
+    
     Open diskPaths$(2) + confFile$ + ".TMI" For Output As #1
 
     Print #1, 0
@@ -284,14 +284,14 @@ Sub SaveConferences (confFile$, confName$, div1$, div2$)
     Next
 
     Close #1
-
+    
     For X = 1 To TEAMS_PER_CONFERENCE
 
         If memberName$(X) = "XXX" Then
-            memberName$(X) = Chr$(42)
+            statFileNames$(X) = Chr$(42)
         Else
             teamName$ = memberName$(X)
-            statFiles$(X) = nameStatFile$(teamName$)
+            statFileNames$(X) = nameStatFile$(teamName$)
         End If
 
     Next X
@@ -303,7 +303,7 @@ Sub SaveConferences (confFile$, confName$, div1$, div2$)
     Write #2, div2$
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Write #2, statFiles$(X)
+        Write #2, statFileNames$(X)
     Next
 
     Close #2

@@ -183,9 +183,7 @@ Sub HD2HDCON ()
 
                 Call TITLE_UTILS
 
-                'Call MenuBox(8, 23, 39, 5, 15, 1)
                 Call MenuBox(8, 15, 44, 6, 15, 1)
-                'Call MenuBox(8, 17, 40, 6, 15, 1)
 
                 Do
 

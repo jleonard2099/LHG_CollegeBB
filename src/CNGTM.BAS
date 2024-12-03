@@ -83,11 +83,11 @@ Sub CNGTM (userChoice)
 
             End If
 
-            'Reset "user choice" after first call
-            'We're at the menu now, no purpose in forcing shortcuts
-            userChoice = 0
-
         End If
+
+        'Reset "user choice" after first call
+        'We're at the menu now, no purpose in forcing shortcuts
+        userChoice = 0
 
     Loop Until SELECTION% = 4 Or ExitCode% = 27
 
