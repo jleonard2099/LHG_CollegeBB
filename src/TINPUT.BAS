@@ -583,7 +583,7 @@ Sub InputTeam ()
         ' Players
         '---------------
         'Average FGA/G for this team (Off + Def)
-        teamRatings(3) = Int(((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) + .5)
+        teamRatings(3) = CInt(((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)))
         teamRatings(4) = leagFGAPerGame!
         teamRatings(5) = nbrGmsPlayed!
 
@@ -739,7 +739,7 @@ Sub InputTeam ()
                     If playerStats!(I, 2) = 0 Then
                         playerOff!(I, 0) = 0
                     Else
-                        playerOff!(I, 0) = Int(playerStats!(I, 3) / playerStats!(I, 2) * 100 + .5)
+                        playerOff!(I, 0) = CInt(playerStats!(I, 3) / playerStats!(I, 2) * 100)
                     End If
 
                     playerStats!(I, 4) = playerOff!(I, 16)
@@ -747,7 +747,7 @@ Sub InputTeam ()
                     If playerStats!(I, 4) = 0 Then
                         playerOff!(I, 1) = 0
                     Else
-                        playerOff!(I, 1) = Int(playerStats!(I, 5) / playerStats!(I, 4) * 100 + .5)
+                        playerOff!(I, 1) = CInt(playerStats!(I, 5) / playerStats!(I, 4) * 100)
                     End If
 
                     playerStats!(I, 6) = playerOff!(I, 19)
@@ -765,7 +765,7 @@ Sub InputTeam ()
                         playerOff!(I, 18) = 0
                         playerRatings!(I, 2) = 0
                     Else
-                        playerOff!(I, 18) = Int(playerStats!(I, 13) / playerStats!(I, 12) * 100 + .5)
+                        playerOff!(I, 18) = CInt(playerStats!(I, 13) / playerStats!(I, 12) * 100)
                         
                         
                         Locate 17, 1: Input "15. 3 FGM"; playerStats!(I, 13)
@@ -807,11 +807,11 @@ Sub InputTeam ()
                 X2! = .83
             End If
 
-            tmFTA! = Int((tmFTA! * X2!) + .5)
-            oppFTA! = Int((oppFTA! * X2!) + .5)
+            tmFTA! = CInt((tmFTA! * X2!))
+            oppFTA! = CInt((oppFTA! * X2!))
 
             For I = 0 To 13:
-                playerOff!(I, 16) = Int((playerOff!(I, 16) * X2) + .5)
+                playerOff!(I, 16) = CInt((playerOff!(I, 16) * X2))
             Next I
 
         End If
@@ -860,16 +860,16 @@ Sub InputTeam ()
                 End If
 
                 'Tot Reb / 40 Min
-                playerOff!(I, 2) = Int((((playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj!) * M7!) + .5)
+                playerOff!(I, 2) = CInt((((playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj!) * M7!))
 
                 '(Tot Reb / 40 Min) * 10
-                X = Int(((((playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj!) * M7!) * 10) + .5)
+                X = CInt(((((playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj!) * M7!) * 10))
 
                 '(Off Reb / 40 Min) * 10
                 If playerOff!(I, 19) = 0 Then
-                    playerRatings!(I, 4) = Int((X * .35) + .5)
+                    playerRatings!(I, 4) = CInt((X * .35))
                 Else
-                    playerRatings!(I, 4) = Int((X * (playerOff!(I, 19) / playerOff!(I, 10))) + .5)
+                    playerRatings!(I, 4) = CInt((X * (playerOff!(I, 19) / playerOff!(I, 10))))
                 End If
 
                 '(Def Reb / 40 Min) x 10
@@ -878,20 +878,20 @@ Sub InputTeam ()
                 'Assist Rating (based on Assits / Game)
                 If inputQQ(0) = 1 Then
                     'Adjust entered assists / game based on time contribution and team
-                    playerOff!(I, 4) = Int(((playerOff!(I, 11) / playerOff!(I, 7)) * plyrMinAdj!) * (L6 / (tmAsst! / nbrGmsPlayed!)) + .5)
+                    playerOff!(I, 4) = CInt(((playerOff!(I, 11) / playerOff!(I, 7)) * plyrMinAdj!) * (L6 / (tmAsst! / nbrGmsPlayed!)))
                 End If
 
                 'Steal Rating (based on Steals / Game)
                 If inputQQ(2) = 1 Then
                     'Adjust entered steals / game based on time contribution
-                    playerSteals = Int(((playerOff!(I, 13) / playerOff!(I, 7)) * plyrMinAdj!) + .5)
+                    playerSteals = CInt(((playerOff!(I, 13) / playerOff!(I, 7)) * plyrMinAdj!))
                     playerOff!(I, 5) = playerSteals
                     playerDef!(I) = playerSteals
                 End If
 
                 'Block Rating (based on Blocks / Game)
                 If inputQQ(3) = 1 Then
-                    playerOff!(I, 6) = Int(((playerOff!(I, 14) / playerOff!(I, 7)) * plyrMinAdj!) + .5)
+                    playerOff!(I, 6) = CInt(((playerOff!(I, 14) / playerOff!(I, 7)) * plyrMinAdj!))
                 End If
 
             End If
@@ -900,12 +900,12 @@ Sub InputTeam ()
 
         X! = leagFGAPerGame! + leagRebPerGame! + 20
         inputY! = (tmFGA! + oppFGA! + tmReb! + oppReb! + tmFouls! + oppFouls!) / (2 * nbrGmsPlayed!)
-        staminaRating! = Int(((2 * inputY!) - X!) + .5)
+        staminaRating! = CInt(((2 * inputY!) - X!))
 
         'Strength of Schedule
-        X1! = (tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)
-        X3 = (sosAdj / 2) / X1!
-        X3 = Int((X3 * 100) + .5)
+        X3 = (sosAdj / 2) / ((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2))
+        X3 = CInt((X3 * 100))
+
         sosAdj = Int(X3 / 2)
         BY = Int(X3 / 2)
         X4 = Int(Rnd(1) * 2)
@@ -945,18 +945,18 @@ Sub InputTeam ()
 
                 'Contribution Pct
                 playerOff!(I, 3) = (playerOff!(I, 9) + playerOff!(I, 10)) / X9!
-                playerOff!(I, 3) = Int((100 * playerOff!(I, 3)) + .5)
+                playerOff!(I, 3) =C Int((100 * playerOff!(I, 3)))
 
                 '3FGA / TOT FGA
                 If playerOff!(I, 9) <> 0 Then 
-                    playerRatings!(I, 3) = Int(playerOff!(I, 17) / playerOff!(I, 9) * 100 + .5)
+                    playerRatings!(I, 3) = CInt(playerOff!(I, 17) / playerOff!(I, 9) * 100)
                 End If
 
                 If M! < 1 Then plyrMinAdj! = 1
 
                 'Fouls Rating (adjusted for player time contrib)
                 B3 = (playerOff!(I, 12) / playerOff!(I, 7)) * plyrMinAdj!
-                B3 = Int((B3 * 10) + .5)
+                B3 = CInt((B3 * 10))
                 playerRatings!(I, 5) = B3
 
                 'FGA * FG%
@@ -970,7 +970,7 @@ Sub InputTeam ()
                     playerOff!(I, 0) = ((B3 - B4) / (playerOff!(I, 9) - playerOff!(I, 17))) + .005
                 End If
 
-                playerOff!(I, 0) = Int((playerOff!(I, 0) * 100) + .5)
+                playerOff!(I, 0) = CInt((playerOff!(I, 0) * 100))
 
             End If
 
@@ -1005,7 +1005,7 @@ Sub InputTeam ()
                 End If
                 X! = X! + ((playerOff!(I, 7) * 1.64) * MI)
                 X! = ((playerOff!(I, 16) - X!) / 2)
-                X! = Int(((X! / (playerOff!(I, 9) + X!)) * 100) + .5)
+                X! = CInt(((X! / (playerOff!(I, 9) + X!)) * 100))
 
                 If X! < 0 Then X! = 0
                 
@@ -1018,8 +1018,7 @@ Sub InputTeam ()
 
         'Off Steal Rating
         inputY! = oppSteal! / nbrGmsPlayed!
-        X! = (inputY! - 7) / .4
-        X! = Int(X! + .5)
+        X! = CInt((inputY! - 7) / .4)
 
         If X! < 0 Then leagueRatings(0) = 100 + X!
         If X! > 0 Then leagueRatings(0) = X!
@@ -1029,24 +1028,24 @@ Sub InputTeam ()
         R! = R! / 6
         inputY! = (tmTO! - oppSteal!) / nbrGmsPlayed!
         X! = (inputY! / R!) - .01
-        X! = Int((X! * 100) + .5)
+        X! = CInt(X! * 100)
         leagueRatings(1) = X!
 
         'Def TO Adj
         inputY! = (oppTO! - tmSteal!) / nbrGmsPlayed!
         X! = (inputY! / R!) - .01
-        X! = Int((X! * 100) + .5)
+        X! = CInt(X! * 100)
         X! = X! - 4
 
         If X! < 0 Then leagueRatings(2) = 100 + X!
         If X! > 0 Then leagueRatings(2) = X!
 
         'Def Foul Adj
-        homeScoreTeam! = Int(((oppFGA! * oppFGPct!) / 100) + .5)
+        homeScoreTeam! = CInt(((oppFGA! * oppFGPct!) / 100))
         X! = (homeScoreTeam! * .1) + (nbrGmsPlayed! * 8.2)
         X! = (oppFTA! - X!) / 2
         X! = (X! / (oppFGA! + X!)) - .09
-        X! = Int((X! * 100) + .5)
+        X! = CInt(X! * 100)
 
         If X! > 0 Then leagueRatings(3) = X!
         If X! < 0 Then leagueRatings(3) = X! + 100
@@ -1177,8 +1176,8 @@ Sub InputTeam ()
 
             HR = HR * HW
             HS = HS / 2
-            HX = Int((HR + HS - HQ) + .5)
-            HX = Int(((HX / nbrGmsPlayed!) * 10) + .5)
+            HX = CInt(HR + HS - HQ)
+            HX = Int((HX / nbrGmsPlayed!) * 10)
 
             Cls
             leagueRatings(4) = 99

@@ -352,7 +352,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
             Print #1, Tab(125); " 0"
         End If
         If carPlyrStat!(V, I, 10) > 0 Then 
-            Print #1, Tab(125); Using "##"; Int(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)) + .5)
+            Print #1, Tab(125); Using "##"; CInt(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)))
         End If
 
     Next V
@@ -452,7 +452,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
         Print #1, Tab(125); " 0"
     End If
     If TT14 > 0 Then 
-        Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + .5
+        Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + 0.5
     End If
 
     Print #1, Chr$(12)

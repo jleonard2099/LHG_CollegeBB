@@ -233,9 +233,9 @@ Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
 
             Do
                 Locate 22, 35
-                Print "TEAM # (1-30) ";
+                Print "SLOT # (1-" + Str$(TEAMS_PER_CONFERENCE) + ") ";
                 Input teamIndex
-            Loop Until teamIndex >= 1 And teamIndex <= 30
+            Loop Until teamIndex >= 1 And teamIndex <= TEAMS_PER_CONFERENCE
 
             If choice = 1 Then
                 'Add team

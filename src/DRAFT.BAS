@@ -901,8 +901,7 @@ Sub ReadDraftExtraData (teamIdx, draftIdx, dataOK)
             teamStats_DRAFT!(draftIdx, I) = CVI(Q$(228 + I))
         Next
 
-        'If CVI(Q$(249)) <> 999 Then
-        If tmAtt_DRAFT&(draftIdx) > 100000 Then
+        If tmAtt_DRAFT&(draftIdx) > 100000 Or ((CheckString%(stadiums_DRAFT$(draftIdx)) = 1) And stadiums_DRAFT$(draftIdx) <> "" ) Then
         'If attendance is abnormally high, we ARE
         'clearly not reading accurate data
 

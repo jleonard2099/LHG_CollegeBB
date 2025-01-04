@@ -8,7 +8,7 @@
 Sub SCHEDULE ()
 
     Dim scheduleFile$
-    ReDim menuChoices$(1 To 9)
+    ReDim menuChoices$(1 To 10)
 
     Shared NS%
 
@@ -38,11 +38,12 @@ Sub SCHEDULE ()
         menuChoices$(6) = "MAKE GLOBAL CHANGES TO A SCHEDULE "
         menuChoices$(7) = "GENERATE A CONFERENCE SCHEDULE    "
         menuChoices$(8) = "BOXSCORE MAINTENANCE / PARAMETERS "
-        menuChoices$(9) = "RETURN TO COURTSIDE CB MAIN MENU  "
+        menuChoices$(9) = "CONVERT SCHEDULE FILE FROM 4.0    "
+        menuChoices$(10) = "RETURN TO COURTSIDE CB MAIN MENU  "
         SELECTION% = 1
-        Count% = 9
+        Count% = 10
         Start% = 1
-        ExitCode% = 9
+        ExitCode% = 10
         FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -121,12 +122,17 @@ Sub SCHEDULE ()
 
                 Case 8:
                     Call BoxscoreMaintenance
+                    
+                Case 9
+                    scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files")
+                    Call ConvertSched4to5(scheduleFile$, 0)
+                    'Call ConvertAllSched
 
             End Select
 
         End If
 
-    Loop Until SELECTION% = 9 Or ExitCode% = 27
+    Loop Until SELECTION% = 10 Or ExitCode% = 27
 
     'Free up memory for rest of program
     ReDim homeScores(1)

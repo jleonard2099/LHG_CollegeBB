@@ -1260,7 +1260,7 @@ Sub COLHOOP ()
                     M9 = 100 / M8
                 End If
 
-                plyrOff_GAME!(P9, I, 16) = Int((plyrOff_GAME!(P9, I, 16) * M9) + .5)
+                plyrOff_GAME!(P9, I, 16) = CInt((plyrOff_GAME!(P9, I, 16) * M9)/)
 
             Next I
 
@@ -1377,7 +1377,7 @@ Sub COLHOOP ()
 
         halfTime = 1
         Call BOXOPTIONS(0)
-        endGame = 0
+        gameOver = 0
         Call TICKER
         halfTime = 0
 
@@ -2385,8 +2385,8 @@ Sub COLHOOP ()
             If offStrat(P) = 4 Or offStrat(P) = 7 Then
                 'Delay / Stall
                 'OY% is -(defAdjVsShot/2)
-                'So, either +-1 or +-2  (1/2 would have the 0.5 added)
-                OY% = Int((defAdjVsShot(2, defCoverage(D)) / 2) + .5) * -1
+                'So, either +-1 or +-2
+                OY% = CInt((defAdjVsShot(2, defCoverage(D)) / 2)) * -1
             Else
                 OY% = 0
             End If
@@ -2427,7 +2427,7 @@ Sub COLHOOP ()
 
                 Case 4, 7
                     'Delay, Total Stall
-                    OY% = Int((defAdjVsShot(3, defCoverage(D)) / 2) + .5) * -1
+                    OY% = CInt((defAdjVsShot(3, defCoverage(D)) / 2)) * -1
                     
             End Select
 
@@ -2782,11 +2782,11 @@ Sub COLHOOP ()
 
         Select Case RN0
             Case 1
-                shotChance! = Int(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) * .4 + .5)
+                shotChance! = CInt(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) * .4)
             Case 2
-                shotChance! = Int(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) * .5 + .5)
+                shotChance! = CInt(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) * .5)
             Case 3
-                shotChance! = Int(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) * .6 + .5)
+                shotChance! = CInt(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) * .6)
         End Select
 
     End If
@@ -4590,12 +4590,12 @@ Sub COLHOOP ()
 
                 If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
                     If plyrOff_GAME!(P, lineupIdx(P, I), 3) - plyrOff_GAME!(P, lineupIdx(P, I), 7) - plyrOff_GAME!(P, lineupIdx(P, I), 11) - plyrOff_GAME!(P, lineupIdx(P, I), 12) <= 0 Then
-                        XZ = Int(XZ * .5 + .5)
+                        XZ = CInt(XZ * .5)
                     End If
                 End If
 
                 If tmFatigue(P, lineupIdx(P, I)) <= -5 Then
-                    XZ = Int(XZ * .9 + .5)
+                    XZ = CInt(XZ * .9)
                 End If
 
                 rebRatings(I) = rebRatings(I) + XZ
@@ -4612,12 +4612,12 @@ Sub COLHOOP ()
 
                 If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
                     If plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 3) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 7) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 11) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 12) <= 0 Then
-                        XZ = Int(XZ * .5 + .5)
+                        XZ = CInt(XZ * .5)
                     End If
                 End If
 
                 If tmFatigue(1 - P, lineupIdx(1 - P, I)) <= -5 Then
-                    XZ = Int(XZ * .9 + .5)
+                    XZ = CInt(XZ * .9)
                 End If
 
                 rebRatings(I + 5) = rebRatings(I + 5) + XZ
@@ -4634,28 +4634,28 @@ Sub COLHOOP ()
                 Case 0
                     'Solid Man-to-Man
                     '6% of total rebounds
-                    XQ = Int((RB * .06) + .5)
+                    XQ = CInt(RB * .06)
 
                 Case 1
                     'Pressure Man-to-Man
                     '12% of total rebounds
-                    XQ = Int((RB * .12) + .5)
+                    XQ = CInt(RB * .12)
 
                 Case 2
                     'Passive Zone
                     '10% of total rebounds
-                    XQ = Int((RB * .1) + .5)
+                    XQ = CInt(RB * .1)
 
                 Case 3
                     'Trapping Zone
                     '14% of total rebounds
-                    XQ = Int((RB * .14) + .5)
+                    XQ = CInt(RB * .14)
 
             End Select
 
             If CZ%(P) = 1 Then
                 '17% of total rebounds
-                XQ = Int((RB * .17) + .5)
+                XQ = CInt(RB * .17)
             End If
 
             rbChance = Rnd(1) * RB
@@ -4846,7 +4846,7 @@ Sub COLHOOP ()
 
                 If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
                     If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
-                        shotChance! = Int(shotChance! * .6 + .5)
+                        shotChance! = CInt(shotChance! * .6)
                     End If
                 End If
 
@@ -5210,7 +5210,7 @@ Sub InitVar ()
     currHalf = 1
     D = 0
     endAllGames = 0
-    endGame = 0
+    gameOver = 0
     fastBreak = 0
     forcedThree = 0
     G9 = 0
@@ -5535,7 +5535,7 @@ Function ShotPacing%
     'JY = Average FGA/G Adjustment For Both Teams
     '   FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA/G)
     '   FY%(1) = 2 * (Home Tm Average FGA/G - League FGA/G)
-    JY = Int(((FY%(1) + FY%(0)) / 2) + .5)
+    JY = CInt(((FY%(1) + FY%(0)) / 2))
 
     'https://kenpom.com/blog/the-possession/
     yFactor! = .44
@@ -5561,23 +5561,23 @@ Function ShotPacing%
                 '85 = ~54 FGA
                 '90 = ~55 FGA
                 'If d100% <= 90 Then
-                paceValue = 39 + Int(((JY - 40) * .8) + .5)
+                paceValue = 39 + CInt((JY - 40) * .8)
                 'End If
 
             Case 1
                 '45-Sec Shot Clock
                 'Average 50% chance of taking shot
-                paceValue = 39 + Int(((JY - 48) * .8) + .5)
+                paceValue = 39 + CInt((JY - 48) * .8)
 
             Case 2
                 '35-Sec Shot Clock
                 'Average 50% chance of taking shot
-                paceValue = 39 + Int(((JY - 58) * .8) + .5)
+                paceValue = 39 + CInt((JY - 58) * .8)
 
             Case 3
                 '30-Sec Shot Clock
                 'Average 50% chance of taking shot
-                paceValue = 39 + Int(((JY - 60) * .8) + .5)
+                paceValue = 39 + CInt((JY - 60) * .8)
 
         End Select
 
@@ -5602,7 +5602,7 @@ Function ShotPacing%
                 'the "old" formula works way too well for 35-sec clock
                 'the new formula sometimes would calculate too high
                 'paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
-                paceValue = 39 + Int(((JY - 58) * .8) + .5)
+                paceValue = 39 + CInt(((JY - 58) * .8))
 
             Case 3
                 '30 sec shot clock
@@ -7733,7 +7733,7 @@ Sub TICKER ()
 
         Else
 
-            If endGame = 1 Then
+            If gameOver = 1 Then
 
                 If G9 = 0 Then
                     Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
@@ -8319,7 +8319,7 @@ Function TickerTime% (timeInterval, X)
 
     If tickerIdx < 0 Then tickerIdx = 0
     If tickerIdx > 14 Then tickerIdx = 14
-    If endGame = 1 Then tickerIdx = 14
+    If gameOver = 1 Then tickerIdx = 14
 
     TickerTime% = tickerIdx
 
@@ -8670,7 +8670,7 @@ Sub FoulCalled (randomFouler)
 
             If Not (I3 = lineupIdx(D, foulPlayer) Or players$(D, I3) = "XXX" Or rosterStatus(D, I3) <> 0) Then
                 If plyrOff_GAME!(D, I3, 0) <= plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 0) Then
-                    plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + Int((plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 3) / M9) + .5)
+                    plyrOff_GAME!(D, I3, 3) = plyrOff_GAME!(D, I3, 3) + CInt((plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 3) / M9))
                 End If
             End If
 
@@ -8822,7 +8822,7 @@ End Sub
 'the current shot (rounding up)
 Sub SHOTSTRING ()
 
-    pbpString$ = pbpString$ + Str$(Int(shotChance! + .5)) + "*"
+    pbpString$ = pbpString$ + Str$(Int(shotChance!)) + "*"
 
 End Sub
 
@@ -9904,11 +9904,13 @@ Sub ReboundOffense ()
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
             If plyrOff_GAME!(P, lineupIdx(P, I), 3) - plyrOff_GAME!(P, lineupIdx(P, I), 7) - plyrOff_GAME!(P, lineupIdx(P, I), 11) - plyrOff_GAME!(P, lineupIdx(P, I), 12) <= 0 Then
-                XZ = Int(XZ * .5 + .5)
+                XZ = CInt(XZ * .5)
             End If
         End If
 
-        If tmFatigue(P, lineupIdx(P, I)) <= -5 Then XZ = Int(XZ * .9 + .5)
+        If tmFatigue(P, lineupIdx(P, I)) <= -5 Then 
+            XZ = CInt(XZ * .9)
+        End If
 
         rebRatings(I) = rebRatings(I) + XZ
         RB = RB + XZ
@@ -9954,12 +9956,12 @@ Sub ReboundDefense ()
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
             If plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 3) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 7) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 11) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 12) <= 0 Then
-                XZ = Int(XZ * .5 + .5)
+                XZ = CInt(XZ * .5)
             End If
         End If
 
         If tmFatigue(1 - P, lineupIdx(1 - P, I)) <= -5 Then
-            XZ = Int(XZ * .9 + .5)
+            XZ = CInt(XZ * .9)
         End If
 
         rebRatings(I) = rebRatings(I) + XZ
@@ -10245,10 +10247,10 @@ Sub SETSTAMINA ()
     'So SQ% is a sum of plyrOff_GAME!(P9, X, 3) values...
     For I = 0 To 13
         If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then
-            plyrOff_GAME!(P9, I, 3) = Int(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina + .5)
+            plyrOff_GAME!(P9, I, 3) = CInt(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina)
         End If
         If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then
-            plyrOff_GAME!(P9, I, 3) = Int(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina + .5)
+            plyrOff_GAME!(P9, I, 3) = CInt(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina)
         End If
         If plyrOff_GAME!(P9, I, 3) < 1 Then
             plyrOff_GAME!(P9, I, 3) = 1
@@ -10264,7 +10266,7 @@ Sub SETSTAMINA ()
     For I = 0 To 13
         If gameAvgTmStamina > 120 And teamAdj(P9, 8) <> 99 Then
             plyrOff_GAME!(P9, I, 16) = plyrOff_GAME!(P9, I, 16) * (120 / gameAvgTmStamina)
-            plyrOff_GAME!(P9, I, 16) = Int(plyrOff_GAME!(P9, I, 16) + .5)
+            plyrOff_GAME!(P9, I, 16) = CInt(plyrOff_GAME!(P9, I, 16))
         End If
     Next I
 
@@ -10272,7 +10274,7 @@ Sub SETSTAMINA ()
 
     If gameAvgTmStamina > 114 Then
         rebFoulChance = (114 / gameAvgTmStamina) * rebFoulChance
-        rebFoulChance = Int(rebFoulChance + .5)
+        rebFoulChance = CInt(rebFoulChance)
     End If
 
 End Sub
@@ -11055,7 +11057,7 @@ Sub SHOTPERCENT ()
 
         If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
             'Fatigue impacts chance for shot
-            FX% = Int(FX% * .67 + .5)
+            FX% = CInt(FX% * .67)
         End If
 
         'If more than 2 minutes in half and already contributed share
@@ -11256,7 +11258,7 @@ Sub WHOGETSBALL ()
             If d100% > 25 Then
 
                 For I = 0 To 4
-                    M8 = Int(plyrRat_GAME(P, lineupIdx(P, I), 1) / plyrRat_GAME(P, lineupIdx(P, I), 0) + .5) - plyrOff_GAME!(P, lineupIdx(P, I), 7)
+                    M8 = CInt(plyrRat_GAME(P, lineupIdx(P, I), 1) / plyrRat_GAME(P, lineupIdx(P, I), 0)) - plyrOff_GAME!(P, lineupIdx(P, I), 7)
                     If M8 <= 0 Then M8 = 0
                     If M8 >= M9 Then
                         ballCarrier = I
@@ -12694,7 +12696,7 @@ Sub FreeThrow_One (missedLastFT)
     ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
 
     If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
-        ftShotChance = Int(ftShotChance * .9 + .5)
+        ftShotChance = CInt(ftShotChance * .9)
     End If
 
     Call Rolld100(shotRoll)
@@ -12799,7 +12801,9 @@ Sub FreeThrow_OneAndOne (missedLastFT)
 
         'FT Success Chance
         ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
-        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then ftShotChance = Int(ftShotChance * .9 + .5)
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then 
+            ftShotChance = CInt(ftShotChance * .9)
+        End If
 
         If shotRoll <= ftShotChance Then
 
@@ -12889,7 +12893,7 @@ Sub FreeThrow_Two (missedLastFT)
         ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
 
         If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
-            ftShotChance = Int(ftShotChance * .9 + .5)
+            ftShotChance = CInt(ftShotChance * .9)
         End If
 
         If shotRoll <= ftShotChance Then
@@ -12975,7 +12979,9 @@ Sub FreeThrow_Three (missedLastFT)
 
         'FT Success Chance
         ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
-        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then ftShotChance = Int(ftShotChance * .9 + .5)
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then 
+            ftShotChance = Int(ftShotChance * .9)
+        End If
 
         If shotRoll <= ftShotChance Then
 
@@ -13181,7 +13187,7 @@ Sub POSTGAME ()
 
     Call CheckRecords
     Call EVENTS(specialCount, specialStat)
-    endGame = 1
+    gameOver = 1
 
     Do
 
@@ -13249,7 +13255,7 @@ Sub POSTGAME ()
 
     Call SAVESTATS
 
-    endGame = 0
+    gameOver = 0
     specialStat = 0
 
 End Sub
@@ -13661,15 +13667,15 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
         'FG %
         Print #1, ; Tab(22);
-        If statTotals(1) > 0 Then Print #1, ; Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
+        If statTotals(1) > 0 Then Print #1, ; CInt(((statTotals(0) / statTotals(1)) * 100)); "%";
 
         '3FG %
         Print #1, ; Tab(28);
-        If statTotals(14) > 0 Then Print #1, ; Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+        If statTotals(14) > 0 Then Print #1, ; CInt(((statTotals(13) / statTotals(14)) * 100)); "%";
 
         'FT %
         Print #1, ; Tab(35);
-        If statTotals(3) > 0 Then Print #1, ; Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        If statTotals(3) > 0 Then Print #1, ; CInt(((statTotals(2) / statTotals(3)) * 100)); "%"
 
         Print #1,
         Print #1, "TOTAL TURNOVERS -"; turnovers(I)
@@ -13874,15 +13880,15 @@ Sub STATS2SCREEN
 
         'FG %
         Print Tab(22);
-        If statTotals(1) > 0 Then Print Int(((statTotals(0) / statTotals(1)) * 100) + .5); "%";
+        If statTotals(1) > 0 Then Print CInt(((statTotals(0) / statTotals(1)) * 100)); "%";
 
         '3FG %
         Print Tab(28);
-        If statTotals(14) > 0 Then Print Int(((statTotals(13) / statTotals(14)) * 100) + .5); "%";
+        If statTotals(14) > 0 Then Print CInt(((statTotals(13) / statTotals(14)) * 100)); "%";
 
         'FT %
         Print Tab(35);
-        If statTotals(3) > 0 Then Print Int(((statTotals(2) / statTotals(3)) * 100) + .5); "%"
+        If statTotals(3) > 0 Then Print CInt(((statTotals(2) / statTotals(3)) * 100)); "%"
 
         Print
         Color 14: Print "TOTAL TURNOVERS -";
@@ -14706,7 +14712,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
                     CNTX% = CNTX% + 1
                 End If
 
-                If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And RN0 > Int(plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5) * 100 + .5)) Then
+                If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And RN0 > CInt(plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5) * 100)) Then
                     rosterStatus(gameIdx, I) = -1
                 End If
 
@@ -14781,7 +14787,7 @@ Sub ReadGameExtraData (teamYear$, teamIdx, gameIdx, dataOK)
             teamStats_GAME(gameIdx, I) = CVI(Q$(228 + I))
         Next
 
-        If avgAttendance&(gameIdx) > 100000 Or (CheckString%(gameArena$(gameIdx)) = 1) Then
+        If avgAttendance&(gameIdx) > 100000 Or ((CheckString%(gameArena$(gameIdx)) = 1) And gameArena$(gameIdx) <> "") Then
             'If attendance is abnormally high, or arena is not a string,
             'we ARE clearly not reading accurate data
 

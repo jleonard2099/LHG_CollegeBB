@@ -473,7 +473,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                 'Minutes
                 If statPlyrVal!(I, 10) > 0 Then
                     Locate , 18: Print Using "####"; Int((statPlyrVal!(I, 10) + 30) / 60);
-                    Locate , 24: Print Using "##"; Int(((statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0)) + .5);
+                    Locate , 24: Print Using "##"; CInt(((statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0)));
                 End If
 
                 'FGM, FGA, FG PCT
@@ -1121,7 +1121,7 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
         'Min, Avg
         If statPlyrVal!(I, 10) > 0 Then
             Print #1, Tab(18); Using "####"; Int((statPlyrVal!(I, 10) + 30) / 60);
-            Print #1, Tab(24); Using "##"; Int(((statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0)) + .5);
+            Print #1, Tab(24); Using "##"; CInt(((statPlyrVal!(I, 10) / 60) / statPlyrVal!(I, 0)));
         End If
 
         'FGM, FGA, FG PCT

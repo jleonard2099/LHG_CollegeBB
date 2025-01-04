@@ -239,7 +239,7 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
                     Print #1, Tab(125); " 0"
                 End If
                 If carPlyrStat!(V, I, 10) > 0 Then 
-                    Print #1, Tab(125); Using "##"; Int(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)) + .5)
+                    Print #1, Tab(125); Using "##"; CInt(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)))
                 End If
 
             Next V
@@ -339,7 +339,7 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
                 Print #1, Tab(125); " 0"
             End If
             If TT14 > 0 Then 
-                Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + .5
+                Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + 0.5
             End If
 
             Print #1, Chr$(12)
@@ -638,7 +638,7 @@ Sub ViewPlayer (careerFile$)
             Print Tab(73); " 0";
         End If
         If carPlyrStat!(V, B9, 10) > 0 Then 
-            Print Tab(73); Using "##"; Int(((carPlyrStat!(V, B9, 10) / 60) / carPlyrStat!(V, B9, 0)) + .5);
+            Print Tab(73); Using "##"; CInt(((carPlyrStat!(V, B9, 10) / 60) / carPlyrStat!(V, B9, 0)));
         End If
 
     Next V
@@ -688,7 +688,7 @@ Sub ViewPlayer (careerFile$)
         Print Tab(73); "--.-"
     End If
     If TT14 > 0 Then 
-        Print Tab(73); Using "##"; Int((TT14 / 60) / TT1) + .5
+        Print Tab(73); Using "##"; Int((TT14 / 60) / TT1) + 0.5
     End If
 
     Print
@@ -947,7 +947,7 @@ Sub ViewRosterSequence (careerFile$)
                         Print Tab(73); " 0";
                     End If
                     If carPlyrStat!(V, I, 10) > 0 Then 
-                        Print Tab(73); Using "##"; Int(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)) + .5);
+                        Print Tab(73); Using "##"; CInt(((carPlyrStat!(V, I, 10) / 60) / carPlyrStat!(V, I, 0)));
                     End If
 
                 Next V
@@ -996,7 +996,7 @@ Sub ViewRosterSequence (careerFile$)
                     Print Tab(73); " 0"
                 End If
                 If TT14 > 0 Then 
-                    Print Tab(73); Using "##"; Int((TT14 / 60) / TT1) + .5
+                    Print Tab(73); Using "##"; Int((TT14 / 60) / TT1) + 0.5
                 End If
 
                 Print "TOTALS";

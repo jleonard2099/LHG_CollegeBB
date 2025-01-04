@@ -340,7 +340,7 @@ Sub ReadExtraData (teamYear$, teamIdx, dataOK)
             teamStats!(I) = CVI(Q$(228 + I))
         Next
 
-        If teamAttendance& > 100000 Then
+        If teamAttendance& > 100000 Or ((CheckString%(arenaName$) = 1) And arenaName$ <> "") Then
             'If attendance is abnormally high, or arena is not a string,
             'we ARE clearly not reading accurate data
             dataOK = 0

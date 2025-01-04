@@ -248,7 +248,7 @@ Dim avgAttendance&(1)
 
 Dim Shared C1, D, P, P9
 Dim Shared autoPlay, ballCarrier, chargeTeam, coachOpt, currHalf
-Dim Shared compTeam, currGame, endGame, endAllGames
+Dim Shared compTeam, currGame, gameOver, endAllGames
 Dim Shared fastBreak, forcedThree, ftNumber
 Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
 Dim Shared halfTime

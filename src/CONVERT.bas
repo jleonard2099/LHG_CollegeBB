@@ -241,7 +241,7 @@ Sub ConvertTeam4to5 (targetFile$, silent)
                     '3FGM - based on 3FGA / PCT
                     player3FGPct = playerRatings!(I, 2)
                     player3FGM = (player3FGA * player3FGPct) / 100
-                    tm3FGM = tm3FGM + Int(player3FGM + 0.5)
+                    tm3FGM = tm3FGM + CInt(player3FGM)
 
                     'Blocks
                     teamStats!(23) = teamStats!(23) + playerStats!(I, 10)
@@ -254,7 +254,7 @@ Sub ConvertTeam4to5 (targetFile$, silent)
             Next I
 
             'Calculate 3FGA PCT now that we have the team whole stats
-            teamStats!(22) = Int(((tm3FGM / teamStats!(21)) * 100) + 0.5)
+            teamStats!(22) = CInt(((tm3FGM / teamStats!(21)) * 100))
 
             Call SaveTeamDataNew(newFile$, currTeam)
 
@@ -348,7 +348,7 @@ Sub ReadSchedOld (targetFile$)
     ReDim homeScores(MAX_SCHEDULE_GAMES)
     ReDim visitorScores(MAX_SCHEDULE_GAMES)
 
-    Open targetFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES - 4
+    Open targetFile$ For Random As #1 Len = (SCHEDULE_SIZE_BYTES - 4)
 
     fileLength& = LOF(1)
     scheduleAP%(0) = fileLength& / (SCHEDULE_SIZE_BYTES - 4)

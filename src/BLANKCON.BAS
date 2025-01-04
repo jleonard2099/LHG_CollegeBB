@@ -49,6 +49,12 @@ Sub BLANKCON ()
 
             Next
 
+            leaderFile$ = diskPaths$(2) + conferenceFile$ + ".LDR"
+            If _FileExists(leaderFile$) Then Kill leaderFile$
+
+            standingsFile$ = diskPaths$(2) + conferenceFile$ + ".LDS"
+            If _FileExists(standingsFile$) Then Kill standingsFile$
+
         End If 'Done confirming to move forward with deletion
 
     End If

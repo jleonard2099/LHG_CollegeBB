@@ -653,7 +653,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
             'Reset tournament
 
             'Create TOU file as backup of TCX
-            Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", BUFFER$, ERRCODE%)
+            Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", Buff$, copyErr%)
 
             MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
             BoxWidth = 18

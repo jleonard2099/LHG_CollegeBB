@@ -324,7 +324,7 @@ Sub EditStats ()
                 Locate 3, 1
                 Print "1. NAME  "; statPlyrNames$(I)
                 Print "2. GAMES "; Z2(I, 0)
-                Print "3. MINUTES "; Int(Z2(I, 10) / 60 + .5)
+                Print "3. MINUTES "; CInt(Z2(I, 10) / 60)
                 Print "4. FGA "; Z2(I, 1)
                 Print "5. FGM "; Z2(I, 2); ""
                 Print "6. FTA "; Z2(I, 3)
