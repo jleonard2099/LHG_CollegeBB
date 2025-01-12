@@ -13,8 +13,8 @@ Sub SEECON ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Call LoadLeaderFiles_Coll(leaderFile$, FF$, D1$, D2$)
-        Call StatOptions_Con(FF$, D1$, D2$)
+        Call LoadLeaderFiles_Coll(leaderFile$, conf$, D1$, D2$)
+        Call StatOptions_Con(conf$, D1$, D2$)
 
     End If
 
@@ -26,7 +26,10 @@ End Sub
 '----------------------------------------
 'This subroutine loads the conference stats
 'from the file into several arrays
-Sub LoadLeaderFiles_Coll (targetFile$, FF$, div1$, div2$)
+Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
+
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
 
     Shared defLeaders!(), offLeaders!()
     Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
@@ -65,12 +68,11 @@ Sub LoadLeaderFiles_Coll (targetFile$, FF$, div1$, div2$)
 
     Close #1
 
-    Open diskPaths$(2) + targetFile$ + ".TMS" For Input As #2
-    Input #2, conf$, div1$, div2$
-    Close #2
+    Call ReadConferenceStats (targetFile$)
 
-    div1$ = PadRight$(div1$, 8)
-    div2$ = PadRight$(div2$, 8)
+    conf$ = conferenceName$
+    div1$ = PadRight$(div1Name$, 8)
+    div2$ = PadRight$(div2Name$, 8)
 
     Cls
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"

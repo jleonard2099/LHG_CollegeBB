@@ -9,7 +9,7 @@ Sub BLANKCON ()
 
     _Title "Courtside College Basketball - Erase Conference Stats"
 
-    Dim statFileNames$(TEAMS_PER_CONFERENCE)
+	Shared memberName$()
 
     conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
@@ -25,21 +25,13 @@ Sub BLANKCON ()
 
         If UCase$(G$) = "Y" Then
 
-            Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #1
-
-            Input #1, conf$, div1$, div2$ ', D3$, D4$
-
-            For XW = 1 To TEAMS_PER_CONFERENCE
-                Input #1, statFileNames$(XW)
-            Next
-
-            Close #1
+            Call ReadConferenceStats (conferenceFile$)
 
             For XW = 1 To TEAMS_PER_CONFERENCE
 
-                If statFileNames$(XW) <> Chr$(42) Then
-                    Print "DELETING "; statFileNames$(XW); " STATS"
-                    statFile$ = diskPaths$(1) + statFileNames$(XW)
+                If memberName$(XW) <> Chr$(42) Then
+                    Print "DELETING "; memberName$(XW); " STATS"
+                    statFile$ = diskPaths$(1) + memberName$(XW)
                     If _FileExists(statFile$) Then Kill statFile$
                     If _FileExists(statFile$) Then Kill statFile$
                     If _FileExists(statFile$ + "D") Then Kill statFile$ + "D"

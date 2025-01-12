@@ -51,7 +51,11 @@ Sub CREATENATL ()
                 Case 1:
                     Call DefineNatOrg(orgName$)
                     orgFile$ = orgName$
-                    Call ReviewEditNatOrg(orgFile$, orgName$)
+
+                    If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
+                        Call ReadOrganizationFile (orgFile$, orgName$)
+                        Call ReviewEditNatOrg(orgFile$, orgName$)
+                    End If
 
                 Case 2:
                     Do
@@ -59,7 +63,10 @@ Sub CREATENATL ()
                         orgFile$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditNatOrg(orgFile$, orgName$)
+                            If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
+                                Call ReadOrganizationFile (orgFile$, orgName$)
+                                Call ReviewEditNatOrg(orgFile$, orgName$)
+                            End If
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -127,20 +134,6 @@ End Sub
 Sub ReviewEditNatOrg (orgFile$, orgName$)
 
     Shared memberConf$()
-
-    If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
-
-        Open diskPaths$(2) + orgFile$ + ".CON" For Input As #1
-
-        Input #1, orgName$
-
-        For X = 1 To MAX_CONFERENCES
-            Input #1, memberConf$(X)
-        Next
-
-        Close #1
-
-    End If
 
     Do
 

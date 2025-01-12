@@ -8,8 +8,8 @@ Sub BLANKORG ()
 
     _Title "Courtside College Basketball - Erase National Stats"
 
-    Dim statFileNames$(MAX_CONFERENCES)
     Shared memberConf$()
+	Shared memberName$()
     
     organizationFile$ = ChooseFile$ (diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
 
@@ -25,34 +25,18 @@ Sub BLANKORG ()
 
         If UCase$(I$) = "Y" Then
 
-            Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
-
-            Input #1, org$
-
-            For X = 1 To MAX_CONFERENCES
-                Input #1, memberConf$(X)
-            Next
-
-            Close #1
+            Call ReadOrganizationFile (organizationFile$, orgName$)
 
             For X = 1 To MAX_CONFERENCES
 
                 If memberConf$(X) <> "XXX" Then
 
-                    Open diskPaths$(2) + memberConf$(X) + ".TMS" For Input As #2
-
-                    Input #2, org$, div1$, div2$
+                    Call ReadConferenceStats(memberConf$(X))
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
-                        Input #2, statFileNames$(XW)
-                    Next
-
-                    Close #2
-
-                    For XW = 1 To TEAMS_PER_CONFERENCE
-                        If statFileNames$(XW) <> Chr$(42) Then
-                            Print "DELETING "; statFileNames$(XW); " STATS"
-                            statFile$ = diskPaths$(1) + statFileNames$(XW)
+                        If memberName$(XW) <> Chr$(42) Then
+                            Print "DELETING "; memberName$(XW); " STATS"
+                            statFile$ = diskPaths$(1) + memberName$(XW)
                             If _FileExists(statFile$) Then Kill statFile$
                             If _FileExists(statFile$ + "S") Then Kill statFile$ + "S"
                         End If

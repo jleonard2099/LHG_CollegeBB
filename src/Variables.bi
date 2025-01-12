@@ -18,7 +18,7 @@ Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCH
 
 Dim statsA!(15, 14)
 Dim statsW0!(15), statsW1!(15)
-Dim statsZ0!(15), statsZ1!(15)
+Dim statsOffTot!(15), statsDefTot!(15)
 Dim statsZ2!(13, 13)
 
 'Record / Standings
@@ -81,7 +81,7 @@ Dim threeFGM_Align!(15), threeFGA_Align!(15)
 Dim threeFGM_Merge!(15), threeFGA_Merge!(15)
 Dim threeFGM_Road!(15), threeFGA_Road!(15)
 
-Dim statsZ0_Road!(15), statsZ1_Road!(15)
+Dim statsOffTot_Road!(15), statsDefTot_Road!(15)
 
 Dim plyrName_Road$(15), plyrName_Align$(15)
 
@@ -169,6 +169,7 @@ Dim tmYears_DRAFT$(1), tmName_DRAFT$(1)
 '----------------------------------------
 '   Used in HD2HD routines
 '----------------------------------------
+Dim conferenceName$
 Dim div1Name$, div2Name$
 
 Dim awayLosses!(50), awayWins!(50)

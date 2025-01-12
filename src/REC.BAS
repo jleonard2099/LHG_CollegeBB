@@ -48,50 +48,66 @@ Sub Records_Menu ()
 
         If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
-                Case 1:
-                    Call ViewSeasonRecords
+                MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
+                BoxWidth = 24
+                BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Call CSMsgBox(MsgText$, BoxWidth, PASS)
+                I$ = GetKeyPress$
+                Call CSMsgBox("", 0, PASS)
 
-                Case 2:
-                    userKey$ = GetPrintOptions$
+            Else
 
-                    If userKey$ <> Chr$(27) Then
+                Call ReadSeasonRecords("RECORDS.CBB")
 
-                        Select Case userKey$
+                Select Case SELECTION%
 
-                            Case "F"
-                                userFile$ = _SaveFileDialog$("Save Records Report", _CWD$ + "\Records", "*.txt", "Text File")
-                                If userFile$ <> "" Then
-                                    Call SeasonRecords_Report(0, userFile$)
-                                End If
+                        Case 1:
+                            Call ViewSeasonRecords
 
-                            Case "P"
-                                Call SeasonRecords_Report(1, "RECORDS")
+                        Case 2:
+                            userKey$ = GetPrintOptions$
 
-                        End Select
+                            If userKey$ <> Chr$(27) Then
 
-                    End If
+                                Select Case userKey$
 
-                Case 3:
-                    If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
-                        Kill diskPaths$(1) + "RECORDS.CBB"
-                    End If
+                                    Case "F"
+                                        userFile$ = _SaveFileDialog$("Save Records Report", _CWD$ + "\Records", "*.txt", "Text File")
+                                        If userFile$ <> "" Then
+                                            Call SeasonRecords_Report(0, userFile$)
+                                        End If
 
-                Case 4:
-                    Call GameRecords(1)
+                                    Case "P"
+                                        Call SeasonRecords_Report(1, "RECORDS")
 
-                Case 5:
-                    Call GameRecords(2)
+                                End Select
 
-                Case 6:
-                    If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
-                        Kill diskPaths$(1) + "RECORDS.GAM"
-                    End If
+                            End If
 
-            End Select
+                        Case 3:
+                            If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
+                                Kill diskPaths$(1) + "RECORDS.CBB"
+                            End If
 
-        End If
+                        Case 4:
+                            Call GameRecords(1)
+
+                        Case 5:
+                            Call GameRecords(2)
+
+                        Case 6:
+                            If _FileExists(diskPaths$(1) + "RECORDS.GAM") Then
+                                Kill diskPaths$(1) + "RECORDS.GAM"
+                            End If
+
+                End Select
+                
+            End If 'Done checking for record file
+
+        End If 'Done checking for user ESC
 
     Loop Until SELECTION% = 7 Or ExitCode% = 27
 
@@ -110,45 +126,7 @@ Sub ViewSeasonRecords ()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
-    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
-
-        MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
-        BoxWidth = 24
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-
-    Else
-
-        Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
-
-        For I = 1 To 25
-            Input #1, plyrRecords!(I)
-            Input #1, plyrRecDesc$(I, 0)
-            Input #1, plyrRecDesc$(I, 1)
-        Next
-
-        For I = 1 To 21
-            Input #1, offRecords!(I)
-            Input #1, offRecDesc$(I)
-            If offRecords!(I) = 19999 Then
-                offRecords!(I) = 0
-                offRecDesc$(I) = ""
-            End If
-        Next
-
-        For I = 1 To 21
-            Input #1, defRecords!(I)
-            Input #1, defRecDesc$(I)
-            If defRecords!(I) = 19999 Then
-                defRecords!(I) = 0
-                defRecDesc$(I) = ""
-            End If
-        Next
-
-        Close #1
+        Call ReadSeasonRecords("RECORDS.CBB")
 
         Color 0, 0
         Cls
@@ -380,8 +358,6 @@ Sub ViewSeasonRecords ()
             Print Space$(72)
         Next
 
-    End If
-
 End Sub
 
 '----------------------------------------
@@ -395,46 +371,6 @@ Sub SeasonRecords_Report (printDest, destFile$)
     Shared teamRecordDesc$(), indRecordDesc$()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
-
-    If Not _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
-
-        MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
-        BoxWidth = 24
-        BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
-        Call CSMsgBox(MsgText$, BoxWidth, PASS)
-        I$ = GetKeyPress$
-        Call CSMsgBox("", 0, PASS)
-
-    Else
-
-        Open diskPaths$(1) + "RECORDS.PBB" For Input As #1
-
-        For I = 1 To 25
-            Input #1, plyrRecords!(I)
-            Input #1, plyrRecDesc$(I, 0)
-            Input #1, plyrRecDesc$(I, 1)
-        Next
-
-        For I = 1 To 21
-            Input #1, offRecords!(I)
-            Input #1, offRecDesc$(I)
-            If offRecords!(I) = 19999 Then
-                offRecords!(I) = 0
-                offRecDesc$(I) = ""
-            End If
-        Next
-
-        For I = 1 To 21
-            Input #1, defRecords!(I)
-            Input #1, defRecDesc$(I)
-            If defRecords!(I) = 19999 Then
-                defRecords!(I) = 0
-                defRecDesc$(I) = ""
-            End If
-        Next
-
-        Close #1
 
         Color 15, 0
         Cls
@@ -571,7 +507,5 @@ Sub SeasonRecords_Report (printDest, destFile$)
             Kill destFile$
 
         End If
-
-    End If
 
 End Sub

@@ -5153,7 +5153,7 @@ Sub InitVar ()
     Shared FY%()
 
     Shared gameW0!(), gameW1!()
-    Shared statsZ0!(), statsZ1!(), statsZ2!()
+    Shared statsOffTot!(), statsDefTot!(), statsZ2!()
     Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
@@ -5296,7 +5296,7 @@ Sub InitVar ()
     Erase teamNames$, teamRecDesc$, teamYrTourn$
 
     Erase gameW0!, gameW1!
-    Erase statsZ0!, statsZ1!, statsZ2!
+    Erase statsOffTot!, statsDefTot!, statsZ2!
     Erase indRecords!, teamRecords!
 
     actualAttendance& = 0
@@ -13918,7 +13918,7 @@ End Sub
 'considered fully complete.
 Sub SAVESTATS ()
 
-    Shared gameW0!(), gameW1!(), statsZ0!()
+    Shared gameW0!(), gameW1!(), statsOffTot!()
 
     Shared scheduleFile$, tourneyFile$
 
@@ -14091,7 +14091,7 @@ Sub SAVESTATS ()
 
             End If
 
-            statsZ0!(12) = 0
+            statsOffTot!(12) = 0
 
         Next idx
 
@@ -14113,7 +14113,7 @@ Sub COMPILESTATFILES (teamIdx)
     Shared gameAttendance&()
 
     Shared gameW0!(), gameW1!()
-    Shared statsZ0!(), statsZ1!(), statsZ2!()
+    Shared statsOffTot!(), statsDefTot!(), statsZ2!()
 
     Shared powerRating(), teamScore(), oppScore()
 
@@ -14141,11 +14141,11 @@ Sub COMPILESTATFILES (teamIdx)
         Next I
 
         For L = 0 To 15:
-            Input #1, statsZ0!(L)
+            Input #1, statsOffTot!(L)
         Next L
 
         For L = 0 To 15:
-            Input #1, statsZ1!(L)
+            Input #1, statsDefTot!(L)
         Next L
 
         Close #1
@@ -14167,13 +14167,13 @@ Sub COMPILESTATFILES (teamIdx)
             statsZ2!(I, J) = statsZ2!(I, J) + plyrOff_GAME!(teamIdx, I, J)
 
             If J <> 5 And J <> 10 And J <> 11 Then
-                statsZ0!(J) = statsZ0!(J) + plyrOff_GAME!(teamIdx, I, J)
-                statsZ1!(J) = statsZ1!(J) + plyrOff_GAME!(1 - teamIdx, I, J)
+                statsOffTot!(J) = statsOffTot!(J) + plyrOff_GAME!(teamIdx, I, J)
+                statsDefTot!(J) = statsDefTot!(J) + plyrOff_GAME!(1 - teamIdx, I, J)
             End If
 
         Next J
 
-        statsZ0!(0) = statsZ0!(0) + plyrOff_GAME!(teamIdx, I, 10)
+        statsOffTot!(0) = statsOffTot!(0) + plyrOff_GAME!(teamIdx, I, 10)
         TG! = TG! + plyrOff_GAME!(teamIdx, I, 10)
 
     Next I
@@ -14190,28 +14190,28 @@ Sub COMPILESTATFILES (teamIdx)
     Next
 
     'Total Steals
-    statsZ0!(15) = statsZ0!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
-    statsZ1!(15) = statsZ1!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
+    statsOffTot!(15) = statsOffTot!(15) + totRebounds(teamIdx) - statTotals(teamIdx)
+    statsDefTot!(15) = statsDefTot!(15) + totRebounds(1 - teamIdx) - statTotals(1 - teamIdx)
 
     'Total Rebounds
-    statsZ0!(5) = statsZ0!(5) + totRebounds(teamIdx)
-    statsZ1!(5) = statsZ1!(5) + totRebounds(1 - teamIdx)
+    statsOffTot!(5) = statsOffTot!(5) + totRebounds(teamIdx)
+    statsDefTot!(5) = statsDefTot!(5) + totRebounds(1 - teamIdx)
 
     'Total Turnovers
-    statsZ0!(11) = statsZ0!(11) + turnovers(teamIdx)
-    statsZ1!(11) = statsZ1!(11) + turnovers(1 - teamIdx)
+    statsOffTot!(11) = statsOffTot!(11) + turnovers(teamIdx)
+    statsDefTot!(11) = statsDefTot!(11) + turnovers(1 - teamIdx)
 
     For J = 0 To 13:
-        statsZ0!(13) = statsZ0!(13) + gameW0!(teamIdx, J)
-        statsZ0!(14) = statsZ0!(14) + gameW1!(teamIdx, J)
-        statsZ1!(13) = statsZ1!(13) + gameW0!(1 - teamIdx, J)
-        statsZ1!(14) = statsZ1!(14) + gameW1!(1 - teamIdx, J)
+        statsOffTot!(13) = statsOffTot!(13) + gameW0!(teamIdx, J)
+        statsOffTot!(14) = statsOffTot!(14) + gameW1!(teamIdx, J)
+        statsDefTot!(13) = statsDefTot!(13) + gameW0!(1 - teamIdx, J)
+        statsDefTot!(14) = statsDefTot!(14) + gameW1!(1 - teamIdx, J)
         W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
         W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
     Next J
 
-    statsZ0!(10) = statsZ0!(10) + score(teamIdx, 0)
-    statsZ1!(10) = statsZ1!(10) + score(1 - teamIdx, 0)
+    statsOffTot!(10) = statsOffTot!(10) + score(teamIdx, 0)
+    statsDefTot!(10) = statsDefTot!(10) + score(1 - teamIdx, 0)
 
     Call TEAMBOX(1, teamIdx)
     pbpString$ = "SAVING STATS FOR " + gameTeams$(teamIdx)
@@ -14238,11 +14238,11 @@ Sub COMPILESTATFILES (teamIdx)
     Next I
 
     For L = 0 To 15:
-        Print #2, statsZ0!(L)
+        Print #2, statsOffTot!(L)
     Next L
 
     For L = 0 To 15:
-        Print #2, statsZ1!(L)
+        Print #2, statsDefTot!(L)
     Next L
 
     Close #2
@@ -14405,7 +14405,7 @@ Sub COMPILESTATFILES (teamIdx)
 
     Erase powerRating, oppScore, teamScore
     Erase gameAttendance&
-    Erase statsZ0!, statsZ1!, statsZ2!
+    Erase statsOffTot!, statsDefTot!, statsZ2!
     Erase gameSite$, locIndicator$, oppName$
 
 End Sub

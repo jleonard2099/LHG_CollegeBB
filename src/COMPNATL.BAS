@@ -44,25 +44,7 @@ Sub CompileNatlOrg ()
 
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
-        Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
-
-        For I = 1 To 25
-            Input #1, plyrRecords!(I)
-            Input #1, plyrRecDesc$(I, 0)
-            Input #1, plyrRecDesc$(I, 1)
-        Next
-
-        For I = 1 To 21
-            Input #1, offRecords!(I)
-            Input #1, offRecDesc$(I)
-        Next
-
-        For I = 1 To 21
-            Input #1, defRecords!(I)
-            Input #1, defRecDesc$(I)
-        Next
-
-        Close #1
+        Call ReadSeasonRecords ("RECORDS.CBB")
 
     Else
 
@@ -96,15 +78,7 @@ Sub CompileNatlOrg ()
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #2
-
-        Input #2, X$
-
-        For I = 1 To MAX_CONFERENCES
-            Input #2, memberConf$(I)
-        Next
-
-        Close #2
+        Call ReadOrganizationFile(organizationFile$, orgName$)
 
         For currConf = 1 To MAX_CONFERENCES
 
@@ -1040,38 +1014,5 @@ Sub PostLeadersOrg (organization$, NRT)
     Next
 
     Close #2
-
-End Sub
-
-
-'----------------------------------------
-'      ReadScheduleStats Subroutine
-'----------------------------------------
-'This subroutine reads in all data from the
-'team's schedule stats file.
-Sub ReadScheduleStats (statFile$, numberGames)
-
-    Shared teamScore(), oppScore()
-    Shared oppName$()
-
-    findFile$ = diskPaths$(1) + statFile$ + "S"
-
-    Open findFile$ For Input As #1
-
-    Input #1, numberGames
-
-    For I = 1 To MAX_SCHED_STATS:
-        Input #1, teamScore(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS:
-        Input #1, oppName$(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS:
-        Input #1, oppScore(I)
-    Next I
-
-    Close #1
 
 End Sub

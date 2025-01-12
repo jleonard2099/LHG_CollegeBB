@@ -131,7 +131,7 @@ Sub MergeFirstYear ()
 
     Shared careerPlayers$()
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     NB = -1
 
@@ -222,11 +222,11 @@ Sub MergeFirstYear ()
                     Next
 
                     For L = 0 To 15: 
-                        Input #1, statsZ0!(L)
+                        Input #1, statsOffTot!(L)
                     Next
 
                     For L = 0 To 15: 
-                        Input #1, statsZ1!(L)
+                        Input #1, statsDefTot!(L)
                     Next
 
                     Close #1
@@ -653,7 +653,7 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
     Shared careerPlayers$()
 
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     NB = -1
 
@@ -687,11 +687,11 @@ Sub AddCareerYear (statYear, finalUpdate, careerFile$, statFile$)
     Next
 
     For L = 0 To 15: 
-        Input #2, statsZ0!(L)
+        Input #2, statsOffTot!(L)
     Next
 
     For L = 0 To 15: 
-        Input #2, statsZ1!(L)
+        Input #2, statsDefTot!(L)
     Next
 
     Close #2

@@ -365,6 +365,213 @@ End Sub
 
 
 '----------------------------------------
+'        ReadTeamStats Subroutine
+'----------------------------------------
+'Reads in compiled stats for a given team
+Sub ReadTeamStats (teamName$, statFile$)
+
+    Shared compStats!()
+    Shared statsW0!(), statsW1!()
+    Shared statsDefTot!(), statsOffTot!()
+
+    Shared statPlyrNames$()
+
+    Erase compStats!
+    Erase statsW0!, statsW1!
+    Erase statsDefTot!, statsOffTot!
+    Erase statPlyrNames$
+
+    Open diskPaths$(1) + statFile$ For Input As #1
+
+    Input #1, teamName$
+
+    For I = 0 To 13
+
+        Input #1, statPlyrNames$(I)
+
+        For J = 0 To 13:
+            Input #1, compStats!(I, J)
+        Next
+
+        Input #1, statsW0!(I)
+        Input #1, statsW1!(I)
+
+    Next
+
+    For L = 1 To 16:
+        Input #1, statsOffTot!(L)
+    Next
+
+    For L = 1 To 16:
+        Input #1, statsDefTot!(L)
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'      ReadScheduleStats Subroutine
+'----------------------------------------
+'This subroutine reads in all data from the
+'team's schedule stats file.
+Sub ReadScheduleStats (statFile$, numberGames)
+
+    Shared teamScore(), oppScore()
+    Shared oppName$()
+
+    findFile$ = diskPaths$(1) + statFile$ + "S"
+
+    Open findFile$ For Input As #1
+
+    Input #1, numberGames
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, teamScore(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, oppName$(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, oppScore(I)
+    Next I
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'       ReadSeasonRecords Subroutine
+'----------------------------------------
+'Reads in list of team and individual 
+'record values from the records file.
+Sub ReadSeasonRecords (recordFile$)
+
+    Shared teamRecordDesc$(), indRecordDesc$()
+    Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
+    Shared plyrRecords!(), offRecords!(), defRecords!()
+
+    Open diskPaths$(1) + recordFile$ For Input As #1
+
+    For I = 1 To 25
+        Input #1, plyrRecords!(I)
+        Input #1, plyrRecDesc$(I, 0)
+        Input #1, plyrRecDesc$(I, 1)
+    Next
+
+    For I = 1 To 21
+        Input #1, offRecords!(I)
+        Input #1, offRecDesc$(I)
+        If offRecords!(I) = 19999 Then
+            offRecords!(I) = 0
+            offRecDesc$(I) = ""
+        End If
+    Next
+
+    For I = 1 To 21
+        Input #1, defRecords!(I)
+        Input #1, defRecDesc$(I)
+        If defRecords!(I) = 19999 Then
+            defRecords!(I) = 0
+            defRecDesc$(I) = ""
+        End If
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'       ReadGameRecords Subroutine
+'----------------------------------------
+'Reads in list of team and individual 
+'record values from the records file.
+Sub ReadGameRecords (recordFile$)
+
+    Shared indRecords!(), teamRecords!()
+    
+    Shared indRecDesc$(), teamRecDesc$()
+
+    Open diskPaths$(1) + recordFile$ For Input As #1
+
+    For I = 0 To 48
+
+        For I1 = 0 To 2
+            Input #1, indRecords!(I, I1)
+        Next
+
+        For I1 = 0 To 4
+            Input #1, indRecDesc$(I, I1)
+        Next
+    Next
+
+    For I = 0 To 125
+        For I1 = 0 To 2
+            Input #1, teamRecords!(I, I1)
+        Next
+        For I1 = 0 To 3
+            Input #1, teamRecDesc$(I, I1)
+        Next
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'     ReadConferenceStats Subroutine
+'----------------------------------------
+'This subroutine reads in the league stats
+'from the .TMS file and assigns them to
+'variables for use later in the routine.
+Sub ReadConferenceStats (statFile$)
+
+    Shared memberName$()
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
+
+    Open diskPaths$(2) + statFile$ + ".TMS" For Input As #1
+
+    Input #1, conferenceName$, div1Name$, div2Name$
+
+    For XW = 1 To TEAMS_PER_CONFERENCE
+        Input #1, memberName$(XW)
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
+'     ReadOrganizationFile Subroutine
+'----------------------------------------
+'Reads in list of conferences from a .CON
+'file that represents a national Org.
+Sub ReadOrganizationFile (organizationFile$, orgName$)
+
+	Shared memberConf$()
+
+	Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
+
+    Input #1, orgName$
+
+    For X = 1 To MAX_CONFERENCES
+        Input #1, memberConf$(X)
+    Next
+
+    Close #1
+
+End Sub
+
+
+'----------------------------------------
 '         nameStatFile$ Function
 '----------------------------------------
 'Helps create uniquely named file to
@@ -557,5 +764,3 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
-
-

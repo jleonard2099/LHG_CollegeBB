@@ -26,7 +26,7 @@ End Sub
 '----------------------------------------
 'This subroutine loads the organization 
 'stats from the file into several arrays
-Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
+Sub LoadLeaderFiles_Nat (targetFile$, NRT)
 
     Shared defLeaderNames$(), offLeaderNames$()
 
@@ -43,7 +43,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
     Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(2) + leagueFile$ + ".NLD" For Input As #1
+    Open diskPaths$(2) + targetFile$ + ".NLD" For Input As #1
 
     For X = 1 To TEAMS_PER_CONFERENCE:
         Input #1, confLdrName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
@@ -69,7 +69,7 @@ Sub LoadLeaderFiles_Nat (NRT, leagueFile$)
 
     Close #1
 
-    Open diskPaths$(2) + leagueFile$ + ".POL" For Input As #2
+    Open diskPaths$(2) + targetFile$ + ".POL" For Input As #2
 
     Input #2, NRT
 
@@ -158,7 +158,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Cls
 
     Color 12
-    Locate , Int((80 - Len(confName$) - 17) / 2)
+    Locate , Int((80 - Len(orgName$) - 17) / 2)
     Print orgName$ + " OVERALL RANKINGS"
 
     Locate , 1

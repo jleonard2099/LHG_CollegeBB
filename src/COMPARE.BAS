@@ -12,7 +12,7 @@ Sub COMPARE ()
     Shared replayLosses, replayWins
 
     Shared statsA!(), statsW0!(), statsW1!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     Shared position$()
     Shared statPlyrNames$(), locIndicator$(), oppName$()
@@ -63,11 +63,11 @@ Sub COMPARE ()
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ0!(L)
+                    Input #1, statsOffTot!(L)
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ1!(L)
+                    Input #1, statsDefTot!(L)
                 Next
 
                 Close #1
@@ -161,7 +161,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared statsW0!(), statsW1!()
     
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     Shared statPlyrNames$()
 
@@ -296,7 +296,7 @@ End Sub
 Sub TeamComparisons_Screen (teamName$)
 
     Shared teamRatings(), teamStats!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
 
     Shared replayLosses, replayWins
 
@@ -550,63 +550,63 @@ Sub TeamComparisons_Screen (teamName$)
     '--> OFFENSE
     
     'FGM
-    Locate 4, 16: Print Using "#########"; statsZ0!(2);
+    Locate 4, 16: Print Using "#########"; statsOffTot!(2);
 
     'FGA
-    Locate 5, 16: Print Using "#########"; statsZ0!(1);
+    Locate 5, 16: Print Using "#########"; statsOffTot!(1);
 
     'FG PCT
     Locate 6, 16
-    If statsZ0!(1) = 0 Then 
+    If statsOffTot!(1) = 0 Then 
         Print "     .000";
     End If
-    If statsZ0!(1) > 0 Then 
-        statPCT! = (statsZ0!(2) / statsZ0!(1))
+    If statsOffTot!(1) > 0 Then 
+        statPCT! = (statsOffTot!(2) / statsOffTot!(1))
         Print "     ";
         Print Using ".###"; statPCT!;
     End If
 
     'FTM
-    Locate 7, 16: Print Using "#########"; statsZ0!(4);
+    Locate 7, 16: Print Using "#########"; statsOffTot!(4);
 
     'FTA
-    Locate 8, 16: Print Using "#########"; statsZ0!(3);
+    Locate 8, 16: Print Using "#########"; statsOffTot!(3);
 
     'FT PCT
     Locate 9, 16
-    If statsZ0!(3) = 0 Then 
+    If statsOffTot!(3) = 0 Then 
         Print "     .000";
     End If
-    If statsZ0!(3) > 0 Then 
-        statPCT! = (statsZ0!(4) / statsZ0!(3))
+    If statsOffTot!(3) > 0 Then 
+        statPCT! = (statsOffTot!(4) / statsOffTot!(3))
         Print "     ";: Print Using ".###"; statPCT!;
     End If
 
     'Rebounds / Assists / Fouls / Steals / TOs
-    Locate 10, 16: Print Using "#########"; statsZ0!(12);
-    Locate 11, 16: Print Using "#########"; statsZ0!(5) - statsZ0!(12) - statsZ0!(15);
-    Locate 12, 16: Print Using "#########"; statsZ0!(5) - statsZ0!(15);
-    Locate 13, 16: Print Using "#########"; statsZ0!(8);
-    Locate 14, 16: Print Using "#########"; statsZ0!(6);
-    Locate 15, 16: Print Using "#########"; statsZ0!(7);
-    Locate 16, 16: Print Using "#########"; statsZ0!(11);
+    Locate 10, 16: Print Using "#########"; statsOffTot!(12);
+    Locate 11, 16: Print Using "#########"; statsOffTot!(5) - statsOffTot!(12) - statsOffTot!(15);
+    Locate 12, 16: Print Using "#########"; statsOffTot!(5) - statsOffTot!(15);
+    Locate 13, 16: Print Using "#########"; statsOffTot!(8);
+    Locate 14, 16: Print Using "#########"; statsOffTot!(6);
+    Locate 15, 16: Print Using "#########"; statsOffTot!(7);
+    Locate 16, 16: Print Using "#########"; statsOffTot!(11);
     
     'Blocks
-    Locate 17, 16: Print Using "#########"; statsZ0!(9);
+    Locate 17, 16: Print Using "#########"; statsOffTot!(9);
 
     '3 FGM
-    Locate 18, 16: Print Using "#########"; statsZ0!(13);
+    Locate 18, 16: Print Using "#########"; statsOffTot!(13);
 
     '3 FGA
-    Locate 19, 16: Print Using "#########"; statsZ0!(14);
+    Locate 19, 16: Print Using "#########"; statsOffTot!(14);
 
     '3 FG PCT
     Locate 20, 16
-    If statsZ0!(13) = 0 Then
+    If statsOffTot!(13) = 0 Then
         Print "     .000";
     End If
-    If statsZ0!(13) > 0 Then
-        statPCT! = (statsZ0!(13) / statsZ0!(14))
+    If statsOffTot!(13) > 0 Then
+        statPCT! = (statsOffTot!(13) / statsOffTot!(14))
         Print "     ";
         Print Using ".###"; statPCT!;
     End If
@@ -615,59 +615,59 @@ Sub TeamComparisons_Screen (teamName$)
     '--> DEFENSE
 
     'FGM
-    Locate 4, 68: Print Using "########"; statsZ1!(2);
+    Locate 4, 68: Print Using "########"; statsDefTot!(2);
     
     'FGA
-    Locate 5, 68: Print Using "########"; statsZ1!(1);
+    Locate 5, 68: Print Using "########"; statsDefTot!(1);
 
     'FG PCT
     Locate 6, 68
-    If statsZ1!(1) = 0 Then 
+    If statsDefTot!(1) = 0 Then 
         Print "    .000";
     End If
-    If statsZ1!(1) > 0 Then 
-        statPCT! = (statsZ1!(2) / statsZ1!(1))
+    If statsDefTot!(1) > 0 Then 
+        statPCT! = (statsDefTot!(2) / statsDefTot!(1))
         Print Using "    .###"; statPCT!;
     End If
 
     'FTM
-    Locate 7, 68: Print Using "########"; statsZ1!(4);
+    Locate 7, 68: Print Using "########"; statsDefTot!(4);
     
     'FTA
-    Locate 8, 68: Print Using "########"; statsZ1!(3);
+    Locate 8, 68: Print Using "########"; statsDefTot!(3);
 
     'FT PCT
     Locate 9, 68
-    If statsZ1!(3) = 0 Then
+    If statsDefTot!(3) = 0 Then
         Print "    .000";
     End If
-    If statsZ1!(3) > 0 Then 
-        statPCT! = (statsZ1!(4) / statsZ1!(3))
+    If statsDefTot!(3) > 0 Then 
+        statPCT! = (statsDefTot!(4) / statsDefTot!(3))
         Print Using "    .###"; statPCT!;
     End If
 
     'Rebounds / Assists / Fouls / Steals / TOs
-    Locate 10, 68: Print Using "########"; statsZ1!(12);
-    Locate 11, 68: Print Using "########"; statsZ1!(5) - statsZ1!(12) - statsZ1!(15);
-    Locate 12, 68: Print Using "########"; statsZ1!(5) - statsZ1!(15);
-    Locate 13, 68: Print Using "########"; statsZ1!(8);
-    Locate 14, 68: Print Using "########"; statsZ1!(6);
-    Locate 15, 68: Print Using "########"; statsZ1!(7);
-    Locate 16, 68: Print Using "########"; statsZ1!(11);
-    Locate 17, 68: Print Using "########"; statsZ1!(9);
+    Locate 10, 68: Print Using "########"; statsDefTot!(12);
+    Locate 11, 68: Print Using "########"; statsDefTot!(5) - statsDefTot!(12) - statsDefTot!(15);
+    Locate 12, 68: Print Using "########"; statsDefTot!(5) - statsDefTot!(15);
+    Locate 13, 68: Print Using "########"; statsDefTot!(8);
+    Locate 14, 68: Print Using "########"; statsDefTot!(6);
+    Locate 15, 68: Print Using "########"; statsDefTot!(7);
+    Locate 16, 68: Print Using "########"; statsDefTot!(11);
+    Locate 17, 68: Print Using "########"; statsDefTot!(9);
 
     '3 FGM
-    Locate 18, 68: Print Using "########"; statsZ1!(13);
+    Locate 18, 68: Print Using "########"; statsDefTot!(13);
 
     '3 FGA
-    Locate 19, 68: Print Using "########"; statsZ1!(14);
+    Locate 19, 68: Print Using "########"; statsDefTot!(14);
 
     '3 FGA PCT
-    If statsZ1!(13) = 0 Then
+    If statsDefTot!(13) = 0 Then
         Locate 20, 68: Print "    .000";
     End If
-    If statsZ1!(13) > 0 Then
-        Locate 20, 68: statPCT! = (statsZ1!(13) / statsZ1!(14))
+    If statsDefTot!(13) > 0 Then
+        Locate 20, 68: statPCT! = (statsDefTot!(13) / statsDefTot!(14))
         Print "    ";: Print Using ".###"; statPCT!;
     End If
 
@@ -1033,7 +1033,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
     Shared playerStats!()
 
     Shared statsA!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
     Shared statsW0!(), statsW1!()
 
     Shared statPlyrNames$()
@@ -1062,21 +1062,21 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
     'Locate 4
     Print #1, Tab(3); " FGM   ";
-    Print #1, Tab(16); Using "#########"; statsZ0!(2);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(2);
 
     Print #1, Tab(55); " FGM   ";
     Print #1, Tab(62); Using "######"; teamStats!(2) / 100 * teamStats!(4);
-    Print #1, Tab(68); Using "########"; statsZ1!(2)
+    Print #1, Tab(68); Using "########"; statsDefTot!(2)
 
     'Locate 5
     Print #1, Tab(3); " FGA   ";
-    Print #1, Tab(16); Using "#########"; statsZ0!(1);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(1);
 
     Print #1, Tab(30); "              W - L ";
 
     Print #1, Tab(55); " FGA   ";
     Print #1, Tab(62); Using "######"; teamStats!(2);
-    Print #1, Tab(68); Using "########"; statsZ1!(1)
+    Print #1, Tab(68); Using "########"; statsDefTot!(1)
 
     'Locate 6
     Print #1, Tab(3); " FG PCT";
@@ -1089,11 +1089,11 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(10); "  "; Using ".###"; statPCT!;
     End If
 
-    If statsZ0!(1) = 0 Then 
+    If statsOffTot!(1) = 0 Then 
         Print #1, Tab(16); "     .000";
     End If
-    If statsZ0!(1) > 0 Then
-        statPCT! = (statsZ0!(2) / statsZ0!(1))
+    If statsOffTot!(1) > 0 Then
+        statPCT! = (statsOffTot!(2) / statsOffTot!(1))
         Print #1, Tab(16); "     "; Using ".###"; statPCT!;
     End If
 
@@ -1111,18 +1111,18 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(62); "  "; Using ".###"; statPCT!;
     End If
 
-    If statsZ1!(1) = 0 Then
+    If statsDefTot!(1) = 0 Then
         Print #1, Tab(68); "    .000"
     End If
-    If statsZ1!(1) > 0 Then
-        statPCT! = (statsZ1!(2) / statsZ1!(1))
+    If statsDefTot!(1) > 0 Then
+        statPCT! = (statsDefTot!(2) / statsDefTot!(1))
         Print #1, Tab(68); "    "; Using ".###"; statPCT!
     End If
 
     'Locate 7
     Print #1, Tab(3); " FTM   ";
     Print #1, Tab(10); Using "######"; teamStats!(5) / 100 * teamStats!(7);
-    Print #1, Tab(16); Using "#########"; statsZ0!(4);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(4);
 
     Print #1, Tab(30); "  REPLAY   ";
     Print #1, Tab(41); Using "####"; replayWins;
@@ -1130,16 +1130,16 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
     Print #1, Tab(55); " FTM   ";
     Print #1, Tab(62); Using "######"; teamStats!(6) / 100 * teamStats!(8);
-    Print #1, Tab(68); Using "########"; statsZ1!(4)
+    Print #1, Tab(68); Using "########"; statsDefTot!(4)
 
     'Locate 8
     Print #1, Tab(3); " FTA   ";
     Print #1, Tab(10); Using "######"; teamStats!(5);
-    Print #1, Tab(16); Using "#########"; statsZ0!(3);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(3);
 
     Print #1, Tab(55); " FTA   ";
     Print #1, Tab(62); Using "######"; teamStats!(6);
-    Print #1, Tab(68); Using "########"; statsZ1!(3)
+    Print #1, Tab(68); Using "########"; statsDefTot!(3)
 
     'Locate 9
     Print #1, Tab(3); " FT PCT";
@@ -1151,11 +1151,11 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(10); "  "; Using ".###"; statPCT!;
     End If
 
-    If statsZ0!(3) = 0 Then
+    If statsOffTot!(3) = 0 Then
         Print #1, Tab(16); "     .000";
     End If
-    If statsZ0!(3) > 0 Then
-        statPCT! = (statsZ0!(4) / statsZ0!(3))
+    If statsOffTot!(3) > 0 Then
+        statPCT! = (statsOffTot!(4) / statsOffTot!(3))
         Print #1, Tab(16); "     "; Using ".###"; statPCT!;
     End If
 
@@ -1169,103 +1169,103 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(62); "  "; Using ".###"; statPCT!;
     End If
 
-    If statsZ1!(3) = 0 Then
+    If statsDefTot!(3) = 0 Then
         Print #1, Tab(68); "    .000"
     End If
-    If statsZ1!(3) > 0 Then
-        statPCT! = (statsZ1!(4) / statsZ1!(3))
+    If statsDefTot!(3) > 0 Then
+        statPCT! = (statsDefTot!(4) / statsDefTot!(3))
         Print #1, Tab(68); "    "; Using ".###"; statPCT!
     End If
 
     'Locate 10
     Print #1, Tab(3); " O.RB  ";
     Print #1, Tab(10); Using "######"; .35 * teamStats!(9);
-    Print #1, Tab(16); Using "#########"; statsZ0!(12);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(12);
 
     Print #1, Tab(55); " O.RB  ";
     Print #1, Tab(62); Using "######"; .35 * teamStats!(10);
-    Print #1, Tab(68); Using "########"; statsZ1!(12)
+    Print #1, Tab(68); Using "########"; statsDefTot!(12)
 
     'Locate 11
     Print #1, Tab(3); " D.RB  ";
     Print #1, Tab(10); Using "######"; .65 * teamStats!(9);
-    Print #1, Tab(16); Using "#########"; statsZ0!(5) - statsZ0!(12) - statsZ0!(15);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(5) - statsOffTot!(12) - statsOffTot!(15);
 
     Print #1, Tab(55); " D.RB  ";
     Print #1, Tab(62); Using "######"; .65 * teamStats!(10);
-    Print #1, Tab(68); Using "########"; statsZ1!(5) - statsZ1!(12) - statsZ1!(15);
+    Print #1, Tab(68); Using "########"; statsDefTot!(5) - statsDefTot!(12) - statsDefTot!(15);
 
     'Locate 12
     Print #1, Tab(3); " T.REB ";
     Print #1, Tab(10); Using "######"; teamStats!(9);
-    Print #1, Tab(16); Using "#########"; statsZ0!(5) - statsZ0!(15);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(5) - statsOffTot!(15);
 
     Print #1, Tab(55); " T.REB ";
     Print #1, Tab(62); Using "######"; teamStats!(10);
-    Print #1, Tab(68); Using "########"; statsZ1!(5) - statsZ1!(15)
+    Print #1, Tab(68); Using "########"; statsDefTot!(5) - statsDefTot!(15)
 
     'Locate 13
     Print #1, Tab(3); " ASS'T ";
     Print #1, Tab(10); Using "######"; teamStats!(11);
-    Print #1, Tab(16); Using "#########"; statsZ0!(8);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(8);
 
     Print #1, Tab(55); " ASS'T ";
     Print #1, Tab(62); Using "######"; teamStats!(12);
-    Print #1, Tab(68); Using "########"; statsZ1!(8)
+    Print #1, Tab(68); Using "########"; statsDefTot!(8)
 
     'Locate 14
     Print #1, Tab(3); " FLS   ";
     Print #1, Tab(10); Using "######"; teamStats!(13);
-    Print #1, Tab(16); Using "#########"; statsZ0!(6);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(6);
 
     Print #1, Tab(55); " FLS   ";
     Print #1, Tab(62); Using "######"; teamStats!(14);
-    Print #1, Tab(68); Using "########"; statsZ1!(6)
+    Print #1, Tab(68); Using "########"; statsDefTot!(6)
 
     'Locate 15
     Print #1, Tab(3); "  ST   ";
     Print #1, Tab(10); Using "######"; teamStats!(17);
-    Print #1, Tab(16); Using "#########"; statsZ0!(7);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(7);
 
     Print #1, Tab(55); "  ST   ";
     Print #1, Tab(62); Using "######"; teamStats!(18);
-    Print #1, Tab(68); Using "########"; statsZ1!(7)
+    Print #1, Tab(68); Using "########"; statsDefTot!(7)
 
     'Locate 16
     Print #1, Tab(3); "  TO   ";
     Print #1, Tab(10); Using "######"; teamStats!(15);
-    Print #1, Tab(16); Using "#########"; statsZ0!(11);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(11);
 
     Print #1, Tab(55); "  TO   ";
     Print #1, Tab(62); Using "######"; teamStats!(16);
-    Print #1, Tab(68); Using "########"; statsZ1!(11)
+    Print #1, Tab(68); Using "########"; statsDefTot!(11)
 
     'Locate 17
     Print #1, Tab(3); " BLK   ";
     Print #1, Tab(10); Using "######"; teamStats!(21);
-    Print #1, Tab(16); Using "#########"; statsZ0!(9);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(9);
 
     Print #1, Tab(55); " BLK   ";
     Print #1, Tab(62); Using "######"; teamStats!(22);
-    Print #1, Tab(68); Using "########"; statsZ1!(9)
+    Print #1, Tab(68); Using "########"; statsDefTot!(9)
 
     'Locate 18
     Print #1, Tab(3); " 3-FGM ";
     Print #1, Tab(10); Using "######"; teamStats!(23) * teamStats!(24) / 100;
-    Print #1, Tab(16); Using "#########"; statsZ0!(13);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(13);
 
     Print #1, Tab(55); " 3-FGM ";
     Print #1, Tab(62); Using "######"; teamStats!(19) * teamStats!(20) / 100;
-    Print #1, Tab(68); Using "########"; statsZ1!(13)
+    Print #1, Tab(68); Using "########"; statsDefTot!(13)
 
     'Locate 19
     Print #1, Tab(3); " 3-FGA ";
     Print #1, Tab(10); Using "######"; teamStats!(23);
-    Print #1, Tab(16); Using "#########"; statsZ0!(14);
+    Print #1, Tab(16); Using "#########"; statsOffTot!(14);
 
     Print #1, Tab(55); " 3-FGA ";
     Print #1, Tab(62); Using "######"; teamStats!(19);
-    Print #1, Tab(68); Using "########"; statsZ1!(14)
+    Print #1, Tab(68); Using "########"; statsDefTot!(14)
 
     'Actual
     Print #1, Tab(3); " 3-PCT ";
@@ -1278,11 +1278,11 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(10); "  "; Using ".###"; statPCT!;
     End If
 
-    If statsZ0!(13) = 0 Then
+    If statsOffTot!(13) = 0 Then
         Print #1, Tab(16); "     .000";
     End If
-    If statsZ0!(13) > 0 Then
-        statPCT! = (statsZ0!(13) / statsZ0!(14))
+    If statsOffTot!(13) > 0 Then
+        statPCT! = (statsOffTot!(13) / statsOffTot!(14))
         Print #1, Tab(16); "     "; Using ".###"; statPCT!;
     End If
 
@@ -1297,11 +1297,11 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(62); "  "; Using ".###"; statPCT!;
     End If
 
-    If statsZ1!(13) = 0 Then
+    If statsDefTot!(13) = 0 Then
         Print #1, Tab(68); "    .000"
     End If
-    If statsZ1!(13) > 0 Then
-        statPCT! = (statsZ1!(13) / statsZ1!(14))
+    If statsDefTot!(13) > 0 Then
+        statPCT! = (statsDefTot!(13) / statsDefTot!(14))
         Print #1, Tab(68); Using "    .###"; statPCT!
     End If
 

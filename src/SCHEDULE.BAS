@@ -162,8 +162,8 @@ Sub NewSchedule (scheduleFile$)
 
     Shared modeAbbrev$(), sClockOpt$(), yesNo$()
 
-    DT$ = "10-01-23"
-    TM$ = "07:30P"
+    DT$ = "11-04-24"
+    TM$ = "07:00P"
 
     Do
 
@@ -1342,8 +1342,8 @@ Sub ChangeGlobalSettings ()
     ft3PtFoul = scheduleNG%(1, 10)
     ft6FloorFouls = scheduleNG%(1, 14)
 
-    DT$ = "10-01-23"
-    TM$ = "07:30P"
+    DT$ = "11-04-24"
+    TM$ = "07:00P"
 
     Do
 

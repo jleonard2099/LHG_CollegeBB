@@ -59,18 +59,9 @@ Sub NEWLDR ()
                                 memberName$(X) = "XXX"
                             Next
 
-                            Open diskPaths$(2) + confStatFile$ + ".TMS" For Input As #1
-
-                            Input #1, conf$, div1$, div2$
-
-                            For X = 1 To TEAMS_PER_CONFERENCE
-                                Input #1, memberName$(X)
-                            Next
-
-                            Close #1
-
+                            Call ReadConferenceStats (confStatFile$)
                             Call UpdateExpandedLeaders(JB, PTS, TTS)
-                            Call SAVELEADER(confStatFile$, JB, PTS, TTS)
+                            Call SaveLeaderStdg(confStatFile$, JB, PTS, TTS)
 
                         End If
 
@@ -81,7 +72,7 @@ Sub NEWLDR ()
                         leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call READLEADER(leaderFile$, JB, PTS, TTS)
+                            Call ReadLeaderStdg(leaderFile$, JB, PTS, TTS)
                             Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
                         End If
 
@@ -120,19 +111,11 @@ Sub ViewExpandedStats ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #1
+        Call ReadConferenceStats (conferenceFile$)
 
-        Input #1, conf$, div1$, div2$
-
-        For X = 1 To TEAMS_PER_CONFERENCE
-            Input #1, memberName$(X)
-        Next
-
-        Close #1
-
-        Call READLEADER(conferenceFile$, JB, PTS, TTS)
+        Call ReadLeaderStdg(conferenceFile$, JB, PTS, TTS)
         Call UpdateExpandedLeaders(JB, PTS, TTS)
-        Call SAVELEADER(leagStatFile$, JB, PTS, TTS)
+        Call SaveLeaderStdg(conferenceFile$, JB, PTS, TTS)
         Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
 
     End If 'Done checking for ESC
@@ -159,7 +142,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
     Shared plyrLdrVal!(), teamLdrVal!()
 
     Shared statsW0!(), statsW1!()
-    Shared statsZ0!(), statsZ1!()
+    Shared statsOffTot!(), statsDefTot!()
     Shared leader3FGM!(), leader3FGA!()
 
     Shared playerOff!()
@@ -197,11 +180,11 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ0!(L)
+                    Input #1, statsOffTot!(L)
                 Next
 
                 For L = 0 To 15:
-                    Input #1, statsZ1!(L)
+                    Input #1, statsDefTot!(L)
                 Next
 
                 Close #1
@@ -213,7 +196,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 plyrTotalStats = plyrTotalStats + 1
 
                 For I = 0 To 14
-                    plyrLdrVal!(plyrTotalStats, I) = statsZ0!(I)
+                    plyrLdrVal!(plyrTotalStats, I) = statsOffTot!(I)
                     plyLeaderTeams$(plyrTotalStats, I) = teamName$
                     plyrLeaderYears!(plyrTotalStats) = year
                 Next
@@ -221,7 +204,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                 teamTotalStats = teamTotalStats + 1
 
                 For I = 0 To 14:
-                    teamLdrVal!(teamTotalStats, I) = statsZ1!(I)
+                    teamLdrVal!(teamTotalStats, I) = statsDefTot!(I)
                     tmLeaderTeams$(teamTotalStats, I) = teamName$
                     tmLeaderYears!(teamTotalStats) = year
                 Next
@@ -259,11 +242,11 @@ End Sub
 
 
 '----------------------------------------
-'        SAVELEADER Subroutine
+'        SaveLeaderStdg Subroutine
 '----------------------------------------
 'This subroutine compiles the leader files
 '(.LDS) for the expanded standings modules
-Sub SAVELEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
+Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared expPlyrLdrName$(), plyLeaderTeams$()
     Shared expPlyrLdrTeam$(), tmLeaderTeams$()
@@ -341,11 +324,11 @@ End Sub
 
 
 '----------------------------------------
-'        READLEADER Subroutine
+'        ReadLeaderStdg Subroutine
 '----------------------------------------
 'This subroutine reads in the leader files
 '(.LDS) for the expanded standings modules
-Sub READLEADER (statFile$, JB, plyrTotalStats, teamTotalStats)
+Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Shared statPlyrNames$(), expPlyrLdrName$(), plyLeaderTeams$()
     Shared expPlyrLdrTeam$(), tmLeaderTeams$()

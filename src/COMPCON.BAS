@@ -25,25 +25,7 @@ Sub CompileCollege ()
     'Read in any existing records first
     If _FileExists(diskPaths$(1) + "RECORDS.CBB") Then
 
-        Open diskPaths$(1) + "RECORDS.CBB" For Input As #1
-
-        For I = 1 To 25
-            Input #1, plyrRecords!(I)
-            Input #1, plyrRecDesc$(I, 0)
-            Input #1, plyrRecDesc$(I, 1)
-        Next
-
-        For I = 1 To 21
-            Input #1, offRecords!(I)
-            Input #1, offRecDesc$(I)
-        Next
-
-        For I = 1 To 21
-            Input #1, defRecords!(I)
-            Input #1, defRecDesc$(I)
-        Next
-
-        Close #1
+        Call ReadSeasonRecords ("RECORDS.CBB")
 
     Else
 
@@ -97,17 +79,7 @@ Sub CompileCollege ()
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Open diskPaths$(2) + conferenceFile$ + ".TMS" For Input As #2
-
-        Input #2, conf$
-        Input #2, div1$
-        Input #2, div2$
-
-        For XW = 1 To TEAMS_PER_CONFERENCE
-            Input #2, memberName$(XW)
-        Next
-
-        Close #2
+        Call ReadConferenceStats (conferenceFile$)
 
         For XW = 1 To TEAMS_PER_CONFERENCE
 

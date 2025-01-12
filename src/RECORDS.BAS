@@ -24,29 +24,7 @@ Sub GameRecords (menuChoice)
     
     Else
 
-        Open diskPaths$(1) + "RECORDS.GAM" For Input As #1
-
-        For I = 0 To 48
-
-            For I1 = 0 To 2
-                Input #1, indRecords!(I, I1)
-            Next
-
-            For I1 = 0 To 4
-                Input #1, indRecDesc$(I, I1)
-            Next
-        Next
-
-        For I = 0 To 125
-            For I1 = 0 To 2
-                Input #1, teamRecords!(I, I1)
-            Next
-            For I1 = 0 To 3
-                Input #1, teamRecDesc$(I, I1)
-            Next
-        Next
-
-        Close #1
+        Call ReadGameRecords("RECORDS.GAM")
 
         Select Case menuChoice
 
