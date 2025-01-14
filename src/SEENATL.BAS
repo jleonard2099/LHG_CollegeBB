@@ -13,8 +13,8 @@ Sub SEENATL ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Call LoadLeaderFiles_Nat(NRT, leaderFile$)
-        Call StatOptions_Nat (NRT, leaderFile$)
+        Call LoadLeaderFiles_Nat(leaderFile$, NRT)
+        Call StatOptions_Nat (leaderFile$, NRT)
 
     End If
 
@@ -88,7 +88,7 @@ End Sub
 'This subroutine gives the user various
 'options for viewing the previously loaded
 'stats, and then calls routines for each
-Sub StatOptions_Nat (NRT, leagueFile$)
+Sub StatOptions_Nat (leagueFile$, NRT)
 
     Do
 

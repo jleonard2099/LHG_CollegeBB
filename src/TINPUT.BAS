@@ -945,7 +945,7 @@ Sub InputTeam ()
 
                 'Contribution Pct
                 playerOff!(I, 3) = (playerOff!(I, 9) + playerOff!(I, 10)) / X9!
-                playerOff!(I, 3) =C Int((100 * playerOff!(I, 3)))
+                playerOff!(I, 3) = CInt((100 * playerOff!(I, 3)))
 
                 '3FGA / TOT FGA
                 If playerOff!(I, 9) <> 0 Then 

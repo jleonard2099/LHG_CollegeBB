@@ -1260,7 +1260,7 @@ Sub COLHOOP ()
                     M9 = 100 / M8
                 End If
 
-                plyrOff_GAME!(P9, I, 16) = CInt((plyrOff_GAME!(P9, I, 16) * M9)/)
+                plyrOff_GAME!(P9, I, 16) = CInt((plyrOff_GAME!(P9, I, 16) * M9))
 
             Next I
 
@@ -9908,7 +9908,7 @@ Sub ReboundOffense ()
             End If
         End If
 
-        If tmFatigue(P, lineupIdx(P, I)) <= -5 Then 
+        If tmFatigue(P, lineupIdx(P, I)) <= -5 Then
             XZ = CInt(XZ * .9)
         End If
 
@@ -12801,7 +12801,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
 
         'FT Success Chance
         ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
-        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then 
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
             ftShotChance = CInt(ftShotChance * .9)
         End If
 
@@ -12979,7 +12979,7 @@ Sub FreeThrow_Three (missedLastFT)
 
         'FT Success Chance
         ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
-        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then 
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
             ftShotChance = Int(ftShotChance * .9)
         End If
 

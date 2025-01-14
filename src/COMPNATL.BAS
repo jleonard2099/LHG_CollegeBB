@@ -186,7 +186,7 @@ Sub CompileNatlOrg ()
 
                                     If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
-                                        Call ReadStatsConf(memberName$(XW), TN$)
+                                        Call ReadTeamStats(memberName$(XW), TN$)
                                         Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
                                         Call CalcStatLeadersConf(TN$)
                                         Call CalcStatLeadersNat(memberName$(XW), TN$)
