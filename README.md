@@ -98,8 +98,8 @@ Contact me directly if interested in contributing. Only considering people who s
 - Crowd sound courtesy of [Mike_Koenig] (https://soundbible.com)
 - Backboard sound retrieved from [Pixabay](https://pixabay.com)
 - I am responsible for maintaining / updating most of the code and will spend equal effort to code cleanup as to code improvement.
-- Randy Dudley, the original author of the LOOKY subroutine, for his crazy attention to detail and testing all my work
-- Jason Lamb, for lending his expertise in BASIC to helping me learn some standards and rewriting the menu functions.
 - Lance Haffner, for his hard work over 2 decades giving people endless hours of playable sports games and making dreams come true.
 - [Lance Haffner Sports Sims](https://www.facebook.com/groups/115923978469802) Facebook group admin Philip Lupi, for his hard work keeping Lance's games alive and active with fans old and new.
-- [Manual images created by Cool Clips](http://search.coolclips.com/)
+- Jason Lamb, for lending his expertise in BASIC to helping me learn some standards and rewriting the menu functions.
+- Randy Dudley, original author of the stats viewer, for his thorough beta testing and attention to detail with stats / leaders
+- Thomas Humphrey, for being persistent in bringing up issues with the no-shot-clock era and being patient for me to work on it
