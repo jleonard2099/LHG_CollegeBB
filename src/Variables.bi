@@ -17,9 +17,9 @@ Dim powerRating(MAX_SCHED_STATS, 1)
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
 Dim statsA!(15, 14)
-Dim statsW0!(15), statsW1!(15)
+Dim stats3FGM!(15), stats3FGA!(15)
 Dim statsOffTot!(15), statsDefTot!(15)
-Dim statsZ2!(13, 13)
+Dim gameStatPlyrVal!(13, 13)
 
 'Record / Standings
 Dim confWins, confLosses
@@ -203,7 +203,7 @@ Dim tm3FGA!, tm3FGAPct!, tmAsst!, tmBlocks!, tmFouls!
 Dim tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
 Dim tmReb!, tmSteal!, tmTO!
 
-Dim statPlyrVal!(0 To 14, 24)
+Dim statPlyrVal!(0 To 14, 0 to 26)
 
 
 '----------------------------------------
@@ -291,7 +291,7 @@ Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecL
 Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1), teamYears(1)
 Dim Shared threeFG(1, 13, 1), timeouts(1), timePlayed(1, 13)
 Dim Shared tmFatigue(1, 13), totRebounds(1), turnovers(1)
-Dim Shared W2(1, 13), W3(1, 13)
+Dim Shared gameStat3FGM(1, 13), gameStat3FGA(1, 13)
 
 'Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25)
 Dim gameW0!(1, 13), gameW1!(1, 13)

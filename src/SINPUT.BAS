@@ -8,12 +8,12 @@ Sub EditStats ()
 
     _Title "Courtside College Basketball - Stats Input"
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
     Shared statPlyrNames$()
-    Dim Z2(14, 14)
-
+    Shared statPlyrVal!()
+    
     teamNbr = 0
     Call ChooseTeam(YN$, NTMS, teamNbr, team$)
     statFile$ = nameStatFile$(team$)
@@ -30,32 +30,7 @@ Sub EditStats ()
 
     Else
 
-        Open diskPaths$(1) + statFile$ For Input As #1
-
-        Input #1, A$
-
-        For I = 0 To 13:
-
-            Input #1, statPlyrNames$(I)
-
-            For J = 0 To 13:
-                Input #1, Z2(I, J)
-            Next J
-
-            Input #1, statsW0!(I)
-            Input #1, statsW1!(I)
-
-        Next I
-
-        For L = 0 To 15:
-            Input #1, statsOffTot!(L)
-        Next L
-
-        For L = 0 To 15:
-            Input #1, statsDefTot!(L)
-        Next L
-
-        Close #1
+        Call ReadTeamStats(teamName$, statFile$)
 
         '---------------
         ' Team Stats
@@ -323,22 +298,22 @@ Sub EditStats ()
                 Locate 2, 1: Print "PLAYER - " + Str$(I + 1)
                 Locate 3, 1
                 Print "1. NAME  "; statPlyrNames$(I)
-                Print "2. GAMES "; Z2(I, 0)
-                Print "3. MINUTES "; CInt(Z2(I, 10) / 60)
-                Print "4. FGA "; Z2(I, 1)
-                Print "5. FGM "; Z2(I, 2); ""
-                Print "6. FTA "; Z2(I, 3)
-                Print "7. FTM "; Z2(I, 4)
-                Print "8. OFF REB "; Z2(I, 12)
-                Print "9. TOT REB "; Z2(I, 5)
-                Print "10. FOULS "; Z2(I, 6)
-                Print "11. STEALS "; Z2(I, 7)
-                Print "12. ASSISTS "; Z2(I, 8)
-                Print "13. BLOCKS "; Z2(I, 9)
-                Print "14. TURNOVERS "; Z2(I, 11)
-                Print "15. 3FGA "; statsW1!(I)
-                Print "16. 3FGM "; statsW0!(I)
-                Print "17. HI-GAME (PTS) "; Z2(I, 13)
+                Print "2. GAMES "; statPlyrVal!(I, 0)
+                Print "3. MINUTES "; CInt(statPlyrVal!(I, 10) / 60)
+                Print "4. FGA "; statPlyrVal!(I, 1)
+                Print "5. FGM "; statPlyrVal!(I, 2); ""
+                Print "6. FTA "; statPlyrVal!(I, 3)
+                Print "7. FTM "; statPlyrVal!(I, 4)
+                Print "8. OFF REB "; statPlyrVal!(I, 12)
+                Print "9. TOT REB "; statPlyrVal!(I, 5)
+                Print "10. FOULS "; statPlyrVal!(I, 6)
+                Print "11. STEALS "; statPlyrVal!(I, 7)
+                Print "12. ASSISTS "; statPlyrVal!(I, 8)
+                Print "13. BLOCKS "; statPlyrVal!(I, 9)
+                Print "14. TURNOVERS "; statPlyrVal!(I, 11)
+                Print "15. 3FGA "; stats3FGA!(I)
+                Print "16. 3FGM "; stats3FGM!(I)
+                Print "17. HI-GAME (PTS) "; statPlyrVal!(I, 13)
 
                 Do
 
@@ -355,83 +330,83 @@ Sub EditStats ()
 
                         Case 2
                             Locate 4, 10: Print Space$(10)
-                            Locate 4, 1: Input "2. GAMES "; Z2(I, 0)
+                            Locate 4, 1: Input "2. GAMES "; statPlyrVal!(I, 0)
                             Locate 4, 10: Print " "
 
                         Case 3
                             Locate 5, 12: Print Space$(10)
-                            Locate 5, 1: Input "3. MINUTES "; Z2(I, 10)
+                            Locate 5, 1: Input "3. MINUTES "; statPlyrVal!(I, 10)
                             Locate 5, 12: Print " "
-                            Z2(I, 10) = Z2(I, 10) * 60
+                            statPlyrVal!(I, 10) = statPlyrVal!(I, 10) * 60
 
                         Case 4
                             Locate 6, 8: Print Space$(10)
-                            Locate 6, 1: Input "4. FGA "; Z2(I, 1)
+                            Locate 6, 1: Input "4. FGA "; statPlyrVal!(I, 1)
                             Locate 6, 8: Print " "
 
                         Case 5
                             Locate 7, 8: Print Space$(10)
-                            Locate 7, 1: Input "5. FGM "; Z2(I, 2)
+                            Locate 7, 1: Input "5. FGM "; statPlyrVal!(I, 2)
                             Locate 7, 8: Print " "
 
                         Case 6
                             Locate 8, 8: Print Space$(10)
-                            Locate 8, 1: Input "6. FTA "; Z2(I, 3)
+                            Locate 8, 1: Input "6. FTA "; statPlyrVal!(I, 3)
                             Locate 8, 8: Print " "
 
                         Case 7
                             Locate 9, 8: Print Space$(10)
-                            Locate 9, 1: Input "7. FTM "; Z2(I, 4)
+                            Locate 9, 1: Input "7. FTM "; statPlyrVal!(I, 4)
                             Locate 9, 8: Print " "
 
                         Case 8
                             Locate 10, 12: Print Space$(10)
-                            Locate 10, 1: Input "8. OFF REB "; Z2(I, 12)
+                            Locate 10, 1: Input "8. OFF REB "; statPlyrVal!(I, 12)
                             Locate 10, 12: Print " "
 
                         Case 9
                             Locate 11, 12: Print Space$(10)
-                            Locate 11, 1: Input "9. TOT REB "; Z2(I, 5)
+                            Locate 11, 1: Input "9. TOT REB "; statPlyrVal!(I, 5)
                             Locate 11, 12: Print " "
 
                         Case 10
                             Locate 12, 11: Print Space$(10)
-                            Locate 12, 1: Input "10. FOULS "; Z2(I, 6)
+                            Locate 12, 1: Input "10. FOULS "; statPlyrVal!(I, 6)
                             Locate 12, 11: Print " "
 
                         Case 11
                             Locate 13, 12: Print Space$(10)
-                            Locate 13, 1: Input "11. STEALS "; Z2(I, 7)
+                            Locate 13, 1: Input "11. STEALS "; statPlyrVal!(I, 7)
                             Locate 13, 12: Print " "
 
                         Case 12
                             Locate 14, 13: Print Space$(10)
-                            Locate 14, 1: Input "12. ASSISTS "; Z2(I, 8)
+                            Locate 14, 1: Input "12. ASSISTS "; statPlyrVal!(I, 8)
                             Locate 14, 13: Print " "
 
                         Case 13
                             Locate 15, 12: Print Space$(10)
-                            Locate 15, 1: Input "13. BLOCKS "; Z2(I, 9)
+                            Locate 15, 1: Input "13. BLOCKS "; statPlyrVal!(I, 9)
                             Locate 15, 12: Print " "
 
                         Case 14
                             Locate 16, 15: Print Space$(10)
-                            Locate 16, 1: Input "14. TURNOVERS "; Z2(I, 11)
+                            Locate 16, 1: Input "14. TURNOVERS "; statPlyrVal!(I, 11)
                             Locate 16, 15: Print " "
 
                         Case 15
                             Locate 17, 10: Print Space$(10)
-                            Locate 17, 1: Input "15. 3FGA "; statsW1!(I)
+                            Locate 17, 1: Input "15. 3FGA "; stats3FGA!(I)
                             Locate 17, 10: Print " "
 
                         Case 16
                             Locate 18, 10: Print Space$(10)
-                            Locate 18, 1: Input "16. 3FGM "; statsW0!(I)
+                            Locate 18, 1: Input "16. 3FGM "; stats3FGM!(I)
                             Locate 18, 10: Print " "
 
                         Case 17
                             Locate 19, 19: Print Space$(10)
-                            Locate 19, 1: Input "17. HI-GAME (PTS) "; Z2(I, 13)
+                            Locate 19, 1: Input "17. HI-GAME (PTS) "; statPlyrVal!(I, 13)
                             Locate 19, 19: Print " "
 
                     End Select
@@ -451,19 +426,19 @@ Sub EditStats ()
         '---------------
         Open diskPaths$(1) + statFile$ For Output As #2
 
-        Print #2, A$
+        Print #2, teamName$
 
         For I = 0 To 13:
 
             Print #2, statPlyrNames$(I)
 
             For J = 0 To 13:
-                Print #2, Z2(I, J)
+                Print #2, statPlyrVal!(I, J)
             Next J
 
-            Print #2, statsW0!(I)
+            Print #2, stats3FGM!(I)
 
-            Print #2, statsW1!(I)
+            Print #2, stats3FGA!(I)
 
         Next I
 

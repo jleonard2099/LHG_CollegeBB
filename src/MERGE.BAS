@@ -75,7 +75,7 @@ Sub MergeStats ()
     Shared teamScore(), teamScore_Road()
 
     Shared plyrStat_Merge!(), plyrRat_MERGE()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
     Shared statsOffTot_Road!(), statsDefTot_Road!()
@@ -195,8 +195,8 @@ Sub MergeStats ()
                                 Input #3, plyrRat_MERGE(I, J)
                             Next
 
-                            Input #3, statsW0!(I)
-                            Input #3, statsW1!(I)
+                            Input #3, stats3FGM!(I)
+                            Input #3, stats3FGA!(I)
 
                         Next
 
@@ -353,7 +353,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
 
     Shared plyrStat_Merge!(), plyrRat_MERGE()
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
     Shared statsOffTot_Road!(), statsDefTot_Road!()
@@ -384,8 +384,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
             plyrRat_MERGE(I, J) = plyrRat_MERGE(I, J) + plyrStat_Merge!(I, J)
         Next J
 
-        statsW0!(I) = statsW0!(I) + threeFGM_Merge!(I)
-        statsW1!(I) = statsW1!(I) + threeFGA_Merge!(I)
+        stats3FGM!(I) = stats3FGM!(I) + threeFGM_Merge!(I)
+        stats3FGA!(I) = stats3FGA!(I) + threeFGA_Merge!(I)
 
         If plyrRat_MERGE(I, 13) < plyrStat_Merge!(I, 13) Then 
             plyrRat_MERGE(I, 13) = plyrStat_Merge!(I, 13) 
@@ -412,8 +412,8 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
             Write #1, plyrRat_MERGE(I, J)
         Next
 
-        Write #1, statsW0!(I)
-        Write #1, statsW1!(I)
+        Write #1, stats3FGM!(I)
+        Write #1, stats3FGA!(I)
 
     Next
 

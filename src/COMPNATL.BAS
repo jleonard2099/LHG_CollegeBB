@@ -228,8 +228,8 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
 
     Shared defTotals!(), offTotals!()
     Shared natDefLeaders!(), natOffLeaders!()
-    Shared natLeaderVals!(), compStats!()
-    Shared statsW0!(), statsW1!()
+    Shared natLeaderVals!(), statPlyrVal!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared natDefLdrNames$(), natOffLdrNames$()
     Shared statPlyrNames$()
@@ -246,9 +246,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         Print statPlyrNames$(X)
 
         'Points Per Game
-        If compStats!(X, 22) > natLeaderVals!(20, 1) Then
+        If statPlyrVal!(X, 22) > natLeaderVals!(20, 1) Then
 
-            natLeaderVals!(20, 1) = compStats!(X, 22)
+            natLeaderVals!(20, 1) = statPlyrVal!(X, 22)
             natLeaderVals!(20, 2) = 0
             natLdrName$(20) = statPlyrNames$(X)
             natLdrTeam$(20) = teamName$
@@ -268,9 +268,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Offensive Rebounds
-        If compStats!(X, 12) > natLeaderVals!(40, 1) Then
+        If statPlyrVal!(X, 12) > natLeaderVals!(40, 1) Then
 
-            natLeaderVals!(40, 1) = compStats!(X, 12)
+            natLeaderVals!(40, 1) = statPlyrVal!(X, 12)
             natLeaderVals!(40, 2) = 0
             natLdrName$(40) = statPlyrNames$(X)
             natLdrTeam$(40) = teamName$
@@ -292,10 +292,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Field Goal %
-        If compStats!(X, 19) > natLeaderVals!(60, 1) Then
+        If statPlyrVal!(X, 19) > natLeaderVals!(60, 1) Then
 
-            natLeaderVals!(60, 1) = compStats!(X, 19)
-            natLeaderVals!(60, 2) = compStats!(X, 1)
+            natLeaderVals!(60, 1) = statPlyrVal!(X, 19)
+            natLeaderVals!(60, 2) = statPlyrVal!(X, 1)
             natLdrName$(60) = statPlyrNames$(X)
             natLdrTeam$(60) = teamName$
 
@@ -316,10 +316,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Free Throw %
-        If compStats!(X, 20) > natLeaderVals!(80, 1) Then
+        If statPlyrVal!(X, 20) > natLeaderVals!(80, 1) Then
 
-            natLeaderVals!(80, 1) = compStats!(X, 20)
-            natLeaderVals!(80, 2) = compStats!(X, 3)
+            natLeaderVals!(80, 1) = statPlyrVal!(X, 20)
+            natLeaderVals!(80, 2) = statPlyrVal!(X, 3)
             natLdrName$(80) = statPlyrNames$(X)
             natLdrTeam$(80) = teamName$
 
@@ -340,10 +340,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Steals Per Game
-        If compStats!(X, 15) > natLeaderVals!(90, 1) Then
+        If statPlyrVal!(X, 15) > natLeaderVals!(90, 1) Then
 
-            natLeaderVals!(90, 1) = compStats!(X, 15)
-            natLeaderVals!(90, 2) = compStats!(X, 7)
+            natLeaderVals!(90, 1) = statPlyrVal!(X, 15)
+            natLeaderVals!(90, 2) = statPlyrVal!(X, 7)
             natLdrName$(90) = statPlyrNames$(X)
             natLdrTeam$(90) = teamName$
 
@@ -364,9 +364,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Steals
-        If compStats!(X, 7) > natLeaderVals!(100, 1) Then
+        If statPlyrVal!(X, 7) > natLeaderVals!(100, 1) Then
 
-            natLeaderVals!(100, 1) = compStats!(X, 7)
+            natLeaderVals!(100, 1) = statPlyrVal!(X, 7)
             natLeaderVals!(100, 2) = 0
             natLdrName$(100) = statPlyrNames$(X)
             natLdrTeam$(100) = teamName$
@@ -388,10 +388,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Assist Per Game
-        If compStats!(X, 16) > natLeaderVals!(110, 1) Then
+        If statPlyrVal!(X, 16) > natLeaderVals!(110, 1) Then
 
-            natLeaderVals!(110, 1) = compStats!(X, 16)
-            natLeaderVals!(110, 2) = compStats!(X, 8)
+            natLeaderVals!(110, 1) = statPlyrVal!(X, 16)
+            natLeaderVals!(110, 2) = statPlyrVal!(X, 8)
             natLdrName$(110) = statPlyrNames$(X)
             natLdrTeam$(110) = teamName$
 
@@ -412,10 +412,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Assists
-        If compStats!(X, 8) > natLeaderVals!(120, 1) Then
+        If statPlyrVal!(X, 8) > natLeaderVals!(120, 1) Then
 
-            natLeaderVals!(120, 1) = compStats!(X, 8)
-            natLeaderVals!(120, 2) = compStats!(X, 8)
+            natLeaderVals!(120, 1) = statPlyrVal!(X, 8)
+            natLeaderVals!(120, 2) = statPlyrVal!(X, 8)
             natLdrName$(120) = statPlyrNames$(X)
             natLdrTeam$(120) = teamName$
 
@@ -436,10 +436,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         '3 Field Goal %
-        If compStats!(X, 21) > natLeaderVals!(130, 1) Then
+        If statPlyrVal!(X, 21) > natLeaderVals!(130, 1) Then
 
-            natLeaderVals!(130, 1) = compStats!(X, 21)
-            natLeaderVals!(130, 2) = statsW1!(X)
+            natLeaderVals!(130, 1) = statPlyrVal!(X, 21)
+            natLeaderVals!(130, 2) = stats3FGA!(X)
             natLdrName$(130) = statPlyrNames$(X)
             natLdrTeam$(130) = teamName$
 
@@ -460,9 +460,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         '3 Field Goals Made
-        If statsW0!(X) > natLeaderVals!(140, 1) Then
+        If stats3FGM!(X) > natLeaderVals!(140, 1) Then
 
-            natLeaderVals!(140, 1) = statsW0!(X)
+            natLeaderVals!(140, 1) = stats3FGM!(X)
             natLeaderVals!(140, 2) = 0
             natLdrName$(140) = statPlyrNames$(X)
             natLdrTeam$(140) = teamName$
@@ -484,9 +484,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Minutes Per Game
-        If compStats!(X, 18) > natLeaderVals!(150, 1) Then
+        If statPlyrVal!(X, 18) > natLeaderVals!(150, 1) Then
 
-            natLeaderVals!(150, 1) = compStats!(X, 18)
+            natLeaderVals!(150, 1) = statPlyrVal!(X, 18)
             natLeaderVals!(150, 2) = 0
             natLdrName$(150) = statPlyrNames$(X)
             natLdrTeam$(150) = teamName$
@@ -508,9 +508,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Total Minutes
-        If compStats!(X, 10) / 60 > natLeaderVals!(160, 1) Then
+        If statPlyrVal!(X, 10) / 60 > natLeaderVals!(160, 1) Then
 
-            natLeaderVals!(160, 1) = compStats!(X, 10) / 60
+            natLeaderVals!(160, 1) = statPlyrVal!(X, 10) / 60
             natLeaderVals!(160, 2) = 0
             natLdrName$(160) = statPlyrNames$(X)
             natLdrTeam$(160) = teamName$
@@ -532,10 +532,10 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Rebounds Per Game
-        If compStats!(X, 13) > natLeaderVals!(170, 1) Then
+        If statPlyrVal!(X, 13) > natLeaderVals!(170, 1) Then
 
-            natLeaderVals!(170, 1) = compStats!(X, 13)
-            natLeaderVals!(170, 2) = compStats!(X, 5)
+            natLeaderVals!(170, 1) = statPlyrVal!(X, 13)
+            natLeaderVals!(170, 2) = statPlyrVal!(X, 5)
             natLdrName$(170) = statPlyrNames$(X)
             natLdrTeam$(170) = teamName$
 
@@ -556,9 +556,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Avg Rebounds
-        If compStats!(X, 5) > natLeaderVals!(180, 1) Then
+        If statPlyrVal!(X, 5) > natLeaderVals!(180, 1) Then
 
-            natLeaderVals!(180, 1) = compStats!(X, 5)
+            natLeaderVals!(180, 1) = statPlyrVal!(X, 5)
             natLeaderVals!(18, 2) = 0
             natLdrName$(180) = statPlyrNames$(X)
             natLdrTeam$(180) = teamName$
@@ -580,9 +580,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Blocks Per Game
-        If compStats!(X, 17) > natLeaderVals!(190, 1) Then
+        If statPlyrVal!(X, 17) > natLeaderVals!(190, 1) Then
 
-            natLeaderVals!(190, 1) = compStats!(X, 17)
+            natLeaderVals!(190, 1) = statPlyrVal!(X, 17)
             natLeaderVals!(190, 2) = 0
             natLdrName$(190) = statPlyrNames$(X)
             natLdrTeam$(190) = teamName$
@@ -604,9 +604,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Blocks
-        If compStats!(X, 9) > natLeaderVals!(200, 1) Then
+        If statPlyrVal!(X, 9) > natLeaderVals!(200, 1) Then
 
-            natLeaderVals!(200, 1) = compStats!(X, 9)
+            natLeaderVals!(200, 1) = statPlyrVal!(X, 9)
             natLeaderVals!(200, 2) = 0
             natLdrName$(200) = statPlyrNames$(X)
             natLdrTeam$(200) = teamName$
@@ -628,9 +628,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Field Goals Made
-        If compStats!(X, 2) > natLeaderVals!(210, 1) Then
+        If statPlyrVal!(X, 2) > natLeaderVals!(210, 1) Then
 
-            natLeaderVals!(210, 1) = compStats!(X, 2)
+            natLeaderVals!(210, 1) = statPlyrVal!(X, 2)
             natLeaderVals!(210, 2) = 0
             natLdrName$(210) = statPlyrNames$(X)
             natLdrTeam$(210) = teamName$
@@ -652,9 +652,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Free Throws Made
-        If compStats!(X, 4) > natLeaderVals!(220, 1) Then
+        If statPlyrVal!(X, 4) > natLeaderVals!(220, 1) Then
 
-            natLeaderVals!(220, 1) = compStats!(X, 4)
+            natLeaderVals!(220, 1) = statPlyrVal!(X, 4)
             natLeaderVals!(220, 2) = 0
             natLdrName$(220) = statPlyrNames$(X)
             natLdrTeam$(220) = teamName$
@@ -676,14 +676,14 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Fouls Per Game
-        If compStats!(X, 14) > natLeaderVals!(230, 1) Then
+        If statPlyrVal!(X, 14) > natLeaderVals!(230, 1) Then
 
-            natLeaderVals!(230, 1) = compStats!(X, 14)
+            natLeaderVals!(230, 1) = statPlyrVal!(X, 14)
             natLeaderVals!(230, 2) = 0
             natLdrName$(230) = statPlyrNames$(X)
             natLdrTeam$(230) = teamName$
 
-            fpg! = compStats!(X, 14)
+            fpg! = statPlyrVal!(X, 14)
             test$ = statPlyrNames$(X)
 
             For Z = 221 To 229
@@ -703,9 +703,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Fouls
-        If compStats!(X, 6) > natLeaderVals!(240, 1) Then
+        If statPlyrVal!(X, 6) > natLeaderVals!(240, 1) Then
 
-            natLeaderVals!(240, 1) = compStats!(X, 6)
+            natLeaderVals!(240, 1) = statPlyrVal!(X, 6)
             natLeaderVals!(240, 2) = 0
             natLdrName$(240) = statPlyrNames$(X)
             natLdrTeam$(240) = teamName$
@@ -727,9 +727,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'MVP Points
-        If compStats!(X, 24) > natLeaderVals!(250, 1) Then
+        If statPlyrVal!(X, 24) > natLeaderVals!(250, 1) Then
 
-            natLeaderVals!(250, 1) = compStats!(X, 24)
+            natLeaderVals!(250, 1) = statPlyrVal!(X, 24)
             natLeaderVals!(250, 2) = 0
             natLdrName$(250) = statPlyrNames$(X)
             natLdrTeam$(250) = teamName$

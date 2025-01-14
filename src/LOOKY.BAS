@@ -63,7 +63,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     Shared gameAttendance&()
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared statPlyrVal!()
 
@@ -158,50 +158,25 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames%)
 
     Next
 
-    Open diskPaths$(1) + statFile$ For Input As #2
-
-    Input #2, teamName$
-
-    For I = 0 To 13:
-
-        Input #2, statPlyrNames$(I)
-
-        For J = 0 To 13:
-            Input #2, statPlyrVal!(I, J)
-        Next
-
-        Input #2, statsW0!(I)
-        Input #2, statsW1!(I)
-
-    Next
-
-    For K = 0 To 15:
-        Input #2, statsOffTot!(K)
-    Next
-
-    For K = 0 To 15:
-        Input #2, statsDefTot!(K)
-    Next
-
-    Close #2
+    Call ReadTeamStats(teamName$, statFile$)
 
     For I = 0 To 13
 
         If statPlyrVal!(I, 0) <> 0 Then
             statPlyrVal!(I, 14) = statPlyrVal!(I, 10) / statPlyrVal!(I, 0)
-            statPlyrVal!(I, 20) = (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + statsW0!(I)) / statPlyrVal!(I, 0)
+            statPlyrVal!(I, 20) = (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)) / statPlyrVal!(I, 0)
             statPlyrVal!(I, 21) = statPlyrVal!(I, 5) / statPlyrVal!(I, 0)
         End If
 
-        statPlyrVal!(I, 22) = statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + statsW0!(I)
+        statPlyrVal!(I, 22) = statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)
         statPlyrVal!(I, 23) = statPlyrVal!(I, 5) - statPlyrVal!(I, 12)
 
         If statPlyrVal!(I, 1) <> 0 Then
             statPlyrVal!(I, 15) = statPlyrVal!(I, 2) / statPlyrVal!(I, 1)
         End If
 
-        statPlyrVal!(I, 18) = statsW0!(I)
-        statPlyrVal!(I, 19) = statsW1!(I)
+        statPlyrVal!(I, 18) = stats3FGM!(I)
+        statPlyrVal!(I, 19) = stats3FGA!(I)
 
         If statPlyrVal!(I, 19) <> 0 Then
             statPlyrVal!(I, 16) = statPlyrVal!(I, 18) / statPlyrVal!(I, 19)
@@ -418,7 +393,7 @@ End Sub
 'team's player stats to the user display
 Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared statPlyrVal!()
 
@@ -496,19 +471,19 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                 End If
 
                 '3FGM, 3FGA, 3FG PCT
-                Locate , 44: Print Using "#### ####"; statsW0!(I); statsW1!(I);
+                Locate , 44: Print Using "#### ####"; stats3FGM!(I); stats3FGA!(I);
 
                 Locate , 54
-                If statsW1!(I) = 0 Then
+                If stats3FGA!(I) = 0 Then
                     Print ".---";
                 Else
-                    If statsW1!(I) = statsW0!(I) Then
+                    If stats3FGA!(I) = stats3FGM!(I) Then
                         Print "1.00";
                     Else
-                        If statsW0!(I) = 0 Then
+                        If stats3FGM!(I) = 0 Then
                             Print ".000";
                         Else
-                            threeFGPCT! = statsW0!(I) / statsW1!(I)
+                            threeFGPCT! = stats3FGM!(I) / stats3FGA!(I)
                             Print Using ".###"; threeFGPCT!;
                         End If
                     End If
@@ -699,7 +674,7 @@ End Sub
 'team's OFF/DEF stats to the user display
 Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared statPlyrVal!()
 
@@ -751,10 +726,10 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames%, menuExit)
                 Print Left$(statPlyrNames$(I), 13);: Locate , 15
 
                 'Points
-                Print Using "####"; statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + statsW0!(I);
+                Print Using "####"; statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I);
 
                 'Average
-                If statPlyrVal!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + statsW0!(I)) / statPlyrVal!(I, 0);
+                If statPlyrVal!(I, 0) > 0 Then Locate , 21: Print Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)) / statPlyrVal!(I, 0);
 
                 'Highest Points, Rebounds
                 Locate , 26: Print Using "## #### #### ####"; statPlyrVal!(I, 13); statPlyrVal!(I, 12); statPlyrVal!(I, 5) - statPlyrVal!(I, 12); statPlyrVal!(I, 5);
@@ -1098,7 +1073,7 @@ End Sub
 Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
 
     Shared statsOffTot!(), statsDefTot!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statPlyrVal!()
 
     Shared statPlyrNames$()
@@ -1144,18 +1119,18 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
         End If
 
         '3FGM, 3FGA, 3FG PCT
-        Print #1, Tab(44); Using "#### ####"; statsW0!(I); statsW1!(I);: Print #1, Tab(54);
+        Print #1, Tab(44); Using "#### ####"; stats3FGM!(I); stats3FGA!(I);: Print #1, Tab(54);
 
-        If statsW1!(I) = 0 Then
+        If stats3FGA!(I) = 0 Then
             Print #1, ".---";
         Else
-            If statsW1!(I) = statsW0!(I) Then
+            If stats3FGA!(I) = stats3FGM!(I) Then
                 Print #1, "1.00";
             Else
-                If statsW0!(I) = 0 Then
+                If stats3FGM!(I) = 0 Then
                     Print #1, ".000";
                 Else
-                    threeFGPCT! = statsW0!(I) / statsW1!(I)
+                    threeFGPCT! = stats3FGM!(I) / stats3FGA!(I)
                     Print #1, Using ".###"; threeFGPCT!;
                 End If
             End If
@@ -1247,11 +1222,11 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames%)
         Print #1, Left$(statPlyrNames$(I), 13);: Print #1, Tab(15);
 
         'Points
-        Print #1, Using "####"; statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + statsW0!(I);
+        Print #1, Using "####"; statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I);
 
         'Average
         If statPlyrVal!(I, 0) > 0 Then
-            Print #1, Tab(21); Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + statsW0!(I)) / statPlyrVal!(I, 0);
+            Print #1, Tab(21); Using "##.#"; (statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I)) / statPlyrVal!(I, 0);
         End If
 
         'Highest Points, Rebounds
@@ -1321,7 +1296,7 @@ End Sub
 'based on the chosen category
 Sub SortStats (categoryPick)
 
-    Shared statsW1!(), statsW1!()
+    Shared stats3FGA!(), stats3FGA!()
     Shared statPlyrVal!()
 
     Shared statPlyrNames$()
@@ -1362,8 +1337,8 @@ Sub SortStats (categoryPick)
                     Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)
                 Next
 
-                Swap statsW0!(Z), statsW0!(Z1)
-                Swap statsW1!(Z), statsW1!(Z1)
+                Swap stats3FGM!(Z), stats3FGM!(Z1)
+                Swap stats3FGA!(Z), stats3FGA!(Z1)
                 Swap statPlyrNames$(Z), statPlyrNames$(Z1)
 
             End If

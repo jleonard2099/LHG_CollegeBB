@@ -5153,7 +5153,7 @@ Sub InitVar ()
     Shared FY%()
 
     Shared gameW0!(), gameW1!()
-    Shared statsOffTot!(), statsDefTot!(), statsZ2!()
+    Shared statsOffTot!(), statsDefTot!(), gameStatPlyrVal!()
     Shared indRecords!(), teamRecords!()
 
     Shared alpha$()
@@ -5283,7 +5283,7 @@ Sub InitVar ()
     Erase teamAdj, teamRecWins, teamRecLoss
     Erase threeFG, timePlayed, tmFatigue
     Erase totRebounds, turnovers, statTotals
-    Erase W2, W3
+    Erase gameStat3FGM, gameStat3FGA
 
     Erase CZ%, FY%
     Erase G9%, NG%, NG1%
@@ -5296,7 +5296,7 @@ Sub InitVar ()
     Erase teamNames$, teamRecDesc$, teamYrTourn$
 
     Erase gameW0!, gameW1!
-    Erase statsOffTot!, statsDefTot!, statsZ2!
+    Erase statsOffTot!, statsDefTot!, gameStatPlyrVal!
     Erase indRecords!, teamRecords!
 
     actualAttendance& = 0
@@ -14113,7 +14113,7 @@ Sub COMPILESTATFILES (teamIdx)
     Shared gameAttendance&()
 
     Shared gameW0!(), gameW1!()
-    Shared statsOffTot!(), statsDefTot!(), statsZ2!()
+    Shared statsOffTot!(), statsDefTot!(), gameStatPlyrVal!()
 
     Shared powerRating(), teamScore(), oppScore()
 
@@ -14132,11 +14132,11 @@ Sub COMPILESTATFILES (teamIdx)
             Input #1, players$(teamIdx, I)
 
             For J = 0 To 13:
-                Input #1, statsZ2!(I, J)
+                Input #1, gameStatPlyrVal!(I, J)
             Next J
 
-            Input #1, W2(teamIdx, I)
-            Input #1, W3(teamIdx, I)
+            Input #1, gameStat3FGM(teamIdx, I)
+            Input #1, gameStat3FGA(teamIdx, I)
 
         Next I
 
@@ -14156,15 +14156,15 @@ Sub COMPILESTATFILES (teamIdx)
 
     For I = 0 To 13
 
-        If plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + gameW0!(teamIdx, I) > statsZ2!(I, 13) Then
-            statsZ2!(I, 13) = plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + gameW0!(teamIdx, I)
+        If plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + gameW0!(teamIdx, I) > gameStatPlyrVal!(I, 13) Then
+            gameStatPlyrVal!(I, 13) = plyrOff_GAME!(teamIdx, I, 2) * 2 + plyrOff_GAME!(teamIdx, I, 4) + gameW0!(teamIdx, I)
         End If
 
-        If plyrOff_GAME!(teamIdx, I, 10) > 0 Then statsZ2!(I, 0) = statsZ2!(I, 0) + 1
+        If plyrOff_GAME!(teamIdx, I, 10) > 0 Then gameStatPlyrVal!(I, 0) = gameStatPlyrVal!(I, 0) + 1
 
         For J = 1 To 12
 
-            statsZ2!(I, J) = statsZ2!(I, J) + plyrOff_GAME!(teamIdx, I, J)
+            gameStatPlyrVal!(I, J) = gameStatPlyrVal!(I, J) + plyrOff_GAME!(teamIdx, I, J)
 
             If J <> 5 And J <> 10 And J <> 11 Then
                 statsOffTot!(J) = statsOffTot!(J) + plyrOff_GAME!(teamIdx, I, J)
@@ -14206,8 +14206,8 @@ Sub COMPILESTATFILES (teamIdx)
         statsOffTot!(14) = statsOffTot!(14) + gameW1!(teamIdx, J)
         statsDefTot!(13) = statsDefTot!(13) + gameW0!(1 - teamIdx, J)
         statsDefTot!(14) = statsDefTot!(14) + gameW1!(1 - teamIdx, J)
-        W2(teamIdx, J) = W2(teamIdx, J) + gameW0!(teamIdx, J)
-        W3(teamIdx, J) = W3(teamIdx, J) + gameW1!(teamIdx, J)
+        gameStat3FGM(teamIdx, J) = gameStat3FGM(teamIdx, J) + gameW0!(teamIdx, J)
+        gameStat3FGA(teamIdx, J) = gameStat3FGA(teamIdx, J) + gameW1!(teamIdx, J)
     Next J
 
     statsOffTot!(10) = statsOffTot!(10) + score(teamIdx, 0)
@@ -14229,11 +14229,11 @@ Sub COMPILESTATFILES (teamIdx)
         Print #2, players$(teamIdx, I)
 
         For J = 0 To 13:
-            Print #2, statsZ2!(I, J)
+            Print #2, gameStatPlyrVal!(I, J)
         Next J
 
-        Print #2, W2(teamIdx, I):
-        Print #2, W3(teamIdx, I)
+        Print #2, gameStat3FGM(teamIdx, I):
+        Print #2, gameStat3FGA(teamIdx, I)
 
     Next I
 
@@ -14405,7 +14405,7 @@ Sub COMPILESTATFILES (teamIdx)
 
     Erase powerRating, oppScore, teamScore
     Erase gameAttendance&
-    Erase statsOffTot!, statsDefTot!, statsZ2!
+    Erase statsOffTot!, statsDefTot!, gameStatPlyrVal!
     Erase gameSite$, locIndicator$, oppName$
 
 End Sub

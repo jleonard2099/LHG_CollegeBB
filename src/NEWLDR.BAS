@@ -141,7 +141,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
     Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
     Shared plyrLdrVal!(), teamLdrVal!()
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared leader3FGM!(), leader3FGA!()
 
@@ -174,8 +174,8 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                         Input #1, playerOff!(I, J)
                     Next
 
-                    Input #1, statsW0!(I)
-                    Input #1, statsW1!(I)
+                    Input #1, stats3FGM!(I)
+                    Input #1, stats3FGA!(I)
 
                 Next
 
@@ -225,8 +225,8 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
                             plyrLdrStats!(JB, K1) = playerOff!(I, I1)
                         Next I1
 
-                        leader3FGM!(JB) = statsW0!(I)
-                        leader3FGA!(JB) = statsW1!(I)
+                        leader3FGM!(JB) = stats3FGM!(I)
+                        leader3FGA!(JB) = stats3FGA!(I)
                     
                     End If
 

@@ -11,7 +11,7 @@ Sub COMPARE ()
     Shared teamScore(), oppScore(), teamRatings()
     Shared replayLosses, replayWins
 
-    Shared statsA!(), statsW0!(), statsW1!()
+    Shared statsA!(), stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
     Shared position$()
@@ -44,35 +44,10 @@ Sub COMPARE ()
 
             Else
 
-                Open diskPaths$(1) + statFile$ For Input As #1
-
-                Input #1, statTeam$
-
-                For I = 0 To 13:
-
-                    Input #1, statPlyrNames$(I)
-
-                    For J = 0 To 13
-                        Input #1, statsA!(I, J)
-                    Next
-
-                    Input #1, statsW0!(I)
-
-                    Input #1, statsW1!(I)
-
-                Next
-
-                For L = 0 To 15:
-                    Input #1, statsOffTot!(L)
-                Next
-
-                For L = 0 To 15:
-                    Input #1, statsDefTot!(L)
-                Next
-
-                Close #1
+                Call ReadTeamStats (statTeam$, statFile$)
 
                 For I = 0 To 13
+
                     Select Case position$(I)
                     
                         Case "F": posn$(I) = "FORWARD"
@@ -87,21 +62,7 @@ Sub COMPARE ()
 
                 Next
 
-                Open diskPaths$(1) + statFile$ + "S" For Input As #2
-
-                Input #2, numberGames
-
-                For J = 1 To MAX_SCHED_STATS: 
-                    Input #2, teamScore(J)
-                Next
-
-                For J = 1 To MAX_SCHED_STATS: 
-                    Input #2, oppName$(J)
-                Next
-
-                For J = 1 To MAX_SCHED_STATS: 
-                    Input #2, oppScore(J)
-                Next
+                Call ReadScheduleStats (statFile$, numberGames)
 
                 replayLosses = 0
                 replayWins = 0
@@ -159,7 +120,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared teamRatings(), teamStats!()
 
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     
     Shared statsOffTot!(), statsDefTot!()
 
@@ -683,7 +644,7 @@ End Sub
 Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
     Shared statsA!(), playerStats!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared statPlyrNames$()
 
@@ -981,27 +942,27 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#####.#"; statsA!(idx, 9) / statsA!(idx, 0);
     End If
 
-    Locate , 25: Print Using "#######"; statsW0!(idx);
-    Locate , 32: Print Using "#######"; statsW1!(idx);
+    Locate , 25: Print Using "#######"; stats3FGM!(idx);
+    Locate , 32: Print Using "#######"; stats3FGA!(idx);
 
     Locate , 39
-    If statsW0!(idx) = 0 Then 
+    If stats3FGM!(idx) = 0 Then 
         Print "      0.0%";
     End If
-    If statsW0!(idx) > 0 Then
-        Print Using "#######.#%"; (statsW0!(idx) / statsW1!(idx)) * 100;
+    If stats3FGM!(idx) > 0 Then
+        Print Using "#######.#%"; (stats3FGM!(idx) / stats3FGA!(idx)) * 100;
     End If
 
     statVal = statsA!(idx, 5) / statsA!(idx, 0)
     Locate , 49: Print Using "#####.#"; statVal;
-    Locate , 56: Print Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx);
+    Locate , 56: Print Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx);
 
     Locate , 62
-    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx) = 0 Then 
+    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx) = 0 Then 
         Print "   0.0";
     End If
-    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx) > 0 Then 
-        Print Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(idx)) / statsA!(idx, 0);
+    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx) > 0 Then 
+        Print Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx)) / statsA!(idx, 0);
     End If
 
     Locate , 68
@@ -1034,7 +995,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
     Shared statsA!()
     Shared statsOffTot!(), statsDefTot!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
 
     Shared statPlyrNames$()
 
@@ -1623,32 +1584,32 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
             '3 FGM
             Print #1, Tab(25);
-            Print #1, Using "#######"; statsW0!(I);
+            Print #1, Using "#######"; stats3FGM!(I);
 
             '3 FGA
             Print #1, Tab(32);
-            Print #1, Using "#######"; statsW1!(I);
+            Print #1, Using "#######"; stats3FGA!(I);
 
             Print #1, Tab(39);
-            If statsW0!(I) = 0 Then
+            If stats3FGM!(I) = 0 Then
                 Print #1, "      0.0%";
             End If
-            If statsW0!(I) > 0 Then
-                Print #1, Using "#######.#%"; (statsW0!(I) / statsW1!(I)) * 100;
+            If stats3FGM!(I) > 0 Then
+                Print #1, Using "#######.#%"; (stats3FGM!(I) / stats3FGA!(I)) * 100;
             End If
 
             statVal = statsA!(idx, 5) / statsA!(idx, 0)
             Print #1, Tab(49);
             Print #1, Using "#####.#"; statVal;
             Print #1, Tab(56);
-            Print #1, Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I);
+            Print #1, Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I);
 
             Print #1, Tab(62);
-            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I) = 0 Then 
+            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I) = 0 Then 
                 Print #1, "   0.0";
             End If
-            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I) > 0 Then 
-                Print #1, Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + statsW0!(I)) / statsA!(idx, 0);
+            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I) > 0 Then 
+                Print #1, Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I)) / statsA!(idx, 0);
             End If
 
             Print #1, Tab(68);

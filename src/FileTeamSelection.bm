@@ -370,14 +370,14 @@ End Sub
 'Reads in compiled stats for a given team
 Sub ReadTeamStats (teamName$, statFile$)
 
-    Shared compStats!()
-    Shared statsW0!(), statsW1!()
+    Shared statPlyrVal!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsDefTot!(), statsOffTot!()
 
     Shared statPlyrNames$()
 
-    Erase compStats!
-    Erase statsW0!, statsW1!
+    Erase statPlyrVal!
+    Erase stats3FGM!, stats3FGA!
     Erase statsDefTot!, statsOffTot!
     Erase statPlyrNames$
 
@@ -390,11 +390,11 @@ Sub ReadTeamStats (teamName$, statFile$)
         Input #1, statPlyrNames$(I)
 
         For J = 0 To 13:
-            Input #1, compStats!(I, J)
+            Input #1, statPlyrVal!(I, J)
         Next
 
-        Input #1, statsW0!(I)
-        Input #1, statsW1!(I)
+        Input #1, stats3FGM!(I)
+        Input #1, stats3FGA!(I)
 
     Next
 

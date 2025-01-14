@@ -16,7 +16,7 @@ Sub ALIGN ()
     Shared statPlyrNames$(), plyrName_Road$()
 
     Shared plyrStat_Road!(), statsA!()
-    Shared statsW0!(), statsW1!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared threeFGM_Road!(), threeFGA_Road!()
     Shared statsOffTot_Road!(), statsDefTot_Road!()
@@ -84,8 +84,8 @@ Sub ALIGN ()
                             Input #2, compareA(I, J)
                         Next
 
-                        Input #2, statsW0!(I)
-                        Input #2, statsW1!(I)
+                        Input #2, stats3FGM!(I)
+                        Input #2, stats3FGA!(I)
 
                     Next
 
