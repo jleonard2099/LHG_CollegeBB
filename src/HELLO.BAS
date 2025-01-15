@@ -1750,9 +1750,7 @@ Sub COLHOOP ()
 
             Else
 
-                timeElapsed! = (Rnd(1) + 1.5)
-                gameClock! = gameClock! - timeElapsed!
-
+                Call AdjustClockTime((Rnd(1) + 1.5))
                 Call AdjustPlayTime
                 'Call AdjustShotClock
 
@@ -2039,8 +2037,7 @@ Sub COLHOOP ()
             If d100% <= 10 Then
 
                 '10% chance of a break from the inbound
-                gameClock! = gameClock! - 4
-                timeElapsed! = 4
+                Call AdjustClockTime(4)
                 Call AdjustPlayTime
                 'Call AdjustShotClock
                 Call WHOLAY
@@ -2136,14 +2133,12 @@ Sub COLHOOP ()
                     Select Case RN0
 
                         Case 1 To 80:
-                            gameClock! = gameClock! + 4
-                            timeElapsed! = -4
+                            Call AdjustClockTime(-4)
                             Call AdjustPlayTime
                             'Call AdjustShotClock
 
                         Case 81 To 90:
-                            gameClock! = gameClock! - 3
-                            timeElapsed! = 3
+                            Call AdjustClockTime(3)
                             Call AdjustPlayTime
                             'Call AdjustShotClock
 
@@ -2169,14 +2164,12 @@ Sub COLHOOP ()
                     Select Case RN0
 
                         Case 1 To 80:
-                            gameClock! = gameClock! + 4
-                            timeElapsed! = -4
+                            Call AdjustClockTime(-4)
                             Call AdjustPlayTime
                             'Call AdjustShotClock
 
                         Case 81 To 90:
-                            gameClock! = gameClock! - 3
-                            timeElapsed! = 3
+                            Call AdjustClockTime(3)
                             Call AdjustPlayTime
                             'Call AdjustShotClock
 
@@ -2203,17 +2196,16 @@ Sub COLHOOP ()
             Select Case RN1
 
                 Case 1 To 80:
-                    timeElapsed! = Int(Rnd(1) * 3) + 1
+                    Call AdjustClockTime(Int(Rnd(1) * 3) + 1)
 
                 Case 81 To 90:
-                    timeElapsed! = Int(Rnd(1) * 3) + 8
+                    Call AdjustClockTime(Int(Rnd(1) * 3) + 8)
 
                 Case 91 To 100:
-                    timeElapsed! = Int(Rnd(1) * 3) + 5
+                    Call AdjustClockTime(Int(Rnd(1) * 3) + 5)
 
             End Select
 
-            gameClock! = gameClock! - timeElapsed!
             Call AdjustPlayTime
             'Call AdjustShotClock
 
@@ -2249,25 +2241,20 @@ Sub COLHOOP ()
             Select Case defCategory(D)
 
                 Case 1, 3
-                    gameClock! = gameClock! - 2
-                    timeElapsed! = 2
+                    Call AdjustClockTime(2)
 
                 Case 2
                     If d100% <= 75 Then
-                        gameClock! = gameClock! - 2
-                        timeElapsed! = 2
+                        Call AdjustClockTime(2)
                     Else
-                        gameClock! = gameClock! + 2
-                        timeElapsed! = -2
+                        Call AdjustClockTime(-2)
                     End If
 
                 Case 4
                     If d100% <= 50 Then
-                        gameClock! = gameClock! - 2
-                        timeElapsed! = 2
+                        Call AdjustClockTime(2)
                     Else
-                        gameClock! = gameClock! + 2
-                        timeElapsed! = -2
+                        Call AdjustClockTime(-2)
                     End If
 
             End Select
@@ -3453,11 +3440,10 @@ Sub COLHOOP ()
                     plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - 1
                     Call ResetShotClock
 
-                    gameClock! = gameClock! - 4
-                    timeElapsed! = 4
-
+                    Call AdjustClockTime(4)
                     Call AdjustPlayTime
                     'Call AdjustShotClock
+
                     Call UPDATESCREEN
 
                     Call FoulCalled(1)
@@ -3516,11 +3502,10 @@ Sub COLHOOP ()
 
                     Call ResetShotClock
 
-                    gameClock! = gameClock! - 4
-                    timeElapsed! = 4
-
+                    Call AdjustClockTime(4)
                     Call AdjustPlayTime
                     'Call AdjustShotClock
+
                     Call UPDATESCREEN
 
                     Call CreditAssists
@@ -3757,10 +3742,10 @@ Sub COLHOOP ()
                 plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) + 1
 
                 562 '
+                '-- Adjust time: shot
                 Call ResetShotClock
-                gameClock! = gameClock! - 4
-                timeElapsed! = 4
-
+                
+                Call AdjustClockTime(4)
                 Call AdjustPlayTime
                 'Call AdjustShotClock
 
@@ -3819,9 +3804,7 @@ Sub COLHOOP ()
                     End If
 
                     Call ResetShotClock
-                    gameClock! = gameClock! - 4
-                    timeElapsed! = 4
-
+                    Call AdjustClockTime(4)
                     Call AdjustPlayTime
                     'Call AdjustShotClock
 
@@ -3884,8 +3867,7 @@ Sub COLHOOP ()
                         plyrOff_GAME!(D, lineupIdx(D, rndPlayer), 15) = plyrOff_GAME!(D, lineupIdx(D, rndPlayer), 15) + 1
 
                         Call ResetShotClock
-                        gameClock! = gameClock! - 4
-                        timeElapsed! = 4
+                        Call AdjustClockTime(4)
                         Call AdjustPlayTime
                         'Call AdjustShotClock
 
@@ -3977,8 +3959,7 @@ Sub COLHOOP ()
                         threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) - 1
 
                         Call ResetShotClock
-                        gameClock! = gameClock! - 4
-                        timeElapsed! = 4
+                        Call AdjustClockTime(4)
                         Call AdjustPlayTime
                         'Call AdjustShotClock
 
@@ -4033,10 +4014,10 @@ Sub COLHOOP ()
 
                             'It's good!
 
-                            gameClock! = gameClock! - 4
-                            timeElapsed! = 4
+                            Call AdjustClockTime(4)
                             Call AdjustPlayTime
                             'Call AdjustShotClock
+
                             Call UPDATESCREEN
 
                             Call CreditAssists
@@ -4085,8 +4066,7 @@ Sub COLHOOP ()
                             End If
 
                             Call ResetShotClock
-                            gameClock! = gameClock! - 4
-                            timeElapsed! = 4
+                            Call AdjustClockTime(4)
                             Call AdjustPlayTime
                             'Call AdjustShotClock
 
@@ -4275,8 +4255,7 @@ Sub COLHOOP ()
         End If
 
         'Restore time on clock
-        gameClock! = gameClock! + M5
-        timeElapsed! = -M5
+        Call AdjustClockTime(-M5)
         Call AdjustPlayTime
 
         If sClockVal >= 1 Then
@@ -4770,12 +4749,11 @@ Sub COLHOOP ()
 
         If CZ%(D) = 1 And d100% <= 50 Then
 
-            gameClock! = gameClock! - 4
-            timeElapsed! = 4
+            Call AdjustClockTime(4)
             Call AdjustPlayTime
             'Call AdjustShotClock
-            Call WHOLAY
 
+            Call WHOLAY
             GoTo LAYUP
 
         Else
@@ -9303,17 +9281,25 @@ Sub UPDATESCREEN ()
 
     'Game Clock - Minutes
     Locate 1, 37
-    Color 15, 0: Print Using "##"; Int(gameClock! / 60);: Print ":";
+    Color 15, 0: Print Using "##"; Int(gameClock! / 60);
+    Print ":";
 
     'Game Clock - Seconds
+    '(Let's just round it to 2 places first)
+    gcSeconds! = gameClock! - Int(gameClock! / 60) * 60
+    gcSeconds! = Fix((gcSeconds! * 100 + Sgn(gcSeconds!) * .5)) / 100
+
     If gameClock! <= 5 Then
         'print 1/10th of a sec for last 5 seconds
-        Print "0";: Print Using "#.#"; gameClock! - Int(gameClock! / 60) * 60;
+        Print "0";
+        Print Using "#.#"; gcSeconds!;
     Else
-        If gameClock! - Int(gameClock! / 60) * 60 < 10 Then
-            Print "0";: Print Using "#"; gameClock! - Int(gameClock! / 60) * 60;
+
+        If gcSeconds! < 10 Then
+            Print "0";
+            Print Using "#"; gcSeconds!;
         Else
-            Print Using "##"; gameClock! - Int(gameClock! / 60) * 60;
+            Print Using "##"; gcSeconds!;
         End If
 
     End If
@@ -9418,89 +9404,9 @@ Sub UPDATESCREEN ()
         Color 15, 0
 
         Locate 19, 1
-
-        'Roster for team 1
-        For I1 = 0 To 4:
-
-            Color 2, 0
-            Print Using "# "; I1;
-
-            Color 15
-            Print Left$(players$(0, lineupIdx(0, I1)), 12); Tab(15);
-
-            If plyrOff_GAME!(0, lineupIdx(0, I1), 19) >= 7 Then Print "*";
-            Print ; Tab(16);
-
-            J = (plyrOff_GAME!(0, lineupIdx(0, I1), 3)) - plyrOff_GAME!(0, lineupIdx(0, I1), 7) - plyrOff_GAME!(0, lineupIdx(0, I1), 11) - plyrOff_GAME!(0, lineupIdx(0, I1), 12)
-            If J <= 0 Then J = 0
-
-            Print Using "## ## "; plyrOff_GAME!(0, lineupIdx(0, I1), 0), plyrOff_GAME!(0, lineupIdx(0, I1), 1);
-
-            If P = 0 Then
-                Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 21) * 2 / 10;
-            Else
-                Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 2) * 2 / 10;
-            End If
-
-            If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-
-            Print Using "### "; J;
-
-            Color 15
-            If tmFatigue(0, lineupIdx(0, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-            Print Using "## "; tmFatigue(0, lineupIdx(0, I1)) * -1;
-
-            Color 15
-            Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 4);
-            Print Using "###  "; plyrOff_GAME!(0, lineupIdx(0, I1), 8) * 2 + plyrOff_GAME!(0, lineupIdx(0, I1), 10) + threeFG(0, lineupIdx(0, I1), 0);
-            If plyrOff_GAME!(0, lineupIdx(0, I1), 12) >= 4 Then Color 12
-
-            Print Using "#"; plyrOff_GAME!(0, lineupIdx(0, I1), 12)
-            Color 15
-
-        Next I1
-
+        Call PrintActiveLineup (0)
         Locate 19, 40
-
-        'Roster for team 2
-        For I1 = 0 To 4:
-
-            Color 2, 0
-            Locate , 40: Print Using "# "; I1;
-            Color 15: Print Left$(players$(1, lineupIdx(1, I1)), 12); Tab(55);
-
-            If plyrOff_GAME!(1, lineupIdx(1, I1), 19) >= 7 Then Print "*";
-
-            Print ; Tab(56);
-
-            J = (plyrOff_GAME!(1, lineupIdx(1, I1), 3)) - plyrOff_GAME!(1, lineupIdx(1, I1), 7) - plyrOff_GAME!(1, lineupIdx(1, I1), 11) - plyrOff_GAME!(1, lineupIdx(1, I1), 12)
-            If J <= 0 Then J = 0
-
-            Print Using "## ## "; plyrOff_GAME!(1, lineupIdx(1, I1), 0), plyrOff_GAME!(1, lineupIdx(1, I1), 1);
-
-            If P = 1 Then
-                Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 21) * 2 / 10;
-            Else
-                Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 2) * 2 / 10;
-            End If
-
-            If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-            Print Using "### "; J;
-
-            Color 15
-            If tmFatigue(1, lineupIdx(1, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-            Print Using "## "; tmFatigue(1, lineupIdx(1, I1)) * -1;
-
-            Color 15
-            Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 4);
-            Print Using "###  "; plyrOff_GAME!(1, lineupIdx(1, I1), 8) * 2 + plyrOff_GAME!(1, lineupIdx(1, I1), 10) + threeFG(1, lineupIdx(1, I1), 0);
-
-            If plyrOff_GAME!(1, lineupIdx(1, I1), 12) >= 4 Then Color 12
-            Print Using "#"; plyrOff_GAME!(1, lineupIdx(1, I1), 12)
-
-            Color 15
-
-        Next I1
+        Call PrintActiveLineup (1)
 
     End If
 
@@ -9537,13 +9443,19 @@ Sub SCOREBOARD ()
 
     'Game Clock - Minutes
     Color 15, 0
-    Locate 1, 37: Print Using "##"; Int(gameClock! / 60);: Print ":";
+    Locate 1, 37: Print Using "##"; Int(gameClock! / 60);
+    Print ":";
 
     'Game Clock - Seconds
-    If gameClock! - Int(gameClock! / 60) * 60 < 10 Then
-        Print "0";: Print Using "#"; gameClock! - Int(gameClock! / 60) * 60;
+    '(Let's just round it to 2 places first)
+    gcSeconds! = gameClock! - Int(gameClock! / 60) * 60
+    gcSeconds! = Fix((gcSeconds! * 100 + Sgn(gcSeconds!) * .5)) / 100
+
+    If gcSeconds! < 10 Then
+        Print "0";
+        Print Using "#"; gcSeconds!;
     Else
-        Print Using "##"; gameClock! - Int(gameClock! / 60) * 60;
+        Print Using "##"; gcSeconds!;
     End If
 
     'Team 2
@@ -9641,60 +9553,9 @@ Sub SCOREBOARD ()
 
     'Win/Loss record from current stats files
     Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
-    Color 14, 0: Print "# NAME         FG FT RB CX EF PA PT  F"
+    Color 14, 0: Print "# NAME         FG FT RB CX EF PA PT F"
 
-    'Team 1 Roster
-    For I1 = 0 To 4
-
-        Color 2: Print Using "# "; I1;
-        Color 15
-        'Player Name
-        Print Left$(players$(0, lineupIdx(0, I1)), 12);
-
-        Locate , 15
-        If plyrOff_GAME!(0, lineupIdx(0, I1), 19) >= 7 Then Print "*";
-
-        Locate , 16
-
-        'FG / FT
-        Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 0);
-        Print Using "### "; plyrOff_GAME!(0, lineupIdx(0, I1), 1);
-
-        'RB
-        If P = 0 Then
-            Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 21) * 2 / 10;
-        Else
-            Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 2) * 2 / 10;
-        End If
-
-        'Contribution
-        J = 0
-        J = (plyrOff_GAME!(0, lineupIdx(0, I1), 3)) - plyrOff_GAME!(0, lineupIdx(0, I1), 7) - plyrOff_GAME!(0, lineupIdx(0, I1), 11) - plyrOff_GAME!(0, lineupIdx(0, I1), 12)
-        If J <= 0 Then J = 0
-        If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-        Print Using "### "; J;
-
-        Color 15
-
-        'Effective Fatigue
-        If tmFatigue(0, lineupIdx(0, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-        Print Using "## "; tmFatigue(0, lineupIdx(0, I1)) * -1;
-
-        Color 15
-
-        'Pass Rating
-        Print Using "##"; plyrOff_GAME!(0, lineupIdx(0, I1), 4);
-
-        'Points
-        Print Using "###  "; plyrOff_GAME!(0, lineupIdx(0, I1), 8) * 2 + plyrOff_GAME!(0, lineupIdx(0, I1), 10) + threeFG(0, lineupIdx(0, I1), 0);
-
-        'Fouls
-        If plyrOff_GAME!(0, lineupIdx(0, I1), 12) >= 4 Then Color 12
-        Print Using "#"; plyrOff_GAME!(0, lineupIdx(0, I1), 12)
-
-        Color 15
-
-    Next I1
+    Call PrintActiveLineup(0)
 
     'Team 2 Overview
     Locate 17, 40
@@ -9704,60 +9565,8 @@ Sub SCOREBOARD ()
     Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
 
     Color 14, 0
-    Locate , 40: Print "# NAME          FG FT RB CX EF PA PT  F"
-
-    'Team 2 Roster
-    For I1 = 0 To 4:
-
-        Locate , 40
-        Color 2: Print Using "# "; I1;
-        Color 15
-        'Player Name
-        Print Left$(players$(1, lineupIdx(1, I1)), 12);: Locate , 55
-
-        If plyrOff_GAME!(1, lineupIdx(1, I1), 19) >= 7 Then Print "*";
-
-        Locate , 56
-
-        'FG / FT
-        Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 0);
-        Print Using "### "; plyrOff_GAME!(1, lineupIdx(1, I1), 1);
-
-        'RB
-        If P = 1 Then
-            Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 21) * 2 / 10;
-        Else
-            Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 2) * 2 / 10;
-        End If
-
-        'Contributon
-        J = 0
-        J = (plyrOff_GAME!(1, lineupIdx(1, I1), 3)) - plyrOff_GAME!(1, lineupIdx(1, I1), 7) - plyrOff_GAME!(1, lineupIdx(1, I1), 11) - plyrOff_GAME!(1, lineupIdx(1, I1), 12)
-        If J <= 0 Then J = 0
-        If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-        Print Using "### "; J;
-
-        Color 15
-
-        'Effective Fatigue
-        If tmFatigue(1, lineupIdx(1, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
-        Print Using "## "; tmFatigue(1, lineupIdx(1, I1)) * -1;
-
-        Color 15
-
-        'PA
-        Print Using "##"; plyrOff_GAME!(1, lineupIdx(1, I1), 4);
-
-        'Points
-        Print Using "###  "; plyrOff_GAME!(1, lineupIdx(1, I1), 8) * 2 + plyrOff_GAME!(1, lineupIdx(1, I1), 10) + threeFG(1, lineupIdx(1, I1), 0);
-
-        'Fouls
-        If plyrOff_GAME!(1, lineupIdx(1, I1), 12) >= 4 Then Color 12
-        Print Using "#"; plyrOff_GAME!(1, lineupIdx(1, I1), 12)
-
-        Color 15
-
-    Next I1
+    Locate , 40: Print "# NAME          FG FT RB CX EF PA PT F"
+    Call PrintActiveLineup(1)
 
     Color 9, 0
     For I = 1 To 9:
@@ -9768,6 +9577,88 @@ Sub SCOREBOARD ()
     Locate 16, 1: Print String$(79, 205)
     Locate 16, 39: Print Chr$(206)
     Color 7, 0
+
+End Sub
+
+
+'----------------------------------------
+'      PrintActiveLineup Subroutine
+'----------------------------------------
+'This subroutine displays the summary of
+'the current lineup at the bottom of the
+'game screen
+Sub PrintActiveLineup (teamIdx)
+
+    'Team Roster
+    For I1 = 0 To 4
+
+        If teamIdx = 1 Then Locate , 40
+
+        Color 2: Print Using "# "; I1;
+        Color 15
+
+        'Player Name
+        Print Left$(players$(teamIdx, lineupIdx(teamIdx, I1)), 12);
+
+        If teamIdx = 0 Then
+            Locate , 15
+        Else
+            Locate , 55
+        End If
+
+        'If player has taken more than 7% of shots as 3FG
+        If plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 19) >= 7 Then 
+            Print "*";
+
+        If teamIdx = 0 Then
+            Locate , 16
+        Else
+            Locate , 56
+        End If
+
+        'Field Goals
+        Print Using "##"; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 0);
+        
+        'Free Throw %
+        ftPct = plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 1)
+        If ftPct >= 100 Then ftPct = 99
+        Print Using "### "; ftPct;
+
+        'Rebounds
+        If P = teamIdx Then
+            Print Using "##"; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 21) * 2 / 10;
+        Else
+            Print Using "##"; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 2) * 2 / 10;
+        End If
+
+        'Stamina
+        J = 0
+        J = (plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 3)) - plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 7) - plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 11) - plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 12)
+        If J <= 0 Then J = 0
+        If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
+        Print Using "### "; J;
+
+        Color 15
+
+        'Effective Fatigue
+        If tmFatigue(teamIdx, lineupIdx(teamIdx, I1)) * -1 >= 5 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
+        Print Using "## "; tmFatigue(teamIdx, lineupIdx(teamIdx, I1)) * -1;
+
+        Color 15
+
+        'Pass Rating
+        Print Using "##"; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 4);
+
+        'Total Points
+        Print Using "### "; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 8) * 2 + plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 10) + threeFG(teamIdx, lineupIdx(teamIdx, I1), 0);
+
+        'Fouls
+        If plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 12) >= (foulsToDQ - 1) Then Color 12
+        Print Using "#"; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 12)
+
+        Color 15
+
+    Next I1
 
 End Sub
 
@@ -12505,11 +12396,9 @@ Sub LASTSHOT ()
 
     End If
 
-    timeElapsed! = M5
-
+    Call AdjustClockTime(M5)
     Call AdjustPlayTime
 
-    gameClock! = gameClock! - M5
     IN = 0
 
     If sClockVal >= 1 Then
@@ -12566,6 +12455,25 @@ Sub CheckGameShotClock ()
     End If
 
     Call UPDATESCREEN
+
+End Sub
+
+
+'----------------------------------------
+'       AdjustClockTime Subroutine
+'----------------------------------------
+'This subroutine updates the clock for
+'the play, based on the time specified
+Sub AdjustClockTime (timeVal!)
+
+    If sClockVal = 0 Then
+        'Increase time taken for no shot clock
+        timeElapsed! = timeVal! + 1
+    Else
+        timeElapsed! = timeVal!
+    End If
+
+    gameClock! = gameClock! - timeElapsed!
 
 End Sub
 
