@@ -101,5 +101,6 @@ Declare Sub pbplog (lineNumber)
 Declare Function d100% ()
 Declare Function GetTeamYear% (yearFromName$)
 Declare Function GetTeamGender$ (diskID$)
+Declare Function playerFatigue% (team, handler)
 Declare Function ShotPacing%
 Declare Function TickerTime% (timeInterval, X)

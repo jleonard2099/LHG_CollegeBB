@@ -2473,7 +2473,7 @@ Sub COLHOOP ()
             If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
 
                 If currHalf <= 2 Then
-                    If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
+                    If playerFatigue%(P, ballCarrier) <= 0 Then
                         'No Shot / Difficult Shot
                         GoTo 437
                     End If
@@ -2529,7 +2529,7 @@ Sub COLHOOP ()
             If currHalf <= 2 Then
 
                 If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
-                    If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
+                    If playerFatigue%(P, ballCarrier) <= 0 Then
                         'No Shot / Difficult Shot
                         GoTo 437
                     End If
@@ -4568,7 +4568,7 @@ Sub COLHOOP ()
                 XZ = plyrOff_GAME!(P, lineupIdx(P, I), 21)
 
                 If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                    If plyrOff_GAME!(P, lineupIdx(P, I), 3) - plyrOff_GAME!(P, lineupIdx(P, I), 7) - plyrOff_GAME!(P, lineupIdx(P, I), 11) - plyrOff_GAME!(P, lineupIdx(P, I), 12) <= 0 Then
+                    If playerFatigue%(P, I) <= 0 Then
                         XZ = CInt(XZ * .5)
                     End If
                 End If
@@ -4590,7 +4590,7 @@ Sub COLHOOP ()
                 XZ = plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 2)
 
                 If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                    If plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 3) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 7) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 11) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 12) <= 0 Then
+                    If playerFatigue%(1 - P, I) <= 0 Then
                         XZ = CInt(XZ * .5)
                     End If
                 End If
@@ -4823,7 +4823,7 @@ Sub COLHOOP ()
                 Call SHOTPERCENT
 
                 If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                    If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0 Then
+                    If playerFatigue%(P, ballCarrier) <= 0 Then
                         shotChance! = CInt(shotChance! * .6)
                     End If
                 End If
@@ -8613,7 +8613,7 @@ Sub FoulCalled (randomFouler)
 
     Call UPDATESCREEN
 
-    If plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 3) - plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 7) - plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 11) - plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 12) = 0 Then
+    If playerFatigue%(D, foulPlayer) = 0 Then
         plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 3) = plyrOff_GAME!(D, lineupIdx(D, foulPlayer), 3) + 1
     End If
 
@@ -8859,7 +8859,7 @@ Sub ComputerCoach ()
     For I = 0 To 13
 
         F1(I) = I
-        plyrStamina(I) = plyrOff_GAME!(P9, I, 3) - plyrOff_GAME!(P9, I, 7) - plyrOff_GAME!(P9, I, 11) - plyrOff_GAME!(P9, I, 12)
+        plyrStamina(I) = playerFatigue%(P9, I)
 
         If currHalf > 2 Then
             plyrStamina(I) = plyrOff_GAME!(P9, I, 3)
@@ -9404,9 +9404,9 @@ Sub UPDATESCREEN ()
         Color 15, 0
 
         Locate 19, 1
-        Call PrintActiveLineup (0)
+        Call PrintActiveLineup(0)
         Locate 19, 40
-        Call PrintActiveLineup (1)
+        Call PrintActiveLineup(1)
 
     End If
 
@@ -9607,8 +9607,9 @@ Sub PrintActiveLineup (teamIdx)
         End If
 
         'If player has taken more than 7% of shots as 3FG
-        If plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 19) >= 7 Then 
+        If plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 19) >= 7 Then
             Print "*";
+        End If
 
         If teamIdx = 0 Then
             Locate , 16
@@ -9618,7 +9619,7 @@ Sub PrintActiveLineup (teamIdx)
 
         'Field Goals
         Print Using "##"; plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 0);
-        
+
         'Free Throw %
         ftPct = plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 1)
         If ftPct >= 100 Then ftPct = 99
@@ -9633,7 +9634,7 @@ Sub PrintActiveLineup (teamIdx)
 
         'Stamina
         J = 0
-        J = (plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 3)) - plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 7) - plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 11) - plyrOff_GAME!(teamIdx, lineupIdx(teamIdx, I1), 12)
+        J = playerFatigue%(teamIdx, I1)
         If J <= 0 Then J = 0
         If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then Color 12
         Print Using "### "; J;
@@ -9794,7 +9795,7 @@ Sub ReboundOffense ()
         XZ = plyrOff_GAME!(P, lineupIdx(P, I), 21)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-            If plyrOff_GAME!(P, lineupIdx(P, I), 3) - plyrOff_GAME!(P, lineupIdx(P, I), 7) - plyrOff_GAME!(P, lineupIdx(P, I), 11) - plyrOff_GAME!(P, lineupIdx(P, I), 12) <= 0 Then
+            If playerFatigue%(P, I) <= 0 Then
                 XZ = CInt(XZ * .5)
             End If
         End If
@@ -9846,7 +9847,7 @@ Sub ReboundDefense ()
         XZ = plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 2)
 
         If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-            If plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 3) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 7) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 11) - plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 12) <= 0 Then
+            If playerFatigue%(1 - P, I) <= 0 Then
                 XZ = CInt(XZ * .5)
             End If
         End If
@@ -10193,24 +10194,42 @@ Sub COMPUTERSUBS ()
 
         For I1 = 0 To 13
 
-            M6 = plyrOff_GAME!(P9, I1, 3) - plyrOff_GAME!(P9, I1, 7) - plyrOff_GAME!(P9, I1, 11) - plyrOff_GAME!(P9, I1, 12)
+            M6 = playerFatigue%(P9, I1)
 
-            If currHalf < 2 And M6 <= 0 Or currHalf = 2 And gameClock! > 120 And M6 <= 0 Then M1 = M1 + 1
+            If currHalf < 2 And M6 <= 0 Or currHalf = 2 And gameClock! > 120 And M6 <= 0 Then
+                M1 = M1 + 1
+            End If
 
             'Disabled player or inactive spot
-            If plyrOff_GAME!(P9, I1, 12) >= foulsToDQ Or players$(P9, I1) = "XXX" Or rosterStatus(P9, I1) <> 0 Then M2 = M2 + 1
+            If plyrOff_GAME!(P9, I1, 12) >= foulsToDQ Or players$(P9, I1) = "XXX" Or rosterStatus(P9, I1) <> 0 Then
+                M2 = M2 + 1
+            End If
 
             If I1 <= 4 Then
 
-                M6 = plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) - plyrOff_GAME!(P9, lineupIdx(P9, I1), 7) - plyrOff_GAME!(P9, lineupIdx(P9, I1), 11) - plyrOff_GAME!(P9, lineupIdx(P9, I1), 12)
+                M6 = playerFatigue%(P9, I1)
 
-                If currHalf = 1 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .5 Then M3 = M3 + 1
-                If currHalf = 1 And gameClock! >= 600 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .75 Then M3 = M3 + 1
-                If currHalf = 2 And gameClock! >= 600 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .25 Then M3 = M3 + 1
-                If currHalf = 2 And gameClock! >= 300 And gameClock! < 600 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .13 Then M3 = M3 + 1
-                If currHalf = 2 And gameClock! < 300 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < gameClock! / 2400 Then M3 = M3 + 1
-                If M6 <= 0 And currHalf < 2 Or M6 <= 0 And currHalf = 2 And gameClock! > 120 Then M3 = M3 + 1
-                If plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ Or plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ - 2 And currHalf = 1 Or currHalf = 2 And gameClock! > 720 And plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ - 1 Then M4 = M4 + 1
+                If currHalf = 1 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .5 Then
+                    M3 = M3 + 1
+                End If
+                If currHalf = 1 And gameClock! >= 600 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .75 Then
+                    M3 = M3 + 1
+                End If
+                If currHalf = 2 And gameClock! >= 600 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .25 Then
+                    M3 = M3 + 1
+                End If
+                If currHalf = 2 And gameClock! >= 300 And gameClock! < 600 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < .13 Then
+                    M3 = M3 + 1
+                End If
+                If currHalf = 2 And gameClock! < 300 And M6 / plyrOff_GAME!(P9, lineupIdx(P9, I1), 3) < gameClock! / 2400 Then
+                    M3 = M3 + 1
+                End If
+                If M6 <= 0 And currHalf < 2 Or M6 <= 0 And currHalf = 2 And gameClock! > 120 Then
+                    M3 = M3 + 1
+                End If
+                If plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ Or plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ - 2 And currHalf = 1 Or currHalf = 2 And gameClock! > 720 And plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ - 1 Then
+                    M4 = M4 + 1
+                End If
 
             End If
 
@@ -10218,7 +10237,6 @@ Sub COMPUTERSUBS ()
 
         'Some notes about these conditions:
         '-- XS = 0 during regular play. Assigned 1 only when the quarter is over
-        '--
         If M3 >= 1 And 5 - M3 < 14 - M1 Or (currHalf = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0) Or (M4 >= 1 And M2 < 13) Or computerTimeout = 1 Then
             computerTimeout = 0
             Call ComputerCoach
@@ -10514,8 +10532,7 @@ Sub LINEUPS ()
             Locate , 20
 
             L = 0
-            L = plyrOff_GAME!(P9, R1, 3) - plyrOff_GAME!(P9, R1, 7) - plyrOff_GAME!(P9, R1, 11) - plyrOff_GAME!(P9, R1, 12)
-
+            L = playerFatigue%(P9, R1)
             If L <= 0 Then L = 0
 
             'FG, FT, 3FG, %3A, ORB, DRB, TRB
@@ -10952,7 +10969,7 @@ Sub SHOTPERCENT ()
         End If
 
         'If more than 2 minutes in half and already contributed share
-        If (currHalf < 3 And gameClock! > 120) And (plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12) <= 0) Then
+        If (currHalf < 3 And gameClock! > 120) And (playerFatigue%(P, ballCarrier) <= 0) Then
             'Bad shot b/c of fatigue
             threePtShotChance = Int(Rnd(1) * 5) + 3
             J8% = 0
@@ -11159,7 +11176,7 @@ Sub WHOGETSBALL ()
 
             End If
 
-            M8 = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 11) - plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 12)
+            M8 = playerFatigue%(P, ballCarrier)
 
             If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 4) >= 5 And M8 / plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 3) <= 0.4 And currHalf = 1 Then
                 GoTo 1041
@@ -16602,6 +16619,23 @@ Function GetTeamYear% (yearFromName$)
     Else
         GetTeamYear% = 1900 + teamYear%
     End If
+
+End Function
+
+
+'----------------------------------------
+'         playerFatigue% Function
+'----------------------------------------
+'This functions calculates the player's
+'current fatigue level based on their
+'existing contribution to the game
+Function playerFatigue% (team, handler)
+
+    'CX = (FGA + Off Reb + Def RB + Fouls) / (Game Minutes)
+    playerCX = plyrOff_GAME!(team, lineupIdx(team, handler), 3)
+    
+    'Fatigue = CX - Curr FGA - Curr Rebounds - Curr Fouls
+    playerFatigue% = playerCX - plyrOff_GAME!(team, lineupIdx(team, handler), 7) - plyrOff_GAME!(team, lineupIdx(team, handler), 11) - plyrOff_GAME!(team, lineupIdx(team, handler), 12)
 
 End Function
 
