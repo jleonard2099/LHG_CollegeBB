@@ -125,7 +125,7 @@ Dim leaderVals!(1 To 250, 0 To 2), natLeaderVals!(1 To 250, 1 To 2)
 Dim natDefLeaders!(MAX_CONFERENCES, 1 To 20), natOffLeaders!(MAX_CONFERENCES, 1 To 20)
 Dim compStats!(0 To 14, 0 To 26)
 
-Dim compSeasonWins!(30), compSeasonLosses!(30), compSeasonWinPct!(30), compConfWins!(30), compConfLosses!(30), compConfWinPct!(30)
+Dim seasonWins!(30), seasonLosses!(30), seasonWinPct!(30), divWins!(30), divLosses!(30), divWinPct(30)
 
 Dim defLeaderNames$(60), offLeaderNames$(60)
 Dim statCategoryAbbr$(25)
