@@ -28,7 +28,7 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim Shared test
+Dim Shared rosterIdx(13), plyrStamina(13)
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -840,7 +840,7 @@ Sub COLHOOP ()
             Close #7
 
             autoPlay = 1
-            
+
         End If
 
     Else
@@ -1050,14 +1050,14 @@ Sub COLHOOP ()
                         If playerOpt > 3 Then playerOpt = 0
 
                     Case 2:
-                        Call ChooseGameTeam(YN$, numberTeams, tmIdx, gameTeams$(0), 0)
+                        Call ChooseGameTeam(diskIDs$(0), numberTeams, tmIdx, gameTeams$(0), 0)
                         If tmIdx <> 0 Then
                             Call TEAMSETUP(0)
                             Call DISABLEPLAYERS(0)
                         End If
 
                     Case 3:
-                        Call ChooseGameTeam(YN$, numberTeams, tmIdx, gameTeams$(1), 1)
+                        Call ChooseGameTeam(diskIDs$(1), numberTeams, tmIdx, gameTeams$(1), 1)
                         If tmIdx <> 0 Then
                             Call TEAMSETUP(1)
                             Call DISABLEPLAYERS(1)
@@ -2407,7 +2407,7 @@ Sub COLHOOP ()
                 Case 1
                     'Aggressive
                     OY% = 7
-                    
+
                 Case 2
                     'Safe
                     OY% = -7
@@ -2415,7 +2415,7 @@ Sub COLHOOP ()
                 Case 4, 7
                     'Delay, Total Stall
                     OY% = CInt((defAdjVsShot(3, defCoverage(D)) / 2)) * -1
-                    
+
             End Select
 
             If RN0 <= CY + OY% Then
@@ -2426,7 +2426,7 @@ Sub COLHOOP ()
         End If
 
     End If
-    
+
     'Is this when we actually pass the ball ???
 
 
@@ -5236,7 +5236,6 @@ Sub InitVar ()
     tourneyFile$ = ""
     schedVisTm$ = ""
     schedHomeTm$ = ""
-    YN$ = ""
 
     'These are read in from teams
     'Erase dFGPA, d3FG_Adj, dthreeFGA_Adj
@@ -5250,7 +5249,7 @@ Sub InitVar ()
     'Erase seedSlotName$
 
     Erase defStrat, defCategory, defCoverage, eventSettings
-    Erase F1, ft3PtFoul, G4, G5
+    Erase rosterIdx, ft3PtFoul, G4, G5
     Erase lineupIdx, offStrat, oppScore
     Erase P4, P5
     Erase teamFouls, teamScore
@@ -8692,19 +8691,20 @@ Sub FoulCalled (randomFouler)
             Call PlayStyle
             Call PlayItSafe
 
-            Call DEADBALLOPTIONS
-
-            For I = 0 To 1
-                If defCategory(I) = 0 Then
-                    pressureRating(I, 0) = 1
-                    pressureRating(I, 1) = 7
-                    pctContrib(I) = 0
-                End If
-            Next
-
-            Call SCOREBOARD
-
         End If
+
+        Call DEADBALLOPTIONS
+
+        For I = 0 To 1
+            If defCategory(I) = 0 Then
+                pressureRating(I, 0) = 1
+                pressureRating(I, 1) = 7
+                pctContrib(I) = 0
+            End If
+        Next
+
+        Call SCOREBOARD
+
 
         Call CheckGameClock
 
@@ -8858,7 +8858,9 @@ Sub ComputerCoach ()
 
     For I = 0 To 13
 
-        F1(I) = I
+        'Assignment of rosterIdx
+        rosterIdx(I) = I
+
         plyrStamina(I) = playerFatigue%(P9, I)
 
         If currHalf > 2 Then
@@ -8903,13 +8905,12 @@ Sub ComputerCoach ()
 
                         Do
                             I = I - 1
-                        Loop Until Not (rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX")
+                        Loop Until Not (rosterStatus(P9, rosterIdx(I)) <> 0 Or players$(P9, rosterIdx(I)) = "XXX")
 
                         '-- These can throw errors in some situations
-                        '-- F1(I) receives an invalid value
-                        test = F1(I)
-                        G4(I1) = F1(I)
-                        G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
+                        '-- rosterIdx(I) receives an invalid (negative) value
+                        G4(I1) = rosterIdx(I)
+                        G5(I1) = plyrOff_GAME!(P9, rosterIdx(I), 2)
 
                     Next I1
 
@@ -8917,9 +8918,9 @@ Sub ComputerCoach ()
 
                 Else
 
-                    If Not (rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX" Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 1 And (currHalf = 1 Or currHalf = 2 And gameClock! > 720)) Then
-                        G4(I1) = F1(I)
-                        G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
+                    If Not (rosterStatus(P9, rosterIdx(I)) <> 0 Or players$(P9, rosterIdx(I)) = "XXX" Or plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ Or plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 1 And (currHalf = 1 Or currHalf = 2 And gameClock! > 720)) Then
+                        G4(I1) = rosterIdx(I)
+                        G5(I1) = plyrOff_GAME!(P9, rosterIdx(I), 2)
                     Else
                         GoTo 8705
                     End If
@@ -8934,27 +8935,27 @@ Sub ComputerCoach ()
 
         Else
 
-            If rosterStatus(P9, F1(I)) <> 0 Or players$(P9, F1(I)) = "XXX" Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 2 And currHalf = 1 Or plyrOff_GAME!(P9, F1(I), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720 Then
+            If rosterStatus(P9, rosterIdx(I)) <> 0 Or players$(P9, rosterIdx(I)) = "XXX" Or plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ Or plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 2 And currHalf = 1 Or plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720 Then
                 GoTo 8794
             End If
 
-            If currHalf = 1 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .5 Then
+            If currHalf = 1 And plyrStamina(I) / plyrOff_GAME!(P9, rosterIdx(I), 3) < .5 Then
                 GoTo 8794
             End If
 
-            If currHalf = 1 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .75 Then
+            If currHalf = 1 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, rosterIdx(I), 3) < .75 Then
                 GoTo 8794
             End If
 
-            If currHalf = 2 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .25 Then
+            If currHalf = 2 And gameClock! >= 600 And plyrStamina(I) / plyrOff_GAME!(P9, rosterIdx(I), 3) < .25 Then
                 GoTo 8794
             End If
 
-            If currHalf = 2 And gameClock! >= 300 And gameClock! < 600 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < .13 Then
+            If currHalf = 2 And gameClock! >= 300 And gameClock! < 600 And plyrStamina(I) / plyrOff_GAME!(P9, rosterIdx(I), 3) < .13 Then
                 GoTo 8794
             End If
 
-            If currHalf = 2 And gameClock! < 300 And plyrStamina(I) / plyrOff_GAME!(P9, F1(I), 3) < gameClock! / 2400 Then
+            If currHalf = 2 And gameClock! < 300 And plyrStamina(I) / plyrOff_GAME!(P9, rosterIdx(I), 3) < gameClock! / 2400 Then
                 GoTo 8794
             End If
 
@@ -8962,8 +8963,8 @@ Sub ComputerCoach ()
                 GoTo 8794
             End If
 
-            G4(I1) = F1(I)
-            G5(I1) = plyrOff_GAME!(P9, F1(I), 2)
+            G4(I1) = rosterIdx(I)
+            G5(I1) = plyrOff_GAME!(P9, rosterIdx(I), 2)
 
         End If
 
@@ -9728,41 +9729,7 @@ Sub LOADSTATS ()
 
         If _FileExists(diskPaths$(1) + statFile$ + "S") Then
 
-            Open diskPaths$(1) + statFile$ + "S" For Input As #1
-
-            Input #1, numberGames
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, teamScore(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, oppName$(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, oppScore(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, locIndicator$(I1)
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS
-                For I2 = 0 To 1
-                    Input #1, powerRating(I1, I2)
-                Next
-            Next
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, gameAttendance&(I1)
-            Next I1
-
-            For I1 = 1 To MAX_SCHED_STATS:
-                Input #1, gameSite$(I1)
-            Next I1
-
-            Close #1
+            Call ReadScheduleStats (statFile$, null, numberGames)
 
             For I1 = 1 To numberGames
                 If teamScore(I1) > oppScore(I1) Then
@@ -11322,7 +11289,6 @@ Sub DEADBALLOPTIONS ()
 
     Do
 
-        220 '
         prevBall$ = ""
         Call CLEARPBP
 
@@ -11404,8 +11370,6 @@ Sub DEADBALLOPTIONS ()
                         P9 = P
                         LC% = 1
 
-                        'GoTo 220
-
                     Case 2
                         'Substitution - Defense
                         S2 = D
@@ -11436,7 +11400,6 @@ Sub DEADBALLOPTIONS ()
                             timeouts(P) = timeouts(P) - 1
                             Call RESETFATIGUE
                             Call SCOREBOARD
-                            'GoTo 220
                         End If
 
                     Case 6
@@ -12322,8 +12285,8 @@ End Sub
 'by their current stamina.
 Sub STAMINASORT ()
 
-    M = 13
     L = 12
+    M = 13
 
     8802 '
     S6 = 0
@@ -12334,13 +12297,18 @@ Sub STAMINASORT ()
     H2 = 0
 
     If plyrStamina(S6) > plyrStamina(S6 + 1) Then
+
         H1 = plyrStamina(S6)
-        H2 = F1(S6)
+        H2 = rosterIdx(S6)
         plyrStamina(S6) = plyrStamina(S6 + 1)
-        F1(S6) = F1(S6 + 1)
+
+        'Assignment of rosterIdx
+        rosterIdx(S6) = rosterIdx(S6 + 1)
         plyrStamina(S6 + 1) = H1
-        F1(S6 + 1) = H2
+        rosterIdx(S6 + 1) = H2
+
         S7 = S6
+
     End If
 
     S6 = S6 + 1
@@ -14177,43 +14145,7 @@ Sub COMPILESTATFILES (teamIdx)
     numberGames = 0
 
     If _FileExists(diskPaths$(1) + statFile$ + "S") Then
-
-        Open diskPaths$(1) + statFile$ + "S" For Input As #3
-
-        Input #3, numberGames
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #3, teamScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #3, oppName$(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #3, oppScore(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #3, locIndicator$(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS
-            For I1 = 0 To 1
-                Input #3, powerRating(I, I1)
-            Next
-        Next
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #3, gameAttendance&(I)
-        Next I
-
-        For I = 1 To MAX_SCHED_STATS:
-            Input #3, gameSite$(I)
-        Next I
-
-        Close #3
-
+        Call ReadScheduleStats (statFile$, numberGames)
     End If
 
     If numberGames < MAX_SCHED_STATS Then

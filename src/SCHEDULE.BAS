@@ -791,18 +791,9 @@ Sub ExtractSchedule (scheduleAction%, subSchedFile$)
 
                 If ExitCode% <> 27 And ExitCode% <> 0 Then
 
+                    Call ReadConferenceIndex (conferenceFile$, confName$, statType)
+
                     Open diskPaths$(2) + conferenceFile$ + ".TMI" For Input As #1
-
-                    Input #1, statType
-                    Input #1, confName$
-                    Input #1, div1$
-                    Input #1, div2$
-
-                    For X = 1 To TEAMS_PER_CONFERENCE
-                        Input #1, memberName$(X)
-                        Input #1, memberIdx(X)
-                        Input #1, memberYear$(X)
-                    Next
 
                     numberTeams = TEAMS_PER_CONFERENCE
 

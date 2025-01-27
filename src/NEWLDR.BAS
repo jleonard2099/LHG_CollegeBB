@@ -132,20 +132,29 @@ End Sub
 'a variety of arrays.
 Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
-    Shared expPlyrLdrName$(), plyLeaderTeams$()
-    Shared memberName$(), statPlyrNames$()
-    Shared expPlyrLdrTeam$(), tmLeaderTeams$()
+    Shared expPlyrLdrName$(), expPlyrLdrTeam$()
+    Shared memberName$(), plyLeaderTeams$()
+    Shared statPlyrNames$(), tmLeaderTeams$()
 
-    Shared plyrLdrStats!()
+    Shared plyrLdrStats!(), plyrLdrVal!()
+    Shared plyrLeaderYears!(), playerOff!()
+    Shared teamLdrVal!(), totGames!(), tmLeaderYears!()
 
-    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
-    Shared plyrLdrVal!(), teamLdrVal!()
-
+    Shared leader3FGM!(), leader3FGA!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
-    Shared leader3FGM!(), leader3FGA!()
 
-    Shared playerOff!()
+    Erase expPlyrLdrName$, expPlyrLdrTeam$
+    Erase memberName$, plyLeaderTeams$
+    Erase statPlyrNames$, tmLeaderTeams$
+
+    Erase plyrLdrStats!, plyrLdrVal!
+    Erase plyrLeaderYears!, playerOff!
+    Erase teamLdrVal!, totGames!, tmLeaderYears!
+
+    Erase leader3FGM!, leader3FGA!
+    Erase stats3FGM!, stats3FGA!
+    Erase statsOffTot!, statsDefTot!
 
     Color 15, 0
     Cls
@@ -162,32 +171,7 @@ Sub UpdateExpandedLeaders (JB, plyrTotalStats, teamTotalStats)
 
             If _FileExists(diskPaths$(1) + memberName$(KK)) Then
 
-                Open diskPaths$(1) + memberName$(KK) For Input As #1
-
-                Input #1, teamName$
-
-                For I = 0 To 13
-
-                    Input #1, statPlyrNames$(I)
-
-                    For J = 0 To 13:
-                        Input #1, playerOff!(I, J)
-                    Next
-
-                    Input #1, stats3FGM!(I)
-                    Input #1, stats3FGA!(I)
-
-                Next
-
-                For L = 0 To 15:
-                    Input #1, statsOffTot!(L)
-                Next
-
-                For L = 0 To 15:
-                    Input #1, statsDefTot!(L)
-                Next
-
-                Close #1
+                Call ReadTeamStats (teamName$, memberName$(KK))
 
                 Open diskPaths$(1) + memberName$(KK) + "S" For Input As #2
                 Input #2, year

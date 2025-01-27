@@ -447,7 +447,7 @@ End Sub
 '----------------------------------------
 '       ReadSeasonRecords Subroutine
 '----------------------------------------
-'Reads in list of team and individual 
+'Reads in list of team and individual
 'record values from the records file.
 Sub ReadSeasonRecords (recordFile$)
 
@@ -489,12 +489,12 @@ End Sub
 '----------------------------------------
 '       ReadGameRecords Subroutine
 '----------------------------------------
-'Reads in list of team and individual 
+'Reads in list of team and individual
 'record values from the records file.
 Sub ReadGameRecords (recordFile$)
 
     Shared indRecords!(), teamRecords!()
-    
+
     Shared indRecDesc$(), teamRecDesc$()
 
     Open diskPaths$(1) + recordFile$ For Input As #1
@@ -556,9 +556,9 @@ End Sub
 'file that represents a national Org.
 Sub ReadOrganizationFile (organizationFile$, orgName$)
 
-	Shared memberConf$()
+    Shared memberConf$()
 
-	Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
+    Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
 
     Input #1, orgName$
 
@@ -764,3 +764,4 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
+

@@ -176,7 +176,7 @@ Dim awayLosses!(50), awayWins!(50)
 Dim homeLosses!(50), homeWins!(50)
 Dim homeScoreTeam!(50), homeScoreOpp!(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
-Dim totAwayLosses!(40), totAwayWin!(40)
+Dim totAwayLosses!(40), totAwayWins!(40)
 Dim totHomeLosses!(40), totHomeWins!(40)
 Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
@@ -203,7 +203,7 @@ Dim tm3FGA!, tm3FGAPct!, tmAsst!, tmBlocks!, tmFouls!
 Dim tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
 Dim tmReb!, tmSteal!, tmTO!
 
-Dim statPlyrVal!(0 To 14, 0 to 26)
+Dim statPlyrVal!(0 To 14, 0 To 26)
 
 
 '----------------------------------------
@@ -268,7 +268,7 @@ Dim Shared X0%, X1%, XX%
 Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$, YN$
+Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$
 
 Dim Shared CZ%(1), G9%(1), NG%(18), NG1%(18)
 Dim Shared pressureRating(1, 1), ST%(32), SX%(32, 1, 14)
@@ -276,14 +276,13 @@ Dim Shared TM%(1, 13)
 
 Dim Shared defAdjVsPass(2, 4), defAdjVsShot(4, 3)
 Dim Shared dFGPA(1), def3FG_Adj(1), defStrat(1), defCategory(1), defCoverage(1)
-Dim Shared ft3PtFoul(1), F1(13)
+Dim Shared ft3PtFoul(1)
 Dim Shared G4(13), G5(13), homeCtFactor(1, 6)
 Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), offStrat(1)
 Dim Shared mandatoryTO(0 To 1), P4(14), P5(14)
 Dim Shared pbpFG(8), pbpBG(8), pctContrib(1)
 Dim Shared playerDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), playerStat_GAME(0 To 1, 0 To 13, 0 To 15)
-Dim Shared plyrStamina(13)
 Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14)
 Dim Shared rosterStatus(1, 13), rebRatings(9)
 Dim Shared schedGame(2), score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
