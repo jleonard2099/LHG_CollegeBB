@@ -1060,7 +1060,7 @@ Sub InputTeam ()
             Print "INPUT ASSIST RATINGS"
             Color 15
             Print "AA SHOULD = APPROX. 3 WHEN FINISHED"
-            Print "FORWARD!S,CENTERS ARE USUALLY 0,1,2,3 ; GUARD!S ARE USUALLY 3,4,5,6"
+            Print "FORWARDS,CENTERS ARE USUALLY 0,1,2,3 ; GUARDS ARE USUALLY 3,4,5,6"
 
             Print
 
@@ -1281,7 +1281,7 @@ Sub InputTeam ()
             Color 14
             Print "INPUT BLOCK RATINGS"
             Color 15
-            Print "GUARD!S ARE USUALLY 0,1 ; FORWARD!S,CENTERS ARE USUALLY 0,1,2,3"
+            Print "GUARDS ARE USUALLY 0,1 ; FORWARDS,CENTERS ARE USUALLY 0,1,2,3"
             Print "THE GREAT SHOT BLOCKERS ARE USUALLY 5,6,7"
             Print
 

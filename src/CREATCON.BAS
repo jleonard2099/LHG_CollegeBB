@@ -9,8 +9,10 @@ Sub CREATCON ()
     _Title "Courtside College Basketball - Manage Conferences"
 
     Shared memberIdx()
-
     Shared memberName$(), memberYear$()
+
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
 
     ReDim menuChoices$(1 To 3)
 
@@ -21,7 +23,7 @@ Sub CREATCON ()
 
         Call TITLE
         menuChoices$(1) = "CREATE A CONFERENCE      "
-        menuChoices$(2) = "MANAGE CONFERENCE MEMBERS"
+        menuChoices$(2) = "MODIFY CONFERENCE MEMBERS"
         menuChoices$(3) = "RETURN TO LEADERS MENU   "
         SELECTION% = 1
         Count% = 3
@@ -45,25 +47,27 @@ Sub CREATCON ()
         If ExitCode% <> 27 Then
 
             For X = 1 To TEAMS_PER_CONFERENCE
+                memberIdx(X) = -1
                 memberName$(X) = "XXX"
+                memberYear$(X) = "XXX"
             Next
 
-            D1$ = ""
-            D2$ = ""
+            div1Name$ = ""
+            div2Name$ = ""
 
             Select Case SELECTION%
 
                 Case 1:
-                    Call DefineConference(conference$, D1$, D2$)
-                    confFile$ = conference$
-                    Call ReviewEditConference(confFile$, conference$, D1$, D2$)
+                    Call DefineConference
+                    Call ReviewEditConference(conferenceName$)
 
                 Case 2:
                     Do
+
                         confFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditConference(confFile$, conference$, D1$, D2$)
+                            Call ReviewEditConference(confFile$)
                         End If
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
@@ -86,7 +90,10 @@ End Sub
 'This subroutine assists the user with the
 'input of paramters related to the conf-
 'erence's general naming and setup
-Sub DefineConference (conference$, div1$, div2$)
+Sub DefineConference ()
+
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
 
     Do
 
@@ -99,12 +106,13 @@ Sub DefineConference (conference$, div1$, div2$)
 
             Locate 7, 32
 
-            Locate , 12: Print "ENTER NAME FOR CONFERENCE: ": Print
+            Locate , 12: Print "ENTER NAME FOR CONFERENCE: "
+            Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
             Locate , 12: Print "SAMPLE NAMES ARE SEC, SWC, 94-ACC"
-            Locate 7, 37: Input conference$
+            Locate 7, 37: Input conferenceName$
 
-            If conference$ <> "" Then
+            If conferenceName$ <> "" Then
 
                 Do
                     Locate 13, 12: Print "ANY CHANGE? (Y/N) "
@@ -117,12 +125,6 @@ Sub DefineConference (conference$, div1$, div2$)
 
     Loop Until UCase$(I$) = "N"
 
-    'Color 15, 0
-    'Print
-    'Print
-    'Locate , 12: Input "ENTER NAME OF DIVISION 1 (ENTER FOR NONE) "; div1$
-    'Locate , 12: Input "ENTER NAME OF DIVISION 2 (ENTER FOR NONE) "; div2$
-
     FG = 0
     BG = 7
 
@@ -130,21 +132,21 @@ Sub DefineConference (conference$, div1$, div2$)
     Color 15, 1
 
     Locate 5, 1: QPrint "Name for Division 1 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div1$, 50), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div1Name$, 50), FG, BG, -1
     Locate 7, 1: QPrint "Name for Division 2 ", 14, 1, -1
-    Locate , 21: QPrint PadRight$(div2$, 50), FG, BG, -1
+    Locate , 21: QPrint PadRight$(div2Name$, 50), FG, BG, -1
 
     GetDiv1:
     Locate 5, 21 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
-    Call TextIn(div1$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(div1Name$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
     GetDiv2:
     Locate 7, 21 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 50 'specify field parameters
-    Call TextIn(div2$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(div2Name$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
 
     Done:
@@ -168,26 +170,16 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the conference
-Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
+Sub ReviewEditConference (confFile$)
 
     Shared memberIdx()
-
     Shared memberName$(), memberYear$()
 
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
+
     If _FileExists(diskPaths$(2) + confFile$ + ".TMI") Then
-
-        Open diskPaths$(2) + confFile$ + ".TMI" For Input As #1
-
-        Input #1, statType, confName$, div1$, div2$
-
-        For X = 1 To TEAMS_PER_CONFERENCE
-            Input #1, memberName$(X)
-            Input #1, memberIdx(X)
-            Input #1, memberYear$(X)
-        Next
-
-        Close #1
-
+        Call ReadConferenceIndex (confFile$)
     End If
 
     Do
@@ -196,14 +188,14 @@ Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
         Cls
 
         Print
-        Print "  "; confName$; " CONFERENCE"
+        Print "  "; conferenceName$; " CONFERENCE"
         Print
 
         Color 12
-        Locate , 6: Print div1$;
-        Locate , 53: Print div2$
+        Locate , 6: Print div1Name$;
+        Locate , 53: Print div2Name$
 
-        For I = 1 To 15
+        For I = 1 To TEAMS_PER_DIV
 
             Color 2: Print Using "  ##"; I;
             Color 15: Print " "; Left$(memberName$(I), 25);
@@ -250,7 +242,7 @@ Sub ReviewEditConference (confFile$, confName$, div1$, div2$)
 
     Loop Until choice = 3
 
-    Call SaveConferences(confFile$, confName$, div1$, div2$)
+    Call SaveConferences(confFile$)
 
 End Sub
 
@@ -261,21 +253,22 @@ End Sub
 'This subroutine writes the conference's
 'team memberships and definition to
 'each of the corresponding files (.TMI, .TMS)
-Sub SaveConferences (confFile$, confName$, div1$, div2$)
+Sub SaveConferences (confFile$)
 
     Shared memberIdx()
-
     Shared memberName$(), memberYear$()
     
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
+
     Dim statFileNames$(TEAMS_PER_CONFERENCE)
     
     Open diskPaths$(2) + confFile$ + ".TMI" For Output As #1
 
     Print #1, 0
-
-    Print #1, confName$ 'League / Conference Name
-    Print #1, div1$ 'Division 1 Name
-    Print #1, div2$ 'Division 2 Name
+    Print #1, conferenceName$ 'League / Conference Name
+    Print #1, div1Name$ 'Division 1 Name
+    Print #1, div2Name$ 'Division 2 Name
 
     For X = 1 To TEAMS_PER_CONFERENCE
         Print #1, memberName$(X) 'Team Name
@@ -298,9 +291,9 @@ Sub SaveConferences (confFile$, confName$, div1$, div2$)
 
     Open diskPaths$(2) + confFile$ + ".TMS" For Output As #2
 
-    Write #2, confName$
-    Write #2, div1$
-    Write #2, div2$
+    Write #2, conferenceName$
+    Write #2, div1Name$
+    Write #2, div2Name$
 
     For X = 1 To TEAMS_PER_CONFERENCE:
         Write #2, statFileNames$(X)

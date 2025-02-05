@@ -30,7 +30,7 @@ Sub MERGE ()
         menuWidth% = Len(menuChoices$(1))
         Column% = (80 - menuWidth% - 2) / 2
 
-        Call box0(Row%-1, Column%-1, Row%+Count%, Column%+menuWidth%, 2, FileFGColor, FileBGColor)
+        Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -210,7 +210,7 @@ Sub MergeStats ()
 
                         Close #3
 
-                        Open pathRoadStats$ + statFile$ + "S" For Input As #4
+                        Open pathCurrentStats$ + statFile$ + "S" For Input As #4
 
                         Input #4, nbrGamesCurr
 

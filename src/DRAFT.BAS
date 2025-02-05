@@ -637,7 +637,7 @@ Sub ChooseDraftTeam (yearNumber$, numberTeams, chosenIdx, teamName$, draftIdx)
                             Get #1, teamIdx
                             'numberTeams = numberTeams + 1
                             teamNames$(teamIdx) = Q$(0)
-                            teamIndex%(teamIdx) = teamIdx
+                            teamIndex(teamIdx) = teamIdx
                         Next teamIdx
 
                         Close #1
@@ -729,7 +729,7 @@ Sub SelectDraftTeam (numberTeams, selectedIdx, ExitCode%, draftIdx)
 
         If ExitCode% <> 27 Then
 
-            selectedIdx = teamIndex%(SELECTION%)
+            selectedIdx = teamIndex(SELECTION%)
 
             'Locate 2, 33
             'Color 31: Print "LOADING..."
