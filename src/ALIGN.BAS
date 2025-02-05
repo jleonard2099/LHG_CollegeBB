@@ -11,8 +11,6 @@ Sub ALIGN ()
 
     _Title "Courtside College Basketball - Align Stats"
 
-    Shared teamNameStats$
-
     Shared statPlyrNames$(), plyrName_Road$()
 
     Shared plyrStat_Road!(), statsA!()
@@ -60,11 +58,11 @@ Sub ALIGN ()
 
                 Next
 
-                For L = 0 To 15: 
+                For L = 1 to 16: 
                     Input #1, statsOffTot_Road!(L)
                 Next
 
-                For L = 0 To 15: 
+                For L = 1 to 16: 
                     Input #1, statsDefTot_Road!(L)
                 Next
 
@@ -72,34 +70,8 @@ Sub ALIGN ()
 
                 If _FileExists(pathCurrentStats$ + statFile$) Then
 
-                    Open pathCurrentStats$ + statFile$ For Input As #2
-
-                    Input #2, teamNameStats$
-
-                    For I = 0 To 13:
-
-                        Input #2, statPlyrNames$(I)
-
-                        For J = 0 To 13:
-                            Input #2, compareA(I, J)
-                        Next
-
-                        Input #2, stats3FGM!(I)
-                        Input #2, stats3FGA!(I)
-
-                    Next
-
-                    For L = 0 To 15: 
-                        Input #2, statsOffTot!(L)
-                    Next
-
-                    For L = 0 To 15: 
-                        Input #2, statsDefTot!(L)
-                    Next
-
-                    Close #2
-
-                    Call AlignStats(pathRoadStats$, statFile$)
+                    Call ReadTeamStats(teamNameStats$, statFile$)
+                    Call AlignStats(teamNameStats$, pathRoadStats$, statFile$)
                     DUMMY$ = "OK"
 
                 Else
@@ -143,7 +115,7 @@ End Sub
 'It then performs the alignment before 
 'presenting the user a chance to review 
 'the results.
-Sub AlignStats (pathRoadStats$, statFile$)
+Sub AlignStats (teamNameStats$, pathRoadStats$, statFile$)
 
     Shared plyrName_Road$()
     Shared plyrName_Align$()
@@ -218,7 +190,7 @@ Sub AlignStats (pathRoadStats$, statFile$)
             Next
 
             If SEQ = 0 Then
-                Call ReviewAndSaveAlignment(pathRoadStats$, statFile$)
+                Call ReviewAndSaveAlignment(teamNameStats$, pathRoadStats$, statFile$)
             Else
                 Color 14
                 Locate 20
@@ -243,9 +215,7 @@ End Sub
 'This routine displays the results of the 
 'player name alignment, then gives the end
 'user a chance to actually save the results 
-Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
-
-    Shared teamNameStats$
+Sub ReviewAndSaveAlignment (teamNameStats$, pathRoadStats$, statFile$)
 
     Shared plyrName_Align$()
     Shared statPlyrNames$()
@@ -294,11 +264,11 @@ Sub ReviewAndSaveAlignment (pathRoadStats$, statFile$)
 
     Next
 
-    For L = 0 To 15: 
+    For L = 1 to 16: 
         Write #1, statsOffTot_Road!(L)
     Next
 
-    For L = 0 To 15: 
+    For L = 1 to 16: 
         Write #1, statsDefTot_Road!(L)
     Next
 

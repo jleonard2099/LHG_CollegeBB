@@ -15,7 +15,7 @@ Sub CompileNatlOrg ()
     Shared leaderVals!(), plyrRecords!()
     Shared defLeaders!(), defRecords!()
     Shared offLeaders!(), offRecords!()
-    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
+    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
@@ -92,7 +92,7 @@ Sub CompileNatlOrg ()
                 Next
 
                 Erase leaderVals!
-                Erase compSeasonWins!, compSeasonLosses!, compSeasonWinPct!, compConfWins!, compConfLosses!, compConfWinPct!
+                Erase seasonWins!, seasonLosses!, seasonWinPct!, divWins!, divLosses!, divWinPct
                 Erase defLeaderNames$, offLeaderNames$
                 Erase memberName$, leaderName$, leaderTeam$
 
@@ -139,42 +139,42 @@ Sub CompileNatlOrg ()
                                 If (haveStats) Then
 
                                     L = Len(memberName$(XW))
-                                    WT$ = ""
+                                    statName$ = ""
 
                                     For X = 1 To L
                                         A = Asc(Mid$(memberName$(XW), X, 1))
-                                        WT$ = WT$ + Chr$(A)
+                                        statName$ = statName$ + Chr$(A)
                                     Next X
 
                                     nonConfGame = 0
 
                                     For X = 1 To TEAMS_PER_CONFERENCE
 
-                                        If memberName$(X) = WT$ Then
+                                        If memberName$(X) = statName$ Then
 
-                                            If compSeasonWins!(X) = fullWins And compSeasonLosses!(X) = fullLosses Then
+                                            If seasonWins!(X) = fullWins And seasonLosses!(X) = fullLosses Then
 
                                                 nonConfGame = 1
                                                 Exit For
 
                                             Else
 
-                                                compSeasonWins!(X) = fullWins
-                                                compSeasonLosses!(X) = fullLosses
+                                                seasonWins!(X) = fullWins
+                                                seasonLosses!(X) = fullLosses
 
-                                                compConfWins!(X) = confWins
-                                                compConfLosses!(X) = confLosses
+                                                divWins!(X) = confWins
+                                                divLosses!(X) = confLosses
 
-                                                If compSeasonWins!(X) + compSeasonLosses!(X) = 0 Then
-                                                    compSeasonWinPct!(X) = 0
+                                                If seasonWins!(X) + seasonLosses!(X) = 0 Then
+                                                    seasonWinPct!(X) = 0
                                                 Else
-                                                    compSeasonWinPct!(X) = compSeasonWins!(X) / (compSeasonWins!(X) + compSeasonLosses!(X))
+                                                    seasonWinPct!(X) = seasonWins!(X) / (seasonWins!(X) + seasonLosses!(X))
                                                 End If
 
-                                                If compConfWins!(X) + compConfLosses!(X) = 0 Then
-                                                    compConfWinPct!(X) = 0
+                                                If divWins!(X) + divLosses!(X) = 0 Then
+                                                    divWinPct(X) = 0
                                                 Else
-                                                    compConfWinPct!(X) = compConfWins!(X) / (compConfWins!(X) + compConfLosses!(X))
+                                                    divWinPct(X) = divWins!(X) / (divWins!(X) + divLosses!(X))
                                                 End If
 
                                             End If
@@ -949,7 +949,7 @@ End Function
 'This includes the national poll.
 Sub PostLeadersOrg (organization$, NRT)
 
-    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
+    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
 
     Shared plyrRecords!()
     Shared natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
@@ -969,7 +969,7 @@ Sub PostLeadersOrg (organization$, NRT)
     Print "    POSTING NEW "; organization$; " LEADERS"
 
     For X = 1 To 30
-        Write #1, confLdrName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
+        Write #1, confLdrName$(X), seasonWins!(X), seasonLosses!(X), seasonWinPct!(X), divWins!(X), divLosses!(X), divWinPct(X)
     Next
 
     For X = 1 To 250

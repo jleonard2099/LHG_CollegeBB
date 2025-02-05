@@ -10,10 +10,13 @@ bin/HELLO*
 bin/TICKER
 doc/*.odt
 src/*.mp3
+src/*.png
 src/DEFAULT
 src/DEV.BAS
 src/errlog
 src/EVENTS.BOX
 src/FOLDERS.CFG
 src/GAME82
+src/pbplog
+src/schedule
 src/TICKER

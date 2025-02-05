@@ -93,7 +93,7 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
                             Get #1, teamIdx
                             'numberTeams = numberTeams + 1
                             teamNames$(teamIdx) = Q$(0)
-                            teamIndex%(teamIdx) = teamIdx
+                            teamIndex(teamIdx) = teamIdx
                         Next teamIdx
 
                         Close #1
@@ -190,7 +190,7 @@ Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
 
         If ExitCode% <> 27 Then
 
-            selectedIdx = teamIndex%(SELECTION%)
+            selectedIdx = teamIndex(SELECTION%)
 
             'Locate 2, 33
             'Color 31: Print "LOADING..."
@@ -365,6 +365,84 @@ End Sub
 
 
 '----------------------------------------
+'        UserFilePrompt Subroutine
+'----------------------------------------
+'This subroutine prompts the user for
+'the name of the report file to be saved
+Sub UserFilePrompt (reportFile$)
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Call MenuBox(6, 8, 61, 7, 15, 1)
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER NAME FOR FILE: ": Print
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
+        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .RPT"
+        Locate 7, 37: Input reportFile$
+
+        If reportFile$ <> "" Then
+
+            Do
+                Locate 13, 12: Print "ANY CHANGE? (Y/N) "
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+
+        End If
+
+    Loop Until UCase$(I$) = "N" And reportFile$ <> ""
+
+End Sub
+
+
+'----------------------------------------
+'     ScheduleFilePrompt Subroutine
+'----------------------------------------
+'This subroutine prompts the user for
+'the name of the schedule file to be saved
+Sub ScheduleFilePrompt (scheduleFile$)
+
+    Color 15, 0
+    Cls
+
+    Call MenuBox(6, 8, 61, 8, 15, 1)
+
+    Do
+
+        Locate 7, 32
+
+        Locate , 12: Print "ENTER NAME FOR SCHEDULE: "
+        Print
+        Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS"
+        Locate , 12: Print "DO NOT ADD A FILE EXTENSION; THE PROGRAM"
+        Locate , 12: Print "WILL AUTOMATICALLY ADD .SCD"
+        Locate , 12: Print "SAMPLE NAMES ARE INDIANA, BOS68, CHI-76, ETC      "
+        Locate 7, 40: Input scheduleFile$
+
+        If scheduleFile$ <> "" Then
+
+            Do
+
+                Locate 14, 12
+                Print "ANY CHANGE? (Y/N) "
+                I$ = GetKeyPress$
+
+            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+
+        End If
+
+    Loop Until (UCase$(I$) = "N" And scheduleFile$ <> "") Or I$ = Chr$(27)
+
+
+End Sub
+
+
+'----------------------------------------
 '        ReadTeamStats Subroutine
 '----------------------------------------
 'Reads in compiled stats for a given team
@@ -398,11 +476,11 @@ Sub ReadTeamStats (teamName$, statFile$)
 
     Next
 
-    For L = 1 To 16:
+    For L = 0 To 15:
         Input #1, statsOffTot!(L)
     Next
 
-    For L = 1 To 16:
+    For L = 0 To 15:
         Input #1, statsDefTot!(L)
     Next
 
@@ -418,8 +496,12 @@ End Sub
 'team's schedule stats file.
 Sub ReadScheduleStats (statFile$, numberGames)
 
-    Shared teamScore(), oppScore()
-    Shared oppName$()
+    Shared gameSite$()
+    Shared locIndicator$(), oppName$()
+
+    Shared oppScore(), powerRating(), teamScore()
+
+    Shared gameAttendance&()
 
     findFile$ = diskPaths$(1) + statFile$ + "S"
 
@@ -439,6 +521,24 @@ Sub ReadScheduleStats (statFile$, numberGames)
         Input #1, oppScore(I)
     Next I
 
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, locIndicator$(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS
+        For I1 = 0 To 1:
+            Input #1, powerRating(I, I1)
+        Next
+    Next
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, gameAttendance&(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Input #1, gameSite$(I)
+    Next I
+
     Close #1
 
 End Sub
@@ -447,7 +547,7 @@ End Sub
 '----------------------------------------
 '       ReadSeasonRecords Subroutine
 '----------------------------------------
-'Reads in list of team and individual 
+'Reads in list of team and individual
 'record values from the records file.
 Sub ReadSeasonRecords (recordFile$)
 
@@ -489,12 +589,12 @@ End Sub
 '----------------------------------------
 '       ReadGameRecords Subroutine
 '----------------------------------------
-'Reads in list of team and individual 
+'Reads in list of team and individual
 'record values from the records file.
 Sub ReadGameRecords (recordFile$)
 
     Shared indRecords!(), teamRecords!()
-    
+
     Shared indRecDesc$(), teamRecDesc$()
 
     Open diskPaths$(1) + recordFile$ For Input As #1
@@ -520,6 +620,37 @@ Sub ReadGameRecords (recordFile$)
     Next
 
     Close #1
+
+End Sub
+
+
+'----------------------------------------
+'     ReadConferenceIndex Subroutine
+'----------------------------------------
+'This subroutine reads in the team file
+'indexes from the .TMI file and assigns them
+'to variables for use later.
+Sub ReadConferenceIndex (indexFile$)
+
+    Shared memberIdx()
+    Shared memberName$(), memberYear$()
+
+    Shared conferenceName$
+    Shared div1Name$, div2Name$
+
+    Open diskPaths$(2) + indexFile$ + ".TMI" For Input As #2
+
+    Input #2, conferenceName$
+    Input #2, div1Name$
+    Input #2, div2Name$
+
+    For X = 1 To TEAMS_PER_LEAGUE
+        Input #2, memberName$(X)
+        Input #2, memberIdx(X)
+        Input #2, memberYear$(X)
+    Next
+
+    Close #2
 
 End Sub
 
@@ -556,9 +687,9 @@ End Sub
 'file that represents a national Org.
 Sub ReadOrganizationFile (organizationFile$, orgName$)
 
-	Shared memberConf$()
+    Shared memberConf$()
 
-	Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
+    Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
 
     Input #1, orgName$
 
@@ -764,3 +895,4 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
+

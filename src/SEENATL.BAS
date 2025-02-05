@@ -37,7 +37,7 @@ Sub LoadLeaderFiles_Nat (targetFile$, NRT)
     Shared pollTeam$()
     Shared pollRatings#()
 
-    Shared compSeasonWins!(), compSeasonLosses!(), compSeasonWinPct!(), compConfWins!(), compConfLosses!(), compConfWinPct!()
+    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
 
     Cls
 
@@ -46,7 +46,7 @@ Sub LoadLeaderFiles_Nat (targetFile$, NRT)
     Open diskPaths$(2) + targetFile$ + ".NLD" For Input As #1
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Input #1, confLdrName$(X), compSeasonWins!(X), compSeasonLosses!(X), compSeasonWinPct!(X), compConfWins!(X), compConfLosses!(X), compConfWinPct!(X)
+        Input #1, confLdrName$(X), seasonWins!(X), seasonLosses!(X), seasonWinPct!(X), divWins!(X), divLosses!(X), divWinPct(X)
     Next
 
     For X = 1 To 250: 
