@@ -139,18 +139,18 @@ Sub CompileNatlOrg ()
                                 If (haveStats) Then
 
                                     L = Len(memberName$(XW))
-                                    WT$ = ""
+                                    statName$ = ""
 
                                     For X = 1 To L
                                         A = Asc(Mid$(memberName$(XW), X, 1))
-                                        WT$ = WT$ + Chr$(A)
+                                        statName$ = statName$ + Chr$(A)
                                     Next X
 
                                     nonConfGame = 0
 
                                     For X = 1 To TEAMS_PER_CONFERENCE
 
-                                        If memberName$(X) = WT$ Then
+                                        If memberName$(X) = statName$ Then
 
                                             If seasonWins!(X) = fullWins And seasonLosses!(X) = fullLosses Then
 

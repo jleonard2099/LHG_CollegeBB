@@ -72,7 +72,7 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames)
 
     ' *** READ IN TEAM STATS ***
     'Erase totalScore
-    
+
     totalLosses = 0
     totalWins = 0
     tiedGames = 0
@@ -85,37 +85,37 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames)
     roadLosses = 0
     neutralLosses = 0
 
-    Call ReadScheduleStats (statFile$, totalGames)
+    Call ReadScheduleStats(statFile$, totalGames)
 
     For I = 1 To totalGames
 
-        If teamScore(I) > oppScore(I) Then 
+        If teamScore(I) > oppScore(I) Then
             totalWins = totalWins + 1
         End If
-        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then 
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then
             homeWins = homeWins + 1
         End If
-        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then 
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then
             roadWins = roadWins + 1
         End If
-        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then 
+        If teamScore(I) > oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then
             neutralWins = neutralWins + 1
         End If
 
-        If teamScore(I) < oppScore(I) Then 
+        If teamScore(I) < oppScore(I) Then
             totalLosses = totalLosses + 1
         End If
-        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then 
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "H" Then
             homeLosses = homeLosses + 1
         End If
-        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then 
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "V" Then
             roadLosses = roadLosses + 1
         End If
-        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then 
+        If teamScore(I) < oppScore(I) And Left$(locIndicator$(I), 1) = "N" Then
             neutralLosses = neutralLosses + 1
         End If
 
-        If teamScore(I) = oppScore(I) Then 
+        If teamScore(I) = oppScore(I) Then
             tiedGames = tiedGames + 1
         End If
 
@@ -233,8 +233,8 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
             End If
 
             'If teamScore(I) = oppScore(I) Then
-                'tiedGames = tiedGames + 1
-                'Print "T";
+            'tiedGames = tiedGames + 1
+            'Print "T";
             'End If
 
             Locate , 31: Print Using "####,###"; gameAttendance&(I);
@@ -327,7 +327,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                     Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -342,7 +342,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
                     End If
 
             End Select
-            
+
         End If
 
     Loop Until I$ = Chr$(0) + Chr$(81) Or I$ = Chr$(27) 'Or I$ = Chr$(0) + Chr$(73)
@@ -608,7 +608,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                     Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -619,7 +619,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                                 Call StatsSummary_Report(1, "REPORT", teamName$, totalGames)
 
                         End Select
-                        
+
                     End If
 
             End Select
@@ -794,7 +794,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                         Select Case userKey$
 
                             Case "F"
-                                userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
                                     Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                     Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -805,7 +805,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                                 Call StatsSummary_Report(1, "REPORT", teamName$, totalGames)
 
                         End Select
-                        
+
                     End If
 
             End Select
@@ -931,7 +931,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames, menuExit)
                     Select Case userKey$
 
                         Case "F"
-                            userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                            userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                             If userFile$ <> "" Then
                                 Call StatsSchedule_Report(0, userFile$, teamName$, totalGames)
                                 Call StatsSummary_Report(0, userFile$, teamName$, totalGames)
@@ -942,7 +942,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames, menuExit)
                             Call StatsSummary_Report(1, "REPORT", teamName$, totalGames)
 
                     End Select
-                    
+
                 End If
 
         End Select
@@ -968,10 +968,10 @@ Sub StatsSchedule_Report (printDest, destFile$, teamName$, totalGames)
 
     Shared locIndicator$(), oppName$()
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, "SCHEDULE RESULTS FOR "; teamName$
     Print #1,
@@ -1011,22 +1011,22 @@ Sub StatsSchedule_Report (printDest, destFile$, teamName$, totalGames)
     Print #1, Tab(27); "ROAD RECORD    ("; roadWins; "-"; roadLosses; ")"
     Print #1, Tab(27); "NEUTRAL RECORD ("; neutralWins; "-"; neutralLosses; ")"
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 
@@ -1044,10 +1044,10 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames)
 
     Shared statPlyrNames$()
 
-	Color 15, 0
-	Cls
+    Color 15, 0
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
 
     Print #1, "STATISTICS SUMMARY FOR "; teamName$
     Print #1, "NAME"; Tab(15);
@@ -1235,22 +1235,22 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames)
     'Fouls  AST  BLK  STL  TO
     Print #1, Using " #### #### #### #### ####"; statsDefTot!(6); statsDefTot!(8); statsDefTot!(9); statsDefTot!(7); statsDefTot!(11)
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 
@@ -1299,7 +1299,7 @@ Sub SortStats (categoryPick)
 
             If statPlyrVal!(Z, SG%) < statPlyrVal!(Z1, SG%) Then
 
-                For I = 0 To 24: 
+                For I = 0 To 24:
                     Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)
                 Next
 

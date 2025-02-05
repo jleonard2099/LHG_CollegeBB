@@ -90,7 +90,7 @@ Sub HD2HDCON ()
 
                 End Select
 
-                Call ReadConferenceIndex (conferenceFile$, conferenceName$, statType)
+                Call ReadConferenceIndex (conferenceFile$)
 
                 Cls
                 Color 15

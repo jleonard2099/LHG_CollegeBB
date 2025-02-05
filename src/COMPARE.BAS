@@ -12,7 +12,6 @@ Sub COMPARE ()
     Shared replayLosses, replayWins
 
     Shared statsA!(), stats3FGM!(), stats3FGA!()
-    Shared statsOffTot!(), statsDefTot!()
 
     Shared position$()
     Shared statPlyrNames$(), locIndicator$(), oppName$()
@@ -122,8 +121,6 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
 
     Shared stats3FGM!(), stats3FGA!()
     
-    Shared statsOffTot!(), statsDefTot!()
-
     Shared statPlyrNames$()
 
     Shared replayLosses, replayWins
@@ -161,13 +158,13 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
         Next
 
         Color 12
-        Locate 5, 15: Print "15. ";
+        Locate 5, 35: Print "15. ";
         Color 3: Print "View Players In Sequence"
         Color 12
-        Locate 6, 15: Print "16. ";
+        Locate 6, 35: Print "16. ";
         Color 3: Print "View Another Team"
         Color 12
-        Locate , 15: Print "17. ";
+        Locate , 35: Print "17. ";
         Color 3: Print "Return To Main Menu"
 
         Do
