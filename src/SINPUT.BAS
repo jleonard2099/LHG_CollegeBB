@@ -549,9 +549,7 @@ Sub ChangeScheduleStats (teamName$)
 
     Shared gameAttendance&()
 
-    statsFile$ = diskPaths$(1) + teamName$ + "S"
-
-    If Not _FileExists(statsFile$) Then
+    If Not _FileExists(diskPaths$(1) + teamName$ + "S") Then
 
         MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
         BoxWidth = 24
@@ -563,7 +561,7 @@ Sub ChangeScheduleStats (teamName$)
 
     Else
 
-        Call ReadScheduleStats (statsFile$, nbrGames)
+        Call ReadScheduleStats (teamName$, nbrGames)
 
         Do
 
@@ -613,7 +611,7 @@ Sub ChangeScheduleStats (teamName$)
 
                     Case 4:
                         Do
-                            Locate 5, 1: Input "4. (H)OME, (V)ISOTOR OR (N)EUTRAL"; homeOrAway$
+                            Locate 5, 1: Input "4. (H)OME, (V)ISITOR OR (N)EUTRAL"; homeOrAway$
                             Locate 5, 36: Print " "
                         Loop Until homeOrAway$ = "H" Or homeOrAway$ = "V" Or homeOrAway$ = "N"
 
@@ -646,7 +644,7 @@ Sub ChangeScheduleStats (teamName$)
 
         Loop Until UCase$(I$) = "N"
 
-        Call SaveScheduleStats (statsFile$, nbrGames)
+        Call SaveScheduleStats(teamName$, nbrGames)
 
         Cls
 
