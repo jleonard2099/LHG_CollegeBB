@@ -14,7 +14,7 @@ Sub MERGE ()
         Color , 0
         Cls
 
-        Call TITLE_MERGE
+        Call TITLE_Merge
 
         menuChoices$(1) = "MERGE STATISTICAL FILES"
         menuChoices$(2) = "ALIGN STATISTICAL FILES"
@@ -74,7 +74,7 @@ Sub MergeStats ()
     Shared oppScore(), oppScore_Road()
     Shared teamScore(), teamScore_Road()
 
-    Shared plyrStat_Merge!(), plyrRat_MERGE()
+    Shared plyrStat_Merge!(), plyrRat_Merge()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
@@ -192,7 +192,7 @@ Sub MergeStats ()
                             Input #3, statPlyrNames$(I)
 
                             For J = 0 To 13: 
-                                Input #3, plyrRat_MERGE(I, J)
+                                Input #3, plyrRat_Merge(I, J)
                             Next
 
                             Input #3, stats3FGM!(I)
@@ -351,7 +351,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     Shared oppScore(), oppScore_Road() 
     Shared teamScore(), teamScore_Road()
 
-    Shared plyrStat_Merge!(), plyrRat_MERGE()
+    Shared plyrStat_Merge!(), plyrRat_Merge()
 
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
@@ -381,16 +381,16 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
     For I = 0 To 13
 
         For J = 0 To 12: 
-            plyrRat_MERGE(I, J) = plyrRat_MERGE(I, J) + plyrStat_Merge!(I, J)
+            plyrRat_Merge(I, J) = plyrRat_Merge(I, J) + plyrStat_Merge!(I, J)
         Next J
 
         stats3FGM!(I) = stats3FGM!(I) + threeFGM_Merge!(I)
         stats3FGA!(I) = stats3FGA!(I) + threeFGA_Merge!(I)
 
-        If plyrRat_MERGE(I, 13) < plyrStat_Merge!(I, 13) Then 
-            plyrRat_MERGE(I, 13) = plyrStat_Merge!(I, 13) 
+        If plyrRat_Merge(I, 13) < plyrStat_Merge!(I, 13) Then 
+            plyrRat_Merge(I, 13) = plyrStat_Merge!(I, 13) 
         Else 
-            plyrRat_MERGE(I, 13) = plyrRat_MERGE(I, 13)
+            plyrRat_Merge(I, 13) = plyrRat_Merge(I, 13)
         End If
 
     Next I
@@ -409,7 +409,7 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
         Write #1, statPlyrNames$(I)
 
         For J = 0 To 13: 
-            Write #1, plyrRat_MERGE(I, J)
+            Write #1, plyrRat_Merge(I, J)
         Next
 
         Write #1, stats3FGM!(I)

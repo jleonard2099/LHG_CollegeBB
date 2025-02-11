@@ -32,7 +32,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Shared div1Name$, div2Name$
 
     Shared defLeaders!(), offLeaders!()
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
     Shared confLdrVal!(), confLdrAtt!()
     Shared offLeaderNames$(), defLeaderNames$()
     Shared leaderName$(), leaderTeam$()
@@ -45,7 +45,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #1
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Input #1, confLdrName$(X), seasonWins!(X), seasonLosses!(X), seasonWinPct!(X), divWins!(X), divLosses!(X), divWinPct(X)
+        Input #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct(X)
     Next
 
     For X = 1 To 250:
@@ -144,7 +144,7 @@ End Sub
 Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
     Shared confLdrVal!(), confLdrAtt!()
     Shared offLeaderNames$(), defLeaderNames$()
     Shared leaderName$(), leaderTeam$()
@@ -172,12 +172,12 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Print confLdrName$(P); Tab(16);
 
             'Conference Record
-            Print Using "##   ##   "; divWins!(P); divLosses!(P);
+            Print Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins!(P) = 0 And divLosses!(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print " .---";
             End If
-            If divWinPct(P) = 0 And (divWins!(P) <> 0 Or divLosses!(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print " .000";
             End If
             If divWinPct(P) = 1  Then
@@ -190,12 +190,12 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             'Season Record
             Locate , 41
             Print confLdrName$(P); Tab(56);
-            Print Using "##   ##   "; seasonWins!(P); seasonLosses!(P);
+            Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
-            If seasonWinPct!(P) = 0 And seasonWins!(P) = 0 And seasonLosses!(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
                 Print " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins!(P) <> 0 Or seasonLosses!(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
                 Print " .000"
             End If
             If seasonWinPct!(P) = 1 Then 
@@ -233,13 +233,13 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
         If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
             Print confLdrName$(P); Tab(16);
-            Print Using "##   ##   "; divWins!(P); divLosses!(P);
+            Print Using "##   ##   "; divWins(P); divLosses(P);
 
             'Conference Record
-            If divWinPct(P) = 0 And divWins!(P) = 0 And divLosses!(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print " .---";
             End If
-            If divWinPct(P) = 0 And (divWins!(P) <> 0 Or divLosses!(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print " .000";
             End If
             If divWinPct(P) = 1 Then 
@@ -251,13 +251,13 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
             Locate , 41
             Print confLdrName$(P); Tab(56);
-            Print Using "##   ##   "; seasonWins!(P); seasonLosses!(P);
+            Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
             'Season Record
-            If seasonWinPct!(P) = 0 And seasonWins!(P) = 0 And seasonLosses!(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
                 Print " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins!(P) <> 0 Or seasonLosses!(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
                 Print " .000"
             End If
             If seasonWinPct!(P) = 1 Then 
@@ -774,7 +774,7 @@ End Sub
 Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
     Shared confLdrVal!(), confLdrAtt!()
 
     Shared offLeaderNames$(), defLeaderNames$()
@@ -796,12 +796,12 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
         If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
             Print #1, confLdrName$(P); Tab(16);
-            Print #1, Using "##   ##   "; divWins!(P); divLosses!(P);
+            Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins!(P) = 0 And divLosses!(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print #1, " .---";
             End If
-            If divWinPct(P) = 0 And (divWins!(P) <> 0 Or divLosses!(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print #1, " .000";
             End If
             If divWinPct(P) = 1 Then 
@@ -813,12 +813,12 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
             Print #1, Tab(41);
             Print #1, confLdrName$(P); Tab(56);
-            Print #1, Using "##   ##   "; seasonWins!(P); seasonLosses!(P);
+            Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
-            If seasonWinPct!(P) = 0 And seasonWins!(P) = 0 And seasonLosses!(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
                 Print #1, " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins!(P) <> 0 Or seasonLosses!(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
                 Print #1, " .000"
             End If
             If seasonWinPct!(P) = 1 Then 
@@ -843,12 +843,12 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
         If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
             Print #1, confLdrName$(P); Tab(16);
-            Print #1, Using "##   ##   "; divWins!(P); divLosses!(P);
+            Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins!(P) = 0 And divLosses!(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print #1, " .---";
             End If
-            If divWinPct(P) = 0 And (divWins!(P) <> 0 Or divLosses!(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print #1, " .000";
             End If
             If divWinPct(P) = 1 Then 
@@ -860,12 +860,12 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
             Print #1, Tab(41);
             Print #1, confLdrName$(P); Tab(56);
-            Print #1, Using "##   ##   "; seasonWins!(P); seasonLosses!(P);
+            Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
-            If seasonWinPct!(P) = 0 And seasonWins!(P) = 0 And seasonLosses!(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
                 Print #1, " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins!(P) <> 0 Or seasonLosses!(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
                 Print #1, " .000"
             End If
             If seasonWinPct!(P) = 1 Then 

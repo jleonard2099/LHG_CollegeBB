@@ -108,10 +108,10 @@ Sub TITLE_LEADERS
 End Sub
 
 '----------------------------------------
-'         TITLE_MERGE Subroutine
+'         TITLE_Merge Subroutine
 '----------------------------------------
 ' Displays window title / game copyright
-Sub TITLE_MERGE ()
+Sub TITLE_Merge ()
 
     Color 12, 1
 

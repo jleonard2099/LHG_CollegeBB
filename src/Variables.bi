@@ -7,6 +7,8 @@ Dim Shared teamIndex(MAX_TEAMS)
 
 ' *** Reading Stat Data ***
 ' -------------------------
+Dim teamNameStats$
+
 Dim gameAttendance&(MAX_SCHED_STATS)
 
 Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
@@ -14,7 +16,7 @@ Dim powerRating(MAX_SCHED_STATS, 1)
 
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
 
-Dim statsA!(15, 14)
+Dim satsPlyrRat!(15, 14)
 Dim stats3FGM!(15), stats3FGA!(15)
 Dim statsOffTot!(15), statsDefTot!(15)
 Dim gameStatPlyrVal!(13, 13)
@@ -50,9 +52,11 @@ ReDim scheduleAP%(MAX_SCHEDULE_GAMES), scheduleNG%(MAX_SCHEDULE_GAMES, 18)
 ReDim homeScores(MAX_SCHEDULE_GAMES), visitorScores(MAX_SCHEDULE_GAMES)
 
 ReDim scheduleH$(MAX_SCHEDULE_GAMES), scheduleV$(MAX_SCHEDULE_GAMES)
-ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
 ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 'ReDim yearNumber$(MAX_SCHEDULE_GAMES, 1)
+
+'-- These are used for tournaments
+ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
 
 
 ' *** Game Options ***
@@ -101,17 +105,29 @@ Dim carLdrVal!(19, 20)
 
 Dim carRecVal!(21), carRecYear!(21)
 
-Dim plyLeaderTeams$(MAX_CONFERENCES, 15), tmLeaderTeams$(MAX_CONFERENCES, 15)
+Dim plyLeaderTeams$(40, 15), tmLeaderTeams$(40, 15)
 
 Dim plyrLdrStats!(0 To 600, 0 To 14)
-Dim plyrLeaderYears!(MAX_CONFERENCES), tmLeaderYears!(MAX_CONFERENCES)
-Dim plyrLdrVal!(MAX_CONFERENCES, 15), teamLdrVal!(MAX_CONFERENCES, 15)
+Dim plyrLeaderYears!(40), tmLeaderYears!(40)
+Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
 
 ' For Expanded Leaders
-Dim expIndCategory$(31), expTeamCategory$(39)
+Dim expIndCategory$(0 to 31), expTeamCategory$(0 to 39)
 Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
 
 Dim totGames!(600), expLdrVal!(600)
+
+'For Expanded Standings
+Dim lastLoseStreak(TEAMS_PER_CONFERENCE), lastWinStreak(TEAMS_PER_CONFERENCE)
+Dim lastTenLosses(TEAMS_PER_CONFERENCE), lastTenWins(TEAMS_PER_CONFERENCE)
+
+Dim teamLoseStreak(TEAMS_PER_CONFERENCE), teamWinStreak(TEAMS_PER_CONFERENCE)
+
+Dim totHomeLosses(TEAMS_PER_CONFERENCE), totHomeWins(TEAMS_PER_CONFERENCE)
+Dim totAwayLosses(TEAMS_PER_CONFERENCE), totAwayWins(TEAMS_PER_CONFERENCE)
+Dim totTeamLosses(TEAMS_PER_CONFERENCE), totTeamWins(TEAMS_PER_CONFERENCE)
+
+Dim expStdLeagName$(TEAMS_PER_CONFERENCE)
 
 
 '----------------------------------------
@@ -123,7 +139,7 @@ Dim leaderVals!(1 To 250, 0 To 2), natLeaderVals!(1 To 250, 1 To 2)
 Dim natDefLeaders!(MAX_CONFERENCES, 1 To 20), natOffLeaders!(MAX_CONFERENCES, 1 To 20)
 Dim compStats!(0 To 14, 0 To 26)
 
-Dim seasonWins!(30), seasonLosses!(30), seasonWinPct!(30), divWins!(30), divLosses!(30), divWinPct(30)
+Dim seasonWins(30), seasonLosses(30), seasonWinPct!(30), divWins(30), divLosses(30), divWinPct(30)
 
 Dim defLeaderNames$(60), offLeaderNames$(60)
 Dim statCategoryAbbr$(25)
@@ -170,14 +186,14 @@ Dim tmYears_DRAFT$(1), tmName_DRAFT$(1)
 Dim conferenceName$
 Dim div1Name$, div2Name$
 
-Dim awayLosses!(50), awayWins!(50)
-Dim homeLosses!(50), homeWins!(50)
-Dim homeScoreTeam!(50), homeScoreOpp!(50)
+Dim awayLosses(50), awayWins(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
-Dim totAwayLosses!(40), totAwayWins!(40)
-Dim totHomeLosses!(40), totHomeWins!(40)
-Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
+
+Dim homeLosses(50), homeWins(50)
+Dim homeScoreTeam!(50), homeScoreOpp!(50)
+
 Dim totAwayScoreTeam!(40), totAwayScoreOpp!(40)
+Dim totHomeScoreTeam!(40), totHomeScoreOpp!(40)
 
 
 '----------------------------------------

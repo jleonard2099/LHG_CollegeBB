@@ -13,8 +13,8 @@ Sub CompileCollege ()
     Shared leaderVals!(), plyrRecords!()
     Shared defLeaders!(), defRecords!()
     Shared offLeaders!(), offRecords!()
-    Shared divWins!(), divLosses!(), divWinPct()
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!()
+    Shared divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared defRecDesc$(), offRecDesc$()
@@ -81,8 +81,8 @@ Sub CompileCollege ()
 
         Call ReadConferenceStats (conferenceFile$)
         
-        Erase seasonWins!, seasonLosses!, seasonWinPct!
-        Erase divWins!, divLosses!, divWinPct
+        Erase seasonWins, seasonLosses, seasonWinPct!
+        Erase divWins, divLosses, divWinPct
 
         For XW = 1 To TEAMS_PER_CONFERENCE
 
@@ -100,29 +100,29 @@ Sub CompileCollege ()
 
                         If memberName$(X) = statName$ Then
 
-                            If seasonWins!(X) = fullWins And seasonLosses!(X) = fullLosses Then
+                            If seasonWins(X) = fullWins And seasonLosses(X) = fullLosses Then
 
                                 nonConfGame = 1
                                 Exit For
 
                             Else
 
-                                seasonWins!(X) = fullWins
-                                seasonLosses!(X) = fullLosses
+                                seasonWins(X) = fullWins
+                                seasonLosses(X) = fullLosses
 
-                                divWins!(X) = confWins
-                                divLosses!(X) = confLosses
+                                divWins(X) = confWins
+                                divLosses(X) = confLosses
 
-                                If seasonWins!(X) + seasonLosses!(X) = 0 Then
+                                If seasonWins(X) + seasonLosses(X) = 0 Then
                                     seasonWinPct!(X) = 0
                                 Else
-                                    seasonWinPct!(X) = seasonWins!(X) / (seasonWins!(X) + seasonLosses!(X))
+                                    seasonWinPct!(X) = seasonWins(X) / (seasonWins(X) + seasonLosses(X))
                                 End If
 
-                                If divWins!(X) + divLosses!(X) = 0 Then
+                                If divWins(X) + divLosses(X) = 0 Then
                                     divWinPct(X) = 0
                                 Else
-                                    divWinPct(X) = divWins!(X) / (divWins!(X) + divLosses!(X))
+                                    divWinPct(X) = divWins(X) / (divWins(X) + divLosses(X))
                                 End If
 
                             End If
@@ -1118,7 +1118,7 @@ End Sub
 'a bubble sort algorithm.
 Sub SortStandingsConference
 
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
 
     Shared memberName$()
 
@@ -1135,18 +1135,18 @@ Sub SortStandingsConference
 
             For Y = X + 1 To ZZ
 
-                diffX = divWins!(X) - divLosses!(X)
-                diffY = divWins!(Y) - divLosses!(Y)
+                diffX = divWins(X) - divLosses(X)
+                diffY = divWins(Y) - divLosses(Y)
 
                 If diffX <= diffY Then
                     If diffX <> diffY Then
-                        If Not (divWins!(X) <= divWins!(Y) And divWins!(X) > divLosses!(X)) Or Not (divWins!(X) >= divWins!(Y) And divWins!(X) < divLosses!(X)) Then
+                        If Not (divWins(X) <= divWins(Y) And divWins(X) > divLosses(X)) Or Not (divWins(X) >= divWins(Y) And divWins(X) < divLosses(X)) Then
                             Swap memberName$(X), memberName$(Y)
-                            Swap seasonWins!(X), seasonWins!(Y)
-                            Swap seasonLosses!(X), seasonLosses!(Y)
+                            Swap seasonWins(X), seasonWins(Y)
+                            Swap seasonLosses(X), seasonLosses(Y)
                             Swap seasonWinPct!(X), seasonWinPct!(Y)
-                            Swap divWins!(X), divWins!(Y)
-                            Swap divLosses!(X), divLosses!(Y)
+                            Swap divWins(X), divWins(Y)
+                            Swap divLosses(X), divLosses(Y)
                             Swap divWinPct(X), divWinPct(Y)
                         End If
                     End If
@@ -1172,7 +1172,7 @@ Sub PostLeadersConf (conferenceName$)
     Shared defLeaderNames$(), offLeaderNames$()
     Shared defLeaders!(), offLeaders!()
     Shared leaderVals!()
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
 
     Shared leaderName$(), memberName$(), leaderTeam$()
 
@@ -1185,7 +1185,7 @@ Sub PostLeadersConf (conferenceName$)
     Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Write #1, memberName$(X), seasonWins!(X), seasonLosses!(X), seasonWinPct!(X), divWins!(X), divLosses!(X), divWinPct(X)
+        Write #1, memberName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct(X)
     Next
 
     For X = 1 To 250

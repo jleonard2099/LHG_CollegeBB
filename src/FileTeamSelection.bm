@@ -29,7 +29,6 @@ Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
         Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
         Print
         Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
-        Locate 8,
 
         I$ = GetKeyPress$
 
@@ -540,6 +539,59 @@ Sub ReadScheduleStats (statFile$, numberGames)
     Next I
 
     Close #1
+
+End Sub
+
+
+'----------------------------------------
+'      SaveScheduleStats Subroutine
+'----------------------------------------
+'This subroutine writes in all data to the
+'team's schedule stats file.
+Sub SaveScheduleStats (saveFile$, numberGames)
+
+    Shared gameSite$()
+    Shared locIndicator$(), oppName$()
+
+    Shared oppScore(), powerRating(), teamScore()
+
+    Shared gameAttendance&()
+
+    Open diskPaths$(1) + saveFile$ + "S" For Output As #2
+
+    Print #2, numberGames
+
+    For I = 1 To MAX_SCHED_STATS:
+        Print #2, teamScore(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Print #2, oppName$(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Print #2, oppScore(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Print #2, locIndicator$(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS
+        For I1 = 0 To 1
+            Print #2, powerRating(I, I1)
+        Next
+    Next
+
+    For I = 1 To MAX_SCHED_STATS:
+        Print #2, gameAttendance&(I)
+    Next I
+
+    For I = 1 To MAX_SCHED_STATS:
+        Print #2, gameSite$(I)
+    Next I
+
+    Close #2
 
 End Sub
 

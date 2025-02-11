@@ -11,7 +11,7 @@ Sub COMPARE ()
     Shared teamScore(), oppScore(), teamRatings()
     Shared replayLosses, replayWins
 
-    Shared statsA!(), stats3FGM!(), stats3FGA!()
+    Shared satsPlyrRat!(), stats3FGM!(), stats3FGA!()
 
     Shared position$()
     Shared statPlyrNames$(), locIndicator$(), oppName$()
@@ -334,10 +334,12 @@ Sub TeamComparisons_Screen (teamName$)
 
     Locate 8, 32: Print String$(18, 177)
 
+    'Actual Record
     Color 3, 0
     Locate 6, 41: Print Using "####"; teamRatings(7);
     Locate 6, 45: Print Using "#### "; teamRatings(8);
 
+    'Replay Record
     Color 14, 0
     Locate 7, 41: Print Using "####"; replayWins;
     Locate 7, 45: Print Using "#### "; replayLosses;
@@ -640,7 +642,7 @@ End Sub
 'are output to the end user display
 Sub PlayerComparisons_Screen (idx, position$, teamName$)
 
-    Shared statsA!(), playerStats!()
+    Shared satsPlyrRat!(), playerStats!()
     Shared stats3FGM!(), stats3FGA!()
 
     Shared statPlyrNames$()
@@ -838,105 +840,105 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Color 7, 0: Print String$(2, 177)
     Color 14, 11
 
-    Locate 6, 14: Print Using "###"; statsA!(idx, 0);
+    Locate 6, 14: Print Using "###"; satsPlyrRat!(idx, 0);
 
     Locate , 17
-    If statsA!(idx, 10) = 0 Then 
+    If satsPlyrRat!(idx, 10) = 0 Then 
         Print "    0";
     End If
-    If statsA!(idx, 10) > 0 Then 
-        Print Using "#####"; (statsA!(idx, 10) + 30) / 60;
+    If satsPlyrRat!(idx, 10) > 0 Then 
+        Print Using "#####"; (satsPlyrRat!(idx, 10) + 30) / 60;
     End If
 
-    Locate , 22: Print Using "#####"; statsA!(idx, 2);
-    Locate , 27: Print Using "#####"; statsA!(idx, 1);
+    Locate , 22: Print Using "#####"; satsPlyrRat!(idx, 2);
+    Locate , 27: Print Using "#####"; satsPlyrRat!(idx, 1);
 
     Locate , 32
-    If statsA!(idx, 2) = 0 Then 
+    If satsPlyrRat!(idx, 2) = 0 Then 
         Print "    0.0%";
     End If
-    If statsA!(idx, 2) > 0 Then
-        Print Using "#####.#%"; (statsA!(idx, 2) / statsA!(idx, 1)) * 100;
+    If satsPlyrRat!(idx, 2) > 0 Then
+        Print Using "#####.#%"; (satsPlyrRat!(idx, 2) / satsPlyrRat!(idx, 1)) * 100;
     End If
 
-    Locate 6, 40: Print Using "#####"; statsA!(idx, 4);
-    Locate 6, 45: Print Using "#####"; statsA!(idx, 3);
+    Locate 6, 40: Print Using "#####"; satsPlyrRat!(idx, 4);
+    Locate 6, 45: Print Using "#####"; satsPlyrRat!(idx, 3);
 
     Locate , 50
-    If statsA!(idx, 4) = 0 Then 
+    If satsPlyrRat!(idx, 4) = 0 Then 
         Print "    0.0%";
     End If
-    If statsA!(idx, 4) > 0 Then
-        Print Using "#####.#%"; statsA!(idx, 4) / statsA!(idx, 3) * 100;
+    If satsPlyrRat!(idx, 4) > 0 Then
+        Print Using "#####.#%"; satsPlyrRat!(idx, 4) / satsPlyrRat!(idx, 3) * 100;
     End If
 
-    Locate , 58: Print Using "#######"; statsA!(idx, 12);
+    Locate , 58: Print Using "#######"; satsPlyrRat!(idx, 12);
 
     Locate , 65
-    If statsA!(idx, 0) = 0 Or statsA!(idx, 12) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 12) = 0) Then 
+    If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 12) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 12) = 0) Then 
         Print "      0.0";
     End If
-    If statsA!(idx, 0) > 0 And statsA!(idx, 12) > 0 Then 
-        Print Using "#######.#"; statsA!(idx, 12) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 12) > 0 Then 
+        Print Using "#######.#"; satsPlyrRat!(idx, 12) / satsPlyrRat!(idx, 0);
     End If
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(60, 177)
 
     Color 14, 11
-    Locate 11, 14: Print Using "######"; statsA!(idx, 5) - statsA!(idx, 12);
+    Locate 11, 14: Print Using "######"; satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12);
 
     Locate , 20
-    If statsA!(idx, 0) = 0 Or (statsA!(idx, 5) - statsA!(idx, 12)) = 0 Or (statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) = 0) Then 
+    If satsPlyrRat!(idx, 0) = 0 Or (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) = 0 Or (satsPlyrRat!(idx, 0) > 0 And (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) = 0) Then 
         Print "      0.0";
     End If
-    If statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) > 0 Then 
-        Print Using "#######.#"; (statsA!(idx, 5) - statsA!(idx, 12)) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 0) > 0 And (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) > 0 Then 
+        Print Using "#######.#"; (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) / satsPlyrRat!(idx, 0);
     End If
 
-    Locate , 29: Print Using "######"; statsA!(idx, 8);
+    Locate , 29: Print Using "######"; satsPlyrRat!(idx, 8);
 
     Locate , 35
-    If statsA!(idx, 0) = 0 Or statsA!(idx, 8) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 8) = 0) Then 
+    If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 8) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 8) = 0) Then 
         Print "     0.0";
     End If
-    If statsA!(idx, 0) > 0 And statsA!(idx, 8) > 0 Then 
-        Print Using "######.#"; statsA!(idx, 8) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 8) > 0 Then 
+        Print Using "######.#"; satsPlyrRat!(idx, 8) / satsPlyrRat!(idx, 0);
     End If
 
-    Locate , 43: Print Using "#######"; statsA!(idx, 6);
+    Locate , 43: Print Using "#######"; satsPlyrRat!(idx, 6);
 
     Locate , 50
-    If statsA!(idx, 0) = 0 Or statsA!(idx, 6) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 6) = 0) Then 
+    If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 6) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 6) = 0) Then 
         Print "  0.0";
     End If
-    If statsA!(idx, 0) > 0 And statsA!(idx, 6) > 0 Then 
-        Print Using "###.#"; statsA!(idx, 6) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 6) > 0 Then 
+        Print Using "###.#"; satsPlyrRat!(idx, 6) / satsPlyrRat!(idx, 0);
     End If
 
-    Locate , 55: Print Using "######"; statsA!(idx, 5);
-    Locate , 61: Print Using "#####"; statsA!(idx, 7);
+    Locate , 55: Print Using "######"; satsPlyrRat!(idx, 5);
+    Locate , 61: Print Using "#####"; satsPlyrRat!(idx, 7);
 
     Locate , 66
-    If statsA!(idx, 0) = 0 Or statsA!(idx, 7) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 7) = 0) Then 
+    If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 7) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 7) = 0) Then 
         Print "    0.0";
     End If
-    If statsA!(idx, 0) > 0 And statsA!(idx, 7) > 0 Then 
-        Print Using "#####.#"; statsA!(idx, 7) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 7) > 0 Then 
+        Print Using "#####.#"; satsPlyrRat!(idx, 7) / satsPlyrRat!(idx, 0);
     End If
 
     Color 7, 0: Print String$(2, 177)
     Locate , 16: Print String$(59, 177)
 
     Color 14, 11
-    Locate 16, 14: Print Using "####"; statsA!(idx, 9);
+    Locate 16, 14: Print Using "####"; satsPlyrRat!(idx, 9);
 
     Locate , 18
-    If statsA!(idx, 0) = 0 Or statsA!(idx, 9) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 9) = 0) Then 
+    If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 9) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 9) = 0) Then 
         Print "    0.0";
     End If
-    If statsA!(idx, 0) > 0 And statsA!(idx, 9) > 0 Then 
-        Print Using "#####.#"; statsA!(idx, 9) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 9) > 0 Then 
+        Print Using "#####.#"; satsPlyrRat!(idx, 9) / satsPlyrRat!(idx, 0);
     End If
 
     Locate , 25: Print Using "#######"; stats3FGM!(idx);
@@ -950,24 +952,24 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
         Print Using "#######.#%"; (stats3FGM!(idx) / stats3FGA!(idx)) * 100;
     End If
 
-    statVal = statsA!(idx, 5) / statsA!(idx, 0)
+    statVal = satsPlyrRat!(idx, 5) / satsPlyrRat!(idx, 0)
     Locate , 49: Print Using "#####.#"; statVal;
-    Locate , 56: Print Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx);
+    Locate , 56: Print Using "######"; (satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(idx);
 
     Locate , 62
-    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx) = 0 Then 
+    If (satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(idx) = 0 Then 
         Print "   0.0";
     End If
-    If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx) > 0 Then 
-        Print Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(idx)) / statsA!(idx, 0);
+    If (satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(idx) > 0 Then 
+        Print Using "####.#"; ((satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(idx)) / satsPlyrRat!(idx, 0);
     End If
 
     Locate , 68
-    If statsA!(idx, 10) = 0 Then 
+    If satsPlyrRat!(idx, 10) = 0 Then 
         Print "    0.0";
     End If
-    If statsA!(idx, 10) > 0 Then 
-        Print Using "#####.#"; ((statsA!(idx, 10) + 30) / 60) / statsA!(idx, 0);
+    If satsPlyrRat!(idx, 10) > 0 Then 
+        Print Using "#####.#"; ((satsPlyrRat!(idx, 10) + 30) / 60) / satsPlyrRat!(idx, 0);
     End If
 
     Color 7, 0: Print String$(2, 177)
@@ -990,7 +992,7 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
     Shared playerStats!()
 
-    Shared statsA!()
+    Shared satsPlyrRat!()
     Shared statsOffTot!(), statsDefTot!()
     Shared stats3FGM!(), stats3FGA!()
 
@@ -1337,47 +1339,47 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
             'Locate 6
             Print #1, " REPLAY  ";
-            Print #1, Tab(14); Using "###"; statsA!(idx, 0);
+            Print #1, Tab(14); Using "###"; satsPlyrRat!(idx, 0);
 
             Print #1, Tab(17);
-            If statsA!(idx, 10) = 0 Then 
+            If satsPlyrRat!(idx, 10) = 0 Then 
                 Print #1, "    0";
             End If
-            If statsA!(idx, 10) > 0 Then 
-                Print #1, Using "#####"; (statsA!(idx, 10) + 30) / 60;
+            If satsPlyrRat!(idx, 10) > 0 Then 
+                Print #1, Using "#####"; (satsPlyrRat!(idx, 10) + 30) / 60;
             End If
 
-            Print #1, Tab(22); Using "#####"; statsA!(idx, 2);
-            Print #1, Tab(27); Using "#####"; statsA!(idx, 1);
+            Print #1, Tab(22); Using "#####"; satsPlyrRat!(idx, 2);
+            Print #1, Tab(27); Using "#####"; satsPlyrRat!(idx, 1);
 
             Print #1, Tab(32);
-            If statsA!(idx, 2) = 0 Then
+            If satsPlyrRat!(idx, 2) = 0 Then
                 Print #1, "    0.0%";
             End If
-            If statsA!(idx, 2) > 0 Then
-                Print #1, Using "#####.#"; (statsA!(idx, 2) / statsA!(idx, 1)) * 100;
+            If satsPlyrRat!(idx, 2) > 0 Then
+                Print #1, Using "#####.#"; (satsPlyrRat!(idx, 2) / satsPlyrRat!(idx, 1)) * 100;
                 Print #1, "%";
             End If
 
-            Print #1, Tab(40); Using "#####"; statsA!(idx, 4);
-            Print #1, Tab(45); Using "#####"; statsA!(idx, 3);
+            Print #1, Tab(40); Using "#####"; satsPlyrRat!(idx, 4);
+            Print #1, Tab(45); Using "#####"; satsPlyrRat!(idx, 3);
 
             Print #1, Tab(50);
-            If statsA!(idx, 4) = 0 Then
+            If satsPlyrRat!(idx, 4) = 0 Then
                 Print #1, "    0.0%";
             End If
-            If statsA!(idx, 4) > 0 Then
-                Print #1, Using "#####.#%"; statsA!(idx, 4) / statsA!(idx, 3) * 100;
+            If satsPlyrRat!(idx, 4) > 0 Then
+                Print #1, Using "#####.#%"; satsPlyrRat!(idx, 4) / satsPlyrRat!(idx, 3) * 100;
             End If
 
-            Print #1, Tab(58); Using "#######"; statsA!(idx, 12);
+            Print #1, Tab(58); Using "#######"; satsPlyrRat!(idx, 12);
 
             Print #1, Tab(65);
-            If statsA!(idx, 0) = 0 Or statsA!(idx, 12) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 12) = 0) Then 
+            If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 12) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 12) = 0) Then 
                 Print #1, "      0.0";
             End If
-            If statsA!(idx, 0) > 0 And statsA!(idx, 12) > 0 Then 
-                Print #1, Using "#######.#"; statsA!(idx, 12) / statsA!(idx, 0);
+            If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 12) > 0 Then 
+                Print #1, Using "#######.#"; satsPlyrRat!(idx, 12) / satsPlyrRat!(idx, 0);
             End If
 
             Print #1,
@@ -1451,49 +1453,49 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
 
             'Locate 11
             Print #1, " REPLAY  ";
-            Print #1, Tab(14); Using "######"; statsA!(idx, 5) - statsA!(idx, 12);
+            Print #1, Tab(14); Using "######"; satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12);
 
             Print #1, Tab(20);
-            If statsA!(idx, 0) = 0 Or (statsA!(idx, 5) - statsA!(idx, 12)) = 0 Or (statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) = 0) Then 
+            If satsPlyrRat!(idx, 0) = 0 Or (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) = 0 Or (satsPlyrRat!(idx, 0) > 0 And (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) = 0) Then 
                 Print #1, "      0.0";
             End If
-            If statsA!(idx, 0) > 0 And (statsA!(idx, 5) - statsA!(idx, 12)) > 0 Then 
-                Print #1, Using "#######.#"; (statsA!(idx, 5) - statsA!(idx, 12)) / statsA!(idx, 0);
+            If satsPlyrRat!(idx, 0) > 0 And (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) > 0 Then 
+                Print #1, Using "#######.#"; (satsPlyrRat!(idx, 5) - satsPlyrRat!(idx, 12)) / satsPlyrRat!(idx, 0);
             End If
 
             Print #1, Tab(29);
-            Print #1, Using "######"; statsA!(idx, 8);
+            Print #1, Using "######"; satsPlyrRat!(idx, 8);
 
             Print #1, Tab(35);
-            If statsA!(idx, 0) = 0 Or statsA!(idx, 8) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 8) = 0) Then 
+            If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 8) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 8) = 0) Then 
                 Print #1, "     0.0";
             End If
-            If statsA!(idx, 0) > 0 And statsA!(idx, 8) > 0 Then 
-                Print #1, Using "######.#"; statsA!(idx, 8) / statsA!(idx, 0);
+            If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 8) > 0 Then 
+                Print #1, Using "######.#"; satsPlyrRat!(idx, 8) / satsPlyrRat!(idx, 0);
             End If
 
             Print #1, Tab(43);
-            Print #1, Using "#######"; statsA!(idx, 6);
+            Print #1, Using "#######"; satsPlyrRat!(idx, 6);
 
             Print #1, Tab(50);
-            If statsA!(idx, 0) = 0 Or statsA!(idx, 6) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 6) = 0) Then 
+            If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 6) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 6) = 0) Then 
                 Print #1, "  0.0";
             End If
-            If statsA!(idx, 0) > 0 And statsA!(idx, 6) > 0 Then 
-                Print #1, Using "###.#"; statsA!(idx, 6) / statsA!(idx, 0);
+            If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 6) > 0 Then 
+                Print #1, Using "###.#"; satsPlyrRat!(idx, 6) / satsPlyrRat!(idx, 0);
             End If
 
             Print #1, Tab(55);
-            Print #1, Using "######"; statsA!(idx, 5);
+            Print #1, Using "######"; satsPlyrRat!(idx, 5);
             Print #1, Tab(61);
-            Print #1, Using "#####"; statsA!(idx, 7);
+            Print #1, Using "#####"; satsPlyrRat!(idx, 7);
 
             Print #1, Tab(66);
-            If statsA!(idx, 0) = 0 Or statsA!(idx, 7) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 7) = 0) Then 
+            If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 7) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 7) = 0) Then 
                 Print #1, "    0.0"
             End If
-            If statsA!(idx, 0) > 0 And statsA!(idx, 7) > 0 Then 
-                Print #1, Using "#####.#"; statsA!(idx, 7) / statsA!(idx, 0);
+            If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 7) > 0 Then 
+                Print #1, Using "#####.#"; satsPlyrRat!(idx, 7) / satsPlyrRat!(idx, 0);
             End If
 
             '-----
@@ -1568,15 +1570,15 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             'Locate 16
             Print #1, " REPLAY  ";
             'Blocks
-            Print #1, Tab(14); Using "####"; statsA!(idx, 9);
+            Print #1, Tab(14); Using "####"; satsPlyrRat!(idx, 9);
 
             'Blocks / Game
             Print #1, Tab(18);
-            If statsA!(idx, 0) = 0 Or statsA!(idx, 9) = 0 Or (statsA!(idx, 0) > 0 And statsA!(idx, 9) = 0) Then 
+            If satsPlyrRat!(idx, 0) = 0 Or satsPlyrRat!(idx, 9) = 0 Or (satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 9) = 0) Then 
                 Print #1, "    0.0";
             End If
-            If statsA!(idx, 0) > 0 And statsA!(idx, 9) > 0 Then 
-                Print #1, Using "#####.#"; statsA!(idx, 9) / statsA!(idx, 0);
+            If satsPlyrRat!(idx, 0) > 0 And satsPlyrRat!(idx, 9) > 0 Then 
+                Print #1, Using "#####.#"; satsPlyrRat!(idx, 9) / satsPlyrRat!(idx, 0);
             End If
 
             '3 FGM
@@ -1595,26 +1597,26 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
                 Print #1, Using "#######.#%"; (stats3FGM!(I) / stats3FGA!(I)) * 100;
             End If
 
-            statVal = statsA!(idx, 5) / statsA!(idx, 0)
+            statVal = satsPlyrRat!(idx, 5) / satsPlyrRat!(idx, 0)
             Print #1, Tab(49);
             Print #1, Using "#####.#"; statVal;
             Print #1, Tab(56);
-            Print #1, Using "######"; (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I);
+            Print #1, Using "######"; (satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(I);
 
             Print #1, Tab(62);
-            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I) = 0 Then 
+            If (satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(I) = 0 Then 
                 Print #1, "   0.0";
             End If
-            If (statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I) > 0 Then 
-                Print #1, Using "####.#"; ((statsA!(idx, 2) * 2) + statsA!(idx, 4) + stats3FGM!(I)) / statsA!(idx, 0);
+            If (satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(I) > 0 Then 
+                Print #1, Using "####.#"; ((satsPlyrRat!(idx, 2) * 2) + satsPlyrRat!(idx, 4) + stats3FGM!(I)) / satsPlyrRat!(idx, 0);
             End If
 
             Print #1, Tab(68);
-            If statsA!(idx, 10) = 0 Then 
+            If satsPlyrRat!(idx, 10) = 0 Then 
                 Print #1, "    0.0"
             End If
-            If statsA!(idx, 10) > 0 Then 
-                Print #1, Using "#####.#"; ((statsA!(idx, 10) + 30) / 60) / statsA!(idx, 0)
+            If satsPlyrRat!(idx, 10) > 0 Then 
+                Print #1, Using "#####.#"; ((satsPlyrRat!(idx, 10) + 30) / 60) / satsPlyrRat!(idx, 0)
             End If
 
             Print #1,

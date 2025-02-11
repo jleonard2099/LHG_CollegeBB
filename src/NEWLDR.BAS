@@ -8,11 +8,21 @@ Sub NEWLDR ()
 
     _Title "Courtside College Basketball - Expanded Leaders / Standings"
 
-    ReDim menuChoices$(1 To 3)
+    ReDim menuChoices$(1 To 5)
 
     Dim printOrView
 
+    Shared div1Name$, div2Name$, conferenceName$
     Shared memberName$()
+
+    'Needed for Expanded Standings
+    Shared totHomeLosses(), totHomeWins()
+    Shared totTeamLosses(), lastLoseStreak()
+    Shared lastTenLosses(), lastTenWins(), lastWinStreak()
+    Shared totAwayLosses(), totAwayWins()
+    Shared teamLoseStreak(), teamWinStreak(), totTeamWins()
+
+    Shared expStdLeagName$()
 
     Do
 
@@ -21,13 +31,15 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "UPDATE EXPANDED LEAGUE LEADER FILES"
-        menuChoices$(2) = "VIEW EXPANDED LEAGUE STATISTICS    "
-        menuChoices$(3) = "RETURN TO LEAGUE LEADER MENU       "
+        menuChoices$(1) = "UPDATE EXPANDED CONFERENCE LEADERS        "
+        menuChoices$(2) = "VIEW EXPANDED CONFERENCE LEADER FILES     "
+        menuChoices$(3) = "UPDATE EXPANDED CONFERENCE STANDINGS      "
+        menuChoices$(4) = "VIEW / PRINT EXPANDED CONFERENCE STANDINGS"
+        menuChoices$(5) = "RETURN TO CONFERENCE LEADER MAIN MENU     "
         SELECTION% = 1
-        Count% = 3
+        Count% = 5
         Start% = 1
-        ExitCode% = 3
+        ExitCode% = 5
         FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -69,7 +81,7 @@ Sub NEWLDR ()
 
                 Case 2:
                     Do
-                        leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "LEAGUE LEADERS", FileExit%)
+                        leaderFile$ = ChooseFile$(diskPaths$(2) + "*.LDS", "CONFERENCE LEADERS", FileExit%)
 
                         If FileExit% <> 27 And FileExit% <> 0 Then
                             Call ReadLeaderStdg(leaderFile$, JB, PTS, TTS)
@@ -78,48 +90,69 @@ Sub NEWLDR ()
 
                     Loop Until FileExit% = 27 Or FileExit% = 0
 
+                Case 3:
+                    Do
+                        confStatFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", FileExit%)
+
+                        If FileExit% <> 27 And FileExit% <> 0 Then
+
+                            Color 15, 0
+                            Cls
+
+                            Call ReadConferenceStats (confStatFile$)
+                            Call UpdateExpandedStandings
+
+                        End If
+
+                    Loop Until FileExit% = 27 Or FileExit% = 0
+
+                Case 4:
+                    Do
+                        standingsFile$ = ChooseFile$(diskPaths$(2) + "*.STD", "CONFERENCE STANDINGS", FileExit%)
+
+                        If FileExit% <> 27 And FileExit% <> 0 Then
+
+                            Open diskPaths$(2) + standingsFile$ + ".STD" For Input As #2
+
+                            Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
+
+                            For I = 1 To TEAMS_PER_LEAGUE
+                                Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totAwayWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totAwayLosses(I), lastTenLosses(I), teamWinStreak(I), teamLoseStreak(I)
+                            Next
+
+                            Close #2
+
+                            userKey$ = GetOutputOptions$
+
+                            If userKey$ <> Chr$(27) Then
+
+                                Select Case userKey$
+
+                                    Case "F"
+                                        userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                                        If userFile$ <> "" Then
+                                            Call NewStandings_Report(0, userFile$, leagueName$)
+                                        End If
+
+                                    Case "P"
+                                        Call NewStandings_Report(1, "REPORT", leagueName$)
+
+                                    Case "S":
+                                        Call NewStandings_Screen(leagueName$)
+
+                                End Select
+
+                            End If
+
+                        End If
+
+                    Loop Until FileExit% = 27 Or FileExit% = 0
+
             End Select
 
         End If
 
-    Loop Until SELECTION% = 3 Or ExitCode% = 27
-
-End Sub
-
-
-'----------------------------------------
-'      ViewExpandedStats Subroutine
-'----------------------------------------
-'This subroutine reads in the league stats
-'from the .TMS file. It then relies on other
-'routines to calculate the expanded stats,
-'write them to a file and present a categ-
-'orized menu to use for reviewing them
-' XXXX NO LONGER USED WITH NEW STRUCTURE XXXX
-Sub ViewExpandedStats ()
-
-    Dim printOrView
-    Shared memberName$()
-
-    printOrView = 0
-
-    For X = 1 To MAX_CONFERENCES
-        memberName$(X) = "XXX"
-    Next
-
-    conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMS", "CONFERENCE STATS", ExitCode%)
-
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
-
-        Call ReadConferenceStats (conferenceFile$)
-
-        Call ReadLeaderStdg(conferenceFile$, JB, PTS, TTS)
-        Call UpdateExpandedLeaders(JB, PTS, TTS)
-        Call SaveLeaderStdg(conferenceFile$, JB, PTS, TTS)
-        Call ExpandedLeaders_Menu(printOrView, JB, PTS, TTS)
-
-    End If 'Done checking for ESC
-
+    Loop Until SELECTION% = 5 Or ExitCode% = 27
 
 End Sub
 
@@ -243,7 +276,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
     'conference
-    TMR = 600 + (2*MAX_CONFERENCES)
+    TMR = 600 + (2 * TEAMS_PER_CONFERENCE)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
@@ -274,7 +307,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Next I
 
-    For I = 1 To MAX_CONFERENCES
+    For I = 1 To TEAMS_PER_CONFERENCE
 
         For I1 = 0 To 14
             Write #1, plyrLdrVal!(I, I1), plyLeaderTeams$(I, I1)
@@ -288,14 +321,14 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
     Next
 
-    For I = 1 To MAX_CONFERENCES
+    For I = 1 To TEAMS_PER_CONFERENCE
 
         For I1 = 0 To 14
             Write #1, teamLdrVal!(I, I1), tmLeaderTeams$(I, I1)
         Next
 
         Color 14
-        Locate 18, 45
+        Locate 18, 38
         TMR = TMR - 1
         Print Using "#####"; TMR
         Write #1, tmLeaderYears!(I)
@@ -314,18 +347,18 @@ End Sub
 '(.LDS) for the expanded standings modules
 Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
-    Shared statPlyrNames$(), expPlyrLdrName$(), plyLeaderTeams$()
-    Shared expPlyrLdrTeam$(), tmLeaderTeams$()
-
+    Shared expPlyrLdrName$(), expPlyrLdrTeam$()
+    Shared plyLeaderTeams$(), tmLeaderTeams$()
+    
     Shared plyrLdrStats!()
-    Shared plyrLeaderYears!(), totGames!(), tmLeaderYears!()
+    Shared plyrLeaderYears!(), tmLeaderYears!(), totGames!()
     Shared plyrLdrVal!(), teamLdrVal!()
     Shared leader3FGM!(), leader3FGA!()
 
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
     'conference
-    TMR = 600 + (2*MAX_CONFERENCES)
+    TMR = 600 + (2 * TEAMS_PER_CONFERENCE)
 
     'Print "READING LEADER FILES . . . . PLEASE WAIT"
 
@@ -368,7 +401,7 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Next I
 
-        For I = 1 To MAX_CONFERENCES
+        For I = 1 To TEAMS_PER_CONFERENCE
 
             For I1 = 0 To 14
                 Input #1, plyrLdrVal!(I, I1), plyLeaderTeams$(I, I1)
@@ -382,14 +415,14 @@ Sub ReadLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
 
         Next
 
-        For I = 1 To MAX_CONFERENCES
+        For I = 1 To TEAMS_PER_CONFERENCE
 
             For I1 = 0 To 14
                 Input #1, teamLdrVal!(I, I1), tmLeaderTeams$(I, I1)
             Next
 
             Color 14
-            Locate 18, 45
+            Locate 18, 38
             TMR = TMR - 1
             Print Using "#####"; TMR
             Input #1, tmLeaderYears!(I)

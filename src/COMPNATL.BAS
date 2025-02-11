@@ -15,7 +15,7 @@ Sub CompileNatlOrg ()
     Shared leaderVals!(), plyrRecords!()
     Shared defLeaders!(), defRecords!()
     Shared offLeaders!(), offRecords!()
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
 
     Shared defLeaderNames$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
@@ -92,7 +92,7 @@ Sub CompileNatlOrg ()
                 Next
 
                 Erase leaderVals!
-                Erase seasonWins!, seasonLosses!, seasonWinPct!, divWins!, divLosses!, divWinPct
+                Erase seasonWins, seasonLosses, seasonWinPct!, divWins, divLosses, divWinPct
                 Erase defLeaderNames$, offLeaderNames$
                 Erase memberName$, leaderName$, leaderTeam$
 
@@ -152,29 +152,29 @@ Sub CompileNatlOrg ()
 
                                         If memberName$(X) = statName$ Then
 
-                                            If seasonWins!(X) = fullWins And seasonLosses!(X) = fullLosses Then
+                                            If seasonWins(X) = fullWins And seasonLosses(X) = fullLosses Then
 
                                                 nonConfGame = 1
                                                 Exit For
 
                                             Else
 
-                                                seasonWins!(X) = fullWins
-                                                seasonLosses!(X) = fullLosses
+                                                seasonWins(X) = fullWins
+                                                seasonLosses(X) = fullLosses
 
-                                                divWins!(X) = confWins
-                                                divLosses!(X) = confLosses
+                                                divWins(X) = confWins
+                                                divLosses(X) = confLosses
 
-                                                If seasonWins!(X) + seasonLosses!(X) = 0 Then
+                                                If seasonWins(X) + seasonLosses(X) = 0 Then
                                                     seasonWinPct!(X) = 0
                                                 Else
-                                                    seasonWinPct!(X) = seasonWins!(X) / (seasonWins!(X) + seasonLosses!(X))
+                                                    seasonWinPct!(X) = seasonWins(X) / (seasonWins(X) + seasonLosses(X))
                                                 End If
 
-                                                If divWins!(X) + divLosses!(X) = 0 Then
+                                                If divWins(X) + divLosses(X) = 0 Then
                                                     divWinPct(X) = 0
                                                 Else
-                                                    divWinPct(X) = divWins!(X) / (divWins!(X) + divLosses!(X))
+                                                    divWinPct(X) = divWins(X) / (divWins(X) + divLosses(X))
                                                 End If
 
                                             End If
@@ -949,7 +949,7 @@ End Function
 'This includes the national poll.
 Sub PostLeadersOrg (organization$, NRT)
 
-    Shared seasonWins!(), seasonLosses!(), seasonWinPct!(), divWins!(), divLosses!(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
 
     Shared plyrRecords!()
     Shared natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
@@ -969,7 +969,7 @@ Sub PostLeadersOrg (organization$, NRT)
     Print "    POSTING NEW "; organization$; " LEADERS"
 
     For X = 1 To 30
-        Write #1, confLdrName$(X), seasonWins!(X), seasonLosses!(X), seasonWinPct!(X), divWins!(X), divLosses!(X), divWinPct(X)
+        Write #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct(X)
     Next
 
     For X = 1 To 250

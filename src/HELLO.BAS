@@ -484,18 +484,18 @@ Sub Replay_Menu ()
 
         Call TITLE
 
-        ReDim menuChoices$(1 To 5)
+        ReDim menuChoices$(1 To 6)
 
         menuChoices$(1) = "VIEW / PRINT COMPILED STATS     "
         menuChoices$(2) = "TEAM CAREER OPTIONS             "
         menuChoices$(3) = "COMPARE REPLAY STATS TO ACTUAL  "
-        'menuChoices$(4) = "MODIFY REPLAY STATS             "
-        menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
-        menuChoices$(5) = "RETURN TO MAIN MENU             "
+        menuChoices$(4) = "MODIFY REPLAY STATS             "
+        menuChoices$(5) = "MERGE SEPARATE STATISTICAL FILES"
+        menuChoices$(6) = "RETURN TO MAIN MENU             "
         SELECTION% = 1
-        Count% = 5
+        Count% = 6
         Start% = 1
-        ExitCode% = 5
+        ExitCode% = 6
         FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
@@ -525,16 +525,19 @@ Sub Replay_Menu ()
                     Call COMPARE
 
                 Case 4:
+                    Call EditStats
+
+                Case 5
                     Call MERGE
 
-                Case 5:
+                Case 6:
                     '
 
             End Select
 
         End If
 
-    Loop Until SELECTION% = 5 Or ExitCode% = 27
+    Loop Until SELECTION% = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -554,20 +557,21 @@ Sub Leaders_Menu ()
 
         ReDim menuChoices$(1 To 14)
 
-        menuChoices$(1) = "MANAGE CONFERENCES        "
-        menuChoices$(2) = "UPDATE STATS / STANDINGS  "
-        menuChoices$(3) = "ACCESS CONFERENCE REPORTS "
-        menuChoices$(4) = "HEAD-TO-HEAD RESULTS      "
-        menuChoices$(5) = "CONFERENCE RECORDS        "
-        menuChoices$(6) = "EXPANDED LEADERS          "
-        menuChoices$(7) = "DELETE CONFERENCE STATS   "
-        menuChoices$(8) = "MANAGE ORGANIZATIONS      "
-        menuChoices$(9) = "UPDATE POLL / STATS       "
-        menuChoices$(10) = "ACCESS NAT'L. REPORTS     "
-        menuChoices$(11) = "NATIONAL RECORDS          "
-        menuChoices$(12) = "DELETE NATIONAL STATS     "
-        menuChoices$(13) = "RETURN TO MAIN MENU       "
-        menuChoices$(14) = "EXIT PROGRAM              "
+        menuChoices$(1) = "MANAGE CONFERENCES       "
+        menuChoices$(2) = "UPDATE STATS / STANDINGS "
+        menuChoices$(3) = "ACCESS CONFERENCE REPORTS"
+        menuChoices$(4) = "HEAD-TO-HEAD RESULTS     "
+        menuChoices$(5) = "CONFERENCE RECORDS       "
+        menuChoices$(6) = "EXPANDED LEADERS         "
+        menuChoices$(7) = "DELETE CONFERENCE STATS  "
+
+        menuChoices$(8) = "MANAGE ORGANIZATIONS     "
+        menuChoices$(9) = "UPDATE POLL / STATS      "
+        menuChoices$(10) = "ACCESS NAT'L. REPORTS    "
+        menuChoices$(11) = "NATIONAL RECORDS         "
+        menuChoices$(12) = "DELETE NATIONAL STATS    "
+        menuChoices$(13) = "RETURN TO MAIN MENU      "
+        menuChoices$(14) = "EXIT PROGRAM             "
         SELECTION% = 1
         Count% = 14
         Start% = 1
@@ -579,8 +583,8 @@ Sub Leaders_Menu ()
         Row% = 9
         Column% = 12
 
-        Call box0(7, 11, 16, 38, 2, 15, 1)
-        Call box0(7, 40, 16, 67, 2, 15, 1)
+        Call box0(7, 11, 16, 37, 2, 15, 1)
+        Call box0(7, 39, 16, 67, 2, 15, 1)
 
         Color 15, 0
         Locate 8, 14: Print "COLLEGE CONFERENCE"
@@ -662,6 +666,7 @@ End Sub
 '$Include: 'LOOKY.BAS'
 '$Include: 'MERGE.BAS'
 '$Include: 'NEWLDR.BAS'
+'$Include: 'NEWLDRST.BAS'
 '$Include: 'REC.BAS'
 '$Include: 'RECORDS.BAS'
 '$Include: 'SCHEDULE.BAS'
@@ -1195,22 +1200,23 @@ Sub COLHOOP ()
     '   2 = PC vs. PC
 
     For I = 0 To 1:
-        'If disk ID has alpha-char, or
-        'we only have 2 digits, then
-        'use the year from the team data
-        If CheckString%(diskIDs$(I)) = 1 Or Len(diskIDs$(I)) <= 2 Then
+        'If disk ID has alpha-char, or is only 3 characters,
+        'then assume the year is the first 2 chars
+        If CheckString%(diskIDs$(I)) = 1 Or Len(diskIDs$(I)) <= 3 Then
             teamYears(I) = GetTeamYear%(Left$(gameTeams$(I), 2))
         Else
-            'Just use the disk ID since we should have 4 digits
+            'If we have 4 or more characters,
+            'then Val will return the first 4 digits
             teamYears(I) = Val(RTrim$(diskIDs$(I)))
         End If
+
     Next I
 
     Call ChangeContributions
     Call LOADSTATS
 
-    If autoPlay = 1 Then
-        gameLoc = schedOptions(2)
+    If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then 
+        Call ColorChange
     End If
 
     'Determine attendance
@@ -4907,8 +4913,10 @@ Sub COLHOOP ()
 
     End If
 
-    pbpString$ = "POSSESSION ARROW TO " + gameTeams$(possArrow)
-    Call SELECTPBP(P, 0)
+    If teamYears(impactTeam) >= 1981 Then
+        pbpString$ = "POSSESSION ARROW TO " + gameTeams$(possArrow)
+        Call SELECTPBP(P, 0)
+    End If
 
     Call DELAY
 
@@ -9387,8 +9395,9 @@ Sub UPDATESCREEN ()
     Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
     'Game Clock - Minutes
+    Color 15, 0
     Locate 1, 37
-    Color 15, 0: Print Using "##"; Int(gameClock! / 60);
+    Print Using "##"; Int(gameClock! / 60);
     Print ":";
 
     'Game Clock - Seconds
@@ -9414,38 +9423,45 @@ Sub UPDATESCREEN ()
     'Team 2
     Locate 2, 56
     Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
-    Color 14, 0
 
     'Score Team 1
+    Color 14, 0
     Locate 4, 13: Print Using "###"; score(0, 0);
+
+    'Poss Arrow
     Locate 2, 33: Print " ";
     If possArrow = 0 And teamYears(impactTeam) >= 1981 Then Locate , 33: Print Chr$(17);
 
     'Period Designation
-    Locate 2, 35: Print Using "  HALF #"; currHalf;: Locate , 44: Print " ";
-    If possArrow = 1 And teamYears(impactTeam) >= 1981 Then Locate , 44: Print Chr$(16);
-
-    'Overtime
+    Locate 2, 35
     If currHalf > 2 Then
-        Locate , 35: Print Using "OVERTIME #"; currHalf - 2;
+        Print Using "OVERTIME #"; currHalf - 2;
         Locate , 46: Print " ";
         If possArrow = 1 And teamYears(impactTeam) >= 1981 Then Locate , 46: Print Chr$(16)
+    Else
+        Print Using "  HALF #"; currHalf;
+        Locate , 44: Print " ";
+        If possArrow = 1 And teamYears(impactTeam) >= 1981 Then Locate , 44: Print Chr$(16);
     End If
 
     'Score Team 2
     Color 14, 0
     Locate 4, 60: Print Using "###"; score(1, 0)
 
-    'TO / RB / TF
+    'Turnovers
     Color 7
-    Locate 3, 35: Print Using "##  "; turnovers(0);
+    Locate 3, 35
+    Print Using "##  "; turnovers(0);
     Color 12: Print "TO  ";
-    Color 7: Print Using "##"; turnovers(1)
+    Color 7
+    Print Using "##"; turnovers(1)
 
+    'Rebounds
     Locate , 35: Print Using "##  "; totRebounds(0);
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; totRebounds(1)
 
+    'Fouls
     Locate , 35: Print Using "##  "; teamFouls(0);
     Color 12: Print "TF  ";
     Color 7: Print Using "##"; teamFouls(1);
@@ -9480,7 +9496,7 @@ Sub UPDATESCREEN ()
     'Team strategies / decisions
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-        'Team strategies / decisions
+        'Team Play Styles
         Locate 9, 41
         Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
         Print "DEF-"; defStyles_brief$(defStrat(D))
@@ -9550,7 +9566,8 @@ Sub SCOREBOARD ()
 
     'Game Clock - Minutes
     Color 15, 0
-    Locate 1, 37: Print Using "##"; Int(gameClock! / 60);
+    Locate 1, 37
+    Print Using "##"; Int(gameClock! / 60);
     Print ":";
 
     'Game Clock - Seconds
@@ -9585,16 +9602,20 @@ Sub SCOREBOARD ()
     Color 14, 0
     Locate 4, 60: Print Using "###"; score(1, 0)
 
-    'TO / RB / TF
+    'Turnovers
     Color 7
-    Locate 3, 35: Print Using "##  "; turnovers(0);
+    Locate 3, 35
+    Print Using "##  "; turnovers(0);
     Color 12: Print "TO  ";
-    Color 7: Print Using "##"; turnovers(1)
+    Color 7
+    Print Using "##"; turnovers(1)
 
+    'Rebounds
     Locate , 35: Print Using "##  "; totRebounds(0);
     Color 12: Print "RB  ";
     Color 7: Print Using "##"; totRebounds(1)
 
+    'Fouls
     Locate , 35: Print Using "##  "; teamFouls(0);
     Color 12: Print "TF  ";
     Color 7: Print Using "##"; teamFouls(1);
@@ -9617,73 +9638,79 @@ Sub SCOREBOARD ()
     Locate , 56: Print "TIMEOUTS:"; timeouts(1)
 
     'Team strategies / decisions
-    Locate 9, 41
-    Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
-    Print "DEF-"; defStyles_brief$(defStrat(D))
-    Locate , 41
-    Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
-    Print "OFF-"; offStyles_brief$(offStrat(P))
+    If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-    Color 15, 0
-    Locate 11, 41
-    Color 14: Print "(1) ";
-    Color 15: Print "SHOOT        ";
-    Color 14: Print "ENTER";
-    Color 15: Print "-PASS"
-    Locate 12, 41
-    Color 14: Print "(2)  ";
-    Color 15: Print gameTeams$(P);
-    Print " CALL TIMEOUT     "
-    Locate 13, 41
-    Color 14: Print "(T)  ";
-    Color 15: Print "10 MIN TICKER"
-    Locate 14, 41
-    Color 14: Print "(D)  ";
-    Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-    Locate 15, 41
-    Color 14: Print "(B)  ";
-    Color 15: Print "BOXSCORE"
+        Locate 9, 41
+        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
+        Print "DEF-"; defStyles_brief$(defStrat(D))
+        Locate , 41
+        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
+        Print "OFF-"; offStyles_brief$(offStrat(P))
 
-    Color 9, 0
-    Locate 7, 1
-    Print String$(38, 205); Chr$(203); String$(38, 205)
+        Color 15, 0
 
-    Locate 8, 1
-    For I = 1 To 8
-        Locate , 39
-        Print Chr$(186)
-    Next
+        Locate 11, 41
+        Color 14: Print "(1) ";
+        Color 15: Print "SHOOT        ";
+        Color 14: Print "ENTER";
+        Color 15: Print "-PASS"
+        Locate 12, 41
+        Color 14: Print "(2)  ";
+        Color 15: Print gameTeams$(P);
+        Print " CALL TIMEOUT     "
+        Locate 13, 41
+        Color 14: Print "(T)  ";
+        Color 15: Print "10 MIN TICKER"
+        Locate 14, 41
+        Color 14: Print "(D)  ";
+        Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
+        Locate 15, 41
+        Color 14: Print "(B)  ";
+        Color 15: Print "BOXSCORE"
 
-    'Team 1 Overview
-    Locate 17, 1
-    Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
+        Color 9, 0
+        Locate 7, 1
+        Print String$(38, 205); Chr$(203); String$(38, 205)
 
-    'Win/Loss record from current stats files
-    Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
-    Color 14, 0: Print "# NAME         FG FT RB CX EF PA PT F"
+        Locate 8, 1
+        For I = 1 To 8
+            Locate , 39: Print Chr$(186)
+        Next
 
-    Call PrintActiveLineup(0)
+        'Team 1 Overview
+        Locate 17, 1
+        Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
-    'Team 2 Overview
-    Locate 17, 40
-    Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1);
+        'Win/Loss record from current stats files
+        Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
 
-    'Win/Loss record from current stats files
-    Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
+        Color 14, 0
+        Print "# NAME         FG FT RB CX EF PA PT F"
 
-    Color 14, 0
-    Locate , 40: Print "# NAME          FG FT RB CX EF PA PT F"
-    Call PrintActiveLineup(1)
+        Call PrintActiveLineup(0)
 
-    Color 9, 0
-    For I = 1 To 9:
-        Locate 14 + I, 39: Print Chr$(186)
-    Next
+        'Team 2 Overview
+        Locate 17, 40
+        Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1);
 
-    'Color 9, 0
-    Locate 16, 1: Print String$(79, 205)
-    Locate 16, 39: Print Chr$(206)
-    Color 7, 0
+        'Win/Loss record from current stats files
+        Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
+
+        Color 14, 0
+        Locate , 40: Print "# NAME          FG FT RB CX EF PA PT F"
+        Call PrintActiveLineup(1)
+
+        Color 9, 0
+        For I = 1 To 9:
+            Locate 14 + I, 39: Print Chr$(186)
+        Next
+
+        'Color 9, 0
+        Locate 16, 1: Print String$(79, 205)
+        Locate 16, 39: Print Chr$(206)
+        Color 7, 0
+
+    End If
 
 End Sub
 
@@ -9823,8 +9850,6 @@ Sub LOADSTATS ()
     Shared gameAttendance&()
 
     Shared gameSite$(), locIndicator$(), oppName$()
-
-    If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then Call ColorChange
 
     For I = 0 To 1
 
@@ -14361,42 +14386,9 @@ Sub COMPILESTATFILES (teamIdx)
         gameSite$(numberGames) = gameArena$(1)
     End If
 
-    Open diskPaths$(1) + statFile$ + "S" For Output As #4
+    Call SaveScheduleStats(statFile$, numberGames)
 
-    Print #4, numberGames
-
-    For I = 1 To MAX_SCHED_STATS:
-        Print #4, teamScore(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS:
-        Print #4, oppName$(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS:
-        Print #4, oppScore(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS:
-        Print #4, locIndicator$(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS
-        For I1 = 0 To 1
-            Print #4, powerRating(I, I1)
-        Next
-    Next
-
-    For I = 1 To MAX_SCHED_STATS:
-        Print #4, gameAttendance&(I)
-    Next I
-
-    For I = 1 To MAX_SCHED_STATS:
-        Print #4, gameSite$(I)
-    Next I
-
-    Close #4
-
+    'Reset arrays for next iteration
     Erase powerRating, oppScore, teamScore
     Erase gameAttendance&
     Erase statsOffTot!, statsDefTot!, gameStatPlyrVal!

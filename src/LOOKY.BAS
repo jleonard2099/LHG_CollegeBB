@@ -365,7 +365,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
 
     Shared statCategoryAbbr$(), statPlyrNames$()
 
-    categoryPick = 1
+    categoryPick = 0
 
     Do
 
@@ -579,14 +579,14 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                 Case Chr$(0) + Chr$(77)
                     'Right Arrow
                     categoryPick = categoryPick + 1
-                    If categoryPick > 13 Then categoryPick = 1
+                    If categoryPick > 12 Then categoryPick = 0
                     Color 12
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                 Case Chr$(0) + Chr$(75)
                     'Left Arrow
                     categoryPick = categoryPick - 1
-                    If categoryPick < 1 Then categoryPick = 13
+                    If categoryPick < 0 Then categoryPick = 12
                     Color 12
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
@@ -646,7 +646,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
 
     Shared statCategoryAbbr$(), statPlyrNames$()
 
-    categoryPick = 14
+    categoryPick = 13
 
     Do
 
@@ -767,14 +767,14 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                 Case Chr$(0) + Chr$(77)
                     'Right Arrow
                     categoryPick = categoryPick + 1
-                    If categoryPick > 25 Then categoryPick = 14
+                    If categoryPick > 25 Then categoryPick = 13
                     Color 3
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
                 Case Chr$(0) + Chr$(75)
                     'Left Arrow
                     categoryPick = categoryPick - 1
-                    If categoryPick < 14 Then categoryPick = 25
+                    If categoryPick < 13 Then categoryPick = 25
                     Color 3
                     Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
@@ -1268,50 +1268,81 @@ Sub SortStats (categoryPick)
     Shared statPlyrNames$()
 
     'SORT BASED ON CATEGORY
-    If categoryPick = 1 Then SG% = 0
-    If categoryPick = 2 Then SG% = 10
-    If categoryPick = 3 Then SG% = 14
-    If categoryPick = 4 Then SG% = 2
-    If categoryPick = 5 Then SG% = 1
-    If categoryPick = 6 Then SG% = 15
-    If categoryPick = 7 Then SG% = 18
-    If categoryPick = 8 Then SG% = 19
-    If categoryPick = 9 Then SG% = 16
-    If categoryPick = 10 Then SG% = 4
-    If categoryPick = 11 Then SG% = 3
-    If categoryPick = 12 Then SG% = 17
-    If categoryPick = 14 Then SG% = 22
-    If categoryPick = 15 Then SG% = 20
-    If categoryPick = 17 Then SG% = 12
-    If categoryPick = 16 Then SG% = 13
-    If categoryPick = 18 Then SG% = 23
-    If categoryPick = 19 Then SG% = 5
-    If categoryPick = 20 Then SG% = 21
-    If categoryPick = 21 Then SG% = 6
-    If categoryPick = 22 Then SG% = 8
-    If categoryPick = 23 Then SG% = 9
-    If categoryPick = 24 Then SG% = 7
-    If categoryPick = 25 Then SG% = 11
+    Select Case categoryPick
+    
+        Case 1: SG% = 0
+    	Case 2: SG% = 10
+    	Case 3: SG% = 14
+    	Case 4: SG% = 2
+    	Case 5: SG% = 1
+    	Case 6: SG% = 15
+    	Case 7: SG% = 18
+    	Case 8: SG% = 19
+    	Case 9: SG% = 16
+    	Case 10: SG% = 4
+    	Case 11: SG% = 3
+    	Case 12: SG% = 17
+    	Case 14: SG% = 22
+    	Case 15: SG% = 20
+    	Case 17: SG% = 12
+    	Case 16: SG% = 13
+    	Case 18: SG% = 23
+    	Case 19: SG% = 5
+    	Case 20: SG% = 21
+    	Case 21: SG% = 6
+    	Case 22: SG% = 8
+    	Case 23: SG% = 9
+    	Case 24: SG% = 7
+    	Case 25: SG% = 11
 
-    For Z = 0 To 12
+    End Select
 
-        For Z1 = Z + 1 To 13
+    If categoryPick = 0 Or categoryPick =13 Then
 
-            If statPlyrVal!(Z, SG%) < statPlyrVal!(Z1, SG%) Then
+        For Z = 0 To 12
 
-                For I = 0 To 24:
-                    Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)
-                Next
+            For Z1 = Z + 1 To 13
+            
+                If _StriCmp(statPlyrNames$(Z),statPlyrNames$(Z1)) = 1 Then
 
-                Swap stats3FGM!(Z), stats3FGM!(Z1)
-                Swap stats3FGA!(Z), stats3FGA!(Z1)
-                Swap statPlyrNames$(Z), statPlyrNames$(Z1)
+                    Swap statPlyrNames$(Z), statPlyrNames$(Z1)
 
-            End If
+                    For I = 0 To 24:
+                        Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)
+                    Next
 
-        Next Z1
+                    Swap stats3FGM!(Z), stats3FGM!(Z1)
+                    Swap stats3FGA!(Z), stats3FGA!(Z1)
+                
+                End If
 
-    Next Z
+            Next Z1
+
+        Next Z
+    
+    Else
+
+        For Z = 0 To 12
+
+            For Z1 = Z + 1 To 13
+
+                If statPlyrVal!(Z, SG%) < statPlyrVal!(Z1, SG%) Then
+
+                    For I = 0 To 24:
+                        Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)
+                    Next
+
+                    Swap stats3FGM!(Z), stats3FGM!(Z1)
+                    Swap stats3FGA!(Z), stats3FGA!(Z1)
+                    Swap statPlyrNames$(Z), statPlyrNames$(Z1)
+
+                End If
+
+            Next Z1
+
+        Next Z
+
+    End If
 
 End Sub
 
