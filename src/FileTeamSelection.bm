@@ -692,11 +692,16 @@ Sub ReadConferenceIndex (indexFile$)
 
     Open diskPaths$(2) + indexFile$ + ".TMI" For Input As #2
 
+    'Currently not used but is there
+    'to help separate from Pro, for
+    'if the games are combined
+    Input #2, conferenceType
+
     Input #2, conferenceName$
     Input #2, div1Name$
     Input #2, div2Name$
 
-    For X = 1 To TEAMS_PER_LEAGUE
+    For X = 1 To TEAMS_PER_CONFERENCE
         Input #2, memberName$(X)
         Input #2, memberIdx(X)
         Input #2, memberYear$(X)
@@ -947,4 +952,3 @@ Function ChooseFile$ (fileSpec$, fileDesc$, ExitCode%)
     End If
 
 End Function
-

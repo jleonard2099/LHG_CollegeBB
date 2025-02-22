@@ -115,9 +115,9 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames)
             neutralLosses = neutralLosses + 1
         End If
 
-        If teamScore(I) = oppScore(I) Then
-            tiedGames = tiedGames + 1
-        End If
+        'If teamScore(I) = oppScore(I) Then
+        '    tiedGames = tiedGames + 1
+        'End If
 
         totalScore(0) = totalScore(0) + teamScore(I)
         totalScore(1) = totalScore(1) + oppScore(I)
@@ -1271,39 +1271,39 @@ Sub SortStats (categoryPick)
     Select Case categoryPick
     
         Case 1: SG% = 0
-    	Case 2: SG% = 10
-    	Case 3: SG% = 14
-    	Case 4: SG% = 2
-    	Case 5: SG% = 1
-    	Case 6: SG% = 15
-    	Case 7: SG% = 18
-    	Case 8: SG% = 19
-    	Case 9: SG% = 16
-    	Case 10: SG% = 4
-    	Case 11: SG% = 3
-    	Case 12: SG% = 17
-    	Case 14: SG% = 22
-    	Case 15: SG% = 20
-    	Case 17: SG% = 12
-    	Case 16: SG% = 13
-    	Case 18: SG% = 23
-    	Case 19: SG% = 5
-    	Case 20: SG% = 21
-    	Case 21: SG% = 6
-    	Case 22: SG% = 8
-    	Case 23: SG% = 9
-    	Case 24: SG% = 7
-    	Case 25: SG% = 11
+        Case 2: SG% = 10
+        Case 3: SG% = 14
+        Case 4: SG% = 2
+        Case 5: SG% = 1
+        Case 6: SG% = 15
+        Case 7: SG% = 18
+        Case 8: SG% = 19
+        Case 9: SG% = 16
+        Case 10: SG% = 4
+        Case 11: SG% = 3
+        Case 12: SG% = 17
+        Case 14: SG% = 22
+        Case 15: SG% = 20
+        Case 17: SG% = 12
+        Case 16: SG% = 13
+        Case 18: SG% = 23
+        Case 19: SG% = 5
+        Case 20: SG% = 21
+        Case 21: SG% = 6
+        Case 22: SG% = 8
+        Case 23: SG% = 9
+        Case 24: SG% = 7
+        Case 25: SG% = 11
 
     End Select
 
-    If categoryPick = 0 Or categoryPick =13 Then
+    If categoryPick = 0 Or categoryPick = 13 Then
 
         For Z = 0 To 12
 
             For Z1 = Z + 1 To 13
             
-                If _StriCmp(statPlyrNames$(Z),statPlyrNames$(Z1)) = 1 Then
+                If _StriCmp(statPlyrNames$(Z), statPlyrNames$(Z1)) = 1 Then
 
                     Swap statPlyrNames$(Z), statPlyrNames$(Z1)
 

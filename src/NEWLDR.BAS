@@ -116,7 +116,7 @@ Sub NEWLDR ()
 
                             Input #2, leagueName$, div1Name$, div2Name$, div3Name$, div4Name$
 
-                            For I = 1 To TEAMS_PER_LEAGUE
+                            For I = 1 To TEAMS_PER_CONFERENCE
                                 Input #2, expStdLeagName$(I), totTeamWins(I), totHomeWins(I), totAwayWins(I), lastTenWins(I), totTeamLosses(I), totHomeLosses(I), totAwayLosses(I), lastTenLosses(I), teamWinStreak(I), teamLoseStreak(I)
                             Next
 

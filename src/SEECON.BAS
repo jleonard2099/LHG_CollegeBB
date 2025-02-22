@@ -34,7 +34,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Shared defLeaders!(), offLeaders!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
     Shared confLdrVal!(), confLdrAtt!()
-    Shared offLeaderNames$(), defLeaderNames$()
+    Shared offLeaderNames$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
@@ -60,7 +60,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Next
 
     For X = 1 To MAX_CONFERENCES:
-        Input #1, defLeaderNames$(X)
+        Input #1, defLeaderTeams$(X)
         For M = 1 To 20:
             Input #1, defLeaders!(X, M)
         Next
@@ -68,7 +68,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
 
     Close #1
 
-    Call ReadConferenceStats (targetFile$)
+    Call ReadConferenceStats(targetFile$)
 
     conf$ = conferenceName$
     div1$ = PadRight$(div1Name$, 8)
@@ -100,7 +100,7 @@ Sub StatOptions_Con (confName$, div1$, div2$)
             Select Case userKey$
 
                 Case "F"
-                    userFile$ = _SaveFileDialog$("Save Conference Report",_CWD$ + "\Report","*.txt","Text File")
+                    userFile$ = _SaveFileDialog$("Save Conference Report", _CWD$ + "\Report", "*.txt", "Text File")
                     If userFile$ <> "" Then
                         Call LeaderStatsCon_Report(confName$, div1$, div2$, 0, userFile$)
                     End If
@@ -146,7 +146,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Shared defLeaders!(), offLeaders!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
     Shared confLdrVal!(), confLdrAtt!()
-    Shared offLeaderNames$(), defLeaderNames$()
+    Shared offLeaderNames$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
@@ -174,16 +174,16 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             'Conference Record
             Print Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
                 Print " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
                 Print " .000";
             End If
-            If divWinPct(P) = 1  Then
+            If divWinPct(P) = 1 Then
                 Print "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then 
+            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
                 Print Using " .###"; divWinPct(P);
             End If
 
@@ -192,16 +192,16 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Print confLdrName$(P); Tab(56);
             Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
                 Print " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
                 Print " .000"
             End If
-            If seasonWinPct!(P) = 1 Then 
+            If seasonWinPct!(P) = 1 Then
                 Print "1.000"
             End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then 
+            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
                 Print Using " .###"; seasonWinPct!(P)
             End If
 
@@ -232,38 +232,39 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     For P = 16 To 30
 
         If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+
             Print confLdrName$(P); Tab(16);
-            Print Using "##   ##   "; divWins(P); divLosses(P);
 
             'Conference Record
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
+            Print Using "##   ##   "; divWins(P); divLosses(P);
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
                 Print " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
                 Print " .000";
             End If
-            If divWinPct(P) = 1 Then 
+            If divWinPct(P) = 1 Then
                 Print "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then 
+            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
                 Print Using " .###"; divWinPct(P);
             End If
 
             Locate , 41
             Print confLdrName$(P); Tab(56);
-            Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
             'Season Record
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
+            Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
                 Print " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
                 Print " .000"
             End If
-            If seasonWinPct!(P) = 1 Then 
+            If seasonWinPct!(P) = 1 Then
                 Print "1.000"
             End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then 
+            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
                 Print Using " .###"; seasonWinPct!(P)
             End If
         End If
@@ -624,9 +625,10 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Cls
 
     Color 12
-    Print "                         OFFENSIVE TOTALS"
+    Print Tab(32); "OFFENSIVE TOTALS"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
@@ -640,39 +642,39 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Print Tab(16);
 
             'FGA
-            Print Using "####"; offLeaders!(X, 2);
+            Print Using "####"; offLeaders!(X, 1);
             Print Tab(21);
 
             'FGM
-            Print Using "####"; offLeaders!(X, 3);
-            Print Tab(26); 
+            Print Using "####"; offLeaders!(X, 2);
+            Print Tab(26);
 
-            'FG PCT
+            'FG %
             Print Using ".###"; offLeaders!(X, 17);
             Print Tab(31);
 
             'FTA / FTM / FT%
-            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+            Print Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
             Print Tab(46);
-            
+
             'Rebounds
-            Print Using "####"; offLeaders!(X, 6);
+            Print Using "####"; offLeaders!(X, 5);
             Print Tab(51);
 
             'Assists
-            Print Using "####"; offLeaders!(X, 9);
+            Print Using "####"; offLeaders!(X, 8);
             Print Tab(56);
 
             'Personal Fouls
-            Print Using "####"; offLeaders!(X, 7);
+            Print Using "####"; offLeaders!(X, 6);
             Print Tab(61);
-            
+
             'Steals
-            Print Using "###"; offLeaders!(X, 8);
+            Print Using "###"; offLeaders!(X, 7);
             Print Tab(65);
 
             'Blocks
-            Print Using "###"; offLeaders!(X, 10);
+            Print Using "###"; offLeaders!(X, 9);
             Print Tab(69);
 
             'Points
@@ -696,27 +698,28 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Cls
 
     Color 12
-    Print "                         DEFENSIVE TOTALS"
+    Print Tab(32); "DEFENSIVE TOTALS"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
 
-            Print Left$(defLeaderNames$(X), 11); Tab(13);
+            Print Left$(defLeaderTeams$(X), 11); Tab(13);
 
             'Games
             Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);
 
             'FGA
-            Print Using "####"; defLeaders!(X, 2);
+            Print Using "####"; defLeaders!(X, 1);
             Print Tab(21);
 
             'FGM
-            Print Using "####"; defLeaders!(X, 3);
+            Print Using "####"; defLeaders!(X, 2);
             Print Tab(26);
 
             'FG PCT
@@ -724,23 +727,27 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Print Tab(31);
 
             'FTA / FTM / FT %
-            Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+            Print Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
             Print Tab(46);
 
-            'Rebounds / Assists
-            Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+            'Rebounds
+            Print Using "####"; defLeaders!(X, 5);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; defLeaders!(X, 8);
             Print Tab(56);
 
             'Personal FOuls
-            Print Using "####"; defLeaders!(X, 7);
+            Print Using "####"; defLeaders!(X, 6);
             Print Tab(61);
 
             'Steals
-            Print Using "###"; defLeaders!(X, 8);
+            Print Using "###"; defLeaders!(X, 7);
             Print Tab(65);
 
             'Blocks
-            Print Using "###"; defLeaders!(X, 10);
+            Print Using "###"; defLeaders!(X, 9);
             Print Tab(69);
 
             'Points
@@ -777,7 +784,7 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
     Shared confLdrVal!(), confLdrAtt!()
 
-    Shared offLeaderNames$(), defLeaderNames$()
+    Shared offLeaderNames$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
@@ -798,16 +805,16 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
             Print #1, confLdrName$(P); Tab(16);
             Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
                 Print #1, " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
                 Print #1, " .000";
             End If
-            If divWinPct(P) = 1 Then 
+            If divWinPct(P) = 1 Then
                 Print #1, "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then 
+            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
                 Print #1, Using " .###"; divWinPct(P);
             End If
 
@@ -815,16 +822,16 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
             Print #1, confLdrName$(P); Tab(56);
             Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
                 Print #1, " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
                 Print #1, " .000"
             End If
-            If seasonWinPct!(P) = 1 Then 
+            If seasonWinPct!(P) = 1 Then
                 Print #1, "1.000"
             End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then 
+            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
                 Print #1, Using " .###"; seasonWinPct!(P)
             End If
         End If
@@ -845,16 +852,16 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
             Print #1, confLdrName$(P); Tab(16);
             Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
+            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
                 Print #1, " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
+            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
                 Print #1, " .000";
             End If
-            If divWinPct(P) = 1 Then 
+            If divWinPct(P) = 1 Then
                 Print #1, "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then 
+            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
                 Print #1, Using " .###"; divWinPct(P);
             End If
 
@@ -862,16 +869,16 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
             Print #1, confLdrName$(P); Tab(56);
             Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
 
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then 
+            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
                 Print #1, " .---"
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then 
+            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
                 Print #1, " .000"
             End If
-            If seasonWinPct!(P) = 1 Then 
+            If seasonWinPct!(P) = 1 Then
                 Print #1, "1.000"
             End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then 
+            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
                 Print #1, Using " .###"; seasonWinPct!(P)
             End If
         End If
@@ -1133,69 +1140,125 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Print #1,
     Print #1, Chr$(12)
-    Print #1, "                         OFFENSIVE TOTALS"
-    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print #1, Tab(32); "OFFENSIVE TOTALS"
+    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
     For X = 1 To 20
 
         If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+
+            'Player
             Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
+
+            'Games
             Print #1, Using "##"; offLeaders!(X, 16);
             Print #1, Tab(16);
-            Print #1, Using "####"; offLeaders!(X, 2);
+
+            'FGA
+            Print #1, Using "####"; offLeaders!(X, 1);
             Print #1, Tab(21);
-            Print #1, Using "####"; offLeaders!(X, 3);
+
+            'FGM
+            Print #1, Using "####"; offLeaders!(X, 2);
             Print #1, Tab(26);
+
+            'FG %
             Print #1, Using ".###"; offLeaders!(X, 17);
             Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+
+            'FTA / FTM / FT%
+            Print #1, Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
             Print #1, Tab(46);
-            Print #1, Using "####"; offLeaders!(X, 6);
+
+            'Rebounds
+            Print #1, Using "####"; offLeaders!(X, 5);
             Print #1, Tab(51);
-            Print #1, Using "####"; offLeaders!(X, 9);
+
+            'Assists
+            Print #1, Using "####"; offLeaders!(X, 8);
             Print #1, Tab(56);
-            Print #1, Using "####"; offLeaders!(X, 7);
+
+            'Personal Fouls
+            Print #1, Using "####"; offLeaders!(X, 6);
             Print #1, Tab(61);
-            Print #1, Using "###"; offLeaders!(X, 8);
+
+            'Steals
+            Print #1, Using "###"; offLeaders!(X, 7);
             Print #1, Tab(65);
-            Print #1, Using "###"; offLeaders!(X, 10);
+
+            'Blocks
+            Print #1, Using "###"; offLeaders!(X, 9);
             Print #1, Tab(69);
+
+            'Points
             Print #1, Using "#####"; offLeaders!(X, 20);
             Print #1, Tab(75);
+
+            'Average
             Print #1, Using "###.#"; offLeaders!(X, 19)
+
         End If
 
     Next
 
     Print #1,
-    Print #1, "                         DEFENSIVE TOTALS"
-    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
+    Print #1, Tab(32); "DEFENSIVE TOTALS"
+    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
     For X = 1 To 20
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
-            Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+
+            'Player
+            Print #1, Left$(defLeaderTeams$(X), 11); Tab(13);
+
+            'Games
             Print #1, Using "##"; defLeaders!(X, 16);
             Print #1, Tab(16);
-            Print #1, Using "####"; defLeaders!(X, 2);
+
+            'FGA
+            Print #1, Using "####"; defLeaders!(X, 1);
             Print #1, Tab(21);
-            Print #1, Using "####"; defLeaders!(X, 3);
+
+            'FGM
+            Print #1, Using "####"; defLeaders!(X, 2);
             Print #1, Tab(26);
+
+            'FG %
             Print #1, Using ".###"; defLeaders!(X, 17);
             Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+
+            'FTA / FTM / FT%
+            Print #1, Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
             Print #1, Tab(46);
-            Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+
+            'Rebounds
+            Print #1, Using "####"; defLeaders!(X, 5);
+            Print #1, Tab(51);
+
+            'Assists
+            Print #1, Using "####"; defLeaders!(X, 8);
             Print #1, Tab(56);
-            Print #1, Using "####"; defLeaders!(X, 7);
+
+            'Personal Fouls
+            Print #1, Using "####"; defLeaders!(X, 6);
             Print #1, Tab(61);
-            Print #1, Using "###"; defLeaders!(X, 8);
+
+            'Steals
+            Print #1, Using "###"; defLeaders!(X, 7);
             Print #1, Tab(65);
-            Print #1, Using "###"; defLeaders!(X, 10);
+
+            'Blocks
+            Print #1, Using "###"; defLeaders!(X, 9);
             Print #1, Tab(69);
+
+            'Points
             Print #1, Using "#####"; defLeaders!(X, 20);
             Print #1, Tab(75);
+
+            'Average
             Print #1, Using "###.#"; defLeaders!(X, 19)
+
         End If
 
     Next
@@ -1220,4 +1283,3 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
     End If
 
 End Sub
-

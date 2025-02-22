@@ -28,7 +28,7 @@ End Sub
 'stats from the file into several arrays
 Sub LoadLeaderFiles_Nat (targetFile$, NRT)
 
-    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderNames$()
 
     Shared defLeaders!(), offLeaders!()
     Shared confLdrVal!()
@@ -61,7 +61,7 @@ Sub LoadLeaderFiles_Nat (targetFile$, NRT)
     Next
 
     For X = 1 To MAX_CONFERENCES: 
-        Input #1, defLeaderNames$(X)
+        Input #1, defLeaderTeams$(X)
         For M = 1 To 20: 
             Input #1, defLeaders!(X, M)
         Next
@@ -147,7 +147,7 @@ End Sub
 'user display.
 Sub LeaderStatsNat_Screen (orgName$, NRT)
 
-    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderNames$()
     Shared defLeaders!(), offLeaders!(), confLdrVal!()
     Shared leaderText$(), leaderName$(), leaderTeam$()
 
@@ -592,8 +592,8 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     For X = 1 To 20
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
-            Print Left$(defLeaderNames$(X), 11); Tab(13);
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+            Print Left$(defLeaderTeams$(X), 11); Tab(13);
             Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);
             Print Using "####"; defLeaders!(X, 2);
@@ -638,7 +638,7 @@ End Sub
 'send to the default printer
 Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
-    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderNames$()
     Shared defLeaders!(), offLeaders!(), confLdrVal!()
     Shared leaderText$(), leaderName$(), leaderTeam$()
 
@@ -955,8 +955,8 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     For X = 1 To 20
 
-        If defLeaderNames$(X) <> "" And defLeaderNames$(X) <> "*" And defLeaderNames$(X) <> " " Then
-            Print #1, Left$(defLeaderNames$(X), 11); Tab(13);
+        If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+            Print #1, Left$(defLeaderTeams$(X), 11); Tab(13);
             Print #1, Using "##"; defLeaders!(X, 16);
             Print #1, Tab(16);
             Print #1, Using "####"; defLeaders!(X, 2);

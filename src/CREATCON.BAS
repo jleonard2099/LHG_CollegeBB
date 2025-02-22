@@ -178,8 +178,10 @@ Sub ReviewEditConference (confFile$)
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
+    test$ = confFile$
+
     If _FileExists(diskPaths$(2) + confFile$ + ".TMI") Then
-        Call ReadConferenceIndex (confFile$)
+        Call ReadConferenceIndex(confFile$)
     End If
 
     Do
@@ -257,27 +259,27 @@ Sub SaveConferences (confFile$)
 
     Shared memberIdx()
     Shared memberName$(), memberYear$()
-    
+
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
     Dim statFileNames$(TEAMS_PER_CONFERENCE)
-    
+
     Open diskPaths$(2) + confFile$ + ".TMI" For Output As #1
 
     Print #1, 0
-    Print #1, conferenceName$ 'League / Conference Name
-    Print #1, div1Name$ 'Division 1 Name
-    Print #1, div2Name$ 'Division 2 Name
+    Print #1, conferenceName$
+    Print #1, div1Name$
+    Print #1, div2Name$
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Print #1, memberName$(X) 'Team Name
-        Print #1, memberIdx(X) 'Team Index ?
-        Print #1, memberYear$(X) 'Year Number
+        Print #1, memberName$(X)
+        Print #1, memberIdx(X)
+        Print #1, memberYear$(X)
     Next
 
     Close #1
-    
+
     For X = 1 To TEAMS_PER_CONFERENCE
 
         If memberName$(X) = "XXX" Then
