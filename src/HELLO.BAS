@@ -28,10 +28,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-
-Dim Shared autoPlay, ballCarrier, chargeTeam, coachOpt, currHalf
-Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -100,17 +96,29 @@ For I = 0 To 1
     Next
 Next
 
+'1st index
+'0 = Turnover chance
+'1 = Steal chance
+'2 = Foul chance
+'2nd index represents Def Category
 'Data 1,4,2,5,15,29,22,36,7,9,7,12
-Data 2,5,1,4,15,29,22,36,7,9,7,12
+Data 2,5,1,4,15,29,22,36,7,9,3,12
 For I = 0 To 2
     For I1 = 1 To 4
         Read defAdjVsPass(I, I1)
     Next
 Next
 
-Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
+'1st index
+'0 = Shot chance
+'1 = Assist chance
+'2 = Turnover chance
+'3 = Steal chance
+'4 = Foul chance
+'2nd index represents Def Coverage
+'Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
+Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,9,3,7
 For I = 0 To 4
-    'For I = 0 To 8
     For I1 = 0 To 3
         Read defAdjVsShot(I, I1)
     Next
@@ -1215,7 +1223,7 @@ Sub COLHOOP ()
     Call ChangeContributions
     Call LOADSTATS
 
-    If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then 
+    If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then
         Call ColorChange
     End If
 
@@ -1264,7 +1272,7 @@ Sub COLHOOP ()
 
         If threePtOpt = 1 Then
 
-            'Calculate contribution % for 3-pointers
+            'Adjust foul draw rating based on 3-pt contributions??
             For I = 0 To 13
 
                 M8 = 100 - plyrOff_GAME!(P9, I, 19)
@@ -1272,7 +1280,6 @@ Sub COLHOOP ()
                 If M8 <> 0 Then
                     M9 = 100 / M8
                 End If
-
 
                 plyrOff_GAME!(P9, I, 16) = CInt((plyrOff_GAME!(P9, I, 16) * M9))
 
@@ -2120,11 +2127,17 @@ Sub COLHOOP ()
                         If timeouts(P) > 0 Then
 
                             pbpString$ = gameTeams$(P) + " CALLS A TIME OUT"
-
                             Call SELECTPBP(P, 0)
 
                             passes = 0
-                            GoTo 640
+                            Call TimeoutCalled(P)
+
+                            If A6 = 0 Then
+                                Call PRESSGUARD
+                                GoTo 300
+                            Else
+                                GoTo 350
+                            End If
 
                         Else
 
@@ -2288,7 +2301,6 @@ Sub COLHOOP ()
             Call Rolld100(RN0)
 
             If RN0 <= defAdjVsPass(2, defCategory(D)) Then
-
                 'Foul
                 Call LASTSHOT
                 Call ResetShotClock
@@ -2300,11 +2312,9 @@ Sub COLHOOP ()
                 LT = 4
 
                 GoTo 9065
-
             End If
 
             ' *** CHECK FOR OFF FOUL ***
-
             If RN0 <= defAdjVsPass(2, defCategory(D)) + 1 Then
                 'Offensive Foul
                 offStatus = 0
@@ -2363,12 +2373,11 @@ Sub COLHOOP ()
 
             'The alternative would be to differentiate between
             'jump shots and layups (which I think can be done)
-            If (GetTeamYear%((Left$(gameTeams$(D), 2))) >= 2005) And (defCoverage(D) < 2) Then
+            If (teamYears(D) >= 2005) And (defCoverage(D) < 2) Then
                 foulChance = foulChance + 4
             End If
 
             If RN0 <= foulChance Then
-
                 Call LASTSHOT
                 Call ResetShotClock
                 Call UPDATESCREEN
@@ -2379,7 +2388,6 @@ Sub COLHOOP ()
                 LT = 4
 
                 GoTo 9065
-
             End If
 
             ' *** CHECK FOR OFF FOUL ***
@@ -3512,7 +3520,7 @@ Sub COLHOOP ()
 
             Call Rolld100(shotRoll)
 
-            'So, foul chance is up to 16% of the shot chance
+            'So, foul chance is up to 10% of the shot chance???
             foulChance! = shotChance! * ((rebFoulChance / 100) + (.03 * threePtOpt))
 
             If Not (currHalf > 1 And gameClock! < 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! < 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! < 30 And scoreDiff = -2) Then
@@ -3911,7 +3919,15 @@ Sub COLHOOP ()
 
         Case 3
             ' *** TIMEOUT ***
-            GoTo 640
+            Call TimeoutCalled(P)
+
+            If A6 = 0 Then
+                Call PRESSGUARD
+                GoTo 300
+            Else
+                GoTo 350
+            End If
+
 
         Case 4
             ' *** FOUL ***
@@ -3952,8 +3968,6 @@ Sub COLHOOP ()
                 GoTo 537
 
             Else
-                'Check for foul
-                Call Rolld100(shotRoll)
 
                 'Increase 3FGA
                 threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) + 1
@@ -3963,6 +3977,8 @@ Sub COLHOOP ()
                 Call MAKEPBP(pbpType)
                 Call PBP(P)
 
+                'Check for foul
+                Call Rolld100(shotRoll)
                 Call Rolld100(foulChance)
 
                 Call pbplog(6221)
@@ -4248,74 +4264,6 @@ Sub COLHOOP ()
 
     '----- NOODLE -----
 
-    ' TIMEOUT "ROUTINE"
-    '-- we can make it into one if we JUST
-    '-- move the A6 part after each reference
-    '-- what is A6, btw???
-
-    640 '
-    prevBall$ = ""
-
-    If timeouts(P) > 0 Then
-
-        timeouts(P) = timeouts(P) - 1
-        Call SCOREBOARD
-
-        'Offense
-        Call Rolld100(RN0)
-        If RN0 <= 8 Then
-            ft3PtFoul(P) = 10
-        End If
-        If RN0 > 8 And RN0 <= 16 Then
-            ft3PtFoul(P) = 5
-        End If
-
-        'Defense
-        Call Rolld100(RN1)
-        If RN1 <= 8 Then
-            ft3PtFoul(D) = -10
-        End If
-        If RN1 > 8 And RN1 <= 16 Then
-            ft3PtFoul(D) = -5
-        End If
-
-        'Restore time on clock
-        Call AdjustClockTime(-clockSecs)
-        Call AdjustPlayTime
-
-        If sClockVal >= 1 Then
-            shotClock = shotClock + clockSecs
-        End If
-
-        Erase pressureRating
-
-        pbpString$ = "TIME OUT " + gameTeams$(P)
-        Call SELECTPBP(P, 1)
-        Call DELAY
-
-        Call DEADBALLOPTIONS
-
-        For I = 0 To 1
-            For I1 = 0 To 13
-                tmFatigue(I, I1) = tmFatigue(I, I1) + 1
-                If tmFatigue(I, I1) > 0 Then
-                    tmFatigue(I, I1) = 0
-                End If
-            Next
-        Next
-
-    End If
-
-    If A6 = 0 Then
-        Call PRESSGUARD
-        GoTo 300
-    Else
-        GoTo 350
-    End If
-
-
-    '----- NOODLE -----
-
     ' ***** CHECK FOR REBOUNDS *****
 
     650 '
@@ -4328,7 +4276,7 @@ Sub COLHOOP ()
     'So we reset the shot clcok as soon
     'as we know it's a REBOUND
     Call ResetShotClock
-    
+
     Call Rolld100(RN0)
 
     scoreDiff = score(P, 0) - score(D, 0)
@@ -5524,102 +5472,68 @@ Sub TEAMSETUP (teamIdx)
 End Sub
 
 
-
 '----------------------------------------
-'          ShotPacing Function
+'        TimeoutCalled Subroutine
 '----------------------------------------
-' Use several factors for both team's FGA
-' to determine the pacing of the game
-Function ShotPacing%
+'This subroutine handles the PBP and
+'variable values for when a team takes
+'a timeout. This includes resetting the
+'pressure and fatigue ratings.
+Sub TimeoutCalled (chargeTeam)
 
-    Shared FY%()
+    prevBall$ = ""
 
-    Dim nbrPoss(0 To 1)
+    If timeouts(chargeTeam) > 0 Then
 
-    'JY = Average FGA/G Adjustment For Both Teams
-    '   FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA/G)
-    '   FY%(1) = 2 * (Home Tm Average FGA/G - League FGA/G)
-    JY = CInt(((FY%(1) + FY%(0)) / 2))
+        timeouts(chargeTeam) = timeouts(chargeTeam) - 1
+        Call SCOREBOARD
 
-    'https://kenpom.com/blog/the-possession/
-    yFactor! = .44
-    For X = 0 To 1
-        'Average team possessions / game
-        nbrPoss(X) = ((teamStats_GAME(X, 1) - teamStats_GAME(X, 9)) + teamStats_GAME(X, 15) + (yFactor! * teamStats_GAME(X, 5))) / teamStats_GAME(X, 0)
-    Next X
+        'Offense
+        Call Rolld100(RN0)
+        If RN0 <= 8 Then
+            ft3PtFoul(chargeTeam) = 10
+        End If
+        If RN0 > 8 And RN0 <= 16 Then
+            ft3PtFoul(chargeTeam) = 5
+        End If
 
-    'https://sports.icalculator.com/basketball-pace-factor-calculator.html
-    paceFactor! = 40 * ((nbrPoss(0) + nbrPoss(1)) / 2)
+        'Defense
+        Call Rolld100(RN1)
+        If RN1 <= 8 Then
+            ft3PtFoul(1 - chargeTeam) = -10
+        End If
+        If RN1 > 8 And RN1 <= 16 Then
+            ft3PtFoul(1 - chargeTeam) = -5
+        End If
 
-    If paceFactor! = 0 Then
+        'Restore time on clock
+        Call AdjustClockTime(-clockSecs)
+        Call AdjustPlayTime
 
-        'This will most often come from teams before 1997
-        'Without team actual stats being entered, there
-        'is no way to determine a value above
-        Select Case sClockVal
+        If sClockVal >= 1 Then
+            shotClock = shotClock + clockSecs
+        End If
 
-            Case 0
-                'No Shot Clock
-                'Average 50% chance of taking shot
-                '75 = ~50 FGA
-                '85 = ~54 FGA
-                '90 = ~55 FGA
-                'If d100% <= 90 Then
-                paceValue = 39 + CInt((JY - 40) * .8)
-                'End If
+        Erase pressureRating
 
-            Case 1
-                '45-Sec Shot Clock
-                'Average 50% chance of taking shot
-                paceValue = 39 + CInt((JY - 48) * .8)
+        pbpString$ = "TIME OUT " + gameTeams$(chargeTeam)
+        Call SELECTPBP(chargeTeam, 1)
+        Call DELAY
 
-            Case 2
-                '35-Sec Shot Clock
-                'Average 50% chance of taking shot
-                paceValue = 39 + CInt((JY - 58) * .8)
+        Call DEADBALLOPTIONS
 
-            Case 3
-                '30-Sec Shot Clock
-                'Average 50% chance of taking shot
-                paceValue = 39 + CInt((JY - 60) * .8)
-
-        End Select
-
-    Else
-
-        leagFGAG = teamRat_GAME(gameIdx, 4)
-
-        Select Case sClockVal
-
-            Case 0
-                'No shot clock
-                'We don't anticipate ever reaching here
-                paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
-
-            Case 1
-                '45 sec shot clock
-                'We don't anticipate ever reaching here
-                paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
-
-            Case 2
-                '35 sec shot clock
-                'the "old" formula works way too well for 35-sec clock
-                'the new formula sometimes would calculate too high
-                'paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
-                paceValue = 39 + CInt(((JY - 58) * .8))
-
-            Case 3
-                '30 sec shot clock
-                'this gets almost identical values to the "old" formula every time
-                paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
-
-        End Select
+        For I = 0 To 1
+            For I1 = 0 To 13
+                tmFatigue(I, I1) = tmFatigue(I, I1) + 1
+                If tmFatigue(I, I1) > 0 Then
+                    tmFatigue(I, I1) = 0
+                End If
+            Next
+        Next
 
     End If
 
-    ShotPacing% = paceValue
-
-End Function
+End Sub
 
 
 '----------------------------------------
@@ -8379,6 +8293,81 @@ End Sub
 
 
 '----------------------------------------
+'          ShotPacing Function
+'----------------------------------------
+' Use several factors for both team's FGA
+' to determine the pacing of the game
+Function ShotPacing%
+
+    Shared FY%()
+
+    Dim nbrPoss(0 To 1)
+
+    'JY = Average FGA/G Adjustment For Both Teams
+    '   FY%(0) = 2 * (Visitor Tm Average FGA/G - League FGA/G)
+    '   FY%(1) = 2 * (Home Tm Average FGA/G - League FGA/G)
+    JY = CInt(((FY%(1) + FY%(0)) / 2))
+
+    'https://kenpom.com/blog/the-possession/
+    yFactor! = .44
+    For X = 0 To 1
+        'Average team possessions / game
+        nbrPoss(X) = ((teamStats_GAME(X, 1) - teamStats_GAME(X, 9)) + teamStats_GAME(X, 15) + (yFactor! * teamStats_GAME(X, 5))) / teamStats_GAME(X, 0)
+    Next X
+
+    'https://sports.icalculator.com/basketball-pace-factor-calculator.html
+    paceFactor! = 40 * ((nbrPoss(0) + nbrPoss(1)) / 2)
+
+    If paceFactor! = 0 Then
+
+        'This will most often come from teams before 1997
+        'Without team actual stats being entered, there
+        'is no way to determine a value above
+        Select Case sClockVal
+
+            Case 0
+                'No Shot Clock
+                'Average 50% chance of taking shot
+                '75 = ~50 FGA
+                '85 = ~54 FGA
+                '90 = ~55 FGA
+                'If d100% <= 90 Then
+                paceValue = 39 + CInt((JY - 40) * .8)
+                'End If
+
+            Case 1
+                '45-Sec Shot Clock
+                'Average 50% chance of taking shot
+                paceValue = 39 + CInt((JY - 48) * .8)
+
+            Case 2
+                '35-Sec Shot Clock
+                'Average 50% chance of taking shot
+                paceValue = 39 + CInt((JY - 58) * .8)
+
+            Case 3
+                '30-Sec Shot Clock
+                'Average 50% chance of taking shot
+                paceValue = 39 + CInt((JY - 60) * .8)
+
+        End Select
+
+    Else
+
+        'Using modern pacing formulas will always yield
+        'the right number of possessions, regardless
+        'of the shot clock settings
+        leagFGAG = teamRat_GAME(gameIdx, 4)
+        paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
+
+    End If
+
+    ShotPacing% = paceValue
+
+End Function
+
+
+'----------------------------------------
 '          TickerTime Function
 '----------------------------------------
 'This subroutine determines which of the
@@ -10260,11 +10249,10 @@ Sub SETSTAMINA ()
         End If
     Next I
 
-    rebFoulChance = 7
+    rebFoulChance = 8
 
     If gameAvgTmStamina > 114 Then
-        rebFoulChance = (114 / gameAvgTmStamina) * rebFoulChance
-        rebFoulChance = CInt(rebFoulChance)
+        rebFoulChance = CInt((114 / gameAvgTmStamina) * rebFoulChance)
     End If
 
 End Sub
@@ -11047,7 +11035,7 @@ Sub SHOTPERCENT ()
     J8% = 0
 
     'Adjust 3-point chance based on defense
-    If (GetTeamYear%((Left$(gameTeams$(D), 2))) < 2000) Then
+    If teamYears(D) < 2000 Then
         threePtDefAdj = 0
     Else
         'Three pointers were significantly more frequent
@@ -11055,7 +11043,7 @@ Sub SHOTPERCENT ()
         'allowing more b/c their likelihood makes them risky.
         'This is reflected here by increasing the likelihood
         'the shot will be taken.
-        threePtDefAdj = 10
+        threePtDefAdj = 0 '10
     End If
 
     Select Case defStrat(D)
@@ -11093,6 +11081,7 @@ Sub SHOTPERCENT ()
         End If
 
     Else
+
         'Good shot - based on FG make %
         FX% = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 20)
 
@@ -14091,8 +14080,6 @@ Sub SAVESTATS ()
 
         Cls
 
-        'H% = gameLoc
-
         For PX = 0 To 1
             For J = 0 To 13
                 plyrOff_GAME!(PX, J, 16) = timePlayed(PX, J)
@@ -14132,6 +14119,7 @@ Sub SAVESTATS ()
             Color 15, 0
 
             If autoPlay <> 1 Then
+
                 Do
                     I$ = GetKeyPress$
                 Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
@@ -14319,44 +14307,44 @@ Sub COMPILESTATFILES (teamIdx)
         Case 2
             Select Case TG!
                 Case Is < 12100
-                    locIndicator$(totalGames) = "N"
+                    locIndicator$(numberGames) = "N"
                 Case 12100 To 13599
-                    locIndicator$(totalGames) = "N1"
+                    locIndicator$(numberGames) = "N1"
                 Case 13600 To 15099
-                    locIndicator$(totalGames) = "N2"
+                    locIndicator$(numberGames) = "N2"
                 Case 15100 To 16599
-                    locIndicator$(totalGames) = "N3"
+                    locIndicator$(numberGames) = "N3"
                 Case 16600 To 18099
-                    locIndicator$(totalGames) = "N4"
+                    locIndicator$(numberGames) = "N4"
             End Select
 
-        Case Is = teamIdx
+        Case teamIdx
             Select Case TG!
                 Case Is < 12100
-                    locIndicator$(totalGames) = "H"
+                    locIndicator$(numberGames) = "H"
                 Case 12100 To 13599
-                    locIndicator$(totalGames) = "H1"
+                    locIndicator$(numberGames) = "H1"
                 Case 13600 To 15099
-                    locIndicator$(totalGames) = "H2"
+                    locIndicator$(numberGames) = "H2"
                 Case 15100 To 16599
-                    locIndicator$(totalGames) = "H3"
+                    locIndicator$(numberGames) = "H3"
                 Case 16600 To 18099
-                    locIndicator$(totalGames) = "H4"
+                    locIndicator$(numberGames) = "H4"
             End Select
         
 
-        Case Is <> teamIdx
+        Case (1 - teamIdx)
             Select Case TG!
                 Case Is < 12100
-                    locIndicator$(totalGames) = "V"
+                    locIndicator$(numberGames) = "V"
                 Case 12100 To 13599
-                    locIndicator$(totalGames) = "V1"
+                    locIndicator$(numberGames) = "V1"
                 Case 13600 To 15099
-                    locIndicator$(totalGames) = "V2"
+                    locIndicator$(numberGames) = "V2"
                 Case 15100 To 16599
-                    locIndicator$(totalGames) = "V3"
+                    locIndicator$(numberGames) = "V3"
                 Case 16600 To 18099
-                    locIndicator$(totalGames) = "V4"
+                    locIndicator$(numberGames) = "V4"
             End Select
 
     End Select
@@ -16674,8 +16662,9 @@ End Sub
 '00 to 38 are year 2000.
 Function GetTeamYear% (yearFromName$)
 
-    teamYear% = Val(yearFromName$)
+    teamYear% = Val(RTrim$(yearFromName$))
 
+    'For 2-digit years
     If teamYear% >= 0 And teamYear% < 39 Then
         GetTeamYear% = 2000 + teamYear%
     Else

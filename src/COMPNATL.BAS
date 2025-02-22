@@ -17,7 +17,7 @@ Sub CompileNatlOrg ()
     Shared offLeaders!(), offRecords!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
 
-    Shared defLeaderNames$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
     Shared plyrRecDesc$(), memberName$()
     Shared leaderName$(), leaderTeam$()
@@ -93,7 +93,7 @@ Sub CompileNatlOrg ()
 
                 Erase leaderVals!
                 Erase seasonWins, seasonLosses, seasonWinPct!, divWins, divLosses, divWinPct
-                Erase defLeaderNames$, offLeaderNames$
+                Erase defLeaderTeams$, offLeaderNames$
                 Erase memberName$, leaderName$, leaderTeam$
 
                 targetConf$ = diskPaths$(2) + memberConf$(currConf) + ".TMS"

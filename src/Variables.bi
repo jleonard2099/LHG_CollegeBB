@@ -112,7 +112,7 @@ Dim plyrLeaderYears!(40), tmLeaderYears!(40)
 Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
 
 ' For Expanded Leaders
-Dim expIndCategory$(0 to 31), expTeamCategory$(0 to 39)
+Dim expIndCategory$(0 To 31), expTeamCategory$(0 To 39)
 Dim expPlyrLdrName$(600), expPlyrLdrTeam$(600), expLdrTeam$(600), expLdrPlyrName$(600)
 
 Dim totGames!(600), expLdrVal!(600)
@@ -141,7 +141,7 @@ Dim compStats!(0 To 14, 0 To 26)
 
 Dim seasonWins(30), seasonLosses(30), seasonWinPct!(30), divWins(30), divLosses(30), divWinPct(30)
 
-Dim defLeaderNames$(60), offLeaderNames$(60)
+Dim defLeaderTeams$(60), offLeaderNames$(60)
 Dim statCategoryAbbr$(25)
 
 Dim leaderName$(1 To 250), leaderTeam$(1 To 250)
@@ -263,7 +263,7 @@ Dim avgAttendance&(1)
 
 Dim Shared C1, clockSecs
 Dim Shared D, P, P9
-'Dim Shared autoPlay, ballCarrier, chargeTeam, coachOpt, currHalf
+Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
 Dim Shared compTeam, currGame, gameOver, endAllGames
 Dim Shared fastBreak, forcedThree, ftNumber
 Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
@@ -280,7 +280,7 @@ Dim Shared tickerGames, tickerIdx, tourneyPlay, willDunk, XS
 Dim Shared GS%, J8%
 Dim Shared X0%, X1%, XX%
 
-'Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
+Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$
