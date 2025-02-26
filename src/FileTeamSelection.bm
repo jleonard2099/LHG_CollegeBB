@@ -293,7 +293,7 @@ Sub ReadExtraData (teamYear$, teamIdx, dataOK)
 
     Shared playerDef!(), playerStats!(), teamStats!()
 
-    Shared position$()
+    Shared playerNames$(), position$()
 
     If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
 

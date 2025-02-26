@@ -32,7 +32,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Shared div1Name$, div2Name$
 
     Shared defLeaders!(), offLeaders!()
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
     Shared confLdrVal!(), confLdrAtt!()
     Shared offLeaderNames$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
@@ -45,7 +45,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Open diskPaths$(2) + targetFile$ + ".LDR" For Input As #1
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Input #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct(X)
+        Input #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct!(X)
     Next
 
     For X = 1 To 250:
@@ -144,7 +144,7 @@ End Sub
 Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
     Shared confLdrVal!(), confLdrAtt!()
     Shared offLeaderNames$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
@@ -174,17 +174,17 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             'Conference Record
             Print Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
+            If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
+            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print " .000";
             End If
-            If divWinPct(P) = 1 Then
+            If divWinPct!(P) = 1  Then
                 Print "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
-                Print Using " .###"; divWinPct(P);
+            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
+                Print Using " .###"; divWinPct!(P);
             End If
 
             'Season Record
@@ -236,18 +236,17 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Print confLdrName$(P); Tab(16);
 
             'Conference Record
-            Print Using "##   ##   "; divWins(P); divLosses(P);
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
+            If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
+            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print " .000";
             End If
-            If divWinPct(P) = 1 Then
+            If divWinPct!(P) = 1 Then 
                 Print "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
-                Print Using " .###"; divWinPct(P);
+            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
+                Print Using " .###"; divWinPct!(P);
             End If
 
             Locate , 41
@@ -781,7 +780,7 @@ End Sub
 Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Shared defLeaders!(), offLeaders!()
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
     Shared confLdrVal!(), confLdrAtt!()
 
     Shared offLeaderNames$(), defLeaderTeams$()
@@ -805,17 +804,17 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
             Print #1, confLdrName$(P); Tab(16);
             Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
+          If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print #1, " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
+            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print #1, " .000";
             End If
-            If divWinPct(P) = 1 Then
+            If divWinPct!(P) = 1 Then 
                 Print #1, "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
-                Print #1, Using " .###"; divWinPct(P);
+            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
+                Print #1, Using " .###"; divWinPct!(P);
             End If
 
             Print #1, Tab(41);
@@ -852,17 +851,17 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
             Print #1, confLdrName$(P); Tab(16);
             Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-            If divWinPct(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
+          If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
                 Print #1, " .---";
             End If
-            If divWinPct(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
+            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
                 Print #1, " .000";
             End If
-            If divWinPct(P) = 1 Then
+            If divWinPct!(P) = 1 Then 
                 Print #1, "1.000";
             End If
-            If divWinPct(P) <> 0 And divWinPct(P) <> 1 Then
-                Print #1, Using " .###"; divWinPct(P);
+            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
+                Print #1, Using " .###"; divWinPct!(P);
             End If
 
             Print #1, Tab(41);

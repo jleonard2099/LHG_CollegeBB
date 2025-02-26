@@ -15,7 +15,7 @@ Sub CompileNatlOrg ()
     Shared leaderVals!(), plyrRecords!()
     Shared defLeaders!(), defRecords!()
     Shared offLeaders!(), offRecords!()
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
 
     Shared defLeaderTeams$(), offLeaderNames$()
     Shared offRecDesc$(), defRecDesc$()
@@ -92,8 +92,8 @@ Sub CompileNatlOrg ()
                 Next
 
                 Erase leaderVals!
-                Erase seasonWins, seasonLosses, seasonWinPct!, divWins, divLosses, divWinPct
-                Erase defLeaderTeams$, offLeaderNames$
+                Erase seasonWins, seasonLosses, seasonWinPct!, divWins, divLosses, divWinPct!
+                Erase defLeaderNames$, offLeaderNames$
                 Erase memberName$, leaderName$, leaderTeam$
 
                 targetConf$ = diskPaths$(2) + memberConf$(currConf) + ".TMS"
@@ -138,14 +138,7 @@ Sub CompileNatlOrg ()
 
                                 If (haveStats) Then
 
-                                    L = Len(memberName$(XW))
-                                    statName$ = ""
-
-                                    For X = 1 To L
-                                        A = Asc(Mid$(memberName$(XW), X, 1))
-                                        statName$ = statName$ + Chr$(A)
-                                    Next X
-
+                                    statName$ = memberName$(XW)
                                     nonConfGame = 0
 
                                     For X = 1 To TEAMS_PER_CONFERENCE
@@ -172,9 +165,9 @@ Sub CompileNatlOrg ()
                                                 End If
 
                                                 If divWins(X) + divLosses(X) = 0 Then
-                                                    divWinPct(X) = 0
+                                                    divWinPct!(X) = 0
                                                 Else
-                                                    divWinPct(X) = divWins(X) / (divWins(X) + divLosses(X))
+                                                    divWinPct!(X) = divWins(X) / (divWins(X) + divLosses(X))
                                                 End If
 
                                             End If
@@ -183,10 +176,9 @@ Sub CompileNatlOrg ()
 
                                     Next X
 
-
                                     If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
-                                        Call ReadTeamStats(memberName$(XW), TN$)
+                                        Call ReadTeamStats(TN$, memberName$(XW))
                                         Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
                                         Call CalcStatLeadersConf(TN$)
                                         Call CalcStatLeadersNat(memberName$(XW), TN$)
@@ -827,7 +819,6 @@ Function FindStatsNat% (statFile$, numberGames, NRT)
 
     If Not _FileExists(findFile$) Then
 
-        Locate , 1
         Print "NO STATS FOUND FOR "; statFile$
         FindStatsNat% = 0
 
@@ -949,7 +940,7 @@ End Function
 'This includes the national poll.
 Sub PostLeadersOrg (organization$, NRT)
 
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
 
     Shared plyrRecords!()
     Shared natDefLeaders!(), natLeaderVals!(), natOffLeaders!()
@@ -969,7 +960,7 @@ Sub PostLeadersOrg (organization$, NRT)
     Print "    POSTING NEW "; organization$; " LEADERS"
 
     For X = 1 To 30
-        Write #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct(X)
+        Write #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct!(X)
     Next
 
     For X = 1 To 250

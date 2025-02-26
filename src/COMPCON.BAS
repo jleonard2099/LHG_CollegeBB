@@ -11,10 +11,9 @@ Sub CompileCollege ()
     _Title "Courtside College Basketball - Update Conference Stats"
 
     Shared leaderVals!(), plyrRecords!()
-    Shared defLeaders!(), defRecords!(), defTotals!()
-    Shared offLeaders!(), offRecords!(), offTotals!()
-    Shared statsOffTot!(), statsDefTot!()
-    Shared divWins(), divLosses(), divWinPct()
+    Shared defLeaders!(), defRecords!()
+    Shared offLeaders!(), offRecords!()
+    Shared divWins(), divLosses(), divWinPct!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!()
 
     Shared defLeaderTeams$(), offLeaderNames$()
@@ -83,7 +82,7 @@ Sub CompileCollege ()
         Call ReadConferenceStats(conferenceFile$)
 
         Erase seasonWins, seasonLosses, seasonWinPct!
-        Erase divWins, divLosses, divWinPct
+        Erase divWins, divLosses, divWinPct!
 
         For XW = 1 To TEAMS_PER_CONFERENCE
 
@@ -121,9 +120,9 @@ Sub CompileCollege ()
                                 End If
 
                                 If divWins(X) + divLosses(X) = 0 Then
-                                    divWinPct(X) = 0
+                                    divWinPct!(X) = 0
                                 Else
-                                    divWinPct(X) = divWins(X) / (divWins(X) + divLosses(X))
+                                    divWinPct!(X) = divWins(X) / (divWins(X) + divLosses(X))
                                 End If
 
                             End If
@@ -1208,7 +1207,7 @@ End Sub
 'a bubble sort algorithm.
 Sub SortStandingsConference
 
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
 
     Shared memberName$()
 
@@ -1237,7 +1236,7 @@ Sub SortStandingsConference
                             Swap seasonWinPct!(X), seasonWinPct!(Y)
                             Swap divWins(X), divWins(Y)
                             Swap divLosses(X), divLosses(Y)
-                            Swap divWinPct(X), divWinPct(Y)
+                            Swap divWinPct!(X), divWinPct!(Y)
                         End If
                     End If
                 End If
@@ -1262,7 +1261,7 @@ Sub PostLeadersConf (conferenceName$)
     Shared defLeaderTeams$(), offLeaderNames$()
     Shared defLeaders!(), offLeaders!()
     Shared leaderVals!()
-    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct()
+    Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
 
     Shared leaderName$(), memberName$(), leaderTeam$()
 
@@ -1275,7 +1274,7 @@ Sub PostLeadersConf (conferenceName$)
     Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
     For X = 1 To TEAMS_PER_CONFERENCE
-        Write #1, memberName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct(X)
+        Write #1, memberName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct!(X)
     Next
 
     For X = 1 To 250
