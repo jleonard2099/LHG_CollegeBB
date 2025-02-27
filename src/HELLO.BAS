@@ -28,6 +28,10 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim confWins, confLosses
+Dim fullWins, fullLosses
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 

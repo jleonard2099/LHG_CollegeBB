@@ -34,7 +34,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Shared defLeaders!(), offLeaders!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
     Shared confLdrVal!(), confLdrAtt!()
-    Shared offLeaderNames$(), defLeaderTeams$()
+    Shared offLeaderTeams$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
@@ -53,7 +53,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Next
 
     For X = 1 To MAX_CONFERENCES:
-        Input #1, offLeaderNames$(X)
+        Input #1, offLeaderTeams$(X)
         For M = 1 To 20:
             Input #1, offLeaders!(X, M)
         Next
@@ -146,7 +146,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Shared defLeaders!(), offLeaders!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
     Shared confLdrVal!(), confLdrAtt!()
-    Shared offLeaderNames$(), defLeaderTeams$()
+    Shared offLeaderTeams$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
@@ -632,9 +632,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     For X = 1 To 20
 
-        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+        If offLeaderTeams$(X) <> "" And offLeaderTeams$(X) <> "*" And offLeaderTeams$(X) <> " " Then
 
-            Print Left$(offLeaderNames$(X), 11); Tab(13);
+            Print Left$(offLeaderTeams$(X), 11); Tab(13);
 
             'Games
             Print Using "##"; offLeaders!(X, 16);
@@ -783,7 +783,7 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
     Shared confLdrVal!(), confLdrAtt!()
 
-    Shared offLeaderNames$(), defLeaderTeams$()
+    Shared offLeaderTeams$(), defLeaderTeams$()
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
@@ -1144,10 +1144,10 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     For X = 1 To 20
 
-        If offLeaderNames$(X) <> "" And offLeaderNames$(X) <> "*" And offLeaderNames$(X) <> " " Then
+        If offLeaderTeams$(X) <> "" And offLeaderTeams$(X) <> "*" And offLeaderTeams$(X) <> " " Then
 
             'Player
-            Print #1, Left$(offLeaderNames$(X), 11); Tab(13);
+            Print #1, Left$(offLeaderTeams$(X), 11); Tab(13);
 
             'Games
             Print #1, Using "##"; offLeaders!(X, 16);

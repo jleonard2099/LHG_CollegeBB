@@ -22,8 +22,8 @@ Dim statsOffTot!(15), statsDefTot!(15)
 Dim gameStatPlyrVal!(13, 13)
 
 'Record / Standings
-Dim confWins, confLosses
-Dim fullWins, fullLosses
+'Dim confWins, confLosses
+'Dim fullWins, fullLosses
 Dim replayLosses, replayWins
 
 Dim homeLosses, homeWins, neutralLosses, neutralWins
@@ -32,7 +32,7 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
-Dim memberName$(TEAMS_PER_CONFERENCE)
+'Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
 
 '-- For Road Data
@@ -141,7 +141,7 @@ Dim compStats!(0 To 14, 0 To 26)
 
 Dim seasonWins(30), seasonLosses(30), seasonWinPct!(30), divWins(30), divLosses(30), divWinPct!(30)
 
-Dim defLeaderTeams$(60), offLeaderNames$(60)
+Dim defLeaderTeams$(60), offLeaderTeams$(60)
 Dim statCategoryAbbr$(25)
 
 Dim leaderName$(1 To 250), leaderTeam$(1 To 250)

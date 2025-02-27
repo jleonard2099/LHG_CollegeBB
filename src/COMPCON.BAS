@@ -16,7 +16,10 @@ Sub CompileCollege ()
     Shared divWins(), divLosses(), divWinPct!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!()
 
-    Shared defLeaderTeams$(), offLeaderNames$()
+    Shared offTotals!(), defTotals!()
+    Shared statsOffTot!(), statsDefTot!()
+
+    Shared defLeaderTeams$(), offLeaderTeams$()
     Shared defRecDesc$(), offRecDesc$()
     Shared plyrRecDesc$(), memberName$()
     Shared leaderName$(), leaderTeam$()
@@ -39,7 +42,7 @@ Sub CompileCollege ()
     Erase defLeaders!, offLeaders!
     Erase leaderVals!
 
-    Erase defLeaderTeams$, offLeaderNames$
+    Erase defLeaderTeams$, offLeaderTeams$
     Erase memberName$, leaderName$, leaderTeam$
 
     'These are defensive record values, so they should be really high
@@ -89,12 +92,12 @@ Sub CompileCollege ()
             'Look for * as terminating char
             If memberName$(XW) <> Chr$(42) Then
 
-                haveStats = FindStatsCon%(memberName$(XW), numberGames)
+                haveStats = FindStatsCon%(memberName$(XW), totalGames)
 
                 If (haveStats) Then
 
                     statName$ = memberName$(XW)
-                    nonConfGame = 0
+                    sameTeam = 0
 
                     For X = 1 To TEAMS_PER_CONFERENCE
 
@@ -102,7 +105,7 @@ Sub CompileCollege ()
 
                             If seasonWins(X) = fullWins And seasonLosses(X) = fullLosses Then
 
-                                nonConfGame = 1
+                                sameTeam = 1
                                 Exit For
 
                             Else
@@ -130,9 +133,9 @@ Sub CompileCollege ()
                         End If
 
                     Next X
-                    'alternatively, use a Do / Until loop; nonConfGame = 1 or EC = 30
+                    'alternatively, use a Do / Until loop; sameTeam = 1 or EC = 30
 
-                    If nonConfGame <> 1 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
+                    If sameTeam = 0 And _FileExists(diskPaths$(1) + memberName$(XW)) Then
 
                         Call ReadTeamStats(TN$, memberName$(XW))
 
@@ -147,7 +150,7 @@ Sub CompileCollege ()
                             defTotals!(L) = statsDefTot!(L)
                         Next
 
-                        Call CalcStatTotalsConf(numberGames, TN$, finalUpdate$)
+                        Call CalcStatTotalsConf(totalGames, TN$, finalUpdate$)
                         Call CalcStatLeadersConf(TN$)
 
                     End If
@@ -179,7 +182,7 @@ Sub CalcStatLeadersConf (teamName$)
     Shared leaderVals!(), statPlyrVal!()
     Shared stats3FGM!(), stats3FGA!()
 
-    Shared defLeaderTeams$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderTeams$()
     Shared statPlyrNames$()
     Shared leaderName$(), leaderTeam$()
 
@@ -703,13 +706,13 @@ Sub CalcStatLeadersConf (teamName$)
             offLeaders!(40, M) = offTotals!(M)
         Next
 
-        offLeaderNames$(40) = teamName$
+        offLeaderTeams$(40) = teamName$
 
         For X = 1 To 39
             For X1 = 1 + X To 40:
 
                 If offLeaders!(X, 19) < offLeaders!(X1, 19) Then
-                    Swap offLeaderNames$(X1), offLeaderNames$(X)
+                    Swap offLeaderTeams$(X1), offLeaderTeams$(X)
                     For M = 1 To 20:
                         Swap offLeaders!(X1, M), offLeaders!(X, M)
                     Next
@@ -753,7 +756,7 @@ End Sub
 'This subroutine compares all pre-loaded
 'stats to each of the record categories to
 'see if any should be updated
-Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
+Sub CalcStatTotalsConf (totalGames, teamName$, finalUpdate$)
 
     Shared defTotals!(), offTotals!()
     Shared plyrRecords!(), statPlyrVal!()
@@ -764,6 +767,10 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
     Shared offRecDesc$(), defRecDesc$()
 
     Shared fullWins, fullLosses
+
+    minFG = totalGames * 5
+    min3FG = totalGames * 1.5
+    minFT = totalGames * 2
 
     For I = 0 To 13
 
@@ -781,15 +788,15 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
             statPlyrVal!(I, 24) = statPlyrVal!(I, 5) + statPlyrVal!(I, 12) - statPlyrVal!(I, 6) + statPlyrVal!(I, 8) + statPlyrVal!(I, 9) + statPlyrVal!(I, 7) - 2 * statPlyrVal!(I, 11)
             statPlyrVal!(I, 18) = statPlyrVal!(I, 10) / 60 / statPlyrVal!(I, 0) ' *** MIN/G ***
 
-            If Not (statPlyrVal!(I, 1) = 0 Or (statPlyrVal!(I, 2) / numberGames < 5)) Then
+            If statPlyrVal!(I, 1) > 0 And (statPlyrVal!(I, 2) >= minFG) Then
                 statPlyrVal!(I, 19) = statPlyrVal!(I, 2) / statPlyrVal!(I, 1) ' *** FG% ***
             End If
 
-            If Not (statPlyrVal!(I, 3) = 0 Or (statPlyrVal!(I, 4) / numberGames) < 2.5) Then
+            If statPlyrVal!(I, 3) > 0 And (statPlyrVal!(I, 4) >= minFT) Then
                 statPlyrVal!(I, 20) = statPlyrVal!(I, 4) / statPlyrVal!(I, 3) ' *** FT% ***
             End If
 
-            If Not (stats3FGA!(I) = 0 Or stats3FGM!(I) / numberGames < 1.5) Then
+            If stats3FGA!(I) > 0 Or (stats3FGM!(I) >= totalGames * min3FG) Then
                 statPlyrVal!(I, 21) = stats3FGM!(I) / stats3FGA!(I) ' *** 3FG% ***
             End If
 
@@ -810,7 +817,7 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
                 plyrRecDesc$(3, 0) = statPlyrNames$(I)
                 plyrRecDesc$(3, 1) = teamName$
             End If
-            If statPlyrVal!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And statPlyrVal!(I, 2) / numberGames >= 5 Then
+            If statPlyrVal!(I, 19) > plyrRecords!(4) And UCase$(finalUpdate$) = "Y" And (statPlyrVal!(I, 2) >= totalGames * minFG) Then
                 plyrRecords!(4) = statPlyrVal!(I, 19)
                 plyrRecDesc$(4, 0) = statPlyrNames$(I)
                 plyrRecDesc$(4, 1) = teamName$
@@ -826,7 +833,7 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
                 plyrRecDesc$(6, 0) = statPlyrNames$(I)
                 plyrRecDesc$(6, 1) = teamName$
             End If
-            If statPlyrVal!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And stats3FGM!(I) / numberGames >= 1.5 Then
+            If statPlyrVal!(I, 21) > plyrRecords!(7) And UCase$(finalUpdate$) = "Y" And (stats3FGM!(I) >= totalGames * min3FG) Then
                 plyrRecords!(7) = statPlyrVal!(I, 21)
                 plyrRecDesc$(7, 0) = statPlyrNames$(I)
                 plyrRecDesc$(7, 1) = teamName$
@@ -842,7 +849,7 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
                 plyrRecDesc$(9, 0) = statPlyrNames$(I)
                 plyrRecDesc$(9, 1) = teamName$
             End If
-            If statPlyrVal!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And statPlyrVal!(I, 4) / numberGames >= 2.5 Then
+            If statPlyrVal!(I, 20) > plyrRecords!(10) And UCase$(finalUpdate$) = "Y" And (statPlyrVal!(I, 4) >= minFT) Then
                 plyrRecords!(10) = statPlyrVal!(I, 20)
                 plyrRecDesc$(10, 0) = statPlyrNames$(I)
                 plyrRecDesc$(10, 1) = teamName$
@@ -931,8 +938,8 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
 
     Next
 
-    offTotals!(16) = numberGames
-    defTotals!(16) = numberGames
+    offTotals!(16) = totalGames
+    defTotals!(16) = totalGames
 
     'FG %
     offTotals!(17) = offTotals!(2) / offTotals!(1)
@@ -960,8 +967,8 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
     End If
 
     'Average
-    offTotals!(19) = offTotals!(20) / numberGames
-    defTotals!(19) = defTotals!(20) / numberGames
+    offTotals!(19) = offTotals!(20) / totalGames
+    defTotals!(19) = defTotals!(20) / totalGames
 
     ' *** OFF TOTALS ***
 
@@ -1028,8 +1035,8 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
     End If
 
     'Reb / Gm
-    If offTotals!(5) / numberGames > offRecords!(13) And UCase$(finalUpdate$) = "Y" Then
-        offRecords!(13) = offTotals!(5) / numberGames
+    If offTotals!(5) / totalGames > offRecords!(13) And UCase$(finalUpdate$) = "Y" Then
+        offRecords!(13) = offTotals!(5) / totalGames
         offRecDesc$(13) = teamName$
     End If
 
@@ -1070,8 +1077,8 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
     End If
 
     'Pts / Game
-    If offTotals!(10) / numberGames > offRecords!(20) And UCase$(finalUpdate$) = "Y" Then
-        offRecords!(20) = offTotals!(10) / numberGames
+    If offTotals!(10) / totalGames > offRecords!(20) And UCase$(finalUpdate$) = "Y" Then
+        offRecords!(20) = offTotals!(10) / totalGames
         offRecDesc$(20) = teamName$
     End If
 
@@ -1144,8 +1151,8 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
     End If
 
     'Reb / Gm
-    If defTotals!(5) / numberGames < defRecords!(13) And UCase$(finalUpdate$) = "Y" Then
-        defRecords!(13) = defTotals!(5) / numberGames
+    If defTotals!(5) / totalGames < defRecords!(13) And UCase$(finalUpdate$) = "Y" Then
+        defRecords!(13) = defTotals!(5) / totalGames
         defRecDesc$(13) = teamName$
     End If
 
@@ -1186,8 +1193,8 @@ Sub CalcStatTotalsConf (numberGames, teamName$, finalUpdate$)
     End If
 
     'Pts / Game
-    If defTotals!(10) / numberGames < defRecords!(20) And UCase$(finalUpdate$) = "Y" Then
-        defRecords!(20) = defTotals!(10) / numberGames
+    If defTotals!(10) / totalGames < defRecords!(20) And UCase$(finalUpdate$) = "Y" Then
+        defRecords!(20) = defTotals!(10) / totalGames
         defRecDesc$(20) = teamName$
     End If
 
@@ -1258,7 +1265,7 @@ End Sub
 'stats to the file
 Sub PostLeadersConf (conferenceName$)
 
-    Shared defLeaderTeams$(), offLeaderNames$()
+    Shared defLeaderTeams$(), offLeaderTeams$()
     Shared defLeaders!(), offLeaders!()
     Shared leaderVals!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
@@ -1282,7 +1289,7 @@ Sub PostLeadersConf (conferenceName$)
     Next X
 
     For X = 1 To MAX_CONFERENCES:
-        Write #1, offLeaderNames$(X)
+        Write #1, offLeaderTeams$(X)
         For Y = 1 To 20:
             Write #1, offLeaders!(X, Y)
         Next
@@ -1340,7 +1347,7 @@ End Sub
 'Looks for schedule stats for a specified
 'team in the conference and loads them if
 'found, notifying the user
-Function FindStatsCon% (statFile$, numberGames)
+Function FindStatsCon% (statFile$, totalGames)
 
     Shared oppScore(), teamScore()
 
@@ -1357,7 +1364,7 @@ Function FindStatsCon% (statFile$, numberGames)
 
     Else
 
-        Call ReadScheduleStats(statFile$, numberGames)
+        Call ReadScheduleStats(statFile$, totalGames)
 
         confWins = 0
         confLosses = 0
@@ -1366,31 +1373,22 @@ Function FindStatsCon% (statFile$, numberGames)
         fullLosses = 0
 
         'RATINGS
-        For I = 1 To numberGames
+        For I = 1 To totalGames
 
             statName$ = nameStatFile$(oppName$(I))
-            nonConfGame = 0
+            confGame = 0
 
             For EC = 1 To TEAMS_PER_CONFERENCE
 
+                'If team stats are conference opponent
                 If statName$ = memberName$(EC) Then
-                    nonConfGame = 1
+                    confGame = 1
                     Exit For
                 End If
 
             Next EC
 
-            If nonConfGame <> 1 Then
-
-                If teamScore(I) > oppScore(I) Then
-                    fullWins = fullWins + 1
-                End If
-
-                If teamScore(I) < oppScore(I) Then
-                    fullLosses = fullLosses + 1
-                End If
-
-            Else
+            If confGame = 1 Then
 
                 If teamScore(I) > oppScore(I) Then
                     confWins = confWins + 1
@@ -1399,6 +1397,16 @@ Function FindStatsCon% (statFile$, numberGames)
 
                 If teamScore(I) < oppScore(I) Then
                     confLosses = confLosses + 1
+                    fullLosses = fullLosses + 1
+                End If
+
+            Else
+
+                If teamScore(I) > oppScore(I) Then
+                    fullWins = fullWins + 1
+                End If
+
+                If teamScore(I) < oppScore(I) Then
                     fullLosses = fullLosses + 1
                 End If
 
