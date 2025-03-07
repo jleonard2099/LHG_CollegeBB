@@ -22,8 +22,8 @@ Dim statsOffTot!(15), statsDefTot!(15)
 Dim gameStatPlyrVal!(13, 13)
 
 'Record / Standings
-'Dim confWins, confLosses
-'Dim fullWins, fullLosses
+Dim confWins, confLosses
+Dim fullWins, fullLosses
 Dim replayLosses, replayWins
 
 Dim homeLosses, homeWins, neutralLosses, neutralWins
@@ -32,7 +32,7 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
-'Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
 
 '-- For Road Data

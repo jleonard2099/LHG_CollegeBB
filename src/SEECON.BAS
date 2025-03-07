@@ -319,7 +319,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     Color 14
     Print "SCORING"
-    Print "                                PTS/G"
+    Print Tab(32); "PTS/G"
     Color 15
 
     For P = 1 To 20
@@ -334,7 +334,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 14
     Print "TOTAL POINTS"
     Locate , 41
-    Print "                                  PTS"
+    Print Tab(34); "PTS"
     Color 15
 
     For P = 21 To 40
@@ -626,7 +626,6 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 12
     Print Tab(32); "OFFENSIVE TOTALS"
     Color 14
-    Print
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
@@ -699,7 +698,6 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Color 12
     Print Tab(32); "DEFENSIVE TOTALS"
     Color 14
-    Print
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 

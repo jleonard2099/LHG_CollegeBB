@@ -892,13 +892,13 @@ Function FindStatsNat% (statFile$, totalGames, NRT)
 
         'STRENGTH OF SCHEDULE
         teamPower = 0
-        SS = 0
+        strSched = 0
 
         For I = 1 To totalGames
-            SS = powerRating(I, 1) + SS
+            strSched = strSched + powerRating(I, 1)
         Next
 
-        SS = SS / totalGames
+        strSched = strSched / totalGames
 
         'INDIVIDUAL GAME POWER RATINGS
         GL = 0
@@ -921,12 +921,14 @@ Function FindStatsNat% (statFile$, totalGames, NRT)
         End If
 
         teamPower = teamPower / (totalGames + GL)
+
         NRT = NRT + 1
         pollTeam$(NRT) = statFile$
+
         pollRatings#(NRT, 1) = teamPower
         pollRatings#(NRT, 2) = fullWins
         pollRatings#(NRT, 3) = fullLosses
-        pollRatings#(NRT, 4) = SS
+        pollRatings#(NRT, 4) = strSched
 
         Cls
 

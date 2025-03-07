@@ -163,7 +163,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     Locate , 1
     Color 14
-    Print "                    RATING     W    L    STRENGTH OF SCHEDULE"
+    Print  Tab(20); "RATING     W    L    STRENGTH OF SCHEDULE"
     Color 15
 
     For P = 1 To NRT
@@ -184,7 +184,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
             Print orgName$ + " OVERALL RANKINGS"
 
             Locate , 1
-            Color 14: Print "                    RATING     W    L    STRENGTH OF SCHEDULE"
+            Color 14: Print Tab(20); "RATING     W    L    STRENGTH OF SCHEDULE"
             Color 15
 
         End If
@@ -539,38 +539,64 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Cls
 
     Color 12
-    Print "                         OFFENSIVE TOTALS"
+    Print Tab(32); "OFFENSIVE TOTALS"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If offLeaderTeams$(X) <> "" And offLeaderTeams$(X) <> "*" And offLeaderTeams$(X) <> " " Then
+
             Print Left$(offLeaderTeams$(X), 11); Tab(13);
+
+            'Games
             Print Using "##"; offLeaders!(X, 16);
             Print Tab(16);
-            Print Using "####"; offLeaders!(X, 2);
+
+            'FGA
+            Print Using "####"; offLeaders!(X, 1);
             Print Tab(21);
-            Print Using "####"; offLeaders!(X, 3);
+
+            'FGM
+            Print Using "####"; offLeaders!(X, 2);
             Print Tab(26);
+
+            'FG %
             Print Using ".###"; offLeaders!(X, 17);
             Print Tab(31);
-            Print Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
+
+            'FTA / FTM / FT%
+            Print Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
             Print Tab(46);
-            Print Using "####"; offLeaders!(X, 6);
+
+            'Rebounds
+            Print Using "####"; offLeaders!(X, 5);
             Print Tab(51);
-            Print Using "####"; offLeaders!(X, 9);
+
+            'Assists
+            Print Using "####"; offLeaders!(X, 8);
             Print Tab(56);
-            Print Using "####"; offLeaders!(X, 7);
+
+            'Personal Fouls
+            Print Using "####"; offLeaders!(X, 6);
             Print Tab(61);
-            Print Using "###"; offLeaders!(X, 8);
+
+            'Steals
+            Print Using "###"; offLeaders!(X, 7);
             Print Tab(65);
-            Print Using "###"; offLeaders!(X, 10);
+
+            'Blocks
+            Print Using "###"; offLeaders!(X, 9);
             Print Tab(69);
+
+            'Points
             Print Using "#####"; offLeaders!(X, 20);
             Print Tab(75);
+
+            'Average
             Print Using "###.#"; offLeaders!(X, 19)
+
         End If
 
     Next
@@ -585,36 +611,64 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Cls
 
     Color 12
-    Print "                         DEFENSIVE TOTALS"
+    Print Tab(32); "DEFENSIVE TOTALS"
     Color 14
-    Print "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
 
     For X = 1 To 20
 
         If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
+
             Print Left$(defLeaderTeams$(X), 11); Tab(13);
+
+            'Games
             Print Using "##"; defLeaders!(X, 16);
             Print Tab(16);
-            Print Using "####"; defLeaders!(X, 2);
+
+            'FGA
+            Print Using "####"; defLeaders!(X, 1);
             Print Tab(21);
-            Print Using "####"; defLeaders!(X, 3);
+
+            'FGM
+            Print Using "####"; defLeaders!(X, 2);
             Print Tab(26);
+
+            'FG PCT
             Print Using ".###"; defLeaders!(X, 17);
             Print Tab(31);
-            Print Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
+
+            'FTA / FTM / FT %
+            Print Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
             Print Tab(46);
-            Print Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
+
+            'Rebounds
+            Print Using "####"; defLeaders!(X, 5);
+            Print Tab(51);
+
+            'Assists
+            Print Using "####"; defLeaders!(X, 8);
             Print Tab(56);
-            Print Using "####"; defLeaders!(X, 7);
+
+            'Personal FOuls
+            Print Using "####"; defLeaders!(X, 6);
             Print Tab(61);
-            Print Using "###"; defLeaders!(X, 8);
+
+            'Steals
+            Print Using "###"; defLeaders!(X, 7);
             Print Tab(65);
-            Print Using "###"; defLeaders!(X, 10);
+
+            'Blocks
+            Print Using "###"; defLeaders!(X, 9);
             Print Tab(69);
+
+            'Points
             Print Using "#####"; defLeaders!(X, 20);
             Print Tab(75);
+
+            'Average
             Print Using "###.#"; defLeaders!(X, 19)
+
         End If
 
     Next
@@ -651,7 +705,7 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
     Open destFile$ For Output As #1
 
     Print #1, orgName$ + " OVERALL RANKINGS"
-    Print #1, "                    RATING     W    L    STRENGTH OF SCHEDULE"
+    Print #1, Tab(20); "RATING     W    L    STRENGTH OF SCHEDULE"
 
     For P = 1 To NRT
         Print #1, Using "###  "; P;
@@ -915,8 +969,8 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
 
     Print #1,
     Print #1, Chr$(12)
-    Print #1, "                         OFFENSIVE TOTALS"
-    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print #1, Tab(25); "OFFENSIVE TOTALS"
+    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
     For X = 1 To 20
 
@@ -950,8 +1004,8 @@ Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
     Next
 
     Print #1,
-    Print #1, "                         DEFENSIVE TOTALS"
-    Print #1, "             G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
+    Print #1, Tab(25); "DEFENSIVE TOTALS"
+    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
 
     For X = 1 To 20
 

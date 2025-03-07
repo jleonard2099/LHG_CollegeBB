@@ -28,10 +28,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim memberName$(TEAMS_PER_CONFERENCE)
-Dim confWins, confLosses
-Dim fullWins, fullLosses
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -4753,7 +4749,7 @@ Sub COLHOOP ()
 
         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " HAS THE OFF RB"
         Call SELECTPBP(P, 1)
-        
+
         If pbpOpt = 1 Then
             Print "FOR " + gameTeams$(P)
             Call DELAY
@@ -8794,7 +8790,6 @@ Sub FoulCalled (randomFouler)
 
         Call SCOREBOARD
 
-
         Call CheckGameClock
 
         offStatus = 0
@@ -8808,7 +8803,7 @@ End Sub
 '         CreditAssists Subroutine
 '----------------------------------------
 'This subroutine appears to be crediting
-'assists, per it's similarity to the code
+'assists, per its similarity to the code
 'from Pro BB to do the same
 Sub CreditAssists ()
 
@@ -8818,13 +8813,17 @@ Sub CreditAssists ()
     'assistChance = Int(Rnd(1) * 3) + 1
     Select Case assistRating
 
-        'Case 0 To 6
-        Case 0 To 4
+        Case 0
             assistChance = Int(Rnd(1) * 4) + 1
 
-            'Case Is >= 7
+        Case 1 To 2
+            assistChance = Int(Rnd(1) * 3) + 1
+
+        Case 3 To 4
+            assistChance = Int(Rnd(1) * 2) + 1
+
         Case Is >= 5
-            assistChance = Int(Rnd(1) * assistRating) + 3
+            assistChance = Int(Rnd(1) * (assistRating * 0.8)) + 1 ' Slightly higher weight
 
     End Select
 
@@ -8839,11 +8838,14 @@ Sub CreditAssists ()
             Next
 
             RN0 = Int(Rnd(1) * totalAssisst) + 1
+
             totalAssisst = 0
 
             For M8 = 0 To 4
                 totalAssisst = totalAssisst + plyrOff_GAME!(P, lineupIdx(P, M8), 4)
-                If RN0 <= totalAssisst Then Exit For
+                If RN0 <= totalAssisst Then
+                    Exit For
+                End If
             Next
 
             tgtPlayer = M8
@@ -11992,7 +11994,7 @@ Sub ComputerStrategy ()
         Call Rolld100(RN0)
 
         Select Case currHalf
-        
+
             Case 1
                 '1st half strategy
                 Select Case RN0
@@ -14816,27 +14818,28 @@ End Sub
 'should be started.
 Sub EndOfGame ()
 
+    Close #11
     Call POSTGAME
 
-    If autoPlay <> 1 Then
+    Cls
 
-        Cls
+    ' Prompt to play another game
+    If autoPlay <> 1 Then
 
         'Using Home Team's color for the box
         Call TEAMBOX(1, 1)
 
-        Do
-            U$ = "PLAY ANOTHER GAME (Y/N)?"
-            Locate 7, (80 - Len(U$)) / 2
-            Print U$
+        pbpString$ = "PLAY ANOTHER GAME? (Y/N)"
+        Locate 7, (80 - Len(pbpString$)) / 2
+        Print pbpString$
 
-            Color 15, 0
+        Color 15, 0
+
+        Do
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
     End If
-
-    Close #11
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
         Cls
