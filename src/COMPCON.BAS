@@ -161,7 +161,7 @@ Sub CompileCollege ()
 
         Next XW 'Done "checking stats"
 
-        Call SortStandingsConference
+        Call SortStandingsConference(0)
         Call PostLeadersConf(conferenceFile$)
         Call PostRecordsColl
 
@@ -1212,47 +1212,57 @@ End Sub
 'This subroutine sorts the leaders in the
 'target conference. Currently setup using
 'a bubble sort algorithm.
-Sub SortStandingsConference
+'sortType
+'  0 = sort by Division
+'  1 = sort by Season
+Sub SortStandingsConference (sortType)
 
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
 
     Shared memberName$()
 
-    'Currently sorts by Conference Record
-    '   To sort by Season Record, change O4 / O5 to O1 / O2
-    '   (not in the Swap statements!)
+    For division = 0 To 1
 
-    For Z = 0 To 1
-
-        AA = (Z * 15) + 1
-        ZZ = (Z * 15) + 15
+        AA = (division * 15) + 1
+        ZZ = (division * 15) + 15
 
         For X = AA To ZZ - 1
 
             For Y = X + 1 To ZZ
 
-                diffX = divWins(X) - divLosses(X)
-                diffY = divWins(Y) - divLosses(Y)
+                If sortType = 0 Then
+                    diffX = divWins(X) - divLosses(X)
+                    diffY = divWins(Y) - divLosses(Y)
+                Else
+                    diffX = seasonWins(X) - seasonLosses(X)
+                    diffY = seasonWins(Y) - seasonLosses(Y)
+                End If
 
-                If diffX <= diffY Then
-                    If diffX <> diffY Then
-                        If Not (divWins(X) <= divWins(Y) And divWins(X) > divLosses(X)) Or Not (divWins(X) >= divWins(Y) And divWins(X) < divLosses(X)) Then
-                            Swap memberName$(X), memberName$(Y)
-                            Swap seasonWins(X), seasonWins(Y)
-                            Swap seasonLosses(X), seasonLosses(Y)
-                            Swap seasonWinPct!(X), seasonWinPct!(Y)
-                            Swap divWins(X), divWins(Y)
-                            Swap divLosses(X), divLosses(Y)
-                            Swap divWinPct!(X), divWinPct!(Y)
-                        End If
-                    End If
+                If sortType = 0 And divWinPct!(X) < divWinPct!(Y) Then
+                    Swap memberName$(X), memberName$(Y)
+                    Swap seasonWins(X), seasonWins(Y)
+                    Swap seasonLosses(X), seasonLosses(Y)
+                    Swap seasonWinPct!(X), seasonWinPct!(Y)
+                    Swap divWins(X), divWins(Y)
+                    Swap divLosses(X), divLosses(Y)
+                    Swap divWinPct!(X), divWinPct!(Y)
+                End If
+
+                If sortType = 1 And seasonWinPct!(X) < seasonWinPct!(Y) Then
+                    Swap memberName$(X), memberName$(Y)
+                    Swap seasonWins(X), seasonWins(Y)
+                    Swap seasonLosses(X), seasonLosses(Y)
+                    Swap seasonWinPct!(X), seasonWinPct!(Y)
+                    Swap divWins(X), divWins(Y)
+                    Swap divLosses(X), divLosses(Y)
+                    Swap divWinPct!(X), divWinPct!(Y)
                 End If
 
             Next Y
 
         Next X
 
-    Next Z
+    Next division
 
 End Sub
 
@@ -1432,3 +1442,4 @@ Function FindStatsCon% (statFile$, totalGames)
     End If
 
 End Function
+

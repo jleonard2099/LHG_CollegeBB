@@ -151,131 +151,107 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Shared confLdrName$()
 
     Color 15, 0
-    Cls
 
-    Color 12
-    Locate , Int((80 - Len(confName$) - 11) / 2)
-    Print confName$ + " CONFERENCE"
+    For division = 1 To 2
 
-    Color 2
-    If div1$ <> "" Then Print RTrim$(div1$); " DIVISION"
-    Color 12
-    Print "                 CONFERENCE                         FULL SEASON"
-    Color 14
-    Print "                W    L     PCT                          W    L     PCT"
-    Color 15
+        Cls
 
-    For P = 1 To 15
+        Color 12
 
-        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+        Print
 
-            Print confLdrName$(P); Tab(16);
-
-            'Conference Record
-            Print Using "##   ##   "; divWins(P); divLosses(P);
-
-            If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
-                Print " .---";
-            End If
-            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
-                Print " .000";
-            End If
-            If divWinPct!(P) = 1  Then
-                Print "1.000";
-            End If
-            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
-                Print Using " .###"; divWinPct!(P);
-            End If
-
-            'Season Record
-            Locate , 41
-            Print confLdrName$(P); Tab(56);
-            Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
-
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
-                Print " .---"
-            End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
-                Print " .000"
-            End If
-            If seasonWinPct!(P) = 1 Then
-                Print "1.000"
-            End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
-                Print Using " .###"; seasonWinPct!(P)
-            End If
-
+        Locate , Int((80 - Len(confName$) - 11) / 2)
+        Print confName$ + " CONFERENCE"
+        Print
+        If division = 1 Then
+            If div1$ <> "" Then Print RTrim$(div1$); " DIVISION"
+        Else
+            If div2$ <> "" Then Print RTrim$(div2$); " DIVISION"
         End If
 
-    Next P
+        Color 12
+        Print "                 CONFERENCE                         FULL SEASON"
+        Color 14
+        Print "                W    L     PCT                          W    L     PCT"
+        Color 15
 
-    '-----
-    Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
-    Color 15
-    QK$ = GetKeyPress$
-    '-----
+        minIdx = ((division - 1) * 15) + 1
+        maxIdx = division * 15
 
-    Cls
+        Call SortStandingsConference(0)
 
-    Color 12
-    Locate , Int((80 - Len(confName$) - 11) / 2)
-    Print confName$ + " CONFERENCE"
+        For P = minIdx To maxIdx
 
-    Color 2
-    If div2$ <> "" Then Print RTrim$(div2$); " DIVISION"
-    Print "                 CONFERENCE                         FULL SEASON"
-    Color 14
-    Print "                W    L     PCT                          W    L     PCT"
-    Color 15
+            If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
 
-    For P = 16 To 30
+                Print confLdrName$(P); Tab(16);
 
-        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+                'Conference Record
+                Print Using "##   ##   "; divWins(P); divLosses(P);
 
-            Print confLdrName$(P); Tab(16);
+                If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
+                    Print " .---"
+                End If
+                If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
+                    Print " .000"
+                End If
+                If divWinPct!(P) = 1 Then
+                    Print "1.000"
+                End If
+                If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then
+                    Print Using " .###"; divWinPct!(P)
+                End If
 
-            'Conference Record
-            If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
-                Print " .---";
-            End If
-            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
-                Print " .000";
-            End If
-            If divWinPct!(P) = 1 Then 
-                Print "1.000";
-            End If
-            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
-                Print Using " .###"; divWinPct!(P);
             End If
 
-            Locate , 41
-            Print confLdrName$(P); Tab(56);
+        Next P
 
-            'Season Record
-            Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
-                Print " .---"
+        Call SortStandingsConference(1)
+
+        Locate 6
+
+        For P = minIdx To maxIdx
+
+            If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+
+                'Season Record
+                Locate , 41
+                Print confLdrName$(P); Tab(56);
+                Print Using "##   ##   "; seasonWins(P); seasonLosses(P);
+
+                If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
+                    Print " .---"
+                End If
+                If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
+                    Print " .000"
+                End If
+                If seasonWinPct!(P) = 1 Then
+                    Print "1.000"
+                End If
+                If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
+                    Print Using " .###"; seasonWinPct!(P)
+                End If
+
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
-                Print " .000"
-            End If
-            If seasonWinPct!(P) = 1 Then
-                Print "1.000"
-            End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
-                Print Using " .###"; seasonWinPct!(P)
-            End If
+
+        Next P
+
+        '-----
+        Color 12
+        'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+        Color 15
+
+        QK$ = GetKeyPress$
+
+        If division = 1 Then
+            'Only show division 2 if it exists
+            If div2$ <> "" Then Exit For
         End If
 
-    Next P
+        '-----
 
-    '-----
-    Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
-    Color 15
-    QK$ = GetKeyPress$
-    '-----
+    Next division
+
 
     Cls
 
@@ -790,97 +766,86 @@ Sub LeaderStatsCon_Report (confName$, div1$, div2$, printDest, destFile$)
 
     Open destFile$ For Output As #1
 
-    Print #1, confName$ + " CONFERENCE"
+    For division = 1 To 2
 
-    If div1$ <> "" Then Print #1, div1$; " DIVISION"
-    Print #1, "                 CONFERENCE                         FULL SEASON"
-    Print #1, "                W    L     PCT                          W    L     PCT"
+        Print #1, confName$ + " CONFERENCE"
 
-    For P = 1 To 15
-
-        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
-            Print #1, confLdrName$(P); Tab(16);
-            Print #1, Using "##   ##   "; divWins(P); divLosses(P);
-
-          If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
-                Print #1, " .---";
-            End If
-            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
-                Print #1, " .000";
-            End If
-            If divWinPct!(P) = 1 Then 
-                Print #1, "1.000";
-            End If
-            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
-                Print #1, Using " .###"; divWinPct!(P);
-            End If
-
-            Print #1, Tab(41);
-            Print #1, confLdrName$(P); Tab(56);
-            Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
-
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
-                Print #1, " .---"
-            End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
-                Print #1, " .000"
-            End If
-            If seasonWinPct!(P) = 1 Then
-                Print #1, "1.000"
-            End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
-                Print #1, Using " .###"; seasonWinPct!(P)
-            End If
+        If division = 1 Then
+            If div1$ <> "" Then Print #1, RTrim$(div1$); " DIVISION"
+        Else
+            If div2$ <> "" Then Print #1, RTrim$(div2$); " DIVISION"
         End If
 
-    Next P
+        Print #1,
+        Print #1, "                 CONFERENCE"
+        Print #1, "                W    L     PCT"
 
-    Print #1,
-    Print #1, confName$ + " CONFERENCE"
+        minIdx = ((division - 1) * 15) + 1
+        maxIdx = division * 15
 
-    If div2$ <> "" Then Print #1, div2$; " DIVISION"
+        Call SortStandingsConference(0)
 
-    Print #1, "                 CONFERENCE                         FULL SEASON"
-    Print #1, "                W    L     PCT                          W    L     PCT"
+        For P = minIdx To maxIdx
 
-    For P = 16 To 30
+            If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
 
-        If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
-            Print #1, confLdrName$(P); Tab(16);
-            Print #1, Using "##   ##   "; divWins(P); divLosses(P);
+                Print #1, confLdrName$(P); Tab(16);
+                Print #1, Using "##   ##   "; divWins(P); divLosses(P);
 
-          If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then 
-                Print #1, " .---";
-            End If
-            If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then 
-                Print #1, " .000";
-            End If
-            If divWinPct!(P) = 1 Then 
-                Print #1, "1.000";
-            End If
-            If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then 
-                Print #1, Using " .###"; divWinPct!(P);
+                If divWinPct!(P) = 0 And divWins(P) = 0 And divLosses(P) = 0 Then
+                    Print #1, " .---"
+                End If
+                If divWinPct!(P) = 0 And (divWins(P) <> 0 Or divLosses(P) <> 0) Then
+                    Print #1, " .000"
+                End If
+                If divWinPct!(P) = 1 Then
+                    Print #1, "1.000"
+                End If
+                If divWinPct!(P) <> 0 And divWinPct!(P) <> 1 Then
+                    Print #1, Using " .###"; divWinPct!(P)
+                End If
+
             End If
 
-            Print #1, Tab(41);
-            Print #1, confLdrName$(P); Tab(56);
-            Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
+        Next P
 
-            If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
-                Print #1, " .---"
+        Call SortStandingsConference(1)
+
+        Print #1,
+        Print #1, "                  FULL SEASON"
+        Print #1, "                W    L     PCT"
+
+        For P = minIdx To maxIdx
+
+            If confLdrName$(P) <> "" And confLdrName$(P) <> "*" Then
+
+                Print #1, confLdrName$(P); Tab(16);
+                Print #1, Using "##   ##   "; seasonWins(P); seasonLosses(P);
+
+                If seasonWinPct!(P) = 0 And seasonWins(P) = 0 And seasonLosses(P) = 0 Then
+                    Print #1, " .---"
+                End If
+                If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
+                    Print #1, " .000"
+                End If
+                If seasonWinPct!(P) = 1 Then
+                    Print #1, "1.000"
+                End If
+                If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
+                    Print #1, Using " .###"; seasonWinPct!(P)
+                End If
+
             End If
-            If seasonWinPct!(P) = 0 And (seasonWins(P) <> 0 Or seasonLosses(P) <> 0) Then
-                Print #1, " .000"
-            End If
-            If seasonWinPct!(P) = 1 Then
-                Print #1, "1.000"
-            End If
-            If seasonWinPct!(P) <> 0 And seasonWinPct!(P) <> 1 Then
-                Print #1, Using " .###"; seasonWinPct!(P)
-            End If
+
+        Next P
+
+        If division = 1 Then
+            'Only show division 2 if it exists
+            If div2$ <> "" Then Exit For
         End If
 
-    Next P
+    Next division
+
 
     Print #1, Chr$(12)
     Print #1, "FIELD GOAL % (MIN 5 FGM/G)"; Tab(41); "FREE THROW % (MIN 2.5 FTM/G)"
