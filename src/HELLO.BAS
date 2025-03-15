@@ -1035,7 +1035,7 @@ Sub COLHOOP ()
             Locate , 3: Print "* 35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16"
             Locate , 3: Print "* 3 PT SHOT ADOPTED IN 1986-87"
             Locate , 3: Print "* BEFORE 1990-91, 10TH FOUL ALLOWED 1+1 FT; NOW IT IS 2 FT"
-            Locate , 3: Print "* STARTING 1990-91, 3 FT REWARD!ED WHEN FOULED ON A 3 PT ATT";
+            Locate , 3: Print "* STARTING 1990-91, 3 FT REWARDED WHEN FOULED ON A 3 PT ATT";
 
             Do
                 Color 7
@@ -1126,7 +1126,7 @@ Sub COLHOOP ()
 
             End If
 
-        Loop Until (setting = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27) Or I$ = Chr$(17) Or UCase(I$) = "Q" 
+        Loop Until (setting = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27) Or I$ = Chr$(17) Or UCase$(I$) = "Q" 
 
         If I$ <> Chr$(27) And UCase$(I$) <> Chr$(17) And UCase$(I$) <> "Q" Then
 
@@ -6017,7 +6017,7 @@ Sub MAKEPBP (pbpType)
                     Case 12
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 2-HANDED STUFshotChance!!!"
                     Case 13
-                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARD!S JAM!!!"
+                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARDS JAM!!!"
                     Case 14
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 1-HANDED SLAM!!!"
                     Case 15
@@ -6489,7 +6489,7 @@ Sub MAKEPBP (pbpType)
                             Case 13
                                 pbpString$ = pbpString$ + " TAKES THE LEFT HANDER"
                             Case 14
-                                pbpString$ = pbpString$ + " HARD! TO THE HOLE..."
+                                pbpString$ = pbpString$ + " HARD TO THE HOLE..."
                             Case 15
                                 pbpString$ = pbpString$ + " FLIPS IT UP"
                             Case 16
@@ -6533,7 +6533,7 @@ Sub MAKEPBP (pbpType)
                             Case 29
                                 pbpString$ = pbpString$ + " GETS INSIDE FOR THE SHOT"
                             Case 30
-                                pbpString$ = pbpString$ + " SPINS TOWARD! THE HOOP"
+                                pbpString$ = pbpString$ + " SPINS TOWARD THE HOOP"
                             Case 31
                                 pbpString$ = pbpString$ + " FROM SHORT RANGE"
                             Case 32
@@ -7087,7 +7087,7 @@ Sub MAKEPBP (pbpType)
                     Case 12
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 2-HANDED STUFshotChance!!!"
                     Case 13
-                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARD!S JAM!!!"
+                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARDS JAM!!!"
                     Case 14
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 1-HANDED SLAM!!!"
                     Case 15
@@ -7368,9 +7368,9 @@ Sub MAKEPBP (pbpType)
                     Case 32
                         pbpString$ = pbpString$ + "FAKES RIGHT...GOES LEFT"
                     Case 33
-                        pbpString$ = pbpString$ + "SPINS HARD! TO THE LEFT"
+                        pbpString$ = pbpString$ + "SPINS HARD TO THE LEFT"
                     Case 34
-                        pbpString$ = pbpString$ + "SPINS HARD! TO THE RIGHT"
+                        pbpString$ = pbpString$ + "SPINS HARD TO THE RIGHT"
                     Case 35
                         pbpString$ = pbpString$ + "LEANS LEFT...GOES RIGHT"
                     Case 36
@@ -7384,7 +7384,7 @@ Sub MAKEPBP (pbpType)
                     Case 40
                         pbpString$ = pbpString$ + "BACKS IN"
                     Case 41
-                        pbpString$ = pbpString$ + "LEANS FORWARD!"
+                        pbpString$ = pbpString$ + "LEANS FORWARD"
                     Case 42
                         pbpString$ = pbpString$ + "CROSSES OVER...SPINS"
                     Case 43
@@ -16801,4 +16801,3 @@ Function GetTeamGender$ (diskID$)
     End If
 
 End Function
-
