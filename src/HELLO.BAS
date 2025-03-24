@@ -2,19 +2,21 @@ $Debug
 $Color:32
 
 Const GAME_VERSION$ = "5.1"
+Const MAX_FILES = 10240
+Const MAX_CAREER_YEARS = 15
+Const MAX_CONFERENCES = 40
+Const MAX_SCHED_STATS = 100
 Const MAX_SCHEDULE_GAMES = 6000
 Const MAX_TOURNAMENT_GAMES = 200
 Const MAX_TEAMS = 1000
-Const MAX_FILES = 10240
 'optimium = 1048576 (but slows code)
 Const TEAMS_PER_DIV = 15
 Const DIVS_PER_CONFERENCE = 2
 Const TEAMS_PER_CONFERENCE = 30
-Const MAX_CAREER_YEARS = 15
-Const MAX_CONFERENCES = 40
 
-Const MAX_SCHED_STATS = 100
 Const SCHEDULE_SIZE_BYTES = 52
+Const LAST_COL = 80
+Const LAST_ROW = 30
 
 DefInt A-Z
 
@@ -27,7 +29,12 @@ DefInt A-Z
 ' For Utils
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
+Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)
+
 '$Include: 'Variables.bi'
+Dim div1Name$, div2Name$
+Dim memberName$(TEAMS_PER_CONFERENCE)
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -66,6 +73,24 @@ Data FIELD GOAL ATTEMPTS,FIELD GOALS MADE,F.G. PCT.,THREE POINT ATTEMPTS,THREE P
 Data DEFENSIVE REBOUNDS,TOTAL REBOUNDS,REBOUNDS PER GAME,FOULS,ASSISTS,BLOCKS,STEALS,TURNOVERS,POINTS PER GAME
 Data OPP. FIELD GOAL ATTEMPTS,OPP. FIELD GOALS MADE,OPP. FIELD GOAL PERCENTAGE,OPP. THREE POINTERS ATTEMPTED,OPP. THREE POINTERS MADE,OPP. THREE POINT PERCENTAGE,OPP. FREE THROWS ATTEMPTED,OPP. FREE THROWS MADE,OPP. FREE THROW PERCENTAGE
 Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. REBOUNDS PER GAME,OPP. FOULS,OPP. ASSISTS,OPP. BLOCKS,OPP. STEALS,OPP. TURNOVERS,OPP. POINTS PER GAME,RETURN TO MAIN MENU
+$Debug
+$Color:32
+
+Const GAME_VERSION$ = "5.1"
+Const MAX_FILES = 10240
+Const MAX_CAREER_YEARS = 15
+Const MAX_CONFERENCES = 40
+Const MAX_SCHED_STATS = 100
+Const MAX_SCHEDULE_GAMES = 6000
+Const MAX_TOURNAMENT_GAMES = 200
+Const MAX_TEAMS = 1000
+'optimium = 1048576 (but slows code)
+Const TEAMS_PER_DIV = 15
+Const DIVS_PER_CONFERENCE = 2
+Const TEAMS_PER_CONFERENCE = 30
+
+Const SCHEDULE_SIZE_BYTES = 52
+Const LAST_ROW = 30
 For I = 0 To 38:
     Read expTeamCategory$(I)
 Next
@@ -295,7 +320,7 @@ Close #3
 'Run main menu
 SELECTION% = 1
 
-'Screen 12
+Screen _NewImage(640, 480, 256)
 
 Do
 
@@ -684,6 +709,7 @@ End Sub
 '$Include: 'TINPUT.BAS'
 '$Include: 'TOURNEY.BAS'
 
+
 ' For Game
 'Include: 'COLHOOP.BAS'
 
@@ -753,6 +779,9 @@ Sub COLHOOP ()
         'PBP Option
         Print #3, 0
 
+        'Sound Option
+        Print #3, 1
+
         Close #3
 
     End If
@@ -769,6 +798,9 @@ Sub COLHOOP ()
     Input #4, ft3PtFoul
     Input #4, ft6FloorFouls
     Input #4, pbpOpt
+    If Not EOF(4) Then
+        Input #4, sndOpt
+    End If
     Close #4
 
     If _FileExists("TICKER") Then
@@ -968,74 +1000,68 @@ Sub COLHOOP ()
             Color 2
             Print Tab(29); "SELECT OPENING OPTIONS"
 
-            Locate 2, 2: Color 14
-            Print "(1) ";: Color 15: Print playMode$(playerOpt)
             Locate 3, 2: Color 14
+            Print "(1) ";: Color 15: Print playMode$(playerOpt)
+            Locate 4, 2: Color 14
             Print "(2) ";
             Color 15: Print "VISITING TEAM: ";
             Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0)
             Color , 0
-            Locate 4, 2: Color 14, 0
+            Locate 5, 2: Color 14, 0
             Print "(3) ";
             Color 15: Print "HOME TEAM: ";
             Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
-            Locate 5, 2: Color 14, 0
+            Locate 6, 2: Color 14, 0
             Print "(4) ";
             Color 15: Print "GAME LOCATION: "; location$(gameLoc)
-            Locate 6, 2: Color 14
+            Locate 7, 2: Color 14
             Print "(5) ";
             Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
-            Locate 7, 2: Color 14
+            Locate 8, 2: Color 14
             Print "(6) ";
             Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
-            Locate 8, 2: Color 14
+            Locate 9, 2: Color 14
             Print "(7) ";
             Color 15: Print "FOULS TO DISQUALIFY: "; foulsToDQ
-            Locate 9, 2: Color 14
+            Locate 10, 2: Color 14
             Print "(8) ";
             Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(ft10thFoul)
-            Locate 10, 2: Color 14
+            Locate 11, 2: Color 14
             Print "(9) ";
             Color 15: Print "START GAME"
-            Locate 11, 2: Color 14
+            Locate 12, 2: Color 14
             Print "(0) ";
             Color 15: Print "SAVE SETTINGS"
-            Locate 12, 2: Color 14
+            Locate 13, 2: Color 14
             Print "(A) ";
             Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#"; pbpDelay!
-            Locate 13, 2: Color 14
+            Locate 14, 2: Color 14
             Print "(B) ";
             Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt);
-            Locate 1, 1
-            Locate 14, 2: Color 14
+            Locate 15, 2: Color 14
             Print "(C) ";
             Color 15: Print "3 FT WHEN FOULED ON 3-PT ATT: "; yesNoText$(ft3PtFoul)
-            Locate 15, 2: Color 14
+            Locate 16, 2: Color 14
             Print "(D) ";
             Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS : "; yesNoText$(ft6FloorFouls)
-            Locate 16, 2: Color 14
+            Locate 17, 2: Color 14
             Print "(E) ";
             Color 15: Print "PLAY-BY-PLAY STYLE: "; pbpStyle$(pbpOpt)
-
-            'Locate 19, 2: Print "NOTE::"
-            'Print "        1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
-            'Print "        45 SEC SHOT CLOCK ADOPTED 1984-85, BUT NOT FOR POST-SEASON"
-            'Print "        3 PT SHOT ADOPTED IN 1986-87"
-            'Print "        2 FT INSTEAD OF 1+1 AFTER 10TH FOUL ADOPTED 1990-91"
-            'Print "        3 FT WHEN FOULED ON A 3 PT ATT ADOPTED 1990-91"
-            'Print "        35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16";
-
             Locate 18, 2: Color 14
+            Print "(F) ";
+            Color 15: Print "SOUND ENABLED: "; yesNoText$(sndOpt)
+
+            Locate 20, 2: Color 14
             Print "NOTE:: "
             Color 15
 
-            Locate , 3: Print "* 1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
-            'Locate , 3: Print "* 45 SEC SHOT CLOCK ADOPTED 1984-85, BUT NOT IN TOURNAMENTS"
-            Locate , 3: Print "* NO SHOT CLOCK UNTIL 1984-1985; 45 SEC CLOCK ADOPTED BUT NOT FOR TOURNAMENT"
+            Locate , 3: Print "* NO SHOT CLOCK BEFORE 1984-1985; 45 SEC CLOCK ADOPTED (NOT FOR TOURNAMENT)"
             Locate , 3: Print "* 35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16"
             Locate , 3: Print "* 3 PT SHOT ADOPTED IN 1986-87"
-            Locate , 3: Print "* BEFORE 1990-91, 10TH FOUL ALLOWED 1+1 FT; NOW IT IS 2 FT"
-            Locate , 3: Print "* STARTING 1990-91, 3 FT REWARD!ED WHEN FOULED ON A 3 PT ATT";
+            Locate , 3: Print "* NCAA ALLOWS 5 FOULS BEFORE A PLAYER IS DQ'D; SOME CONF'S TESTED 6"
+            Locate , 3: Print "* 10TH FOUL ALLOWED 1+1 FT BEFORE 90-91; NOW IT IS 2 FT"
+            Locate , 3: Print "* 3 FT AWARDED WHEN FOULED ON A 3 FGA STARTING 90-91, "
+            Locate , 3: Print "* 1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
 
             Do
                 Color 7
@@ -1044,7 +1070,7 @@ Sub COLHOOP ()
 
                 Call LetterToNumber(I$, setting)
 
-            Loop Until setting >= 0 And setting <= 14 Or I$ = Chr$(27) Or UCase$(I$) = Chr$(17) Or UCase$(I$) = "Q"
+            Loop Until setting >= 0 And setting <= 15 Or I$ = Chr$(27) Or UCase$(I$) = Chr$(17) Or UCase$(I$) = "Q"
 
             If I$ <> Chr$(27) And UCase$(I$) <> "Q" And UCase$(I$) <> Chr$(17) Then
 
@@ -1063,6 +1089,7 @@ Sub COLHOOP ()
                         Print #10, ft3PtFoul
                         Print #10, ft6FloorFouls
                         Print #10, pbpOpt
+                        Print #10, sndOpt
                         Close #10
 
                     Case 1:
@@ -1122,11 +1149,14 @@ Sub COLHOOP ()
                     Case 14:
                         pbpOpt = 1 - pbpOpt
 
+                    Case 15:
+                        sndOpt = 1 - sndOpt
+
                 End Select
 
             End If
 
-        Loop Until (setting = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27) Or I$ = Chr$(17) Or UCase(I$) = "Q" 
+        Loop Until (setting = 9 And gameTeams$(0) <> "" And gameTeams$(1) <> "") Or I$ = Chr$(27) Or I$ = Chr$(17) Or UCase$(I$) = "Q"
 
         If I$ <> Chr$(27) And UCase$(I$) <> Chr$(17) And UCase$(I$) <> "Q" Then
 
@@ -1292,7 +1322,7 @@ Sub COLHOOP ()
     Call CheckGameClock
     Call STEALADJ
 
-    If autoPlay <> 1 And playerMode <> 2 Then
+    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 Then
         whistle& = _SndOpen("whistle.mp3")
         swish& = _SndOpen("swish.mp3")
         backboard& = _SndOpen("backboard.mp3")
@@ -1314,7 +1344,7 @@ Sub COLHOOP ()
             jumpBall = Int(Rnd(1) * 2)
             P = jumpBall
             D = 1 - P
-        
+
         Case Is >= 2
             'NCAA used jump balls each period
             'before 1981.
@@ -1732,7 +1762,7 @@ Sub COLHOOP ()
                 pbpString$ = "SHOT MISSES...GAME OVER"
                 Call PBP(P)
 
-                If autoPlay <> 1 Or playerMode <> 2 And backboard& Then
+                If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then
                     _SndPlay backboard&
                 End If
 
@@ -1839,7 +1869,7 @@ Sub COLHOOP ()
                 pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " MISSES"
                 Call PBP(P)
 
-                If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% <= 10 Then
+                If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% <= 10 Then
                     _SndPlay backboard&
                 End If
 
@@ -1850,7 +1880,7 @@ Sub COLHOOP ()
                 pbpString$ = "BASKET BY " + players$(P, lineupIdx(P, ballCarrier)) + "!!"
                 Call PBP(P)
 
-                If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then
                     _SndPlay swish&
                 End If
 
@@ -1888,7 +1918,7 @@ Sub COLHOOP ()
                 pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " MISSES"
                 Call PBP(P)
 
-                If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% <= 10 Then
+                If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% <= 10 Then
                     _SndPlay backboard&
                 End If
 
@@ -1897,7 +1927,7 @@ Sub COLHOOP ()
                 pbpString$ = "BASKET BY " + players$(P, lineupIdx(P, ballCarrier)) + "!!"
                 Call PBP(P)
 
-                If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then
                     _SndPlay swish&
                 End If
 
@@ -2367,7 +2397,7 @@ Sub COLHOOP ()
 
     Else
 
-    'If NOT an Offensive Stall OR Defense is not 2-3 Zone
+        'If NOT an Offensive Stall OR Defense is not 2-3 Zone
         If (offStrat(P) <> 8 And offStrat(P) <> 7) Or defCoverage(D) <> 2 Then
 
             ' *** CHECK FOR PERSONAL FOUL ***
@@ -3866,7 +3896,7 @@ Sub COLHOOP ()
 
                     Call SELECTPBP(P, 1)
 
-                    If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
                         _SndPlay backboard&
                     End If
 
@@ -4145,7 +4175,7 @@ Sub COLHOOP ()
 
                         Call SELECTPBP(P, 0)
 
-                        If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+                        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
                             _SndPlay backboard&
                         End If
 
@@ -4180,7 +4210,7 @@ Sub COLHOOP ()
 
                         Call SELECTPBP(P, 0)
 
-                        If autoPlay <> 1 Or playerMode <> 2 And swish& Then
+                        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then
                             _SndPlay swish&
                         End If
 
@@ -5121,7 +5151,7 @@ Sub INFO ()
     Color 14
     Print "GAME OPTIONS MENU"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
     Locate , 1
     Print "    LANCE HAFFNER 1986-2024"; Tab(70); Left$(Time$, 5);
@@ -5204,40 +5234,41 @@ Sub InitVar ()
     teamRat_GAME(1, 0) = 15
     teamRat_GAME(1, 1) = 1
 
-    autoPlay = 0
-    ballCarrier = 0
     C1 = 0
-    compTeam = 0
-    currHalf = 1
     D = 0
-    endAllGames = 0
-    gameOver = 0
-    fastBreak = 0
-    forcedThree = 0
     G9 = 0
-    gameAvgTmStamina = 0
-    halfTime = 0
-    foulOnPlay = 0
-    clockSecs = 0
     MJ = 0
-    nbrLines = 1
     P = 0
     P9 = 0
+    S2 = 0
+    autoPlay = 0
+    ballCarrier = 0
+    clockSecs = 0
+    compTeam = 0
+    currHalf = 1
+    endAllGames = 0
+    fastBreak = 0
+    forcedThree = 0
+    foulOnPlay = 0
+    gameAvgTmStamina = 0
+    gameOver = 0
+    guardNbr = 0
+    halfTime = 0
+    lineupChanged = 0
+    nbrLines = 1
     passes = 0
     pbpType = 0
     rebFoulChance = 0
-    S2 = 0
     shotClock = 0
     shotType = 0
+    sndOpt = 1
     statSpecial = 0
     threePtShotChance = 0
-    timeElapsed! = 0
     tickerGames = 0
+    timeElapsed! = 0
     tourneyPlay = 0
     willDunk = 0
 
-    guardNbr = 0
-    lineupChanged = 0
     X0% = 0
     X1% = 0
     XX% = 0
@@ -5435,6 +5466,11 @@ Sub LetterToNumber (promptVal$, J)
         Case "F": J = 15
         Case "G": J = 16
         Case "H": J = 17
+        Case "I": J = 18
+        Case "J": J = 19
+        Case "K": J = 20
+        Case "L": J = 21
+        Case "M": J = 22
 
     End Select
 
@@ -6017,7 +6053,7 @@ Sub MAKEPBP (pbpType)
                     Case 12
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 2-HANDED STUFshotChance!!!"
                     Case 13
-                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARD!S JAM!!!"
+                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARDS JAM!!!"
                     Case 14
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 1-HANDED SLAM!!!"
                     Case 15
@@ -6489,7 +6525,7 @@ Sub MAKEPBP (pbpType)
                             Case 13
                                 pbpString$ = pbpString$ + " TAKES THE LEFT HANDER"
                             Case 14
-                                pbpString$ = pbpString$ + " HARD! TO THE HOLE..."
+                                pbpString$ = pbpString$ + " HARD TO THE HOLE..."
                             Case 15
                                 pbpString$ = pbpString$ + " FLIPS IT UP"
                             Case 16
@@ -6533,7 +6569,7 @@ Sub MAKEPBP (pbpType)
                             Case 29
                                 pbpString$ = pbpString$ + " GETS INSIDE FOR THE SHOT"
                             Case 30
-                                pbpString$ = pbpString$ + " SPINS TOWARD! THE HOOP"
+                                pbpString$ = pbpString$ + " SPINS TOWARD THE HOOP"
                             Case 31
                                 pbpString$ = pbpString$ + " FROM SHORT RANGE"
                             Case 32
@@ -7087,7 +7123,7 @@ Sub MAKEPBP (pbpType)
                     Case 12
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 2-HANDED STUFshotChance!!!"
                     Case 13
-                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARD!S JAM!!!"
+                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " BACKWARDS JAM!!!"
                     Case 14
                         pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WITH THE 1-HANDED SLAM!!!"
                     Case 15
@@ -7368,9 +7404,9 @@ Sub MAKEPBP (pbpType)
                     Case 32
                         pbpString$ = pbpString$ + "FAKES RIGHT...GOES LEFT"
                     Case 33
-                        pbpString$ = pbpString$ + "SPINS HARD! TO THE LEFT"
+                        pbpString$ = pbpString$ + "SPINS HARD TO THE LEFT"
                     Case 34
-                        pbpString$ = pbpString$ + "SPINS HARD! TO THE RIGHT"
+                        pbpString$ = pbpString$ + "SPINS HARD TO THE RIGHT"
                     Case 35
                         pbpString$ = pbpString$ + "LEANS LEFT...GOES RIGHT"
                     Case 36
@@ -7384,7 +7420,7 @@ Sub MAKEPBP (pbpType)
                     Case 40
                         pbpString$ = pbpString$ + "BACKS IN"
                     Case 41
-                        pbpString$ = pbpString$ + "LEANS FORWARD!"
+                        pbpString$ = pbpString$ + "LEANS FORWARD"
                     Case 42
                         pbpString$ = pbpString$ + "CROSSES OVER...SPINS"
                     Case 43
@@ -8713,7 +8749,7 @@ Sub FoulCalled (randomFouler)
 
     Shared rosterStatus()
 
-    If autoPlay <> 1 Or playerMode <> 2 And whistle& Then
+    If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And whistle& Then
         _SndPlay whistle&
     End If
 
@@ -10534,7 +10570,7 @@ Sub PlayStyle ()
     Do
 
         Do
-            Locate 25, 1
+            Locate LAST_ROW, 1
             Color 12, 0
             Print "# TO CHANGE (0-4) 6=NONE";
             Locate 1, 1
@@ -10583,7 +10619,7 @@ Sub PlayStyle ()
 
             Else
 
-                Locate 25, 1: Print Space$(25);
+                Locate LAST_ROW, 1: Print Space$(25);
 
                 J = lineupIdx(P9, K)
                 Z = J
@@ -12816,7 +12852,7 @@ Sub FreeThrow_One (missedLastFT)
 
         End If
 
-        If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then 'And d100% < 10 Then
             _SndPlay swish&
         End If
 
@@ -12831,7 +12867,7 @@ Sub FreeThrow_One (missedLastFT)
             End If
         End If
 
-        If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+        If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
             _SndPlay backboard&
         End If
 
@@ -12910,7 +12946,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
                 Call MADEFT(freethrow)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then 'And d100% < 10 Then
                 _SndPlay swish&
             End If
 
@@ -12922,7 +12958,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
                 Call BADFT(freethrow)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
                 _SndPlay backboard&
             End If
 
@@ -13004,7 +13040,7 @@ Sub FreeThrow_Two (missedLastFT)
                 Call THREEFT(freethrow)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then 'And d100% < 10 Then
                 _SndPlay swish&
             End If
 
@@ -13016,7 +13052,7 @@ Sub FreeThrow_Two (missedLastFT)
                 Call BADFT(freethrow)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
                 _SndPlay backboard&
             End If
 
@@ -13094,7 +13130,7 @@ Sub FreeThrow_Three (missedLastFT)
                 Call THREEFT(freethrow)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And swish& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then 'And d100% < 10 Then
                 _SndPlay swish&
             End If
 
@@ -13106,7 +13142,7 @@ Sub FreeThrow_Three (missedLastFT)
                 Call BADFT(freethrow)
             End If
 
-            If autoPlay <> 1 Or playerMode <> 2 And backboard& And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
                 _SndPlay backboard&
             End If
 
@@ -13155,7 +13191,6 @@ Sub OPTIONS ()
 
         Do
             Color 7, 0
-            'Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
             I = Val(I$)
         Loop Until I >= 0 And I <= 3
@@ -13448,7 +13483,7 @@ Sub BOX2SCREEN ()
     Call ScoreSummary
 
     If Not (autoPlay = 1 And playerMode = 2) Then
-        Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+        Locate LAST_ROW, 1: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress
     End If
 
@@ -14001,7 +14036,7 @@ Sub STATS2SCREEN
         Color 15: Print totRebounds(I)
 
         If Not (autoPlay = 1 And playerMode = 2) Then
-            Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+            Locate LAST_ROW, 1: Print "HIT ANY KEY TO CONTINUE";
             I$ = GetKeyPress$
         End If
 
@@ -14631,21 +14666,27 @@ Sub SelectGameTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%,
         Start% = 1
         FileFGColor = 15: FileBGColor = 4
         HiLiteFGColor = 0: HiLiteBGColor = 7
-        Rows = 20
+        Rows% = LAST_ROW - 6
         Columns% = 4
         Spacing% = 6
-        Row% = 4
+        Row% = 5
         Column% = 1
 
         Color , 4
         Cls
+
         Color 14
         Locate , 33: Print "TEAM SELECTION"
-        Locate 25, 1
-        Color 14: Print "ESC";
-        Color 15: Print "-SELECT NEW ID  PGDN  PGUP  ";
-        Color 14: Print "ENTER";
+        Locate LAST_ROW, 1
+        Color 14
+        Print Tab(3); "PG DN";
+        Print Tab(18); "ENTER";
         Color 15: Print "-SELECTS TEAM";
+        Color 14
+        Print Tab(39); "ESC";
+        Color 15: Print "-SELECT NEW ID";
+        Color 14
+        Print Tab(72); "PG UP";
 
         _MouseShow "DEFAULT"
         MAMenu teamNames$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor, HiLiteBGColor, Rows%, Columns%, Spacing%, Row%, Column%

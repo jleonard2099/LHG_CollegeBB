@@ -10,11 +10,17 @@ Dim Shared teamIndex(MAX_TEAMS)
 Dim teamNameStats$
 
 Dim gameAttendance&(MAX_SCHED_STATS)
+Dim gameAtt_Road&(MAX_SCHED_STATS)
 
 Dim oppScore(MAX_SCHED_STATS), teamScore(MAX_SCHED_STATS)
+Dim oppScore_Road(MAX_SCHED_STATS), teamScore_Road(MAX_SCHED_STATS)
+
 Dim powerRating(MAX_SCHED_STATS, 1)
+Dim powerRating_Road(MAX_SCHED_STATS, 1)
 
 Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCHED_STATS)
+Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppName_Road$(MAX_SCHED_STATS)
+
 
 Dim satsPlyrRat!(15, 14)
 Dim stats3FGM!(15), stats3FGA!(15)
@@ -32,16 +38,12 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
-Dim memberName$(TEAMS_PER_CONFERENCE)
+'Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
 
 '-- For Road Data
-Dim gameAtt_Road&(MAX_SCHED_STATS)
+Dim homeTeam$(MAX_TOURNAMENT_GAMES), visitingTeam$(MAX_TOURNAMENT_GAMES)
 
-Dim oppScore_Road(MAX_SCHED_STATS), teamScore_Road(MAX_SCHED_STATS)
-Dim powerRating_Road(MAX_SCHED_STATS, 1)
-
-Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppName_Road$(MAX_SCHED_STATS)
 
 
 ' *** Schedule Data ***
@@ -56,7 +58,7 @@ ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 'ReDim yearNumber$(MAX_SCHEDULE_GAMES, 1)
 
 '-- These are used for tournaments
-ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
+'Rim homeTeam$(MAX_TOURNAMENT_GAMES), visitingTeam$(MAX_TOURNAMENT_GAMES)
 
 
 ' *** Game Options ***
@@ -108,7 +110,7 @@ Dim carRecVal!(21), carRecYear!(21)
 Dim plyLeaderTeams$(40, 15), tmLeaderTeams$(40, 15)
 
 Dim plyrLdrStats!(0 To 600, 0 To 14)
-Dim plyrLeaderYears!(40), tmLeaderYears!(40)
+Dim plyrLeaderGames!(40), tmLeaderGames!(40)
 Dim plyrLdrVal!(40, 15), teamLdrVal!(40, 15)
 
 ' For Expanded Leaders
@@ -184,7 +186,7 @@ Dim tmYears_DRAFT$(1), tmName_DRAFT$(1)
 '   Used in HD2HD routines
 '----------------------------------------
 Dim conferenceName$
-Dim div1Name$, div2Name$
+'Dim div1Name$, div2Name$
 
 Dim awayLosses(50), awayWins(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
@@ -273,7 +275,7 @@ Dim Shared foulOnPlay, foulsToDQ
 Dim Shared guardNbr, lineupChanged, MJ
 Dim Shared nbrLines, offStatus
 Dim Shared passes, playerMode, playerOpt, pbpOpt, pbpType
-Dim Shared rebFoulChance, S2, sClockVal, shotClock, shotType
+Dim Shared rebFoulChance, S2, sClockVal, shotClock, shotType, sndOpt
 Dim Shared threePtOpt, threePtShotChance
 Dim Shared tickerGames, tickerIdx, tourneyPlay, willDunk, XS
 

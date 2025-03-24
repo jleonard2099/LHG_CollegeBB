@@ -13,7 +13,7 @@ Sub TITLE_CAREER ()
     Locate , 19
     Print "COURTSIDE COLLEGE BASKETBALL: CAREER STATS"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -48,7 +48,7 @@ Sub TITLE_EDITSTATS ()
     '    Print subtitle$
     'End If
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -96,7 +96,7 @@ Sub TITLE_LEADERS
     Locate , 22
     Print "COURTSIDE COLLEGE BASKETBALL LEADERS"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -122,7 +122,7 @@ Sub TITLE_Merge ()
     Locate , 22
     Print "COURTSIDE COLLEGE BASKETBALL: MERGE"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -151,7 +151,7 @@ Sub TITLE_SCHEDULER ()
     Locate , 33
     Print "AUTO SCHEDULER"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -176,7 +176,7 @@ Sub TITLE_STATS ()
     Locate , 26
     Print "COURTSIDE COLLEGE BASKETBALL STATISTICS"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -195,20 +195,20 @@ End Sub
 Sub TITLE_STAT_HEADER (header$)
 
     Color 12, 1
-    
+
     Locate 1, 1
     Print Tab(80); " ";
 
     Color 14
     Locate , Int(80 - Len(header$)) / 2
     Print header$
-    
-    Locate 24, 1
+
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
     Print "    LANCE HAFFNER/SHANNON LYNN 1991"; Tab(70); Left$(Time$, 5);
-    
+
     Locate 4, 1
     Color 15, 0
 
@@ -219,29 +219,28 @@ End Sub
 '----------------------------------------
 ' Displays window title / game copyright
 Sub TITLE_TOURN ()
-        
+
     KEY Off
     Cls
-    
+
     Color 12, 1
-    
+
     Locate 1, 1
     Print Tab(80); " ";
 
-    Color 12
-    Locate , 25
+    Locate , 15
     Print "COURTSIDE COLLEGE BASKETBALL TOURNAMENT SCHEDULER"
-    
-    Locate 24, 1
+
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
-    Print "    LANCE HAFFNER/SHANNON LYNN/JASON LEONARD 1987-2024";
-    
+    Print "    LANCE HAFFNER/SHANNON LYNN/JASON LEONARD 1987-2025";
+
     Color 15, 0
     Locate 3, 1
     Print "        PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
-    Print "            FOR TECHNICAL SUPPORT, CONTACT support@LHGames.net"
+    Print "            FOR TECHNICAL SUPPORT, CONTACT support@lhgames.net"
 
     Color 10
 
@@ -254,7 +253,7 @@ End Sub
 Sub TITLE_UTILS ()
 
     Color 12, 1
-    
+
     Locate 1, 1
     Print Tab(80); " ";
 
@@ -262,7 +261,7 @@ Sub TITLE_UTILS ()
     Locate , 22
     Print "COURTSIDE COLLEGE BASKETBALL UTILITIES"
 
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
     Locate , 1
@@ -289,25 +288,27 @@ Sub TITLE ()
     Locate 1, 1
     Print Tab(80); " ";
 
-    Color 12
+    Color 12, 1
     Locate , 25
     Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
 
     'Footer
-    Locate 24, 1
+    Locate LAST_ROW, 1
     Print Tab(80); " ";
 
-    Color 12, 1
     Locate , 1
-    Print "    LANCE HAFFNER/SHANNON LYNN 1984-2024"; Tab(75); Left$(Time$, 5);
+    Print "    LANCE HAFFNER/SHANNON LYNN/JASON LEONARD 1984-2025"; Tab(75); Left$(Time$, 5);
 
     'Contact
     Color 15, 0
     Locate 3, 1
-    Print "           PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
-    Print "               FOR TECHNICAL SUPPORT, CONTACT support@LHGames.net"
-    Print "          LANCE HAFFNER GAMES ON THE INTERNET AT https://www.LHGames.net"
+    Print "        PROGRAMMED BY LANCE HAFFNER, SHANNON LYNN AND JASON LEONARD"
+    Print "            FOR TECHNICAL SUPPORT, CONTACT support@lhgames.net"
+
+    Locate LAST_ROW - 2
+    Print "              LH GAMES ON THE INTERNET AT https://www.lhgames.net";
 
     Color 10
 
 End Sub
+

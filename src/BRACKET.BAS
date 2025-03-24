@@ -291,7 +291,7 @@ Sub EditBracket (numberRegions, ACTION%)
         Locate , 23
         Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
-        Locate 25, 1: Print Tab(80); " ";
+        Locate LAST_ROW, 1: Print Tab(80); " ";
         Locate , 1: Color , 0
 
         ReDim menuChoices$(1 To numberRegions + 2)

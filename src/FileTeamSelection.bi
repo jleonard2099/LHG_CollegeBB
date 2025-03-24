@@ -40,7 +40,7 @@ Dim leagueRatings(0 To 4)
 Dim teamRatings(0 To 9), teamStats!(0 To 24)
 
 'Why isn't this 0 to 13?
-Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)
+'Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)
 Dim playerDef!(0 To 13), playerStats!(0 To 13, 0 To 13)
 
 Dim playerNames$(0 To 13), position$(0 To 13)

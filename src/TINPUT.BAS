@@ -533,7 +533,6 @@ Sub InputTeam ()
                     Locate 22, 29: Input opp3FGAPct!
 
                 Case 20
-                    'Try Locate 24, 40 ???
                     Locate 23, 9: Print Space$(10)
                     Locate 23, 1: Input "OPP 2FG% "; opp2FGPct!
                     Locate 23, 9: Print " "

@@ -97,19 +97,16 @@ End Sub
 'all rely on separate routine.
 Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
-    Shared yesNo$()
-
-    Dim SC$(0 To 3), TE$(0 To 1)
-
-    Dim tourneyCM$(0 To 1)
-
-    Shared tourneyDefaults%()
-
     Dim pbpDelayTourn!
 
-    Shared slotName$(), regionNames$()
+    Shared tourneyDefaults%()
     Shared consolationSetting%(), teamRatings()
     Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
+
+    'Shared coachMode$()
+    Shared foulShotOpt$()
+    Shared regionNames$(), slotName$()
+    Shared sClockOpt$(), yesNoText$()
 
     tourneyDefaults%(3) = 1
     tourneyDefaults%(7) = 3
@@ -118,49 +115,72 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     tourneyDefaults%(10) = 1
     tourneyDefaults%(14) = 0
 
-    SC$(0) = "NO SHOT CLOCK"
-    SC$(1) = "45 SEC CLOCK "
-    SC$(2) = "35 SEC CLOCK "
-    SC$(3) = "30 SEC CLOCK"
-    TE$(0) = "SHOOT 1+1"
-    TE$(1) = "SHOOT 2  "
-    tourneyCM$(0) = "COACH AND SELECT SHOTS           "
-    tourneyCM$(1) = "COACH ONLY AND LET COMPUTER SHOOT"
-
-    If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
+    If consolationSetting%(0) = 1 Then
+        C$ = "Y"
+    Else
+        C$ = "N"
+    End If
 
     'GLOBAL SETUP TOURNEY DEFAULTS
     Cls
 
     Color , 4
-    Locate 1, 1: Print Tab(80); " ";
+    Locate 1, 1
+    Print Tab(80); " ";
 
     Color 0
-    Locate , 19: Print "SELECT GENERAL TOURNAMENT OPTIONS"
+    Locate , 23: Print "SELECT GENERAL TOURNAMENT OPTIONS"
 
-    Locate 25, 1: Print Tab(80); " ";
+    Locate LAST_ROW, 1
+    Print Tab(80); " ";
+
+    Locate , 1
+    Print "    LANCE HAFFNER/SHANNON LYNN/JASON LEONARD 1987-2025";
+
     Locate , 1
     Color , 0
 
     Do
 
-        Locate 5,
-        Color 14: Print " (1) ";
-        Color 15: Print "3-POINT SHOT: "; yesNo$(tourneyDefaults%(3))
-        Color 14: Print " (2) ";
-        Color 15: Print SC$(tourneyDefaults%(7))
-        Color 14: Print " (3) ";
-        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; tourneyDefaults%(4) / 10
-        Color 14: Print " (4) ";
+        Locate 4, 2: Color 14
+        Print " (1) ";
+        Color 15: Print "SHOT CLOCK: "; sClockOpt$(tourneyDefaults%(7))
+        Locate 5, 2: Color 14
+        Print " (2) ";
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(tourneyDefaults%(3))
+        Locate 6, 2: Color 14
+        Print " (3) ";
         Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
-        Color 14: Print " (5) ";
-        Color 15: Print "FREE THROWS ON 10TH FOUL "; yesNo$(tourneyDefaults%(6))
-        Color 14: Print " (6) ";
-        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT "; yesNo$(tourneyDefaults%(10))
-        Color 14: Print " (7) ";
-        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNo$(tourneyDefaults%(14))
-        Color 14: Print " (8) ";
+        Locate 7, 2: Color 14
+        Print " (4) ";
+        Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(tourneyDefaults%(6))
+        Locate 8, 2: Color 14
+        Print " (5) ";
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; tourneyDefaults%(4) / 10
+        Locate 9, 2: Color 14
+        Print " (6) ";
+        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(tourneyDefaults%(10))
+        Locate 10, 2: Color 14
+        Print " (7) ";
+        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNoText$(tourneyDefaults%(14))
+        Locate 11, 2: Color 14
+        Print " (8) ";
+        Color 15: Print "CURRENTLY NOT USED"
+        Locate 12, 2: Color 14
+        Print " (9) ";
         Color 15: Print "ACCEPT SETTINGS"
+
+        Locate 14, 2: Color 14
+        Print "NOTE:: "
+        Color 15
+
+        Locate , 3: Print "* NO SHOT CLOCK BEFORE 1984-1985; 45 SEC CLOCK ADOPTED (NOT FOR TOURNAMENT)"
+        Locate , 3: Print "* 35 SEC SHOT CLOCK IN 1993-94; 30 SEC SHOT CLOCK IN 2015-16"
+        Locate , 3: Print "* 3 PT SHOT ADOPTED IN 1986-87"
+        Locate , 3: Print "* NCAA ALLOWS 5 FOULS BEFORE A PLAYER IS DQ'D; SOME CONF'S TESTED 6"
+        Locate , 3: Print "* 10TH FOUL ALLOWED 1+1 FT BEFORE 90-91; NOW IT IS 2 FT"
+        Locate , 3: Print "* 3 FT AWARDED WHEN FOULED ON A 3 FGA STARTING 90-91, "
+        Locate , 3: Print "* 1 FT ON 1ST 6 FLOOR FOULS THROUGH 1972-73 SEASON"
 
         Do
             I$ = GetKeyPress$
@@ -169,30 +189,30 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
                 I = Val(I$)
             End If
 
-        Loop Until I >= 1 Or I <= 8
+        Loop Until I >= 1 Or I <= 9
 
         If I$ = Chr$(27) Then Exit Sub
 
         Select Case I
 
             Case 1:
-                tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
-
-            Case 2:
                 tourneyDefaults%(7) = tourneyDefaults%(7) + 1
                 If tourneyDefaults%(7) > 3 Then tourneyDefaults%(7) = 0
 
-            Case 3:
-                Locate 7, 32
-                Input pbpDelayTourn!
-                tourneyDefaults%(4) = pbpDelayTourn! * 10
+            Case 2:
+                tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
 
-            Case 4:
+            Case 3:
                 tourneyDefaults%(5) = tourneyDefaults%(5) + 1
                 If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
 
-            Case 5:
+            Case 4:
                 tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
+
+            Case 5:
+                Locate 7, 32
+                Input pbpDelayTourn!
+                tourneyDefaults%(4) = pbpDelayTourn! * 10
 
             Case 6:
                 tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
@@ -200,11 +220,13 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
             Case 7:
                 tourneyDefaults%(14) = 1 - tourneyDefaults%(14)
 
-            Case 8: '
+                'Case 8:
+
+            Case 9: '
 
         End Select
 
-    Loop Until I = 8
+    Loop Until I = 9
 
     Color 15, 1
     FG = 0
@@ -217,7 +239,7 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Color 15
     Locate , 22: Print "TOURNAMENT  - GENERAL INFORMATION"
 
-    Locate 25, 1: Print Tab(80); " ";
+    Locate LAST_ROW, 1: Print Tab(80); " ";
     Locate , 1: Color , 0
 
     Locate 7, 1: QPrint "FILE NAME (48 CHARACTERS) ", 14, 1, -1
@@ -265,9 +287,10 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
     Done:
     Color 14, 1
-    Locate 23, 1
+    Locate LAST_ROW - 2, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
+
     Call YesNoB(X$, XCode, FG, BG)
     Locate , 1
     ClearEOL 14, 1
@@ -348,13 +371,15 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
     Color 15, 1
     FG = 0
     BG = 7
-    'Colr = OneColor%(FG, BG) 'pack FG and BG into a single byte
+
     Cls
     Color , 6
     Locate 1, 1: Print Tab(80); " ";
     Color 15
+
     Locate , 26: Print "REGIONAL/BRACKET INFORMATION"
-    Locate 25, 1: Print Tab(80); " ";
+
+    Locate LAST_ROW, 1: Print Tab(80); " ";
 
     Color , 0
     Locate , 1
@@ -382,7 +407,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
 
     Done1:
     Color 14, 1
-    Locate 23, 1
+    Locate LAST_ROW - 2, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
 
@@ -413,7 +438,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
             Locate , Xcoord
             Print regionNames$(currRegion) + " REGIONAL/CONFERENCE SEEDING"
 
-            Locate 25, 1: Print Tab(80); " ";
+            Locate LAST_ROW, 1: Print Tab(80); " ";
             Locate , 1
             Color 12, 0
 
@@ -429,7 +454,7 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                 Color 15: Print slotName$(currRegion, I1, 0)
             Next I1
 
-            Locate 25, 1
+            Locate LAST_ROW, 1
             Color 0, 6: Print "A-";
             Color 15: Print "ADD A TEAM    ";
             Color 0, 6: Print "R-";
@@ -557,7 +582,7 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         Locate , 23: Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
 
-        Locate 25, 1: Print Tab(80); " ";
+        Locate LAST_ROW, 1: Print Tab(80); " ";
 
         Locate , 1
         Color , 0
@@ -647,7 +672,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
     tourneyFile$ = ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
 
-    If ExitCode% <> 27 Then
+    If ExitCode% <> 27 And _FileExists(tourneyFile$) Then
 
         If ACTION% = 4 Then
             'Reset tournament
@@ -6094,4 +6119,3 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
     If _FileExists(tempFile$) Then Kill tempFile$
 
 End Sub
-

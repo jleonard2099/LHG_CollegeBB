@@ -530,7 +530,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; carLdrVal!(1, I)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -552,7 +552,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "##.#"; carLdrVal!(3, I) * 100
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -574,7 +574,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; carLdrVal!(5, I)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -596,7 +596,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; carLdrVal!(7, I)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -618,7 +618,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "##.#"; carLdrVal!(9, I) * 100
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -640,7 +640,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; carLdrVal!(11, I)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -662,7 +662,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; carLdrVal!(13, I)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -684,7 +684,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; Int((carLdrVal!(15, I) + 30) / 60)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -706,7 +706,7 @@ Sub ViewCareerLeaders ()
         Print Tab(60); Using "####"; carLdrVal!(17, I)
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 
@@ -722,7 +722,7 @@ Sub ViewCareerLeaders ()
         Print Tab(20); Using "####"; carLdrVal!(18, I);:
     Next I
 
-    Locate 23, 22
+    Locate LAST_ROW - 2, 22
     Color 14: Print "HIT ANY KEY TO CONTINUE"
     I$ = GetKeyPress$
 

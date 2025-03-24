@@ -112,7 +112,7 @@ Sub CompileNatlOrg ()
                         MsgText$ = "ERROR!! THIS IS NOT A COLLEGE CONFERENCE. PRESS ANY KEY TO RETURN TO MAIN MENU"
                         BoxWidth = 20
                         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                        Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                         Call CSMsgBox(MsgText$, BoxWidth, PASS)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, PASS)
@@ -691,7 +691,6 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
             natLdrTeam$(230) = teamName$
 
             fpg! = statPlyrVal!(X, 14)
-            test$ = statPlyrNames$(X)
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230

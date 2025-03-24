@@ -186,7 +186,7 @@ Sub MergeFirstYear ()
                     MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                     BoxWidth = 24
                     BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                    Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                    Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                     Call CSMsgBox(MsgText$, BoxWidth, Pass)
                     I$ = GetKeyPress$
                     Call CSMsgBox("", 0, Pass)
@@ -352,7 +352,7 @@ Sub ReviewCareerRecords ()
                         Color 7: Print Tab(32); Using "###.#"; carRecVal!(14);: Print Tab(47); BL$(14);: Print Tab(66); carRecYear!(14)
 
                         Color 15
-                        Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
+                        Locate LAST_ROW - 2, 5: Print "HIT ANY KEY TO CONTINUE"
                         I$ = GetKeyPress$
 
                         Cls
@@ -574,7 +574,7 @@ Sub MergeCareerFiles ()
                 MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                 BoxWidth = 24
                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                 Call CSMsgBox(MsgText$, BoxWidth, Pass)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, Pass)

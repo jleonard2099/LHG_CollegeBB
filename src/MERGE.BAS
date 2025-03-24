@@ -42,10 +42,10 @@ Sub MERGE ()
 
             Select Case SELECTION%
 
-                Case 1: 
+                Case 1:
                     Call MergeStats
-                
-                Case 2: 
+
+                Case 2:
                     Call ALIGN
 
             End Select
@@ -74,7 +74,7 @@ Sub MergeStats ()
     Shared oppScore(), oppScore_Road()
     Shared teamScore(), teamScore_Road()
 
-    Shared plyrStat_Merge!(), plyrRat_Merge()
+    Shared plyrStat_Merge!(), plyrRat_MERGE()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared threeFGM_Merge!(), threeFGA_Merge!()
@@ -87,9 +87,16 @@ Sub MergeStats ()
 
     Do
 
-        Call GetMergePaths(pathCurrentStats$, pathRoadStats$, I$)
+        badFile = 0
 
-        If UCase$(I$) = "N" And I$ <> Chr$(27) Then
+        'Call GetMergePaths(pathCurrentStats$, pathRoadStats$, I$)
+        pathCurrentStats$ = diskPaths$(1)
+        pathRoadStats$ = _SelectFolderDialog$("Select folder with ROAD stats", diskPaths$(1))
+
+        'If UCase$(I$) = "N" And I$ <> Chr$(27) Then
+        If pathRoadStats$ <> "" Then
+
+            pathRoadStats$ = pathRoadStats$ + "\"
 
             teamNbr = 0
             Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -98,16 +105,27 @@ Sub MergeStats ()
             Color 15, 0
             Cls
 
-            Locate 10, 15: Print "ROAD STATS ARE ON DRIVE "; pathRoadStats$
-            Locate , 15: Print "MASTER STATS ARE ON DRIVE "; pathCurrentStats$
-            Locate , 15: Print "TEAM TO MERGE STATS FOR IS "; team$
+            Color 14
+            Locate 8, 15: Print "EXISTING STATS ARE IN: "
+            Color 15
+            Print Tab(15); pathRoadStats$
+            Color 14
+            Locate 11, 15: Print "ROAD STATS ARE LOCATED AT:"
+            Color 15
+            Print Tab(15); pathCurrentStats$
+            Color 14
+            Locate 14, 15: Print "TEAM TO MERGE STATS FOR IS: "
+            Color 15
+            Print Tab(15); team$
 
             Do
-                Locate 14, 15: Print "ANY CHANGE? (Y/N)"
-                I$ = GetKeyPress$
-            Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
+                Color 14:
+                Locate 17, 15: Print "ANY CHANGE? "
+                Color 15: Print Tab(15); "(Y/N)"
+                J$ = GetKeyPress$
+            Loop Until UCase$(J$) = "Y" Or UCase$(J$) = "N"
 
-            If UCase$(I$) = "N" Then
+            If UCase$(J$) = "N" Then
 
                 If _FileExists(pathRoadStats$ + statFile$) Then
 
@@ -115,24 +133,24 @@ Sub MergeStats ()
 
                     Input #1, teamNameRoad$
 
-                    For I = 0 To 13: 
+                    For I = 0 To 13:
 
                         Input #1, plyrName_Road$(I)
 
-                        For J = 0 To 13: 
+                        For J = 0 To 13:
                             Input #1, plyrStat_Merge!(I, J)
                         Next
-                        
+
                         Input #1, threeFGM_Merge!(I)
                         Input #1, threeFGA_Merge!(I)
-                        
+
                     Next
 
-                    For L = 0 To 15: 
+                    For L = 0 To 15:
                         Input #1, statsOffTot_Road!(L)
                     Next
 
-                    For L = 0 To 15: 
+                    For L = 0 To 15:
                         Input #1, statsDefTot_Road!(L)
                     Next
 
@@ -142,33 +160,33 @@ Sub MergeStats ()
 
                     Input #2, nbrGamesRoad
 
-                    For I = 1 To MAX_SCHED_STATS: 
+                    For I = 1 To MAX_SCHED_STATS:
                         Input #2, teamScore_Road(I)
                     Next I
 
-                    For I = 1 To MAX_SCHED_STATS: 
+                    For I = 1 To MAX_SCHED_STATS:
                         Input #2, oppName_Road$(I)
                     Next I
 
-                    For I = 1 To MAX_SCHED_STATS: 
+                    For I = 1 To MAX_SCHED_STATS:
                         Input #2, oppScore_Road(I)
                     Next I
 
-                    For I = 1 To MAX_SCHED_STATS: 
+                    For I = 1 To MAX_SCHED_STATS:
                         Input #2, locIndicator_Road$(I)
                     Next I
 
                     For I = 1 To MAX_SCHED_STATS
-                        For I1 = 0 To 1: 
+                        For I1 = 0 To 1:
                             Input #2, powerRating_Road(I, I1)
                         Next
                     Next
 
-                    For I = 1 To MAX_SCHED_STATS: 
+                    For I = 1 To MAX_SCHED_STATS:
                         Input #2, gameAtt_Road&(I)
                     Next I
 
-                    For I = 1 To MAX_SCHED_STATS: 
+                    For I = 1 To MAX_SCHED_STATS:
                         Input #2, gameSite_Road$(I)
                     Next I
 
@@ -187,12 +205,12 @@ Sub MergeStats ()
 
                         Input #3, teamNameStats$
 
-                        For I = 0 To 13: 
+                        For I = 0 To 13:
 
                             Input #3, statPlyrNames$(I)
 
-                            For J = 0 To 13: 
-                                Input #3, plyrRat_Merge(I, J)
+                            For J = 0 To 13:
+                                Input #3, plyrRat_MERGE(I, J)
                             Next
 
                             Input #3, stats3FGM!(I)
@@ -200,49 +218,51 @@ Sub MergeStats ()
 
                         Next
 
-                        For L = 0 To 15: 
+                        For L = 0 To 15:
                             Input #3, statsOffTot!(L)
                         Next
 
-                        For L = 0 To 15: 
+                        For L = 0 To 15:
                             Input #3, statsDefTot!(L)
                         Next
 
                         Close #3
 
+                        '-- We can still use our routines here ???
+                        '-- Only if we replace Current Stats with existing path from Config
                         Open pathCurrentStats$ + statFile$ + "S" For Input As #4
 
                         Input #4, nbrGamesCurr
 
-                        For I = 1 To MAX_SCHED_STATS: 
+                        For I = 1 To MAX_SCHED_STATS:
                             Input #4, teamScore(I)
                         Next I
 
-                        For I = 1 To MAX_SCHED_STATS: 
+                        For I = 1 To MAX_SCHED_STATS:
                             Input #4, oppName$(I)
                         Next I
 
-                        For I = 1 To MAX_SCHED_STATS: 
+                        For I = 1 To MAX_SCHED_STATS:
                             Input #4, oppScore(I)
                         Next I
 
-                        For I = 1 To MAX_SCHED_STATS: 
+                        For I = 1 To MAX_SCHED_STATS:
                             Input #4, locIndicator$(I)
                         Next I
 
                         For I = 1 To MAX_SCHED_STATS
 
-                            For I1 = 0 To 1: 
+                            For I1 = 0 To 1:
                                 Input #4, powerRating(I, I1)
                             Next
 
                         Next
 
-                        For I = 1 To MAX_SCHED_STATS: 
+                        For I = 1 To MAX_SCHED_STATS:
                             Input #4, gameAttendance&(I)
                         Next I
 
-                        For I = 1 To MAX_SCHED_STATS: 
+                        For I = 1 To MAX_SCHED_STATS:
                             Input #4, gameSite$(I)
                         Next I
 
@@ -284,53 +304,34 @@ Sub MergeStats ()
 
                     Else
 
-                        Cls
-                        Color 7
-                        Locate 2, 10: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
-                        Print
-                        Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
-
-                        Do
-                            Locate , 10
-                            Print "TRY AGAIN? (Y/N) "
-                            I$ = GetKeyPress$
-                        Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                        If UCase$(I$) = "Y" Then
-                            Print
-                            Print "HIT ENTER TO RE-ENTER INFORMATION"
-                            I$ = GetKeyPress$
-                        End If
+                        badFile = 1
 
                     End If 'Done checking if home file exists
 
                 Else
 
+                    badFile = 1
+
+                End If 'Done checking if road file exists
+
+                If badFile = 1 Then
+
                     Cls
-                    Locate 2, 10
-                    Color 7: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
-                    Print
-                    Locate , 10: Line Input "HIT ENTER TO RE-ENTER INFORMATION"; DUMMY$
+                    Color 7
+                    Locate 2, 10: Print "NON-EXISTANT PATH OR INCORRECT FILE NAME!!!!"
 
                     Do
                         Locate , 10
                         Print "TRY AGAIN? (Y/N) "
                         I$ = GetKeyPress$
                     Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-
-                    If UCase$(I$) = "Y" Then
-                        Print
-                        Print "HIT ENTER TO RE-ENTER INFORMATION"
-                        I$ = GetKeyPress$
-                    End If
-
-                End If 'Done checking if road file exists
+                End If
 
             End If 'Done checking if ready to proceed
 
         End If 'Done checking for ESC
 
-    Loop Until DUMMY$ <> "" Or UCase$(J$) = "N" Or UCase$(I$) = "N" Or I$ = Chr$(27)
+    Loop Until DUMMY$ <> "" Or (UCase$(J$) = "N" And badFile = 0) Or UCase$(I$) = "N" Or I$ = Chr$(27)
 
 End Sub
 
@@ -348,10 +349,10 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
 
     Shared powerRating(), powerRating_Road()
 
-    Shared oppScore(), oppScore_Road() 
+    Shared oppScore(), oppScore_Road()
     Shared teamScore(), teamScore_Road()
 
-    Shared plyrStat_Merge!(), plyrRat_Merge()
+    Shared plyrStat_Merge!(), plyrRat_MERGE()
 
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
@@ -369,28 +370,25 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
         oppName$(nbrGamesCurr) = oppName_Road$(K)
         oppScore(nbrGamesCurr) = oppScore_Road(K)
         locIndicator$(nbrGamesCurr) = locIndicator_Road$(K)
-        powerRating(nbrGamesCurr, 0) = powerRating_Road(nbrGamesCurr, 0)
-        powerRating(nbrGamesCurr, 1) = powerRating_Road(nbrGamesCurr, 1)
-        gameAttendance&(nbrGamesCurr) = gameAtt_Road&(nbrGamesCurr)
-        gameSite$(nbrGamesCurr) = gameSite_Road$(nbrGamesCurr)
+        powerRating(nbrGamesCurr, 0) = powerRating_Road(K, 0)
+        powerRating(nbrGamesCurr, 1) = powerRating_Road(K, 1)
+        gameAttendance&(nbrGamesCurr) = gameAtt_Road&(K)
+        gameSite$(nbrGamesCurr) = gameSite_Road$(K)
     Next
-
-    Color 12
-    Locate 18, 20: Print "MERGING STAT FILE AND SCHEDULE RESULTS . . . ."
 
     For I = 0 To 13
 
-        For J = 0 To 12: 
-            plyrRat_Merge(I, J) = plyrRat_Merge(I, J) + plyrStat_Merge!(I, J)
+        For J = 0 To 12:
+            plyrRat_MERGE(I, J) = plyrRat_MERGE(I, J) + plyrStat_Merge!(I, J)
         Next J
 
         stats3FGM!(I) = stats3FGM!(I) + threeFGM_Merge!(I)
         stats3FGA!(I) = stats3FGA!(I) + threeFGA_Merge!(I)
 
-        If plyrRat_Merge(I, 13) < plyrStat_Merge!(I, 13) Then 
-            plyrRat_Merge(I, 13) = plyrStat_Merge!(I, 13) 
-        Else 
-            plyrRat_Merge(I, 13) = plyrRat_Merge(I, 13)
+        If plyrRat_MERGE(I, 13) < plyrStat_Merge!(I, 13) Then
+            plyrRat_MERGE(I, 13) = plyrStat_Merge!(I, 13)
+        Else
+            plyrRat_MERGE(I, 13) = plyrRat_MERGE(I, 13)
         End If
 
     Next I
@@ -400,16 +398,18 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
         statsDefTot!(L) = statsDefTot!(L) + statsDefTot_Road!(L)
     Next
 
+    '-- We can still use our routines here ???
+    '-- Only if we replace Current Stats with existing path from Config
     Open pathCurrentStats$ + statFile$ For Output As #1
 
     Write #1, teamNameStats$
 
-    For I = 0 To 13: 
+    For I = 0 To 13:
 
         Write #1, statPlyrNames$(I)
 
-        For J = 0 To 13: 
-            Write #1, plyrRat_Merge(I, J)
+        For J = 0 To 13:
+            Write #1, plyrRat_MERGE(I, J)
         Next
 
         Write #1, stats3FGM!(I)
@@ -417,11 +417,11 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
 
     Next
 
-    For L = 0 To 15: 
+    For L = 0 To 15:
         Write #1, statsOffTot!(L)
     Next
 
-    For L = 0 To 15: 
+    For L = 0 To 15:
         Write #1, statsDefTot!(L)
     Next
 
@@ -431,33 +431,33 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
 
     Write #2, nbrGamesCurr
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Write #2, teamScore(I)
     Next I
-    
-    For I = 1 To MAX_SCHED_STATS: 
+
+    For I = 1 To MAX_SCHED_STATS:
         Write #2, oppName$(I)
     Next I
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Write #2, oppScore(I)
     Next I
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Write #2, locIndicator$(I)
     Next I
 
     For I = 1 To MAX_SCHED_STATS
-        For I1 = 0 To 1: 
+        For I1 = 0 To 1:
             Write #2, powerRating(I, I1)
         Next
     Next
 
-    For I = 1 To MAX_SCHED_STATS: 
+    For I = 1 To MAX_SCHED_STATS:
         Write #2, gameAttendance&(I)
     Next I
-    
-    For I = 1 To MAX_SCHED_STATS: 
+
+    For I = 1 To MAX_SCHED_STATS:
         Write #2, gameSite$(I)
     Next I
 
@@ -465,8 +465,13 @@ Sub DoTheMerge (pathCurrentStats$, statFile$, teamNameStats$, nbrGamesCurr, nbrG
 
     Y = 0
 
-    Color 12
-    Locate 20, 20: Print "RESULTS SUCCESSFULLY MERGED!!"
+    MsgText$ = "SUCCESSFULLY MERGED ALL STAT FILES!! PRESS ANY KEY TO RETURN TO MENU"
+    BoxWidth = 20
+    BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
+    Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+    Call CSMsgBox(MsgText$, BoxWidth, PASS)
+    I$ = GetKeyPress$
+    Call CSMsgBox("", 0, PASS)
 
 End Sub
 
@@ -475,13 +480,14 @@ End Sub
 '       GetMergePaths Subroutine
 '----------------------------------------
 'This subroutine assists the user with the
-'entry of the separate paths to be used 
+'entry of the separate paths to be used
 'for the merge / align process.
 Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
 
     Shared opSysType$
 
     Do
+
         Color 12, 0
         Cls
 
@@ -545,3 +551,4 @@ Sub GetMergePaths (pathCurrentStats$, pathRoadStats$, promptResponse$)
     End Select
 
 End Sub
+

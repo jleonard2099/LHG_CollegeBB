@@ -118,7 +118,7 @@ Sub StatOptions_Nat (leagueFile$, NRT)
             Color 15, 0
             Cls
 
-            Call box0 (6, 8, 11, 70, 2, 15, 1)
+            Call box0(6, 17, 10, 63, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -158,12 +158,12 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Cls
 
     Color 12
-    Locate , Int((80 - Len(orgName$) - 17) / 2)
+    Locate 2, Int((80 - Len(orgName$) - 17) / 2)
     Print orgName$ + " OVERALL RANKINGS"
 
-    Locate , 1
+    Locate 4, 1
     Color 14
-    Print  Tab(20); "RATING     W    L    STRENGTH OF SCHEDULE"
+    Print  Tab(21); "RATING     W    L   STRENGTH OF SCHEDULE"
     Color 15
 
     For P = 1 To NRT
@@ -171,20 +171,22 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         Print Using "###  "; P;
         Print pollTeam$(P); Tab(22); Using "###.#    ##   ##          ###.#"; pollRatings#(P, 1); pollRatings#(P, 2); pollRatings#(P, 3); pollRatings#(P, 4)
 
-        If (P / 20) = Int(P / 20) Then
+        If (P Mod 20 = 0) Then
 
             Color 12
-            'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+            Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
             Color 15
             QK$ = GetKeyPress$
 
             Cls
 
             Color 12
+            Locate 2, Int((80 - Len(orgName$) - 17) / 2)
             Print orgName$ + " OVERALL RANKINGS"
 
-            Locate , 1
-            Color 14: Print Tab(20); "RATING     W    L    STRENGTH OF SCHEDULE"
+            Locate 4, 1
+            Color 14
+            Print  Tab(21); "RATING     W    L   STRENGTH OF SCHEDULE"
             Color 15
 
         End If
@@ -193,16 +195,17 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "FIELD GOAL % (MIN 5 FGA/G)"
-    Print "                            PCT   FGA"
+    Print "                            PCT    FGA"
     Color 15
 
     For P = 41 To 60
@@ -215,10 +218,10 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Next
 
     Color 14
-    Locate 1, 41
+    Locate 2, 41
     Print "FREE THROW % (MIN 2 FTA/G)"
     Locate , 41
-    Print "                            PCT   FTA"
+    Print "                            PCT    FTA"
     Color 15
 
     For P = 61 To 80
@@ -233,7 +236,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -241,8 +244,9 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Cls
 
     Color 14
+    Locate 2, 1
     Print "SCORING"
-    Print "                                PTS/G"
+    Print Tab(33); "PTS/G"
     Color 15
 
     For P = 1 To 20
@@ -253,11 +257,11 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
+    Locate 2, 41
     Color 14
-    Locate 1, 41
     Print "TOTAL POINTS"
-    Locate , 41
-    Print "                                  PTS"
+    Locate, 75
+    Print "PTS"
     Color 15
 
     For P = 21 To 40
@@ -270,13 +274,14 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "STEALS PER GAME"
     Color 15
@@ -289,7 +294,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "STEALS"
     Color 15
@@ -302,9 +307,8 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
-    Locate 13
     Color 14
-    Print "ASSISTS PER GAME"
+    Locate 14: Print "ASSISTS PER GAME"
     Color 15
 
     For P = 101 To 110
@@ -315,7 +319,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "ASSISTS"
     Color 15
@@ -330,28 +334,27 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
     Color 15
 
     For P = 121 To 130
-
         If leaderName$(P) <> "" Then
             Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 33
             Print Using "###.#"; confLdrVal!(P) * 100
         End If
-
     Next P
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "MINUTES PER GAME"
     Color 15
@@ -364,7 +367,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next P
 
-    Locate 13
+    Locate 14
     Color 14
     Print "THREE POINT FIELD GOALS MADE"
     Color 15
@@ -377,7 +380,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "TOTAL MINUTES"
     Color 15
@@ -392,13 +395,14 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "REBOUNDS PER GAME   "
     Color 15
@@ -411,7 +415,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "REBOUNDS"
     Color 15
@@ -424,7 +428,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         End If
     Next
 
-    Locate 13
+    Locate 14
     Color 14
     Print "BLOCKS PER GAME"
     Color 15
@@ -452,26 +456,29 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "FIELD GOALS MADE "
     Color 15
 
     For P = 201 To 210
         If leaderName$(P) <> "" Then
-            Print leaderName$(P) + ", " + leaderTeam$(P);: Locate , 34
+            Print leaderName$(P) + ", " + leaderTeam$(P);
+            Locate , 34
             Print Using "####"; confLdrVal!(P)
         End If
     Next
 
+    Locate 2, 41
     Color 14
-    Locate 1, 41: Print "FREE THROWS MADE"
+    Print "FREE THROWS MADE"
     Color 15
 
     For P = 211 To 220
@@ -489,12 +496,13 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     For P = 221 To 230
         If leaderName$(P) <> "" Then
-            Print leaderName$(P) + ", " + leaderTeam$(P);: Locate , 34
+            Print leaderName$(P) + ", " + leaderTeam$(P);
+            Locate , 34
             Print Using "##.#"; confLdrVal!(P)
         End If
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "FOULS"
     Color 15
@@ -510,13 +518,14 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "MOST VALUABLE PLAYER POINTS"
     Color 15
@@ -531,15 +540,18 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(32); "OFFENSIVE TOTALS"
+    
+    Locate 4, 1
     Color 14
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
@@ -603,15 +615,18 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(32); "DEFENSIVE TOTALS"
+
+    Locate 4, 1
     Color 14
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
@@ -675,7 +690,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
