@@ -199,6 +199,7 @@ Sub NewStandings_Screen (league$)
 
         Color 11
         Locate 2, 35: Print league$
+
         Color 14
         Locate 4: Print Tab(20); "                     MAJ          HOME    ROAD    LAST 10"
 
@@ -304,14 +305,16 @@ Sub NewStandings_Report (printDest, destFile$, league$)
         Select Case NT
 
             Case 1
-                Print #1, div1Name$;
+                targetDiv$ = div1Name$
 
             Case 2
-                Print #1, div2Name$;
+                targetDiv$ = div2Name$
 
         End Select
 
+        Print #1, RTrim$(targetDiv$);
         Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
+        Print #1, String$(75,45)
 
         For I = AA To ZZ
 
