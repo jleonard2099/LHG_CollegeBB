@@ -151,7 +151,7 @@ Declare Sub ViewGameRecords
 Declare Sub ViewIndividualLeaders (printOrView, JB)
 Declare Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
 Declare Sub ViewPlayer (careerFile$)
-Declare Sub ViewRoster (teamName$)
+Declare Sub ViewRoster (targetTeam$)
 Declare Sub ViewRosterSequence (careerFile$)
 Declare Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
 Declare Sub ViewSeasonRecords ()

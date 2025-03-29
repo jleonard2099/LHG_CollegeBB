@@ -838,34 +838,38 @@ Sub Roster_Report (printDest, destFile$, teamName$)
 
     Open destFile$ For Output As #1
 
-    Print #1, "TEAM ROSTER FOR "; teamName$
+    XCoord = (80 - 16 - Len(targetTeam$)) / 2
+
+    Print #1, Tab(XCoord); "TEAM ROSTER FOR "; teamName$
     Print #1,
-    Print #1, "AVG SHOTS PER GAME = "; teamRatings(3); "      DEF FG ADJ = "; defFGPctAdj!
-    Print #1, "OPP PCT OF 3FG ATT ADJ = "; defthreeFGA_Adj; "  OPP 3FG PCT ADJ = "; def3FG_Adj
+
+    Print #1, "AVG SHOTS / GAME       = "; teamRatings(3);
+    Print #1, Tab(30); "DEF FG ADJ    = "; defFGPctAdj!
+    Print #1, "OPP PCT OF 3FG ATT ADJ = "; defthreeFGA_Adj;
+    Print #1, Tab(30); "DEF STEAL ADJ = "; leagueRatings(0);
+    Print #1, Tab(50); "OFF TURNOVER ADJ = "; leagueRatings(1)
+    Print #1, "OPP 3FG PCT ADJ        = "; def3FG_Adj;
+    Print #1, Tab(30); "OFF FOUL ADJ  = "; leagueRatings(3);
+    Print #1, Tab(50); "DEF TURNOVER ADJ = "; leagueRatings(2)
+
     Print #1,
-    Print #1, "DEF STEAL ADJ "; leagueRatings(0)
-    Print #1, "OFF TURNOVER ADJ "; leagueRatings(1)
-    Print #1, "DEF TURNOVER ADJ "; leagueRatings(2)
-    Print #1, "OFF FOUL ADJ "; leagueRatings(3)
-    Print #1,
-    Print #1, "NAME           FG  FT ORB DRB  CX PS  D  B FC FD  3FG 3FG%":
-    Print #1,
+    Print #1, "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
 
     For I = 0 To 13
         If playerNames$(I) <> "XXX" Then
-            Print #1, playerNames$(I); Tab(15);
+            Print #1, playerNames$(I); Tab(16);
+            'FG% --> CX
             Print #1, Using "### ### ### ### ### "; playerOff!(I, 0); playerOff!(I, 1); playerRatings!(I, 4); playerOff!(I, 2); playerOff!(I, 3);
-            Print #1, Using "## ## ## ## ## ### ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
+            'PS --> FD
+            Print #1, Using "## ## ## ### ##  ###  ###"; playerOff!(I, 4); playerOff!(I, 5); playerOff!(I, 6); playerRatings!(I, 5); playerRatings!(I, 6); playerRatings!(I, 3); playerRatings!(I, 2)
         End If
     Next I
 
     Print #1,
-    Print #1, "FG - FIELD GOAL %                 B - BLOCK SHOT RATING"
-    Print #1, "FT - FREE THROW %                FC - FOUL COMMIT RATING"
-    Print #1, "RB - REBOUNDING RATING           FD - FOUL DRAWING RATING"
-    Print #1, "CX - CONTRIBUTION FACTOR        3FG - 3FGA/TOTAL FGA"
-    Print #1, "PS - PASSING RATING            3FG% - THREE POINT GOAL %"
-    Print #1, " D - DEFENSIVE RATING"
+    Print #1, "RB - REBOUNDING RATING                 B - BLOCK SHOT RATING"
+    Print #1, "CX - CONTRIBUTION FACTOR               FC - FOUL COMMIT RATING"
+    Print #1, "PS - PASSING RATING                    FD - FOUL DRAWING RATING"
+    Print #1, " D - DEFENSIVE RATING                  3FG - 3FGA/TOTAL FGA"
 
     If printDest = 1 Then
 
@@ -892,7 +896,7 @@ End Sub
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the user's display
-Sub ViewRoster (teamName$)
+Sub ViewRoster (targetTeam$)
 
     Shared def3FG_Adj, defthreeFGA_Adj
     Shared defFGPctAdj!, staminaRating!
@@ -908,9 +912,12 @@ Sub ViewRoster (teamName$)
     Color 15, 0
     Cls
 
+    XCoord = (80 - 16 - Len(targetTeam$)) / 2
+    Locate 2, XCoord
+
     Locate 2, 1
     Print "TEAM ROSTER FOR ";
-    Color teamRatings(0), teamRatings(1): Print teamName$
+    Color teamRatings(0), teamRatings(1): Print targetTeam$
     
     Locate 4, 1
     Color 11, 0: Print "AVG SHOTS / GAME       = ";
@@ -953,44 +960,51 @@ Sub ViewRoster (teamName$)
 
     Print
     Color 2
+    Print "RB";
+    Color 15
+    Print " - REBOUNDING RATING";
+
+    Locate , 32
+    Color 2
     Print " B";
     Color 15
-    Print " - BLOCK SHOT RATING";
+    Print " - BLOCK SHOT RATING"
+
+    ' -- New Line
+    Color 2
+    Print "CX";
+    Color 15
+    Print " - CONTRIBUTION FACTOR";
+
     Locate , 32
     Color 2
     Print "FC";
     Color 15
     Print " - FOUL COMMIT RATING"
 
+    ' -- New Line
     Color 2
-    Print "RB";
+    Print "PS";
     Color 15
-    Print " - REBOUNDING RATING";
+    Print " - PASSING RATING";
+
     Locate , 32
     Color 2
     Print "FD";
     Color 15
     Print " - FOUL DRAWING RATING"
 
+    ' -- New Line
     Color 2
-    Print "CX";
+    Print "D";
     Color 15
-    Print " - CONTRIBUTION FACTOR";
+    Print " - DEFENSIVE RATING";
+
     Locate , 32
     Color 2
     Print "3FG";
     Color 15
     Print " - 3FGA/TOTAL FGA"
-
-    Color 2
-    Print "PS";
-    Color 15
-    Print " - PASSING RATING";
-    Locate , 32
-    Color 2
-    Print "D";
-    Color 15
-    Print " - DEFENSIVE RATING"
 
     Locate LAST_ROW - 1, 30
     Color 15: Print "HIT ANY KEY TO EXIT";
