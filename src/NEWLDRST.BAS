@@ -185,23 +185,25 @@ Sub NewStandings_Screen (league$)
 
         Cls
 
-        Color 11
-        Locate 1, 35: Print league$
-        Color 14
-        Locate 2: Print Tab(20); "                     MAJ          HOME    ROAD    LAST 10"
-
-        Locate 3
-
         Select Case NT
 
             Case 1
-                Print div1Name$;
+                targetDiv$ = div1Name$
 
             Case 2
-                Print div2Name$;
+                targetDiv$ = div2Name$
 
         End Select
 
+        'If NT > 1 And targetDiv$ <> ""
+
+        Color 11
+        Locate 2, 35: Print league$
+
+        Color 14
+        Locate 4: Print Tab(20); "                     MAJ          HOME    ROAD    LAST 10"
+
+        Print RTrim$(targetDiv$)
         Print Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
 
         For I = AA To ZZ
@@ -251,12 +253,14 @@ Sub NewStandings_Screen (league$)
         MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
         If MJ < 0 Then MJ = 0
 
-        Locate 4, 42
+        Locate 6, 42
         Print Using "##"; MJ;
 
         Color 14
-        Locate 24, 1: Print "HIT ANY KEY TO CONTINUE";
+        Locate LAST_ROW - 1: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress$
+            
+        'End If
 
     Next NT
 
@@ -301,14 +305,16 @@ Sub NewStandings_Report (printDest, destFile$, league$)
         Select Case NT
 
             Case 1
-                Print #1, div1Name$;
+                targetDiv$ = div1Name$
 
             Case 2
-                Print #1, div2Name$;
+                targetDiv$ = div2Name$
 
         End Select
 
+        Print #1, RTrim$(targetDiv$);
         Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
+        Print #1, String$(75,45)
 
         For I = AA To ZZ
 

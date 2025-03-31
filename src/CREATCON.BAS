@@ -151,7 +151,7 @@ Sub DefineConference ()
 
     Done:
     Color 14, 1
-    Locate 23, 1
+    Locate LAST_ROW - 2, 1
     Print "Is this okay? (Yes/No) ";
     X$ = ""
     Call YesNoB(X$, XCode, FG, BG)
@@ -177,8 +177,6 @@ Sub ReviewEditConference (confFile$)
 
     Shared conferenceName$
     Shared div1Name$, div2Name$
-
-    test$ = confFile$
 
     If _FileExists(diskPaths$(2) + confFile$ + ".TMI") Then
         Call ReadConferenceIndex(confFile$)

@@ -10,18 +10,19 @@ Sub TOURNEY ()
 
     _Title "Courtside College Basketball - Tournament"
 
-    Shared homeTeam$(), visitingTeam$(), yearNumber$()
+    Shared homeTeam$(), visitingTeam$()
+    Shared yearNumber$()
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
 
     Shared BS%, NS%
 
-    Dim NGG(MAX_TEAMS)
-
     Dim gameDay(MAX_TEAMS), gameMonth(MAX_TEAMS), gameYear(MAX_TEAMS)
 
     Shared coachMode$(), foulShotOpt$(), location$()
     Shared modeAbbrev$(), playMode$(), sClockOpt$(), yesNo$()
+
+    'ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
 
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
@@ -54,9 +55,9 @@ Sub TOURNEY ()
             Color 15, 0
             Cls
 
-            Locate 23, 1
+            Locate LAST_ROW - 2, 1
             Color , 1: Print Tab(80); " ";
-            Locate 23, 1
+            Locate LAST_ROW - 2, 1
             Color 13: Print "SC";
             Color 14: Print "-SHOT CLOCK  ";
             Color 13: Print "MA";
@@ -66,9 +67,9 @@ Sub TOURNEY ()
             Color 11: Print " B";
             Color 14: Print "-BOXSCORE OPTIONS"
 
-            Locate 24, 1
+            Locate LAST_ROW - 1, 1
             Color , 1: Print Tab(80); " ";
-            Locate 24, 1
+            Locate LAST_ROW - 1, 1
             Color 13: Print "HC";
             Color 14: Print "-HOME COURT  ";
             Color 13: Print "3";
@@ -81,9 +82,9 @@ Sub TOURNEY ()
             Color 14: Print "-GAME  ";
             Color 11: Print "   PGUP  PGDN  ";
 
-            Locate 25, 1
+            Locate LAST_ROW, 1
             Color , 1: Print Tab(80); " ";
-            Locate 25, 1
+            Locate LAST_ROW, 1
             Color 11: Print "P";
             Color 14: Print "-PLAY TOURNAMENT   ";
             Color 11: Print "E";
@@ -103,6 +104,7 @@ Sub TOURNEY ()
             Print "GM ID#  REG  RND  GM    VISITING TEAM        HOME TEAM            MA  HC  3  SC": Color 15
 
             'Show 20 schedule entries on the screen at once
+            '-- we could update this to 25
             For X = 1 To 20
 
                 Locate X + 2, 1
@@ -141,8 +143,8 @@ Sub TOURNEY ()
 
                 Case "B":
                     Do
-                        Locate 23, 1: Print "ENTER GAME # TO GO TO        "
-                        Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
+                        Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
+                        Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
                     NS% = Int((targetGame% - 1) / 20)
 
@@ -158,14 +160,14 @@ Sub TOURNEY ()
                 Case "G":
                     'GOTO A SPECIFIC PAGE
                     Do
-                        Locate 23, 1: Print "ENTER GAME # TO GO TO        "
-                        Locate 23, 1: Input "ENTER GAME # TO GO TO "; targetGame%
+                        Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
+                        Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
                     NS% = Int((targetGame% - 1) / 20)
 
                 Case "P":
-                    ' *** SAVE TOURNAMENT SCHEDULE ***                    
+                    ' *** SAVE TOURNAMENT SCHEDULE ***
                     Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 94
 
                     For X = 0 To 14
@@ -243,8 +245,7 @@ Sub TOURNEY ()
                         T$ = Right$(yearNumber$(I, 2), 1)
                         If UCase$(T$) = "P" And Left$(yearNumber$(I, 2), 2) <> "12" Then HR = HR + 12
                         TM = HR * 60 + MIN
-                        NGG(I) = Int(TM / 30 - 18)
-                        scheduleNG%(I, 12) = NGG(I)
+                        scheduleNG%(I, 12) = Int(TM / 30 - 18)
 
                     Next
 
@@ -383,8 +384,8 @@ Sub EditGame_TOURNEY ()
 
     Do
         ' *** EDIT A GAME ***
-        Locate 23, 1: Print "ENTER GAME # TO EDIT        "
-        Locate 23, 1: Input "ENTER GAME # TO EDIT "; NG%
+        Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO EDIT        "
+        Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO EDIT "; NG%
     Loop Until NG% >= 1 And NG% <= scheduleAP%(0)
 
     visitor$ = visitingTeam$(NG%)

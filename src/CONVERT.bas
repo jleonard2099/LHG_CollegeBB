@@ -18,14 +18,12 @@ Sub ReadExtraDataOld (teamYear$, teamIdx)
 
     Shared position$()
 
-    test$ = diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$
-
     If Not _FileExists(diskPaths$(0) + DATA_FILE_NAME$ + "." + teamYear$) Then
 
         MsgText$ = "WARNING!!! NO DATA FILE WAS FOUND FOR THIS TEAM. PRESS ANY KEY TO CONTINUE"
         BoxWidth = 20
         BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-        Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+        Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
         Call CSMsgBox(MsgText$, BoxWidth, PASS)
         I$ = GetKeyPress$
         Call CSMsgBox("", 0, PASS)

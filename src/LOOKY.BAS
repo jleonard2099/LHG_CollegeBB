@@ -26,7 +26,7 @@ Sub LOOKY ()
                 MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                 BoxWidth = 24
                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                 Call CSMsgBox(MsgText$, BoxWidth, PASS)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, PASS)
@@ -203,10 +203,9 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
         Print teamName$
 
         Color 14, 1
-        Print "OPPONENT            SCORE  W/L  ATTEND   SITE                                   ";
+        Print "OPPONENT            SCORE  W/L  ATTEND   SITE"; Space$(35)
 
-        Locate 25, 1: Print Tab(80); " ";
-        Locate 25, 27: Print "PRESS ANY KEY TO CONTINUE";
+        'Locate LAST_ROW - 1, 27: Print "PRESS ANY KEY TO CONTINUE";
         Locate 3, 1
         Color 15, 0
 
@@ -246,6 +245,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
                 ' *** ADD IN CLEAR SCREEN AND TITLE BAR ***
 
                 If I$ <> Chr$(27) Then
+
                     Cls
 
                     Locate 1, 1
@@ -258,10 +258,10 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
                     Print teamName$
 
                     Color 14, 1
-                    Print "OPPONENT            SCORE  W/L  ATTEND   SITE                                   ";
+                    Print "OPPONENT            SCORE  W/L  ATTEND   SITE"; Space$(35)
 
-                    Locate 25, 1: Print Tab(80); " ";
-                    Locate 25, 27: Print "PRESS ANY KEY TO CONTINUE";
+                    Locate LAST_ROW - 1, 1: Print Tab(80); " ";
+                    Locate LAST_ROW - 1, 27: Print "PRESS ANY KEY TO CONTINUE";
                     Locate 3, 1
                     Color 15, 0
                 Else
@@ -276,7 +276,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
 
             Print
 
-            Locate 21, 27
+            Locate LAST_ROW - 5, 27
             Color 14: Print "OVERALL RECORD ";
             Color 15: Print "("; totalWins; "-"; totalLosses; ")"
             Locate , 27
@@ -290,14 +290,14 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
             Color 15: Print "("; neutralWins; "-"; neutralLosses; ")";
 
             Color 3
-            Locate 25, 1
+            Locate LAST_ROW, 1
             Color 15, 1: Print "VIEW STATS ";
             Color 14: Print "[Pg DN]  ";
             Color 15: Print "SELECT ANOTHER TEAM ";
             Color 14: Print "[ESC]  ";
             Color 15: Print "PRINT STATS ";
             Color 14: Print "[P]";
-            Print Space$(17);
+            Print Space$(18);
 
             Locate 3, 1
 
@@ -372,7 +372,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Call TITLE_STATS
 
         Color , 1
-        Locate 24, 1
+        Locate LAST_ROW - 1, 1
 
         Color 15, 1: Print "SCHEDULE ";
         Color 14: Print "[Pg UP]  ";
@@ -383,7 +383,7 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Color 15: Print "SORT ";
         Color 14: Print "<-,-> and [ENTER]";
         Print Space$(5);
-        Locate 25, 1
+        Locate LAST_ROW, 1
         Color 15: Print "PRINT ";
         Color 14: Print "[P]  ";
         Color 15: Print "DELETE STATS ";
@@ -393,8 +393,10 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Color 12, 0
         Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40)
 
+        Locate 4, 1
         Color 14: Print teamName$
 
+        Locate 6, 1
         Print "NAME"; Tab(15);
         Print " G  MIN AVG   FGM  FGA  PCT  3FGM 3FGA  PCT   FTM  FTA  PCT"
 
@@ -655,7 +657,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Call TITLE_STATS
 
         Color , 1
-        Locate 24, 1
+        Locate LAST_ROW - 1, 1
 
         Color 15: Print "OFF STATS ";
         Color 14: Print "[Pg UP]  ";
@@ -664,7 +666,7 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Color 15: Print "SORT ";
         Color 14: Print "<-,-> and [ENTER]";
         Print Space$(16);
-        Locate 25, 1
+        Locate LAST_ROW, 1
         Color 15: Print "PRINT ";
         Color 14: Print "[P]    ";
         Color 15: Print "DELETE STATS ";
@@ -675,10 +677,11 @@ Sub ViewDefenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
         Locate 2, 1: Print "SORT BY: "; statCategoryAbbr$(categoryPick); Tab(40);
 
         'Player Stats
-        Locate 3, 1
-        Color 14, 0: Print teamName$;
-        Locate , 15
-        Print "               OFF  DEF  TOT": Print "NAME"; Tab(15);
+        Locate 4, 1
+        Color 14: Print teamName$
+
+        Print Space$(29); "OFF  DEF  TOT"
+        Print "NAME"; Tab(15);
         Print " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
         For I = 0 To 13
@@ -847,7 +850,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames, menuExit)
 
     Color 15, 0
 
-    Locate 25, 1: Print Tab(80); " ";
+    Locate LAST_ROW, 1: Print Tab(80); " ";
     Locate 2, 1
 
     For I = 1 To totalGames
@@ -890,7 +893,7 @@ Sub ExtendedStatSummary (statFile$, teamName$, totalGames, menuExit)
     Locate , 27: Color 14: Print "NEUTRAL RECORD ";
     Color 15: Print "("; neutralWins; "-"; neutralLosses; ")";
     Color 3
-    Locate 25, 1
+    Locate LAST_ROW, 1
     Color 15, 1: Print "INDIVIDUAL STATS ";
     Color 14: Print "[Pg DN]  ";
     Color 15: Print "SELECT ANOTHER TEAM ";

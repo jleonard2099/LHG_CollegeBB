@@ -186,7 +186,7 @@ Sub MergeFirstYear ()
                     MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                     BoxWidth = 24
                     BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                    Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                    Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                     Call CSMsgBox(MsgText$, BoxWidth, Pass)
                     I$ = GetKeyPress$
                     Call CSMsgBox("", 0, Pass)
@@ -312,79 +312,109 @@ Sub ReviewCareerRecords ()
                     Call CareerRecords_Report(1, "CAREER")
 
                 Case "S":
-
-                    Do
-                        Cls
-                        Color 15, 0
-
-                        Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
-                        Print
-
-                        Color 3: Print "FIELD GOALS MADE";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(0);: Print Tab(47); BL$(0);: Print Tab(66); carRecYear!(0)
-                        Color 3: Print "FIELD GOAL ATTEMPTS";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(1);: Print Tab(47); BL$(1);: Print Tab(66); carRecYear!(1)
-                        Color 3: Print "FIELD GOAL PCT.";
-                        Color 7: Print Tab(32); Using "#.###"; carRecVal!(2);: Print Tab(47); BL$(2);: Print Tab(66); carRecYear!(2)
-                        Color 3: Print "FREE THROWS MADE";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(3);: Print Tab(47); BL$(3);: Print Tab(66); carRecYear!(3)
-                        Color 3: Print "FREE THROW ATTEMPTS";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(4);: Print Tab(47); BL$(4);: Print Tab(66); carRecYear!(4)
-                        Color 3: Print "FREE THROW PCT.";
-                        Color 7: Print Tab(32); Using "#.###"; carRecVal!(5);: Print Tab(47); BL$(5);: Print Tab(66); carRecYear!(5)
-                        Color 3: Print "3 PT. FIELD GOALS MADE";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(6);: Print Tab(47); BL$(6);: Print Tab(66); carRecYear!(6)
-                        Color 3: Print "3 PT. FILED GOAL ATTEMPTS";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(7);: Print Tab(47); BL$(7);: Print Tab(66); carRecYear!(7)
-                        Color 3: Print "3 PT. FIELD GOAL PCT.";
-                        Color 7: Print Tab(32); Using "#.###"; carRecVal!(8);: Print Tab(47); BL$(8);: Print Tab(66); carRecYear!(8)
-                        Color 3: Print "POINTS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(9);: Print Tab(47); BL$(9);: Print Tab(66); carRecYear!(9)
-                        Color 3: Print "POINTS PER GAME";
-                        Color 7: Print Tab(32); Using "###.#"; carRecVal!(10);: Print Tab(47); BL$(10);: Print Tab(66); carRecYear!(10)
-                        Color 3: Print "OFFENSIVE REBOUNDS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(11);: Print Tab(47); BL$(11);: Print Tab(66); carRecYear!(11)
-                        Color 3: Print "DEFENSIVE REBOUNDS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(12);: Print Tab(47); BL$(12);: Print Tab(66); carRecYear!(12)
-                        Color 3: Print "TOTAL REBOUNDS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(13);: Print Tab(47); BL$(13);: Print Tab(66); carRecYear!(13)
-                        Color 3: Print "REBOUNDS PER GAME";
-                        Color 7: Print Tab(32); Using "###.#"; carRecVal!(14);: Print Tab(47); BL$(14);: Print Tab(66); carRecYear!(14)
-
-                        Color 15
-                        Locate 23, 5: Print "HIT ANY KEY TO CONTINUE"
-                        I$ = GetKeyPress$
-
-                        Cls
-                        Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
-                        Print
-                        Color 3: Print "PERSONAL FOULS";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(15);: Print Tab(47); BL$(15);: Print Tab(66); carRecYear!(15)
-                        Color 3: Print "ASSISTS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(16);: Print Tab(47); BL$(16);: Print Tab(66); carRecYear!(16)
-                        Color 3: Print "SHOTS BLOCKED";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(17);: Print Tab(47); BL$(17);: Print Tab(66); carRecYear!(17)
-                        Color 3: Print "STEALS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(18);: Print Tab(47); BL$(18);: Print Tab(66); carRecYear!(18)
-                        Color 3: Print "TURNOVERS";
-                        Color 7: Print Tab(32); Using "#####"; carRecVal!(19);: Print Tab(47); BL$(19);: Print Tab(66); carRecYear!(19)
-                        Color 3: Print "HI-GAME (POINTS)";
-                        Color 7: Print Tab(33); Using "####"; carRecVal!(20);: Print Tab(47); BL$(20);: Print Tab(66); carRecYear!(20)
-
-                        Color 15
-
-                        Do
-                            Locate 22: Print "VIEW AGAIN? (Y/N)"
-                            I$ = GetKeyPress$
-                        Loop Until UCase$(I$) = "N" Or Ucase$(I$) = "Y" Or I$ = Chr$(27)
-
-                    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+                    Call CareerRecords_Screen
 
             End Select
             
         End If
 
     End If 'Done checking for ESC
+
+End Sub
+
+
+'----------------------------------------
+'    CareerRecords_Screen Subroutine
+'----------------------------------------
+'This routine formats career records for
+'output to the screen.
+Sub CareerRecords_Screen ()
+
+    Shared carRecVal!(), carRecYear!()
+    Shared BL$()
+
+    Do
+
+        Cls
+        Color 15, 0
+
+        Locate 2, 1
+        Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
+        Color 3: Print "FIELD GOALS MADE";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(0);
+        Print Tab(47); BL$(0); Tab(66); carRecYear!(0)
+        Color 3: Print "FIELD GOAL ATTEMPTS";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(1);
+        Print Tab(47); BL$(1); Tab(66); carRecYear!(1)
+        Color 3: Print "FIELD GOAL PCT.";
+        Color 15: Print Tab(32); Using "#.###"; carRecVal!(2);
+        Print Tab(47); BL$(2); Tab(66); carRecYear!(2)
+        Color 3: Print "FREE THROWS MADE";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(3);
+        Print Tab(47); BL$(3); Tab(66); carRecYear!(3)
+        Color 3: Print "FREE THROW ATTEMPTS";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(4);
+        Print Tab(47); BL$(4); Tab(66); carRecYear!(4)
+        Color 3: Print "FREE THROW PCT.";
+        Color 15: Print Tab(32); Using "#.###"; carRecVal!(5);
+        Print Tab(47); BL$(5); Tab(66); carRecYear!(5)
+        Color 3: Print "3 PT. FIELD GOALS MADE";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(6);
+        Print Tab(47); BL$(6); Tab(66); carRecYear!(6)
+        Color 3: Print "3 PT. FILED GOAL ATTEMPTS";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(7);
+        Print Tab(47); BL$(7); Tab(66); carRecYear!(7)
+        Color 3: Print "3 PT. FIELD GOAL PCT.";
+        Color 15: Print Tab(32); Using "#.###"; carRecVal!(8);
+        Print Tab(47); BL$(8); Tab(66); carRecYear!(8)
+        Color 3: Print "POINTS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(9);
+        Print Tab(47); BL$(9); Tab(66); carRecYear!(9)
+        Color 3: Print "POINTS PER GAME";
+        Color 15: Print Tab(32); Using "###.#"; carRecVal!(10);
+        Print Tab(47); BL$(10); Tab(66); carRecYear!(10)
+        Color 3: Print "OFFENSIVE REBOUNDS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(11);
+        Print Tab(47); BL$(11); Tab(66); carRecYear!(11)
+        Color 3: Print "DEFENSIVE REBOUNDS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(12);
+        Print Tab(47); BL$(12); Tab(66); carRecYear!(12)
+        Color 3: Print "TOTAL REBOUNDS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(13);
+        Print Tab(47); BL$(13); Tab(66); carRecYear!(13)
+        Color 3: Print "REBOUNDS PER GAME";
+        Color 15: Print Tab(32); Using "###.#"; carRecVal!(14);
+        Print Tab(47); BL$(14); Tab(66); carRecYear!(14)
+        Color 3: Print "PERSONAL FOULS";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(15);
+        Print Tab(47); BL$(15); Tab(66); carRecYear!(15)
+        Color 3: Print "ASSISTS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(16);
+        Print Tab(47); BL$(16); Tab(66); carRecYear!(16)
+        Color 3: Print "SHOTS BLOCKED";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(17);
+        Print Tab(47); BL$(17); Tab(66); carRecYear!(17)
+        Color 3: Print "STEALS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(18);
+        Print Tab(47); BL$(18); Tab(66); carRecYear!(18)
+        Color 3: Print "TURNOVERS";
+        Color 15: Print Tab(32); Using "#####"; carRecVal!(19);
+        Print Tab(47); BL$(19); Tab(66); carRecYear!(19)
+        Color 3: Print "HI-GAME (POINTS)";
+        Color 15: Print Tab(33); Using "####"; carRecVal!(20);
+        Print Tab(47); BL$(20); Tab(66); carRecYear!(20)
+
+        Color 15
+
+        Do
+            Color 14
+            Locate LAST_ROW - 2: Print "VIEW AGAIN? (Y/N)"
+            I$ = GetKeyPress$
+            Color 15
+        Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y" Or I$ = Chr$(27)
+
+    Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
+
 
 End Sub
 
@@ -574,7 +604,7 @@ Sub MergeCareerFiles ()
                 MsgText$ = "NO COMPILED STATS COULD BE FOUND FOR THIS TEAM. PRESS ANY KEY TO RETURN TO THE MAIN MENU"
                 BoxWidth = 24
                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                 Call CSMsgBox(MsgText$, BoxWidth, Pass)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, Pass)

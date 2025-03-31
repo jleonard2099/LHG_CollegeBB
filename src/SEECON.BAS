@@ -116,7 +116,7 @@ Sub StatOptions_Con (confName$, div1$, div2$)
             Color 15, 0
             Cls
 
-            Call box0(6, 8, 11, 70, 2, 15, 1)
+            Call box0(6, 18, 10, 62, 2, 15, 1)
 
             Do
                 Color 15, 1
@@ -154,20 +154,22 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     For division = 1 To 2
 
+        If division = 1 Then
+            divName$ = RTrim$(div1$) + " DIVISION"
+        Else
+            divName$ = RTrim$(div2$) + " DIVISION"
+        End If
+
+        'If divName$ <> "" Then
+
         Cls
 
-        Color 12
-
-        Print
-
-        Locate , Int((80 - Len(confName$) - 11) / 2)
+        Color 2
+        Locate 2, Int((80 - Len(confName$) - 11) / 2)
         Print confName$ + " CONFERENCE"
         Print
-        If division = 1 Then
-            If div1$ <> "" Then Print RTrim$(div1$); " DIVISION"
-        Else
-            If div2$ <> "" Then Print RTrim$(div2$); " DIVISION"
-        End If
+
+        Print divName$
 
         Color 12
         Print "                 CONFERENCE                         FULL SEASON"
@@ -208,7 +210,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
         Call SortStandingsConference(1)
 
-        Locate 6
+        Locate 7
 
         For P = minIdx To maxIdx
 
@@ -236,9 +238,11 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
         Next P
 
+        'End If
+
         '-----
         Color 12
-        'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+        Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
         Color 15
 
         QK$ = GetKeyPress$
@@ -248,16 +252,16 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             If div2$ <> "" Then Exit For
         End If
 
-        '-----
-
     Next division
 
+    '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "FIELD GOAL % (MIN 5 FGA/G)"
-    Print "                            PCT   FGA"
+    Print "                            PCT    FGA"
     Color 15
 
     For P = 41 To 60
@@ -269,7 +273,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Next
 
     Color 14
-    Locate 1, 41
+    Locate 2, 41
     Print "FREE THROW % (MIN 2 FTA/G)"
     Locate , 41
     Print "                            PCT   FTA"
@@ -286,7 +290,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
@@ -294,8 +298,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
     Cls
 
     Color 14
+    Locate 2, 1
     Print "SCORING"
-    Print Tab(32); "PTS/G"
+    Print Tab(33); "PTS/G"
     Color 15
 
     For P = 1 To 20
@@ -306,11 +311,11 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
         End If
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "TOTAL POINTS"
-    Locate , 41
-    Print Tab(34); "PTS"
+    Locate, 75
+    Print "PTS"
     Color 15
 
     For P = 21 To 40
@@ -323,13 +328,14 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "STEALS PER GAME"
     Color 15
@@ -342,23 +348,21 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
         End If
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "STEALS"
     Color 15
 
     For P = 91 To 100
-
         If leaderName$(P) <> "" Then
             Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
             Locate , 74
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
     Color 14
-    Locate 13: Print "ASSISTS PER GAME"
+    Locate 14: Print "ASSISTS PER GAME"
     Color 15
 
     For P = 101 To 110
@@ -367,10 +371,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 34
             Print Using "##.#"; confLdrVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "ASSISTS"
     Color 15
@@ -381,18 +384,18 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 74
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "THREE FIELD GOAL% (MIN 1.5 3FGM/G)"
     Color 15
@@ -405,7 +408,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
         End If
     Next P
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "MINUTES PER GAME"
     Color 15
@@ -416,11 +419,11 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 74
             Print Using "##.#"; confLdrVal!(P)
         End If
-
     Next P
 
-    Locate 13
-    Color 14: Print "THREE POINT FIELD GOALS MADE"
+    Locate 14
+    Color 14
+    Print "THREE POINT FIELD GOALS MADE"
     Color 15
 
     For P = 131 To 140
@@ -429,10 +432,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 34
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "TOTAL MINUTES"
     Color 15
@@ -447,13 +449,14 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "REBOUNDS PER GAME   "
     Color 15
@@ -467,20 +470,22 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "REBOUNDS"
     Color 15
 
     For P = 171 To 180
         If leaderName$(P) <> "" Then
-            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);: Locate , 74
+            Locate , 41: Print leaderName$(P) + ", " + leaderTeam$(P);
+            Locate , 74
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
-    Locate 13: Color 14: Print "BLOCKS PER GAME"
+    Locate 14
+    Color 14
+    Print "BLOCKS PER GAME"
     Color 15
 
     For P = 181 To 190
@@ -491,7 +496,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
         End If
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "BLOCKS"
     Color 15
@@ -502,18 +507,18 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 74
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "FIELD GOALS MADE "
     Color 15
@@ -524,10 +529,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 34
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
-    Locate 1, 41
+    Locate 2, 41
     Color 14
     Print "FREE THROWS MADE"
     Color 15
@@ -540,7 +544,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
         End If
     Next
 
-    Locate 13
+    Locate 14
     Color 14
     Print "FOULS PER GAME"
     Color 15
@@ -551,10 +555,9 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 34
             Print Using "##.#"; confLdrVal!(P)
         End If
-
     Next
 
-    Locate 13, 41
+    Locate 14, 41
     Color 14
     Print "FOULS"
     Color 15
@@ -565,18 +568,18 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 74
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 14
     Print "MOST VALUABLE PLAYER POINTS"
     Color 15
@@ -587,20 +590,22 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
             Locate , 34
             Print Using "####"; confLdrVal!(P)
         End If
-
     Next
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(32); "OFFENSIVE TOTALS"
+
+    Locate 4, 1
     Color 14
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
@@ -664,15 +669,18 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----
 
     Cls
 
+    Locate 2, 1
     Color 12
     Print Tab(32); "DEFENSIVE TOTALS"
+
+    Locate 4, 1
     Color 14
     Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
     Color 15
@@ -736,7 +744,7 @@ Sub LeaderStatsCon_Screen (confName$, div1$, div2$)
 
     '-----
     Color 12
-    'Locate 24: Print "HIT ANY KEY TO CONTINUE!";
+    Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
     Color 15
     QK$ = GetKeyPress$
     '-----

@@ -53,7 +53,7 @@ Sub Records_Menu ()
                 MsgText$ = "UNABLE TO LOCATE RECORDS PRESS ANY KEY TO RETURN TO MAIN MENU"
                 BoxWidth = 24
                 BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
-                Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
+                Locate ((LAST_ROW - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
                 Call CSMsgBox(MsgText$, BoxWidth, PASS)
                 I$ = GetKeyPress$
                 Call CSMsgBox("", 0, PASS)
@@ -188,17 +188,29 @@ Sub ViewSeasonRecords ()
 
         Color 7
 
+        'Hi-Game
         Locate , 4: Print indRecordDesc$(14); Tab(28); Left$(plyrRecDesc$(14, 0), 14); Tab(42); plyrRecDesc$(14, 1); Tab(62); Using "####"; plyrRecords!(14)
+        'Offensive Rebounds
         Locate , 4: Print indRecordDesc$(15); Tab(28); Left$(plyrRecDesc$(15, 0), 14); Tab(42); plyrRecDesc$(15, 1); Tab(62); Using "####"; plyrRecords!(15)
+        'Defensive Rebounds
         Locate , 4: Print indRecordDesc$(16); Tab(28); Left$(plyrRecDesc$(16, 0), 14); Tab(42); plyrRecDesc$(16, 1); Tab(62); Using "####"; plyrRecords!(16)
+        'Total Rebounds
         Locate , 4: Print indRecordDesc$(17); Tab(28); Left$(plyrRecDesc$(17, 0), 14); Tab(42); plyrRecDesc$(17, 1); Tab(62); Using "####"; plyrRecords!(17)
+        'Rebounds Per Game
         Locate , 4: Print indRecordDesc$(18); Tab(28); Left$(plyrRecDesc$(18, 0), 14); Tab(42); plyrRecDesc$(18, 1); Tab(62); Using "##.#"; plyrRecords!(18)
+        'Personal Fouls
         Locate , 4: Print indRecordDesc$(19); Tab(28); Left$(plyrRecDesc$(19, 0), 14); Tab(42); plyrRecDesc$(19, 1); Tab(62); Using "####"; plyrRecords!(19)
+        'Steals
         Locate , 4: Print indRecordDesc$(20); Tab(28); Left$(plyrRecDesc$(20, 0), 14); Tab(42); plyrRecDesc$(20, 1); Tab(62); Using "####"; plyrRecords!(20)
+        'Assists
         Locate , 4: Print indRecordDesc$(21); Tab(28); Left$(plyrRecDesc$(21, 0), 14); Tab(42); plyrRecDesc$(21, 1); Tab(62); Using "####"; plyrRecords!(21)
+        'Blocks
         Locate , 4: Print indRecordDesc$(22); Tab(28); Left$(plyrRecDesc$(22, 0), 14); Tab(42); plyrRecDesc$(22, 1); Tab(62); Using "####"; plyrRecords!(22)
+        'Turnovers
         Locate , 4: Print indRecordDesc$(23); Tab(28); Left$(plyrRecDesc$(23, 0), 14); Tab(42); plyrRecDesc$(23, 1); Tab(62); Using "####"; plyrRecords!(23)
+        'Minutes per Game
         Locate , 4: Print indRecordDesc$(24); Tab(28); Left$(plyrRecDesc$(24, 0), 14); Tab(42); plyrRecDesc$(24, 1); Tab(62); Using "##.#"; plyrRecords!(24)
+        'MVP Voting
         Locate , 4: Print indRecordDesc$(25); Tab(28); Left$(plyrRecDesc$(25, 0), 14); Tab(42); plyrRecDesc$(25, 1); Tab(62); Using "####"; plyrRecords!(25)
 
         Color 15
@@ -239,12 +251,17 @@ Sub ViewSeasonRecords ()
         Locate , 4: Print teamRecordDesc$(8); Tab(33); offRecDesc$(8); Tab(53); Using "####"; offRecords!(8)
         'Free Throw %
         Locate , 4: Print teamRecordDesc$(9); Tab(33); offRecDesc$(9); Tab(53); Using "##.#"; offRecords!(9) * 100
-
+        'Offensive Rebounds
         Locate , 4: Print teamRecordDesc$(10); Tab(33); offRecDesc$(10); Tab(53); Using "####"; offRecords!(10)
+        'Defensive Rebounds
         Locate , 4: Print teamRecordDesc$(11); Tab(33); offRecDesc$(11); Tab(53); Using "####"; offRecords!(11)
+        'Total Rebounds
         Locate , 4: Print teamRecordDesc$(12); Tab(33); offRecDesc$(12); Tab(53); Using "####"; offRecords!(12)
+        'Rebounds / Game
         Locate , 4: Print teamRecordDesc$(13); Tab(33); offRecDesc$(13); Tab(53); Using "##.#"; offRecords!(13)
+        'Personal Fouls
         Locate , 4: Print teamRecordDesc$(14); Tab(33); offRecDesc$(14); Tab(53); Using "####"; offRecords!(14)
+        'Steals
         Locate , 4: Print teamRecordDesc$(15); Tab(33); offRecDesc$(15); Tab(53); Using "####"; offRecords!(15)
 
         Color 15
@@ -268,11 +285,17 @@ Sub ViewSeasonRecords ()
         Print "CATEGORY                        TEAM             RECORD            "
 
         Color 14
+        'Assists
         Locate , 4: Print teamRecordDesc$(16); Tab(33); offRecDesc$(16); Tab(53); Using "####"; offRecords!(16)
+        'Blocks
         Locate , 4: Print teamRecordDesc$(17); Tab(33); offRecDesc$(17); Tab(53); Using "####"; offRecords!(17)
+        'Turnovers
         Locate , 4: Print teamRecordDesc$(18); Tab(33); offRecDesc$(18); Tab(53); Using "####"; offRecords!(18)
+        'Points
         Locate , 4: Print teamRecordDesc$(19); Tab(33); offRecDesc$(19); Tab(52); Using "#####"; offRecords!(19)
+        'Points / Game
         Locate , 4: Print teamRecordDesc$(20); Tab(33); offRecDesc$(20); Tab(52); Using "###.#"; offRecords!(20)
+
         Locate , 4: Print "WINS"; Tab(33); offRecDesc$(21); Tab(53); Using "####"; offRecords!(21)
 
         Color 15
@@ -315,12 +338,17 @@ Sub ViewSeasonRecords ()
         Locate , 4: Print teamRecordDesc$(8); Tab(33); defRecDesc$(8); Tab(53); Using "####"; defRecords!(8)
         'Free Throw %
         Locate , 4: Print teamRecordDesc$(9); Tab(33); defRecDesc$(9); Tab(53); Using "##.#"; defRecords!(9) * 100
-
+        'Offensive Rebounds
         Locate , 4: Print teamRecordDesc$(10); Tab(33); defRecDesc$(10); Tab(53); Using "####"; defRecords!(10)
+        'Defensive Rebounds
         Locate , 4: Print teamRecordDesc$(11); Tab(33); defRecDesc$(11); Tab(53); Using "####"; defRecords!(11)
+        'Total Rebounds
         Locate , 4: Print teamRecordDesc$(12); Tab(33); defRecDesc$(12); Tab(53); Using "####"; defRecords!(12)
+        'Rebounds / Game
         Locate , 4: Print teamRecordDesc$(13); Tab(33); defRecDesc$(13); Tab(53); Using "##.#"; defRecords!(13)
+        'Personal Fouls
         Locate , 4: Print teamRecordDesc$(14); Tab(33); defRecDesc$(14); Tab(53); Using "####"; defRecords!(14)
+        'Steals
         Locate , 4: Print teamRecordDesc$(15); Tab(33); defRecDesc$(15); Tab(53); Using "####"; defRecords!(15)
 
         Color 15
@@ -343,11 +371,17 @@ Sub ViewSeasonRecords ()
 
         Color 15
 
+        'Assists
         Locate , 4: Print teamRecordDesc$(16); Tab(33); defRecDesc$(16); Tab(53); Using "####"; defRecords!(16)
+        'Blocks
         Locate , 4: Print teamRecordDesc$(17); Tab(33); defRecDesc$(17); Tab(53); Using "####"; defRecords!(17)
+        'Turnovers
         Locate , 4: Print teamRecordDesc$(18); Tab(33); defRecDesc$(18); Tab(53); Using "####"; defRecords!(18)
+        'Points
         Locate , 4: Print teamRecordDesc$(19); Tab(33); defRecDesc$(19); Tab(52); Using "#####"; defRecords!(19)
+        'Points / Game
         Locate , 4: Print teamRecordDesc$(20); Tab(33); defRecDesc$(20); Tab(52); Using "###.#"; defRecords!(20)
+
         Locate , 4: Print "LOSSES"; Tab(33); defRecDesc$(21); Tab(53); Using "####"; defRecords!(21)
 
         Color 15
