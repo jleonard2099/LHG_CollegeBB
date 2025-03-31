@@ -16842,4 +16842,3 @@ Function GetTeamGender$ (diskID$)
     End If
 
 End Function
-
