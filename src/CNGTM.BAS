@@ -64,7 +64,7 @@ Sub CNGTM (userChoice)
                             Select Case userKey$
 
                                 Case "F"
-                                    userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
+                                    userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                     If userFile$ <> "" Then
                                         Call Roster_Report(0, userFile$, team$)
                                     End If
@@ -73,7 +73,7 @@ Sub CNGTM (userChoice)
                                     Call Roster_Report(1, "REPORT", team$)
 
                             End Select
-                            
+
                         End If
 
                     Case 3:
@@ -306,7 +306,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         Locate LAST_ROW - 2, 53
         Print Space$(10)
-            
+
     Loop Until B9 = 0
 
 
@@ -841,6 +841,9 @@ Sub Roster_Report (printDest, destFile$, teamName$)
     XCoord = (80 - 16 - Len(targetTeam$)) / 2
 
     Print #1, Tab(XCoord); "TEAM ROSTER FOR "; teamName$
+    Print #1, Tab(20);
+    Print #1, "TEXT COLOR:"; teamRatings(0); Tab(38);
+    Print #1, "BACKGROUND COLOR:"; teamRatings(1)
     Print #1,
 
     Print #1, "AVG SHOTS / GAME       = "; teamRatings(3);
@@ -915,11 +918,14 @@ Sub ViewRoster (targetTeam$)
     XCoord = (80 - 16 - Len(targetTeam$)) / 2
     Locate 2, XCoord
 
-    Locate 2, 1
     Print "TEAM ROSTER FOR ";
     Color teamRatings(0), teamRatings(1): Print targetTeam$
-    
-    Locate 4, 1
+    Color 15, 0
+    Locate , 20
+    Print "TEXT COLOR:"; teamRatings(0); Tab(38);
+    Print "BACKGROUND COLOR:"; teamRatings(1)
+
+    Locate 5, 1
     Color 11, 0: Print "AVG SHOTS / GAME       = ";
     Color 15: Print teamRatings(3);
 
@@ -944,7 +950,7 @@ Sub ViewRoster (targetTeam$)
     Color 11: Locate , 50: Print "DEF TURNOVER ADJ = ";
     Color 15: Print leagueRatings(2)
 
-    Locate 8, 1
+    Locate 9, 1
     Color 14: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
     Color 15
 
