@@ -267,15 +267,17 @@ _AllowFullScreen
 
 opSysType$ = Left$(_OS$, InStr(2, _OS$, "[") - 1)
 
+Select Case opSysType$
+    Case "[WINDOWS]":
+        dirSeparator$ = "\"
+    Case "[MAC]", "[MACOSX]", "[LINUX]":
+        dirSeparator$ = "/"
+End Select
+
 'Default new folders to current path
 For I = 0 To 3
 
-    Select Case opSysType$
-        Case "[WINDOWS]":
-            diskPaths$(I) = _CWD$ + "\"
-        Case "[MAC]", "[MACOSX]", "[LINUX]":
-            diskPaths$(I) = _CWD$ + "/"
-    End Select
+    diskPaths$(I) = _CWD$ + dirSeparator$
 
 Next
 

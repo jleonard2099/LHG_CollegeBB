@@ -1,5 +1,8 @@
-
+'----------------------------------------
+' Used in more than one source file
+'----------------------------------------
 Dim opSysType$
+Dim Shared dirSeparator$
 
 Dim Shared diskPaths$(0 To 3), Q$(0 To 500)
 Dim Shared teamNames$(MAX_TEAMS)

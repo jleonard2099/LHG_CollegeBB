@@ -383,31 +383,32 @@ Sub ViewPlayer (careerFile$)
 
     Cls
 
+    Locate 2, 1
     Color 12: Print careerFile$
 
     For I = 0 To 15:
-        Locate I + 2
+        Locate I + 4
         Color 11: Print Using "##"; I;
         Print " ";
         Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     For I = 16 To 31:
-        Locate I - 14, 20
+        Locate I - 12, 20
         Color 11: Print Using "##"; I;
         Print " ";
         Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     For I = 32 To 46:
-        Locate I - 30, 40
+        Locate I - 28, 40
         Color 11: Print Using "##"; I;
         Print " ";
         Color 7: Print Left$(careerPlayers$(I), 12)
     Next
 
     For I = 47 To 61:
-        Locate I - 45, 60
+        Locate I - 43, 60
         Color 11: Print Using "##"; I;
         Print " ";
         Color 7: Print Left$(careerPlayers$(I), 12)
@@ -417,7 +418,7 @@ Sub ViewPlayer (careerFile$)
     Color 15
 
     Do
-        Locate 22, 48
+        Locate LAST_ROW - 2, 48
         Input "ENTER # OF PLAYER TO VIEW"; B9
     Loop Until B9 >= 0 And B9 <= 61
 
@@ -443,12 +444,14 @@ Sub ViewPlayer (careerFile$)
     
     VV = 0 
 
+    Locate 2, 1
     Color 11
-    Locate 1: Print careerFile$
+    Print careerFile$
     Color 12
-    Locate 2: Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
+    Locate 4, 1
+    Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
     Color 15
-    Locate 3: Print Left$(careerPlayers$(B9), 13);
+    Print Left$(careerPlayers$(B9), 13);
 
     For Z = 1 To MAX_CAREER_YEARS
         VV = VV + carPlyrStat!(Z, B9, 14)
@@ -588,10 +591,14 @@ Sub ViewPlayer (careerFile$)
     Cls
     Color 11
 
-    Locate 1: Print careerFile$
-    Color 12: Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
+    Locate 2, 1
+    Color 11
+    Print careerFile$
+    Color 12
+    Locate 4, 1
+    Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
     Color 15
-    Locate 3: Print Left$(careerPlayers$(B9), 13);
+    Print Left$(careerPlayers$(B9), 13);
 
     For V = 1 To VV
 
@@ -754,12 +761,14 @@ Sub ViewRosterSequence (careerFile$)
 
                 Cls
 
+                Locate 2, 1
                 Color 11
-                Locate 1: Print careerFile$
+                Print careerFile$
                 Color 12
-                Locate 2: Print "PLAYER         YEAR  G FGM  FGA   PCT FTM FTA   PCT 3FGM 3FGA PCT  PTS  AVG"
+                Locate 4, 1
+                Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
                 Color 15
-                Locate 3: Print Left$(careerPlayers$(I), 13);
+                Print Left$(careerPlayers$(I), 13);
 
                 For Z = 1 To MAX_CAREER_YEARS
                     VV = VV + carPlyrStat!(Z, I, 14)
@@ -893,12 +902,14 @@ Sub ViewRosterSequence (careerFile$)
 
                 Cls
 
+                Locate 2, 1
                 Color 11
-                Locate 1: Print careerFile$
+                Print careerFile$
                 Color 12
-                Print "PLAYER         YEAR OREB DREB  TRB  AVG  PF  AST BLK  ST  TO HI   MIN  AVG."
+                Locate 4, 1
+                Print "PLAYER         YEAR  G  FGM  FGA  PCT FTM  FTA  PCT 3FGM 3FGA  PCT  PTS  AVG."
                 Color 15
-                Locate 3: Print Left$(careerPlayers$(I), 13);
+                Print Left$(careerPlayers$(I), 13);
 
                 For V = 1 To VV
 
