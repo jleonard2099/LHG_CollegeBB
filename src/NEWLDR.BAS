@@ -31,11 +31,11 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "UPDATE EXPANDED CONFERENCE LEADERS        "
-        menuChoices$(2) = "VIEW EXPANDED CONFERENCE LEADER FILES     "
-        menuChoices$(3) = "UPDATE EXPANDED CONFERENCE STANDINGS      "
-        menuChoices$(4) = "VIEW / PRINT EXPANDED CONFERENCE STANDINGS"
-        menuChoices$(5) = "RETURN TO CONFERENCE LEADER MAIN MENU     "
+        menuChoices$(1) = "UPDATE EXPANDED CONFERENCE LEADERS   "
+        menuChoices$(2) = "VIEW EXPANDED CONFERENCE LEADER FILES"
+        menuChoices$(3) = "UPDATE EXPANDED CONFERENCE STANDINGS "
+        menuChoices$(4) = "REVIEW EXPANDED CONFERENCE STANDINGS "
+        menuChoices$(5) = "RETURN TO CONFERENCE LEADER MAIN MENU"
         SELECTION% = 1
         Count% = 5
         Start% = 1
