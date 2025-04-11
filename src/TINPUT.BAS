@@ -291,7 +291,7 @@ Sub InputTeam ()
         Locate 4: Input " 1. DISK ID "; yearNumber$
         Locate 5: Input " 2. TEAM NAME "; teamName$
         Locate 6: Input " 3. TEAM NICKNAME "; mascot$
-        Locate 7: Input " 4. STRENGTH OF SCHEDULE ADJ "; sosAdj
+        Locate 7: Input " 4. STRENGTH OF SCHEDULE ADJ "; schedStr
         Locate 8: Input " 5. HOMECOURT FACTOR (0-6) "; teamRatings(6)
         Locate 9: Input " 6. TEXT COLOR (0-15) "; teamRatings(0)
         Locate 10: Input " 7. BACKGROUND COLOR (0-7) "; teamRatings(1)
@@ -384,7 +384,7 @@ Sub InputTeam ()
 
                 Case 4
                     Locate 7, 30: Print Space$(10)
-                    Locate 7, 1: Input " 4. STRENGTH OF SCHEDULE ADJ "; sosAdj
+                    Locate 7, 1: Input " 4. STRENGTH OF SCHEDULE ADJ "; schedStr
                     Locate 7, 30: Print " "
 
                 Case 5
@@ -923,37 +923,41 @@ Sub InputTeam ()
 
         Next I
 
-        X! = leagFGAPerGame! + leagRebPerGame! + 20
-        inputY! = (tmFGA! + oppFGA! + tmReb! + oppReb! + tmFouls! + oppFouls!) / (2 * nbrGmsPlayed!)
-        staminaRating! = CInt(((2 * inputY!) - X!))
+        oppShotContrib! = leagFGAPerGame! + leagRebPerGame! + 20
+        gamePace! = (tmFGA! + oppFGA! + tmReb! + oppReb! + tmFouls! + oppFouls!) / (nbrGmsPlayed! * 2)
+        staminaRating! = CInt(((2 * gamePace!) - oppShotContrib!))
 
         'Strength of Schedule
-        X3 = (sosAdj / 2) / ((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2))
-        X3 = CInt((X3 * 100))
+        sosAdj = (schedStr / 2) / ((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2))
+        sosAdj = CInt((sosAdj * 100))
 
-        sosAdj = Int(X3 / 2)
-        BY = Int(X3 / 2)
-        X4 = Int(Rnd(1) * 2)
+        schedStr = Int(sosAdj / 2)
+        sosDupe = Int(sosAdj / 2)
+        coin = Int(Rnd(1) * 2)
 
-        If X3 - sosAdj - BY > 0 And X4 = 0 Then
-            sosAdj = sosAdj + 1
+        If sosAdj - schedStr - sosDupe > 0 Then
+            If coin = 0 Then
+                schedStr = schedStr + 1
+            Else
+                sosDupe = sosDupe + 1
+            End If
         End If
 
-        If X3 - sosAdj - BY > 0 And X4 = 1 Then
-            BY = BY + 1
-        End If
+        'Def FG % Adj
+        lgFgPctAdj = Int((46 - leagFGPct!) / 2)
+        defFGPctAdj! = opp2FGPct! - leagFGPct! + sosDupe - lgFgPctAdj
 
-        U7 = Int((46 - leagFGPct) / 2)
-        defFGPctAdj! = opp2FGPct! - leagFGPct! + BY - U7
-
-        V% = Int(((opp3FGA! / oppFGA!) + .005) * 100)
-        defthreeFGA_Adj = V% - leag3FGAPct!
+        'Def 3 FG % Adj
+        opp3FGAAdj = Int(((opp3FGA! / oppFGA!) + .005) * 100)
+        defthreeFGA_Adj = opp3FGAAdj - leag3FGAPct!
 
         'DEF 3FGA/3FGA ADJ
         '-- Here is where 100 is being added to the value
         '-- This is why our team files and viewer later
         '-- will show values as 95-99
-        If defthreeFGA_Adj < 0 Then defthreeFGA_Adj = 100 + defthreeFGA_Adj
+        If defthreeFGA_Adj < 0 Then 
+            defthreeFGA_Adj = 100 + defthreeFGA_Adj
+        End If
 
         def3FG_Adj = opp3FGAPct! - leag3FGPct!
 
@@ -961,7 +965,9 @@ Sub InputTeam ()
         '-- Here is where 100 is being added to the value
         '-- This is why our team files and viewer later
         '-- will show values as 95-99
-        If def3FG_Adj < 0 Then def3FG_Adj = 100 + def3FG_Adj
+        If def3FG_Adj < 0 Then 
+            def3FG_Adj = 100 + def3FG_Adj
+        End If
 
 
         For I = 0 To 13
@@ -1004,8 +1010,8 @@ Sub InputTeam ()
         For I = 0 To 13
 
             If playerNames$(I) <> "XXX" Then
-                'Adjust player FG% by SOS and U7 (how far league FG% is from 46)
-                playerOff!(I, 0) = playerOff!(I, 0) - sosAdj + U7
+                'Adjust player FG% by SOS and lgFgPctAdj (how far league FG% is from 46)
+                playerOff!(I, 0) = playerOff!(I, 0) - schedStr + lgFgPctAdj
             End If
 
         Next I
@@ -1042,8 +1048,8 @@ Sub InputTeam ()
         Next I
 
         'Off Steal Rating
-        inputY! = oppSteal! / nbrGmsPlayed!
-        X! = CInt((inputY! - 7) / .4)
+        gameStls! = oppSteal! / nbrGmsPlayed!
+        X! = CInt((gameStls! - 7) / .4)
 
         If X! < 0 Then leagueRatings(0) = 100 + X!
         If X! > 0 Then leagueRatings(0) = X!
@@ -1051,14 +1057,14 @@ Sub InputTeam ()
         'Off TO Rating
         R! = 1200 - (((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) * 4)
         R! = R! / 6
-        inputY! = (tmTO! - oppSteal!) / nbrGmsPlayed!
-        X! = (inputY! / R!) - .01
+        toAdj! = (tmTO! - oppSteal!) / nbrGmsPlayed!
+        X! = (toAdj! / R!) - .01
         X! = CInt(X! * 100)
         leagueRatings(1) = X!
 
         'Def TO Adj
-        inputY! = (oppTO! - tmSteal!) / nbrGmsPlayed!
-        X! = (inputY! / R!) - .01
+        toAdj! = (oppTO! - tmSteal!) / nbrGmsPlayed!
+        X! = (toAdj! / R!) - .01
         X! = CInt(X! * 100)
         X! = X! - 4
 

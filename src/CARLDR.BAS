@@ -330,14 +330,14 @@ Sub CareerLeaderOptions ()
 
     Cls
 
-    leaderFile$ = ChooseFile$(diskPaths$(2) + "*.TCL", "LEADER", ExitCode%)
+    leaderFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.TCL", "Career Leader files")
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Color 15, 0
         Cls
 
-        Open diskPaths$(2) + leaderFile$ + ".TCL" For Input As #1
+        Open leaderFile$ For Input As #1
 
         For I = 0 To 19:
             For I1 = 0 To 19:

@@ -41,7 +41,7 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
-'Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
 
 '-- For Road Data
@@ -189,7 +189,7 @@ Dim tmYears_DRAFT$(1), tmName_DRAFT$(1)
 '   Used in HD2HD routines
 '----------------------------------------
 Dim conferenceName$
-'Dim div1Name$, div2Name$
+Dim div1Name$, div2Name$
 
 Dim awayLosses(50), awayWins(50)
 Dim awayScoreTeam!(50), awayScoreOpp!(50)
@@ -321,6 +321,7 @@ Dim game3FGM!(1, 13), game3FGA!(1, 13)
 Dim Shared defStyles$(0 To 17), defStyles_brief$(0 To 17), diskIDs$(5)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
 Dim Shared offStyles$(9), offStyles_brief$(9)
+Dim Shared offStylesNew$(15)
 Dim Shared pbpStyle$(1), players$(1, 13)
 Dim Shared positions_GAME$(0 To 1, 0 To 13), posnName$(0 To 4)
 Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)

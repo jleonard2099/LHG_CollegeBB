@@ -268,7 +268,7 @@ End Sub
 'formats the results for them as directed.
 Sub ReviewCareerRecords ()
 
-    recordFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.CLD", "Career Leader files")
+    recordFile$ = _OpenFileDialog$("Choose Career Record file", diskPaths$(2), "*.CLD", "Career Record files")
 
     If recordFile$ <> "" Then
 
@@ -817,7 +817,6 @@ Sub LoadCareerFile (loadFile$)
     Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
    TMR = MAX_CAREER_YEARS * 62 
-    ' * (1 + 16 + 2))
  
     Open loadFile$ For Input As #1
 
@@ -873,7 +872,7 @@ Sub SaveCareerFile (saveFile$)
     Locate 12, 18
     Print "SAVING UPDATED CAREER FILE . . . PLEASE WAIT"
 
-	TMR = 15 * 62
+    TMR = MAX_CAREER_YEARS * 62 
 
     Open saveFile$ For Output As #3
 
