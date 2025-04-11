@@ -309,6 +309,58 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
     Loop Until B9 = 0
 
+    Color 15, 0
+    Cls
+
+    Color 14
+    Locate 2, 30: Print "STRENGTH OF SCHEDULE"
+    Color 15
+
+    newSos = -99
+
+    Do
+
+        Locate 4, 5: Print "DO YOU WANT TO CHANGE THIS TEAM'S STRENGTH OF SCHEDULE? (Y/N)"
+        Locate 5, 5: Print "(THIS ALSO REQUIRES OPP 2FG% AND SEASON FG%)"
+        I$ = GetKeyPress$
+
+    Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y" Or I$ = Chr$(27)
+
+    If UCase$(I$) = "Y" Then
+
+        Locate 7, 1: Input "1. OPP 2FG % "; newOpp2FGPct!
+        Locate 8, 1: Input "2. SEASON FG % "; newLeagFGPct!
+        Locate 9, 1: Input "3. STRENGTH OF SCHEDULE "; newSos
+
+        Do
+        
+            Do
+                Locate LAST_ROW - 2, 25
+                Input "# TO CHANGE (0 TO CONTINUE) "; B9
+            Loop Until B9 >= 0 And B9 <= 3
+
+            Select Case B9
+
+                Case 1
+                    Locate 7, 14: Print Space$(10)
+                    Locate 7, 1: Input "1. OPP 2FG % "; newOpp2FGPct!
+                    Locate 7, 14: Print " "
+
+                Case 2
+                    Locate 8, 16: Print Space$(10)
+                    Locate 8, 1: Input "2. SEASON FG % "; newLeagFGPct!
+                    Locate 8, 16: Print " "
+
+                Case 3
+                    Locate 9, 25: Print Space$(10)
+                    Locate 9, 1: Input "3. STRENGTH OF SCHEDULE "; newSos
+                    Locate 9, 25: Print " "
+
+            End Select
+
+        Loop Until B9 = 0
+
+    End If
 
     Color 15, 0
     Cls
@@ -729,6 +781,13 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
     Loop Until idx = 0
 
+
+    'Adjust ratings based on new SOS
+    If newSos <> -99 Then
+        Call CalcSosAdjustments(newOpp2FGPct!, newLeagFGPct!, newSos)
+    End If
+
+
     '---------------
     'Player Contributions
     '---------------
@@ -1015,6 +1074,73 @@ Sub ViewRoster (targetTeam$)
     Locate LAST_ROW - 1, 30
     Color 15: Print "HIT ANY KEY TO EXIT";
     I$ = GetKeyPress$
+
+End Sub
+
+
+'----------------------------------------
+'     CalcSosAdjustments Subroutine
+'----------------------------------------
+'This routine makes adjustments to the
+'team and player ratings based on the
+'SOS that was provided
+Sub CalcSosAdjustments (opp2FGPct!, seasonFGPct!, sosVal)
+
+    Shared defFGPctAdj!
+
+    Shared playerOff!(), teamStats!()
+
+    sosAdj = (sosVal / 2) / ((teamStats!(1) + teamStats!(2)) / (teamStats!(0) * 2))
+    sosAdj = CInt((sosAdj * 100))
+
+    sosVal = Int(sosAdj / 2)
+    sosDupe = Int(sosAdj / 2)
+    coin = Int(Rnd(1) * 2)
+
+    If sosAdj - sosVal - sosDupe > 0 Then
+        If coin = 0 Then
+            sosVal = sosVal + 1
+        Else
+            sosDupe = sosDupe + 1
+        End If
+    End If
+
+    'Def FG % Adj
+    lgFgPctAdj = Int((46 - seasonFGPct!) / 2)
+    defFGPctAdj! = opp2FGPct! - seasonFGPct! + sosDupe - lgFgPctAdj
+
+    For I = 0 To 13
+
+        If playerNames$(I) <> "XXX" Then
+
+            'Adjust player FG% by SOS and lgFgPctAdj (how far league FG% is from 46)
+            playerOff!(I, 0) = playerOff!(I, 0) - sosVal + lgFgPctAdj
+
+            X! = ((playerOff!(I, 9) * playerOff!(I, 0)) / 100)
+            MI = (playerOff!(I, 8) / playerOff!(I, 7)) / 40
+
+            If playerOff!(I, 8) = 0 Then
+                MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9! / 5)
+            End If
+
+            X! = X! * .1
+
+            If MI > 1 And playerOff!(I, 8) = 0 Then
+                MI = 1
+            End If
+
+            X! = X! + ((playerOff!(I, 7) * 1.64) * MI)
+            X! = ((playerOff!(I, 16) - X!) / 2)
+            X! = CInt(((X! / (playerOff!(I, 9) + X!)) * 100))
+
+            If X! < 0 Then X! = 0
+
+            'Foul Draw rating
+            playerRatings!(I, 6) = X!
+
+        End If
+
+    Next I
 
 End Sub
 

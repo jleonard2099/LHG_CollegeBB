@@ -31,11 +31,11 @@ Sub NEWLDR ()
 
         Call TITLE
 
-        menuChoices$(1) = "UPDATE EXPANDED CONFERENCE LEADERS        "
-        menuChoices$(2) = "VIEW EXPANDED CONFERENCE LEADER FILES     "
-        menuChoices$(3) = "UPDATE EXPANDED CONFERENCE STANDINGS      "
-        menuChoices$(4) = "VIEW / PRINT EXPANDED CONFERENCE STANDINGS"
-        menuChoices$(5) = "RETURN TO CONFERENCE LEADER MAIN MENU     "
+        menuChoices$(1) = "UPDATE EXPANDED CONFERENCE LEADERS   "
+        menuChoices$(2) = "VIEW EXPANDED CONFERENCE LEADER FILES"
+        menuChoices$(3) = "UPDATE EXPANDED CONFERENCE STANDINGS "
+        menuChoices$(4) = "REVIEW EXPANDED CONFERENCE STANDINGS "
+        menuChoices$(5) = "RETURN TO CONFERENCE LEADER MAIN MENU"
         SELECTION% = 1
         Count% = 5
         Start% = 1
@@ -273,7 +273,7 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
     'Our first set of stats is 600 entries
     'Our next 2 sets are loops around each
     'conference
-    TMR = 600 + (2 * TEAMS_PER_CONFERENCE)
+    TMR = 600 + (TEAMS_PER_CONFERENCE * (15+1) * 2)
 
     Print "SAVING LEADER FILES . . . . PLEASE WAIT"
 
@@ -284,11 +284,6 @@ Sub SaveLeaderStdg (statFile$, JB, plyrTotalStats, teamTotalStats)
     For I = 1 To 600:
 
         Write #1, expPlyrLdrName$(I), expPlyrLdrTeam$(I), totGames!(I)
-
-        Color 14
-        Locate 18, 38
-        TMR = TMR - 1
-        Print Using "#####"; TMR
 
         For I1 = 1 To 14:
             Write #1, plyrLdrStats!(I, I1)

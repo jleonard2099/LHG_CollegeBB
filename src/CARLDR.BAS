@@ -16,9 +16,9 @@ Sub CARLDR ()
         Call TITLE
 
         ReDim menuChoices$(1 To 3)
-        menuChoices$(1) = "UPDATE CAREER LEADERS      "
-        menuChoices$(2) = "VIEW / PRINT CAREER LEADERS"
-        menuChoices$(3) = "RETURN TO UTILITIES MENU   "
+        menuChoices$(1) = "UPDATE CAREER LEADERS   "
+        menuChoices$(2) = "REVIEW CAREER LEADERS   "
+        menuChoices$(3) = "RETURN TO UTILITIES MENU"
         SELECTION% = 1
         Count% = 3
         Start% = 1
@@ -85,7 +85,7 @@ Sub UpdateCareerLeaders ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Call LoadCareerFile(careerFile$)
+        Call LoadCareerFile(diskPaths$(1) + careerFile$ + ".CAR")
 
         Color 14
 
@@ -330,14 +330,14 @@ Sub CareerLeaderOptions ()
 
     Cls
 
-    leaderFile$ = ChooseFile$(diskPaths$(2) + "*.TCL", "LEADER", ExitCode%)
+    leaderFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.TCL", "Career Leader files")
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
         Color 15, 0
         Cls
 
-        Open diskPaths$(2) + leaderFile$ + ".TCL" For Input As #1
+        Open leaderFile$ For Input As #1
 
         For I = 0 To 19:
             For I1 = 0 To 19:

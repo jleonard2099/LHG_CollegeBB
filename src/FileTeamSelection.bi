@@ -1,11 +1,13 @@
-Declare Sub ChooseTeam (yearNumber$, numberTeams, teamIdx)
-Declare Sub SelectTeam (selectedIdx)
+Declare Sub ChooseTeam (yearNumber$, numberTeams, chosenIdx, teamName$)
+Declare Sub SelectTeam (numberTeams, yearNumber$, selectedIdx, teamName$, ExitCode%)
 Declare Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
-Declare Sub ReadExtraData (teamYear$, teamIdx)
+Declare Sub ReadExtraData (teamYear$, teamIdx, dataOK)
 Declare Sub UserFilePrompt (reportFile$)
+Declare Sub ScheduleFilePrompt (scheduleFile$)
 
 Declare Sub ReadTeamStats (teamName$, statFile$)
 Declare Sub ReadScheduleStats (statFile$, numberGames)
+Declare Sub SaveScheduleStats (saveFile$, numberGames)
 Declare Sub ReadSeasonRecords (recordFile$)
 Declare Sub ReadGameRecords (recordFile$)
 Declare Sub ReadConferenceIndex (indexFile$)
@@ -40,7 +42,7 @@ Dim leagueRatings(0 To 4)
 Dim teamRatings(0 To 9), teamStats!(0 To 24)
 
 'Why isn't this 0 to 13?
-'Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)
+Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)
 Dim playerDef!(0 To 13), playerStats!(0 To 13, 0 To 13)
 
 Dim playerNames$(0 To 13), position$(0 To 13)

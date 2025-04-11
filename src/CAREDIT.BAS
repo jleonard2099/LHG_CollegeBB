@@ -16,7 +16,7 @@ Sub CAREDIT ()
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-        Call LoadCareerFile(careerFile$)
+		Call LoadCareerFile (diskPaths$(1) + careerFile$ + ".CAR")
 
         Do
 
@@ -42,7 +42,7 @@ Sub CAREDIT ()
                 Case "E", "X": '
 
                 Case "U":
-                    Call SaveCareerFile(careerFile$)
+                    Call SaveCareerFile(diskPaths$(1) + careerFile$ + ".CAR")
 
             End Select
 

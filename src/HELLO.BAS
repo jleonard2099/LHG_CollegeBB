@@ -29,12 +29,7 @@ DefInt A-Z
 ' For Utils
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
-Dim playerOff!(0 To 14, 0 To 19), playerRatings!(0 To 13, 0 To 6)
-
 '$Include: 'Variables.bi'
-Dim div1Name$, div2Name$
-Dim memberName$(TEAMS_PER_CONFERENCE)
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -163,6 +158,28 @@ Data "SHOOT ONLY THREE POINTERS (LAST 3 MIN)"
 For I = 0 To 9:
     Read offStyles$(I)
 Next
+
+
+Data "MOTION"
+Data "PICK AND ROLL"
+Data "TRIANGLE"
+Data "PRINCETON"
+Data "FLEX"
+Data "DRIBBLE DRIVE"
+Data "TRANSITION"
+Data "ZONE"
+Data "ISOLATION"
+Data "QUICK OFFENSE (LAST 3 MIN)"
+Data "DELAY OFFENSE (LAST 3 MIN)"
+Data "MILK CLOCK TO 15 SEC (IF USING SHOT CLOCK)"
+Data "STALL-ONLY REAL GOOD SHOT (MUST BE WITHIN 10 POINTS)"
+Data "TOTAL STALL (LAST 3 MIN)"
+Data "HOLD BALL VS PASSIVE ZONE (MUST BE AHEAD, WITH NO SHOT CLOCK)"
+Data "SHOOT ONLY THREE POINTERS (LAST 3 MIN)"
+For I = 0 To 15:
+    Read offStylesNew$(I)
+Next
+
 
 Data "SOLID MAN-TO-MAN"
 Data "PRESSURE MAN-TO-MAN"
@@ -487,7 +504,7 @@ Sub TeamMgt_Menu ()
                     Call DRAFT
 
                 Case 6:
-                    targetFile$ = _OpenFileDialog$("Select team file", diskPaths$(0), "COLBBTMS.*", "Team files")
+                    targetFile$ = _OpenFileDialog$("Choose Team file", diskPaths$(0), "COLBBTMS.*", "Team files")
 
                     Call ConvertTeam4to5(targetFile$, 0)
 
@@ -521,7 +538,7 @@ Sub Replay_Menu ()
 
         ReDim menuChoices$(1 To 6)
 
-        menuChoices$(1) = "VIEW / PRINT COMPILED STATS     "
+        menuChoices$(1) = "REVIEW COMPILED STATS           "
         menuChoices$(2) = "COMPARE REPLAY STATS TO ACTUAL  "
         menuChoices$(3) = "MODIFY REPLAY STATS             "
         menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
@@ -2287,8 +2304,6 @@ Sub COLHOOP ()
                 Call FoulCalled(1)
             End If
 
-            Call pbplog(2258)
-
             GoTo 9065
 
         End If
@@ -2346,7 +2361,6 @@ Sub COLHOOP ()
                 ' ** Foul on pass **
                 '(DEF / Standard)
                 Call FoulCalled(1)
-                Call pbplog(2315)
 
                 LT = 4
 
@@ -2426,7 +2440,6 @@ Sub COLHOOP ()
                 offStatus = 88
 
                 Call FoulCalled(1)
-                Call pbplog(2395)
 
                 LT = 4
 
@@ -2481,6 +2494,8 @@ Sub COLHOOP ()
 
                 Case 1
                     'Aggressive
+                    '-- Dribble Drive = 7
+                    '-- Transition = 6
                     OY% = 7
 
                 Case 2
@@ -2521,15 +2536,17 @@ Sub COLHOOP ()
         GS% = GS% - 7
     End If
 
-    'Quick Off
-    If offStrat(P) = 3 Then
-        GS% = GS% + 21
-    End If
+    Select Case offStrat(P)
 
-    'Delay Off
-    If offStrat(P) = 4 Then
-        GS% = GS% - 21
-    End If
+        'Quick Off
+        Case 3: 
+            GS% = GS% + 21
+
+        'Delay
+        Case 4: 
+            GS% = GS% - 21
+
+    End Select
 
     'Total Stall | Hold Ball | Milk Clock and 15+ Secs on Shot Clock
     'Shot Clock + Difficult Shot | No Shot Clock + Difficult Shot OR 25% of the time
@@ -3543,7 +3560,6 @@ Sub COLHOOP ()
 
                     ' ** Foul on shot attempt **
                     Call FoulCalled(1)
-                    Call pbplog(3512)
 
                     Call FreeThrow_Two(missedLast)
 
@@ -3660,7 +3676,6 @@ Sub COLHOOP ()
 
                     ' ** Foul on made FGA **
                     Call FoulCalled(1)
-                    Call pbplog(3629)
 
                     619 '
                     If (autoPlay = 0 Or pbpDelay! > 0) Then
@@ -4027,7 +4042,6 @@ Sub COLHOOP ()
 
             ' ** Intentional foul / designated player **
             Call FoulCalled(0)
-            Call pbplog(3998)
 
             GoTo 9065
 
@@ -4074,7 +4088,6 @@ Sub COLHOOP ()
 
                         ' ** Foul on missed 3FGA **
                         Call FoulCalled(1)
-                        Call pbplog(4042)
 
                         If (autoPlay = 0 Or pbpDelay! > 0) Then
 
@@ -4151,7 +4164,6 @@ Sub COLHOOP ()
 
                         ' ** Foul on made 3FGA **
                         Call FoulCalled(1)
-                        Call pbplog(4119)
 
                         GoTo 619
 
@@ -4294,7 +4306,6 @@ Sub COLHOOP ()
 
     ' ** Foul on Offense **
     Call FoulCalled(1)
-    Call pbplog(4262)
     
     ballCarrier = foulPlayer
 
@@ -4768,7 +4779,6 @@ Sub COLHOOP ()
 
         ' ** Foul on defensive rebound (by offense) **
         Call FoulCalled(1)
-        Call pbplog(4735)
 
         LT = 4
         foulOnReb = 0
@@ -4845,7 +4855,6 @@ Sub COLHOOP ()
 
         ' ** Foul on offensive rebound (by defense) **
         Call FoulCalled(1)
-        Call pbplog(4812)
 
         LT = 4
         foulOnReb = 0
@@ -8898,7 +8907,7 @@ Sub CreditAssists ()
     randPlayer = Int(Rnd(1) * 5)
 
     assistRating = plyrOff_GAME!(P, lineupIdx(P, randPlayer), 4)
-    'assistChance = Int(Rnd(1) * 3) + 1
+
     Select Case assistRating
 
         Case 0
@@ -9550,15 +9559,17 @@ Sub UPDATESCREEN ()
     Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If teamFouls(0) > 6 Then
+    If teamFouls(0) >= 6 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
+        If teamFouls(0) >= 9 Then Print "+";
         Color 7, 0
     End If
 
-    If teamFouls(1) > 6 Then
+    If teamFouls(1) >= 6 Then
         Color 0, 2
-        Locate , 29: Print "BONUS"
+        Locate , 29: Print "BONUS";
+        If teamFouls(1) >= 9 Then Print "+";
         Color 7, 0
     End If
 
@@ -9964,7 +9975,7 @@ End Sub
 
 
 '----------------------------------------
-'         ReboundOffense Subroutine
+'        ReboundOffense Subroutine
 '----------------------------------------
 'This subroutine clearly does something
 'related to offensive rebounds
@@ -10015,7 +10026,7 @@ End Sub
 
 
 '----------------------------------------
-'         ReboundDefense Subroutine
+'        ReboundDefense Subroutine
 '----------------------------------------
 'This subroutine determines which player
 'gets the rebound, based on the team's
@@ -12079,51 +12090,90 @@ Sub ComputerStrategy ()
 
             Case 1
                 '1st half strategy
-                Select Case RN0
+                If threePtOpt = 1 Then
+                
+                    Select Case RN0
 
-                    Case 1 To 43
-                        defStrat(P9) = 0
+                        Case 1 To 23
+                            defStrat(P9) = 0
 
-                    Case 44 To 67
-                        defStrat(P9) = 1
+                        Case 24 To 33
+                            defStrat(P9) = 1
 
-                    Case 68 To 92
-                        defStrat(P9) = 2
+                        Case 34 To 52
+                            defStrat(P9) = 2
 
-                    Case 93 To 94
-                        defStrat(P9) = 15
+                        Case 53 To 62
+                            defStrat(P9) = 3
 
-                    Case 95 To 100
-                        defStrat(P9) = 3
+                        Case 63 To 65
+                            defStrat(P9) = 4
 
-                End Select
+                        Case 66 To 69
+                            defStrat(P9) = 7
 
-                Call Rolld100(RN1)
-                Select Case RN1
+                        Case 70 To 72
+                            defStrat(P9) = 8
 
-                    Case 1 To 3
-                        defStrat(P9) = 10
+                        Case 73 To 83
+                            defStrat(P9) = 9
 
-                    Case 4 To 5
-                        defStrat(P9) = 9
+                        Case 84 To 88
+                            defStrat(P9) = 10
 
-                    Case 6
-                        defStrat(P9) = 16
+                        Case 89 To 97
+                            defStrat(P9) = 15
 
-                    Case 7 To 9
-                        defStrat(P9) = 7
+                        Case 98 To 100
+                            defStrat(P9) = 16
 
-                    Case 10 To 12
-                        defStrat(P9) = 8
+                    End Select
+                
+                Else
 
-                    Case 13 To 14
-                        defStrat(P9) = 4
+                    Select Case RN0
 
-                    Case 15
-                        defStrat(P9) = 15
+                        Case 1 To 26
+                            defStrat(P9) = 0
 
-                End Select
+                        Case 27 To 36
+                            defStrat(P9) = 1
 
+                        Case 37 To 45
+                            defStrat(P9) = 2
+
+                        Case 46
+                            defStrat(P9) = 15
+
+                        Case 47 To 64
+                            defStrat(P9) = 3
+                            
+                        Case 65 To 66
+                            defStrat(P9) = 13
+
+                        Case 67 To 79
+                            defStrat(P9) = 10
+
+                        Case 80 To 87
+                            defStrat(P9) = 9
+
+                        Case 88 To 89
+                            defStrat(P9) = 16
+
+                        Case 90 To 92
+                            defStrat(P9) = 7
+
+                        Case 93 To 96
+                            defStrat(P9) = 8
+
+                        Case 97 To 100
+                            defStrat(P9) = 4
+
+                    End Select
+
+                End If
+
+                'Call pbplog(12155)
 
             Case 2
                 '2nd Half strategy
@@ -12134,77 +12184,164 @@ Sub ComputerStrategy ()
 
                         Select Case scoreDiffOpp
 
-                            Case Is < 10
-                                'Opponent behind or within 10
+                            Case Is < 12
+                                'Opponent behind or within 12
 
-                                Select Case RN0
+                                If threePtOpt = 1 Then
 
-                                    Case 1 To 52
-                                        defStrat(P9) = 0
+                                    Select Case RN0
 
-                                    Case 53 To 75
-                                        defStrat(P9) = 1
+                                        Case 1 To 22
+                                            defStrat(P9) = 0
 
-                                    Case 76 To 84
-                                        defStrat(P9) = 2
+                                        Case 23 To 27
+                                            defStrat(P9) = 1
 
-                                    Case 85
-                                        defStrat(P9) = 15
+                                        Case 28 To 39
+                                            defStrat(P9) = 2
 
-                                    Case 86 To 93
-                                        defStrat(P9) = 5
+                                        Case 40 To 42
+                                            defStrat(P9) = 15
 
-                                    Case 94 To 97
-                                        defStrat(P9) = 3
+                                        Case 43 To 63
+                                            defStrat(P9) = 5
 
-                                    Case 98 To 100
-                                        defStrat(P9) = 12
+                                        Case 64 To 73
+                                            defStrat(P9) = 3
 
-                                End Select
+                                        Case 74 To 100
+                                            defStrat(P9) = 12
 
-                            Case 10 To 20
-                                'Opponent ahead by 10-20
+                                    End Select
+                                    
+                                Else
 
-                                Select Case RN0
+                                    Select Case RN0
 
-                                    Case 1 To 57
-                                        defStrat(P9) = 0
+                                        Case 1 To 40
+                                            defStrat(P9) = 0
 
-                                    Case 58 To 86
-                                        defStrat(P9) = 4
+                                        Case 41 To 50
+                                            defStrat(P9) = 1
 
-                                    Case 87 To 94
-                                        defStrat(P9) = 1
+                                        Case 51 To 56
+                                            defStrat(P9) = 2
 
-                                    Case 95 To 99
-                                        defStrat(P9) = 10
+                                        Case 57 To 59
+                                            defStrat(P9) = 15
 
-                                    Case 100
-                                        defStrat(P9) = 11
+                                        Case 60 To 85
+                                            defStrat(P9) = 5
 
-                                End Select
+                                        Case 86 To 95
+                                            defStrat(P9) = 3
+
+                                        Case 96 To 100
+                                            defStrat(P9) = 12
+
+                                    End Select
+
+                                End If
+
+                                'Call pbplog(12225)
+
+                            Case 12 To 20
+                                'Opponent ahead by 12-20
+
+                                If threePtOpt = 1 Then
+
+                                    Select Case RN0
+
+                                        Case 1 To 45
+                                            defStrat(P9) = 0
+
+                                        Case 46 To 72
+                                            defStrat(P9) = 4
+
+                                        Case 73 To 77
+                                            defStrat(P9) = 1
+
+                                        Case 78 To 90
+                                            defStrat(P9) = 10
+
+                                        Case 91 To 100
+                                            defStrat(P9) = 11
+
+                                    End Select
+                                    
+                                Else
+
+                                    Select Case RN0
+
+                                        Case 1 To 52
+                                            defStrat(P9) = 0
+
+                                        Case 53 To 80
+                                            defStrat(P9) = 4
+
+                                        Case 81 To 87
+                                            defStrat(P9) = 1
+
+                                        Case 88 To 96
+                                            defStrat(P9) = 10
+
+                                        Case 97 To 100
+                                            defStrat(P9) = 11
+
+                                    End Select
+
+                                End If
+
+                                'Call pbplog(12274)
 
                             Case Is > 20
                                 'Opponent ahead by 21+
 
-                                Select Case RN0
+                                If threePtOpt = 1 Then
 
-                                    Case 1 To 42
-                                        defStrat(P9) = 0
+                                    Select Case RN0
 
-                                    Case 43 To 80
-                                        defStrat(P9) = 1
+                                        Case 1 To 28
+                                            defStrat(P9) = 0
 
-                                    Case 81 To 92
-                                        defStrat(P9) = 6
+                                        Case 29 To 59
+                                            defStrat(P9) = 1
 
-                                    Case 93 To 97
-                                        defStrat(P9) = 10
+                                        Case 60 To 84
+                                            defStrat(P9) = 6
 
-                                    Case 98 To 100
-                                        defStrat(P9) = 11
+                                        Case 85 To 91
+                                            defStrat(P9) = 10
 
-                                End Select
+                                        Case 92 To 100
+                                            defStrat(P9) = 11
+
+                                    End Select
+
+                                Else
+
+                                    Select Case RN0
+
+                                        Case 1 To 30
+                                            defStrat(P9) = 0
+
+                                        Case 31 To 63
+                                            defStrat(P9) = 1
+
+                                        Case 64 To 87
+                                            defStrat(P9) = 6
+
+                                        Case 88 To 92
+                                            defStrat(P9) = 10
+
+                                        Case 93 To 100
+                                            defStrat(P9) = 11
+
+                                    End Select
+                                    
+                                End If
+
+                                'Call pbplog(12323)
 
                         End Select
 
@@ -12216,65 +12353,145 @@ Sub ComputerStrategy ()
                             Case Is <= 10
                                 'Opponent behind or within 10
 
-                                Select Case RN0
+                                If threePtOpt = 1 Then
 
-                                    Case 1 To 52
-                                        defStrat(P9) = 0
+                                    Select Case RN0
 
-                                    Case 53 To 71
-                                        defStrat(P9) = 2
+                                        Case 1 To 43
+                                            defStrat(P9) = 0
 
-                                    Case 72
-                                        defStrat(P9) = 15
+                                        Case 44 To 62
+                                            defStrat(P9) = 2
 
-                                    Case 73 To 78
-                                        defStrat(P9) = 1
+                                        Case 63
+                                            defStrat(P9) = 15
 
-                                    Case 79 To 100
-                                        defStrat(P9) = 10
+                                        Case 64 To 66
+                                            defStrat(P9) = 1
 
-                                End Select
+                                        Case 67 To 100
+                                            defStrat(P9) = 10
 
+                                    End Select
+                                    
+                                Else
+
+                                    Select Case RN0
+
+                                        Case 1 To 40
+                                            defStrat(P9) = 0
+                                            
+                                        Case 41 To 60
+                                            defStrat(P9) = 6
+                                        
+                                        Case 61 To 71
+                                            defStrat(P9) = 2
+
+                                        Case 72
+                                            defStrat(P9) = 15
+
+                                        Case 73 To 78
+                                            defStrat(P9) = 1
+
+                                        Case 79 To 100
+                                            defStrat(P9) = 10
+
+                                    End Select
+
+                                End If
+
+                                'Call pbplog(12382)
 
                             Case 11 To 19
                                 'Opponent ahead by 11-19
 
-                                Select Case RN0
+                                If threePtOpt = 1 Then
 
-                                    Case 1 To 52
-                                        defStrat(P9) = 0
+                                    Select Case RN0
 
-                                    Case 53 To 80
-                                        defStrat(P9) = 1
+                                        Case 1 To 20
+                                            defStrat(P9) = 0
 
-                                    Case 81 To 90
-                                        defStrat(P9) = 5
+                                        Case 21 To 27
+                                            defStrat(P9) = 1
 
-                                    Case 91 To 100
-                                        defStrat(P9) = 12
+                                        Case 28 To 54
+                                            defStrat(P9) = 5
 
-                                End Select
+                                        Case 55 To 100
+                                            defStrat(P9) = 12
+
+                                    End Select
+
+                                Else
+
+                                    Select Case RN0
+
+                                        Case 1 To 41
+                                            defStrat(P9) = 0
+
+                                        Case 42 To 54
+                                            defStrat(P9) = 1
+
+                                        Case 55 To 81
+                                            defStrat(P9) = 5
+
+                                        Case 82 To 100
+                                            defStrat(P9) = 12
+
+                                    End Select
+                                
+                                End If
+                                
+                                'Call pbplog(12425)
 
                             Case Is > 20
 
-                                Select Case RN0
+                                If threePtOpt = 1 Then
 
-                                    Case 1 To 52
-                                        defStrat(P9) = 0
+                                    Select Case RN0
 
-                                    Case 53 To 74
-                                        defStrat(P9) = 1
+                                        Case 1 To 36
+                                            defStrat(P9) = 0
 
-                                    Case 75 To 84
-                                        defStrat(P9) = 5
+                                        Case 37 To 50
+                                            defStrat(P9) = 1
 
-                                    Case 85 To 94
-                                        defStrat(P9) = 10
+                                        Case 51 To 60
+                                            defStrat(P9) = 5
 
-                                    Case 95 To 100
-                                        defStrat(P9) = 13
+                                        Case 61 To 70
+                                            defStrat(P9) = 10
 
-                                End Select
+                                        Case 71 To 100
+                                            defStrat(P9) = 13
+
+                                    End Select
+
+                                Else
+
+                                    Select Case RN0
+
+                                        Case 1 To 52
+                                            defStrat(P9) = 0
+
+                                        Case 53 To 74
+                                            defStrat(P9) = 1
+
+                                        Case 75 To 84
+                                            defStrat(P9) = 5
+
+                                        Case 85 To 94
+                                            defStrat(P9) = 10
+
+                                        Case 95 To 100
+                                            defStrat(P9) = 13
+
+                                    End Select
+                                    
+                                End If
+
+                                'Call pbplog(12473)
 
                         End Select
 
@@ -12282,47 +12499,56 @@ Sub ComputerStrategy ()
 
                         Select Case scoreDiffOpp
 
-                            Case Is <= 4
-                                'Opponent behind or within 4
+                            Case Is <= 7
+                                'Opponent behind or within 7
 
                                 Select Case RN0
 
-                                    Case 1 To 15
+                                    Case 1 To 20
                                         defStrat(P9) = 5
 
-                                    Case 16 To 41
+                                    Case 21 To 50
                                         defStrat(P9) = 6
 
-                                    Case 42 To 63
+                                    Case 51 To 74
                                         defStrat(P9) = 11
 
-                                    Case 64 To 84
+                                    Case 75 To 94
                                         defStrat(P9) = 13
 
-                                    Case 85 To 100
+                                    Case 95 To 100
                                         defStrat(P9) = 1
 
                                 End Select
 
-                            Case 5 To 10
-                                'Opponent ahead by 5-10
+                                'Call pbplog(12503)
+
+                            Case 8 To 12
+                                'Opponent ahead by 8-12
                                 defStrat(P9) = 14
 
-                            Case Is >= 11
-                                'Opponent ahead by 11+
+                                'Call pbplog(12509)
+
+                            Case Is >= 13
+                                'Opponent ahead by 15+
 
                                 Select Case RN0
 
-                                    Case 1 To 47
+                                    Case 1 To 49
                                         defStrat(P9) = 11
 
-                                    Case 48 To 93
-                                        defStrat(P9) = 13
+                                    Case 50 To 94
+                                        defStrat(P9) = 6
 
-                                    Case 94 To 100
+                                    Case 95 To 96
+                                        defStrat(P9) = 3
+
+                                    Case 97 To 100
                                         defStrat(P9) = 1
 
                                 End Select
+
+                                'Call pbplog(12530)
 
                         End Select
 
@@ -12351,6 +12577,8 @@ Sub ComputerStrategy ()
 
                 End Select
 
+                'Call pbplog(12559)
+
         End Select
 
     Else
@@ -12358,39 +12586,67 @@ Sub ComputerStrategy ()
 
         Call Rolld100(RN0)
 
-        Select Case RN0
+        If threePtOpt = 1 Then
 
-            Case 1 To 46
-                defStrat(P9) = 0
+            Select Case RN0
 
-            Case 47 To 74
-                defStrat(P9) = 1
+                Case 1 To 30
+                    defStrat(P9) = 0
 
-            Case 75 To 98
-                defStrat(P9) = 2
+                Case 31 To 47
+                    defStrat(P9) = 1
 
-            Case 99 To 100
-                defStrat(P9) = 15
+                Case 48 To 74
+                    defStrat(P9) = 2
 
-        End Select
+                Case 75 To 81
+                    defStrat(P9) = 15
 
-        Call Rolld100(RN0)
+                Case 82 To 87
+                    defStrat(P9) = 4
 
-        Select Case RN0
+                Case 88 To 91
+                    defStrat(P9) = 8
 
-            Case 1 To 5
-                defStrat(P9) = 4
+                Case 92 To 97
+                    defStrat(P9) = 7
 
-            Case 6 To 9
-                defStrat(P9) = 8
+                Case 98 To 100
+                    defStrat(P9) = 16
 
-            Case 10
-                defStrat(P9) = 7
+            End Select
+            
+        Else
+        
+            Select Case RN0
 
-            Case 11
-                defStrat(P9) = 16
+                Case 1 To 35
+                    defStrat(P9) = 0
 
-        End Select
+                Case 36 To 52
+                    defStrat(P9) = 1
+
+                Case 53 To 77
+                    defStrat(P9) = 2
+
+                Case 78 To 81
+                    defStrat(P9) = 15
+
+                Case 82 To 89
+                    defStrat(P9) = 4
+
+                Case 90 To 93
+                    defStrat(P9) = 8
+
+                Case 94 To 98
+                    defStrat(P9) = 7
+
+                Case 99 To 100
+                    defStrat(P9) = 16
+
+            End Select
+
+        End If
 
     End If
 
@@ -12405,18 +12661,39 @@ Sub ComputerStrategy ()
 
     If currHalf = 1 Then
 
-        Select Case RN0
+        If threePtOpt = 1 then
 
-            Case 1 To 75
-                offStrat(P9) = 0
+            Select Case RN0
 
-            Case 76 To 94
-                offStrat(P9) = 1
+                Case 1 To 53
+                    offStrat(P9) = 0
 
-            Case 95 To 100
-                offStrat(P9) = 2
+                Case 54 To 88
+                    offStrat(P9) = 1
 
-        End Select
+                Case 89 To 100
+                    offStrat(P9) = 2
+
+            End Select
+        
+        Else
+
+            Select Case RN0
+
+                Case 1 To 73
+                    offStrat(P9) = 0
+
+                Case 74 To 91
+                    offStrat(P9) = 1
+
+                Case 92 To 100
+                    offStrat(P9) = 2
+
+            End Select
+            
+        End If
+        
+        Call pbplog(12658)
 
     Else
         'currHalf >= 2
@@ -12444,6 +12721,8 @@ Sub ComputerStrategy ()
 
             End If
 
+            Call pbplog(12703)
+
         Else
 
             'We are ahead
@@ -12452,6 +12731,8 @@ Sub ComputerStrategy ()
             Else
                 offStrat(P9) = 2
             End If
+
+            Call pbplog(12714)
 
         End If
 
@@ -14495,7 +14776,8 @@ Sub pbplog (lineNumber)
     'Print #11, "Calling from "; lineNumber
     'Print #11, currGame; ","; ballCarrier; ","; lineNumber
     'Print #11, test
-    Print #11, lineNumber
+    'Print #11, lineNumber
+    Print #11, lineNumber, offStrat(P9)
     'Print #11, shotRoll; " | "; threePtShotChance
     'Print #11,
 
