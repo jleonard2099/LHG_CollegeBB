@@ -320,7 +320,7 @@ Dim game3FGM!(1, 13), game3FGA!(1, 13)
 
 Dim Shared defStyles$(0 To 17), defStyles_brief$(0 To 17), diskIDs$(5)
 Dim Shared gameArena$(0 To 1), gameCoaches$(0 To 1), gameMascots$(0 To 1), gameTeams$(0 To 1)
-Dim Shared offStyles$(9), offStyles_brief$(9)
+Dim Shared offStyles$(9), offStyles_brief$(15)
 Dim Shared offStylesNew$(15)
 Dim Shared pbpStyle$(1), players$(1, 13)
 Dim Shared positions_GAME$(0 To 1, 0 To 13), posnName$(0 To 4)
