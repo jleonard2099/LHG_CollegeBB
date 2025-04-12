@@ -105,6 +105,7 @@ Next
 '2 = Foul chance
 '2nd index represents Def Category
 'Data 1,4,2,5,15,29,22,36,7,9,7,12
+'-- Update to improve foul chances
 Data 2,5,1,4,15,29,22,36,7,9,3,12
 For I = 0 To 2
     For I1 = 1 To 4
@@ -120,6 +121,7 @@ Next
 '4 = Foul chance
 '2nd index represents Def Coverage
 'Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
+'-- Update to improve foul chances
 Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,9,3,7
 For I = 0 To 4
     For I1 = 0 To 3
@@ -1255,7 +1257,6 @@ Sub COLHOOP ()
             'then Val will return the first 4 digits
             teamYears(I) = Val(RTrim$(diskIDs$(I)))
         End If
-
     Next I
 
     Call ChangeContributions
@@ -1263,6 +1264,10 @@ Sub COLHOOP ()
 
     If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then
         Call ColorChange
+    End If
+
+    If autoPlay = 1 Then
+        gameLoc = schedOptions(2)
     End If
 
     'Determine attendance
@@ -2374,7 +2379,7 @@ Sub COLHOOP ()
             '   5% = fudge factor to get Turnovers where they should be overall
             CY = defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
 
-            If d100% <= CY Then
+            If RN0 <= CY Then
 
                 Call LASTSHOT
 
@@ -2395,7 +2400,7 @@ Sub COLHOOP ()
                 pressureRating(D, 1) = 0
             End If
 
-            If d100% <= CY Then
+            If RN0 <= CY Then
                 'Steal
                 GoTo 435
             End If
@@ -2404,11 +2409,13 @@ Sub COLHOOP ()
 
     Else
 
+        Call Rolld100(RN0)
+
         'If NOT an Offensive Stall OR Defense is not 2-3 Zone
-        If (offStrat(P) <> 14 And offStrat(P) <> 13) Or defCoverage(D) <> 2 Then
+        If (offStrat(P) <> 13 And offStrat(P) <> 14) Or defCoverage(D) <> 2 Then
 
             ' *** CHECK FOR PERSONAL FOUL ***
-            foulChance = defAdjVsShot(4, defCoverage(D)) - 2
+            foulChance = defAdjVsShot(4, defCoverage(D)) ' - 2
 
             'Around 2005, the NCAA  saw a shift towards fewer jump shots.
             'This naturally leads to increased personal fouls.
@@ -2479,7 +2486,7 @@ Sub COLHOOP ()
 
             Select Case offStrat(P)
 
-                Case 0 to 4, 9, 11, 12, 14, 15
+                Case 0 To 4, 9, 11, 12, 14, 15
                     'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
                     OY% = 0
 
@@ -2531,7 +2538,7 @@ Sub COLHOOP ()
         Case 9:
             GS% = GS% + 21
 
-        'Delay
+            'Delay
         Case 10:
             GS% = GS% - 21
 
@@ -3534,7 +3541,8 @@ Sub COLHOOP ()
 
                 'Player attempt to draw FOUL
                 '-- Compare roll to Foul Draw Rating + Def Foul Adj
-                If foulRoll <= plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 16) + teamAdj(D, 7) - 2 Then
+                If foulRoll <= plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 16) + teamAdj(D, 7) Then
+                    ' - 2 Then
 
                     'FOUL!!!
                     plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - 1
@@ -4297,6 +4305,7 @@ Sub COLHOOP ()
     
     ballCarrier = foulPlayer
 
+    'Check if in BONUS
     If teamFouls(D) > 6 Then
 
         'BONUS
@@ -11130,7 +11139,8 @@ Sub SHOTPERCENT ()
         'allowing more b/c their likelihood makes them risky.
         'This is reflected here by increasing the likelihood
         'the shot will be taken.
-        threePtDefAdj = 0 '10
+        '--- currently adjusting to tweak 3FGA
+        threePtDefAdj = 0
     End If
 
     Select Case defStrat(D)
