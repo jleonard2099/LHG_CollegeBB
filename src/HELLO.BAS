@@ -10285,7 +10285,7 @@ Sub ZONECHANGE ()
         End Select
 
         P9 = D
-        
+
         Call CategorizeDefense(P9)
 
         Color 15, 0
@@ -10863,59 +10863,74 @@ Sub CHANGESTRATEGY ()
     109 '
     Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1)
     Cls
-    Print ; Tab(33); "OFFENSIVE STYLE"
+
+    Print Tab(33); "OFFENSIVE STYLE"
     Print
 
     For I = 0 To 15
-        Locate , 5: Print Using "# "; I;: Print offStylesNew$(I)
+        Locate 3 + I, 5: Print Using "# "; I;
+        If I = 10 Then Locate , 5: Print "A ";
+        If I = 11 Then Locate , 5: Print "B ";
+        If I = 12 Then Locate , 5: Print "C ";
+        If I = 13 Then Locate , 5: Print "D ";
+        If I = 14 Then Locate , 5: Print "E ";
+        If I = 15 Then Locate , 5: Print "F ";
+        Print offStylesNew$(I)
     Next
 
     Print
-    Locate 14, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(P9)
+    Locate 20, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(P9)
 
     Do
         I$ = GetKeyPress$
         offChoice = Val(I$)
+        Call LetterToNumber(I$, offChoice)
     Loop Until offChoice >= 0 And offChoice <= 15
 
     If (offChoice = 9 Or offChoice = 10 Or offChoice = 13 Or offChoice = 15) And (currHalf < 2 Or currHalf >= 2 And gameClock! > 180) Then
         Beep
-        Locate 18, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT"
+        Color 12
+        Locate 22, 5: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR LATER!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
     If offChoice = 14 And defCoverage(1 - P9) <> 2 Then
         Beep
-        Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE"
+        Color 12
+        Locate 22, 5: Print "DEFENSE IS NOT IN PASSIVE ZONE!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
     If offChoice = 10 And score(P9, 0) - score(1 - P9, 0) > -11 Then
         Beep
-        Locate 18, 1: Print "ILLEGAL SELECTION"
+        Color 12
+        Locate 22, 5: Print "ILLEGAL SELECTION!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
     If offChoice = 15 And threePtOpt = 0 Then
         Beep
-        Locate 18, 1: Print "NOT USING 3 POINT SHOT"
+        Color 12
+        Locate 22, 5: Print "NOT USING 3 POINT SHOT!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
     If offChoice = 11 And sClockVal = 0 Then
         Beep
-        Locate 18, 1: Print "NOT USING SHOT CLOCK"
+        Color 12
+        Locate 22, 5: Print "NOT USING SHOT CLOCK!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
     If offChoice = 13 And score(P9, 0) - score(1 - P9, 0) <= 0 Then
         Beep
-        Locate 18, 1: Print "ILLEGAL SELECTION"
+        Color 12
+        Locate 22, 5: Print "ILLEGAL SELECTION!"
         I$ = GetKeyPress$
         GoTo 109
     End If
@@ -10923,18 +10938,19 @@ Sub CHANGESTRATEGY ()
     'How to loop around this with so many conditions?
     'Possibly build a bunch of nested If/Then statements?
     offStrat(P9) = offChoice
+
     crashBoards(P9) = 0
 
     If currHalf >= 2 And gameClock! <= 120 Then
-        
+
         Print "CRASH OFFENSIVE BOARDS (LAST 2 MIN)? (Y/N)";
-        
+
         Do
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
         If UCase$(I$) = "Y" Then crashBoards(P9) = 1
-        
+
     End If
 
     Call DEFENSEMENU
