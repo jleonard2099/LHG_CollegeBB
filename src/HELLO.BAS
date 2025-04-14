@@ -188,22 +188,22 @@ For I = 0 To 17
     Read defStyles$(I)
 Next I
 
-Data "MOTION OFFENSE"
-Data "PICK AND ROLL"
-Data "TRIANGLE OFFENSE"
-Data "PRINCETON OFFENSE"
-Data "FLEX OFFENSE"
-Data "DRIBBLE DRIVE MOTION"
-Data "TRANSITION OFFENSE"
-Data "ZONE OFFENSE"
-Data "ISOLATION PLAYS"
-Data "QUICK OFFENSE (LAST 3 MIN)        "
-Data "DELAY OFFENSE (LAST 3 MIN)        "
-Data "MILK CLOCK TO 15 SEC (USING S.C.) "
-Data "STALL F GOOD SHOT (WITHIN 10 PTS) "
-Data "TOTAL STALL (LAST 3 MIN)          "
-Data "HOLD VS PASS ZN (AHEAD, NO S.C.)  "
-Data "SHOOT ONLY THREES (LAST 3 MIN)    "
+Data "MOTION"
+Data "PICK & ROLL"
+Data "TRIANGLE"
+Data "PRINCETON"
+Data "FLEX"
+Data "DRIBBLE DRIVE"
+Data "TRANSITION"
+Data "ZONE"
+Data "ISOLATION"
+Data "QUICK OFFENSE (LAST 3 MIN)       "
+Data "DELAY OFFENSE (LAST 3 MIN)       "
+Data "MILK CLOCK TO 15 SEC (USING S.C.)"
+Data "STALL GOOD SHOT (WITHIN 10 PTS)  "
+Data "TOTAL STALL (LAST 3 MIN)         "
+Data "HOLD VS PASS ZN (AHEAD, NO S.C.) "
+Data "SHOOT ONLY THREES (LAST 3 MIN)   "
 For I = 0 To 15
     Read offStyles_brief$(I)
 Next
@@ -10866,8 +10866,8 @@ Sub CHANGESTRATEGY ()
     Print ; Tab(33); "OFFENSIVE STYLE"
     Print
 
-    For I = 0 To 9
-        Locate , 5: Print Using "# "; I;: Print offStyles$(I)
+    For I = 0 To 15
+        Locate , 5: Print Using "# "; I;: Print offStylesNew$(I)
     Next
 
     Print
