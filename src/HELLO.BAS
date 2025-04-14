@@ -2204,10 +2204,9 @@ Sub COLHOOP ()
                 ' *** CHECK FOR TURNOVER ***
 
                 'NOTE - defAdjVsPass(0, 4) is a value of 5
-                'We are not relying on the current DEFENSE???
-                CY = 7 + defAdjVsPass(0, 4)
+                toChance = 7 + defAdjVsPass(0, 4)
 
-                If RN1 <= CY Then
+                If RN1 <= toChance Then
 
                     Select Case RN0
 
@@ -2236,9 +2235,9 @@ Sub COLHOOP ()
                 'We are not relying on the current DEFENSE
                 'So technically fixed values could be put in here
                 'However, if research would show them needing changed...
-                CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 1)
+                stealChance = stealChance + teamAdj(P, 4) + defAdjVsPass(1, 1)
 
-                If RN1 <= CY Then
+                If RN1 <= stealChance Then
 
                     Select Case RN0
 
@@ -2376,10 +2375,9 @@ Sub COLHOOP ()
 
             'Chance of Turnover
             '   Def Foul Chance + Off T/O Rating + Def TO Adj + Def TO Chance - Pressure Rating
-            '   5% = fudge factor to get Turnovers where they should be overall
-            CY = defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
+            toChance = 1 + defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
 
-            If RN0 <= CY Then
+            If RN0 <= toChance Then
 
                 Call LASTSHOT
 
@@ -2392,7 +2390,7 @@ Sub COLHOOP ()
 
             'Chance of Steal
             '           Off Steal Rating + Def Steal Chance - Pressure Rating
-            CY = CY + teamAdj(P, 4) + defAdjVsPass(1, defCategory(D)) - pressureRating(D, 1)
+            stealChance = stealChance + teamAdj(P, 4) + defAdjVsPass(1, defCategory(D)) - pressureRating(D, 1)
             pctContrib(D) = pctContrib(D) + 1
 
             If pctContrib(D) > 3 Then
@@ -2400,7 +2398,7 @@ Sub COLHOOP ()
                 pressureRating(D, 1) = 0
             End If
 
-            If RN0 <= CY Then
+            If RN0 <= stealChance Then
                 'Steal
                 GoTo 435
             End If
@@ -2415,7 +2413,7 @@ Sub COLHOOP ()
         If (offStrat(P) <> 13 And offStrat(P) <> 14) Or defCoverage(D) <> 2 Then
 
             ' *** CHECK FOR PERSONAL FOUL ***
-            foulChance = defAdjVsShot(4, defCoverage(D)) ' - 2
+            foulChance = defAdjVsShot(4, defCoverage(D))
 
             'Around 2005, the NCAA  saw a shift towards fewer jump shots.
             'This naturally leads to increased personal fouls.
@@ -2455,21 +2453,35 @@ Sub COLHOOP ()
 
             ' *** CHECK FOR TURNOVER ***
 
-            If offStrat(P) = 10 Or offStrat(P) = 13 Then
-                'Delay / Stall
-                'OY% is -(defAdjVsShot/2)
-                'So, either +-1 or +-2
-                OY% = CInt((defAdjVsShot(2, defCoverage(D)) / 2)) * -1
-            Else
-                OY% = 0
-            End If
+            Select Case offStrat(P)
+
+                Case 0, 2, 4
+                    OY% = -1
+
+                Case 1, 6
+                    OY% = 1
+
+                Case 5
+                    OY% = 2
+
+                Case 7
+                    OY% = -2
+
+                Case 10, 13
+                    'Delay / Stall
+                    OY% = CInt((defAdjVsShot(2, defCoverage(D)) / 2)) * -1
+
+                Case Else
+                    OY% = 0
+
+            End Select
 
             'Chance of Turnover
             '   Def Foul Chance + Off TO Rating + Def TO Adj + Def TO Chance + OY%
             '--> 95+% of turnovers get calculated from here
-            CY = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY% + 3
+            toChance = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY%
 
-            If RN0 <= CY Then
+            If RN0 <= toChance Then
 
                 Call LASTSHOT
 
@@ -2477,26 +2489,32 @@ Sub COLHOOP ()
 
             End If
 
-
             ' *** CHECK FOR STEAL ***
 
             'Chance of Steal (based on Turnover)
             '         Off Steal Rating + Def Steal Chance
-            CY = CY + teamAdj(P, 4) + defAdjVsShot(3, defCoverage(D))
+            stealChance = toChance + teamAdj(P, 4) + defAdjVsShot(3, defCoverage(D))
 
             Select Case offStrat(P)
 
-                Case 0 To 4, 9, 11, 12, 14, 15
-                    'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
+                Case 0, 2, 4
+                    OY% = -3
+
+                Case 1, 6
+                    OY% = 3
+
+                Case 3, 8
                     OY% = 0
 
-                Case 5 To 6
-                    'Aggressive
+                Case 5
                     OY% = 7
 
-                Case 7 To 8
-                    'Safe
+                Case 7
                     OY% = -7
+
+                Case 9, 11, 12, 14, 15
+                    'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
+                    OY% = 0
 
                 Case 10, 13
                     'Delay, Total Stall
@@ -2504,7 +2522,7 @@ Sub COLHOOP ()
 
             End Select
 
-            If RN0 <= CY + OY% Then
+            If RN0 <= stealChance + OY% Then
                 'Check for steal
                 GoTo 435
             End If
@@ -2513,7 +2531,6 @@ Sub COLHOOP ()
 
     End If
 
-    'Is this when we actually pass the ball ???
 
 
     '-----
@@ -2532,9 +2549,40 @@ Sub COLHOOP ()
         GS% = GS% - 7
     End If
 
+    'These were NOT weighted based on the frequency
+    'of how much they're used.
+    'They were only weighted linearly.
+    'We will likely have to revisit.
     Select Case offStrat(P)
 
-        'Quick Off
+        Case 0
+            GS% = GS% + 5
+
+        Case 1
+            GS% = GS% + 11
+        
+        Case 2
+            GS% = GS% - 1
+        
+        Case 3
+            GS% = GS% - 6
+        
+        Case 4
+            GS% = GS% - 1
+                
+        Case 5
+            GS% = GS% + 16
+                
+        Case 6
+            GS% = GS% + 26
+                
+        Case 7
+            GS% = GS% - 11
+                
+        Case 8
+            GS% = GS% - 6
+
+            'Quick Off
         Case 9:
             GS% = GS% + 21
 
@@ -3539,10 +3587,25 @@ Sub COLHOOP ()
 
             If Not (currHalf > 1 And gameClock! <= 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! <= 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! <= 30 And scoreDiff = -2) Then
 
+                'Player's Foul Draw Rating + Def Foul Adj
+                foulDrawChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 16) + teamAdj(D, 7)
+
+                'Adjust foul chance based on offense
+                Select Case offStrat(P)
+
+                    Case 1, 8
+                        foulDrawChance = foulDrawChance + 1
+
+                    Case 3, 7
+                        foulDrawChance = foulDrawChance - 1
+
+                    Case 5
+                        foulDrawChance = foulDrawChance + 3
+                
+                End Select
+
                 'Player attempt to draw FOUL
-                '-- Compare roll to Foul Draw Rating + Def Foul Adj
-                If foulRoll <= plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 16) + teamAdj(D, 7) Then
-                    ' - 2 Then
+                If foulRoll <= foulDrawChance Then
 
                     'FOUL!!!
                     plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - 1
@@ -5505,7 +5568,7 @@ Sub TEAMSETUP (teamIdx)
     teamAdj(teamIdx, 6) = leagRat_GAME(teamIdx, 2)
     If teamAdj(teamIdx, 6) > 20 Then teamAdj(teamIdx, 6) = teamAdj(teamIdx, 6) - 100
 
-    'Def Foul Adj
+    'Off Foul Adj
     teamAdj(teamIdx, 7) = leagRat_GAME(teamIdx, 3)
     If teamAdj(teamIdx, 7) > 20 Then teamAdj(teamIdx, 7) = teamAdj(teamIdx, 7) - 100
 
@@ -9469,11 +9532,6 @@ Sub UPDATESCREEN ()
 
     Call TICKERUPDATE
 
-    'Team 1
-    Locate 2, 1
-    Locate , 9
-    Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
-
     'Game Clock - Minutes
     Color 15, 0
     Locate 1, 37
@@ -9499,10 +9557,6 @@ Sub UPDATESCREEN ()
         End If
 
     End If
-
-    'Team 2
-    Locate 2, 56
-    Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
 
     'Score Team 1
     Color 14, 0
@@ -9556,7 +9610,7 @@ Sub UPDATESCREEN ()
 
     If teamFouls(1) >= 6 Then
         Color 0, 2
-        Locate , 29: Print "BONUS";
+        Locate , 28: Print "BONUS";
         If teamFouls(1) >= 9 Then Print "+";
         Color 7, 0
     End If
@@ -9642,8 +9696,7 @@ Sub SCOREBOARD ()
     Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
 
     'Team 1
-    Locate 2, 1
-    Locate , 9
+    Locate 2, 14 - (Len(gameTeams$(0)) / 2)
     Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
     'Game Clock - Minutes
@@ -9665,7 +9718,7 @@ Sub SCOREBOARD ()
     End If
 
     'Team 2
-    Locate 2, 56
+    Locate 2, 62 - (Len(gameTeams$(1)) / 2)
     Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
 
     'Score Team 1
@@ -9706,12 +9759,14 @@ Sub SCOREBOARD ()
     If teamFouls(0) >= 6 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
+        If teamFouls(0) >= 9 Then Print "+";
         Color 7, 0
     End If
 
     If teamFouls(1) >= 6 Then
         Color 0, 2
-        Locate , 29: Print "BONUS"
+        Locate , 28: Print "BONUS"
+        If teamFouls(1) >= 9 Then Print "+";
         Color 7, 0
     End If
 
@@ -10877,7 +10932,7 @@ Sub CHANGESTRATEGY ()
         Do
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-        
+
         If UCase$(I$) = "Y" Then crashBoards(P9) = 1
         
     End If
@@ -11162,6 +11217,9 @@ Sub SHOTPERCENT ()
     End Select
 
     skipCalcs% = 0
+
+    'Fudge factor
+    threePtDefAdj = threePtDefAdj - 9
 
     ' ** Check for three-point shot **
     '% of player shots that are 3 FG + def threeFGA_Adj + adjustment due to Def

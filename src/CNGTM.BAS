@@ -113,6 +113,31 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Shared playerNames$(), position$()
     Shared playerOff!(), playerDef!(), playerStats!(), playerRatings!()
 
+    offStRat = leagueRatings(0)
+    If offStRat > 20 Then
+        offStRat = leagueRatings(0) - 100
+    End If
+
+    defTOAdj = leagueRatings(2)
+    If defTOAdj > 20 Then
+        defTOAdj = leagueRatings(2) - 100
+    End If
+
+    offFoulAdj = leagueRatings(3)
+    If offFoulAdj > 20 Then
+        offFoulAdj = leagueRatings(3) - 100
+    End If
+
+    d3FGAdj = def3FG_Adj
+    If d3FGAdj > 20 Then
+        d3FGAdj = def3FG_Adj - 100
+    End If
+
+    dthreeFGAAdj = defthreeFGA_Adj
+    If dthreeFGAAdj > 20 Then
+        dthreeFGAAdj = defthreeFGA_Adj - 100
+    End If
+
     Color 15, 0
     Cls
 
@@ -125,12 +150,12 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print " 3. TEAM NAME   "; teamName$
     Print " 4. TEAM STAMINA RATING "; staminaRating!
     Print " 5. DEF FG% ADJ "; defFGPctAdj!
-    Print " 6. DEF 3FGA/FGA ADJ "; defthreeFGA_Adj
-    Print " 7. DEF 3FG% ADJ "; def3FG_Adj
-    Print " 8. OFF STEAL RATING "; leagueRatings(0)
+    Print " 6. DEF 3FGA/FGA ADJ "; dthreeFGAAdj
+    Print " 7. DEF 3FG% ADJ "; d3FGAdj
+    Print " 8. OFF STEAL RATING "; offStRat
     Print " 9. OFF TURNOVER RATING "; leagueRatings(1)
-    Print "10. DEF TURNOVER ADJ "; leagueRatings(2)
-    Print "11. DEF FOUL ADJ "; leagueRatings(3)
+    Print "10. DEF TURNOVER ADJ "; defTOAdj
+    Print "11. DEF FOUL ADJ "; offFoulAdj
     Print "12. ENTER 99 IF USING 6-9 "; leagueRatings(4)
     Print "13. TEXT COLOR (0-15) "; teamRatings(0)
     Print "14. BACKGROUND COLOR (0-7) "; teamRatings(1)
@@ -213,7 +238,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
             Case 11
                 Locate 12, 17: Print Space$(10)
-                Locate 12, 1: Input "11. DEF FOUL ADJ"; leagueRatings(3)
+                Locate 12, 1: Input "11. OFF FOUL ADJ"; leagueRatings(3)
                 Locate 12, 17: Print " "
 
             Case 12
@@ -308,6 +333,26 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         Print Space$(10)
 
     Loop Until B9 = 0
+
+    If defthreeFGA_Adj < 0 Then 
+        defthreeFGA_Adj = 100 + defthreeFGA_Adj
+    End If
+
+    If def3FG_Adj < 0 Then 
+        def3FG_Adj = 100 + def3FG_Adj
+    End If
+    
+    If leagueRatings(0) < 0 Then
+        leagueRatings(0) = 100 + leagueRatings(0)
+    End If
+
+    If leagueRatings(2) < 0 Then
+        leagueRatings(2) = 100 + leagueRatings(0)
+    End If
+
+    If leagueRatings(3) < 0 Then
+        leagueRatings(3) = 100 + leagueRatings(0)
+    End If
 
     Color 15, 0
     Cls
@@ -905,14 +950,39 @@ Sub Roster_Report (printDest, destFile$, teamName$)
     Print #1, "BACKGROUND COLOR:"; teamRatings(1)
     Print #1,
 
+    offStRat = leagueRatings(0)
+    If offStRat > 20 Then
+        offStRat = leagueRatings(0) - 100
+    End If
+
+    defTOAdj = leagueRatings(2)
+    If defTOAdj > 20 Then
+        defTOAdj = leagueRatings(2) - 100
+    End If
+
+    offFoulAdj = leagueRatings(3)
+    If offFoulAdj > 20 Then
+        offFoulAdj = leagueRatings(3) - 100
+    End If
+
+    d3FGAdj = def3FG_Adj
+    If d3FGAdj > 20 Then
+        d3FGAdj = def3FG_Adj - 100
+    End If
+
+    dthreeFGAAdj = defthreeFGA_Adj
+    If dthreeFGAAdj > 20 Then
+        dthreeFGAAdj = defthreeFGA_Adj - 100
+    End If
+
     Print #1, "AVG SHOTS / GAME       = "; teamRatings(3);
     Print #1, Tab(30); "DEF FG ADJ    = "; defFGPctAdj!
-    Print #1, "OPP PCT OF 3FG ATT ADJ = "; defthreeFGA_Adj;
-    Print #1, Tab(30); "DEF STEAL ADJ = "; leagueRatings(0);
+    Print #1, "OPP PCT OF 3FG ATT ADJ = "; dthreeFGAAdj;
+    Print #1, Tab(30); "DEF STEAL ADJ = "; offStRat;
     Print #1, Tab(50); "OFF TURNOVER ADJ = "; leagueRatings(1)
-    Print #1, "OPP 3FG PCT ADJ        = "; def3FG_Adj;
-    Print #1, Tab(30); "OFF FOUL ADJ  = "; leagueRatings(3);
-    Print #1, Tab(50); "DEF TURNOVER ADJ = "; leagueRatings(2)
+    Print #1, "OPP 3FG PCT ADJ        = "; d3FGAdj;
+    Print #1, Tab(30); "OFF FOUL ADJ  = "; offFoulAdj;
+    Print #1, Tab(50); "DEF TURNOVER ADJ = "; defTOAdj
 
     Print #1,
     Print #1, "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
@@ -974,6 +1044,31 @@ Sub ViewRoster (targetTeam$)
     Color 15, 0
     Cls
 
+    offStRat = leagueRatings(0)
+    If offStRat > 20 Then
+        offStRat = leagueRatings(0) - 100
+    End If
+
+    defTOAdj = leagueRatings(2)
+    If defTOAdj > 20 Then
+        defTOAdj = leagueRatings(2) - 100
+    End If
+
+    offFoulAdj = leagueRatings(3)
+    If offFoulAdj > 20 Then
+        offFoulAdj = leagueRatings(3) - 100
+    End If
+
+    d3FGAdj = def3FG_Adj
+    If d3FGAdj > 20 Then
+        d3FGAdj = def3FG_Adj - 100
+    End If
+
+    dthreeFGAAdj = defthreeFGA_Adj
+    If dthreeFGAAdj > 20 Then
+        dthreeFGAAdj = defthreeFGA_Adj - 100
+    End If
+
     XCoord = (80 - 16 - Len(targetTeam$)) / 2
     Locate 2, XCoord
 
@@ -992,22 +1087,22 @@ Sub ViewRoster (targetTeam$)
     Color 15: Print defFGPctAdj!
 
     Color 11: Print "OPP PCT OF 3FG ATT ADJ = ";
-    Color 15: Print defthreeFGA_Adj;
+    Color 15: Print dthreeFGAAdj;
 
     Color 11: Locate , 30: Print "DEF STEAL ADJ = ";
-    Color 15: Print leagueRatings(0);
+    Color 15: Print offStRat;
 
     Color 11: Locate , 50: Print "OFF TURNOVER ADJ = ";
     Color 15: Print leagueRatings(1)
 
     Color 11: Print "OPP 3FG PCT ADJ        = ";
-    Color 15: Print def3FG_Adj;
+    Color 15: Print d3FGAdj;
 
     Color 11: Locate , 30: Print "OFF FOUL ADJ  = ";
-    Color 15: Print leagueRatings(3);
+    Color 15: Print offFoulAdj;
 
     Color 11: Locate , 50: Print "DEF TURNOVER ADJ = ";
-    Color 15: Print leagueRatings(2)
+    Color 15: Print defTOAdj
 
     Locate 9, 1
     Color 14: Print "NAME           FG% FT% ORB DRB  CX PS  D  B  FC FD  3FG 3FG%"
@@ -1072,7 +1167,7 @@ Sub ViewRoster (targetTeam$)
     Print " - 3FGA/TOTAL FGA"
 
     Locate LAST_ROW - 1, 30
-    Color 15: Print "HIT ANY KEY TO EXIT";
+    Color 14: Print "HIT ANY KEY TO EXIT";
     I$ = GetKeyPress$
 
 End Sub
