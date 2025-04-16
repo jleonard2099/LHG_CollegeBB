@@ -832,7 +832,7 @@ Sub ViewIndividualLeaders (printOrView, JB)
             Select Case printOrView
 
                 Case 1
-                    Call DisplayLeaders(TVN, QW, categoryId)
+                    Call NewLeaders_Screen(TVN, QW, categoryId)
 
                 Case 2
                     Call GetListLength(printOrView, LG, QW)
@@ -846,11 +846,11 @@ Sub ViewIndividualLeaders (printOrView, JB)
                             Case "F"
                                 userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                 If userFile$ <> "" Then
-                                    Call Leaders_Report(0, userFile$, TVN, LG, categoryId)
+                                    Call NewLeaders_Report(0, userFile$, TVN, LG, categoryId)
                                 End If
 
                             Case "P"
-                                Call Leaders_Report(1, "REPORT", TVN, LG, categoryId)
+                                Call NewLeaders_Report(1, "REPORT", TVN, LG, categoryId)
 
                         End Select
 
@@ -1271,11 +1271,11 @@ End Sub
 
 
 '----------------------------------------
-'       DisplayLeaders Subroutine
+'       NewLeaders_Screen Subroutine
 '----------------------------------------
 'This subroutine displays individual player
 'stat categories to the user display
-Sub DisplayLeaders (TVN, maxRecords, categoryId)
+Sub NewLeaders_Screen (TVN, maxRecords, categoryId)
 
     Shared expLdrVal!()
     Shared expIndCategory$(), expLdrTeam$(), expLdrPlyrName$()
@@ -1550,11 +1550,11 @@ End Sub
 
 
 '----------------------------------------
-'        Leaders_Report Subroutine
+'     NewLeaders_Report Subroutine
 '----------------------------------------
 'This subroutine displays individual player
 'stat categories to the default printer
-Sub Leaders_Report (printDest, destFile$, TVN, maxRecords, categoryID)
+Sub NewLeaders_Report (printDest, destFile$, TVN, maxRecords, categoryID)
 
     Shared expLdrVal!()
     Shared expIndCategory$(), expLdrTeam$(), expLdrPlyrName$()

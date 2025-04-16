@@ -9,12 +9,13 @@ Sub SEENATL ()
 
     _Title "Courtside College Basketball - View National Stats"
 
-    leaderFile$ = ChooseFile$ (diskPaths$(2) + "*.NLD", "LEADER", ExitCode%)
+    leaderFile$ = _OpenFileDialog$("Choose Organization Stats file", diskPaths$(2), "*.NLD", "Organization Stats files")
+    'ChooseFile$ (diskPaths$(2) + "*.NLD", "LEADER", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If leaderFile$ <> "" Then
 
         Call LoadLeaderFiles_Nat(leaderFile$, NRT)
-        Call StatOptions_Nat (leaderFile$, NRT)
+        Call StatOptions_Natl (GetFileBaseName$(leaderFile$), NRT)
 
     End If
 
@@ -41,54 +42,55 @@ Sub LoadLeaderFiles_Nat (targetFile$, NRT)
 
     Cls
 
-    Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
+    Locate 9, 6
+    Print "PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
-    Open diskPaths$(2) + targetFile$ + ".NLD" For Input As #1
+    Open targetFile$ For Input As #2
 
     For X = 1 To TEAMS_PER_CONFERENCE:
-        Input #1, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct!(X)
+        Input #2, confLdrName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct!(X)
     Next
 
     For X = 1 To 250: 
-        Input #1, leaderName$(X), leaderTeam$(X), confLdrVal!(X), leaderText$(X)
+        Input #2, leaderName$(X), leaderTeam$(X), confLdrVal!(X), leaderText$(X)
     Next
 
     For X = 1 To MAX_CONFERENCES:
-        Input #1, offLeaderTeams$(X)
+        Input #2, offLeaderTeams$(X)
         For M = 1 To 20: 
-            Input #1, offLeaders!(X, M)
+            Input #2, offLeaders!(X, M)
         Next
     Next
 
     For X = 1 To MAX_CONFERENCES: 
-        Input #1, defLeaderTeams$(X)
+        Input #2, defLeaderTeams$(X)
         For M = 1 To 20: 
-            Input #1, defLeaders!(X, M)
+            Input #2, defLeaders!(X, M)
         Next
     Next
 
-    Close #1
+    Close #2
 
-    Open diskPaths$(2) + targetFile$ + ".POL" For Input As #2
+    Open diskPaths$(2) + GetFileBaseName$(targetFile$) + ".POL" For Input As #3
 
-    Input #2, NRT
+    Input #3, NRT
 
     For X = 1 To NRT
-        Input #2, pollTeam$(X), pollRatings#(X, 1), pollRatings#(X, 2), pollRatings#(X, 3), pollRatings#(X, 4)
+        Input #3, pollTeam$(X), pollRatings#(X, 1), pollRatings#(X, 2), pollRatings#(X, 3), pollRatings#(X, 4)
     Next
 
-    Close #2
+    Close #3
 
 End Sub
 
 
 '----------------------------------------
-'       StatOptions_Nat Subroutine
+'       StatOptions_Natl Subroutine
 '----------------------------------------
 'This subroutine gives the user various
 'options for viewing the previously loaded
 'stats, and then calls routines for each
-Sub StatOptions_Nat (leagueFile$, NRT)
+Sub StatOptions_Natl (confName$, NRT)
 
     Do
 
@@ -104,14 +106,15 @@ Sub StatOptions_Nat (leagueFile$, NRT)
                 Case "F":
                     userFile$ = _SaveFileDialog$("Save Report File",_CWD$ + "\Report","*.txt","Text File")
                     If userFile$ <> "" Then
-                        Call LeaderStatsNat_Report(leagueFile$, NRT, 0, userFile$)
+                        Call NatLeaders_Report(confName$, NRT, 0, userFile$)
                     End If
 
                 Case "P":
-                    Call LeaderStatsNat_Report(leagueFile$, NRT, 1, "REPORT")
+                    Call NatLeaders_Report(confName$, NRT, 1, "REPORT")
 
                 Case "S":
-                    Call LeaderStatsNat_Screen(leagueFile$, NRT)
+                    Call NatlStdgs_Screen(confName$, NRT)
+                    Call NatLeaders_Screen
 
             End Select
 
@@ -138,28 +141,24 @@ Sub StatOptions_Nat (leagueFile$, NRT)
 End Sub
 
 
-
 '----------------------------------------
-'    LeaderStatsNat_Screen Subroutine
+'     NatlStdgs_Screen Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to the end
 'user display.
-Sub LeaderStatsNat_Screen (orgName$, NRT)
+Sub NatlStdgs_Screen (confName$, NRT)
 
-    Shared defLeaderTeams$(), offLeaderTeams$()
-    Shared defLeaders!(), offLeaders!(), confLdrVal!()
-    Shared leaderText$(), leaderName$(), leaderTeam$()
-
-    Shared pollTeam$()
     Shared pollRatings#()
-
+    Shared pollTeam$()
+    
     Color 15, 0
     Cls
 
     Color 12
-    Locate 2, Int((80 - Len(orgName$) - 17) / 2)
-    Print orgName$ + " OVERALL RANKINGS"
+    header$ = confName$ + " OVERALL RANKINGS"
+    Locate 2, (80 - Len(header$)) / 2
+    Print header$
 
     Locate 4, 1
     Color 14
@@ -171,7 +170,7 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
         Print Using "###  "; P;
         Print pollTeam$(P); Tab(22); Using "###.#    ##   ##          ###.#"; pollRatings#(P, 1); pollRatings#(P, 2); pollRatings#(P, 3); pollRatings#(P, 4)
 
-        If (P Mod 20 = 0) Then
+        If P <> 0 And (P Mod 20 = 0) Then
 
             Color 12
             Locate LAST_ROW - 1, 28: Print "(HIT ANY KEY TO CONTINUE)";
@@ -181,12 +180,12 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
             Cls
 
             Color 12
-            Locate 2, Int((80 - Len(orgName$) - 17) / 2)
-            Print orgName$ + " OVERALL RANKINGS"
+            Locate 2, (80 - Len(header$)) / 2
+            Print header$
 
             Locate 4, 1
             Color 14
-            Print  Tab(21); "RATING     W    L   STRENGTH OF SCHEDULE"
+            Print Tab(21); "RATING     W    L   STRENGTH OF SCHEDULE"
             Color 15
 
         End If
@@ -199,6 +198,24 @@ Sub LeaderStatsNat_Screen (orgName$, NRT)
     Color 15
     QK$ = GetKeyPress$
     '-----
+
+End Sub
+
+
+'----------------------------------------
+'     NatLeaders_Screen Subroutine
+'----------------------------------------
+'This subroutine formats the previously
+'loaded stats and outputs them to the end
+'user display.
+Sub NatLeaders_Screen ()
+
+    Shared defLeaderTeams$(), offLeaderTeams$()
+    Shared defLeaders!(), offLeaders!(), confLdrVal!()
+    Shared leaderText$(), leaderName$(), leaderTeam$()
+
+    Shared pollTeam$()
+    Shared pollRatings#()
 
     Cls
 
@@ -699,13 +716,13 @@ End Sub
 
 
 '----------------------------------------
-'     LeaderStatsNat_Report Subroutine
+'     NatLeaders_Report Subroutine
 '----------------------------------------
 'This subroutine formats the previously
 'loaded stats and outputs them to a file.
 'This file can then be looped through to 
 'send to the default printer
-Sub LeaderStatsNat_Report (orgName$, NRT, printDest, destFile$)
+Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     Shared defLeaderTeams$(), offLeaderTeams$()
     Shared defLeaders!(), offLeaders!(), confLdrVal!()

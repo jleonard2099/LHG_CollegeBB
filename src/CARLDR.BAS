@@ -81,11 +81,11 @@ Sub UpdateCareerLeaders ()
     Erase carLdrPlyrName$
     Erase carLdrVal!
 
-    careerFile$ = ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
+    careerFile$ = _OpenFileDialog$("Choose Career file", diskPaths$(1), "*.CAR", "Career Career files")
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If careerFile$ <> "" Then
 
-        Call LoadCareerFile(diskPaths$(1) + careerFile$ + ".CAR")
+        Call LoadCareerFile(careerFile$)
 
         Color 14
 
@@ -302,7 +302,7 @@ Sub UpdateCareerLeaders ()
         Next Z
 
         'Save leaders
-        Open diskPaths$(2) + careerFile$ + ".TCL" For Output As #1
+        Open diskPaths$(2) + GetFileBaseName$(careerFile$) + ".TCL" For Output As #1
 
         For I = 0 To 19:
             For I1 = 0 To 19:
@@ -332,7 +332,7 @@ Sub CareerLeaderOptions ()
 
     leaderFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(2), "*.TCL", "Career Leader files")
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If leaderFile$ <> "" Then
 
         Color 15, 0
         Cls
@@ -356,14 +356,14 @@ Sub CareerLeaderOptions ()
                 Case "F"
                     userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                     If userFile$ <> "" Then
-                        Call PrintCareerLeaders(0, userFile$)
+                        Call CareerLeaders_Report (GetFileBaseName$(userFile$), 0, userFile$)
                     End If
 
                 Case "P"
-                    Call PrintCareerLeaders(1, "REPORT")
+                    Call CareerLeaders_Report (GetFileBaseName$(leaderFile$), 1, "REPORT")
 
                 Case "S"
-                    Call ViewCareerLeaders
+                    Call CareerLeaders_Screen (GetFileBaseName$(leaderFile$))
 
             End Select
 
@@ -376,12 +376,12 @@ End Sub
 
 
 '----------------------------------------
-'     PrintCareerLeaders Subroutine
+'    CareerLeaders_Report Subroutine
 '----------------------------------------
 'This routine sends formatted career stats
 '(loaded from the .TCL file) to the user's
 'default printer
-Sub PrintCareerLeaders (printDest, destFile$)
+Sub CareerLeaders_Report (careerName$, printDest, destFile$)
 
     Shared carLdrPlyrName$()
     Shared carLdrVal!()
@@ -390,6 +390,10 @@ Sub PrintCareerLeaders (printDest, destFile$)
     Cls
 
     Open destFile$ For Output As #1
+
+    Print #1, Tab(80 - Int(Len(careerName$) / 2))
+    Print #1, careerName$
+    Print #1, 
 
     Print #1, Tab(5); "GAMES PLAYED"; Tab(34); "FIELD GOALS ATTEMPTED"; Tab(62); "FIELD GOALS MADE"
 
@@ -521,12 +525,12 @@ End Sub
 
 
 '----------------------------------------
-'      ViewCareerLeaders Subroutine
+'    CareerLeaders_Screen Subroutine
 '----------------------------------------
 'This routine displays formatted career
 'stats (loaded from the .TCL file) to the
 'primary screen
-Sub ViewCareerLeaders ()
+Sub CareerLeaders_Screen (careerName$)
 
     Shared carLdrPlyrName$()
     Shared carLdrVal!()
@@ -535,6 +539,9 @@ Sub ViewCareerLeaders ()
 
     Cls
     Color 12
+
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
 
     ' Category #1, 2
     Locate 2, 1
@@ -561,6 +568,9 @@ Sub ViewCareerLeaders ()
     Cls
     Color 12
 
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
+
     Locate 2, 1
     Print Tab(5); "FGM"; Tab(44); "FG %"
 
@@ -584,6 +594,9 @@ Sub ViewCareerLeaders ()
 
     Cls
     Color 12
+
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
 
     Locate 2, 1
     Print Tab(5); "3FGA"; Tab(44); "3FGM"
@@ -609,6 +622,9 @@ Sub ViewCareerLeaders ()
     Cls
     Color 12
 
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
+
     Locate 2, 1
     Print Tab(5); "3FG %"; Tab(44); "FTA"
 
@@ -632,6 +648,9 @@ Sub ViewCareerLeaders ()
 
     Cls
     Color 12
+
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
 
     Locate 2, 1
     Print Tab(5); "FTM"; Tab(44); "FT %"
@@ -657,6 +676,9 @@ Sub ViewCareerLeaders ()
     Cls
     Color 12
 
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
+
     Locate 2, 1
     Print Tab(5); "TOTAL REBOUNDS"; Tab(44); "PERSONAL FOULS"
     For I = 0 To 19
@@ -680,6 +702,9 @@ Sub ViewCareerLeaders ()
     Cls
     Color 12
 
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
+
     Locate 2, 1
     Print Tab(5); "STEALS"; Tab(44); "ASSISTS"
     For I = 0 To 19
@@ -702,6 +727,9 @@ Sub ViewCareerLeaders ()
 
     Cls
     Color 12
+
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
 
     Locate 2, 1
     Print Tab(5); "BLOCKS"; Tab(44); "MINUTES PLAYED"
@@ -727,6 +755,9 @@ Sub ViewCareerLeaders ()
     Cls
     Color 12
 
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
+
     Locate 2, 1
     Print Tab(5); "POINTS"; Tab(44); "OFFENSIVE REBOUNDS"
 
@@ -750,6 +781,9 @@ Sub ViewCareerLeaders ()
 
     Cls
     Color 12
+
+    Locate 1, 80 - Int(Len(careerName$) / 2)
+    Print careerName$
 
     Locate 2, 1
     Print Tab(5); "HIGHEST POINTS"

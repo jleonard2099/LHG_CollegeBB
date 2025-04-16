@@ -8,11 +8,12 @@ Sub CARVIEW ()
 
     _Title "Courtside College Basketball - View Careers"
 
-    careerFile$ = ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
+    careerFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(1), "*.CAR", "Career Leader files")
+    'ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If careerFile$ <> "" Then
 
-        Call LoadCareerFile(diskPaths$(1) + careerFile$ + ".CAR")
+        Call LoadCareerFile(careerFile$)
 
         userKey$ = GetOutputOptions$
 
@@ -23,14 +24,14 @@ Sub CARVIEW ()
                 Case "F"
                     userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                     If userFile$ <> "" Then
-                        Call CareerStats_Report(0, userFile$, careerFile$)
+                        Call CareerStats_Report(GetFileBaseName$(careerFile$), 0, userFile$)
                     End If
 
                 Case "P"
-                    Call CareerStats_Report(1, "REPORT", careerFile$)
+                    Call CareerStats_Report(GetFileBaseName$(careerFile$), 1, "CAREER")
 
                 Case "S"
-                    Call CareerStats_Screen(careerFile$)
+                    Call CareerStats_Screen(GetFileBaseName$(careerFile$))
 
             End Select
 
@@ -42,59 +43,11 @@ End Sub
 
 
 '----------------------------------------
-'      CareerStats_Screen Subroutine
-'----------------------------------------
-'This routine gives the user different
-'categories of stats related to the roster.
-'It then calls a supplemental routine for
-'each  that will format those stats and
-'send them to the display screen
-Sub CareerStats_Screen (careerFile$)
-
-    Shared careerPlayers$()
-
-    Do
-
-        Color 15, 0
-        Cls
-
-        Locate 4, 10
-        Color 7: Print "VIEW ";
-        Color 12: Print "P";
-        Color 7: Print "LAYERS"
-
-        Locate , 10
-        Color 7: Print "VIEW ";
-        Color 12: Print "R";
-        Color 7: Print "OSTER IN SEQUENCE"
-
-        Locate , 10
-        Color 12: Print "E";
-        Color 7: Print "XIT TO MAIN MENU"
-
-        I$ = GetKeyPress$
-
-        Select Case UCase$(I$)
-
-            Case "P":
-                Call ViewPlayer(careerFile$)
-
-            Case "R":
-                Call ViewRosterSequence(careerFile$)
-
-        End Select
-
-    Loop Until UCase$(I$) = "E" Or UCase$(I$) = "X" Or I$ = Chr$(27)
-
-End Sub
-
-
-'----------------------------------------
 '       CareerStats_Report Subroutine
 '----------------------------------------
 'Formats results of Career stats and sends
 'to the user's default printer
-Sub CareerStats_Report (printDest, destFile$, careerFile$)
+Sub CareerStats_Report (careerName$, printDest, destFile$)
 
     Shared careerPlayers$()
 
@@ -107,7 +60,7 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
 
     Open destFile$ For Output As #1
 
-    Print #1, Tab(59); careerFile$
+    Print #1, Ta ,b(59); careerName$
     Print #1,
     Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
 
@@ -142,7 +95,7 @@ Sub CareerStats_Report (printDest, destFile$, careerFile$)
 
             If 55 - PTN < VV Then
                 Print #1, Chr$(12)
-                Print #1, Tab(59); careerFile$
+                Print #1, Tab(59); careerName$
                 Print #1,
                 Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
                 PTN = 0
@@ -374,11 +327,59 @@ End Sub
 
 
 '----------------------------------------
+'      CareerStats_Screen Subroutine
+'----------------------------------------
+'This routine gives the user different
+'categories of stats related to the roster.
+'It then calls a supplemental routine for
+'each  that will format those stats and
+'send them to the display screen
+Sub CareerStats_Screen (careerName$)
+
+    Shared careerPlayers$()
+
+    Do
+
+        Color 15, 0
+        Cls
+
+        Locate 4, 10
+        Color 7: Print "VIEW ";
+        Color 12: Print "P";
+        Color 7: Print "LAYERS"
+
+        Locate , 10
+        Color 7: Print "VIEW ";
+        Color 12: Print "R";
+        Color 7: Print "OSTER IN SEQUENCE"
+
+        Locate , 10
+        Color 12: Print "E";
+        Color 7: Print "XIT TO MAIN MENU"
+
+        I$ = GetKeyPress$
+
+        Select Case UCase$(I$)
+
+            Case "P":
+                Call ViewPlayer(careerName$)
+
+            Case "R":
+                Call ViewRosterSequence(careerName$)
+
+        End Select
+
+    Loop Until UCase$(I$) = "E" Or UCase$(I$) = "X" Or I$ = Chr$(27)
+
+End Sub
+
+
+'----------------------------------------
 '          ViewPlayer Subroutine
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file
-Sub ViewPlayer (careerFile$)
+Sub ViewPlayer (careerName$)
 
     Shared careerPlayers$()
 
@@ -388,7 +389,7 @@ Sub ViewPlayer (careerFile$)
 
     Locate 2, 1
     Color 12
-    Print careerFile$
+    Print careerName$
 
     For I = 0 To 15:
         Locate I + 4
@@ -426,7 +427,7 @@ Sub ViewPlayer (careerFile$)
         Input "ENTER # OF PLAYER TO VIEW"; B9
     Loop Until B9 >= 0 And B9 <= 61
 
-    Call OnePlayer_Screen (B9)
+    Call OnePlayer_Screen (careerName$, B9)
 
     Color 14
     Locate, 30
@@ -440,7 +441,7 @@ End Sub
 '----------------------------------------
 'This subroutine will display player stats
 'from the team's career file, in sequence
-Sub ViewRosterSequence (careerFile$)
+Sub ViewRosterSequence (careerName$)
 
     Shared careerPlayers$()
 
@@ -453,7 +454,7 @@ Sub ViewRosterSequence (careerFile$)
 
                 Cls
 
-                Call OnePlayer_Screen (I)
+                Call OnePlayer_Screen (careerName$, I)
 
                 Color 14
                 Locate, 16
@@ -488,7 +489,7 @@ End Sub
 '----------------------------------------
 'This subroutine will display career stats
 'on the screen for a single player
-Sub OnePlayer_Screen (index)
+Sub OnePlayer_Screen (careerName$, index)
 
     Shared careerPlayers$()
 
@@ -518,7 +519,7 @@ Sub OnePlayer_Screen (index)
 
     Locate 2, 1
     Color 11
-    'Print careerFile$
+    Print careerName$
 
     Color 12
     Locate 4, 1
@@ -675,7 +676,7 @@ Sub OnePlayer_Screen (index)
 
     Locate 2, 1
     Color 11
-    'Print careerFile$
+    Print careerName$
 
     Color 12
     Locate 4, 1

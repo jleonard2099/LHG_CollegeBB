@@ -1,14 +1,14 @@
 '----------------------------------------
 '          CAREER Subroutine
 '----------------------------------------
-'This routine gives the user a menu from 
+'This routine gives the user a menu from
 'which they can choose several options
 'for managing career files
 Sub CAREER ()
 
     _Title "Courtside College Basketball - Career Stats"
 
-    ReDim menuChoices$(1 to 7)
+    ReDim menuChoices$(1 To 7)
 
     Do
 
@@ -142,8 +142,8 @@ Sub MergeFirstYear ()
         Color 11, 0
         Cls
 
-        careerFile$ = _INPUTBOX$("Career File", "Enter name for Career stats file")
-        'careerFile$ = _SAVEFILEDIALOG$("Save Career File", "", "*.CAR", "Career files")
+        'careerFile$ = _INPUTBOX$("Career File", "Enter name for Career stats file")
+        careerFile$ = _SAVEFILEDIALOG$("Save Career File", "", "*.CAR", "Career files")
 
         teamNbr = 0
         Call ChooseTeam(YN$, NTMS, teamNbr, team$)
@@ -243,9 +243,11 @@ Sub MergeFirstYear ()
 
                     Next I
 
-                    If doPostLeaders = 1 Then Call UpdateCareerRecords(diskPaths$(2) + careerFile$ + ".CLD")
+                    If doPostLeaders = 1 Then 
+                        Call UpdateCareerRecords(diskPaths$(2) + GetFileBaseName$(careerFile$) + ".CLD")
+                    End If
 
-                    Call SaveCareerFile (diskPaths$(1) + careerFile$ + ".CAR")
+                    Call SaveCareerFile (careerFile$)
 
                 End If 'Done checking for stat file
 
@@ -286,14 +288,14 @@ Sub ReviewCareerRecords ()
                 Case "F"
                     userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Career", "*.txt", "Text File")
                     If userFile$ <> "" Then
-                        Call CareerRecords_Report(0, userFile$)
+                        Call CareerRecords_Report(GetFileBaseName$(recordFile$), 0, userFile$)
                     End If
 
                 Case "P"
-                    Call CareerRecords_Report(1, "CAREER")
+                    Call CareerRecords_Report(GetFileBaseName$(recordFile$), 1, "CAREER")
 
                 Case "S":
-                    Call CareerRecords_Screen
+                    Call CareerRecords_Screen(GetFileBaseName$(recordFile$))
 
             End Select
             
@@ -309,7 +311,7 @@ End Sub
 '----------------------------------------
 'This routine formats career records for
 'output to the screen.
-Sub CareerRecords_Screen ()
+Sub CareerRecords_Screen (careerName$)
 
     Shared carRecVal!(), carRecYear!()
     Shared BL$()
@@ -319,8 +321,12 @@ Sub CareerRecords_Screen ()
         Cls
         Color 15, 0
 
+        Locate 1, 80 - Int(Len(careerName$) / 2)
+        Print careerName$
+
         Locate 2, 1
         Color 12: Print "CATEGORY                     RECORD           PLAYER              YEAR"
+
         Color 3: Print "FIELD GOALS MADE";
         Color 15: Print Tab(33); Using "####"; carRecVal!(0);
         Print Tab(47); BL$(0); Tab(66); carRecYear!(0)
@@ -409,15 +415,19 @@ End Sub
 'involve creating a file first, that can
 'then be looped through if sending to 
 'printer
-Sub CareerRecords_Report (printDest, destFile$)
+Sub CareerRecords_Report (careerName$, printDest, destFile$)
 
     Shared carRecVal!(), carRecYear!()
     Shared BL$()
 
     Color 0, 15
-	Cls
+    Cls
 
-	Open destFile$ For Output As #1
+    Open destFile$ For Output As #1
+
+    Print #1, Tab(80 - Int(Len(careerName$) / 2))
+    Print #1, careerName$
+    Print #1,
 
     Print #1, "CATEGORY                     RECORD           PLAYER              YEAR"
     Print #1,
@@ -506,22 +516,22 @@ Sub CareerRecords_Report (printDest, destFile$)
     Print #1, Tab(47); BL$(20);
     Print #1, Tab(66); carRecYear!(20)
 
-	If printDest = 1 Then
+    If printDest = 1 Then
 
-		Open destFile$ For Input As #2
+        Open destFile$ For Input As #2
 
-		Do While Not EOF(2)
-			Line Input #2, X$
-			LPrint X$
-		Loop
+        Do While Not EOF(2)
+            Line Input #2, X$
+            LPrint X$
+        Loop
 
-		Close #2
+        Close #2
 
-		LPrint Chr$(12)
+        LPrint Chr$(12)
 
-		Kill destFile$
+        Kill destFile$
 
-	End If
+    End If
 
 End Sub
 
@@ -674,6 +684,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
     TMR1% = 14 * (14 + 3) + (16 * 2)
 
+    'Call ReadTeamStats(temp$, statFile$)
+
     Open diskPaths$(1) + statFile$ For Input As #2
 
     Input #2, team$
@@ -816,7 +828,7 @@ Sub LoadCareerFile (loadFile$)
     Locate 12, 21
     Print "LOADING CAREER FILE . . . . PLEASE WAIT"
 
-   TMR = MAX_CAREER_YEARS * 62 
+    TMR = MAX_CAREER_YEARS * 62 
  
     Open loadFile$ For Input As #1
 
@@ -947,7 +959,7 @@ Sub UpdateCareerRecords (careerRecordFile$)
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
     If _FileExists(careerRecordFile$) Then
-        Call LoadCareerLeaders(careerFile$)
+        Call LoadCareerLeaders(careerRecordFile$)
     End If
 
     For I = 0 To 61

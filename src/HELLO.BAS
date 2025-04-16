@@ -23,7 +23,7 @@ DefInt A-Z
 ' General Sub
 '$Include: 'KeyInput.bi'
 '$Include: 'QPProEqu.bi'
-'$Include: 'PadRight.bi'
+'$Include: 'StringManip.bi'
 '$Include: 'QBWRITE.bi'
 
 ' For Utils
@@ -680,7 +680,7 @@ End Sub
 ' General purpose
 '$Include: 'KeyInput.bm'
 '$Include: 'QPProEqu.bm'
-'$Include: 'PadRight.bm'
+'$Include: 'StringManip.bm'
 '$Include: 'QBWRITE.bm'
 
 ' For Utils
