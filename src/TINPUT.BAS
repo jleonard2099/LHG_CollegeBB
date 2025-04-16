@@ -952,9 +952,6 @@ Sub InputTeam ()
         defthreeFGA_Adj = opp3FGAAdj - leag3FGAPct!
 
         'DEF 3FGA/3FGA ADJ
-        '-- Here is where 100 is being added to the value
-        '-- This is why our team files and viewer later
-        '-- will show values as 95-99
         If defthreeFGA_Adj < 0 Then 
             defthreeFGA_Adj = 100 + defthreeFGA_Adj
         End If
@@ -962,13 +959,9 @@ Sub InputTeam ()
         def3FG_Adj = opp3FGAPct! - leag3FGPct!
 
         'DEF 3FG %
-        '-- Here is where 100 is being added to the value
-        '-- This is why our team files and viewer later
-        '-- will show values as 95-99
         If def3FG_Adj < 0 Then 
             def3FG_Adj = 100 + def3FG_Adj
         End If
-
 
         For I = 0 To 13
 
@@ -1071,7 +1064,7 @@ Sub InputTeam ()
         If X! < 0 Then leagueRatings(2) = 100 + X!
         If X! > 0 Then leagueRatings(2) = X!
 
-        'Def Foul Adj
+        'Off Foul Adj
         homeScoreTeam! = CInt(((oppFGA! * oppFGPct!) / 100))
         X! = (homeScoreTeam! * .1) + (nbrGmsPlayed! * 8.2)
         X! = (oppFTA! - X!) / 2

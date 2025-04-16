@@ -18,7 +18,7 @@ DefInt A-Z
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'KeyInput.bi'
 '$Include: 'QPProEqu.bi'
-'$Include: 'PadRight.bi'
+'$Include: 'StringManip.bi'
 '$Include: 'Variables.bi'
 
 Open "FOLDERS.CFG" For Input As #2
@@ -60,4 +60,4 @@ End Sub
 '$Include: 'FileTeamSelection.bm'
 '$Include: 'KeyInput.bm'
 '$Include: 'QPProEqu.bm'
-'$Include: 'PadRight.bm'
+'$Include: 'StringManip.bm'

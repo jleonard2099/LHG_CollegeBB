@@ -12,11 +12,12 @@ Sub CAREDIT ()
     Color 15, 0
     Cls
 
-    careerFile$ = ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
+    careerFile$ = _OpenFileDialog$("Choose Career Record file", diskPaths$(1), "*.CAR", "Career Record files")
+    'ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
 
     If ExitCode% <> 27 And ExitCode% <> 0 Then
 
-		Call LoadCareerFile (diskPaths$(1) + careerFile$ + ".CAR")
+		Call LoadCareerFile (careerFile$)
 
         Do
 
@@ -37,12 +38,12 @@ Sub CAREDIT ()
             Select Case UCase$(I$)
 
                 Case "P":
-                    Call EditPlayers(careerFile$)
+                    Call EditPlayers (GetFileBaseName$(careerFile$))
 
                 Case "E", "X": '
 
                 Case "U":
-                    Call SaveCareerFile(diskPaths$(1) + careerFile$ + ".CAR")
+                    Call SaveCareerFile (careerFile$)
 
             End Select
 
@@ -60,7 +61,7 @@ End Sub
 'players to edit from the career stats,
 'then presents options for handling them
 'before deletions or edits are processed.
-Sub EditPlayers (careerFile$)
+Sub EditPlayers (careerName$)
 
     Shared careerPlayers$()
 
@@ -69,7 +70,7 @@ Sub EditPlayers (careerFile$)
     Do
 
         Cls
-        Color 12: Print careerFile$
+        Color 12: Print careerName$
 
         For I = 0 To 15:
             Locate I + 2
@@ -140,11 +141,11 @@ Sub EditPlayers (careerFile$)
                                     Case "F"
                                         userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
                                         If userFile$ <> "" Then
-                                            Call CareerStatsPlayer_Report(0, userFile$, careerFile$, B9)
+                                            Call CareerStatsPlayer_Report(0, userFile$, careerName$, B9)
                                         End If
 
                                     Case "P"
-                                        Call CareerStatsPlayer_Report(1, "REPORT", careerFile$, B9)
+                                        Call CareerStatsPlayer_Report(1, "REPORT", careerName$, B9)
 
                                 End Select
 
@@ -210,7 +211,7 @@ End Sub
 '----------------------------------------
 'This routine formats and prints career
 'stats associated with the team's players
-Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
+Sub CareerStatsPlayer_Report (printDest, destFile$, careerName$, playerIdx)
 
     Shared careerPlayers$()
 
@@ -223,7 +224,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
 
     Open destFile$ For Output As #1
 
-    Print #1, careerFile$
+    Print #1, careerName$
 
     'Process player
     TT1 = 0
@@ -252,7 +253,7 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerFile$, playerIdx)
 
     If 55 - PTN < VV Then
         Print #1, Chr$(12)
-        Print #1, Tab(59); careerFile$
+        Print #1, Tab(59); careerName$
         Print #1,
         Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
         PTN = 0

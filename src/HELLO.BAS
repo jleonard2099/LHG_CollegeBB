@@ -23,7 +23,7 @@ DefInt A-Z
 ' General Sub
 '$Include: 'KeyInput.bi'
 '$Include: 'QPProEqu.bi'
-'$Include: 'PadRight.bi'
+'$Include: 'StringManip.bi'
 '$Include: 'QBWRITE.bi'
 
 ' For Utils
@@ -68,24 +68,7 @@ Data FIELD GOAL ATTEMPTS,FIELD GOALS MADE,F.G. PCT.,THREE POINT ATTEMPTS,THREE P
 Data DEFENSIVE REBOUNDS,TOTAL REBOUNDS,REBOUNDS PER GAME,FOULS,ASSISTS,BLOCKS,STEALS,TURNOVERS,POINTS PER GAME
 Data OPP. FIELD GOAL ATTEMPTS,OPP. FIELD GOALS MADE,OPP. FIELD GOAL PERCENTAGE,OPP. THREE POINTERS ATTEMPTED,OPP. THREE POINTERS MADE,OPP. THREE POINT PERCENTAGE,OPP. FREE THROWS ATTEMPTED,OPP. FREE THROWS MADE,OPP. FREE THROW PERCENTAGE
 Data OPP. OFFENSIVE REBOUNDS,OPP. DEFENSIVE REBOUNDS,OPP. TOTAL REBOUNDS,OPP. REBOUNDS PER GAME,OPP. FOULS,OPP. ASSISTS,OPP. BLOCKS,OPP. STEALS,OPP. TURNOVERS,OPP. POINTS PER GAME,RETURN TO MAIN MENU
-$Debug
-$Color:32
 
-Const GAME_VERSION$ = "5.1"
-Const MAX_FILES = 10240
-Const MAX_CAREER_YEARS = 15
-Const MAX_CONFERENCES = 40
-Const MAX_SCHED_STATS = 100
-Const MAX_SCHEDULE_GAMES = 6000
-Const MAX_TOURNAMENT_GAMES = 200
-Const MAX_TEAMS = 1000
-'optimium = 1048576 (but slows code)
-Const TEAMS_PER_DIV = 15
-Const DIVS_PER_CONFERENCE = 2
-Const TEAMS_PER_CONFERENCE = 30
-
-Const SCHEDULE_SIZE_BYTES = 52
-Const LAST_ROW = 30
 For I = 0 To 38:
     Read expTeamCategory$(I)
 Next
@@ -122,6 +105,7 @@ Next
 '2 = Foul chance
 '2nd index represents Def Category
 'Data 1,4,2,5,15,29,22,36,7,9,7,12
+'-- Update to improve foul chances
 Data 2,5,1,4,15,29,22,36,7,9,3,12
 For I = 0 To 2
     For I1 = 1 To 4
@@ -137,6 +121,7 @@ Next
 '4 = Foul chance
 '2nd index represents Def Coverage
 'Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
+'-- Update to improve foul chances
 Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,9,3,7
 For I = 0 To 4
     For I1 = 0 To 3
@@ -203,17 +188,23 @@ For I = 0 To 17
     Read defStyles$(I)
 Next I
 
-Data "NORMAL                            "
-Data "AGGRESSIVE                        "
-Data "SAFE                              "
-Data "QUICK OFFENSE (LAST 3 MIN)        "
-Data "DELAY OFFENSE (LAST 3 MIN)        "
-Data "MILK CLOCK TO 15 SEC (USING S.C.) "
-Data "STALL F GOOD SHOT (WITHIN 10 PTS) "
-Data "TOTAL STALL (LAST 3 MIN)          "
-Data "HOLD VS PASS ZN (AHEAD, NO S.C.)  "
-Data "SHOOT ONLY THREES (LAST 3 MIN)    "
-For I = 0 To 9
+Data "MOTION"
+Data "PICK & ROLL"
+Data "TRIANGLE"
+Data "PRINCETON"
+Data "FLEX"
+Data "DRIBBLE DRIVE"
+Data "TRANSITION"
+Data "ZONE"
+Data "ISOLATION"
+Data "QUICK OFFENSE (LAST 3 MIN)       "
+Data "DELAY OFFENSE (LAST 3 MIN)       "
+Data "MILK CLOCK TO 15 SEC (USING S.C.)"
+Data "STALL GOOD SHOT (WITHIN 10 PTS)  "
+Data "TOTAL STALL (LAST 3 MIN)         "
+Data "HOLD VS PASS ZN (AHEAD, NO S.C.) "
+Data "SHOOT ONLY THREES (LAST 3 MIN)   "
+For I = 0 To 15
     Read offStyles_brief$(I)
 Next
 
@@ -689,7 +680,7 @@ End Sub
 ' General purpose
 '$Include: 'KeyInput.bm'
 '$Include: 'QPProEqu.bm'
-'$Include: 'PadRight.bm'
+'$Include: 'StringManip.bm'
 '$Include: 'QBWRITE.bm'
 
 ' For Utils
@@ -870,7 +861,7 @@ Sub COLHOOP ()
         currGame = schedGame(0) + schedGame(2)
 
         'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
         
         If Not _FileExists(diskPaths$(3) + scheduleFile$) Then
 
@@ -916,7 +907,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1266,7 +1257,6 @@ Sub COLHOOP ()
             'then Val will return the first 4 digits
             teamYears(I) = Val(RTrim$(diskIDs$(I)))
         End If
-
     Next I
 
     Call ChangeContributions
@@ -1274,6 +1264,10 @@ Sub COLHOOP ()
 
     If teamRat_GAME(1, 0) = teamRat_GAME(0, 0) And teamRat_GAME(1, 1) = teamRat_GAME(0, 1) Then
         Call ColorChange
+    End If
+
+    If autoPlay = 1 Then
+        gameLoc = schedOptions(2)
     End If
 
     'Determine attendance
@@ -2210,10 +2204,9 @@ Sub COLHOOP ()
                 ' *** CHECK FOR TURNOVER ***
 
                 'NOTE - defAdjVsPass(0, 4) is a value of 5
-                'We are not relying on the current DEFENSE???
-                CY = 7 + defAdjVsPass(0, 4)
+                toChance = 7 + defAdjVsPass(0, 4)
 
-                If RN1 <= CY Then
+                If RN1 <= toChance Then
 
                     Select Case RN0
 
@@ -2242,9 +2235,9 @@ Sub COLHOOP ()
                 'We are not relying on the current DEFENSE
                 'So technically fixed values could be put in here
                 'However, if research would show them needing changed...
-                CY = CY + teamAdj(P, 4) + defAdjVsPass(1, 1)
+                stealChance = stealChance + teamAdj(P, 4) + defAdjVsPass(1, 1)
 
-                If RN1 <= CY Then
+                If RN1 <= stealChance Then
 
                     Select Case RN0
 
@@ -2349,7 +2342,9 @@ Sub COLHOOP ()
             Call AdjustPlayTime
             'Call AdjustShotClock
 
-            If d100% <= defAdjVsPass(2, defCategory(D)) Then
+            Call Rolld100(RN0)
+
+            If RN0 <= defAdjVsPass(2, defCategory(D)) Then
 
                 'Foul
                 Call LASTSHOT
@@ -2370,7 +2365,7 @@ Sub COLHOOP ()
 
             ' *** CHECK FOR OFF FOUL ***
 
-            If d100% <= defAdjVsPass(2, defCategory(D)) + 1 Then
+            If RN0 <= defAdjVsPass(2, defCategory(D)) + 1 Then
                 'Offensive Foul
                 offStatus = 0
                 GoTo 580
@@ -2380,10 +2375,9 @@ Sub COLHOOP ()
 
             'Chance of Turnover
             '   Def Foul Chance + Off T/O Rating + Def TO Adj + Def TO Chance - Pressure Rating
-            '   5% = fudge factor to get Turnovers where they should be overall
-            CY = defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
+            toChance = 1 + defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
 
-            If d100% <= CY Then
+            If RN0 <= toChance Then
 
                 Call LASTSHOT
 
@@ -2396,7 +2390,7 @@ Sub COLHOOP ()
 
             'Chance of Steal
             '           Off Steal Rating + Def Steal Chance - Pressure Rating
-            CY = CY + teamAdj(P, 4) + defAdjVsPass(1, defCategory(D)) - pressureRating(D, 1)
+            stealChance = stealChance + teamAdj(P, 4) + defAdjVsPass(1, defCategory(D)) - pressureRating(D, 1)
             pctContrib(D) = pctContrib(D) + 1
 
             If pctContrib(D) > 3 Then
@@ -2404,7 +2398,7 @@ Sub COLHOOP ()
                 pressureRating(D, 1) = 0
             End If
 
-            If d100% <= CY Then
+            If RN0 <= stealChance Then
                 'Steal
                 GoTo 435
             End If
@@ -2413,11 +2407,13 @@ Sub COLHOOP ()
 
     Else
 
+        Call Rolld100(RN0)
+
         'If NOT an Offensive Stall OR Defense is not 2-3 Zone
-        If (offStrat(P) <> 8 And offStrat(P) <> 7) Or defCoverage(D) <> 2 Then
+        If (offStrat(P) <> 13 And offStrat(P) <> 14) Or defCoverage(D) <> 2 Then
 
             ' *** CHECK FOR PERSONAL FOUL ***
-            foulChance = defAdjVsShot(4, defCoverage(D)) - 2
+            foulChance = defAdjVsShot(4, defCoverage(D))
 
             'Around 2005, the NCAA  saw a shift towards fewer jump shots.
             'This naturally leads to increased personal fouls.
@@ -2431,7 +2427,7 @@ Sub COLHOOP ()
             End If
 
             ' ** Foul on shot attempt **
-            If d100% <= foulChance Then
+            If RN0 <= foulChance Then
 
                 Call LASTSHOT
                 Call ResetShotClock
@@ -2449,7 +2445,7 @@ Sub COLHOOP ()
 
             ' *** CHECK FOR OFF FOUL ***
 
-            If d100% <= foulChance + 1 Then
+            If RN0 <= foulChance + 1 Then
                 'Offensive Foul
                 offStatus = 0
                 GoTo 580
@@ -2457,21 +2453,35 @@ Sub COLHOOP ()
 
             ' *** CHECK FOR TURNOVER ***
 
-            If offStrat(P) = 4 Or offStrat(P) = 7 Then
-                'Delay / Stall
-                'OY% is -(defAdjVsShot/2)
-                'So, either +-1 or +-2
-                OY% = CInt((defAdjVsShot(2, defCoverage(D)) / 2)) * -1
-            Else
-                OY% = 0
-            End If
+            Select Case offStrat(P)
+
+                Case 0, 2, 4
+                    OY% = -1
+
+                Case 1, 6
+                    OY% = 1
+
+                Case 5
+                    OY% = 2
+
+                Case 7
+                    OY% = -2
+
+                Case 10, 13
+                    'Delay / Stall
+                    OY% = CInt((defAdjVsShot(2, defCoverage(D)) / 2)) * -1
+
+                Case Else
+                    OY% = 0
+
+            End Select
 
             'Chance of Turnover
             '   Def Foul Chance + Off TO Rating + Def TO Adj + Def TO Chance + OY%
             '--> 95+% of turnovers get calculated from here
-            CY = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY% + 3
+            toChance = defAdjVsShot(4, defCoverage(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsShot(2, defCoverage(D)) + OY%
 
-            If d100% <= CY Then
+            If RN0 <= toChance Then
 
                 Call LASTSHOT
 
@@ -2479,36 +2489,40 @@ Sub COLHOOP ()
 
             End If
 
-
             ' *** CHECK FOR STEAL ***
 
             'Chance of Steal (based on Turnover)
             '         Off Steal Rating + Def Steal Chance
-            CY = CY + teamAdj(P, 4) + defAdjVsShot(3, defCoverage(D))
+            stealChance = toChance + teamAdj(P, 4) + defAdjVsShot(3, defCoverage(D))
 
             Select Case offStrat(P)
 
-                Case 0, 3, 5, 6, 8, 9
+                Case 0, 2, 4
+                    OY% = -3
+
+                Case 1, 6
+                    OY% = 3
+
+                Case 3, 8
+                    OY% = 0
+
+                Case 5
+                    OY% = 7
+
+                Case 7
+                    OY% = -7
+
+                Case 9, 11, 12, 14, 15
                     'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
                     OY% = 0
 
-                Case 1
-                    'Aggressive
-                    '-- Dribble Drive = 7
-                    '-- Transition = 6
-                    OY% = 7
-
-                Case 2
-                    'Safe
-                    OY% = -7
-
-                Case 4, 7
+                Case 10, 13
                     'Delay, Total Stall
                     OY% = CInt((defAdjVsShot(3, defCoverage(D)) / 2)) * -1
 
             End Select
 
-            If d100% <= CY + OY% Then
+            If RN0 <= stealChance + OY% Then
                 'Check for steal
                 GoTo 435
             End If
@@ -2517,7 +2531,6 @@ Sub COLHOOP ()
 
     End If
 
-    'Is this when we actually pass the ball ???
 
 
     '-----
@@ -2536,22 +2549,52 @@ Sub COLHOOP ()
         GS% = GS% - 7
     End If
 
+    'These were NOT weighted based on the frequency
+    'of how much they're used.
+    'They were only weighted linearly.
+    'We will likely have to revisit.
     Select Case offStrat(P)
 
-        'Quick Off
-        Case 3: 
+        Case 0
+            GS% = GS% + 5
+
+        Case 1
+            GS% = GS% + 11
+        
+        Case 2
+            GS% = GS% - 1
+        
+        Case 3
+            GS% = GS% - 6
+        
+        Case 4
+            GS% = GS% - 1
+                
+        Case 5
+            GS% = GS% + 16
+                
+        Case 6
+            GS% = GS% + 26
+                
+        Case 7
+            GS% = GS% - 11
+                
+        Case 8
+            GS% = GS% - 6
+
+            'Quick Off
+        Case 9:
             GS% = GS% + 21
 
-        'Delay
-        Case 4: 
+            'Delay
+        Case 10:
             GS% = GS% - 21
 
     End Select
 
     'Total Stall | Hold Ball | Milk Clock and 15+ Secs on Shot Clock
     'Shot Clock + Difficult Shot | No Shot Clock + Difficult Shot OR 25% of the time
-    'If offStrat(P) = 7 Or offStrat(P) = 8 Or (sClockVal >= 1 And offStrat(P) = 5 And shotClock > 15) Or (d100% > GS%) Then
-    If offStrat(P) = 7 Or offStrat(P) = 8 Or (sClockVal >= 1 And offStrat(P) = 5 And shotClock > 15) Or (sClockVal >= 1 And d100% > GS%) Or ((sClockVal = 0 And d100% > GS% And d100% <= 80)) Then
+    If offStrat(P) = 13 Or offStrat(P) = 14 Or (sClockVal >= 1 And offStrat(P) = 11 And shotClock > 15) Or (sClockVal >= 1 And d100% > GS%) Or ((sClockVal = 0 And d100% > GS% And d100% <= 80)) Then
 
         'No Shot / Difficult Shot
         GoTo 437
@@ -2608,7 +2651,7 @@ Sub COLHOOP ()
 
         ' *** CHECK AVERAGE SHOT ***
         'Delay Offense
-        If offStrat(P) = 4 Then
+        If offStrat(P) = 10 Then
 
             'No Shot / Difficult Shot
             GoTo 437
@@ -3544,9 +3587,25 @@ Sub COLHOOP ()
 
             If Not (currHalf > 1 And gameClock! <= 30 And scoreDiff = 2 Or currHalf > 1 And gameClock! <= 30 And scoreDiff = 0 Or currHalf > 1 And gameClock! <= 30 And scoreDiff = -2) Then
 
+                'Player's Foul Draw Rating + Def Foul Adj
+                foulDrawChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 16) + teamAdj(D, 7)
+
+                'Adjust foul chance based on offense
+                Select Case offStrat(P)
+
+                    Case 1, 8
+                        foulDrawChance = foulDrawChance + 1
+
+                    Case 3, 7
+                        foulDrawChance = foulDrawChance - 1
+
+                    Case 5
+                        foulDrawChance = foulDrawChance + 3
+                
+                End Select
+
                 'Player attempt to draw FOUL
-                '-- Compare roll to Foul Draw Rating + Def Foul Adj
-                If foulRoll <= plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 16) + teamAdj(D, 7) - 2 Then
+                If foulRoll <= foulDrawChance Then
 
                     'FOUL!!!
                     plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - 1
@@ -4309,6 +4368,7 @@ Sub COLHOOP ()
     
     ballCarrier = foulPlayer
 
+    'Check if in BONUS
     If teamFouls(D) > 6 Then
 
         'BONUS
@@ -5508,7 +5568,7 @@ Sub TEAMSETUP (teamIdx)
     teamAdj(teamIdx, 6) = leagRat_GAME(teamIdx, 2)
     If teamAdj(teamIdx, 6) > 20 Then teamAdj(teamIdx, 6) = teamAdj(teamIdx, 6) - 100
 
-    'Def Foul Adj
+    'Off Foul Adj
     teamAdj(teamIdx, 7) = leagRat_GAME(teamIdx, 3)
     If teamAdj(teamIdx, 7) > 20 Then teamAdj(teamIdx, 7) = teamAdj(teamIdx, 7) - 100
 
@@ -8424,27 +8484,18 @@ Function ShotPacing%
 
             Case 0
                 'No Shot Clock
-                'Average 50% chance of taking shot
-                '75 = ~50 FGA
-                '85 = ~54 FGA
-                '90 = ~55 FGA
-                'If d100% <= 90 Then
                 paceValue = 39 + CInt((JY - 40) * .8)
-                'End If
 
             Case 1
                 '45-Sec Shot Clock
-                'Average 50% chance of taking shot
                 paceValue = 39 + CInt((JY - 48) * .8)
 
             Case 2
                 '35-Sec Shot Clock
-                'Average 50% chance of taking shot
                 paceValue = 39 + CInt((JY - 58) * .8)
 
             Case 3
                 '30-Sec Shot Clock
-                'Average 50% chance of taking shot
                 paceValue = 39 + CInt((JY - 60) * .8)
 
         End Select
@@ -8454,7 +8505,7 @@ Function ShotPacing%
         'Using modern pacing formulas will always yield
         'the right number of possessions, regardless
         'of the shot clock settings
-        leagFGAG = teamRat_GAME(gameIdx, 4)
+        'leagFGAG = teamRat_GAME(gameIdx, 4)
         paceValue = Int((paceFactor! + 0.5) / (100 - teamRat_GAME(gameIdx, 4)))
 
     End If
@@ -9481,11 +9532,6 @@ Sub UPDATESCREEN ()
 
     Call TICKERUPDATE
 
-    'Team 1
-    Locate 2, 1
-    Locate , 9
-    Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
-
     'Game Clock - Minutes
     Color 15, 0
     Locate 1, 37
@@ -9511,10 +9557,6 @@ Sub UPDATESCREEN ()
         End If
 
     End If
-
-    'Team 2
-    Locate 2, 56
-    Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
 
     'Score Team 1
     Color 14, 0
@@ -9568,7 +9610,7 @@ Sub UPDATESCREEN ()
 
     If teamFouls(1) >= 6 Then
         Color 0, 2
-        Locate , 29: Print "BONUS";
+        Locate , 28: Print "BONUS";
         If teamFouls(1) >= 9 Then Print "+";
         Color 7, 0
     End If
@@ -9654,8 +9696,7 @@ Sub SCOREBOARD ()
     Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
 
     'Team 1
-    Locate 2, 1
-    Locate , 9
+    Locate 2, 14 - (Len(gameTeams$(0)) / 2)
     Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
     'Game Clock - Minutes
@@ -9677,7 +9718,7 @@ Sub SCOREBOARD ()
     End If
 
     'Team 2
-    Locate 2, 56
+    Locate 2, 62 - (Len(gameTeams$(1)) / 2)
     Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1)
 
     'Score Team 1
@@ -9715,15 +9756,17 @@ Sub SCOREBOARD ()
     Color 7: Print Using "##"; teamFouls(1);
 
     'Bonus
-    If teamFouls(0) > 6 Then
+    If teamFouls(0) >= 6 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
+        If teamFouls(0) >= 9 Then Print "+";
         Color 7, 0
     End If
 
-    If teamFouls(1) > 6 Then
+    If teamFouls(1) >= 6 Then
         Color 0, 2
-        Locate , 29: Print "BONUS"
+        Locate , 28: Print "BONUS"
+        If teamFouls(1) >= 9 Then Print "+";
         Color 7, 0
     End If
 
@@ -9863,6 +9906,7 @@ Sub PrintActiveLineup (teamIdx)
         'Stamina
         J = 0
         J = playerFatigue%(teamIdx, lineupIdx(teamIdx, I1))
+
         If J <= 0 Then J = 0
         If J <= 0 And (currHalf = 1 Or currHalf = 2 And gameClock! > 120) Then
             Color 12
@@ -10196,7 +10240,7 @@ End Sub
 'their zone strategy, except for a 2-3 / 3-2.
 Sub ZONECHANGE ()
 
-    If (playerMode = 1 And compTeam = P9 Or playerMode = 0) And (defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or defStrat(D) >= 15) And (offStrat(P) <= 8 And offStrat(P) >= 4) Then
+    If (playerMode = 1 And compTeam = P9 Or playerMode = 0) And (defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or defStrat(D) >= 15) And (offStrat(P) <= 14 And offStrat(P) >= 10) Then
 
         Call FRAMEOPTION(8, P)
         Locate 10, 15
@@ -10241,7 +10285,7 @@ Sub ZONECHANGE ()
         End Select
 
         P9 = D
-        
+
         Call CategorizeDefense(P9)
 
         Color 15, 0
@@ -10373,7 +10417,7 @@ End Sub
 Sub COMPUTERSUBS ()
 
     If currHalf >= 2 And gameClock! <= 60 And threePtOpt = 1 And (score(P9, 0) - score(1 - P9, 0) = -3 Or score(P9, 0) - score(1 - P9, 0) = -6) Then
-        offStrat(P9) = 9
+        offStrat(P9) = 15
     End If
 
     fatiguePlayers = 0
@@ -10819,78 +10863,94 @@ Sub CHANGESTRATEGY ()
     109 '
     Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1)
     Cls
-    Print ; Tab(33); "OFFENSIVE STYLE"
+
+    Print Tab(33); "OFFENSIVE STYLE"
     Print
 
-    For I = 0 To 9
-        Locate , 5: Print Using "# "; I;: Print offStyles$(I)
+    For I = 0 To 15
+        Locate 3 + I, 5: Print Using "# "; I;
+        If I = 10 Then Locate , 5: Print "A ";
+        If I = 11 Then Locate , 5: Print "B ";
+        If I = 12 Then Locate , 5: Print "C ";
+        If I = 13 Then Locate , 5: Print "D ";
+        If I = 14 Then Locate , 5: Print "E ";
+        If I = 15 Then Locate , 5: Print "F ";
+        Print offStylesNew$(I)
     Next
 
     Print
-    Locate 14, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(P9)
+    Locate 20, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(P9)
 
     Do
         I$ = GetKeyPress$
-        I1 = Val(I$)
-    Loop Until I1 >= 0 And I1 <= 9
+        offChoice = Val(I$)
+        Call LetterToNumber(I$, offChoice)
+    Loop Until offChoice >= 0 And offChoice <= 15
 
-    If (I1 = 3 Or I1 = 4 Or I1 = 7 Or I1 = 9) And (currHalf < 2 Or currHalf >= 2 And gameClock! > 180) Then
+    If (offChoice = 9 Or offChoice = 10 Or offChoice = 13 Or offChoice = 15) And (currHalf < 2 Or currHalf >= 2 And gameClock! > 180) Then
         Beep
-        Locate 18, 1: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR OT"
+        Color 12
+        Locate 22, 5: Print "CAN ONLY USE LAST 3 MIN OF 2ND HALF OR LATER!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
-    If I1 = 8 And defCoverage(1 - P9) <> 2 Then
+    If offChoice = 14 And defCoverage(1 - P9) <> 2 Then
         Beep
-        Locate 18, 1: Print "DEFENSE NOT IN PASSIVE ZONE"
+        Color 12
+        Locate 22, 5: Print "DEFENSE IS NOT IN PASSIVE ZONE!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
-    If I1 = 4 And score(P9, 0) - score(1 - P9, 0) > -11 Then
+    If offChoice = 10 And score(P9, 0) - score(1 - P9, 0) > -11 Then
         Beep
-        Locate 18, 1: Print "ILLEGAL SELECTION"
+        Color 12
+        Locate 22, 5: Print "ILLEGAL SELECTION!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
-    If I1 = 9 And threePtOpt = 0 Then
+    If offChoice = 15 And threePtOpt = 0 Then
         Beep
-        Locate 18, 1: Print "NOT USING 3 POINT SHOT"
+        Color 12
+        Locate 22, 5: Print "NOT USING 3 POINT SHOT!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
-    If I1 = 5 And sClockVal = 0 Then
+    If offChoice = 11 And sClockVal = 0 Then
         Beep
-        Locate 18, 1: Print "NOT USING SHOT CLOCK"
+        Color 12
+        Locate 22, 5: Print "NOT USING SHOT CLOCK!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
-    If I1 = 7 And score(P9, 0) - score(1 - P9, 0) <= 0 Then
+    If offChoice = 13 And score(P9, 0) - score(1 - P9, 0) <= 0 Then
         Beep
-        Locate 18, 1: Print "ILLEGAL SELECTION"
+        Color 12
+        Locate 22, 5: Print "ILLEGAL SELECTION!"
         I$ = GetKeyPress$
         GoTo 109
     End If
 
     'How to loop around this with so many conditions?
     'Possibly build a bunch of nested If/Then statements?
-    offStrat(P9) = I1
+    offStrat(P9) = offChoice
+
     crashBoards(P9) = 0
 
-    If Not (currHalf < 2 Or currHalf >= 2 And gameClock! > 120) Then
-        
+    If currHalf >= 2 And gameClock! <= 120 Then
+
         Print "CRASH OFFENSIVE BOARDS (LAST 2 MIN)? (Y/N)";
-        
+
         Do
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
-        
+
         If UCase$(I$) = "Y" Then crashBoards(P9) = 1
-        
+
     End If
 
     Call DEFENSEMENU
@@ -11150,7 +11210,8 @@ Sub SHOTPERCENT ()
         'allowing more b/c their likelihood makes them risky.
         'This is reflected here by increasing the likelihood
         'the shot will be taken.
-        threePtDefAdj = 0 '10
+        '--- currently adjusting to tweak 3FGA
+        threePtDefAdj = 0
     End If
 
     Select Case defStrat(D)
@@ -11173,12 +11234,15 @@ Sub SHOTPERCENT ()
 
     skipCalcs% = 0
 
+    'Fudge factor
+    threePtDefAdj = threePtDefAdj - 9
+
     ' ** Check for three-point shot **
     '% of player shots that are 3 FG + def threeFGA_Adj + adjustment due to Def
     If threePtShotChance > plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) + teamAdj(D, 3) + threePtDefAdj Or plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) = 0 Then
 
         'Strategy = Shoot only 3's
-        If offStrat(P) = 9 Then
+        If offStrat(P) = 15 Then
             'Shoot 3's no matter what!
             threePtShotChance = Int(Rnd(1) * 5) + 11
             J8% = 1
@@ -12661,18 +12725,36 @@ Sub ComputerStrategy ()
 
     If currHalf = 1 Then
 
-        If threePtOpt = 1 then
+        If threePtOpt = 1 Then
 
             Select Case RN0
 
-                Case 1 To 53
+                Case 1 To 17
                     offStrat(P9) = 0
 
-                Case 54 To 88
+                Case 18 To 39
                     offStrat(P9) = 1
 
-                Case 89 To 100
+                Case 40 To 43
                     offStrat(P9) = 2
+
+                Case 44 To 48
+                    offStrat(P9) = 3
+
+                Case 49 To 52
+                    offStrat(P9) = 4
+
+                Case 53 To 68
+                    offStrat(P9) = 5
+
+                Case 69 To 88
+                    offStrat(P9) = 6
+
+                Case 89 To 93
+                    offStrat(P9) = 7
+                    
+                Case 94 To 100
+                    offStrat(P9) = 8
 
             End Select
         
@@ -12680,20 +12762,32 @@ Sub ComputerStrategy ()
 
             Select Case RN0
 
-                Case 1 To 73
+                Case 1 To 24
                     offStrat(P9) = 0
 
-                Case 74 To 91
+                Case 25 To 34
                     offStrat(P9) = 1
 
-                Case 92 To 100
+                Case 35 To 50
                     offStrat(P9) = 2
+
+                Case 51 To 60
+                    offStrat(P9) = 3
+
+                Case 61 To 73
+                    offStrat(P9) = 4
+
+                Case 74 To 90
+                    offStrat(P9) = 6
+
+                Case 91 To 100
+                    offStrat(P9) = 7
 
             End Select
             
         End If
         
-        Call pbplog(12658)
+        'Call pbplog(12658)
 
     Else
         'currHalf >= 2
@@ -12705,43 +12799,139 @@ Sub ComputerStrategy ()
 
                 If RN0 <= 30 Then
                     'Quick
-                    offStrat(P9) = 3
+                    offStrat(P9) = 9
                 Else
                     'Delay
-                    offStrat(P9) = 4
+                    offStrat(P9) = 10
                 End If
 
             Else
 
-                If RN0 <= 70 Then
-                    offStrat(P9) = 0
+                If threePtOpt = 1 Then
+
+                    Select Case RN0
+
+                        Case 0 To 23
+                            offStrat(P9) = 0
+
+                        Case 24 To 52
+                            offStrat(P9) = 1
+
+                        Case 53 To 58
+                            offStrat(P9) = 2
+
+                        Case 59 To 65
+                            offStrat(P9) = 3
+
+                        Case 66 To 70
+                            offStrat(P9) = 4
+
+                        Case 71 To 87
+                            offStrat(P9) = 5
+                            
+                        Case 88 To 100
+                            offStrat(P9) = 6
+
+                    End Select
+                    
                 Else
-                    offStrat(P9) = 1
+                
+                    Select Case RN0
+
+                        Case 0 To 23
+                            offStrat(P9) = 0
+
+                        Case 24 To 32
+                            offStrat(P9) = 1
+
+                        Case 33 To 46
+                            offStrat(P9) = 2
+
+                        Case 47 To 55
+                            offStrat(P9) = 3
+
+                        Case 56 To 70
+                            offStrat(P9) = 4
+                    
+                        Case 71 To 100
+                            offStrat(P9) = 6
+
+                    End Select
+                
                 End If
 
             End If
 
-            Call pbplog(12703)
+            'Call pbplog(12804)
 
         Else
 
             'We are ahead
-            If RN0 <= 85 Then
-                offStrat(P9) = 0
+            If threePtOpt = 1 Then
+
+                Select Case RN0
+
+                    Case 0 To 28
+                        offStrat(P9) = 0
+
+                    Case 29 To 63
+                        offStrat(P9) = 1
+
+                    Case 64 To 71
+                        offStrat(P9) = 2
+
+                    Case 72 To 78
+                        offStrat(P9) = 3
+                
+                    Case 79 To 86
+                        offStrat(P9) = 4
+
+                    Case 86 To 91
+                        offStrat(P9) = 7
+
+                    Case 92 To 100
+                        offStrat(P9) = 8
+
+                End Select
+
             Else
-                offStrat(P9) = 2
+            
+                Select Case RN0
+
+                    Case 0 To 28
+                        offStrat(P9) = 0
+
+                    Case 29 To 39
+                        offStrat(P9) = 1
+
+                    Case 40 To 56
+                        offStrat(P9) = 2
+
+                    Case 57 To 68
+                        offStrat(P9) = 3
+                
+                    Case 69 To 85
+                        offStrat(P9) = 4
+
+                    Case 86 To 100
+                        offStrat(P9) = 7
+
+                End Select
+
             End If
 
-            Call pbplog(12714)
+            'Call pbplog(12862)
 
         End If
 
         If gameClock! <= 60 And threePtOpt = 1 And scoreDiffTm <= -3 Then
             'We are behind by 3 or more
-            offStrat(P9) = 9
+            offStrat(P9) = 15
         End If
 
     End If
+
+    'Call pbplog(12873)
 
 End Sub
 
@@ -15196,7 +15386,7 @@ End Sub
 'should be started.
 Sub EndOfGame ()
 
-    Close #11
+    'Close #11
     Call POSTGAME
 
     Cls

@@ -1290,7 +1290,7 @@ Sub PostLeadersConf (conferenceName$)
 
     Print "    POSTING NEW "; conferenceName$; " CONFERENCE LEADERS"
 
-    For X = 1 To TEAMS_PER_CONFERENCE
+    For X = 1 To TEAMS_PER_CONFERENCE:
         Write #1, memberName$(X), seasonWins(X), seasonLosses(X), seasonWinPct!(X), divWins(X), divLosses(X), divWinPct!(X)
     Next
 
