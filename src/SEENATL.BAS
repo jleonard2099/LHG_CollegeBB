@@ -9,7 +9,7 @@ Sub SEENATL ()
 
     _Title "Courtside College Basketball - View National Stats"
 
-    leaderFile$ = _OpenFileDialog$("Choose Organization Stats file", diskPaths$(2), "*.NLD", "Organization Stats files")
+    leaderFile$ = _OpenFileDialog$("Choose Organization Stats file", diskPaths$(2), "*.NLD", "Organization Stats files [.NLD]")
     'ChooseFile$ (diskPaths$(2) + "*.NLD", "LEADER", ExitCode%)
 
     If leaderFile$ <> "" Then

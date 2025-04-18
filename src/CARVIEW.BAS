@@ -8,7 +8,7 @@ Sub CARVIEW ()
 
     _Title "Courtside College Basketball - View Careers"
 
-    careerFile$ = _OpenFileDialog$("Choose Career Leader file", diskPaths$(1), "*.CAR", "Career Leader files")
+    careerFile$ = _OpenFileDialog$("Choose Career file", diskPaths$(1), "*.CAR", "Career files [.CAR]")
     'ChooseFile$(diskPaths$(1) + "*.CAR", "CAREER", ExitCode%)
 
     If careerFile$ <> "" Then
@@ -387,7 +387,7 @@ Sub ViewPlayer (careerName$)
 
     Cls
 
-    Locate 2, 1
+    Locate 2, (80 - Len(careerName$)) / 2
     Color 12
     Print careerName$
 
@@ -427,7 +427,7 @@ Sub ViewPlayer (careerName$)
         Input "ENTER # OF PLAYER TO VIEW"; B9
     Loop Until B9 >= 0 And B9 <= 61
 
-    Call OnePlayer_Screen (careerName$, B9)
+    Call OnePlayer_Screen (careerName$, B9, VV)
 
     Color 14
     Locate, 30
@@ -452,32 +452,38 @@ Sub ViewRosterSequence (careerName$)
             'Check for valid player
             If careerPlayers$(I) <> "" And careerPlayers$(I) <> "XXX" Then
 
-                Cls
+                Call OnePlayer_Screen (careerName$, I, VV)
 
-                Call OnePlayer_Screen (careerName$, I)
+                Do
 
-                Color 14
-                Locate, 16
-                Print "HIT ENTER TO CONTINUE OR ESC TO GO TO MAIN MENU"
-                I$ = GetKeyPress$
+                    Color 14
+                    Locate 11+VV, 16
+                    Print "HIT ENTER TO CONTINUE OR ESC TO GO TO MAIN MENU"
+                    I$ = GetKeyPress$
 
-                If I$ = Chr$(27) Then Exit Sub
+                    If I$ = Chr$(27) Then Exit For
 
-                Cls
+                    Cls
+                    
+                Loop Until I$ = Chr$(27) Or I$ = Chr$(13)
 
             End If 'Done checking for valid player
 
         Next I
 
-        Cls
+        If I$ <> Chr$(27) Then
 
-        Color 14
+            Cls
 
-        Do
-            Locate 5, 20
-            Print "VIEW AGAIN? (Y/N)"
-            I$ = GetKeyPress$
-        Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y" Or I$ = Chr$(27)
+            Color 14
+
+            Do
+                Locate 5, 20
+                Print "VIEW AGAIN? (Y/N)"
+                I$ = GetKeyPress$
+            Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y" Or I$ = Chr$(27)
+
+        End If
 
     Loop Until UCase$(I$) = "N" Or I$ = Chr$(27)
 
@@ -489,7 +495,7 @@ End Sub
 '----------------------------------------
 'This subroutine will display career stats
 'on the screen for a single player
-Sub OnePlayer_Screen (careerName$, index)
+Sub OnePlayer_Screen (careerName$, index, nbrYears)
 
     Shared careerPlayers$()
 
@@ -513,12 +519,12 @@ Sub OnePlayer_Screen (careerName$, index)
     TT16 = 0
     TT17 = 0
 
-    VV = 0
+    nbrYears = 0
 
     Cls
 
-    Locate 2, 1
     Color 11
+    Locate 2, (80 - Len(careerName$)) / 2
     Print careerName$
 
     Color 12
@@ -529,10 +535,10 @@ Sub OnePlayer_Screen (careerName$, index)
     Print Left$(careerPlayers$(index), 13);
 
     For Z = 1 To MAX_CAREER_YEARS
-        VV = VV + carPlyrStat!(Z, index, 14)
+        nbrYears = nbrYears + carPlyrStat!(Z, index, 14)
     Next Z
 
-    For V = 1 To VV
+    For V = 1 To nbrYears
 
         Color 7
 
@@ -606,7 +612,7 @@ Sub OnePlayer_Screen (careerName$, index)
     Print
 
     'Games
-    Print Tab(18); Using "##"; VV;
+    Print Tab(18); Using "##"; nbrYears;
 
     'FGM
     Print Tab(23); Using "#####"; TT2;
@@ -674,7 +680,7 @@ Sub OnePlayer_Screen (careerName$, index)
 
     Cls
 
-    Locate 2, 1
+    Locate 2, (80 - Len(careerName$)) / 2
     Color 11
     Print careerName$
 
@@ -685,7 +691,7 @@ Sub OnePlayer_Screen (careerName$, index)
     Color 15
     Print Left$(careerPlayers$(index), 13);
 
-    For V = 1 To VV
+    For V = 1 To nbrYears
 
         Color 7
 
@@ -754,7 +760,7 @@ Sub OnePlayer_Screen (careerName$, index)
     Color 3
     Print
 
-    Print Tab(18); Using "##"; VV;
+    Print Tab(18); Using "##"; nbrYears;
     Print Tab(26); Using "####"; TT9 - TT17;
 
     If TT9 = 0 Then
@@ -808,7 +814,5 @@ Sub OnePlayer_Screen (careerName$, index)
     TT15 = 0
     TT16 = 0
     TT17 = 0
-
-    Locate 10+VV
 
 End Sub

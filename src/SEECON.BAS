@@ -9,7 +9,7 @@ Sub SEECON ()
 
     _Title "Courtside College Basketball - View Conference Stats"
 
-    leaderFile$ = _OpenFileDialog$("Choose Conference Stats file", diskPaths$(2), "*.LDR", "Conference Stats files")
+    leaderFile$ = _OpenFileDialog$("Choose Conference Stats file", diskPaths$(2), "*.LDR", "Conference Stats files [.LDR]")
     'ChooseFile$(diskPaths$(2) + "*.LDR", "LEADER", ExitCode%)
 
     If leaderFile$ <> "" Then
