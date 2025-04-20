@@ -70,9 +70,9 @@ Sub CompileCollege ()
 
     C$ = ","
 
-    conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
+    conferenceFile$ = _OpenFileDialog$("Choose Conference Stats file", diskPaths$(2), "*.TMS", "Conference Stats files [.TMS]")
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If conferenceFile$ <> "" Then
 
         Do
             Color 15, 0
@@ -162,7 +162,7 @@ Sub CompileCollege ()
         Next XW 'Done "checking stats"
 
         Call SortStandingsConference(0)
-        Call PostLeadersConf(conferenceFile$)
+        Call PostLeadersConf(GetFileBaseName$(conferenceFile$))
         Call PostRecordsColl
 
     End If

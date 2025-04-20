@@ -27,9 +27,10 @@ Sub TOURNEY ()
     yearNumber$(0, 3) = "10-01-91"
     yearNumber$(0, 2) = "07:30P"
 
-    tourneyFile$ = ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
+    tourneyFile$ = _OpenFileDialog$("Choose Tournament file", diskPaths$(1), "*.TOU", "Tournament files [.TOU]")
+    'ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If tourneyFile$ <> "" Then
 
         Color 7, 0
         Cls
@@ -49,6 +50,8 @@ Sub TOURNEY ()
         Next
 
         Call ReadTourneyFile(tourneyFile$)
+        
+        tourneyName$ = GetFileBaseName$(tourneyFile$)
 
         Do
 
@@ -93,7 +96,7 @@ Sub TOURNEY ()
             Color 14: Print "-QUIT  ";
 
             Locate 1, 1: Print Tab(80); " ";
-            Locate 1, 1: Print tourneyFile$
+            Locate 1, 1: Print tourneyName$
             Locate 1, 33
 
             Color 14: Print "AUTO SCHEDULER"
@@ -168,7 +171,7 @@ Sub TOURNEY ()
 
                 Case "P":
                     ' *** SAVE TOURNAMENT SCHEDULE ***
-                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 94
+                    Open tourneyFile$ For Random As #1 Len = 94
 
                     For X = 0 To 14
                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -226,7 +229,7 @@ Sub TOURNEY ()
 
                     'Create the Tournament file (equivalent to GAME82)
                     Open "TOURNEY" For Output As #2
-                    Print #2, tourneyFile$ + ".TOU" '".TNY"
+                    Print #2, tourneyName$ + ".TOU"
                     Print #2, SG%
                     Print #2, EG%
                     Print #2, 0
@@ -315,7 +318,7 @@ Sub ReadTourneyFile (tourneyFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
 
-    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #1 Len = 94
+    Open tourneyFile$ For Random As #1 Len = 94
     fileLength& = LOF(1)
     Close #1
 
@@ -324,7 +327,7 @@ Sub ReadTourneyFile (tourneyFile$)
 
     For I = 1 To scheduleAP%(0)
 
-        Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 94
+        Open tourneyFile$ For Random As #2 Len = 94
 
         For X = 0 To 14
             Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$

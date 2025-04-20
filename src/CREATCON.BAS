@@ -62,15 +62,12 @@ Sub CREATCON ()
                     Call ReviewEditConference(conferenceName$)
 
                 Case 2:
-                    Do
+                    confFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
+                    'ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
 
-                        confFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
-
-                        If FileExit% <> 27 And FileExit% <> 0 Then
-                            Call ReviewEditConference(confFile$)
-                        End If
-
-                    Loop Until FileExit% = 27 Or FileExit% = 0
+                    If confFile$ <> "" Then
+                        Call ReviewEditConference(GetFileBaseName$(confFile$))
+                    End If
 
             End Select
 

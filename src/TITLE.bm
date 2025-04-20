@@ -71,7 +71,7 @@ Sub TITLE_HEADER ()
     Print Tab(80); " ";
 
     Locate , 25
-    Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
+    Print "COURTSIDE COLLEGE BASKETBALL v" + GAME_VERSION$
 
     Locate 3, 1
     Color 2, 0
@@ -287,7 +287,7 @@ Sub TITLE ()
 
     Color 12, 1
     Locate , 25
-    Print "COURTSIDE COLLEGE BASKETBALL V" + GAME_VERSION$
+    Print "COURTSIDE COLLEGE BASKETBALL v" + GAME_VERSION$
 
     'Footer
     Locate LAST_ROW, 1

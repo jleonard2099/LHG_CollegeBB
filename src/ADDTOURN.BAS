@@ -70,7 +70,7 @@ Sub ADDTOURN ()
                     consolationSetting%(0) = 0
                     consolationSetting%(1) = 0
 
-                    Call LoadTourney(NR%, SELECTION%, tn$)
+                    Call LoadTourney(NR%, SELECTION%)
 
                 Case 3:
                     Call BRACKET
@@ -623,7 +623,9 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
 
     Loop Until SELECTION% = numberRegions + 1 Or ExitCode% = 27
 
-    If ExitCode% <> 27 Then Call ScheduleAndSaveTourney(saveFile$, numberRegions, tourneyName$)
+    If ExitCode% <> 27 Then 
+        Call ScheduleAndSaveTourney(saveFile$, numberRegions, tourneyName$)
+    End If
 
 End Sub
 
@@ -661,7 +663,7 @@ End Sub
 'tournament files and reads in the data.
 'It then proceeds to call the routine for
 'editing tournament files.
-Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
+Sub LoadTourney (numberRegions, ACTION%)
 
     Dim numberRegions$
 
@@ -670,15 +672,18 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
     Shared tourneyParams(), nbrRegionalTeams()
     Shared tourneyDefaults%()
 
-    tourneyFile$ = ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
+    tourneyFile$ = _OpenFileDialog$("Choose Tournament file", diskPaths$(1), "*.TOU", "Tournament files [.TOU]")
+    'ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
 
-    If ExitCode% <> 27 And _FileExists(tourneyFile$) Then
+    baseFile$ = GetFileBaseName$(tourneyFile$)
+
+    If tourneyFile$ <> "" Then
 
         If ACTION% = 4 Then
             'Reset tournament
 
             'Create TOU file as backup of TCX
-            Call FCopy(diskPaths$(1) + tourneyFile$ + ".TCX", diskPaths$(1) + tourneyFile$ + ".TOU", Buff$, copyErr%)
+            Call FCopy(diskPaths$(1) + baseFile$ + ".TCX", diskPaths$(1) + baseFile$ + ".TOU", Buff$, copyErr%)
 
             MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
             BoxWidth = 18
@@ -692,7 +697,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
         Else
 
-            Open diskPaths$(1) + tourneyFile$ + ".INF" For Input As #1
+            Open diskPaths$(1) + baseFile$ + ".INF" For Input As #1
 
             Input #1, tourneyName$
 
@@ -712,11 +717,12 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
                 Next
             Next
 
-            Input #1, consolationSetting%(0): Input #1, consolationSetting%(1): ' CONSOLATION GAME
+            Input #1, consolationSetting%(0)
+            Input #1, consolationSetting%(1) ' CONSOLATION GAME
 
             Close #1
 
-            Open diskPaths$(1) + tourneyFile$ + ".TNY" For Input As #2
+            Open diskPaths$(1) + baseFile$ + ".TNY" For Input As #2
 
             For I = 0 To 14
                 Input #2, tourneyDefaults%(I)
@@ -728,7 +734,7 @@ Sub LoadTourney (numberRegions, ACTION%, tourneyName$)
 
             numberRegions$ = Str$(numberRegions)
 
-            Call SetupTourney(numberRegions$, ACTION%, tourneyName$, tourneyFile$)
+            Call SetupTourney(numberRegions$, ACTION%, tourneyName$, baseFile$)
 
         End If 'Done checking ACTION%
 

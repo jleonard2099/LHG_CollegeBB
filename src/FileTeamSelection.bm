@@ -508,9 +508,9 @@ Sub ReadScheduleStats (statFile$, numberGames)
 
     Shared gameAttendance&()
 
-    findFile$ = diskPaths$(1) + statFile$ + "S"
+    baseFile$ = diskPaths$(1) + statFile$ + "S"
 
-    Open findFile$ For Input As #1
+    Open baseFile$ For Input As #1
 
     Input #1, numberGames
 
@@ -696,7 +696,7 @@ Sub ReadConferenceIndex (indexFile$)
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
-    Open diskPaths$(2) + indexFile$ + ".TMI" For Input As #2
+    Open indexFile$ For Input As #2
 
     'Currently not used but is there
     'to help separate from Pro, for
@@ -731,7 +731,7 @@ Sub ReadConferenceStats (statFile$)
 
     Shared div1Name$, div2Name$
 
-    Open diskPaths$(2) + statFile$ + ".TMS" For Input As #1
+    Open statFile$ For Input As #1
 
     Input #1, conferenceName$, div1Name$, div2Name$
 
@@ -753,7 +753,7 @@ Sub ReadOrganizationFile (organizationFile$, orgName$)
 
     Shared memberConf$()
 
-    Open diskPaths$(2) + organizationFile$ + ".CON" For Input As #1
+    Open organizationFile$ For Input As #1
 
     Input #1, orgName$
 

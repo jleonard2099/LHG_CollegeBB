@@ -330,7 +330,8 @@ Close #3
 'Run main menu
 SELECTION% = 1
 
-Screen _NewImage(640, 480, 256)
+menu& = _NewImage(640, 480, 256)
+Screen menu&
 
 Do
 
@@ -403,7 +404,15 @@ Sub Main_Menu (menuSelection)
             Select Case menuSelection
 
                 Case 1:
-                    Call COLHOOP
+                    If schedGame(0) + schedGame(2) <= schedGame(1) Then
+                        activeSchedule = 1
+                    Else
+                        activeSchedule = 0
+                    End If
+
+                    Do
+                        Call COLHOOP
+                    Loop Until activeSchedule = 0
 
                 Case 2:
                     Call TeamMgt_Menu
@@ -694,22 +703,6 @@ End Sub
 '$Include: 'BLANKCON.BAS'
 '$Include: 'BLANKORG.BAS'
 '$Include: 'BRACKET.BAS'
-'$Include: 'CAREER.BAS'
-'$Include: 'CAREDIT.BAS'
-'$Include: 'CARLDR.BAS'
-'$Include: 'CARVIEW.BAS'
-'$Include: 'CNGTM.BAS'
-'$Include: 'COMPARE.BAS'
-'$Include: 'COMPCON.BAS'
-'$Include: 'COMPNATL.BAS'
-'$Include: 'CREATCON.BAS'
-'$Include: 'CREATNATL.BAS'
-'$Include: 'DRAFT.BAS'
-'$Include: 'HD2HDCON.BAS'
-'$Include: 'LOOKY.BAS'
-'$Include: 'MERGE.BAS'
-'$Include: 'NEWLDR.BAS'
-'$Include: 'NEWLDRST.BAS'
 '$Include: 'REC.BAS'
 '$Include: 'RECORDS.BAS'
 '$Include: 'SCHEDULE.BAS'
@@ -5129,7 +5122,7 @@ Sub COLHOOP ()
 
         'Check if BONUS
         If teamFouls(D) > 6 Then
-        
+
             'BONUS
             GoTo 570
 
@@ -12852,7 +12845,7 @@ Sub ComputerStrategy ()
 
                         Case 56 To 70
                             offStrat(P9) = 4
-                    
+
                         Case 71 To 100
                             offStrat(P9) = 6
 
@@ -15412,7 +15405,6 @@ Sub EndOfGame ()
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
         Cls
         Print "PLEASE WAIT ..."
-        Call COLHOOP
     End If
 
 End Sub

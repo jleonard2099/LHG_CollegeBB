@@ -11,9 +11,10 @@ Sub BLANKORG ()
     Shared memberConf$()
 	Shared memberName$()
     
-    organizationFile$ = ChooseFile$ (diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
+    organizationFile$ = _OpenFileDialog$("Choose Organization file", diskPaths$(2), "*.CON", "Organization files [.CON]")
+    'ChooseFile$ (diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If organizationFile$ <> "" Then
 
         MsgText$ = "WARNING!!! THIS WILL ERASE ALL COMPILED STATS FOR THIS ORGANIZATION. IF YOU STILL WISH TO ERASE ALL STATS, PRESS 'Y' FOR YES"
         BoxWidth = 31
@@ -31,7 +32,7 @@ Sub BLANKORG ()
 
                 If memberConf$(X) <> "XXX" Then
 
-                    Call ReadConferenceStats(memberConf$(X))
+                    Call ReadConferenceStats (diskPaths$(2) + memberConf$(X) + ".TMS")
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
                         If memberName$(XW) <> Chr$(42) Then
@@ -42,13 +43,13 @@ Sub BLANKORG ()
                         End If
                     Next
 
+                    leaderFile$ = diskPaths$(2) + memberConf$(X) + ".LDR"
+                    If _FileExists(leaderFile$) Then Kill leaderFile$
+
+                    standingsFile$ = diskPaths$(2) + memberConf$(X) + ".LDS"
+                    If _FileExists(standingsFile$) Then Kill standingsFile$
+
                 End If 'done checking for XXX
-
-                leaderFile$ = diskPaths$(2) + memberConf$(X) + ".LDR"
-                If _FileExists(leaderFile$) Then Kill leaderFile$
-
-                standingsFile$ = diskPaths$(2) + memberConf$(X) + ".LDS"
-                If _FileExists(standingsFile$) Then Kill standingsFile$
 
             Next
 

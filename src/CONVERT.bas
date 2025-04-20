@@ -204,7 +204,8 @@ Sub ConvertTeam4to5 (targetFile$, silent)
 
     Shared playerNames$(), position$()
 
-    diskID$ = Right$(targetFile$, Len(targetFile$) - InStr(targetFile$, "COLBBTMS.") - 8)
+    diskID$ = GetFileExtension$(targetFile$)
+    'Right$(targetFile$, Len(targetFile$) - InStr(targetFile$, "COLBBTMS.") - 8)
     newFile$ = targetFile$ + ".NEW"
 
     If targetFile$ <> "" Then
@@ -485,7 +486,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
     Shared scheduleNG%()
 
-    newFile$ = targetFile$ + ".NEW"
+    newFile$ = GetFileBaseName$(targetFile$) + ".NEW"
 
     If targetFile$ <> "" Then
 
@@ -495,7 +496,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         numberGames = fileLength& / (SCHEDULE_SIZE_BYTES - 4)
 
-        Call ReadSchedOld(targetFile$)
+        Call ReadSchedOld(GetFileBaseName$(targetFile$))
 
         'Call SaveSchedFileConverted(newFile$, numberGames)
 

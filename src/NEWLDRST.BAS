@@ -253,6 +253,7 @@ Sub NewStandings_Screen (league$)
         MJ = 83 - totTeamWins(AA) - totTeamLosses(AA + 1)
         If MJ < 0 Then MJ = 0
 
+        Color 15
         Locate 6, 42
         Print Using "##"; MJ;
 

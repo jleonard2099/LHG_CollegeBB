@@ -71,7 +71,7 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
 
     Close #2
 
-    Call ReadConferenceStats(GetFileBaseName$(targetFile$))
+    Call ReadConferenceStats(diskPaths$(2) + GetFileBaseName$(targetFile$) + ".TMS")
 
     conf$ = conferenceName$
     div1$ = PadRight$(div1Name$, 8)

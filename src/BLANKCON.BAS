@@ -11,9 +11,10 @@ Sub BLANKCON ()
 
 	Shared memberName$()
 
-    conferenceFile$ = ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
+    conferenceFile$ = _OpenFileDialog$("Choose Conference Stats file", diskPaths$(2), "*.TMS", "Conference Stats files [.TMS]")
+    'ChooseFile$ (diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If conferenceFile$ <> "" Then
 
         MsgText$ = "WARNING!!! THIS WILL ERASE ALL COMPILED STATS FOR THIS CONFERENCE. IF YOU STILL WISH TO ERASE ALL STATS, PRESS 'Y' FOR YES"
         BoxWidth = 31
@@ -41,10 +42,12 @@ Sub BLANKCON ()
 
             Next
 
-            leaderFile$ = diskPaths$(2) + conferenceFile$ + ".LDR"
+            baseFile$ = GetFileBaseName$(conferenceFile$)
+
+            leaderFile$ = diskPaths$(2) + baseFile$ + ".LDR"
             If _FileExists(leaderFile$) Then Kill leaderFile$
 
-            standingsFile$ = diskPaths$(2) + conferenceFile$ + ".LDS"
+            standingsFile$ = diskPaths$(2) + baseFile$ + ".LDS"
             If _FileExists(standingsFile$) Then Kill standingsFile$
 
         End If 'Done confirming to move forward with deletion

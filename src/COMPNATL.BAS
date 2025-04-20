@@ -69,9 +69,10 @@ Sub CompileNatlOrg ()
 
     C$ = ","
 
-    organizationFile$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
+    organizationFile$ = _OpenFileDialog$("Choose Organization file", diskPaths$(2), "*.CON", "Organization files [.CON]")
+    'ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", ExitCode%)
 
-    If ExitCode% <> 27 And ExitCode% <> 0 Then
+    If organizationFile$ <> "" Then
 
         Do
             Color 15, 0
@@ -85,6 +86,7 @@ Sub CompileNatlOrg ()
 
         For currConf = 1 To MAX_CONFERENCES
 
+            'Look for * as terminating char
             If memberConf$(currConf) <> "XXX" Then
 
                 Cls
@@ -218,7 +220,7 @@ Sub CompileNatlOrg ()
 
         Next currConf
 
-        Call PostLeadersOrg(organizationFile$, NRT)
+        Call PostLeadersOrg(GetFileBaseName$(organizationFile$), NRT)
         Call PostRecordsColl
 
     End If

@@ -55,7 +55,8 @@ Sub HD2HDCON ()
 
                     'Check if same conference
                     If sameConf <> 1 Then
-                        conferenceFile$ = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
+                        conferenceFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
+                        'ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
                     End If
 
                 End If
@@ -71,7 +72,7 @@ Sub HD2HDCON ()
         Color 7, 0
         Cls
 
-        If teamNbr > 0 And ExitCode% <> 27 And ExitCode% <> 0 Then
+        If teamNbr > 0 And ExitCode% <> 27 And conferenceFile$ <> "" Then
 
             userKey$ = GetOutputOptions$
 

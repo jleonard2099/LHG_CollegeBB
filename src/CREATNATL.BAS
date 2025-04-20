@@ -50,28 +50,31 @@ Sub CREATENATL ()
 
                 Case 1:
                     Call DefineNatOrg(orgName$)
-                    orgFile$ = orgName$
 
-                    If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
-                        Call ReadOrganizationFile (orgFile$, orgName$)
+                    If orgName$ <> "" Then
+                        orgFile$ = diskPaths$(2) + orgName$ + ".CON"
                         Call ReviewEditNatOrg(orgFile$, orgName$)
                     End If
 
                 Case 2:
-                    Do
+                    orgFile$ = _OpenFileDialog$("Choose Organization file", diskPaths$(2), "*.CON", "Organization files [.CON]")
+                    'ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
 
-                        orgFile$ = ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
-
-                        If FileExit% <> 27 And FileExit% <> 0 Then
-                            If _FileExists(diskPaths$(2) + orgFile$ + ".CON") Then
-                                Call ReadOrganizationFile (orgFile$, orgName$)
-                                Call ReviewEditNatOrg(orgFile$, orgName$)
-                            End If
+                    If orgFile$ <> "" Then
+                        If _FileExists(orgFile$) Then
+                            Call ReadOrganizationFile (orgFile$, orgName$)
+                            Call ReviewEditNatOrg(orgFile$, orgName$)
                         End If
-
-                    Loop Until FileExit% = 27 Or FileExit% = 0
+                    End If
 
             End Select
+
+            If orgFile$ <> "" Then
+                If _FileExists(orgFile$) Then
+                    Call ReadOrganizationFile (orgFile$, orgName$)
+                    Call ReviewEditNatOrg(orgFile$, orgName$)
+                End If
+            End If
 
         End If 'Done checking for ESC
 
@@ -96,7 +99,7 @@ Sub DefineNatOrg (organization$)
         Color 15, 0
         Cls
 
-        Call MenuBox(6, 8, 61, 7, 15, 1)
+        Call MenuBox (6, 8, 61, 7, 15, 1)
 
         Do
 
@@ -190,7 +193,9 @@ Sub ReviewEditNatOrg (orgFile$, orgName$)
 
             If choice = 1 Then
                 'Add conference
-                memberConf$(conferenceIndex) = ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
+                targetFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
+                memberConf$(conferenceIndex) = GetFileBaseName$(targetFile$)
+                'ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
                 memberConf$(conferenceIndex) = "XXX"
@@ -215,7 +220,7 @@ Sub SaveNatOrg (orgFile$, orgName$)
 
     Shared memberConf$()
 
-    Open diskPaths$(2) + orgFile$ + ".CON" For Output As #1
+    Open orgFile$ For Output As #1
 
     Print #1, orgName$
 
@@ -228,4 +233,3 @@ Sub SaveNatOrg (orgFile$, orgName$)
     Cls
 
 End Sub
-
