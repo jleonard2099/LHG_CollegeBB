@@ -347,12 +347,18 @@ System
 Errhandler:
 
 Open "errlog" For Append As #10
+'Print #10, "An error occurred. Please contact support with the following information:"
 Print #10, "Error #"; Err; "on program file line"; _ErrorLine
-If _FileExists("GAME82") Then
-    Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
-    Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
+
+If _InclErrorLine Then
+    Print #10, "    in module "; _InclErrorFile$; " line "; _InclErrorLine
 End If
-Print #10, rebIdx
+
+'If _FileExists("GAME82") Then
+'Print #10, "Schedule game # "; Using "###"; schedGame(0) + schedGame(2)
+'Print #10, gameTeams$(0) + " vs. " + gameTeams$(1)
+'End If
+Print #10,
 Close #10
 Resume Next ' moves program to code following the error.
 
@@ -703,6 +709,22 @@ End Sub
 '$Include: 'BLANKCON.BAS'
 '$Include: 'BLANKORG.BAS'
 '$Include: 'BRACKET.BAS'
+'$Include: 'CAREER.BAS'
+'$Include: 'CAREDIT.BAS'
+'$Include: 'CARLDR.BAS'
+'$Include: 'CARVIEW.BAS'
+'$Include: 'CNGTM.BAS'
+'$Include: 'COMPARE.BAS'
+'$Include: 'COMPCON.BAS'
+'$Include: 'COMPNATL.BAS'
+'$Include: 'CREATCON.BAS'
+'$Include: 'CREATNATL.BAS'
+'$Include: 'DRAFT.BAS'
+'$Include: 'HD2HDCON.BAS'
+'$Include: 'LOOKY.BAS'
+'$Include: 'MERGE.BAS'
+'$Include: 'NEWLDR.BAS'
+'$Include: 'NEWLDRST.BAS'
 '$Include: 'REC.BAS'
 '$Include: 'RECORDS.BAS'
 '$Include: 'SCHEDULE.BAS'

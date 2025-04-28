@@ -142,9 +142,11 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Cls
 
     Color 14
+    Locate 2
     Print Tab(29); "CHANGE TEAM INFORMATION"
     Color 15
 
+    Locate 4
     Print " 1. TEAM NUMBER  "; teamIdx
     Print " 2. DISK ID  "; yearNumber$
     Print " 3. TEAM NAME   "; teamName$
@@ -155,7 +157,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print " 8. OFF STEAL RATING "; offStRat
     Print " 9. OFF TURNOVER RATING "; leagueRatings(1)
     Print "10. DEF TURNOVER ADJ "; defTOAdj
-    Print "11. DEF FOUL ADJ "; offFoulAdj
+    Print "11. OFF FOUL ADJ "; offFoulAdj
     Print "12. ENTER 99 IF USING 6-9 "; leagueRatings(4)
     Print "13. TEXT COLOR (0-15) "; teamRatings(0)
     Print "14. BACKGROUND COLOR (0-7) "; teamRatings(1)
@@ -163,16 +165,22 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print "16. LEAGUE FGA/G "; teamRatings(4)
     Print "17. TEAM GAMES PLAYED "; teamRatings(5)
     Print "18. HOMECOURT FACTOR "; teamRatings(6)
-    Print "19. ARENA NAME   "; arenaName$
-    Print "20. NICKNAME   "; mascot$
-    Print "21. COACH   "; coach$
+    Print "19. ARENA NAME  "; arenaName$
+    Locate 4, 40
+    Print "20. NICKNAME  "; mascot$
+    Locate 5, 40
+    Print "21. COACH  "; coach$
+    Locate 6, 40
     Print "22. AVG ATTENDANCE "; teamAttendance&
+    Locate 7, 40
     Print "23. WINS "; teamRatings(7)
+    Locate 8, 40
     Print "24. LOSSES "; teamRatings(8)
+    Locate 9, 40
     Print "25. POWER RATING "; teamRatings(9)
 
     If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
-        Locate 21, 1
+        Locate 24, 1
         Print "TEAM APPEARANCE: ";
         Color teamRatings(0), teamRatings(1)
         Print RTrim$(teamName$ + " " + mascot$)
@@ -189,70 +197,72 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         Select Case B9
 
             Case 1
-                Locate 2, 17: Print Space$(10)
-                Locate 2, 1: Input " 1. TEAM NUMBER "; teamIdx
-                Locate 2, 17: Print " "
+                Locate 4, 17: Print Space$(10)
+                Locate 4, 1: Input " 1. TEAM NUMBER "; teamIdx
+                Locate 4, 17: Print " "
 
             Case 2
-                Locate 3, 1: Input " 2. DISK ID "; yearNumber$
-                Locate 3, 13: Print " "
+                Locate 5, 12: Print Space$(10)
+                Locate 5, 1: Input " 2. DISK ID"; yearNumber$
+                Locate 5, 12: Print " "
 
             Case 3
-                Locate 4, 1: Input " 3. TEAM NAME "; teamName$
-                Locate 4, 15: Print " "
+                Locate 6, 15: Print Space$(20)
+                Locate 6, 1: Input " 3. TEAM NAME "; teamName$
+                Locate 6, 15: Print " "
 
             Case 4
-                Locate 5, 24: Print Space$(10)
-                Locate 5, 1: Input " 4. TEAM STAMINA RATING"; staminaRating!
-                Locate 5, 24: Print " "
+                Locate 7, 24: Print Space$(10)
+                Locate 7, 1: Input " 4. TEAM STAMINA RATING"; staminaRating!
+                Locate 7, 24: Print " "
 
             Case 5
-                Locate 6, 16: Print Space$(10)
-                Locate 6, 1: Input " 5. DEF FG% ADJ"; defFGPctAdj!
-                Locate 6, 16: Print " "
+                Locate 8, 16: Print Space$(10)
+                Locate 8, 1: Input " 5. DEF FG% ADJ"; defFGPctAdj!
+                Locate 8, 16: Print " "
 
             Case 6
-                Locate 7, 21: Print Space$(10)
-                Locate 7, 1: Input " 6. DEF 3FGA/FGA ADJ"; defthreeFGA_Adj
-                Locate 7, 21: Print " "
-
-            Case 7
-                Locate 8, 17: Print Space$(10)
-                Locate 8, 1: Input " 7. DEF 3FG% ADJ"; def3FG_Adj
-                Locate 8, 17: Print " "
-
-            Case 8
                 Locate 9, 21: Print Space$(10)
-                Locate 9, 1: Input " 8. OFF STEAL RATING"; leagueRatings(0)
+                Locate 9, 1: Input " 6. DEF 3FGA/FGA ADJ"; defthreeFGA_Adj
                 Locate 9, 21: Print " "
 
-            Case 9
-                Locate 10, 24: Print Space$(10)
-                Locate 10, 1: Input " 9. OFF TURNOVER RATING"; leagueRatings(1)
-                Locate 10, 24: Print " "
+            Case 7
+                Locate 10, 17: Print Space$(10)
+                Locate 10, 1: Input " 7. DEF 3FG% ADJ"; def3FG_Adj
+                Locate 10, 17: Print " "
 
-            Case 10
+            Case 8
                 Locate 11, 21: Print Space$(10)
-                Locate 11, 1: Input "10. DEF TURNOVER ADJ"; leagueRatings(2)
+                Locate 11, 1: Input " 8. OFF STEAL RATING"; leagueRatings(0)
                 Locate 11, 21: Print " "
 
+            Case 9
+                Locate 12, 24: Print Space$(10)
+                Locate 12, 1: Input " 9. OFF TURNOVER RATING"; leagueRatings(1)
+                Locate 12, 24: Print " "
+
+            Case 10
+                Locate 13, 21: Print Space$(10)
+                Locate 13, 1: Input "10. DEF TURNOVER ADJ"; leagueRatings(2)
+                Locate 13, 21: Print " "
+
             Case 11
-                Locate 12, 17: Print Space$(10)
-                Locate 12, 1: Input "11. OFF FOUL ADJ"; leagueRatings(3)
-                Locate 12, 17: Print " "
+                Locate 14, 17: Print Space$(10)
+                Locate 14, 1: Input "11. OFF FOUL ADJ"; leagueRatings(3)
+                Locate 14, 17: Print " "
 
             Case 12
-                Locate 13, 26: Print Space$(10)
-                Locate 13, 1: Input "12. ENTER 99 IF USING 6-9"; leagueRatings(4)
-                Locate 13, 26: Print " "
+                Locate 15, 26: Print Space$(10)
+                Locate 15, 1: Input "12. ENTER 99 IF USING 6-9"; leagueRatings(4)
+                Locate 15, 26: Print " "
 
             Case 13
-                Locate 14, 22: Print Space$(10)
-                Locate 14, 1: Input "13. TEXT COLOR (0-15)"; teamRatings(0)
-                Locate 14, 22: Print " "
+                Locate 16, 22: Print Space$(10)
+                Locate 16, 1: Input "13. TEXT COLOR (0-15)"; teamRatings(0)
+                Locate 16, 22: Print " "
 
                 If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
-                    Locate 21, 1
+                    Locate 24, 1
                     Print "TEAM APPEARANCE: ";
                     Color teamRatings(0), teamRatings(1)
                     Print RTrim$(teamName$) + " " + RTrim$(mascot$)
@@ -260,12 +270,12 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 End If
 
             Case 14
-                Locate 15, 27: Print Space$(10)
-                Locate 15, 1: Input "14. BACKGROUND COLOR (0-7)"; teamRatings(1)
-                Locate 15, 27: Print " "
+                Locate 17, 27: Print Space$(10)
+                Locate 17, 1: Input "14. BACKGROUND COLOR (0-7)"; teamRatings(1)
+                Locate 17, 27: Print " "
 
                 If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
-                    Locate 21, 1
+                    Locate 24, 1
                     Print "TEAM APPEARANCE: ";
                     Color teamRatings(0), teamRatings(1)
                     Print RTrim$(teamName$) + " " + RTrim$(mascot$)
@@ -273,59 +283,62 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 End If
 
             Case 15
-                Locate 16, 16: Print Space$(10)
-                Locate 16, 1: Input "15. TEAM FGA/G "; teamRatings(3)
-                Locate 16, 16: Print " "
+                Locate 18, 15: Print Space$(10)
+                Locate 18, 1: Input "15. TEAM FGA/G"; teamRatings(3)
+                Locate 18, 15: Print " "
 
             Case 16
-                Locate 17, 18: Print Space$(10)
-                Locate 17, 1: Input "16. LEAGUE FGA/G "; teamRatings(4)
-                Locate 17, 18: Print " "
+                Locate 19, 17: Print Space$(10)
+                Locate 19, 1: Input "16. LEAGUE FGA/G"; teamRatings(4)
+                Locate 19, 17: Print " "
 
             Case 17
-                Locate 18, 23: Print Space$(10)
-                Locate 18, 1: Input "17. TEAM GAMES PLAYED "; teamRatings(5)
-                Locate 18, 23: Print " "
+                Locate 20, 22: Print Space$(10)
+                Locate 20, 1: Input "17. TEAM GAMES PLAYED"; teamRatings(5)
+                Locate 20, 22: Print " "
 
             Case 18
-                Locate 19, 22: Print Space$(10)
-                Locate 19, 1: Input "18. HOMECOURT FACTOR "; teamRatings(6)
-                Locate 19, 22: Print " "
+                Locate 21, 21: Print Space$(10)
+                Locate 21, 1: Input "18. HOMECOURT FACTOR"; teamRatings(6)
+                Locate 21, 21: Print " "
 
                 If teamRatings(6) < 0 Then teamRatings(6) = 0
                 If teamRatings(6) > 6 Then teamRatings(6) = 6
 
             Case 19
-                Locate 20, 1: Input "19. ARENA NAME "; arenaName$
-                Locate 20, 16: Print " "
+                Locate 22, 16: Print Space$(40)
+                Locate 22, 1: Input "19. ARENA NAME "; arenaName$
+                Locate 22, 16: Print " "
 
             Case 20
-                Locate 21, 1: Input "20. NICKNAME "; mascot$
-                Locate 21, 15: Print " "
+                Locate 4, 53: Print Space$(15)
+                Locate 4, 40: Input "20. NICKNAME "; mascot$
+                Locate 4, 53: Print " "
 
             Case 21
-                Locate 22, 1: Input "21. COACH "; coach$
-                Locate 22, 12: Print " "
+                Locate 5, 50: Print Space$(20)
+                Locate 5, 40: Input "21. COACH "; coach$
+                Locate 5, 50: Print " "
 
             Case 22
-                Locate 23, 21: Print Space$(10)
-                Locate 23, 1: Input "22. AVG ATTENDANCE "; teamAttendance&
-                Locate 23, 21: Print " "
+                Locate 6, 58: Print Space$(10)
+                Locate 6, 40: Input "22. AVG ATTENDANCE"; teamAttendance&
+                Locate 6, 58: Print " "
 
             Case 23
-                Locate 24, 11: Print Space$(10)
-                Locate 24, 1: Input "23. WINS "; teamRatings(7)
-                Locate 24, 11: Print " "
+                Locate 7, 48: Print Space$(10)
+                Locate 7, 40: Input "23. WINS"; teamRatings(7)
+                Locate 7, 48: Print " "
 
             Case 24
-                Locate 25, 13: Print Space$(10)
-                Locate 25, 1: Input "24. LOSSES "; teamRatings(8)
-                Locate 25, 13: Print " "
+                Locate 8, 50: Print Space$(10)
+                Locate 8, 40: Input "24. LOSSES"; teamRatings(8)
+                Locate 8, 50: Print " "
 
             Case 25
-                Locate 26, 19: Print Space$(10)
-                Locate 26, 1: Input "25. POWER RATING "; teamRatings(9)
-                Locate 26, 19: Print " "
+                Locate 9, 56: Print Space$(10)
+                Locate 9, 40: Input "25. POWER RATING"; teamRatings(9)
+                Locate 9, 56: Print " "
 
         End Select
 
@@ -334,14 +347,14 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
     Loop Until B9 = 0
 
-    If defthreeFGA_Adj < 0 Then 
+    If defthreeFGA_Adj < 0 Then
         defthreeFGA_Adj = 100 + defthreeFGA_Adj
     End If
 
-    If def3FG_Adj < 0 Then 
+    If def3FG_Adj < 0 Then
         def3FG_Adj = 100 + def3FG_Adj
     End If
-    
+
     If leagueRatings(0) < 0 Then
         leagueRatings(0) = 100 + leagueRatings(0)
     End If
@@ -374,11 +387,14 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     If UCase$(I$) = "Y" Then
 
         Locate 7, 1: Input "1. OPP 2FG % "; newOpp2FGPct!
+        Locate 7, 14: Print " "
         Locate 8, 1: Input "2. SEASON FG % "; newLeagFGPct!
+        Locate 8, 16: Print " "
         Locate 9, 1: Input "3. STRENGTH OF SCHEDULE "; newSos
+        Locate 9, 25: Print " "
 
         Do
-        
+
             Do
                 Locate LAST_ROW - 2, 25
                 Input "# TO CHANGE (0 TO CONTINUE) "; B9
@@ -387,19 +403,19 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Select Case B9
 
                 Case 1
-                    Locate 7, 14: Print Space$(10)
-                    Locate 7, 1: Input "1. OPP 2FG % "; newOpp2FGPct!
-                    Locate 7, 14: Print " "
+                    Locate 7, 13: Print Space$(10)
+                    Locate 7, 1: Input "1. OPP 2FG %"; newOpp2FGPct!
+                    Locate 7, 13: Print " "
 
                 Case 2
-                    Locate 8, 16: Print Space$(10)
-                    Locate 8, 1: Input "2. SEASON FG % "; newLeagFGPct!
-                    Locate 8, 16: Print " "
+                    Locate 8, 15: Print Space$(10)
+                    Locate 8, 1: Input "2. SEASON FG %"; newLeagFGPct!
+                    Locate 8, 15: Print " "
 
                 Case 3
-                    Locate 9, 25: Print Space$(10)
-                    Locate 9, 1: Input "3. STRENGTH OF SCHEDULE "; newSos
-                    Locate 9, 25: Print " "
+                    Locate 9, 24: Print Space$(10)
+                    Locate 9, 1: Input "3. STRENGTH OF SCHEDULE"; newSos
+                    Locate 9, 24: Print " "
 
             End Select
 
@@ -411,51 +427,29 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Cls
 
     Color 14
+    Locate 2
     Print Tab(30); "CHANGE ACTUAL STATS"
     Color 15
 
     teamStats!(0) = teamRatings(5)
 
     Color 14
-    Locate 3, 15: Print "TEAM"
-    Locate 3, 30: Print "OPPONENTS"
+    Locate 4, 15: Print " TEAM"
+    Locate 4, 30: Print " OPPONENTS"
     Color 15
-    Locate 4, 1: Print " 1. FGA ";
-    Locate 4, 14: Print teamStats!(1)
-    Locate 4, 29: Print teamStats!(2)
-    Locate 5, 1: Print " 2. FG % ";
-    Locate 5, 14: Print teamStats!(3)
-    Locate 5, 29: Print teamStats!(4)
-    Locate 6, 1: Print " 3. FTA";
-    Locate 6, 14: Print teamStats!(5)
-    Locate 6, 29: Print teamStats!(6)
-    Locate 7, 1: Print " 4. FT %";
-    Locate 7, 14: Print teamStats!(7)
-    Locate 7, 29: Print teamStats!(8)
-    Locate 8, 1: Print " 5. RB";
-    Locate 8, 14: Print teamStats!(9)
-    Locate 8, 29: Print teamStats!(10)
-    Locate 9, 1: Print " 6. AST";
-    Locate 9, 14: Print teamStats!(11)
-    Locate 9, 29: Print teamStats!(12)
-    Locate 10, 1: Print " 7. FOULS";
-    Locate 10, 14: Print teamStats!(13)
-    Locate 10, 29: Print teamStats!(14)
-    Locate 11, 1: Print " 8. TO";
-    Locate 11, 14: Print teamStats!(15)
-    Locate 11, 29: Print teamStats!(16)
-    Locate 12, 1: Print " 9. STLS";
-    Locate 12, 14: Print teamStats!(17)
-    Locate 12, 29: Print teamStats!(18)
-    Locate 13, 1: Print "10. BLOCKS";
-    Locate 13, 14: Print teamStats!(23);
-    Locate 13, 29: Print teamStats!(24)
-    Locate 14, 1: Print "11. 3 FGA";
-    Locate 14, 14: Print teamStats!(21);
-    Locate 14, 29: Print teamStats!(19)
-    Locate 15, 1: Print "12. 3 FG %";
-    Locate 15, 14: Print teamStats!(22);
-    Locate 15, 29: Print teamStats!(20)
+
+    Print " 1. FGA "; Tab(15); teamStats!(1); Tab(30); teamStats!(2)
+    Print " 2. FG % "; Tab(15); teamStats!(3); Tab(30); teamStats!(4)
+    Print " 3. 3 FGA "; Tab(15); teamStats!(21); Tab(30); teamStats!(19)
+    Print " 4. 3 FG % "; Tab(15); teamStats!(22); Tab(30); teamStats!(20)
+    Print " 5. FTA "; Tab(15); teamStats!(5); Tab(30); teamStats!(6)
+    Print " 6. FT % "; Tab(15); teamStats!(7); Tab(30); teamStats!(8)
+    Print " 7. RB "; Tab(15); teamStats!(9); Tab(30); teamStats!(10)
+    Print " 8. AST "; Tab(15); teamStats!(11); Tab(30); teamStats!(12)
+    Print " 9. STLS "; Tab(15); teamStats!(17); Tab(30); teamStats!(18)
+    Print "10. BLOCKS "; Tab(15); teamStats!(23); Tab(30); teamStats!(24)
+    Print "11. TO "; Tab(15); teamStats!(15); Tab(30); teamStats!(16)
+    Print "12. FOULS "; Tab(15); teamStats!(13); Tab(30); teamStats!(14)
 
     Do
 
@@ -467,133 +461,112 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         Select Case B9
 
             Case 1
-                Locate 4, 1: Print " 1. FGA";
-
-                Locate 4, 15: Print Space$(10)
-                Locate 4, 13: Input teamStats!(1)
-                Locate 4, 13: Print " "
-
-                Locate 4, 30: Print Space$(10)
-                Locate 4, 28: Input teamStats!(2)
-                Locate 4, 28: Print " "
+                Locate 5, 1: Print " 1. FGA ";
+                Locate 5, 14: Print Space$(10)
+                Locate 5, 14: Input teamStats!(1)
+                Locate 5, 14: Print " "
+                Locate 5, 29: Print Space$(10)
+                Locate 5, 29: Input teamStats!(2)
+                Locate 5, 29: Print " "
 
             Case 2
-                Locate 5, 1: Print " 2. FG %";
-
-                Locate 5, 15: Print Space$(10)
-                Locate 5, 13: Input teamStats!(3)
-                Locate 5, 13: Print " "
-
-                Locate 5, 30: Print Space$(10)
-                Locate 5, 28: Input teamStats!(4)
-                Locate 5, 28: Print " "
+                Locate 6, 1: Print " 2. FG % ";
+                Locate 6, 14: Print Space$(10)
+                Locate 6, 14: Input teamStats!(3)
+                Locate 6, 14: Print " "
+                Locate 6, 29: Print Space$(10)
+                Locate 6, 29: Input teamStats!(4)
+                Locate 6, 29: Print " "
 
             Case 3
-                Locate 6, 1: Print " 3. FTA";
-
-                Locate 6, 15: Print Space$(10)
-                Locate 6, 13: Input teamStats!(5)
-                Locate 6, 13: Print " "
-
-                Locate 6, 30: Print Space$(10)
-                Locate 6, 28: Input teamStats!(6)
-                Locate 6, 28: Print " "
+                Locate 7, 1: Print " 3. 3 FGA ";
+                Locate 7, 14: Print Space$(10)
+                Locate 7, 14: Input teamStats!(21)
+                Locate 7, 14: Print " "
+                Locate 7, 29: Print Space$(10)
+                Locate 7, 29: Input teamStats!(19)
+                Locate 7, 29: Print " "
 
             Case 4
-                Locate 7, 1: Print " 4. FT %"
-
-                Locate 7, 15: Print Space$(10)
-                Locate 7, 13: Input teamStats!(7)
-                Locate 7, 13: Print " "
-
-                Locate 7, 30: Print Space$(10)
-                Locate 7, 28: Input teamStats!(8)
-                Locate 7, 28: Print " "
+                Locate 8, 1: Print " 4. 3 FG % ";
+                Locate 8, 14: Print Space$(10)
+                Locate 8, 14: Input teamStats!(22)
+                Locate 8, 14: Print " "
+                Locate 8, 29: Print Space$(10)
+                Locate 8, 29: Input teamStats!(20)
+                Locate 8, 29: Print " "
 
             Case 5
-                Locate 8, 1: Print " 5. RB";
-
-                Locate 8, 15: Print Space$(10)
-                Locate 8, 13: Input teamStats!(9)
-                Locate 8, 13: Print " "
-
-                Locate 8, 30: Print Space$(10)
-                Locate 8, 28: Input teamStats!(10)
-                Locate 8, 28: Print " "
+                Locate 9, 1: Print " 5. FTA ";
+                Locate 9, 14: Print Space$(10)
+                Locate 9, 14: Input teamStats!(5)
+                Locate 9, 14: Print " "
+                Locate 9, 29: Print Space$(10)
+                Locate 9, 29: Input teamStats!(6)
+                Locate 9, 29: Print " "
 
             Case 6
-                Locate 9, 1: Print " 6. AST";
-
-                Locate 9, 15: Print Space$(10)
-                Locate 9, 13: Input teamStats!(11)
-                Locate 9, 13: Print " "
-
-                Locate 9, 30: Print Space$(10)
-                Locate 9, 28: Input teamStats!(12)
-                Locate 9, 28: Print " "
+                Locate 10, 1: Print " 6. FT % "
+                Locate 10, 14: Print Space$(10)
+                Locate 10, 14: Input teamStats!(7)
+                Locate 10, 14: Print " "
+                Locate 10, 29: Print Space$(10)
+                Locate 10, 29: Input teamStats!(8)
+                Locate 10, 29: Print " "
 
             Case 7
-                Locate 10, 1: Print " 7. FOULS";
-
-                Locate 10, 15: Print Space$(10)
-                Locate 10, 13: Input teamStats!(13)
-                Locate 10, 13: Print " "
-
-                Locate 10, 30: Print Space$(10)
-                Locate 10, 28: Input teamStats!(14)
-                Locate 10, 28: Print " "
+                Locate 11, 1: Print " 7. RB ";
+                Locate 11, 14: Print Space$(10)
+                Locate 11, 14: Input teamStats!(9)
+                Locate 11, 14: Print " "
+                Locate 11, 29: Print Space$(10)
+                Locate 11, 29: Input teamStats!(10)
+                Locate 11, 29: Print " "
 
             Case 8
-                Locate 11, 1: Print " 8. TO";
-
-                Locate 11, 15: Print Space$(10)
-                Locate 11, 13: Input teamStats!(15)
-                Locate 11, 13: Print " "
-
-                Locate 11, 30: Print Space$(10)
-                Locate 11, 28: Input teamStats!(16)
-                Locate 11, 28: Print " "
+                Locate 12, 1: Print " 8. AST ";
+                Locate 12, 14: Print Space$(10)
+                Locate 12, 14: Input teamStats!(11)
+                Locate 12, 14: Print " "
+                Locate 12, 29: Print Space$(10)
+                Locate 12, 29: Input teamStats!(12)
+                Locate 12, 29: Print " "
 
             Case 9
-                Locate 12, 1: Print " 9. STLS";
-
-                Locate 12, 15: Print Space$(10)
-                Locate 12, 13: Input teamStats!(17)
-                Locate 12, 13: Print " "
-
-                Locate 12, 30: Print Space$(10)
-                Locate 12, 28: Input teamStats!(18)
-                Locate 12, 28: Print " "
+                Locate 13, 1: Print " 9. STLS ";
+                Locate 13, 14: Print Space$(10)
+                Locate 13, 14: Input teamStats!(17)
+                Locate 13, 14: Print " "
+                Locate 13, 29: Print Space$(10)
+                Locate 13, 29: Input teamStats!(18)
+                Locate 13, 29: Print " "
 
             Case 10
-                Locate 13, 15: Print Space$(10)
-                Locate 13, 1: Print "10. BLOCKS";
-                Locate 13, 13: Input teamStats!(23)
-                Locate 13, 13: Print " "
-
-                Locate 13, 30: Print Space$(10)
-                Locate 13, 28: Input teamStats!(24)
-                Locate 13, 28: Print " "
+                Locate 14, 1: Print "10. BLOCKS ";
+                Locate 14, 14: Print Space$(10)
+                Locate 14, 14: Input teamStats!(23)
+                Locate 14, 14: Print " "
+                Locate 14, 29: Print Space$(10)
+                Locate 14, 29: Input teamStats!(24)
+                Locate 14, 29: Print " "
 
             Case 11
-                Locate 14, 15: Print Space$(10)
-                Locate 14, 1: Print "11. 3 FGA";
-                Locate 14, 13: Input teamStats!(21)
-                Locate 14, 13: Print " "
-
-                Locate 14, 30: Print Space$(10)
-                Locate 14, 28: Input teamStats!(19)
-                Locate 14, 28: Print " "
+                Locate 15, 1: Print "11. TO ";
+                Locate 15, 14: Print Space$(10)
+                Locate 15, 14: Input teamStats!(15)
+                Locate 15, 14: Print " "
+                Locate 15, 29: Print Space$(10)
+                Locate 15, 29: Input teamStats!(16)
+                Locate 15, 29: Print " "
 
             Case 12
-                Locate 15, 15: Print Space$(10)
-                Locate 15, 1: Print "12. 3 FG %";
-                Locate 15, 13: Input teamStats!(22)
-                Locate 15, 13: Print " "
-
-                Locate 15, 30: Print Space$(10)
-                Locate 15, 28: Input teamStats!(20)
-                Locate 15, 28: Print " "
+                Locate 16, 1: Print "12. FOULS ";
+                Locate 16, 14: Print Space$(10)
+                Locate 16, 14: Input teamStats!(13)
+                Locate 16, 14: Print " "
+                Locate 16, 29: Print Space$(10)
+                Locate 16, 29: Input teamStats!(14)
+                Locate 16, 29: Print " "
 
         End Select
 
@@ -611,11 +584,11 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         Cls
         Color 14
-        Print Tab(32); "CHANGE PLAYERS"
+        Locate 2, 32: Print "CHANGE PLAYERS"
         Color 15
 
         For I = 0 To 6
-            Locate I + 3, 5
+            Locate I + 4, 5
             Print Using "##"; I + 1;
             Print " "; playerNames$(I); Tab(37);
             Print Using "##"; I + 8;
@@ -625,9 +598,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         Print
 
         Do
-            Locate 11, 37
+            Locate 12, 37
             Print Space$(10)
-            Locate 11, 1
+            Locate 12, 9
             Input "# TO CHANGE (1-13) (0 TO CONTINUE) "; idx
         Loop Until idx >= 0 And idx <= 14
 
@@ -637,9 +610,12 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
             Cls
             Color 14
+            Locate 2
             Print Tab(35); "PLAYER - "; idx
+            Locate 4
             Print Tab(31); "CHANGE PLAYER STATS"
             Color 15
+            Print
 
             Print " 1. NAME   "; playerNames$(I); Tab(37); "16. GAMES  "; playerStats!(I, 0)
             Print " 2. POSITION   "; position$(I); Tab(37); "17. MINUTES  "; playerStats!(I, 1)
@@ -668,77 +644,79 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Select Case B9
 
                     Case 1
-                        Locate 3, 1: Input " 1. NAME "; playerNames$(I)
-                        Locate 3, 10: Print " "
+                        Locate 6, 10: Print Space$(20)
+                        Locate 6, 1: Input " 1. NAME "; playerNames$(I)
+                        Locate 6, 10: Print " "
 
                     Case 2
-                        Locate 4, 1: Input " 2. POSITION "; position$(I)
-                        Locate 3, 14: Print " "
+                        Locate 7, 14: Print Space$(10)
+                        Locate 7, 1: Input " 2. POSITION "; position$(I)
+                        Locate 7, 14: Print " "
 
                     Case 3
-                        Locate 5, 17: Print Space$(10)
-                        Locate 5, 1: Input " 3. GAMES PLAYED"; playerRatings!(I, 0)
-                        Locate 5, 17: Print " "
+                        Locate 8, 17: Print Space$(10)
+                        Locate 8, 1: Input " 3. GAMES PLAYED"; playerRatings!(I, 0)
+                        Locate 8, 17: Print " "
 
                     Case 4
-                        Locate 6, 12: Print Space$(10)
-                        Locate 6, 1: Input " 4. ADJ FG%"; playerOff!(I, 0)
-                        Locate 6, 12: Print " "
+                        Locate 9, 12: Print Space$(10)
+                        Locate 9, 1: Input " 4. ADJ FG%"; playerOff!(I, 0)
+                        Locate 9, 12: Print " "
 
                     Case 5
-                        Locate 7, 8: Print Space$(10)
-                        Locate 7, 1: Input " 5. FT%"; playerOff!(I, 1)
-                        Locate 7, 8: Print " "
+                        Locate 10, 8: Print Space$(10)
+                        Locate 10, 1: Input " 5. FT%"; playerOff!(I, 1)
+                        Locate 10, 8: Print " "
 
                     Case 6
-                        Locate 8, 23: Print Space$(10)
-                        Locate 8, 1: Input " 6. OFF RB/40 MIN X 10"; playerRatings!(I, 4)
-                        Locate 8, 23: Print " "
+                        Locate 11, 23: Print Space$(10)
+                        Locate 11, 1: Input " 6. OFF RB/40 MIN X 10"; playerRatings!(I, 4)
+                        Locate 11, 23: Print " "
 
                     Case 7
-                        Locate 9, 23: Print Space$(10)
-                        Locate 9, 1: Input " 7. DEF RB/40 MIN X 10"; playerOff!(I, 2)
-                        Locate 9, 23: Print " "
+                        Locate 12, 23: Print Space$(10)
+                        Locate 12, 1: Input " 7. DEF RB/40 MIN X 10"; playerOff!(I, 2)
+                        Locate 12, 23: Print " "
 
                     Case 8
-                        Locate 10, 18: Print Space$(10)
-                        Locate 10, 1: Input " 8. ASSIST RATING"; playerOff!(I, 4)
-                        Locate 10, 18: Print " "
+                        Locate 13, 18: Print Space$(10)
+                        Locate 13, 1: Input " 8. ASSIST RATING"; playerOff!(I, 4)
+                        Locate 13, 18: Print " "
 
                     Case 9
-                        Locate 11, 17: Print Space$(10)
-                        Locate 11, 1: Input " 9. STEAL RATING"; playerOff!(I, 5)
-                        Locate 11, 17: Print " "
+                        Locate 14, 17: Print Space$(10)
+                        Locate 14, 1: Input " 9. STEAL RATING"; playerOff!(I, 5)
+                        Locate 14, 17: Print " "
 
                     Case 10
-                        Locate 12, 17: Print Space$(10)
-                        Locate 12, 1: Input "10. BLOCK RATING"; playerOff!(I, 6)
-                        Locate 12, 17: Print " "
+                        Locate 15, 17: Print Space$(10)
+                        Locate 15, 1: Input "10. BLOCK RATING"; playerOff!(I, 6)
+                        Locate 15, 17: Print " "
 
                     Case 11
-                        Locate 13, 8: Print Space$(10)
-                        Locate 13, 1: Input "11. FGA"; playerRatings!(I, 1)
-                        Locate 13, 8: Print " "
+                        Locate 16, 8: Print Space$(10)
+                        Locate 16, 1: Input "11. FGA"; playerRatings!(I, 1)
+                        Locate 16, 8: Print " "
 
                     Case 12
-                        Locate 14, 24: Print Space$(10)
-                        Locate 14, 1: Input "12. FOUL COMMIT RATING"; playerRatings!(I, 5)
-                        Locate 14, 24: Print " "
+                        Locate 17, 24: Print Space$(10)
+                        Locate 17, 1: Input "12. FOUL COMMIT RATING"; playerRatings!(I, 5)
+                        Locate 17, 24: Print " "
 
                     Case 13
-                        Locate 15, 24: Print Space$(10)
-                        Locate 15, 1: Input "13. FOUL DRAWING RATING"; playerRatings!(I, 6)
-                        Locate 15, 24: Print " "
+                        Locate 18, 24: Print Space$(10)
+                        Locate 18, 1: Input "13. FOUL DRAWING RATING"; playerRatings!(I, 6)
+                        Locate 18, 24: Print " "
 
                     Case 14
-                        Locate 16, 9: Print Space$(10)
-                        Locate 16, 1: Input "14. 3FG%"; playerRatings!(I, 2)
-                        Locate 16, 9: Print " "
+                        Locate 19, 9: Print Space$(10)
+                        Locate 19, 1: Input "14. 3FG%"; playerRatings!(I, 2)
+                        Locate 19, 9: Print " "
 
                     Case 15
-                        Locate 17, 17: Print Space$(10)
-                        Locate 17, 1: Input "15. 3FGA/TOT FGA"; playerRatings!(I, 3)
-                        Locate 17, 17: Print " "
+                        Locate 20, 17: Print Space$(10)
+                        Locate 20, 1: Input "15. 3FGA/TOT FGA"; playerRatings!(I, 3)
+                        Locate 20, 17: Print " "
 
                         'Case 16
                         'Locate 18, 28: Print Space$(10)
@@ -746,74 +724,74 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                         'Locate 18, 28: Print " "
 
                     Case 16
-                        Locate 3, 46: Print Space$(10)
-                        Locate 3, 37: Input "17. GAMES"; playerStats!(I, 0)
-                        Locate 3, 46: Print " "
+                        Locate 6, 46: Print Space$(10)
+                        Locate 6, 37: Input "17. GAMES"; playerStats!(I, 0)
+                        Locate 6, 46: Print " "
 
                     Case 17
-                        Locate 4, 48: Print Space$(10)
-                        Locate 4, 37: Input "18. MINUTES"; playerStats!(I, 1)
-                        Locate 4, 48: Print " "
+                        Locate 7, 48: Print Space$(10)
+                        Locate 7, 37: Input "18. MINUTES"; playerStats!(I, 1)
+                        Locate 7, 48: Print " "
 
                     Case 18
-                        Locate 5, 44: Print Space$(10)
-                        Locate 5, 37: Input "19. FGM"; playerStats!(I, 3)
-                        Locate 5, 44: Print " "
-
-                    Case 19
-                        Locate 6, 44: Print Space$(10)
-                        Locate 6, 37: Input "20. FGA"; playerStats!(I, 2)
-                        Locate 6, 44: Print " "
-
-                    Case 20
-                        Locate 7, 44: Print Space$(10)
-                        Locate 7, 37: Input "21. FTM"; playerStats!(I, 5)
-                        Locate 7, 44: Print " "
-
-                    Case 21
                         Locate 8, 44: Print Space$(10)
-                        Locate 8, 37: Input "22. FTA"; playerStats!(I, 4)
+                        Locate 8, 37: Input "19. FGM"; playerStats!(I, 3)
                         Locate 8, 44: Print " "
 
+                    Case 19
+                        Locate 9, 44: Print Space$(10)
+                        Locate 9, 37: Input "20. FGA"; playerStats!(I, 2)
+                        Locate 9, 44: Print " "
+
+                    Case 20
+                        Locate 10, 44: Print Space$(10)
+                        Locate 10, 37: Input "21. FTM"; playerStats!(I, 5)
+                        Locate 10, 44: Print " "
+
+                    Case 21
+                        Locate 11, 44: Print Space$(10)
+                        Locate 11, 37: Input "22. FTA"; playerStats!(I, 4)
+                        Locate 11, 44: Print " "
+
                     Case 22
-                        Locate 9, 48: Print Space$(10)
-                        Locate 9, 37: Input "23. OFF REB"; playerStats!(I, 6)
-                        Locate 9, 48: Print " "
-
-                    Case 23
-                        Locate 10, 50: Print Space$(10)
-                        Locate 10, 37: Input "24. TOTAL REB"; playerStats!(I, 7)
-                        Locate 10, 50: Print " "
-
-                    Case 24
-                        Locate 11, 50: Print Space$(10)
-                        Locate 11, 37: Input "25. PER FOULS"; playerStats!(I, 8)
-                        Locate 11, 50: Print " "
-
-                    Case 25
                         Locate 12, 48: Print Space$(10)
-                        Locate 12, 37: Input "26. ASSISTS"; playerStats!(I, 9)
+                        Locate 12, 37: Input "23. OFF REB"; playerStats!(I, 6)
                         Locate 12, 48: Print " "
 
+                    Case 23
+                        Locate 13, 50: Print Space$(10)
+                        Locate 13, 37: Input "24. TOTAL REB"; playerStats!(I, 7)
+                        Locate 13, 50: Print " "
+
+                    Case 24
+                        Locate 14, 50: Print Space$(10)
+                        Locate 14, 37: Input "25. PER FOULS"; playerStats!(I, 8)
+                        Locate 14, 50: Print " "
+
+                    Case 25
+                        Locate 15, 48: Print Space$(10)
+                        Locate 15, 37: Input "26. ASSISTS"; playerStats!(I, 9)
+                        Locate 15, 48: Print " "
+
                     Case 26
-                        Locate 13, 47: Print Space$(10)
-                        Locate 13, 37: Input "27. BLOCKS"; playerStats!(I, 10)
-                        Locate 13, 47: Print " "
+                        Locate 16, 47: Print Space$(10)
+                        Locate 16, 37: Input "27. BLOCKS"; playerStats!(I, 10)
+                        Locate 16, 47: Print " "
 
                     Case 27
-                        Locate 14, 47: Print Space$(10)
-                        Locate 14, 37: Input "28. STEALS"; playerStats!(I, 11)
-                        Locate 14, 47: Print " "
+                        Locate 17, 47: Print Space$(10)
+                        Locate 17, 37: Input "28. STEALS"; playerStats!(I, 11)
+                        Locate 17, 47: Print " "
 
                     Case 28
-                        Locate 15, 46: Print Space$(10)
-                        Locate 15, 37: Input "29. 3 FGM"; playerStats!(I, 13)
-                        Locate 15, 46: Print " "
+                        Locate 18, 46: Print Space$(10)
+                        Locate 18, 37: Input "29. 3 FGM"; playerStats!(I, 13)
+                        Locate 18, 46: Print " "
 
                     Case 29
-                        Locate 16, 46: Print Space$(10)
-                        Locate 16, 37: Input "30. 3 FGA"; playerStats!(I, 12)
-                        Locate 16, 46: Print " "
+                        Locate 19, 46: Print Space$(10)
+                        Locate 19, 37: Input "30. 3 FGA"; playerStats!(I, 12)
+                        Locate 19, 46: Print " "
 
                 End Select
 

@@ -199,11 +199,10 @@ Sub NewStandings_Screen (league$)
 
         Color 11
         Locate 2, 35: Print league$
+        Print RTrim$(targetDiv$)
 
         Color 14
-        Locate 4: Print Tab(20); "                     MAJ          HOME    ROAD    LAST 10"
-
-        Print RTrim$(targetDiv$)
+        Locate 4: Print Tab(41); "MAG          HOME    ROAD    LAST 10"
         Print Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
 
         For I = AA To ZZ
@@ -258,9 +257,9 @@ Sub NewStandings_Screen (league$)
         Print Using "##"; MJ;
 
         Color 14
-        Locate LAST_ROW - 1: Print "HIT ANY KEY TO CONTINUE";
+        Locate LAST_ROW - 1, 28: Print "HIT ANY KEY TO CONTINUE";
         I$ = GetKeyPress$
-            
+
         'End If
 
     Next NT
@@ -315,7 +314,7 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
         Print #1, RTrim$(targetDiv$);
         Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "
-        Print #1, String$(75,45)
+        Print #1, String$(75, 45)
 
         For I = AA To ZZ
 
