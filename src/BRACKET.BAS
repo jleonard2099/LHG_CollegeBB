@@ -10,7 +10,7 @@ Sub BRACKET ()
 
     Shared scheduleNG%(), nbrRegionalTeams()
 
-    Shared consolationSetting%(), tourneyDefaults%()
+    Shared consolationSetting()
     Shared homeTeam$(), visitingTeam$()
 
     ' TOURNAMENT DEFAULTS
@@ -71,7 +71,7 @@ Sub ViewTourneyInfo (ACTION%)
 
     Shared BS%, NS%
 
-    Shared consolationSetting%(), tourneyDefaults%()
+    Shared consolationSetting(), tourneyDefaults()
     Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
     Shared homeScores(), visitorScores()
     Shared scheduleAP%()
@@ -107,23 +107,20 @@ Sub ViewTourneyInfo (ACTION%)
             Next
         Next
 
-        Input #1, consolationSetting%(0)
-        Input #1, consolationSetting%(1) ' CONSOLATION GAME
+        Input #1, consolationSetting(0)
+        Input #1, consolationSetting(1) ' CONSOLATION GAME
 
         Close #1
 
         Open diskPaths$(1) + baseFile$ + ".TNY" For Input As #2
 
         For I = 0 To 14
-            Input #2, tourneyDefaults%(I)
+            Input #2, tourneyDefaults(I)
         Next
 
         Close #2
 
-        If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
-        NR$ = Str$(R%)
-
-        Open tourneyFile$ For Random As #3 Len = 94
+        Open tourneyFile$ For Random As #3 Len = TOURNEY_SIZE_BYTES
         fileLength& = LOF(3)
         Close #3
 
@@ -132,7 +129,7 @@ Sub ViewTourneyInfo (ACTION%)
 
         For I = 1 To scheduleAP%(0)
 
-            Open tourneyFile$ For Random As #4 Len = 94
+            Open tourneyFile$ For Random As #4 Len = TOURNEY_SIZE_BYTES
 
             For X = 0 To 14
                 Field #4, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -170,7 +167,7 @@ Sub ViewTourneyInfo (ACTION%)
 
         Next
 
-        Call EditBracket(R%, ACTION%)
+        Call ViewBracket(R%, ACTION%)
 
     End If
 
@@ -274,42 +271,45 @@ Sub TeamColors (currentTeam$, currentScore%)
 End Sub
 
 '----------------------------------------
-'        EditBracket Subroutine
+'        ViewBracket Subroutine
 '----------------------------------------
 'This subroutine will either display the
 'tournament seedings or brackets, depending
 'on what was chosen in the menu.
-Sub EditBracket (numberRegions, ACTION%)
+Sub ViewBracket (numberRegions, ACTION%)
 
     Dim bracketA$(9)
 
     Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
     Shared scheduleAP%()
-    Shared consolationSetting%(), tourneyDefaults%()
+    Shared consolationSetting()
     Shared regionNames$(), slotName$()
     Shared homeScores(), visitorScores()
     Shared homeTeam$(), visitingTeam$()
 
+    ReDim menuChoices$(0 To numberRegions + 2)
+
     Do
+
         'EDIT A GIVEN BRACKET
         Color , 0
-
         Cls
 
         Color , 6
-
         Locate 1, 1: Print Tab(80); " ";
 
         Locate , 23
         Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
         Locate LAST_ROW, 1: Print Tab(80); " ";
-        Locate , 1: Color , 0
 
-        ReDim menuChoices$(1 To numberRegions + 2)
+        Locate , 1
+        Color , 0
 
         For I = 1 To numberRegions
-            If regionNames$(I) = "" Then regionNames$(I) = "TO BE NAMED"
+            If regionNames$(I) = "" Then
+                regionNames$(I) = "TO BE NAMED"
+            End If
             menuChoices$(I) = regionNames$(I)
         Next
 
@@ -317,12 +317,17 @@ Sub EditBracket (numberRegions, ACTION%)
         Count% = numberRegions + 2
         Start% = 1
         ExitCode% = numberRegions + 2
-        FileColr% = 15
         FileFGColor = 15: FileBGColor = 1
         HiLiteFGColor% = 0: HiLiteBGColor% = 7
         Spacing% = 1
         Row% = 4
         Column% = 32
+
+        If regionNames$(0) <> "" Then
+            menuChoices$(0) = regionNames$(0)
+            Start% = 0
+        End If
+
         menuChoices$(numberRegions + 1) = "CHAMPIONSHIP BRACKET"
         menuChoices$(numberRegions + 2) = "EXIT                "
 
@@ -345,17 +350,21 @@ Sub EditBracket (numberRegions, ACTION%)
             If regionNbr = numberRegions + 2 Then Exit Sub
 
             If ACTION% = 2 Then
+
                 'View Seedings
                 Color , 0
                 Cls
 
                 Color , 6
                 Locate 1, 1: Print Tab(80); " ";
+
                 Locate , 23
                 Color 15
                 Print "TOURNAMENT  - REGION/BRACKET EDITOR"
                 Locate LAST_ROW, 1: Print Tab(80); " ";
-                Locate , 1: Color , 0
+
+                Locate , 1
+                Color , 0
 
                 MAXSEED = nbrRegionalTeams(regionNbr) + 1 + 4
                 Call box0(3, 24, MAXSEED, 54, 2, 15, 1)
@@ -417,7 +426,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 3 + consolationSetting%(0)
+                        GAME = 3 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -469,7 +478,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 4 + consolationSetting%(0)
+                        GAME = 4 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -531,7 +540,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 5 + consolationSetting%(0)
+                        GAME = 5 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -603,7 +612,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 6 + consolationSetting%(0)
+                        GAME = 6 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -685,7 +694,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 7 + consolationSetting%(0)
+                        GAME = 7 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -779,7 +788,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 8 + consolationSetting%(0)
+                        GAME = 8 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -899,7 +908,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 9 + consolationSetting%(0)
+                        GAME = 9 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1025,7 +1034,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 10 + consolationSetting%(0)
+                        GAME = 10 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1171,7 +1180,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 11 + consolationSetting%(0)
+                        GAME = 11 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1323,7 +1332,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 12 + consolationSetting%(0)
+                        GAME = 12 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1479,7 +1488,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 13 + consolationSetting%(0)
+                        GAME = 13 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1641,7 +1650,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 14 + consolationSetting%(0)
+                        GAME = 14 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1821,7 +1830,7 @@ Sub EditBracket (numberRegions, ACTION%)
                         Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
-                        GAME = 15 + consolationSetting%(0)
+                        GAME = 15 + consolationSetting(0)
 
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
@@ -1836,6 +1845,7 @@ Sub EditBracket (numberRegions, ACTION%)
                 Locate 12, 64
 
                 If scheduleNG%(I, 13) <> 0 Then
+
                     'Determine winner
                     If homeScores(I) > visitorScores(I) Then
                         X$ = _Trim$(homeTeam$(I))
@@ -1844,6 +1854,7 @@ Sub EditBracket (numberRegions, ACTION%)
                     End If
 
                     found = 0
+
                     'Determine team color
                     For X = 1 To 16
                         For X1 = 1 To 16

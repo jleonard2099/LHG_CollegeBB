@@ -13,6 +13,7 @@ Declare Sub ReadGameRecords (recordFile$)
 Declare Sub ReadConferenceIndex (indexFile$)
 Declare Sub ReadConferenceStats (statFile$)
 Declare Sub ReadOrganizationFile (organizationFile$, orgName$)
+Declare Sub ReadTournamentFile (tourneyFile$)
 
 Declare Function nameStatFile$ (teamName$)
 Declare Function CheckString% (targetString$)

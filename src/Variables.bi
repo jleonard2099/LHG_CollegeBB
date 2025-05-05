@@ -229,33 +229,42 @@ Dim statPlyrVal!(0 To 14, 0 To 26)
 '----------------------------------------
 ' Used in ADDTOURN / BRACKET routines
 '----------------------------------------
-Dim TC!
+Dim TC
+
+Dim Shared playinOpt$
 
 '           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-Dim tourneyParams(1 To 17, 1 To 17, 0 To 3)
+' Mode of Play is no longer used as it's saved
+' with the file
+Dim tourneyParams(0 To 17, 0 To 17, 0 To 3)
 
 'Number of Teams Per Region (up to 16 Regions)
-Dim nbrRegionalTeams(17)
+'Additional regions
+'   Playin Teams
+'   Championship Teams
+Dim nbrRegionalTeams(0 To 17)
 
 'Team Names for Each Seed Slot
-Dim slotName$(17, 17, 0 To 3)
+Dim slotName$(0 To 17, 0 To 17, 0 To 3)
 
 'Region Names
-Dim regionNames$(1 To 17)
+Dim regionNames$(0 To 17)
 
 Dim yearNumber$(MAX_TEAMS, 3)
 
 'TOURNAMENT DEFAULTS
-Dim tourneyDefaults%(14)
+Dim tourneyDefaults(14)
 
 '0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
-Dim consolationSetting%(1)
+Dim consolationSetting(1)
 
 
 '----------------------------------------
 ' Used in Game Routines
 '----------------------------------------
 Dim scheduleFile$, tourneyFile$
+Dim schedHomeTm$, schedVisTm$
+
 Dim actualAttendance&
 Dim Shared whistle&, swish&, backboard&
 
@@ -263,10 +272,13 @@ Dim FY%(0 To 1)
 
 Dim alpha$(4), tickerPeriod$(14), teamYrTourn$(0 To 3)
 
+Dim schedOptions(18)
 Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
 
 Dim avgAttendance&(1)
 
+' Shared / Global
+Dim Shared earlyExit
 Dim Shared C1, clockSecs
 Dim Shared D, P, P9
 Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
@@ -289,7 +301,7 @@ Dim Shared X0%, X1%, XX%
 Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
-Dim Shared prevBall$, pbpString$, schedHomeTm$, schedVisTm$
+Dim Shared prevBall$, pbpString$
 
 Dim Shared crashBoards(1), G9%(1)
 Dim Shared ST%(32), SX%(32, 1, 14)
@@ -308,13 +320,14 @@ Dim Shared plyrDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24
 Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), plyrStat_GAME(0 To 1, 0 To 13, 0 To 15)
 Dim Shared QQ(1, 8, 13, 14), QR(1, 7, 14)
 Dim Shared rebRatings(9), rosterIdx(13), rosterStatus(1, 13)
-Dim Shared schedGame(2), schedOptions(18)
+Dim Shared schedGame(2)
 Dim Shared score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
 Dim Shared statsGame3FGM(1, 13), statsGame3FGA(1, 13)
 Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecLoss(1)
 Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1), teamYears(1)
 Dim Shared threeFG(1, 13, 1), timeouts(1), timePlayed(1, 13)
-Dim Shared tmFatigue(1, 13), totRebounds(1), tourneyOptions(18), turnovers(1)
+Dim Shared tmFatigue(1, 13), totRebounds(1), turnovers(1)
+Dim tourneyOptions(18)
 
 Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25)
 Dim game3FGM!(1, 13), game3FGA!(1, 13)
