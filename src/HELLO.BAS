@@ -15,6 +15,7 @@ Const DIVS_PER_CONFERENCE = 2
 Const TEAMS_PER_CONFERENCE = 30
 
 Const SCHEDULE_SIZE_BYTES = 52
+Const TOURNEY_SIZE_BYTES = 94
 Const LAST_COL = 80
 Const LAST_ROW = 30
 
@@ -418,7 +419,7 @@ Sub Main_Menu (menuSelection)
 
                     Do
                         Call COLHOOP
-                    Loop Until activeSchedule = 0
+                    Loop Until activeSchedule = 0 Or earlyExit = 1
 
                 Case 2:
                     Call TeamMgt_Menu
@@ -755,9 +756,11 @@ Sub COLHOOP ()
     Shared avgAttendance&()
 
     Shared scheduleFile$, tourneyFile$
+    Shared schedHomeTm$, schedVisTm$
 
     Shared tickerStart
-    Shared FY%()
+
+    Shared FY%(), schedOptions()
 
     Shared coachMode$(), foulShotOpt$()
     Shared location$()
@@ -951,7 +954,7 @@ Sub COLHOOP ()
             earlyExit = 1
         Else
 
-            Open diskPaths$(1) + tourneyFile$ As #9 Len = 94
+            Open diskPaths$(1) + tourneyFile$ As #9 Len = TOURNEY_SIZE_BYTES
 
             For X = 0 To 14
                 Field #9, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5264,6 +5267,7 @@ Sub InitVar ()
     Shared d3FG_Adj(), dthreeFGA_Adj()
     Shared eventSettings(), powerRating()
     Shared oppScore(), rosterStatus()
+    Shared schedOptions()
     Shared teamScore(), tourneySettings()
 
     Shared FY%()
@@ -5404,7 +5408,7 @@ Sub InitVar ()
     Erase teamRecWins, teamRecLoss
     Erase teamFouls, teamScore
     Erase threeFG, timePlayed, tmFatigue
-    Erase totRebounds, tourneyOptions, turnovers
+    Erase totRebounds, turnovers
 
     Erase FY%, G9%
     Erase ST%, SX%
@@ -5435,7 +5439,7 @@ Sub AUTOSETUP (validTeam)
 
     Shared tourneyFile$
 
-    Shared tourneySettings()
+    Shared schedOptions(), tourneySettings()
 
     gameLoc = schedOptions(2)
     threePtOpt = schedOptions(3)
@@ -8670,6 +8674,8 @@ Sub TickerSchedule
 
     Shared scheduleFile$
 
+    Shared schedOptions()
+
     If schedGame(2) <= 31 Then
 
         For X = 0 To 1
@@ -9254,30 +9260,33 @@ End Sub
 
 
 '----------------------------------------
-'        TOURNEY_Game Subroutine
+'     UpdateNextRoundSeeds Subroutine
 '----------------------------------------
 'This subroutine checks the file for the
 'tournament and, as needed, calls a routine
 'to update it with the game scores
-Sub TOURNEY_Game ()
+Sub UpdateNextRoundSeeds ()
 
     Dim fileLength&
     Dim loseTeam$, winTeam$
+    Shared schedHomeTm$, schedVisTm$
 
     Shared tourneyFile$
+
+    Shared schedOptions(), tourneyOptions()
 
     Shared teamYrTourn$()
 
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
-    Open diskPaths$(1) + tourneyFile$ As #1 Len = 94
+    Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
     fileLength& = LOF(1)
     Close #1
 
-    numGames = fileLength& / 90
+    numGames = fileLength& / TOURNEY_SIZE_BYTES
 
-    For I = 1 To numGames
+    For currGame = 1 To numGames
 
-        Open diskPaths$(1) + tourneyFile$ As #1 Len = 94
+        Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
 
         For X = 0 To 14
             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -9286,11 +9295,10 @@ Sub TOURNEY_Game ()
         Field #1, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
         Field #1, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
         Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
-        Get #1, I
+        Get #1, currGame
 
         VS1% = CVI(Q$(16))
         HS1% = CVI(Q$(17))
-
         loseTeam$ = Q$(18)
         winTeam$ = Q$(19)
 
@@ -9308,181 +9316,287 @@ Sub TOURNEY_Game ()
 
         Close #1
 
-        If tourneyOptions(15) = schedOptions(15) And schedOptions(15) <> 17 Then
-
-            If score(0, 0) > score(1, 0) And tourneyOptions(0) - 900 = schedOptions(17) Then
-                tourneyOptions(0) = schedOptions(0)
-                teamYrTourn$(0) = diskIDs$(0)
-                loseTeam$ = schedVisTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(1, 0) > score(0, 0) And tourneyOptions(0) - 900 = schedOptions(17) Then
-                tourneyOptions(0) = schedOptions(1)
-                teamYrTourn$(0) = diskIDs$(1)
-                loseTeam$ = schedHomeTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(0, 0) > score(1, 0) And tourneyOptions(1) - 900 = schedOptions(17) Then
-                tourneyOptions(1) = schedOptions(0)
-                teamYrTourn$(1) = diskIDs$(0)
-                winTeam$ = schedVisTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(1, 0) > score(0, 0) And tourneyOptions(1) - 900 = schedOptions(17) Then
-                tourneyOptions(1) = schedOptions(1)
-                teamYrTourn$(1) = diskIDs$(1)
-                winTeam$ = schedHomeTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(0, 0) < score(1, 0) And tourneyOptions(0) - 800 = schedOptions(17) Then
-                tourneyOptions(0) = schedOptions(0)
-                teamYrTourn$(0) = diskIDs$(0)
-                loseTeam$ = schedVisTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(1, 0) < score(0, 0) And tourneyOptions(0) - 800 = schedOptions(17) Then
-                tourneyOptions(0) = schedOptions(1)
-                teamYrTourn$(0) = diskIDs$(1)
-                loseTeam$ = schedHomeTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(0, 0) < score(1, 0) And tourneyOptions(1) - 800 = schedOptions(17) Then
-                tourneyOptions(1) = schedOptions(0)
-                teamYrTourn$(1) = diskIDs$(0)
-                winTeam$ = schedVisTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-            If score(1, 0) < score(0, 0) And tourneyOptions(1) - 800 = schedOptions(17) Then
-                tourneyOptions(1) = schedOptions(1)
-                teamYrTourn$(1) = diskIDs$(1)
-                winTeam$ = schedHomeTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-            End If
-
-        End If
+        'tourneyOptions = settings for game being evaluated in schedule
+        'schedOptions = current game being play
 
         If schedOptions(15) <> 17 Then
 
-            If score(0, 0) > score(1, 0) And schedOptions(16) = 89 And tourneyOptions(15) = 17 And tourneyOptions(0) - 900 = schedOptions(15) Then
-                tourneyOptions(0) = schedOptions(0)
-                teamYrTourn$(0) = diskIDs$(0)
-                loseTeam$ = schedVisTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
+            'Seed Play-in Winners
+            If schedOptions(15) = 0 And schedOptions(16) = 1 Then
+
+                test = 1
+
+                'Since game #1 seeds to region #1,
+                'We compare those 2 fields
+                If tourneyOptions(0) - 1700 = schedOptions(17) Then
+
+                    If score(0, 0) > score(1, 0) Then
+                        tourneyOptions(0) = schedOptions(0)
+                        teamYrTourn$(0) = diskIDs$(0)
+                        loseTeam$ = schedVisTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                    If score(1, 0) > score(0, 0) Then
+                        tourneyOptions(0) = schedOptions(1)
+                        teamYrTourn$(0) = diskIDs$(1)
+                        loseTeam$ = schedHomeTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                End If
+
+                If tourneyOptions(1) - 1700 = schedOptions(17) Then
+
+                    If score(0, 0) > score(1, 0) Then
+                        tourneyOptions(1) = schedOptions(0)
+                        teamYrTourn$(1) = diskIDs$(0)
+                        winTeam$ = schedVisTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                    If score(1, 0) > score(0, 0) Then
+                        tourneyOptions(1) = schedOptions(1)
+                        teamYrTourn$(1) = diskIDs$(1)
+                        winTeam$ = schedHomeTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                End If
+
             End If
 
-            If score(1, 0) > score(0, 0) And schedOptions(16) = 89 And tourneyOptions(15) = 17 And tourneyOptions(0) - 900 = schedOptions(15) Then
-                tourneyOptions(0) = schedOptions(1)
-                teamYrTourn$(0) = diskIDs$(1)
-                loseTeam$ = schedHomeTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
+            'Seed Regular Rounds
+            If tourneyOptions(15) = schedOptions(15) Then
+
+                'Seed Winners
+                If tourneyOptions(0) - 1900 = schedOptions(17) Then
+
+                    If score(0, 0) > score(1, 0) Then
+                        tourneyOptions(0) = schedOptions(0)
+                        teamYrTourn$(0) = diskIDs$(0)
+                        loseTeam$ = schedVisTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                    If score(1, 0) > score(0, 0) Then
+                        tourneyOptions(0) = schedOptions(1)
+                        teamYrTourn$(0) = diskIDs$(1)
+                        loseTeam$ = schedHomeTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                End If
+
+                If tourneyOptions(1) - 1900 = schedOptions(17) Then
+
+                    If score(0, 0) > score(1, 0) Then
+                        tourneyOptions(1) = schedOptions(0)
+                        teamYrTourn$(1) = diskIDs$(0)
+                        winTeam$ = schedVisTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                    If score(1, 0) > score(0, 0) Then
+                        tourneyOptions(1) = schedOptions(1)
+                        teamYrTourn$(1) = diskIDs$(1)
+                        winTeam$ = schedHomeTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                End If
+
+                'Seed Losers (Consolation)
+                If tourneyOptions(0) - 1800 = schedOptions(17) Then
+
+                    If score(0, 0) < score(1, 0) Then
+                        tourneyOptions(0) = schedOptions(0)
+                        teamYrTourn$(0) = diskIDs$(0)
+                        loseTeam$ = schedVisTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                    If score(1, 0) < score(0, 0) Then
+                        tourneyOptions(0) = schedOptions(1)
+                        teamYrTourn$(0) = diskIDs$(1)
+                        loseTeam$ = schedHomeTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                End If
+
+
+                If tourneyOptions(1) - 1800 = schedOptions(17) Then
+
+                    If score(0, 0) < score(1, 0) Then
+                        tourneyOptions(1) = schedOptions(0)
+                        teamYrTourn$(1) = diskIDs$(0)
+                        winTeam$ = schedVisTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                    If score(1, 0) < score(0, 0) Then
+                        tourneyOptions(1) = schedOptions(1)
+                        teamYrTourn$(1) = diskIDs$(1)
+                        winTeam$ = schedHomeTm$
+                        Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                    End If
+
+                End If
+
             End If
 
-            If score(0, 0) > score(1, 0) And schedOptions(16) = 89 And tourneyOptions(15) = 17 And tourneyOptions(1) - 900 = schedOptions(15) Then
-                tourneyOptions(1) = schedOptions(0)
-                teamYrTourn$(1) = diskIDs$(0)
-                winTeam$ = schedVisTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
+            'Seed Regional Winners
+            If tourneyOptions(15) = 17 And schedOptions(16) = 89 And tourneyOptions(0) - 1900 = schedOptions(15) Then
+
+                If score(0, 0) > score(1, 0) Then
+                    tourneyOptions(0) = schedOptions(0)
+                    teamYrTourn$(0) = diskIDs$(0)
+                    loseTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+                If score(1, 0) > score(0, 0) Then
+                    tourneyOptions(0) = schedOptions(1)
+                    teamYrTourn$(0) = diskIDs$(1)
+                    loseTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
             End If
 
-            If score(1, 0) > score(0, 0) And schedOptions(16) = 89 And tourneyOptions(15) = 17 And tourneyOptions(1) - 900 = schedOptions(15) Then
-                tourneyOptions(1) = schedOptions(1)
-                teamYrTourn$(1) = diskIDs$(1)
-                winTeam$ = schedHomeTm$
-                Call UpdateTourneyFile(I, loseTeam$, winTeam$)
+            If schedOptions(16) = 89 And tourneyOptions(15) = 17 And tourneyOptions(1) - 1900 = schedOptions(15) Then
+
+                If score(0, 0) > score(1, 0) Then
+                    tourneyOptions(1) = schedOptions(0)
+                    teamYrTourn$(1) = diskIDs$(0)
+                    winTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+                If score(1, 0) > score(0, 0) Then
+                    tourneyOptions(1) = schedOptions(1)
+                    teamYrTourn$(1) = diskIDs$(1)
+                    winTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
             End If
 
-        End If
+        Else
+            'Final Rounds
 
-        If score(0, 0) > score(1, 0) And schedOptions(15) = 17 And tourneyOptions(0) - 1100 = schedOptions(17) Then
-            tourneyOptions(0) = schedOptions(0)
-            teamYrTourn$(0) = diskIDs$(0)
-            loseTeam$ = schedVisTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+            'Seed Winners
+            If tourneyOptions(0) - 2100 = schedOptions(17) Then
 
-        If score(1, 0) > score(0, 0) And schedOptions(15) = 17 And tourneyOptions(0) - 1100 = schedOptions(17) Then
-            tourneyOptions(0) = schedOptions(1)
-            teamYrTourn$(0) = diskIDs$(1)
-            loseTeam$ = schedHomeTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+                If score(0, 0) > score(1, 0) Then
+                    tourneyOptions(0) = schedOptions(0)
+                    teamYrTourn$(0) = diskIDs$(0)
+                    loseTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
 
-        If score(0, 0) > score(1, 0) And schedOptions(15) = 17 And tourneyOptions(1) - 1100 = schedOptions(17) Then
-            tourneyOptions(1) = schedOptions(0)
-            teamYrTourn$(1) = diskIDs$(0)
-            winTeam$ = schedVisTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+                If score(1, 0) > score(0, 0) Then
+                    tourneyOptions(0) = schedOptions(1)
+                    teamYrTourn$(0) = diskIDs$(1)
+                    loseTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
 
-        If score(1, 0) > score(0, 0) And schedOptions(15) = 17 And tourneyOptions(1) - 1100 = schedOptions(17) Then
-            tourneyOptions(1) = schedOptions(1)
-            teamYrTourn$(1) = diskIDs$(1)
-            winTeam$ = schedHomeTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+            End If
 
+            If tourneyOptions(1) - 2100 = schedOptions(17) Then
 
-        If score(0, 0) < score(1, 0) And schedOptions(15) = 17 And tourneyOptions(0) - 1000 = schedOptions(17) Then
-            tourneyOptions(0) = schedOptions(0)
-            teamYrTourn$(0) = diskIDs$(0)
-            loseTeam$ = schedVisTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+                If score(0, 0) > score(1, 0) Then
+                    tourneyOptions(1) = schedOptions(0)
+                    teamYrTourn$(1) = diskIDs$(0)
+                    winTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
 
-        If score(1, 0) < score(0, 0) And schedOptions(15) = 17 And tourneyOptions(0) - 1000 = schedOptions(17) Then
-            tourneyOptions(0) = schedOptions(1)
-            teamYrTourn$(0) = diskIDs$(1)
-            loseTeam$ = schedHomeTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+                If score(1, 0) > score(0, 0) Then
+                    tourneyOptions(1) = schedOptions(1)
+                    teamYrTourn$(1) = diskIDs$(1)
+                    winTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
 
-        If score(0, 0) < score(1, 0) And schedOptions(15) = 17 And tourneyOptions(1) - 1000 = schedOptions(17) Then
-            tourneyOptions(1) = schedOptions(0)
-            teamYrTourn$(1) = diskIDs$(0)
-            winTeam$ = schedVisTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+            End If
 
-        If score(1, 0) < score(0, 0) And schedOptions(15) = 17 And tourneyOptions(1) - 1000 = schedOptions(17) Then
-            tourneyOptions(1) = schedOptions(1)
-            teamYrTourn$(1) = diskIDs$(1)
-            winTeam$ = schedHomeTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+            'Seed Losers (Consolation)
+            If tourneyOptions(0) - 2000 = schedOptions(17) Then
 
-        If score(0, 0) < score(1, 0) And schedOptions(15) = 17 And tourneyOptions(0) - 900 = schedOptions(17) Then
-            tourneyOptions(0) = schedOptions(0)
-            teamYrTourn$(0) = diskIDs$(0)
-            loseTeam$ = schedVisTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+                If score(0, 0) < score(1, 0) Then
+                    tourneyOptions(0) = schedOptions(0)
+                    teamYrTourn$(0) = diskIDs$(0)
+                    loseTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
 
-        If score(1, 0) < score(0, 0) And schedOptions(15) = 17 And tourneyOptions(0) - 900 = schedOptions(17) Then
-            tourneyOptions(0) = schedOptions(1)
-            teamYrTourn$(0) = diskIDs$(1)
-            loseTeam$ = schedHomeTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+                If score(1, 0) < score(0, 0) Then
+                    tourneyOptions(0) = schedOptions(1)
+                    teamYrTourn$(0) = diskIDs$(1)
+                    loseTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
 
-        If score(0, 0) < score(1, 0) And schedOptions(15) = 17 And tourneyOptions(1) - 900 = schedOptions(17) Then
-            tourneyOptions(1) = schedOptions(0)
-            teamYrTourn$(1) = diskIDs$(0)
-            winTeam$ = schedVisTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
-        End If
+            End If
 
-        If score(1, 0) < score(0, 0) And schedOptions(15) = 17 And tourneyOptions(1) - 900 = schedOptions(17) Then
-            tourneyOptions(1) = schedOptions(1)
-            teamYrTourn$(1) = diskIDs$(1)
-            winTeam$ = schedHomeTm$
-            Call UpdateTourneyFile(I, loseTeam$, winTeam$)
+            If tourneyOptions(1) - 2000 = schedOptions(17) Then
+
+                If score(0, 0) < score(1, 0) Then
+                    tourneyOptions(1) = schedOptions(0)
+                    teamYrTourn$(1) = diskIDs$(0)
+                    winTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+                If score(1, 0) < score(0, 0) Then
+                    tourneyOptions(1) = schedOptions(1)
+                    teamYrTourn$(1) = diskIDs$(1)
+                    winTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+            End If
+
+            'Seed Winners
+            If tourneyOptions(0) - 1900 = schedOptions(17) Then
+
+                If score(0, 0) < score(1, 0) Then
+                    tourneyOptions(0) = schedOptions(0)
+                    teamYrTourn$(0) = diskIDs$(0)
+                    loseTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+                If score(1, 0) < score(0, 0) Then
+                    tourneyOptions(0) = schedOptions(1)
+                    teamYrTourn$(0) = diskIDs$(1)
+                    loseTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+            End If
+
+            If tourneyOptions(1) - 1900 = schedOptions(17) Then
+
+                If score(0, 0) < score(1, 0) Then
+                    tourneyOptions(1) = schedOptions(0)
+                    teamYrTourn$(1) = diskIDs$(0)
+                    winTeam$ = schedVisTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+                If score(1, 0) < score(0, 0) Then
+                    tourneyOptions(1) = schedOptions(1)
+                    teamYrTourn$(1) = diskIDs$(1)
+                    winTeam$ = schedHomeTm$
+                    Call UpdateTourneyFile(currGame, loseTeam$, winTeam$)
+                End If
+
+            End If
+
         End If
 
     Next
@@ -9501,7 +9615,9 @@ Sub UpdateTourneyFile (gameIdx, loseTeam$, winTeam$)
 
     Shared teamYrTourn$()
 
-    Open diskPaths$(1) + tourneyFile$ As #1 Len = 94
+    Shared tourneyOptions()
+
+    Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
 
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -9774,14 +9890,18 @@ Sub SCOREBOARD ()
     If teamFouls(0) >= 6 Then
         Color 0, 2
         Locate , 46: Print "BONUS";
-        If teamFouls(0) >= 9 Then Print "+";
+        If teamFouls(0) >= 9 Then
+            Print "+";
+        End If
         Color 7, 0
     End If
 
     If teamFouls(1) >= 6 Then
         Color 0, 2
-        Locate , 28: Print "BONUS"
-        If teamFouls(1) >= 9 Then Print "+";
+        Locate , 28: Print "BONUS";
+        If teamFouls(1) >= 9 Then
+            Print "+";
+        End If
         Color 7, 0
     End If
 
@@ -12924,7 +13044,7 @@ Sub ComputerStrategy ()
 
                     Case 57 To 68
                         offStrat(P9) = 3
-                
+
                     Case 69 To 85
                         offStrat(P9) = 4
 
@@ -14547,6 +14667,9 @@ Sub SAVESTATS ()
     Shared game3FGM!(), game3FGA!(), statsOffTot!()
 
     Shared scheduleFile$, tourneyFile$
+    Shared schedHomeTm$, schedVisTm$
+
+    Shared schedOptions()
 
     Color 15, 0
     Cls
@@ -14603,7 +14726,7 @@ Sub SAVESTATS ()
 
                 Close #2
 
-                Open diskPaths$(1) + tourneyFile$ As #1 Len = 94
+                Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
 
                 For X = 0 To 14
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -14649,7 +14772,7 @@ Sub SAVESTATS ()
 
                 Close #2
 
-                Call TOURNEY_Game
+                Call UpdateNextRoundSeeds
 
                 If schedGame(1) < schedGame(0) + schedGame(2) Then
                     Kill "TOURNEY"

@@ -24,7 +24,7 @@ Sub TOURNEY ()
 
     'ReDim homeTeam$(MAX_SCHEDULE_GAMES), visitingTeam$(MAX_SCHEDULE_GAMES)
 
-    yearNumber$(0, 3) = "10-01-91"
+    yearNumber$(0, 3) = "03-01-25"
     yearNumber$(0, 2) = "07:30P"
 
     tourneyFile$ = _OpenFileDialog$("Choose Tournament file", diskPaths$(1), "*.TOU", "Tournament files [.TOU]")
@@ -50,7 +50,7 @@ Sub TOURNEY ()
         Next
 
         Call ReadTourneyFile(tourneyFile$)
-        
+
         tourneyName$ = GetFileBaseName$(tourneyFile$)
 
         Do
@@ -158,7 +158,7 @@ Sub TOURNEY ()
                     Color 15, 0
 
                 Case "E":
-                    Call EditGame_TOURNEY
+                    Call EditTournamentGame
 
                 Case "G":
                     'GOTO A SPECIFIC PAGE
@@ -171,7 +171,7 @@ Sub TOURNEY ()
 
                 Case "P":
                     ' *** SAVE TOURNAMENT SCHEDULE ***
-                    Open tourneyFile$ For Random As #1 Len = 94
+                    Open tourneyFile$ For Random As #1 Len = TOURNEY_SIZE_BYTES
 
                     For X = 0 To 14
                         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -210,7 +210,7 @@ Sub TOURNEY ()
                     Color , 0
                     Cls
 
-                    Call MenuBox(6, 8, 61, 7, 15, 4)
+                    Call MenuBox(6, 8, 61, 8, 15, 4)
 
                     Do
 
@@ -274,7 +274,9 @@ Sub TOURNEY ()
 
                     Close #3
 
-                    Call COLHOOP
+                    Do
+                        Call COLHOOP
+                    Loop Until schedGame(0) + schedGame(2) > schedGame(1)
 
                     Call ReadTourneyFile(tourneyFile$)
 
@@ -318,16 +320,16 @@ Sub ReadTourneyFile (tourneyFile$)
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
 
-    Open tourneyFile$ For Random As #1 Len = 94
+    Open tourneyFile$ For Random As #1 Len = TOURNEY_SIZE_BYTES
     fileLength& = LOF(1)
     Close #1
 
-    scheduleAP%(0) = fileLength& / 90
+    scheduleAP%(0) = fileLength& / TOURNEY_SIZE_BYTES
     BS% = Int((scheduleAP%(0) - 1) / 20)
 
     For I = 1 To scheduleAP%(0)
 
-        Open tourneyFile$ For Random As #2 Len = 94
+        Open tourneyFile$ For Random As #2 Len = TOURNEY_SIZE_BYTES
 
         For X = 0 To 14
             Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -368,11 +370,11 @@ End Sub
 
 
 '----------------------------------------
-'       EditGame_TOURNEY Subroutine
+'       EditTournamentGame Subroutine
 '----------------------------------------
 'This Subroutine lets the user edit any of
 'the existing games for a tournament schedule.
-Sub EditGame_TOURNEY ()
+Sub EditTournamentGame ()
 
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
     Shared scheduleNG%(), scheduleAP%()
@@ -382,7 +384,7 @@ Sub EditGame_TOURNEY ()
 
     Dim displayPause!
 
-    yearNumber$(0, 3) = "03-01-23"
+    yearNumber$(0, 3) = "03-01-25"
     yearNumber$(0, 2) = "07:30P"
 
     Do
@@ -490,4 +492,3 @@ Sub EditGame_TOURNEY ()
     Loop Until userKey = 0
 
 End Sub
-
