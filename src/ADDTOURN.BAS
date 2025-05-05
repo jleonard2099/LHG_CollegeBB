@@ -8,14 +8,25 @@ Sub ADDTOURN ()
 
     _Title "Courtside College Basketball - Create Tournament"
 
-    Shared slotName$(), regionNames$()
+    Shared regionNames$(), slotName$()
 
-    Shared consolationSetting%()
-    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
+    Shared consolationSetting(), nbrRegionalTeams()
+    Shared tourneyDefaults(), tourneyParams()
 
     Dim NR$
 
     ReDim menuChoices$(1 To 6)
+
+    tourneyDefaults(2) = 2 'Neutral Site
+    tourneyDefaults(3) = 1 '3-Pt Opt
+    tourneyDefaults(5) = 5 'Fouls to DQ
+    tourneyDefaults(6) = 1 'FTs on 10th PF
+    tourneyDefaults(7) = 3 'Shot Clock
+    tourneyDefaults(8) = 3 'Play Mode (PC vs PC)
+    tourneyDefaults(9) = 0 'Human Coaches
+    tourneyDefaults(10) = 1 '3FT's on 3FGA
+    tourneyDefaults(11) = 0 'Play-in Mode
+    tourneyDefaults(14) = 0 'FT on 1st 6 Floor PF
 
     Do
         Color , 0
@@ -30,8 +41,8 @@ Sub ADDTOURN ()
         menuChoices$(1) = "CREATE TOURNAMENT SEEDS      "
         menuChoices$(2) = "EDIT EXISTING SEEDS          "
         menuChoices$(3) = "VIEW BRACKETS / SEEDS        "
-        menuChoices$(4) = "RESET A TOURNAMENT           "
-        menuChoices$(5) = "PLAY TOURNAMENT GAMES        "
+        menuChoices$(4) = "PLAY TOURNAMENT GAMES        "
+        menuChoices$(5) = "RESET A TOURNAMENT           "
         menuChoices$(6) = "RETURN TO COURTSIDE MAIN MENU"
         SELECTION% = 1
         Count% = 6
@@ -62,20 +73,19 @@ Sub ADDTOURN ()
                     tourneyFile$ = ""
                     Erase regionNames$
                     Erase slotName$
-                    Call SetupTourney(NR$, SELECTION%, newTourneyName$, tourneyFile$)
+                    Call SetupTourney(SELECTION%, NR$, newTourneyName$, tourneyFile$)
 
-                Case 2, 4:
+                Case 2, 5:
                     Erase nbrRegionalTeams, tourneyParams
                     Erase regionNames$, slotName$
-                    consolationSetting%(0) = 0
-                    consolationSetting%(1) = 0
+                    Erase consolationSetting
 
                     Call LoadTourney(NR%, SELECTION%)
 
                 Case 3:
                     Call BRACKET
 
-                Case 5:
+                Case 4:
                     Call TOURNEY
 
             End Select
@@ -95,30 +105,23 @@ End Sub
 'setup. It then steps the user through
 'other screens for tournament setup - which
 'all rely on separate routine.
-Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
+Sub SetupTourney (ACTION%, numberRegions$, tourneyName$, sourceFile$)
 
     Dim pbpDelayTourn!
 
-    Shared tourneyDefaults%()
-    Shared consolationSetting%(), teamRatings()
-    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
-
-    'Shared coachMode$()
-    Shared foulShotOpt$()
+    Shared coachMode$(), foulShotOpt$()
+    Shared playMode$()
     Shared regionNames$(), slotName$()
     Shared sClockOpt$(), yesNoText$()
 
-    tourneyDefaults%(3) = 1
-    tourneyDefaults%(7) = 3
-    tourneyDefaults%(5) = 5
-    tourneyDefaults%(6) = 1
-    tourneyDefaults%(10) = 1
-    tourneyDefaults%(14) = 0
+    Shared consolationSetting(), nbrRegionalTeams()
+    Shared scheduleNG%(), teamRatings()
+    Shared tourneyDefaults(), tourneyParams()
 
-    If consolationSetting%(0) = 1 Then
-        C$ = "Y"
+    If consolationSetting(0) = 1 Then
+        consolation$ = "Y"
     Else
-        C$ = "N"
+        consolation$ = "N"
     End If
 
     'GLOBAL SETUP TOURNEY DEFAULTS
@@ -144,33 +147,39 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
         Locate 4, 2: Color 14
         Print " (1) ";
-        Color 15: Print "SHOT CLOCK: "; sClockOpt$(tourneyDefaults%(7))
+        Color 15: Print playMode$(tourneyDefaults(8))
         Locate 5, 2: Color 14
         Print " (2) ";
-        Color 15: Print "3-POINT SHOT: "; yesNoText$(tourneyDefaults%(3))
+        Color 15: Print "SHOT CLOCK: "; sClockOpt$(tourneyDefaults(7))
         Locate 6, 2: Color 14
         Print " (3) ";
-        Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults%(5)
+        Color 15: Print "3-POINT SHOT: "; yesNoText$(tourneyDefaults(3))
         Locate 7, 2: Color 14
         Print " (4) ";
-        Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(tourneyDefaults%(6))
+        Color 15: Print "FOULS TO DISQUALIFY: "; tourneyDefaults(5)
         Locate 8, 2: Color 14
         Print " (5) ";
-        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; tourneyDefaults%(4) / 10
+        Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(tourneyDefaults(6))
         Locate 9, 2: Color 14
         Print " (6) ";
-        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(tourneyDefaults%(10))
+        Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; tourneyDefaults(4) / 10
         Locate 10, 2: Color 14
         Print " (7) ";
-        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNoText$(tourneyDefaults%(14))
+        Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(tourneyDefaults(10))
         Locate 11, 2: Color 14
         Print " (8) ";
-        Color 15: Print "CURRENTLY NOT USED"
+        Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS (PRIOR TO 1973): "; yesNoText$(tourneyDefaults(14))
         Locate 12, 2: Color 14
         Print " (9) ";
+        Color 15: Print "HUMAN COACHES: "; coachMode$(tourneyDefaults(9))
+        Locate 13, 2: Color 14
+        Print " (0) ";
         Color 15: Print "ACCEPT SETTINGS"
-
         Locate 14, 2: Color 14
+        Print " (A) ";
+        Color 15: Print "PLAY-IN GAMES: "; yesNoText$(tourneyDefaults(11))
+
+        Locate 16, 2: Color 14
         Print "NOTE:: "
         Color 15
 
@@ -186,47 +195,55 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
             I$ = GetKeyPress$
 
             If I$ <> Chr$(27) Then
-                I = Val(I$)
+                Call LetterToNumber(I$, setting)
             End If
 
-        Loop Until I >= 1 Or I <= 9
+        Loop Until setting >= 0 Or setting <= 10
 
         If I$ = Chr$(27) Then Exit Sub
 
-        Select Case I
+        Select Case setting
 
             Case 1:
-                tourneyDefaults%(7) = tourneyDefaults%(7) + 1
-                If tourneyDefaults%(7) > 3 Then tourneyDefaults%(7) = 0
+                tourneyDefaults(8) = tourneyDefaults(8) + 1
+                If tourneyDefaults(8) > 3 Then tourneyDefaults(8) = 3
 
             Case 2:
-                tourneyDefaults%(3) = 1 - tourneyDefaults%(3)
+                tourneyDefaults(7) = tourneyDefaults(7) + 1
+                If tourneyDefaults(7) > 3 Then tourneyDefaults(7) = 0
 
             Case 3:
-                tourneyDefaults%(5) = tourneyDefaults%(5) + 1
-                If tourneyDefaults%(5) > 6 Then tourneyDefaults%(5) = 5
+                tourneyDefaults(3) = 1 - tourneyDefaults(3)
 
             Case 4:
-                tourneyDefaults%(6) = 1 - tourneyDefaults%(6)
+                tourneyDefaults(5) = tourneyDefaults(5) + 1
+                If tourneyDefaults(5) > 6 Then tourneyDefaults(5) = 5
 
             Case 5:
-                Locate 7, 32
-                Input pbpDelayTourn!
-                tourneyDefaults%(4) = pbpDelayTourn! * 10
+                tourneyDefaults(6) = 1 - tourneyDefaults(6)
 
             Case 6:
-                tourneyDefaults%(10) = 1 - tourneyDefaults%(10)
+                Locate 9, 32
+                Input pbpDelayTourn!
+                tourneyDefaults(4) = pbpDelayTourn! * 10
 
             Case 7:
-                tourneyDefaults%(14) = 1 - tourneyDefaults%(14)
+                tourneyDefaults(10) = 1 - tourneyDefaults(10)
 
-                'Case 8:
+            Case 8: '
+                tourneyDefaults(14) = 1 - tourneyDefaults(14)
 
             Case 9: '
+                tourneyDefaults(9) = 1 - tourneyDefaults(9)
+
+            Case 0: '
+
+            Case 10:
+                tourneyDefaults(11) = 1 - tourneyDefaults(11)
 
         End Select
 
-    Loop Until I = 9
+    Loop Until setting = 0
 
     Color 15, 1
     FG = 0
@@ -249,16 +266,16 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Locate , 20: QPrint PadRight$(tourneyName$, 55), FG, BG, -1
 
     Locate 11, 1: QPrint "CONSOLATION GAMES IN REGIONALS/FINALS ", 14, 1, -1
-    Locate , 40: QPrint PadRight$(C$, 1), FG, BG, -1
+    Locate , 40: QPrint PadRight$(consolation$, 1), FG, BG, -1
 
     Locate 13, 1: QPrint "NUMBER OF BRACKETS/REGIONS (1-16) ", 14, 1, -1
     Locate , 35: QPrint PadRight$(numberRegions$, 2), FG, BG, -1
 
-    GETDIV1:
+    GetDiv1:
     Locate 7, 26 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 32 'specify field parameters
     Call TextIn(sourceFile$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
-    If XCode = 1 GoTo GETDIV1: 'can't back up any more, stay here
+    If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
     sourceFile$ = _Trim$(sourceFile$)
 
@@ -266,44 +283,46 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
     Locate 9, 20 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 40 'specify field parameters
     Call TextIn(tourneyName$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
-    If XCode = 1 GoTo GETDIV1: 'can't back up any more, stay here
+    If XCode = 1 GoTo GetDiv1: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
     tourneyName$ = _Trim$(tourneyName$)
 
     GetDiv3:
     Locate 11, 40 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 1 'specify field parameters
-    Call TextIn(C$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(consolation$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv2: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
-    C$ = _Trim$(C$)
+    consolation$ = UCase$(_Trim$(consolation$))
 
-    GETDIV4:
+    GetDiv4:
     Locate 13, 35 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 2 'specify field parameters
     Call TextIn(numberRegions$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
+    If XCode = 2 GoTo Done 'all done entering data
     numberRegions$ = _Trim$(numberRegions$)
 
     Done:
     Color 14, 1
     Locate LAST_ROW - 2, 1
+    Print Space$(35)
     Print "Is this okay? (Yes/No) ";
     X$ = ""
 
     Call YesNoB(X$, XCode, FG, BG)
     Locate , 1
     ClearEOL 14, 1
-    If XCode = 1 GoTo GETDIV4
+    If XCode = 1 GoTo GetDiv4
 
     If Not (XCode = 2) Then
 
-        If X$ = "N" GoTo GETDIV1
+        If X$ = "N" GoTo GetDiv1
         If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow
 
-        If UCase$(C$) = "Y" Then consolationSetting%(0) = 1 Else consolationSetting%(0) = 0
+        If UCase$(consolation$) = "Y" Then consolationSetting(0) = 1 Else consolationSetting(0) = 0
 
-        consolationSetting%(1) = consolationSetting%(0)
+        consolationSetting(1) = consolationSetting(0)
 
         If sourceFile$ = "" Then
 
@@ -321,29 +340,32 @@ Sub SetupTourney (numberRegions$, ACTION%, tourneyName$, sourceFile$)
 
             numberRegions = Val(numberRegions$)
 
-            If numberRegions < 1 Or numberRegions > 16 Then GoTo GETDIV4
+            If numberRegions < 1 Or numberRegions > 16 Then GoTo GetDiv4
 
+            '.TNY file = tournament settings
             Open diskPaths$(1) + sourceFile$ + ".TNY" For Output As #1
 
             For I = 0 To 14
-                Print #1, tourneyDefaults%(I)
+                Print #1, tourneyDefaults(I)
             Next
 
             Close #1
 
             If ACTION% = 2 Then
 
-                Call EditBracket_TOURN(NT$, sourceFile$, numberRegions, tourneyName$)
+                Call EditRegionSeeds(numberRegions, NT$, sourceFile$, tourneyName$)
 
             Else
 
-                For currRegion = 1 To numberRegions
-
-                    Call SeedBrackets(currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
-
+                For currRegion = 0 To numberRegions
+                    Call SeedBrackets(currRegion, numberRegions, NT$, sourceFile$, tourneyName$)
                 Next
 
-                Call ScheduleAndSaveTourney(sourceFile$, numberRegions, tourneyName$)
+                Call ScheduleNextRoundSeeds(numberRegions, tourneyDefaults(11), sourceFile$, tourneyName$)
+
+                Call CHAMPIONSHIP(numberRegions, sourceFile$, tourneyName$)
+
+                Call SaveTourneyInfo(numberRegions, sourceFile$, tourneyName$)
 
             End If 'Done checking for Edit Bracket
 
@@ -361,11 +383,13 @@ End Sub
 'make changes to the Tournament Regions
 'and their corresponding seedings and
 'brackets.
-Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
+Sub SeedBrackets (currRegion, numberRegions, numberTeams$, sourceFile$, tourneyName$)
 
-    Shared slotName$(), regionNames$()
-    Shared consolationSetting%(), teamRatings()
-    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
+    Shared regionNames$(), slotName$()
+
+    Shared consolationSetting(), nbrRegionalTeams()
+    Shared teamRatings()
+    Shared tourneyParams()
 
     Cls
     Color 15, 1
@@ -385,29 +409,41 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
     Locate , 1
     X$ = "NAME OF REGION" + Str$(currRegion) + " "
 
+    If currRegion = 0 Then
+        regionNames$(0) = "PLAY-IN TEAMS"
+    End If
+
     Locate 7, 1: QPrint X$, 14, 1, -1
     Locate , 26: QPrint PadRight$(regionNames$(currRegion), 16), FG, BG, -1
     Locate 9, 1: QPrint "NUMBER OF TEAMS IN REGION (4-16) ", 14, 1, -1
-    Locate , 34: QPrint PadRight$(NT$, 2), FG, BG, -1
+    Locate , 34: QPrint PadRight$(numberTeams$, 2), FG, BG, -1
 
     NameRegion:
-    Locate 7, 26 'location of beginning of field
-    CapsOn = 0: NumOnly = 0: Max = 16 'specify field parameters
-    Call TextIn(regionNames$(currRegion), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
-    If XCode = 1 GoTo REGIONSIZE: 'can't back up any more, stay here
-    If XCode = 2 GoTo Done1 'all done entering data
-    regionNames$(currRegion) = _Trim$(regionNames$(currRegion))
+    If currRegion > 0 Then
+        Locate 7, 26 'location of beginning of field
+        CapsOn = 0: NumOnly = 0: Max = 16 'specify field parameters
+        Call TextIn(regionNames$(currRegion), Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+        If XCode = 1 GoTo REGIONSIZE: 'can't back up any more, stay here
+        If XCode = 2 GoTo Done1 'all done entering data
+        regionNames$(currRegion) = _Trim$(regionNames$(currRegion))
+    End If
 
     REGIONSIZE:
     Locate 9, 34 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 2 'specify field parameters
-    Call TextIn(NT$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
+    Call TextIn(numberTeams$, Max, NumOnly, CapsOn, XCode, FG, BG) 'get input
     If XCode = 1 GoTo NameRegion: 'can't back up any more, stay here
-    NT$ = _Trim$(NT$)
+    numberTeams$ = _Trim$(numberTeams$)
+    If currRegion = 0 And numberTeams$ <> "4" And numberTeams$ <> "8" Then
+        Locate LAST_ROW - 2, 1
+        Print "NOT A VALID NUMBER OF PLAY-IN TEAMS!!!";
+        GoTo REGIONSIZE
+    End If
 
     Done1:
     Color 14, 1
     Locate LAST_ROW - 2, 1
+    Print Space$(40)
     Print "Is this okay? (Yes/No) ";
     X$ = ""
 
@@ -416,13 +452,27 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
     ClearEOL 14, 1
     If XCode = 1 GoTo REGIONSIZE
 
-    If Not (X$ = Chr$(27)) Then
+    If X$ <> Chr$(27) Then
 
         If X$ = "N" GoTo NameRegion
         If X$ <> "Y" GoTo Done1 'insist on either Y or N or up-arrow
 
-        nbrRegionalTeams(currRegion) = Val(NT$)
+        nbrRegionalTeams(currRegion) = Val(numberTeams$)
         If nbrRegionalTeams(currRegion) < 4 Or nbrRegionalTeams(currRegion) > 16 Then GoTo REGIONSIZE
+
+        playInSeeds = (nbrRegionalTeams(0) / 2)
+        slotsUsed = 0
+
+        '-- This currently assumes 1 winner goes to each region
+        '-- This would need changed eventually
+        If currRegion > 0 And currRegion <= playInSeeds Then
+            slotsUsed = slotsUsed + 1
+            lastSeed = nbrRegionalTeams(currRegion)
+            slotName$(currRegion, lastSeed, 0) = "PLAY-IN GM" + Str$(currRegion) + " WINNER"
+            slotName$(currRegion, lastSeed, 1) = "XXX"
+            tourneyParams(currRegion, lastSeed, 0) = 1700 + currRegion
+            tourneyParams(currRegion, lastSeed, 1) = 1
+        End If
 
         Do
             Color , 0
@@ -486,21 +536,21 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                                 I$ = GetKeyPress$
                                 Call CSMsgBox("", 0, PASS)
 
-                                NF = 1
+                                notFilled = 1
                                 'Return
                                 Exit For
                             End If
 
                         Next
 
-                        If NF = 1 Then
-                            Call EditBracket_TOURN(NT$, sourceFile$, numberRegions, tourneyName$)
+                        If notFilled = 1 Then
+                            Call EditRegionSeeds(numberRegions, numberTeams$, sourceFile$, tourneyName$)
                             _Continue
                         End If
 
                     End If 'Done for value 3
 
-                    If NF = 1 Then NF = 0
+                    If notFilled = 1 Then notFilled = 0
 
                 End If
 
@@ -527,17 +577,15 @@ Sub SeedBrackets (currRegion, NT$, sourceFile$, numberRegions, tourneyName$)
                             slotName$(currRegion, seed, 0) = team$
                             slotName$(currRegion, seed, 1) = YN$
                             tourneyParams(currRegion, seed, 0) = teamNbr
-                            tourneyParams(currRegion, seed, 1) = 3
+                            tourneyParams(currRegion, seed, 1) = 1
                             tourneyParams(currRegion, seed, 2) = teamRatings(0)
                             tourneyParams(currRegion, seed, 3) = teamRatings(1)
-                            tourneyParams(currRegion, seed, 1) = 1
 
                         End If
 
                     Else
                         'Clear a slot
                         slotName$(currRegion, seed, 0) = ""
-
                     End If
 
                 End If 'Done checking for value 3
@@ -552,7 +600,7 @@ End Sub
 
 
 '----------------------------------------
-'      EditBracket_TOURN Subroutine
+'      EditRegionSeeds Subroutine
 '----------------------------------------
 'This subroutine gives the user a menu of
 'regions that were named previously. For
@@ -561,14 +609,13 @@ End Sub
 'seedings for the region. When done, it
 'then calls a routine to create the schedule
 'for the tournament and save the file.
-Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
+Sub EditRegionSeeds (numberRegions, numberTeams$, saveFile$, tourneyName$)
 
-    Shared TC!
-
+    Shared TC
     Shared regionNames$()
     Shared nbrRegionalTeams()
 
-    ReDim menuChoices$(1 To numberRegions + 1)
+    ReDim menuChoices$(0 To numberRegions + 1)
 
     Do
 
@@ -579,15 +626,15 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         Color , 6
         Locate 1, 1: Print Tab(80); " ";
 
-        Locate , 23: Color 15
+        Locate , 23
+        Color 15
         Print "TOURNAMENT  - REGION/BRACKET EDITOR"
-
         Locate LAST_ROW, 1: Print Tab(80); " ";
 
         Locate , 1
         Color , 0
 
-        For I = 1 To numberRegions
+        For I = 0 To numberRegions
             If regionNames$(I) = "" Then regionNames$(I) = "TO BE NAMED"
             menuChoices$(I) = regionNames$(I)
         Next
@@ -603,55 +650,69 @@ Sub EditBracket_TOURN (numberTeams$, saveFile$, numberRegions, tourneyName$)
         Column% = 32
 
         menuChoices$(numberRegions + 1) = "SAVE AND EXIT"
-        Call box0(3, 31, 3 + numberRegions + 2, 48, 2, 15, 1)
+
+        nbrRows = 3 + numberRegions + 2
+
+        If regionNames$(0) <> "" Then
+            'menuChoices$(0) = regionNames$(0)
+            SELECTION% = 0
+            Count% = Count% + 1
+            Start% = 0
+            nbrRows = nbrRows + 1
+        End If
+
+        Call box0(3, 31, nbrRows, 48, 2, 15, 1)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
+
         If ExitCode% <> 27 And ExitCode% <> 0 Then
 
             'Save and Exit
             If SELECTION% < numberRegions + 1 Then
                 numberTeams$ = _Trim$(Str$(nbrRegionalTeams(SELECTION%)))
-                Call SeedBrackets(SELECTION%, numberTeams$, saveFile$, numberRegions, tourneyName$)
-
+                Call SeedBrackets(SELECTION%, numberRegions, numberTeams$, saveFile$, tourneyName$)
             End If
 
         End If
 
     Loop Until SELECTION% = numberRegions + 1 Or ExitCode% = 27
 
-    If ExitCode% <> 27 Then 
-        Call ScheduleAndSaveTourney(saveFile$, numberRegions, tourneyName$)
+    If ExitCode% <> 27 Then
+        Call ScheduleNextRoundSeeds(numberRegions, 0, saveFile$, tourneyName$)
+        Call CHAMPIONSHIP(numberRegions, saveFile$, tourneyName$)
+        Call SaveTourneyInfo(numberRegions, saveFile$, tourneyName$)
     End If
 
 End Sub
 
 
 '----------------------------------------
-'   ScheduleAndSaveTourney Subroutine
+'   ScheduleNextRoundSeeds Subroutine
 '----------------------------------------
 'This subroutine uses the data loaded so
 'far for the tournament, then calls routines
 'to generate the appropriate schedule.
-Sub ScheduleAndSaveTourney (saveFile$, numberRegions, tourneyName$)
+Sub ScheduleNextRoundSeeds (numberRegions, playIn, saveFile$, tourneyName$)
 
     Shared nbrRegionalTeams()
 
+    'Delete existing files containing seedings
     If _FileExists(diskPaths$(1) + saveFile$ + ".TMP") Then Kill diskPaths$(1) + saveFile$ + ".TMP"
     If _FileExists(diskPaths$(1) + saveFile$ + ".TCX") Then Kill diskPaths$(1) + saveFile$ + ".TCX"
     If _FileExists(diskPaths$(1) + saveFile$ + ".TOU") Then Kill diskPaths$(1) + saveFile$ + ".TOU"
 
-    For currRegion = 1 To numberRegions
-        If nbrRegionalTeams(currRegion) >= 4 Then
-            var% = nbrRegionalTeams(currRegion) - 3
-            Call PickIt(var%, currRegion, saveFile$)
-        End If
-    Next
+    For currRegion = 0 To numberRegions
 
-    Call CHAMPIONSHIP(saveFile$, numberRegions, tourneyName$)
+        If nbrRegionalTeams(currRegion) >= 4 Then
+            nxtRndGames = nbrRegionalTeams(currRegion) - 3
+            Call ScheduleWinners(nxtRndGames, currRegion, playIn, saveFile$)
+        End If
+
+    Next
 
 End Sub
 
@@ -667,10 +728,10 @@ Sub LoadTourney (numberRegions, ACTION%)
 
     Dim numberRegions$
 
-    Shared slotName$(), regionNames$()
-    Shared consolationSetting%()
-    Shared tourneyParams(), nbrRegionalTeams()
-    Shared tourneyDefaults%()
+    Shared regionNames$(), slotName$()
+
+    Shared consolationSetting(), nbrRegionalTeams()
+    Shared tourneyParams(), tourneyDefaults()
 
     tourneyFile$ = _OpenFileDialog$("Choose Tournament file", diskPaths$(1), "*.TOU", "Tournament files [.TOU]")
     'ChooseFile$(diskPaths$(1) + "*.TOU", "TOURNAMENT", ExitCode%)
@@ -679,7 +740,7 @@ Sub LoadTourney (numberRegions, ACTION%)
 
     If tourneyFile$ <> "" Then
 
-        If ACTION% = 4 Then
+        If ACTION% = 5 Then
             'Reset tournament
 
             'Create TOU file as backup of TCX
@@ -703,13 +764,13 @@ Sub LoadTourney (numberRegions, ACTION%)
 
             Input #1, numberRegions ' NUMBER OF REGIONS
 
-            For I = 1 To 16
+            For I = 0 To 16
                 Input #1, nbrRegionalTeams(I): ' NUMBER OF TEAMS IN REGION
                 Input #1, regionNames$(I) ' NAME OF REGION
             Next
 
-            For I = 1 To 16
-                For I1 = 1 To 16
+            For I = 0 To 16
+                For I1 = 0 To 16
                     For I2 = 0 To 3
                         Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
                         Input #1, tourneyParams(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
@@ -717,24 +778,22 @@ Sub LoadTourney (numberRegions, ACTION%)
                 Next
             Next
 
-            Input #1, consolationSetting%(0)
-            Input #1, consolationSetting%(1) ' CONSOLATION GAME
+            Input #1, consolationSetting(0)
+            Input #1, consolationSetting(1) ' CONSOLATION GAME
 
             Close #1
 
             Open diskPaths$(1) + baseFile$ + ".TNY" For Input As #2
 
             For I = 0 To 14
-                Input #2, tourneyDefaults%(I)
+                Input #2, tourneyDefaults(I)
             Next
 
             Close #2
 
-            If consolationSetting%(0) = 1 Then C$ = "Y" Else C$ = "N"
-
             numberRegions$ = Str$(numberRegions)
 
-            Call SetupTourney(numberRegions$, ACTION%, tourneyName$, baseFile$)
+            Call SetupTourney(ACTION%, numberRegions$, tourneyName$, baseFile$)
 
         End If 'Done checking ACTION%
 
@@ -744,2389 +803,2437 @@ End Sub
 
 
 '----------------------------------------
-'       PickIt Subroutine
+'       ScheduleWinners Subroutine
 '----------------------------------------
 'This subroutine loads the regular bracket
 'games for the tournament, depending on the
 'number of regions.
-Sub PickIt (var%, currRegion, saveFile$)
+Sub ScheduleWinners (newRndGames, currRegion, playIn, saveFile$)
 
-    Shared TC!
+    Shared TC
 
     Shared homeTeam$(), visitingTeam$()
     Shared regionNames$(), slotName$(), yearNumber$()
-    Shared consolationSetting%()
-    Shared tourneyParams(), scheduleNG%(), nbrRegionalTeams()
 
-    Select Case var%
+    Shared consolationSetting(), nbrRegionalTeams()
+    Shared scheduleNG%(), tourneyParams()
+
+    Select Case newRndGames
 
         Case 1:
             '4 TEAM REGION
-
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
 
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 3, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 3, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+
+            '3rd seed vs 2nd seed
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 3, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 3, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
 
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 4, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 4, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+
+            Call AssignGameSettings
+
+            '4th seed vs 1st seed
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 4, 0)
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 4, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
+
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
 
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
-                GAME = 3
-                ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 801
-                scheduleNG%(TC!, 1) = 802
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
-                Call WRITEGAME(saveFile$)
+            'Only pit "winners" against each other if
+            'they are not play-in games
+            If currRegion > 0 Then
 
-                TC! = TC! + 1
-                REGION = currRegion
-                GAME = 4
-                ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 901
-                scheduleNG%(TC!, 1) = 902
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
-                Call WRITEGAME(saveFile$)
+                If consolationSetting(0) = 1 Then
 
-            Else
-                TC! = TC! + 1
-                REGION = currRegion
-                GAME = 3
-                ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 901
-                scheduleNG%(TC!, 1) = 902
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
-                Call WRITEGAME(saveFile$)
+                    TC = TC + 1
+                    GAME = 3
+                    ROUND = 88
+                    Call AssignGameSettings
+                    scheduleNG%(TC, 0) = 1801
+                    scheduleNG%(TC, 1) = 1802
+                    scheduleNG%(TC, 15) = REGION
+                    scheduleNG%(TC, 16) = ROUND
+                    scheduleNG%(TC, 17) = GAME
+                    visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 LOSER"
+                    homeTeam$(TC) = "REG" + Str$(REGION) + " GM 2 LOSER"
+                    yearNumber$(TC, 0) = "XXX  "
+                    yearNumber$(TC, 1) = "XXX  "
+                    Call WRITEGAME(saveFile$)
+
+                    TC = TC + 1
+                    REGION = currRegion
+                    GAME = 4
+                    ROUND = 89
+                    Call AssignGameSettings
+                    scheduleNG%(TC, 0) = 1901
+                    scheduleNG%(TC, 1) = 1902
+                    scheduleNG%(TC, 15) = REGION
+                    scheduleNG%(TC, 16) = ROUND
+                    scheduleNG%(TC, 17) = GAME
+                    visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+                    homeTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+                    yearNumber$(TC, 0) = "XXX  "
+                    yearNumber$(TC, 1) = "XXX  "
+                    Call WRITEGAME(saveFile$)
+
+                Else
+
+                    TC = TC + 1
+                    REGION = currRegion
+                    GAME = 3
+                    ROUND = 89
+                    Call AssignGameSettings
+                    scheduleNG%(TC, 0) = 1901
+                    scheduleNG%(TC, 1) = 1902
+                    scheduleNG%(TC, 15) = REGION
+                    scheduleNG%(TC, 16) = ROUND
+                    scheduleNG%(TC, 17) = GAME
+                    visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+                    homeTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+                    yearNumber$(TC, 0) = "XXX  "
+                    yearNumber$(TC, 1) = "XXX  "
+                    Call WRITEGAME(saveFile$)
+
+                End If
 
             End If
 
         Case 2:
             '5 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
-            ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 3, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 3, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 3, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 3, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 4
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 802
-                scheduleNG%(TC!, 1) = 803
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1802
+                scheduleNG%(TC, 1) = 1803
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 3 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 5
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 902
-                scheduleNG%(TC!, 1) = 903
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1902
+                scheduleNG%(TC, 1) = 1903
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 4
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 902
-                scheduleNG%(TC!, 1) = 903
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1902
+                scheduleNG%(TC, 1) = 1903
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 3:
             '6 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 6, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 6, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 5
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 803
-                scheduleNG%(TC!, 1) = 804
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1803
+                scheduleNG%(TC, 1) = 1804
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 6
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 903
-                scheduleNG%(TC!, 1) = 904
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1903
+                scheduleNG%(TC, 1) = 1904
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 5
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 903
-                scheduleNG%(TC!, 1) = 904
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1903
+                scheduleNG%(TC, 1) = 1904
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 4:
             '7 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 6, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 6, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 7, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 7, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 7, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 7, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 6
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 804
-                scheduleNG%(TC!, 1) = 805
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1804
+                scheduleNG%(TC, 1) = 1805
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 7
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 904
-                scheduleNG%(TC!, 1) = 905
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1904
+                scheduleNG%(TC, 1) = 1905
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 6
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 904
-                scheduleNG%(TC!, 1) = 905
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+
+                Call AssignGameSettings
+
+                scheduleNG%(TC, 0) = 1904
+                scheduleNG%(TC, 1) = 1905
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
+
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 5:
             '8 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 7, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 7, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+
+            Call AssignGameSettings
+
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 7, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 7, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
+
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 6, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 6, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 8, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 8, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 8, 0)
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 8, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
-            REGION = currRegion
-            GAME = 5
-            ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
-            Call WRITEGAME(saveFile$)
+            'Only pit "winners" against each other if
+            'they are not play-in games
+            If currRegion > 0 Then
 
-            TC! = TC! + 1
-            REGION = currRegion
-            GAME = 6
-            ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
-            Call WRITEGAME(saveFile$)
-
-            REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
-                GAME = 7
-                ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 805
-                scheduleNG%(TC!, 1) = 806
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
-                Call WRITEGAME(saveFile$)
-
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
-                GAME = 8
-                ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 905
-                scheduleNG%(TC!, 1) = 906
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                GAME = 5
+                ROUND = 2
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1901
+                scheduleNG%(TC, 1) = 1902
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-            Else
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
-                GAME = 7
-                ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 905
-                scheduleNG%(TC!, 1) = 906
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                GAME = 6
+                ROUND = 2
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1903
+                scheduleNG%(TC, 1) = 1904
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
+
+                REGION = currRegion
+                If consolationSetting(0) = 1 Then
+
+                    TC = TC + 1
+                    GAME = 7
+                    ROUND = 88
+                    Call AssignGameSettings
+                    scheduleNG%(TC, 0) = 1805
+                    scheduleNG%(TC, 1) = 1806
+                    scheduleNG%(TC, 15) = REGION
+                    scheduleNG%(TC, 16) = ROUND
+                    scheduleNG%(TC, 17) = GAME
+                    visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 LOSER"
+                    homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 LOSER"
+                    yearNumber$(TC, 0) = "XXX  "
+                    yearNumber$(TC, 1) = "XXX  "
+                    Call WRITEGAME(saveFile$)
+
+                    TC = TC + 1
+                    REGION = currRegion
+                    GAME = 8
+                    ROUND = 89
+                    Call AssignGameSettings
+                    scheduleNG%(TC, 0) = 1905
+                    scheduleNG%(TC, 1) = 1906
+                    scheduleNG%(TC, 15) = REGION
+                    scheduleNG%(TC, 16) = ROUND
+                    scheduleNG%(TC, 17) = GAME
+                    visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+                    homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+                    yearNumber$(TC, 0) = "XXX  "
+                    yearNumber$(TC, 1) = "XXX  "
+                    Call WRITEGAME(saveFile$)
+
+                Else
+
+                    TC = TC + 1
+                    REGION = currRegion
+                    GAME = 7
+                    ROUND = 89
+                    Call AssignGameSettings
+                    scheduleNG%(TC, 0) = 1905
+                    scheduleNG%(TC, 1) = 1906
+                    scheduleNG%(TC, 15) = REGION
+                    scheduleNG%(TC, 16) = ROUND
+                    scheduleNG%(TC, 17) = GAME
+                    visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+                    homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+                    yearNumber$(TC, 0) = "XXX  "
+                    yearNumber$(TC, 1) = "XXX  "
+                    Call WRITEGAME(saveFile$)
+
+                End If
 
             End If
 
         Case 6:
             '9 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 7, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 7, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 7, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 7, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 6, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 6, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 8
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 806
-                scheduleNG%(TC!, 1) = 807
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1806
+                scheduleNG%(TC, 1) = 1807
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 6 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 7 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 9
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 906
-                scheduleNG%(TC!, 1) = 907
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1906
+                scheduleNG%(TC, 1) = 1907
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 8
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 906
-                scheduleNG%(TC!, 1) = 907
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1906
+                scheduleNG%(TC, 1) = 1907
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 7:
             '10 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 6, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 6, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 6, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 6, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1905
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 9
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 807
-                scheduleNG%(TC!, 1) = 808
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1807
+                scheduleNG%(TC, 1) = 1808
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 7 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 8 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 10
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 907
-                scheduleNG%(TC!, 1) = 908
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1907
+                scheduleNG%(TC, 1) = 1908
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 9
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 907
-                scheduleNG%(TC!, 1) = 908
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1907
+                scheduleNG%(TC, 1) = 1908
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 8:
             '11 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 6, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 6, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 11, 0)
+            homeTeam$(TC) = slotName$(currRegion, 6, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 11, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 6, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 5, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 5, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 5, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 5, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 9
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 906
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1906
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 10
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 808
-                scheduleNG%(TC!, 1) = 809
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1808
+                scheduleNG%(TC, 1) = 1809
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 8 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 9 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 11
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 908
-                scheduleNG%(TC!, 1) = 909
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1908
+                scheduleNG%(TC, 1) = 1909
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 10
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 908
-                scheduleNG%(TC!, 1) = 909
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1908
+                scheduleNG%(TC, 1) = 1909
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 9:
             '12 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 6, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 6, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 11, 0)
+            homeTeam$(TC) = slotName$(currRegion, 6, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 11, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 6, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 5, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 5, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 12, 0)
+            homeTeam$(TC) = slotName$(currRegion, 5, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 12, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 5, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 9
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1905
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 10
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 907
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1907
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 11
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 809
-                scheduleNG%(TC!, 1) = 810
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1809
+                scheduleNG%(TC, 1) = 1810
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 9 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 10 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 12
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 909
-                scheduleNG%(TC!, 1) = 910
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1909
+                scheduleNG%(TC, 1) = 1910
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 11
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 909
-                scheduleNG%(TC!, 1) = 910
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1909
+                scheduleNG%(TC, 1) = 1910
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 10:
             '13 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 13, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 13, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 5, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 5, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 12, 0)
+            homeTeam$(TC) = slotName$(currRegion, 5, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 12, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 5, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 6, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 6, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 11, 0)
+            homeTeam$(TC) = slotName$(currRegion, 6, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 11, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 6, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 9
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1905
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 10
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 906
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1906
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 11
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 908
-            scheduleNG%(TC!, 1) = 909
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1908
+            scheduleNG%(TC, 1) = 1909
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 12
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 810
-                scheduleNG%(TC!, 1) = 811
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1810
+                scheduleNG%(TC, 1) = 1811
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 10 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 11 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 13
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 910
-                scheduleNG%(TC!, 1) = 911
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1910
+                scheduleNG%(TC, 1) = 1911
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 11 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 12
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 910
-                scheduleNG%(TC!, 1) = 911
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1910
+                scheduleNG%(TC, 1) = 1911
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 11 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 11:
             '14 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 14, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 14, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 14, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 14, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 14, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 14, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 13, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 13, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 5, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 5, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 12, 0)
+            homeTeam$(TC) = slotName$(currRegion, 5, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 12, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 5, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 6, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 6, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 11, 0)
+            homeTeam$(TC) = slotName$(currRegion, 6, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 11, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 6, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1905
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 9
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 10
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 906
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1906
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 11
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 907
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1907
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 12
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 910
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1910
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 13
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 811
-                scheduleNG%(TC!, 1) = 812
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1811
+                scheduleNG%(TC, 1) = 1812
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 11 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 12 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 14
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 911
-                scheduleNG%(TC!, 1) = 912
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1911
+                scheduleNG%(TC, 1) = 1912
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 11 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 12 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 13
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 911
-                scheduleNG%(TC!, 1) = 912
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1911
+                scheduleNG%(TC, 1) = 1912
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 11 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 12 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 12:
             '15 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 15, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 15, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 15, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 15, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 15, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 15, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 14, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 14, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 14, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 14, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 14, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 14, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 13, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 13, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 5, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 5, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 12, 0)
+            homeTeam$(TC) = slotName$(currRegion, 5, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 12, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 5, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 6, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 6, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 11, 0)
+            homeTeam$(TC) = slotName$(currRegion, 6, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 11, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 6, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 9
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 10
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 11
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 907
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1907
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 12
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 908
-            scheduleNG%(TC!, 1) = 909
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1908
+            scheduleNG%(TC, 1) = 1909
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 13
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 911
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1911
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 11 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 14
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 812
-                scheduleNG%(TC!, 1) = 813
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1812
+                scheduleNG%(TC, 1) = 1813
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 12 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 13 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 15
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 912
-                scheduleNG%(TC!, 1) = 913
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1912
+                scheduleNG%(TC, 1) = 1913
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 12 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 13 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 14
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 912
-                scheduleNG%(TC!, 1) = 913
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1912
+                scheduleNG%(TC, 1) = 1913
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 12 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 13 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
 
         Case 13:
             '16 TEAM REGION
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 1
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 16, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 1, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 16, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 1, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 16, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 1, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 16, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 1, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 16, 0)
+            homeTeam$(TC) = slotName$(currRegion, 1, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 16, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 1, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 2
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 15, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 2, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 15, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 2, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 15, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 2, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 15, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 2, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 15, 0)
+            homeTeam$(TC) = slotName$(currRegion, 2, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 15, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 2, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 3
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 14, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 3, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 14, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 3, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 14, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 3, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 14, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 3, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 14, 0)
+            homeTeam$(TC) = slotName$(currRegion, 3, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 14, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 3, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 4
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 13, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 4, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 13, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 4, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 13, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 4, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 13, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 4, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 13, 0)
+            homeTeam$(TC) = slotName$(currRegion, 4, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 13, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 4, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 5
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 12, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 5, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 12, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 5, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 12, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 5, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 12, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 5, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 12, 0)
+            homeTeam$(TC) = slotName$(currRegion, 5, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 12, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 5, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 6
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 11, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 6, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 11, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 6, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 11, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 6, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 11, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 6, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 11, 0)
+            homeTeam$(TC) = slotName$(currRegion, 6, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 11, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 6, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 7
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 10, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 7, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 10, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 7, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 10, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 7, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 10, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 7, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 10, 0)
+            homeTeam$(TC) = slotName$(currRegion, 7, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 10, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 7, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 8
             ROUND = 1
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = tourneyParams(currRegion, 9, 0)
-            scheduleNG%(TC!, 1) = tourneyParams(currRegion, 8, 0)
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = slotName$(currRegion, 9, 0)
-            homeTeam$(TC!) = slotName$(currRegion, 8, 0)
-            yearNumber$(TC!, 0) = slotName$(currRegion, 9, 1)
-            yearNumber$(TC!, 1) = slotName$(currRegion, 8, 1)
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = tourneyParams(currRegion, 9, 0)
+            scheduleNG%(TC, 1) = tourneyParams(currRegion, 8, 0)
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = slotName$(currRegion, 9, 0)
+            homeTeam$(TC) = slotName$(currRegion, 8, 0)
+            yearNumber$(TC, 0) = slotName$(currRegion, 9, 1)
+            yearNumber$(TC, 1) = slotName$(currRegion, 8, 1)
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 9
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 1 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 1 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 10
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 4 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 4 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 11
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 3 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 3 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 12
             ROUND = 2
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 2 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 2 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 13
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 910
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 9 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1910
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 9 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 10 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = currRegion
             GAME = 14
             ROUND = 3
-            Call SETTINGS
-            scheduleNG%(TC!, 0) = 911
-            scheduleNG%(TC!, 1) = 912
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 11 WINNER"
-            homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 12 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            Call AssignGameSettings
+            scheduleNG%(TC, 0) = 1911
+            scheduleNG%(TC, 1) = 1912
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 11 WINNER"
+            homeTeam$(TC) = "REG" + Str$(REGION) + " GM 12 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
             REGION = currRegion
-            If consolationSetting%(0) <> 0 Then '1-YES, 0-NO CONSOLATION
-                TC! = TC! + 1
+            If consolationSetting(0) = 1 Then
+
+                TC = TC + 1
                 GAME = 15
                 ROUND = 88
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 813
-                scheduleNG%(TC!, 1) = 814
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 LOSER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1813
+                scheduleNG%(TC, 1) = 1814
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 13 LOSER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 14 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 16
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 913
-                scheduleNG%(TC!, 1) = 914
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1913
+                scheduleNG%(TC, 1) = 1914
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 13 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 14 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = currRegion
                 GAME = 15
                 ROUND = 89
-                Call SETTINGS
-                scheduleNG%(TC!, 0) = 913
-                scheduleNG%(TC!, 1) = 914
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "REG" + Str$(REGION) + " GM 13 WINNER"
-                homeTeam$(TC!) = "REG" + Str$(REGION) + " GM 14 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                Call AssignGameSettings
+                scheduleNG%(TC, 0) = 1913
+                scheduleNG%(TC, 1) = 1914
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "REG" + Str$(REGION) + " GM 13 WINNER"
+                homeTeam$(TC) = "REG" + Str$(REGION) + " GM 14 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -3141,2629 +3248,2591 @@ End Sub
 'This subroutine configures the championship
 'bracket / seed for the tournament, depending
 'on the number of regions.
-Sub CHAMPIONSHIP (saveFile$, numberRegions, tournName$)
+Sub CHAMPIONSHIP (numberRegions, saveFile$, tournName$)
 
-    Shared TC!
+    Shared TC
 
-    Shared consolationSetting%(), scheduleNG%()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
+    Shared consolationSetting(), scheduleNG%()
 
     Select Case numberRegions
 
         Case 1:
-            Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
         Case 2:
             '2 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 99
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
-
-            Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
         Case 3:
             '3 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 99
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
-
-            Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
         Case 4:
             '4 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 2 WINNER"
-            homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 3
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1001
-                scheduleNG%(TC!, 1) = 1002
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 1 LOSER"
-                homeTeam$(TC!) = "GAME 2 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2001
+                scheduleNG%(TC, 1) = 2002
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 1 LOSER"
+                homeTeam$(TC) = "GAME 2 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 4
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1101
-                scheduleNG%(TC!, 1) = 1102
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 1 WINNER"
-                homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2101
+                scheduleNG%(TC, 1) = 2102
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 1 WINNER"
+                homeTeam$(TC) = "GAME 2 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 3
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1101
-                scheduleNG%(TC!, 1) = 1102
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 1 WINNER"
-                homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2101
+                scheduleNG%(TC, 1) = 2102
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 1 WINNER"
+                homeTeam$(TC) = "GAME 2 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
-
         Case 5:
             '5 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 5 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1905
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 5 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 2 WINNER"
-            homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 4
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1003
-                scheduleNG%(TC!, 1) = 1002
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 3 LOSER"
-                homeTeam$(TC!) = "GAME 2 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2003
+                scheduleNG%(TC, 1) = 2002
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 LOSER"
+                homeTeam$(TC) = "GAME 2 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 5
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1103
-                scheduleNG%(TC!, 1) = 1102
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 3 WINNER"
-                homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2103
+                scheduleNG%(TC, 1) = 2102
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 WINNER"
+                homeTeam$(TC) = "GAME 2 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 4
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1103
-                scheduleNG%(TC!, 1) = 1102
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 3 WINNER"
-                homeTeam$(TC!) = "GAME 2 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2103
+                scheduleNG%(TC, 1) = 2102
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 WINNER"
+                homeTeam$(TC) = "GAME 2 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 6:
             '6 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 905
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 5 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1905
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 5 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 5
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1003
-                scheduleNG%(TC!, 1) = 1004
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 3 LOSER"
-                homeTeam$(TC!) = "GAME 4 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2003
+                scheduleNG%(TC, 1) = 2004
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 LOSER"
+                homeTeam$(TC) = "GAME 4 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 6
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1103
-                scheduleNG%(TC!, 1) = 1104
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 3 WINNER"
-                homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2103
+                scheduleNG%(TC, 1) = 2104
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 WINNER"
+                homeTeam$(TC) = "GAME 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 5
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1103
-                scheduleNG%(TC!, 1) = 1104
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 3 WINNER"
-                homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2103
+                scheduleNG%(TC, 1) = 2104
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 3 WINNER"
+                homeTeam$(TC) = "GAME 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
         Case 7:
             '7 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 2 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 4 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 1101
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 2101
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1103
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 3 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2103
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 6
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1005
-                scheduleNG%(TC!, 1) = 1004
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 5 LOSER"
-                homeTeam$(TC!) = "GAME 4 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2005
+                scheduleNG%(TC, 1) = 2004
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 LOSER"
+                homeTeam$(TC) = "GAME 4 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 7
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1105
-                scheduleNG%(TC!, 1) = 1104
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 5 WINNER"
-                homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2105
+                scheduleNG%(TC, 1) = 2104
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 WINNER"
+                homeTeam$(TC) = "GAME 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 6
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1105
-                scheduleNG%(TC!, 1) = 1104
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 5 WINNER"
-                homeTeam$(TC!) = "GAME 4 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2105
+                scheduleNG%(TC, 1) = 2104
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 WINNER"
+                homeTeam$(TC) = "GAME 4 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 8:
             '8 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 2 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 4 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 1102
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 2102
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1103
-            scheduleNG%(TC!, 1) = 1104
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 3 WINNER"
-            homeTeam$(TC!) = "GAME 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2103
+            scheduleNG%(TC, 1) = 2104
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 7
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1005
-                scheduleNG%(TC!, 1) = 1006
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 5 LOSER"
-                homeTeam$(TC!) = "GAME 6 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2005
+                scheduleNG%(TC, 1) = 2006
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 LOSER"
+                homeTeam$(TC) = "GAME 6 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 8
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1105
-                scheduleNG%(TC!, 1) = 1106
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 5 WINNER"
-                homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2105
+                scheduleNG%(TC, 1) = 2106
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 WINNER"
+                homeTeam$(TC) = "GAME 6 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 7
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1105
-                scheduleNG%(TC!, 1) = 1106
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 5 WINNER"
-                homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2105
+                scheduleNG%(TC, 1) = 2106
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 5 WINNER"
+                homeTeam$(TC) = "GAME 6 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
         Case 9:
             '9 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 2 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 4 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 1101
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 2101
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 1103
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 2103
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1104
-            scheduleNG%(TC!, 1) = 1105
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 4 WINNER"
-            homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2104
+            scheduleNG%(TC, 1) = 2105
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 8
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1007
-                scheduleNG%(TC!, 1) = 1006
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 LOSER"
-                homeTeam$(TC!) = "GAME 6 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2007
+                scheduleNG%(TC, 1) = 2006
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 LOSER"
+                homeTeam$(TC) = "GAME 6 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 9
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1107
-                scheduleNG%(TC!, 1) = 1106
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 WINNER"
-                homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2107
+                scheduleNG%(TC, 1) = 2106
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 6 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 8
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1107
-                scheduleNG%(TC!, 1) = 1106
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 WINNER"
-                homeTeam$(TC!) = "GAME 6 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2107
+                scheduleNG%(TC, 1) = 2106
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 6 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 10:
             '10 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 908
-            scheduleNG%(TC!, 1) = 909
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 8 WINNER"
-            homeTeam$(TC!) = "REGION 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1908
+            scheduleNG%(TC, 1) = 1909
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 8 WINNER"
+            homeTeam$(TC) = "REGION 9 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 4 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 1102
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 2102
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1103
-            scheduleNG%(TC!, 1) = 1104
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 3 WINNER"
-            homeTeam$(TC!) = "GAME 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2103
+            scheduleNG%(TC, 1) = 2104
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1105
-            scheduleNG%(TC!, 1) = 1106
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 5 WINNER"
-            homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2105
+            scheduleNG%(TC, 1) = 2106
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 5 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 9
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1007
-                scheduleNG%(TC!, 1) = 1008
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 LOSER"
-                homeTeam$(TC!) = "GAME 8 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2007
+                scheduleNG%(TC, 1) = 2008
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 LOSER"
+                homeTeam$(TC) = "GAME 8 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 10
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1107
-                scheduleNG%(TC!, 1) = 1108
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 WINNER"
-                homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2107
+                scheduleNG%(TC, 1) = 2108
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 8 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 9
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1107
-                scheduleNG%(TC!, 1) = 1108
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 WINNER"
-                homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2107
+                scheduleNG%(TC, 1) = 2108
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 8 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
         Case 11:
             '11 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 911
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 11 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1911
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 1102
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 2102
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 4 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 1103
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 2103
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1104
-            scheduleNG%(TC!, 1) = 1105
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 4 WINNER"
-            homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2104
+            scheduleNG%(TC, 1) = 2105
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 9
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1106
-            scheduleNG%(TC!, 1) = 1107
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 6 WINNER"
-            homeTeam$(TC!) = "GAME 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2106
+            scheduleNG%(TC, 1) = 2107
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 6 WINNER"
+            homeTeam$(TC) = "GAME 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 10
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1009
-                scheduleNG%(TC!, 1) = 1008
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 9 LOSER"
-                homeTeam$(TC!) = "GAME 8 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2009
+                scheduleNG%(TC, 1) = 2008
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 LOSER"
+                homeTeam$(TC) = "GAME 8 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 11
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1109
-                scheduleNG%(TC!, 1) = 1108
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 9 WINNER"
-                homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2109
+                scheduleNG%(TC, 1) = 2108
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 WINNER"
+                homeTeam$(TC) = "GAME 8 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 10
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1109
-                scheduleNG%(TC!, 1) = 1108
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 7 WINNER"
-                homeTeam$(TC!) = "GAME 8 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2109
+                scheduleNG%(TC, 1) = 2108
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 7 WINNER"
+                homeTeam$(TC) = "GAME 8 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 12:
             '12 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 911
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 11 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1911
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 912
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 12 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1912
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 902
-            scheduleNG%(TC!, 1) = 1101
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 2 WINNER"
-            homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1902
+            scheduleNG%(TC, 1) = 2101
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 2 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 904
-            scheduleNG%(TC!, 1) = 1103
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 4 WINNER"
-            homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1904
+            scheduleNG%(TC, 1) = 2103
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 4 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1104
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 4 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2104
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 9
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1106
-            scheduleNG%(TC!, 1) = 1105
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 6 WINNER"
-            homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2106
+            scheduleNG%(TC, 1) = 2105
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 6 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 10
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1107
-            scheduleNG%(TC!, 1) = 1108
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 7 WINNER"
-            homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2107
+            scheduleNG%(TC, 1) = 2108
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 11
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1009
-                scheduleNG%(TC!, 1) = 1010
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 9 LOSER"
-                homeTeam$(TC!) = "GAME 10 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2009
+                scheduleNG%(TC, 1) = 2010
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 LOSER"
+                homeTeam$(TC) = "GAME 10 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 12
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1109
-                scheduleNG%(TC!, 1) = 1110
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 9 WINNER"
-                homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2109
+                scheduleNG%(TC, 1) = 2110
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 WINNER"
+                homeTeam$(TC) = "GAME 10 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             Else
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 11
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1109
-                scheduleNG%(TC!, 1) = 1110
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 9 WINNER"
-                homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2109
+                scheduleNG%(TC, 1) = 2110
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 9 WINNER"
+                homeTeam$(TC) = "GAME 10 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
-
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
 
             End If
 
         Case 13:
             '13 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 913
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 13 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1913
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 912
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 12 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1912
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 906
-            scheduleNG%(TC!, 1) = 911
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 6 WINNER"
-            homeTeam$(TC!) = "REGION 11 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1906
+            scheduleNG%(TC, 1) = 1911
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 6 WINNER"
+            homeTeam$(TC) = "REGION 11 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 1102
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "GAME 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 2102
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 901
-            scheduleNG%(TC!, 1) = 1103
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 1 WINNER"
-            homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1901
+            scheduleNG%(TC, 1) = 2103
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 1 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1104
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 4 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2104
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 9
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 903
-            scheduleNG%(TC!, 1) = 1105
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 3 WINNER"
-            homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1903
+            scheduleNG%(TC, 1) = 2105
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 3 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 10
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1107
-            scheduleNG%(TC!, 1) = 1106
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 7 WINNER"
-            homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2107
+            scheduleNG%(TC, 1) = 2106
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 11
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1103
-            scheduleNG%(TC!, 1) = 1109
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 3 WINNER"
-            homeTeam$(TC!) = "GAME 9 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2103
+            scheduleNG%(TC, 1) = 2109
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 9 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 12
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1011
-                scheduleNG%(TC!, 1) = 1010
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 11 LOSER"
-                homeTeam$(TC!) = "GAME 10 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2011
+                scheduleNG%(TC, 1) = 2010
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 11 LOSER"
+                homeTeam$(TC) = "GAME 10 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 13
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1111
-                scheduleNG%(TC!, 1) = 1110
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 11 WINNER"
-                homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2111
+                scheduleNG%(TC, 1) = 2110
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 11 WINNER"
+                homeTeam$(TC) = "GAME 10 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 12
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1111
-                scheduleNG%(TC!, 1) = 1110
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 11 WINNER"
-                homeTeam$(TC!) = "GAME 10 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2111
+                scheduleNG%(TC, 1) = 2110
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 11 WINNER"
+                homeTeam$(TC) = "GAME 10 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 14:
 
             '14 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 914
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 14 WINNER"
-            homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1914
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 14 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 913
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 13 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1913
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 912
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 12 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1912
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 911
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 11 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1911
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 909
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1909
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1104
-            scheduleNG%(TC!, 1) = 1101
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 4 WINNER"
-            homeTeam$(TC!) = "GAME 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2104
+            scheduleNG%(TC, 1) = 2101
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1105
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 5 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2105
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 5 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 9
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 1103
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "GAME 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 2103
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 10
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1106
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 6 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2106
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 6 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 11
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1107
-            scheduleNG%(TC!, 1) = 1108
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 7 WINNER"
-            homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2107
+            scheduleNG%(TC, 1) = 2108
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 12
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1109
-            scheduleNG%(TC!, 1) = 1110
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 9 WINNER"
-            homeTeam$(TC!) = "GAME 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2109
+            scheduleNG%(TC, 1) = 1110
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 10 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 13
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1012
-                scheduleNG%(TC!, 1) = 1011
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 12 LOSER"
-                homeTeam$(TC!) = "GAME 11 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 1012
+                scheduleNG%(TC, 1) = 1011
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 LOSER"
+                homeTeam$(TC) = "GAME 11 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 14
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1112
-                scheduleNG%(TC!, 1) = 1111
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 12 WINNER"
-                homeTeam$(TC!) = "GAME 11 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2112
+                scheduleNG%(TC, 1) = 2111
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 WINNER"
+                homeTeam$(TC) = "GAME 11 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 13
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1111
-                scheduleNG%(TC!, 1) = 1112
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 11 WINNER"
-                homeTeam$(TC!) = "GAME 12 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2111
+                scheduleNG%(TC, 1) = 2112
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 11 WINNER"
+                homeTeam$(TC) = "GAME 12 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 15:
 
             '15 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 915
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 15 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1915
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 15 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 914
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 14 WINNER"
-            homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1914
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 14 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 913
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 13 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1913
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 912
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 12 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1912
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 911
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 11 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1911
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 1106
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 2106
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 9
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 1105
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 2105
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 10
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1103
-            scheduleNG%(TC!, 1) = 1104
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 3 WINNER"
-            homeTeam$(TC!) = "GAME 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2103
+            scheduleNG%(TC, 1) = 2104
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 11
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1107
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 7 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2107
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 7 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 12
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1109
-            scheduleNG%(TC!, 1) = 1108
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 9 WINNER"
-            homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2109
+            scheduleNG%(TC, 1) = 2108
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 13
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1110
-            scheduleNG%(TC!, 1) = 1111
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 10 WINNER"
-            homeTeam$(TC!) = "GAME 11 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2110
+            scheduleNG%(TC, 1) = 2111
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 10 WINNER"
+            homeTeam$(TC) = "GAME 11 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 14
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1012
-                scheduleNG%(TC!, 1) = 1013
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 12 LOSER"
-                homeTeam$(TC!) = "GAME 13 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2012
+                scheduleNG%(TC, 1) = 2013
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 LOSER"
+                homeTeam$(TC) = "GAME 13 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 15
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1112
-                scheduleNG%(TC!, 1) = 1113
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 12 WINNER"
-                homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2112
+                scheduleNG%(TC, 1) = 2113
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 WINNER"
+                homeTeam$(TC) = "GAME 13 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 14
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1112
-                scheduleNG%(TC!, 1) = 1113
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 12 WINNER"
-                homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2112
+                scheduleNG%(TC, 1) = 2113
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 12 WINNER"
+                homeTeam$(TC) = "GAME 13 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
             End If
 
         Case 16:
 
             '16 REGIONS
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 1
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 916
-            scheduleNG%(TC!, 1) = 901
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 16 WINNER"
-            homeTeam$(TC!) = "REGION 1 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1916
+            scheduleNG%(TC, 1) = 1901
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 16 WINNER"
+            homeTeam$(TC) = "REGION 1 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 2
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 915
-            scheduleNG%(TC!, 1) = 902
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 15 WINNER"
-            homeTeam$(TC!) = "REGION 2 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1915
+            scheduleNG%(TC, 1) = 1902
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 15 WINNER"
+            homeTeam$(TC) = "REGION 2 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 3
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 914
-            scheduleNG%(TC!, 1) = 903
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 14 WINNER"
-            homeTeam$(TC!) = "REGION 3 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1914
+            scheduleNG%(TC, 1) = 1903
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 14 WINNER"
+            homeTeam$(TC) = "REGION 3 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 4
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 913
-            scheduleNG%(TC!, 1) = 904
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 13 WINNER"
-            homeTeam$(TC!) = "REGION 4 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1913
+            scheduleNG%(TC, 1) = 1904
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 13 WINNER"
+            homeTeam$(TC) = "REGION 4 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 5
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 912
-            scheduleNG%(TC!, 1) = 905
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 12 WINNER"
-            homeTeam$(TC!) = "REGION 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1912
+            scheduleNG%(TC, 1) = 1905
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 12 WINNER"
+            homeTeam$(TC) = "REGION 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 6
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 911
-            scheduleNG%(TC!, 1) = 906
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 11 WINNER"
-            homeTeam$(TC!) = "REGION 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1911
+            scheduleNG%(TC, 1) = 1906
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 11 WINNER"
+            homeTeam$(TC) = "REGION 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 7
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 910
-            scheduleNG%(TC!, 1) = 907
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 10 WINNER"
-            homeTeam$(TC!) = "REGION 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1910
+            scheduleNG%(TC, 1) = 1907
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 10 WINNER"
+            homeTeam$(TC) = "REGION 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 8
             ROUND = 1
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 909
-            scheduleNG%(TC!, 1) = 908
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "REGION 9 WINNER"
-            homeTeam$(TC!) = "REGION 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 1909
+            scheduleNG%(TC, 1) = 1908
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "REGION 9 WINNER"
+            homeTeam$(TC) = "REGION 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 9
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1101
-            scheduleNG%(TC!, 1) = 1108
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 1 WINNER"
-            homeTeam$(TC!) = "GAME 8 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2101
+            scheduleNG%(TC, 1) = 2108
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 1 WINNER"
+            homeTeam$(TC) = "GAME 8 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 10
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1104
-            scheduleNG%(TC!, 1) = 1105
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 4 WINNER"
-            homeTeam$(TC!) = "GAME 5 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2104
+            scheduleNG%(TC, 1) = 2105
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 4 WINNER"
+            homeTeam$(TC) = "GAME 5 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 11
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1103
-            scheduleNG%(TC!, 1) = 1106
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 3 WINNER"
-            homeTeam$(TC!) = "GAME 6 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2103
+            scheduleNG%(TC, 1) = 2106
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 3 WINNER"
+            homeTeam$(TC) = "GAME 6 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 12
             ROUND = 2
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1102
-            scheduleNG%(TC!, 1) = 1107
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 2 WINNER"
-            homeTeam$(TC!) = "GAME 7 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2102
+            scheduleNG%(TC, 1) = 2107
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 2 WINNER"
+            homeTeam$(TC) = "GAME 7 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 13
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1109
-            scheduleNG%(TC!, 1) = 1110
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 9 WINNER"
-            homeTeam$(TC!) = "GAME 10 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2109
+            scheduleNG%(TC, 1) = 2110
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 9 WINNER"
+            homeTeam$(TC) = "GAME 10 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            TC! = TC! + 1
+            TC = TC + 1
             REGION = 17
             GAME = 14
             ROUND = 3
-            Call SETTINGS
+            Call AssignGameSettings
 
-            scheduleNG%(TC!, 0) = 1111
-            scheduleNG%(TC!, 1) = 1112
-            scheduleNG%(TC!, 15) = REGION
-            scheduleNG%(TC!, 16) = ROUND
-            scheduleNG%(TC!, 17) = GAME
-            visitingTeam$(TC!) = "GAME 11 WINNER"
-            homeTeam$(TC!) = "GAME 12 WINNER"
-            yearNumber$(TC!, 0) = "XXX  "
-            yearNumber$(TC!, 1) = "XXX  "
+            scheduleNG%(TC, 0) = 2111
+            scheduleNG%(TC, 1) = 2112
+            scheduleNG%(TC, 15) = REGION
+            scheduleNG%(TC, 16) = ROUND
+            scheduleNG%(TC, 17) = GAME
+            visitingTeam$(TC) = "GAME 11 WINNER"
+            homeTeam$(TC) = "GAME 12 WINNER"
+            yearNumber$(TC, 0) = "XXX  "
+            yearNumber$(TC, 1) = "XXX  "
             Call WRITEGAME(saveFile$)
 
-            If consolationSetting%(1) <> 0 Then
-                TC! = TC! + 1
+            If consolationSetting(1) <> 0 Then
+                TC = TC + 1
                 REGION = 17
                 GAME = 15
                 ROUND = 98
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1014
-                scheduleNG%(TC!, 1) = 1013
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 14 LOSER"
-                homeTeam$(TC!) = "GAME 13 LOSER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2014
+                scheduleNG%(TC, 1) = 2013
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 14 LOSER"
+                homeTeam$(TC) = "GAME 13 LOSER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                TC! = TC! + 1
+                TC = TC + 1
                 REGION = 17
                 GAME = 16
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1114
-                scheduleNG%(TC!, 1) = 1113
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 14 WINNER"
-                homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2114
+                scheduleNG%(TC, 1) = 2113
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 14 WINNER"
+                homeTeam$(TC) = "GAME 13 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
-                Call SaveTourneyInfo(saveFile$, numberRegions, tournName$)
-
             Else
-                TC! = TC! + 1
+
+                TC = TC + 1
                 REGION = 17
                 GAME = 15
                 ROUND = 99
-                Call SETTINGS
+                Call AssignGameSettings
 
-                scheduleNG%(TC!, 0) = 1114
-                scheduleNG%(TC!, 1) = 1113
-                scheduleNG%(TC!, 15) = REGION
-                scheduleNG%(TC!, 16) = ROUND
-                scheduleNG%(TC!, 17) = GAME
-                visitingTeam$(TC!) = "GAME 14 WINNER"
-                homeTeam$(TC!) = "GAME 13 WINNER"
-                yearNumber$(TC!, 0) = "XXX  "
-                yearNumber$(TC!, 1) = "XXX  "
+                scheduleNG%(TC, 0) = 2114
+                scheduleNG%(TC, 1) = 2113
+                scheduleNG%(TC, 15) = REGION
+                scheduleNG%(TC, 16) = ROUND
+                scheduleNG%(TC, 17) = GAME
+                visitingTeam$(TC) = "GAME 14 WINNER"
+                homeTeam$(TC) = "GAME 13 WINNER"
+                yearNumber$(TC, 0) = "XXX  "
+                yearNumber$(TC, 1) = "XXX  "
                 Call WRITEGAME(saveFile$)
 
             End If
@@ -5774,27 +5843,24 @@ End Sub
 
 
 '----------------------------------------
-'    SETTINGS Subroutine
+'     AssignGameSettings Subroutine
 '----------------------------------------
 'This subroutine assigns the tournament
 'settings to the current game, using the
 'defaults set earlier.
-Sub SETTINGS ()
+Sub AssignGameSettings ()
 
-    Shared TC!
-    Shared scheduleNG%(), tourneyDefaults%()
+    Shared TC
+    Shared scheduleNG%(), tourneyDefaults()
 
     For I = 0 To 14
-        scheduleNG%(TC!, I) = tourneyDefaults%(I)
+        scheduleNG%(TC, I) = tourneyDefaults(I)
     Next
-
-    scheduleNG%(TC!, 8) = 3
-    scheduleNG%(TC!, 2) = 2
 
 End Sub
 
 '----------------------------------------
-'    WRITEGAME Subroutine
+'         WRITEGAME Subroutine
 '----------------------------------------
 'This subroutine writes the current game
 'being considered to temporary files.
@@ -5808,14 +5874,14 @@ End Sub
 
 Sub WRITEGAME (outputFile$)
 
-    Shared TC!
+    Shared TC
 
     Shared homeScores(), scheduleNG%(), visitorScores()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
 
     'WRITE OUT A GAME
     'TMP file
-    Open diskPaths$(1) + outputFile$ + ".TMP" For Random As #1 Len = 94
+    Open diskPaths$(1) + outputFile$ + ".TMP" For Random As #1 Len = TOURNEY_SIZE_BYTES
 
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5826,28 +5892,28 @@ Sub WRITEGAME (outputFile$)
     Field #1, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
     For X = 0 To 14:
-        LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
+        LSet Q$(X + 1) = MKI$(scheduleNG%(TC, X))
     Next
 
-    LSet Q$(16) = MKI$(visitorScores(TC!))
-    LSet Q$(17) = MKI$(homeScores(TC!))
-    LSet Q$(18) = visitingTeam$(TC!)
-    LSet Q$(19) = homeTeam$(TC!)
+    LSet Q$(16) = MKI$(visitorScores(TC))
+    LSet Q$(17) = MKI$(homeScores(TC))
+    LSet Q$(18) = visitingTeam$(TC)
+    LSet Q$(19) = homeTeam$(TC)
 
     For X = 0 To 3:
-        LSet Q$(20 + X) = yearNumber$(TC!, X)
+        LSet Q$(20 + X) = yearNumber$(TC, X)
     Next
 
     For X = 24 To 26
-        LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
+        LSet Q$(X) = MKI$(scheduleNG%(TC, X - 9))
     Next
 
-    Put #1, TC!
+    Put #1, TC
 
     Close #1
 
     'TCX file
-    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #2 Len = 94
+    Open diskPaths$(1) + outputFile$ + ".TCX" For Random As #2 Len = TOURNEY_SIZE_BYTES
 
     For X = 0 To 14
         Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5858,41 +5924,42 @@ Sub WRITEGAME (outputFile$)
     Field #2, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
     For X = 0 To 14:
-        LSet Q$(X + 1) = MKI$(scheduleNG%(TC!, X))
+        LSet Q$(X + 1) = MKI$(scheduleNG%(TC, X))
     Next
 
     For X = 0 To 3:
-        LSet Q$(20 + X) = yearNumber$(TC!, X)
+        LSet Q$(20 + X) = yearNumber$(TC, X)
     Next
 
-    LSet Q$(16) = MKI$(visitorScores(TC!))
-    LSet Q$(17) = MKI$(homeScores(TC!))
-    LSet Q$(18) = visitingTeam$(TC!)
-    LSet Q$(19) = homeTeam$(TC!)
+    LSet Q$(16) = MKI$(visitorScores(TC))
+    LSet Q$(17) = MKI$(homeScores(TC))
+    LSet Q$(18) = visitingTeam$(TC)
+    LSet Q$(19) = homeTeam$(TC)
 
     For X = 24 To 26
-        LSet Q$(X) = MKI$(scheduleNG%(TC!, X - 9))
+        LSet Q$(X) = MKI$(scheduleNG%(TC, X - 9))
     Next
 
-    Put #2, TC!
+    Put #2, TC
 
     Close #2
 
 End Sub
 
 '----------------------------------------
-'         SaveTourneyInfo Subroutine
+'       SaveTourneyInfo Subroutine
 '----------------------------------------
 'This subroutine saves the tournament
 '"INFO" file (.INF), then relies on a
 'separate routine to sort the games and
 'save them to the .TOU file.
-Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
+Sub SaveTourneyInfo (numberRegions, saveFile$, tourneyName$)
 
-    Shared TC!
+    Shared TC
 
-    Shared consolationSetting%(), tourneyParams(), nbrRegionalTeams()
-    Shared slotName$(), regionNames$()
+    Shared regionNames$(), slotName$()
+
+    Shared consolationSetting(), nbrRegionalTeams(), tourneyParams()
 
     'SAVE TOURNAMENT INFO AND QUIT
     Open diskPaths$(1) + saveFile$ + ".INF" For Output As #2
@@ -5900,13 +5967,13 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
     Print #2, tourneyName$
     Print #2, numberRegions ' NUMBER OF REGIONS
 
-    For I = 1 To 16
+    For I = 0 To 16
         Print #2, nbrRegionalTeams(I) ' NUMBER OF TEAMS IN REGION
         Print #2, regionNames$(I) ' NAME OF REGION
     Next
 
-    For I = 1 To 16
-        For I1 = 1 To 16
+    For I = 0 To 16
+        For I1 = 0 To 16
             For I2 = 0 To 3
                 Print #2, slotName$(I, I1, I2) ' SEED SLOT NAME
                 Print #2, tourneyParams(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
@@ -5914,12 +5981,14 @@ Sub SaveTourneyInfo (saveFile$, numberRegions, tourneyName$)
         Next
     Next
 
-    Print #2, consolationSetting%(0)
-    Print #2, consolationSetting%(1): ' CONSOLATION GAME
+    Print #2, consolationSetting(0)
+    Print #2, consolationSetting(1): ' CONSOLATION GAME
 
     Close #2
 
-    Call SortAndSaveGames(saveFile$, numberRegions)
+    Call SortTourney
+
+    Call SaveTourneyGames(numberRegions, saveFile$)
 
     Locate 22, 25: Print Space$(34)
 
@@ -5935,19 +6004,19 @@ End Sub
 
 
 '----------------------------------------
-'      SortAndSaveGames Subroutine
+'      SaveTourneyGames Subroutine
 '----------------------------------------
 'This subroutine reads data from a .TMP
 'file created earlier in the process. If
 'then performs a sort on all games to be
 'scheduled and creates the final .TOU file.
-Sub SortAndSaveGames (tourneyFile$, numberRegions)
+Sub SaveTourneyGames (numberRegions, tourneyFile$)
 
-    Shared TC!
+    Shared TC
 
-    Shared scheduleNG%()
     Shared homeTeam$(), visitingTeam$(), yearNumber$()
-    Shared homeScores(), visitorScores()
+
+    Shared homeScores(), scheduleNG%(), visitorScores()
 
     For RD = 1 To 89
 
@@ -5955,14 +6024,14 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
             Locate 22, 25: Print "SCHEDULING GAMES FOR BRACKET"; numberRegions
 
-            For currRegion = 1 To 16
+            For currRegion = 0 To 16
 
                 If currRegion <= numberRegions Then
 
-                    For AP = 1 To TC!
+                    For AP = 1 To TC
 
                         'Read data from .TMP file
-                        Open diskPaths$(1) + tourneyFile$ + ".TMP" For Random As #1 Len = 94
+                        Open diskPaths$(1) + tourneyFile$ + ".TMP" For Random As #1 Len = TOURNEY_SIZE_BYTES
 
                         For X = 0 To 14
                             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -5997,7 +6066,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                             MATCH = MATCH + 1
 
-                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 94
+                            Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = TOURNEY_SIZE_BYTES
 
                             For X = 0 To 14
                                 Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -6036,6 +6105,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
             Next currRegion 'Done processing all regions
 
         End If
+
     Next RD
 
     currRegion = 17
@@ -6046,9 +6116,9 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
         If Not (RD > 5 And RD < 88 Or RD > 89 And RD < 98) Then
 
-            For AP = 1 To TC!
+            For AP = 1 To TC
 
-                Open tempFile$ For Random As #1 Len = 94
+                Open tempFile$ For Random As #1 Len = TOURNEY_SIZE_BYTES
 
                 For X = 0 To 14
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -6083,7 +6153,7 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
 
                     MATCH = MATCH + 1
 
-                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = 94
+                    Open diskPaths$(1) + tourneyFile$ + ".TOU" For Random As #2 Len = TOURNEY_SIZE_BYTES
 
                     For X = 0 To 14
                         Field #2, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -6123,5 +6193,90 @@ Sub SortAndSaveGames (tourneyFile$, numberRegions)
     Next RD
 
     If _FileExists(tempFile$) Then Kill tempFile$
+
+End Sub
+
+
+'----------------------------------------
+'       SortTourney SubRoutine
+'----------------------------------------
+'This subroutine is used to automatically
+'sort all games in the schedule by their
+'date / time.
+Sub SortTourney ()
+
+    Shared scheduleAP%(), scheduleNG%()
+    Shared homeScores(), visitorScores()
+    Shared homeTeam$(), visitingTeam$()
+    Shared yearNumber$()
+
+
+    For Z = 1 To scheduleAP%(0) - 1
+
+        For Z1 = Z + 1 To scheduleAP%(0)
+
+            Locate 1, 1: Print Z, Z1
+
+            If scheduleNG%(Z, 16) > scheduleNG%(Z1, 16) Then
+
+                For I = 0 To 14:
+                    Swap scheduleNG%(Z, I), scheduleNG%(Z1, I)
+                Next
+
+                For I = 0 To 3:
+                    Swap yearNumber$(Z, I), yearNumber$(Z1, I)
+                Next
+
+                Swap homeTeam$(Z), homeTeam$(Z1)
+                Swap visitingTeam$(Z), visitingTeam$(Z1)
+                Swap homeScores(Z), homeScores(Z1)
+                Swap visitorScores(Z), visitorScores(Z1)
+
+                For I = 1 To 3:
+                    Swap scheduleNG%(Z, I + 14), scheduleNG%(Z1, I + 14)
+                Next
+
+            End If
+
+        Next Z1
+
+    Next Z
+
+    For Z = 1 To scheduleAP%(0) - 1
+
+        For Z1 = Z + 1 To scheduleAP%(0)
+
+            If scheduleNG%(Z, 15) > scheduleNG%(Z1, 15) Then
+
+                For I = 0 To 14:
+                    Swap scheduleNG%(Z, I), scheduleNG%(Z1, I)
+                Next
+
+                For I = 0 To 3:
+                    Swap yearNumber$(Z, I), yearNumber$(Z1, I)
+                Next
+
+                Swap homeTeam$(Z), homeTeam$(Z1)
+                Swap visitingTeam$(Z), visitingTeam$(Z1)
+                Swap homeScores(Z), homeScores(Z1)
+                Swap visitorScores(Z), visitorScores(Z1)
+
+                For X = 0 To 14:
+                    scheduleNG%(0, X) = CVI(Q$(X + 1))
+                Next
+
+                For X = 0 To 3:
+                    yearNumber$(0, X) = Q$(20 + X)
+                Next
+
+                For I = 1 To 3:
+                    Swap scheduleNG%(Z, I + 14), scheduleNG%(Z1, I + 14)
+                Next
+
+            End If
+
+        Next Z1
+
+    Next Z
 
 End Sub

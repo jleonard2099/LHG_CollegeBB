@@ -1239,9 +1239,9 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
 
     X$ = X$ + Space$(Max% - Length) 'Pad with trailing spaces
 
-    Locate , , 1 'Toggle the cursor
+    'Locate , , 1 'Toggle the cursor
     Call QPrint(X$, FGColor&, BGColor&, -1)
-    ' Locate , , 1  'Toggle the cursor
+    'Locate , , 0  'Toggle the cursor
 
     GoSub TInsertOff 'Set cursor size according to display
 
@@ -1463,6 +1463,7 @@ Sub TextIn (T$, Max%, NumOnly%, CapsOn%, ExitCode%, FGColor&, BGColor&)
     Else
         Locate , , , 12, 13
     End If
+
     Return
 
 End Sub
