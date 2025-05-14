@@ -47,7 +47,7 @@ If you intend to manage several seasons or files:
 - Mesa (libglu1-mesa / mesa-libGLU)
 - OpenGL (libopengl0 / libglvnd-opengl)
 
-### Useage
+### Usage
 Launch HELLO binary compiled for your system directly from the folder!
 
 ### Support ###
@@ -79,7 +79,7 @@ This phase will see the games take on updated rules and correct accuracy. All kn
 
 ### The Future ###
 - Updating code to work with databases instead of flat files.
-- Bringing modern interface concepts to the design (including GUI)
+- Bringing modern interface concepts to the design (including GUI) [IN PROGRESS!]
 
 # The Fine Print #
 ### License ###
