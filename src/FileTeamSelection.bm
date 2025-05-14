@@ -345,10 +345,13 @@ Sub ReadExtraData (teamYear$, teamIdx, dataOK)
             teamStats!(I) = CVI(Q$(228 + I))
         Next
 
+        test& = teamAttendance&
+
         If teamAttendance& > 100000 Or ((CheckString%(arenaName$) = 1) And arenaName$ <> "") Then
             'If attendance is abnormally high, or arena is not a string,
             'we ARE clearly not reading accurate data
-            dataOK = 0
+            'dataOK = 0
+            dataOK = 1
 
         Else
 
@@ -775,36 +778,36 @@ Sub ReadTournamentFile (tourneyFile$)
     Shared schedOptions()
     Shared schedHomeTm$, schedVisTm$
 
-	Open diskPaths$(1) + tourneyFile$ As #9 Len = TOURNEY_SIZE_BYTES
+    Open diskPaths$(1) + tourneyFile$ As #9 Len = TOURNEY_SIZE_BYTES
 
-	For X = 0 To 14
-		Field #9, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
-	Next
+    For X = 0 To 14
+        Field #9, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
+    Next
 
-	Field #9, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
-	Field #9, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
-	Field #9, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
+    Field #9, 30 As X$, 2 As Q$(16), 2 As Q$(17), 15 As Q$(18), 15 As Q$(19), 26 As X$
+    Field #9, 64 As X$, 5 As Q$(20), 5 As Q$(21), 6 As Q$(22), 8 As Q$(23), 6 As X$
+    Field #9, 88 As X$, 2 As Q$(24), 2 As Q$(25), 2 As Q$(26)
 
-	Get #9, schedGame(0) + schedGame(2)
+    Get #9, schedGame(0) + schedGame(2)
 
-	VS% = CVI(Q$(16))
-	HS% = CVI(Q$(17))
-	schedVisTm$ = Q$(18)
-	schedHomeTm$ = Q$(19)
+    VS% = CVI(Q$(16))
+    HS% = CVI(Q$(17))
+    schedVisTm$ = Q$(18)
+    schedHomeTm$ = Q$(19)
 
-	For X = 0 To 14:
-		schedOptions(X) = CVI(Q$(X + 1))
-	Next
+    For X = 0 To 14:
+        schedOptions(X) = CVI(Q$(X + 1))
+    Next
 
-	For X = 0 To 3:
-		diskIDs$(X) = Q$(20 + X)
-	Next
+    For X = 0 To 3:
+        diskIDs$(X) = Q$(20 + X)
+    Next
 
-	For X = 1 To 3:
-		schedOptions(X + 14) = CVI(Q$(X + 23))
-	Next
+    For X = 1 To 3:
+        schedOptions(X + 14) = CVI(Q$(X + 23))
+    Next
 
-	Close #9
+    Close #9
 
 End Sub
 

@@ -1,7 +1,7 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.1"
+Const GAME_VERSION$ = "5.21"
 Const MAX_FILES = 10240
 Const MAX_CAREER_YEARS = 15
 Const MAX_CONFERENCES = 40
@@ -12582,7 +12582,7 @@ Sub ComputerStrategy ()
                                             
                                         Case 41 To 60
                                             defStrat(P9) = 6
-                                        
+
                                         Case 61 To 71
                                             defStrat(P9) = 2
 

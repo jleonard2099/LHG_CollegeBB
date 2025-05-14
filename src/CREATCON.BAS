@@ -175,8 +175,10 @@ Sub ReviewEditConference (confFile$)
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
-    If _FileExists(diskPaths$(2) + confFile$ + ".TMI") Then
-        Call ReadConferenceIndex(confFile$)
+    targetFile$ = diskPaths$(2) + confFile$ + ".TMI"
+
+    If _FileExists(targetFile$) Then
+        Call ReadConferenceIndex(targetFile$)
     End If
 
     Do

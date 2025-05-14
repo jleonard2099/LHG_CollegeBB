@@ -141,6 +141,8 @@ Sub ModifyTeamStats (statFile$)
     Do
 
         Do
+            Locate 22, 29
+            Print Space$(10)
             Locate 22, 1
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
         Loop Until B9 >= 0 And B9 <= 16
@@ -229,9 +231,6 @@ Sub ModifyTeamStats (statFile$)
 
         End Select
 
-        Locate 22, 29
-        Print Space$(10)
-
     Loop Until B9 = 0
 
     '---------------
@@ -260,6 +259,8 @@ Sub ModifyTeamStats (statFile$)
     Do
 
         Do
+            Locate 22, 29
+            Print Space$(10)
             Locate 22, 1
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
         Loop Until B9 >= 0 And B9 <= 14
@@ -338,9 +339,6 @@ Sub ModifyTeamStats (statFile$)
 
         End Select
 
-        Locate 22, 29
-        Print Space$(10)
-
     Loop Until B9 = 0
 
 
@@ -398,6 +396,8 @@ Sub ModifyTeamStats (statFile$)
             Do
 
                 Do
+                    Locate 22, 29
+                    Print Space$(10)
                     Locate 22, 1
                     Input "# TO CHANGE (0 TO CONTINUE) "; B9
                 Loop Until B9 >= 0 And B9 <= 17
@@ -490,9 +490,6 @@ Sub ModifyTeamStats (statFile$)
                         Locate 20, 18: Print " "
 
                 End Select
-
-                Locate 22, 29
-                Print Space$(10)
 
             Loop Until B9 = 0
 

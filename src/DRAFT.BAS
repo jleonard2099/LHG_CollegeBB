@@ -119,6 +119,8 @@ Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
     Do
 
         Do
+            Locate 20, 53
+            Print Space$(10)
             Locate 20, 25
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 6
@@ -172,9 +174,6 @@ Sub NewTeamParameters (draftYear$, teamName$, teamIdx)
                     End If
 
             End Select
-
-            Locate 20, 53
-            Print Space$(10)
 
         End If
 
@@ -310,6 +309,8 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
 
                     Do
 
+                        Locate 21, 46
+                        Print Space$(10);
                         Locate 21, 1
                         Input "SELECT PLAYER # TO CHANGE (0-NO MORE CHANGE) "; X9
 
@@ -342,9 +343,6 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                             Input "ENTER CP: "; plyrOff_DRAFT!(0, X9 - 1, 3)
 
                         End If 'End checking X9
-
-                        Locate 21, 46
-                        Print Space$(10);
 
                     Loop Until X9 >= 0 And X9 <= 14
 

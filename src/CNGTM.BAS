@@ -190,6 +190,8 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Do
 
         Do
+            Locate LAST_ROW - 2, 53
+            Print Space$(10)
             Locate LAST_ROW - 2, 25
             Input "# TO CHANGE (0 TO CONTINUE) "; B9
         Loop Until B9 >= 0 And B9 <= 25
@@ -210,6 +212,14 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Locate 6, 15: Print Space$(20)
                 Locate 6, 1: Input " 3. TEAM NAME "; teamName$
                 Locate 6, 15: Print " "
+
+                If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
+                    Locate 24, 1
+                    Print "TEAM APPEARANCE: ";
+                    Color teamRatings(0), teamRatings(1)
+                    Print RTrim$(teamName$) + " " + RTrim$(mascot$)
+                    Color 15, 0
+                End If
 
             Case 4
                 Locate 7, 24: Print Space$(10)
@@ -315,6 +325,14 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
                 Locate 4, 40: Input "20. NICKNAME "; mascot$
                 Locate 4, 53: Print " "
 
+                If teamRatings(0) >= 0 And teamRatings(1) >= 0 Then
+                    Locate 24, 1
+                    Print "TEAM APPEARANCE: ";
+                    Color teamRatings(0), teamRatings(1)
+                    Print RTrim$(teamName$) + " " + RTrim$(mascot$)
+                    Color 15, 0
+                End If
+
             Case 21
                 Locate 5, 50: Print Space$(20)
                 Locate 5, 40: Input "21. COACH "; coach$
@@ -342,9 +360,6 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         End Select
 
-        Locate LAST_ROW - 2, 53
-        Print Space$(10)
-
     Loop Until B9 = 0
 
     If defthreeFGA_Adj < 0 Then
@@ -370,28 +385,34 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Color 15, 0
     Cls
 
-    Color 14
-    Locate 2, 30: Print "STRENGTH OF SCHEDULE"
+    XCoord = (80 - Len(teamName$)) / 2
+    Locate 2, XCoord
+    Color teamRatings(0), teamRatings(1)
+    Print teamName$
+
+    Color 14, 0
+    Locate 4, 30: Print "STRENGTH OF SCHEDULE"
     Color 15
 
     newSos = -99
 
     Do
 
-        Locate 4, 5: Print "DO YOU WANT TO CHANGE THIS TEAM'S STRENGTH OF SCHEDULE? (Y/N)"
-        Locate 5, 5: Print "(THIS ALSO REQUIRES OPP 2FG% AND SEASON FG%)"
+        Locate 6, 14: Print "DO YOU WANT TO EDIT THIS TEAM'S STRENGTH OF SCHEDULE?"
+        Locate 7, 21: Print "(THIS REQUIRES OPP 2FG% AND SEASON FG%)"
+        Locate 9, 26: Print "PRESS 'Y' FOR YES, 'N' FOR NO"
         I$ = GetKeyPress$
 
     Loop Until UCase$(I$) = "N" Or UCase$(I$) = "Y" Or I$ = Chr$(27)
 
     If UCase$(I$) = "Y" Then
 
-        Locate 7, 1: Input "1. OPP 2FG % "; newOpp2FGPct!
-        Locate 7, 14: Print " "
-        Locate 8, 1: Input "2. SEASON FG % "; newLeagFGPct!
-        Locate 8, 16: Print " "
-        Locate 9, 1: Input "3. STRENGTH OF SCHEDULE "; newSos
-        Locate 9, 25: Print " "
+        Locate 11, 1: Input "1. OPP 2FG % "; newOpp2FGPct!
+        Locate 11, 14: Print " "
+        Locate 12, 1: Input "2. SEASON FG % "; newLeagFGPct!
+        Locate 12, 16: Print " "
+        Locate 13, 1: Input "3. STRENGTH OF SCHEDULE "; newSos
+        Locate 13, 25: Print " "
 
         Do
 
@@ -403,19 +424,19 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Select Case B9
 
                 Case 1
-                    Locate 7, 13: Print Space$(10)
-                    Locate 7, 1: Input "1. OPP 2FG %"; newOpp2FGPct!
-                    Locate 7, 13: Print " "
+                    Locate 11, 13: Print Space$(10)
+                    Locate 11, 1: Input "1. OPP 2FG %"; newOpp2FGPct!
+                    Locate 11, 13: Print " "
 
                 Case 2
-                    Locate 8, 15: Print Space$(10)
-                    Locate 8, 1: Input "2. SEASON FG %"; newLeagFGPct!
-                    Locate 8, 15: Print " "
+                    Locate 12, 15: Print Space$(10)
+                    Locate 12, 1: Input "2. SEASON FG %"; newLeagFGPct!
+                    Locate 12, 15: Print " "
 
                 Case 3
-                    Locate 9, 24: Print Space$(10)
-                    Locate 9, 1: Input "3. STRENGTH OF SCHEDULE"; newSos
-                    Locate 9, 24: Print " "
+                    Locate 13, 24: Print Space$(10)
+                    Locate 13, 1: Input "3. STRENGTH OF SCHEDULE"; newSos
+                    Locate 13, 24: Print " "
 
             End Select
 
@@ -426,16 +447,21 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Color 15, 0
     Cls
 
-    Color 14
-    Locate 2
-    Print Tab(30); "CHANGE ACTUAL STATS"
+    XCoord = (40 - Len(teamName$)) / 2
+    Locate 2, XCoord
+    Color teamRatings(0), teamRatings(1)
+    Print teamName$
+
+    Color 14, 0
+    Locate 4
+    Print Tab(11); "CHANGE ACTUAL STATS"
     Color 15
 
     teamStats!(0) = teamRatings(5)
 
-    Color 14
-    Locate 4, 15: Print " TEAM"
-    Locate 4, 30: Print " OPPONENTS"
+    Color 14, 0
+    Locate 6, 15: Print " TEAM"
+    Locate 6, 30: Print " OPPONENTS"
     Color 15
 
     Print " 1. FGA "; Tab(15); teamStats!(1); Tab(30); teamStats!(2)
@@ -444,7 +470,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Print " 4. 3 FG % "; Tab(15); teamStats!(22); Tab(30); teamStats!(20)
     Print " 5. FTA "; Tab(15); teamStats!(5); Tab(30); teamStats!(6)
     Print " 6. FT % "; Tab(15); teamStats!(7); Tab(30); teamStats!(8)
-    Print " 7. RB "; Tab(15); teamStats!(9); Tab(30); teamStats!(10)
+    Print " 7. TRB "; Tab(15); teamStats!(9); Tab(30); teamStats!(10)
     Print " 8. AST "; Tab(15); teamStats!(11); Tab(30); teamStats!(12)
     Print " 9. STLS "; Tab(15); teamStats!(17); Tab(30); teamStats!(18)
     Print "10. BLOCKS "; Tab(15); teamStats!(23); Tab(30); teamStats!(24)
@@ -454,124 +480,123 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Do
 
         Do
-            Locate 23, 25
+            Locate 20, 31
+            Print Space$(10)
+            Locate 20, 4
             Input "# TO CHANGE (0 TO CONTINUE)"; B9
         Loop Until B9 >= 0 And B9 <= 12
 
         Select Case B9
 
             Case 1
-                Locate 5, 1: Print " 1. FGA ";
-                Locate 5, 14: Print Space$(10)
-                Locate 5, 14: Input teamStats!(1)
-                Locate 5, 14: Print " "
-                Locate 5, 29: Print Space$(10)
-                Locate 5, 29: Input teamStats!(2)
-                Locate 5, 29: Print " "
-
-            Case 2
-                Locate 6, 1: Print " 2. FG % ";
-                Locate 6, 14: Print Space$(10)
-                Locate 6, 14: Input teamStats!(3)
-                Locate 6, 14: Print " "
-                Locate 6, 29: Print Space$(10)
-                Locate 6, 29: Input teamStats!(4)
-                Locate 6, 29: Print " "
-
-            Case 3
-                Locate 7, 1: Print " 3. 3 FGA ";
+                Locate 7, 1: Print " 1. FGA ";
                 Locate 7, 14: Print Space$(10)
-                Locate 7, 14: Input teamStats!(21)
+                Locate 7, 14: Input teamStats!(1)
                 Locate 7, 14: Print " "
                 Locate 7, 29: Print Space$(10)
-                Locate 7, 29: Input teamStats!(19)
+                Locate 7, 29: Input teamStats!(2)
                 Locate 7, 29: Print " "
 
-            Case 4
-                Locate 8, 1: Print " 4. 3 FG % ";
+            Case 2
+                Locate 8, 1: Print " 2. FG % ";
                 Locate 8, 14: Print Space$(10)
-                Locate 8, 14: Input teamStats!(22)
+                Locate 8, 14: Input teamStats!(3)
                 Locate 8, 14: Print " "
                 Locate 8, 29: Print Space$(10)
-                Locate 8, 29: Input teamStats!(20)
+                Locate 8, 29: Input teamStats!(4)
                 Locate 8, 29: Print " "
 
-            Case 5
-                Locate 9, 1: Print " 5. FTA ";
+            Case 3
+                Locate 9, 1: Print " 3. 3 FGA ";
                 Locate 9, 14: Print Space$(10)
-                Locate 9, 14: Input teamStats!(5)
+                Locate 9, 14: Input teamStats!(21)
                 Locate 9, 14: Print " "
                 Locate 9, 29: Print Space$(10)
-                Locate 9, 29: Input teamStats!(6)
+                Locate 9, 29: Input teamStats!(19)
                 Locate 9, 29: Print " "
 
-            Case 6
-                Locate 10, 1: Print " 6. FT % "
+            Case 4
+                Locate 10, 1: Print " 4. 3 FG % ";
                 Locate 10, 14: Print Space$(10)
-                Locate 10, 14: Input teamStats!(7)
+                Locate 10, 14: Input teamStats!(22)
                 Locate 10, 14: Print " "
                 Locate 10, 29: Print Space$(10)
-                Locate 10, 29: Input teamStats!(8)
+                Locate 10, 29: Input teamStats!(20)
                 Locate 10, 29: Print " "
 
-            Case 7
-                Locate 11, 1: Print " 7. RB ";
+            Case 5
+                Locate 11, 1: Print " 5. FTA ";
                 Locate 11, 14: Print Space$(10)
-                Locate 11, 14: Input teamStats!(9)
+                Locate 11, 14: Input teamStats!(5)
                 Locate 11, 14: Print " "
                 Locate 11, 29: Print Space$(10)
-                Locate 11, 29: Input teamStats!(10)
+                Locate 11, 29: Input teamStats!(6)
                 Locate 11, 29: Print " "
 
-            Case 8
-                Locate 12, 1: Print " 8. AST ";
+            Case 6
+                Locate 12, 1: Print " 6. FT % "
                 Locate 12, 14: Print Space$(10)
-                Locate 12, 14: Input teamStats!(11)
+                Locate 12, 14: Input teamStats!(7)
                 Locate 12, 14: Print " "
                 Locate 12, 29: Print Space$(10)
-                Locate 12, 29: Input teamStats!(12)
+                Locate 12, 29: Input teamStats!(8)
                 Locate 12, 29: Print " "
 
-            Case 9
-                Locate 13, 1: Print " 9. STLS ";
+            Case 7
+                Locate 13, 1: Print " 7. TRB ";
                 Locate 13, 14: Print Space$(10)
-                Locate 13, 14: Input teamStats!(17)
+                Locate 13, 14: Input teamStats!(9)
                 Locate 13, 14: Print " "
                 Locate 13, 29: Print Space$(10)
-                Locate 13, 29: Input teamStats!(18)
+                Locate 13, 29: Input teamStats!(10)
                 Locate 13, 29: Print " "
 
-            Case 10
-                Locate 14, 1: Print "10. BLOCKS ";
+            Case 8
+                Locate 14, 1: Print " 8. AST ";
                 Locate 14, 14: Print Space$(10)
-                Locate 14, 14: Input teamStats!(23)
+                Locate 14, 14: Input teamStats!(11)
                 Locate 14, 14: Print " "
                 Locate 14, 29: Print Space$(10)
-                Locate 14, 29: Input teamStats!(24)
+                Locate 14, 29: Input teamStats!(12)
                 Locate 14, 29: Print " "
 
-            Case 11
-                Locate 15, 1: Print "11. TO ";
+            Case 9
+                Locate 15, 1: Print " 9. STLS ";
                 Locate 15, 14: Print Space$(10)
-                Locate 15, 14: Input teamStats!(15)
+                Locate 15, 14: Input teamStats!(17)
                 Locate 15, 14: Print " "
                 Locate 15, 29: Print Space$(10)
-                Locate 15, 29: Input teamStats!(16)
+                Locate 15, 29: Input teamStats!(18)
                 Locate 15, 29: Print " "
 
-            Case 12
-                Locate 16, 1: Print "12. FOULS ";
+            Case 10
+                Locate 16, 1: Print "10. BLOCKS ";
                 Locate 16, 14: Print Space$(10)
-                Locate 16, 14: Input teamStats!(13)
+                Locate 16, 14: Input teamStats!(23)
                 Locate 16, 14: Print " "
                 Locate 16, 29: Print Space$(10)
-                Locate 16, 29: Input teamStats!(14)
+                Locate 16, 29: Input teamStats!(24)
                 Locate 16, 29: Print " "
 
-        End Select
+            Case 11
+                Locate 17, 1: Print "11. TO'S ";
+                Locate 17, 14: Print Space$(10)
+                Locate 17, 14: Input teamStats!(15)
+                Locate 17, 14: Print " "
+                Locate 17, 29: Print Space$(10)
+                Locate 17, 29: Input teamStats!(16)
+                Locate 17, 29: Print " "
 
-        Locate 23, 40
-        Print Space$(10)
+            Case 12
+                Locate 18, 1: Print "12. FOULS ";
+                Locate 18, 14: Print Space$(10)
+                Locate 18, 14: Input teamStats!(13)
+                Locate 18, 14: Print " "
+                Locate 18, 29: Print Space$(10)
+                Locate 18, 29: Input teamStats!(14)
+                Locate 18, 29: Print " "
+
+        End Select
 
     Loop Until B9 = 0
 
@@ -583,14 +608,20 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
     Do
 
         Cls
-        Color 14
-        Locate 2, 32: Print "CHANGE PLAYERS"
+
+        XCoord = (80 - Len(teamName$)) / 2
+        Locate 2, XCoord
+        Color teamRatings(0), teamRatings(1)
+        Print teamName$
+
+        Color 14, 0
+        Locate 4, 33: Print "CHANGE PLAYERS"
         Color 15
 
         For I = 0 To 6
-            Locate I + 4, 5
+            Locate I + 6, 20
             Print Using "##"; I + 1;
-            Print " "; playerNames$(I); Tab(37);
+            Print " "; playerNames$(I); Tab(45);
             Print Using "##"; I + 8;
             Print " "; playerNames$(I + 7)
         Next
@@ -598,9 +629,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         Print
 
         Do
-            Locate 12, 37
+            Locate 14, 54
             Print Space$(10)
-            Locate 12, 9
+            Locate 14, 20
             Input "# TO CHANGE (1-13) (0 TO CONTINUE) "; idx
         Loop Until idx >= 0 And idx <= 14
 
@@ -611,9 +642,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Cls
             Color 14
             Locate 2
-            Print Tab(35); "PLAYER - "; idx
+            Print Tab(22); "PLAYER - "; idx
             Locate 4
-            Print Tab(31); "CHANGE PLAYER STATS"
+            Print Tab(18); "CHANGE PLAYER STATS"
             Color 15
             Print
 
@@ -621,23 +652,25 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
             Print " 2. POSITION   "; position$(I); Tab(37); "17. MINUTES  "; playerStats!(I, 1)
             Print " 3. GAMES PLAYED  "; playerRatings!(I, 0); Tab(37); "18. FGM  "; playerStats!(I, 3)
             Print " 4. ADJ FG%  "; playerOff!(I, 0); Tab(37); "19. FGA  "; playerStats!(I, 2)
-            Print " 5. FT%  "; playerOff!(I, 1); Tab(37); "20. FTM  "; playerStats!(I, 5)
-            Print " 6. OFF RB/40 MIN X 10  "; playerRatings!(I, 4); Tab(37); "21. FTA  "; playerStats!(I, 4)
-            Print " 7. DEF RB/40 MIN X 10  "; playerOff!(I, 2); Tab(37); "22. OFF REB  "; playerStats!(I, 6)
-            Print " 8. ASSIST RATING  "; playerOff!(I, 4); Tab(37); "23. TOTAL REB  "; playerStats!(I, 7)
-            Print " 9. STEAL RATING  "; playerOff!(I, 5); Tab(37); "24. PER FOULS  "; playerStats!(I, 8)
-            Print "10. BLOCK RATING  "; playerOff!(I, 6); Tab(37); "25. ASSISTS  "; playerStats!(I, 9)
-            Print "11. FGA  "; playerRatings!(I, 1); Tab(37); "26. BLOCKS  "; playerStats!(I, 10)
+            Print " 5. FT%  "; playerOff!(I, 1); Tab(37); "20. 3 FGM  "; playerStats!(I, 13)
+            Print " 6. OFF RB/40 MIN X 10  "; playerRatings!(I, 4); Tab(37); "21. 3 FGA  "; playerStats!(I, 12)
+            Print " 7. DEF RB/40 MIN X 10  "; playerOff!(I, 2); Tab(37); "22. FTM  "; playerStats!(I, 5)
+            Print " 8. ASSIST RATING  "; playerOff!(I, 4); Tab(37); "23. FTA  "; playerStats!(I, 4)
+            Print " 9. STEAL RATING  "; playerOff!(I, 5); Tab(37); "24. OFF REB  "; playerStats!(I, 6)
+            Print "10. BLOCK RATING  "; playerOff!(I, 6); Tab(37); "25. TOTAL REB  "; playerStats!(I, 7)
+            Print "11. FGA  "; playerRatings!(I, 1); Tab(37); "26. ASSISTS  "; playerStats!(I, 9)
             Print "12. FOUL COMMIT RATING  "; playerRatings!(I, 5); Tab(37); "27. STEALS  "; playerStats!(I, 11)
-            Print "13. FOUL DRAWING RATING  "; playerRatings!(I, 6); Tab(37); "28. 3 FGM  "; playerStats!(I, 13)
-            Print "14. 3FG%  "; playerRatings!(I, 2); Tab(37); "29. 3 FGA  "; playerStats!(I, 12)
+            Print "13. FOUL DRAWING RATING  "; playerRatings!(I, 6); Tab(37); "28. BLOCKS  "; playerStats!(I, 10)
+            Print "14. 3FG%  "; playerRatings!(I, 2); Tab(37); "29. PER FOULS  "; playerStats!(I, 8)
             Print "15. 3FGA/TOT FGA  "; playerRatings!(I, 3)
             'Print "16. DEFENSIVE RATING (1-9)  "; playerDef!(I)
 
             Do
 
                 Do
-                    Locate 22, 25
+                    Locate 22, 41
+                    Print Space$(10)
+                    Locate 22, 14
                     Input "# TO CHANGE (0 TO CONTINUE) "; B9
                 Loop Until B9 >= 0 And B9 <= 29
 
@@ -725,78 +758,75 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
                     Case 16
                         Locate 6, 46: Print Space$(10)
-                        Locate 6, 37: Input "17. GAMES"; playerStats!(I, 0)
+                        Locate 6, 37: Input "16. GAMES"; playerStats!(I, 0)
                         Locate 6, 46: Print " "
 
                     Case 17
                         Locate 7, 48: Print Space$(10)
-                        Locate 7, 37: Input "18. MINUTES"; playerStats!(I, 1)
+                        Locate 7, 37: Input "17. MINUTES"; playerStats!(I, 1)
                         Locate 7, 48: Print " "
 
                     Case 18
                         Locate 8, 44: Print Space$(10)
-                        Locate 8, 37: Input "19. FGM"; playerStats!(I, 3)
+                        Locate 8, 37: Input "18. FGM"; playerStats!(I, 3)
                         Locate 8, 44: Print " "
 
                     Case 19
                         Locate 9, 44: Print Space$(10)
-                        Locate 9, 37: Input "20. FGA"; playerStats!(I, 2)
+                        Locate 9, 37: Input "19. FGA"; playerStats!(I, 2)
                         Locate 9, 44: Print " "
 
                     Case 20
-                        Locate 10, 44: Print Space$(10)
-                        Locate 10, 37: Input "21. FTM"; playerStats!(I, 5)
-                        Locate 10, 44: Print " "
+                        Locate 10, 46: Print Space$(10)
+                        Locate 10, 37: Input "20. 3 FGM"; playerStats!(I, 13)
+                        Locate 10, 46: Print " "
 
                     Case 21
-                        Locate 11, 44: Print Space$(10)
-                        Locate 11, 37: Input "22. FTA"; playerStats!(I, 4)
-                        Locate 11, 44: Print " "
+                        Locate 11, 46: Print Space$(10)
+                        Locate 11, 37: Input "21. 3 FGA"; playerStats!(I, 12)
+                        Locate 11, 46: Print " "
 
                     Case 22
-                        Locate 12, 48: Print Space$(10)
-                        Locate 12, 37: Input "23. OFF REB"; playerStats!(I, 6)
-                        Locate 12, 48: Print " "
+                        Locate 12, 44: Print Space$(10)
+                        Locate 12, 37: Input "22. FTM"; playerStats!(I, 5)
+                        Locate 12, 44: Print " "
 
                     Case 23
-                        Locate 13, 50: Print Space$(10)
-                        Locate 13, 37: Input "24. TOTAL REB"; playerStats!(I, 7)
-                        Locate 13, 50: Print " "
+                        Locate 13, 44: Print Space$(10)
+                        Locate 13, 37: Input "23. FTA"; playerStats!(I, 4)
+                        Locate 13, 44: Print " "
 
                     Case 24
-                        Locate 14, 50: Print Space$(10)
-                        Locate 14, 37: Input "25. PER FOULS"; playerStats!(I, 8)
-                        Locate 14, 50: Print " "
+                        Locate 14, 48: Print Space$(10)
+                        Locate 14, 37: Input "24. OFF REB"; playerStats!(I, 6)
+                        Locate 14, 48: Print " "
 
                     Case 25
-                        Locate 15, 48: Print Space$(10)
-                        Locate 15, 37: Input "26. ASSISTS"; playerStats!(I, 9)
-                        Locate 15, 48: Print " "
+                        Locate 15, 50: Print Space$(10)
+                        Locate 15, 37: Input "25. TOTAL REB"; playerStats!(I, 7)
+                        Locate 15, 50: Print " "
 
                     Case 26
-                        Locate 16, 47: Print Space$(10)
-                        Locate 16, 37: Input "27. BLOCKS"; playerStats!(I, 10)
-                        Locate 16, 47: Print " "
+                        Locate 16, 48: Print Space$(10)
+                        Locate 16, 37: Input "26. ASSISTS"; playerStats!(I, 9)
+                        Locate 16, 48: Print " "
 
                     Case 27
                         Locate 17, 47: Print Space$(10)
-                        Locate 17, 37: Input "28. STEALS"; playerStats!(I, 11)
+                        Locate 17, 37: Input "27. STEALS"; playerStats!(I, 11)
                         Locate 17, 47: Print " "
 
                     Case 28
-                        Locate 18, 46: Print Space$(10)
-                        Locate 18, 37: Input "29. 3 FGM"; playerStats!(I, 13)
-                        Locate 18, 46: Print " "
+                        Locate 18, 47: Print Space$(10)
+                        Locate 18, 37: Input "28. BLOCKS"; playerStats!(I, 10)
+                        Locate 18, 47: Print " "
 
                     Case 29
-                        Locate 19, 46: Print Space$(10)
-                        Locate 19, 37: Input "30. 3 FGA"; playerStats!(I, 12)
-                        Locate 19, 46: Print " "
+                        Locate 19, 51: Print Space$(10)
+                        Locate 19, 37: Input "29. PER. FOULS"; playerStats!(I, 8)
+                        Locate 19, 51: Print " "
 
                 End Select
-
-                Locate 22, 53
-                Print Space$(10)
 
             Loop Until B9 = 0
 
@@ -818,13 +848,16 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
         Cls
 
+        XCoord = (28 - Len(teamName$)) / 2
+        Locate 2, XCoord
         Color teamRatings(0), teamRatings(1)
         Print teamName$
 
         Color 14, 0
-        Print "PLAYER          CONTRIBUTION"
-        Print "                PERCENT"
-
+        Locate 4
+        Print "     PLAYER         PERCENT"
+        Print "      NAME       CONTRIBUTION"
+        
         Color 15, 0
 
         totalCX = 0
@@ -832,23 +865,23 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         For I = 0 To 13
             Print Using "## "; I + 1;
             Print playerNames$(I);
-            Locate , 17
+            Locate , 22
             Print playerOff!(I, 3)
             Locate , 1
             totalCX = totalCX + playerOff!(I, 3)
         Next I
 
         Print
-        Color 14: Print "TOTAL CP ";
+        Color 14: Print "TOTAL CONTRIBUTION %";
 
-        Locate , 17
+        Locate , 22
         Color 15, 0: Print totalCX
 
         Do
-            Locate 21, 46
+            Locate 23, 39
             Print Space$(10);
-            Locate 21, 1
-            Input "SELECT PLAYER # TO CHANGE (0-NO MORE CHANGE) "; X9
+            Locate 23, 1
+            Input "PLAYER # TO CHANGE (0-NO MORE CHANGE) "; X9
         Loop Until X9 >= 0 And X9 <= 14
 
         If X9 <> 0 Then
