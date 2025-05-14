@@ -79,7 +79,7 @@ This phase will see the games take on updated rules and correct accuracy. All kn
 
 ### The Future ###
 - Updating code to work with databases instead of flat files.
-- Bringing modern interface concepts to the design (including GUI)
+- Bringing modern interface concepts to the design (including GUI)  [IN PROGRESS!]
 
 # The Fine Print #
 ### License ###
