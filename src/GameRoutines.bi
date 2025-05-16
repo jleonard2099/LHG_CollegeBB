@@ -19,7 +19,7 @@ Declare Sub CLEARPBPBOX ()
 Declare Sub CLEARPBP ()
 Declare Sub TICKER ()
 Declare Sub TICKERUPDATE ()
-Declare Sub TickerSchedule
+Declare Sub UpdateSchedule
 Declare Sub HalfCourt (shotChoice)
 Declare Sub WHOLAY ()
 Declare Sub ChangePossession

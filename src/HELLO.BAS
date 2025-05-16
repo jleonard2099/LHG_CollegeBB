@@ -880,8 +880,8 @@ Sub COLHOOP ()
 
         'Open "pbplog" + Str$(currGame) For Append As #11
         'Open "pbplog" For Append As #11
-        
-        If Not _FileExists(diskPaths$(3) + scheduleFile$) Then
+
+        If Not _FileExists(scheduleFile$) Then
 
             'Notify user that game won't execute
             MsgText$ = "CAN'T FIND OR LOAD TARGET SCHEDULE.  PRESS ANY KEY TO RETURN TO MENU"
@@ -896,7 +896,8 @@ Sub COLHOOP ()
 
         Else
 
-            Open diskPaths$(3) + scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
+            'Read in schedule options
+            Open scheduleFile$ For Random As #7 Len = SCHEDULE_SIZE_BYTES
 
             For X = 0 To 18
                 Field #7, X * 2 As X$, 2 As Q$(X + 1), 48 - 2 - 2 * X As X$
@@ -8665,12 +8666,14 @@ End Sub
 
 
 '----------------------------------------
-'       TickerSchedule Subroutine
+'       UpdateSchedule Subroutine
 '----------------------------------------
-'This subroutine reads in the scores from
-'the ticker and uses them to update the
-'corresponding schedule file.
-Sub TickerSchedule
+'This subroutine updates the schedule
+'file for a completed game. It will first
+'update any relevant ticker scores, then
+'update the scores for the current game in
+'the corresponding schedule file.
+Sub UpdateSchedule ()
 
     Shared scheduleFile$
 
@@ -8706,7 +8709,7 @@ Sub TickerSchedule
 
     End If
 
-    Open diskPaths$(3) + scheduleFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
+    Open scheduleFile$ For Random As #1 Len = SCHEDULE_SIZE_BYTES
 
     For X = 0 To 18
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -14694,7 +14697,7 @@ Sub SAVESTATS ()
 
         If _FileExists("GAME82") Then
 
-            Call TickerSchedule
+            Call UpdateSchedule
 
             If schedGame(1) < schedGame(0) + schedGame(2) Then
                 Kill "GAME82"

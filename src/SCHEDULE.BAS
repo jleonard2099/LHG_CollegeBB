@@ -69,7 +69,7 @@ Sub SCHEDULE ()
             scheduleNG%(0, 2) = 1 'Home Court
             scheduleNG%(0, 3) = 1 '3 Pt Opt
             scheduleNG%(0, 5) = 5 'Fouls to DQ
-            scheduleNG%(0, 6) = 0 'FT 10th Foul 
+            scheduleNG%(0, 6) = 0 'FT 10th Foul
             scheduleNG%(0, 7) = 3 'Shot Clock
             scheduleNG%(0, 8) = 3 'Team Control
             scheduleNG%(0, 9) = 1 'Coach Opt
@@ -86,7 +86,7 @@ Sub SCHEDULE ()
                     scheduleFile$ = _InputBox$("Schedule File Name", "Enter name for schedule file")
 
                     If scheduleFile$ <> "" Then
-                        Call NewSchedule(GetFileBaseName$(scheduleFile$))
+                        Call NewSchedule(scheduleFile$)
                     End If
 
                 Case 2 To 6:
@@ -110,7 +110,7 @@ Sub SCHEDULE ()
                             Else
                                 'Retrieve / Edit / Play Schedule
                                 Color 15, 0
-                                Call NewSchedule(GetFileBaseName$(scheduleFile$))
+                                Call NewSchedule(scheduleFile$)
                             End If
 
                         End If
@@ -122,7 +122,7 @@ Sub SCHEDULE ()
 
                 Case 8:
                     Call BoxscoreMaintenance
-                    
+
                 Case 9
                     scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files [.SCD]")
                     Call ConvertSched4to5(scheduleFile$, 0)
@@ -423,7 +423,7 @@ Sub NewSchedule (scheduleFile$)
                 If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
 
                 Open "GAME82" For Output As #1
-                Print #1, baseFile$ + ".SCD"
+                Print #1, scheduleFile$
                 Print #1, SG% 'Start Game
                 Print #1, EG% 'End Game
                 Print #1, 0
@@ -581,7 +581,7 @@ Sub EditGame (DT$, TM$)
     Shared scheduleH$(), scheduleV$()
     Shared scheduleYN$()
     Shared scheduleNG%()
-    
+
     Shared NS%
 
     ' *** EDIT A GAME ***
@@ -724,9 +724,9 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Do
 
             I$ = GetKeyPress$
-            
+
             Call LetterToNumber(I$, setting)
-            
+
             Select Case setting
 
                 Case 1:
@@ -863,7 +863,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
         Case 6
             Call ChangeGlobalSettings
             Call SaveScheduleFile(scheduleFile$)
-            Call NewSchedule(GetFileBaseName$(scheduleFile$))
+            Call NewSchedule(scheduleFile$)
 
         Case 3, 4, 5
 
@@ -878,7 +878,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
 
                 If conferenceFile$ <> "" Then
 
-                    Call ReadConferenceIndex (conferenceFile$)
+                    Call ReadConferenceIndex(conferenceFile$)
                     numberTeams = TEAMS_PER_CONFERENCE
 
                     For I = 1 To scheduleAP%(0)
