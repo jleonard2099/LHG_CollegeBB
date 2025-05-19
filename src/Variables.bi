@@ -26,7 +26,7 @@ Dim gameSite$(MAX_SCHED_STATS), locIndicator$(MAX_SCHED_STATS), oppName$(MAX_SCH
 Dim gameSite_Road$(MAX_SCHED_STATS), locIndicator_Road$(MAX_SCHED_STATS), oppName_Road$(MAX_SCHED_STATS)
 
 
-Dim satsPlyrRat!(15, 14)
+Dim statsPlyrRat!(15, 14)
 Dim stats3FGM!(15), stats3FGA!(15)
 Dim statsOffTot!(15), statsDefTot!(15)
 Dim gameStatPlyrVal!(13, 13)
@@ -42,11 +42,8 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
-Dim memberName$(TEAMS_PER_CONFERENCE)
+'Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
-
-'-- For Road Data
-Dim homeTeam$(MAX_TOURNAMENT_GAMES), visitingTeam$(MAX_TOURNAMENT_GAMES)
 
 
 
@@ -62,7 +59,7 @@ ReDim scheduleYN$(MAX_SCHEDULE_GAMES, 1)
 'ReDim yearNumber$(MAX_SCHEDULE_GAMES, 1)
 
 '-- These are used for tournaments
-'Rim homeTeam$(MAX_TOURNAMENT_GAMES), visitingTeam$(MAX_TOURNAMENT_GAMES)
+Dim homeTeam$(MAX_TOURNAMENT_GAMES), visitingTeam$(MAX_TOURNAMENT_GAMES)
 
 
 ' *** Game Options ***

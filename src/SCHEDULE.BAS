@@ -166,8 +166,6 @@ Sub NewSchedule (scheduleFile$)
     TM$ = "07:00P"
 
     'Show 25 schedule entries on the screen at once
-    entriesPerScreen = 25
-
     baseFile$ = GetFileBaseName$(scheduleFile$)
 
     Do
@@ -227,41 +225,41 @@ Sub NewSchedule (scheduleFile$)
         Print "GAME  DATE      TIME    VISITING TEAM        HOME TEAM            MA  HC  3  SC"
         Color 15
 
-        For X = 1 To entriesPerScreen
+        For X = 1 To SCHED_ENTRIES_PER_SCREEN
 
             Locate X + 2, 1
 
-            If X + NS% * entriesPerScreen <= scheduleAP%(0) Then
+            If X + NS% * SCHED_ENTRIES_PER_SCREEN <= scheduleAP%(0) Then
 
-                T1 = scheduleNG%(X + NS% * entriesPerScreen, 0)
-                YN$ = scheduleYN$(X + NS% * entriesPerScreen, 0)
+                T1 = scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 0)
+                YN$ = scheduleYN$(X + NS% * SCHED_ENTRIES_PER_SCREEN, 0)
                 Call ReadTeam(YN$, team$, T1)
                 Call ReadExtraData(YN$, T1, validData)
 
                 If validData = 1 Then
 
-                    scheduleV$(X + NS% * entriesPerScreen) = team$
+                    scheduleV$(X + NS% * SCHED_ENTRIES_PER_SCREEN) = team$
 
-                    T1 = scheduleNG%(X + NS% * entriesPerScreen, 1)
-                    YN$ = scheduleYN$(X + NS% * entriesPerScreen, 1)
+                    T1 = scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 1)
+                    YN$ = scheduleYN$(X + NS% * SCHED_ENTRIES_PER_SCREEN, 1)
                     Call ReadTeam(YN$, team$, T1)
                     Call ReadExtraData(YN$, T1, validData)
 
                     If validData = 1 Then
 
-                        scheduleH$(X + NS% * entriesPerScreen) = team$
+                        scheduleH$(X + NS% * SCHED_ENTRIES_PER_SCREEN) = team$
 
                         'Game number
-                        Print Using "####  "; X + NS% * entriesPerScreen;
+                        Print Using "####  "; X + NS% * SCHED_ENTRIES_PER_SCREEN;
 
                         'Date
-                        Print Using "##/##/##"; scheduleNG%(X + NS% * entriesPerScreen, 17); scheduleNG%(X + NS% * entriesPerScreen, 16); scheduleNG%(X + NS% * entriesPerScreen, 18);
+                        Print Using "##/##/##"; scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 17); scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 16); scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 18);
 
                         'Time
                         Locate , 17
                         I$ = "A"
-                        HR% = scheduleNG%(X + NS% * entriesPerScreen, 15) / 100
-                        MIN% = scheduleNG%(X + NS% * entriesPerScreen, 15) - HR% * 100
+                        HR% = scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 15) / 100
+                        MIN% = scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 15) - HR% * 100
 
                         If HR% = 12 Then I$ = "P"
                         If HR% > 12 Then HR% = HR% - 12: I$ = "P"
@@ -276,24 +274,24 @@ Sub NewSchedule (scheduleFile$)
                         Print TM$;
 
                         'Visiting Team
-                        Locate , 25: Print scheduleV$(X + NS% * entriesPerScreen); " ";
-                        If scheduleNG%(X + NS% * entriesPerScreen, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * entriesPerScreen);
+                        Locate , 25: Print scheduleV$(X + NS% * SCHED_ENTRIES_PER_SCREEN); " ";
+                        If scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * SCHED_ENTRIES_PER_SCREEN);
 
                         'Home Team
-                        Locate , 46: Print scheduleH$(X + NS% * entriesPerScreen); " ";
-                        If scheduleNG%(X + NS% * entriesPerScreen, 13) = 1 Then Print Using "###"; homeScores(X + NS% * entriesPerScreen);
+                        Locate , 46: Print scheduleH$(X + NS% * SCHED_ENTRIES_PER_SCREEN); " ";
+                        If scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 13) = 1 Then Print Using "###"; homeScores(X + NS% * SCHED_ENTRIES_PER_SCREEN);
 
                         'Mode of Play
-                        Locate , 67: Print modeAbbrev$(scheduleNG%(X + NS% * entriesPerScreen, 8));
+                        Locate , 67: Print modeAbbrev$(scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 8));
 
                         'Home Court
-                        Locate , 72: If scheduleNG%(X + NS% * entriesPerScreen, 2) = 1 Then Print "Y";: Else Print "N";
+                        Locate , 72: If scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 2) = 1 Then Print "Y";: Else Print "N";
 
                         '3 Pt Option
-                        Locate , 75: Print yesNo$(scheduleNG%(X + NS% * entriesPerScreen, 3));
+                        Locate , 75: Print yesNo$(scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 3));
 
                         'Shot Clock
-                        Locate , 78: Print Left$(sClockOpt$(scheduleNG%(X + NS% * entriesPerScreen, 7)), 2)
+                        Locate , 78: Print Left$(sClockOpt$(scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 7)), 2)
 
                     End If
 
@@ -325,7 +323,7 @@ Sub NewSchedule (scheduleFile$)
                 scheduleAP%(0) = scheduleAP%(0) + 1
                 targetGame% = scheduleAP%(0)
 
-                BS% = Int((targetGame% - 1) / entriesPerScreen)
+                BS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
                 If NS% < BS% Then NS% = BS%
 
                 For X = 0 To 18
@@ -348,7 +346,8 @@ Sub NewSchedule (scheduleFile$)
                     Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
-                NS% = Int((targetGame% - 1) / entriesPerScreen)
+
+                NS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
 
                 'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
                 boxName$ = diskPaths$(1) + baseFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
@@ -376,7 +375,7 @@ Sub NewSchedule (scheduleFile$)
                 Next
 
                 scheduleAP%(0) = scheduleAP%(0) - 1
-                BS% = Int((scheduleAP%(0) - 1) / entriesPerScreen)
+                BS% = Int((scheduleAP%(0) - 1) / SCHED_ENTRIES_PER_SCREEN)
                 If NS% > BS% Then NS% = BS%
 
             Case "G":
@@ -386,7 +385,7 @@ Sub NewSchedule (scheduleFile$)
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
-                NS% = Int((targetGame% - 1) / entriesPerScreen)
+                NS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
 
             Case "S":
                 Call SortSchedule
@@ -512,8 +511,8 @@ Sub NewSchedule (scheduleFile$)
 
                     'Time
                     I$ = "A"
-                    HR% = scheduleNG%(X + NS% * entriesPerScreen, 15) / 100
-                    MIN% = scheduleNG%(X + NS% * entriesPerScreen, 15) - HR% * 100
+                    HR% = scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 15) / 100
+                    MIN% = scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 15) - HR% * 100
 
                     If HR% = 12 Then I$ = "P"
                     If HR% > 12 Then HR% = HR% - 12: I$ = "P"
@@ -1593,7 +1592,7 @@ Sub LoadScheduleInfo (targetFile$)
 
     fileLength& = LOF(1)
     scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
-    BS% = Int((scheduleAP%(0) - 1) / 20)
+    BS% = Int((scheduleAP%(0) - 1) / SCHED_ENTRIES_PER_SCREEN)
 
     For X = 0 To 18
         Field #1, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -1723,7 +1722,7 @@ Sub CreateConferenceSchedule ()
             fileLength& = LOF(2)
 
             scheduleAP%(0) = fileLength& / SCHEDULE_SIZE_BYTES
-            BS% = Int((scheduleAP%(0) - 1) / 20)
+            BS% = Int((scheduleAP%(0) - 1) / SCHED_ENTRIES_PER_SCREEN)
 
             For X = 0 To 18
                 Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$

@@ -13,7 +13,7 @@ Sub ALIGN ()
 
     Shared statPlyrNames$(), plyrName_Road$()
 
-    Shared plyrStat_Road!(), satsPlyrRat!()
+    Shared plyrStat_Road!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsOffTot!(), statsDefTot!()
     Shared threeFGM_Road!(), threeFGA_Road!()

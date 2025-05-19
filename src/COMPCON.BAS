@@ -151,7 +151,7 @@ Sub CompileCollege ()
                         Next
 
                         Call CalcStatTotalsConf(totalGames, TN$, finalUpdate$)
-                        Call CalcStatLeadersConf(TN$)
+                        Call CalcStatLeadersConf(totalGames, TN$)
 
                     End If
 
@@ -175,7 +175,7 @@ End Sub
 '----------------------------------------
 'This subroutine compares pre-loaded stats
 'to existing leaders and updates as needed
-Sub CalcStatLeadersConf (teamName$)
+Sub CalcStatLeadersConf (totalGames, teamName$)
 
     Shared defTotals!(), offTotals!()
     Shared defLeaders!(), offLeaders!()
@@ -185,6 +185,11 @@ Sub CalcStatLeadersConf (teamName$)
     Shared defLeaderTeams$(), offLeaderTeams$()
     Shared statPlyrNames$()
     Shared leaderName$(), leaderTeam$()
+
+    'we don't have "totalGames"
+    minFGA = totalGames * 5
+    minFTA = totalGames * 2
+    min3FGM = totalGames * 1.5
 
     For X = 0 To 14:
 
@@ -242,10 +247,10 @@ Sub CalcStatLeadersConf (teamName$)
         End If
 
         'Field Goal %
-        If statPlyrVal!(X, 19) > leaderVals!(60, 1) Then
+        If statPlyrVal!(X, 19) > leaderVals!(60, 1) And (statPlyrVal!(X, 1) >= minFGA) Then
 
-            leaderVals!(60, 1) = statPlyrVal!(X, 19)
-            leaderVals!(60, 2) = statPlyrVal!(X, 1)
+            leaderVals!(60, 1) = statPlyrVal!(X, 19) 'FG%
+            leaderVals!(60, 2) = statPlyrVal!(X, 1) 'FGA
             leaderName$(60) = statPlyrNames$(X)
             leaderTeam$(60) = teamName$
 
@@ -266,10 +271,10 @@ Sub CalcStatLeadersConf (teamName$)
         End If
 
         'Free Throw %
-        If statPlyrVal!(X, 20) > leaderVals!(80, 1) Then
+        If statPlyrVal!(X, 20) > leaderVals!(80, 1) And (statPlyrVal!(X, 3) >= minFTA) Then
 
-            leaderVals!(80, 1) = statPlyrVal!(X, 20)
-            leaderVals!(80, 2) = statPlyrVal!(X, 3)
+            leaderVals!(80, 1) = statPlyrVal!(X, 20) 'FT%
+            leaderVals!(80, 2) = statPlyrVal!(X, 3) 'FTA
             leaderName$(80) = statPlyrNames$(X)
             leaderTeam$(80) = teamName$
 
@@ -386,7 +391,7 @@ Sub CalcStatLeadersConf (teamName$)
         End If
 
         '3 Field Goal %
-        If statPlyrVal!(X, 21) > leaderVals!(130, 1) Then
+        If statPlyrVal!(X, 21) > leaderVals!(130, 1) And (stats3FGM!(X) >= min3FGM) Then
 
             leaderVals!(130, 1) = statPlyrVal!(X, 21)
             leaderVals!(130, 2) = stats3FGA!(X)
@@ -1219,7 +1224,7 @@ Sub SortStandingsConference (sortType)
 
     Shared seasonWins(), seasonLosses(), seasonWinPct!(), divWins(), divLosses(), divWinPct!()
 
-    Shared memberName$()
+    Shared confLdrName$(), memberName$()
 
     For division = 0 To 1
 
@@ -1238,7 +1243,10 @@ Sub SortStandingsConference (sortType)
                     diffY = seasonWins(Y) - seasonLosses(Y)
                 End If
 
+                test = 1
+
                 If sortType = 0 And divWinPct!(X) < divWinPct!(Y) Then
+                    Swap confLdrName$(X), confLdrName$(Y)
                     Swap memberName$(X), memberName$(Y)
                     Swap seasonWins(X), seasonWins(Y)
                     Swap seasonLosses(X), seasonLosses(Y)
@@ -1249,6 +1257,7 @@ Sub SortStandingsConference (sortType)
                 End If
 
                 If sortType = 1 And seasonWinPct!(X) < seasonWinPct!(Y) Then
+                    Swap confLdrName$(X), confLdrName$(Y)
                     Swap memberName$(X), memberName$(Y)
                     Swap seasonWins(X), seasonWins(Y)
                     Swap seasonLosses(X), seasonLosses(Y)
@@ -1442,4 +1451,3 @@ Function FindStatsCon% (statFile$, totalGames)
     End If
 
 End Function
-

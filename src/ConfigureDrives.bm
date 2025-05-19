@@ -232,9 +232,11 @@ Sub ConfigureDrives ()
     Locate 24, 1
     Print "Is this okay? (Y/N) ";
     X$ = ""
+
     Call YesNoB(X$, XCode, FG, BG)
     Locate , 1
     ClearEOL 14, 1
+
     If XCode = 1 GoTo GetDiv4
     If X$ = "N" GoTo GetDiv1
     If X$ <> "Y" GoTo Done 'insist on either Y or N or up-arrow

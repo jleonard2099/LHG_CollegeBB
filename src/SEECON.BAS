@@ -1006,7 +1006,8 @@ Sub CollLeaders_Screen (confName$, div1$, div2$)
 
     Locate 4, 1
     Color 14
-    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    'Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    Print Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT   REB  AST   PF STL BLK   PTS  AVG"
     Color 15
 
     For X = 1 To 20
@@ -1161,7 +1162,7 @@ Sub CollegeStdgs_Screen (confName$, div1$, div2$)
 
     Shared divWins(), divLosses(), divWinPct!()
     Shared seasonWins(), seasonLosses(), seasonWinPct!()
-    Shared confLdrName$()
+    Shared confLdrName$(), memberName$()
 
     Color 15, 0
 

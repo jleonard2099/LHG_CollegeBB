@@ -750,10 +750,9 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
     UserIn$ = "" ' *** Reset UserIn$ ***
 
     Do
-        Sleep
         UserIn$ = InKey$
     Loop Until UserIn$ <> ""
-
+    
     Select Case UserIn$
 
         Case Chr$(0) + Chr$(80)
@@ -869,7 +868,6 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
 
     'get cursor key movements and redraw menu
     Do
-        Sleep
         UserIn$ = InKey$
 
         If Len(UserIn$) = 2 Then UserIn$ = Right$(UserIn$, 1)
@@ -1132,6 +1130,7 @@ Sub NumIn (Number#, Max, XCode, FGColor&, BGColor&)
     NTabKey: 'you may handle Tab separately
     '  if you'd like
     NEnter:
+
     Number# = Val(X$) 'assign returned amount
     Locate , , 0 'turn off the cursor
 
@@ -1719,4 +1718,3 @@ Sub Lts2Menu (Item$(), Prompt$(), Choice%, FGColor%, BGColor%)
     Erase Break%, ScrBuf%
 
 End Sub
-

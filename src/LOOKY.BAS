@@ -40,7 +40,7 @@ Sub LOOKY ()
 
         End If
 
-    Loop Until menuExit = 1 Or teamNbr = 0
+    Loop Until teamNbr = 0
 
 End Sub
 
@@ -438,9 +438,10 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                     End If
                 End If
 
-                '3FGM, 3FGA, 3FG PCT
+                '3FGM, 3FGA
                 Locate , 44: Print Using "#### ####"; stats3FGM!(I); stats3FGA!(I);
 
+                '3FG PCT
                 Locate , 54
                 If stats3FGA!(I) = 0 Then
                     Print ".---";
@@ -457,9 +458,10 @@ Sub ViewOffenseStats (statFile$, teamName$, categoryPick, totalGames, menuExit)
                     End If
                 End If
 
-                'FTM, FTA, FT PCT
+                'FTM, FTA
                 Locate , 60: Print Using "#### ####"; statPlyrVal!(I, 4); statPlyrVal!(I, 3);
 
+                'FT PCT
                 Locate , 70
                 If statPlyrVal!(I, 3) = 0 Then
                     Print ".---"
@@ -1265,14 +1267,14 @@ End Sub
 'based on the chosen category
 Sub SortStats (categoryPick)
 
-    Shared stats3FGA!(), stats3FGA!()
+    Shared stats3FGM!(), stats3FGA!()
     Shared statPlyrVal!()
 
     Shared statPlyrNames$()
 
     'SORT BASED ON CATEGORY
     Select Case categoryPick
-    
+
         Case 1: SG% = 0
         Case 2: SG% = 10
         Case 3: SG% = 14
@@ -1287,8 +1289,8 @@ Sub SortStats (categoryPick)
         Case 12: SG% = 17
         Case 14: SG% = 22
         Case 15: SG% = 20
-        Case 17: SG% = 12
         Case 16: SG% = 13
+        Case 17: SG% = 12
         Case 18: SG% = 23
         Case 19: SG% = 5
         Case 20: SG% = 21
@@ -1305,7 +1307,7 @@ Sub SortStats (categoryPick)
         For Z = 0 To 12
 
             For Z1 = Z + 1 To 13
-            
+
                 If _StriCmp(statPlyrNames$(Z), statPlyrNames$(Z1)) = 1 Then
 
                     Swap statPlyrNames$(Z), statPlyrNames$(Z1)
@@ -1316,13 +1318,13 @@ Sub SortStats (categoryPick)
 
                     Swap stats3FGM!(Z), stats3FGM!(Z1)
                     Swap stats3FGA!(Z), stats3FGA!(Z1)
-                
+
                 End If
 
             Next Z1
 
         Next Z
-    
+
     Else
 
         For Z = 0 To 12
@@ -1397,4 +1399,3 @@ Sub ResetStatPrompt (statFile$)
     End If 'Done checking if reset stats
 
 End Sub
-

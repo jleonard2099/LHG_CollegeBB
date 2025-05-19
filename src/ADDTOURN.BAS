@@ -106,7 +106,7 @@ End Sub
 'setup. It then steps the user through
 'other screens for tournament setup - which
 'all rely on separate routine.
-Sub SetupTourney (ACTION%, numberRegions, tourneyName$, sourceFile$)
+Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
 
     Dim pbpDelayTourn!
 
@@ -299,7 +299,7 @@ Sub SetupTourney (ACTION%, numberRegions, tourneyName$, sourceFile$)
     GetDiv4:
     Locate 13, 35 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 2 'specify field parameters
-    Call NumIn(nbrRegions, Max, XCode, FG, BG) 'get input
+    Call NumIn(regionCount#, Max, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
 
@@ -313,6 +313,7 @@ Sub SetupTourney (ACTION%, numberRegions, tourneyName$, sourceFile$)
     Call YesNoB(X$, XCode, FG, BG)
     Locate , 1
     ClearEOL 14, 1
+
     If XCode = 1 GoTo GetDiv4
 
     If Not (XCode = 2) Then
@@ -338,6 +339,8 @@ Sub SetupTourney (ACTION%, numberRegions, tourneyName$, sourceFile$)
 
         Else
 
+            nbrRegions = Int(regionCount#)
+
             If nbrRegions < 1 Or nbrRegions > 16 Then GoTo GetDiv4
 
             '.TNY file = tournament settings
@@ -355,7 +358,14 @@ Sub SetupTourney (ACTION%, numberRegions, tourneyName$, sourceFile$)
 
             Else
 
-                For currRegion = 0 To nbrRegions
+                If tourneyDefaults(11) = 1 Then 
+                    'Play-in games are handled as "region 0"
+                    startRegion = 0
+                Else    
+                    startRegion = 1
+                End If
+
+                For currRegion = startRegion To nbrRegions
                     Call SeedBrackets(currRegion, nbrRegions, nbrTeams, sourceFile$, tourneyName$)
                 Next
 
@@ -381,7 +391,7 @@ End Sub
 'make changes to the Tournament Regions
 'and their corresponding seedings and
 'brackets.
-Sub SeedBrackets (currRegion, nbrRegions, nbrTeamsInRegion, sourceFile$, tourneyName$)
+Sub SeedBrackets (currRegion, nbrRegions, teamCount, sourceFile$, tourneyName$)
 
     Shared regionNames$(), slotName$()
 
@@ -414,7 +424,7 @@ Sub SeedBrackets (currRegion, nbrRegions, nbrTeamsInRegion, sourceFile$, tourney
     Locate 7, 1: QPrint X$, 14, 1, -1
     Locate , 26: QPrint PadRight$(regionNames$(currRegion), 16), FG, BG, -1
     Locate 9, 1: QPrint "NUMBER OF TEAMS IN REGION (4-16) ", 14, 1, -1
-    Locate , 34: QPrint PadRight$(Str$(nbrTeamsInRegion), 2), FG, BG, -1
+    Locate , 34: QPrint PadRight$(Str$(teamCount), 2), FG, BG, -1
 
     NameRegion:
     If currRegion > 0 Then
@@ -429,9 +439,12 @@ Sub SeedBrackets (currRegion, nbrRegions, nbrTeamsInRegion, sourceFile$, tourney
     REGIONSIZE:
     Locate 9, 34 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 2 'specify field parameters
-    Call NumIn(nbrTeamsInRegion, Max, XCode, FG, BG) 'get input
+    Call NumIn(teamQty#, Max, XCode, FG, BG) 'get input
     If XCode = 1 GoTo NameRegion: 'can't back up any more, stay here
-    If currRegion = 0 And nbrTeamsInRegion <> 4 And nbrTeamsInRegion <> 8 Then
+
+    teamCount = Int(teamQty#)
+
+    If currRegion = 0 And teamCount <> 4 And teamCount <> 8 Then
         Locate LAST_ROW - 2, 1
         Print "NOT A VALID NUMBER OF PLAY-IN TEAMS!!!";
         GoTo REGIONSIZE
@@ -454,7 +467,7 @@ Sub SeedBrackets (currRegion, nbrRegions, nbrTeamsInRegion, sourceFile$, tourney
         If X$ = "N" GoTo NameRegion
         If X$ <> "Y" GoTo Done1 'insist on either Y or N or up-arrow
 
-        nbrRegionalTeams(currRegion) = nbrTeamsInRegion
+        nbrRegionalTeams(currRegion) = teamCount
         If nbrRegionalTeams(currRegion) < 4 Or nbrRegionalTeams(currRegion) > 16 Then GoTo REGIONSIZE
 
         playInSeeds = (nbrRegionalTeams(0) / 2)
@@ -541,7 +554,7 @@ Sub SeedBrackets (currRegion, nbrRegions, nbrTeamsInRegion, sourceFile$, tourney
                         Next
 
                         If notFilled = 1 Then
-                            Call EditRegionSeeds(nbrRegions, nbrTeamsInRegion, sourceFile$, tourneyName$)
+                            Call EditRegionSeeds(nbrRegions, teamCount, sourceFile$, tourneyName$)
                             _Continue
                         End If
 
@@ -606,7 +619,7 @@ End Sub
 'seedings for the region. When done, it
 'then calls a routine to create the schedule
 'for the tournament and save the file.
-Sub EditRegionSeeds (nbrRegions, nbrTeamsInRegion, saveFile$, tourneyName$)
+Sub EditRegionSeeds (nbrRegions, teamCount, saveFile$, tourneyName$)
 
     Shared TC
     Shared regionNames$()
@@ -670,8 +683,8 @@ Sub EditRegionSeeds (nbrRegions, nbrTeamsInRegion, saveFile$, tourneyName$)
 
             'Save and Exit
             If SELECTION% < nbrRegions + 1 Then
-                nbrTeamsInRegion = nbrRegionalTeams(SELECTION%)
-                Call SeedBrackets(SELECTION%, nbrRegions, nbrTeamsInRegion, saveFile$, tourneyName$)
+                teamCount = nbrRegionalTeams(SELECTION%)
+                Call SeedBrackets(SELECTION%, nbrRegions, teamCount, saveFile$, tourneyName$)
             End If
 
         End If

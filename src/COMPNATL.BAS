@@ -57,7 +57,8 @@ Sub CompileNatlOrg ()
     End If
 
     'Initialize values first
-    Erase natDefLeaders!, natLeaderVals!, natOffLeaders!
+    Erase natDefLeaders!, natOffLeaders!
+    Erase natLeaderVals!
 
     Erase natDefLdrNames$, natOffLdrNames$
     Erase natLdrName$, confLdrName$, natLdrTeam$
@@ -197,8 +198,12 @@ Sub CompileNatlOrg ()
                                         Next
 
                                         Call CalcStatTotalsConf(totalGames, TN$, finalUpdate$)
-                                        Call CalcStatLeadersConf(TN$)
-                                        Call CalcStatLeadersNat(memberName$(XW), TN$)
+                                        Call CalcStatLeadersConf(totalGames, TN$)
+
+                                        Cls
+                                        Print "CHECKING "; memberName$(XW); " STATS AGAINST NATIONAL LEADERS"
+                                        
+                                        Call CalcStatLeadersNat(totalGames, memberName$(XW), TN$)
 
                                     End If
 
@@ -229,11 +234,20 @@ End Sub
 
 
 '----------------------------------------
-'       CalcStatLeadersNat Subroutine
+'      CalcStatLeadersNat Subroutine
 '----------------------------------------
 'This subroutine compares pre-loaded stats
-'to existing leaders and updates as needed
-Sub CalcStatLeadersNat (statFile$, teamName$)
+'for a team to existing National Leaders,
+'updating leaders as needed. This is the
+'same routine used for Conferences in just
+'about every way, but stores leaders into
+'separate arrays. By having separate routines, 
+'we can compile all conferences into 1 set
+'(while looped through) at the same time as
+'compiling National Leaders. This gives us a
+'shortcut for people who don't want to compile
+'each Conference separately (one-at-a-time)
+Sub CalcStatLeadersNat (totalGames, teamName$)
 
     Shared defTotals!(), offTotals!()
     Shared natDefLeaders!(), natOffLeaders!()
@@ -244,8 +258,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
     Shared statPlyrNames$()
     Shared natLdrName$(), natLdrTeam$()
 
-    Cls
-    Print "CHECKING "; statFile$; " STATS AGAINST NATIONAL LEADERS"
+    minFGA = totalGames * 5
+    minFTA = totalGames * 2
+    min3FGM = totalGames * 1.5
 
     For X = 0 To 14
 
@@ -268,7 +283,9 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
                     If natLeaderVals!(Z, 1) < natLeaderVals!(Z1, 1) Then
                         Swap natLdrName$(Z1), natLdrName$(Z)
                         Swap natLdrTeam$(Z1), natLdrTeam$(Z)
-                        For M = 1 To 2: Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M): Next
+                        For M = 1 To 2: 
+                            Swap natLeaderVals!(Z1, M), natLeaderVals!(Z, M)
+                        Next
                     End If
 
                 Next Z1
@@ -301,7 +318,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Field Goal %
-        If statPlyrVal!(X, 19) > natLeaderVals!(60, 1) Then
+        If statPlyrVal!(X, 19) > natLeaderVals!(60, 1)  And (statPlyrVal!(X, 1) >= minFGA) Then
 
             natLeaderVals!(60, 1) = statPlyrVal!(X, 19)
             natLeaderVals!(60, 2) = statPlyrVal!(X, 1)
@@ -325,7 +342,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         'Free Throw %
-        If statPlyrVal!(X, 20) > natLeaderVals!(80, 1) Then
+        If statPlyrVal!(X, 20) > natLeaderVals!(80, 1) And (statPlyrVal!(X, 3) >= minFTA) Then
 
             natLeaderVals!(80, 1) = statPlyrVal!(X, 20)
             natLeaderVals!(80, 2) = statPlyrVal!(X, 3)
@@ -445,7 +462,7 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
         End If
 
         '3 Field Goal %
-        If statPlyrVal!(X, 21) > natLeaderVals!(130, 1) Then
+        If statPlyrVal!(X, 21) > natLeaderVals!(130, 1) And (stats3FGM!(X) >= min3FGM) Then
 
             natLeaderVals!(130, 1) = statPlyrVal!(X, 21)
             natLeaderVals!(130, 2) = stats3FGA!(X)
@@ -691,8 +708,6 @@ Sub CalcStatLeadersNat (statFile$, teamName$)
             natLeaderVals!(230, 2) = 0
             natLdrName$(230) = statPlyrNames$(X)
             natLdrTeam$(230) = teamName$
-
-            fpg! = statPlyrVal!(X, 14)
 
             For Z = 221 To 229
                 For Z1 = Z + 1 To 230
@@ -1001,6 +1016,7 @@ Sub PostLeadersOrg (organization$, NRT)
 
     Close #1
 
+    'Sort Poll Ratings
     For Z = 1 To NRT - 1
         For Z1 = Z + 1 To NRT
             If pollRatings#(Z, 1) < pollRatings#(Z1, 1) Then
