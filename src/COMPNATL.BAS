@@ -203,7 +203,7 @@ Sub CompileNatlOrg ()
                                         Cls
                                         Print "CHECKING "; memberName$(XW); " STATS AGAINST NATIONAL LEADERS"
                                         
-                                        Call CalcStatLeadersNat(totalGames, memberName$(XW), TN$)
+                                        Call CalcStatLeadersNat(totalGames, TN$)
 
                                     End If
 

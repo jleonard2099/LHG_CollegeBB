@@ -83,7 +83,9 @@ Sub SCHEDULE ()
                     scheduleAP%(0) = 0
                     NS% = 0
 
-                    scheduleFile$ = _InputBox$("Schedule File Name", "Enter name for schedule file")
+                    scheduleFile$ = _SaveFileDialog$("New Schedule", diskPaths$(3), "*.SCD", "Schedule File")
+                    'schedule_Name$ = _InputBox$("Schedule File Name", "Enter name for schedule file")
+                    'scheduleFile$ = diskPaths$(3) + schedule_Name$ + ".SCD"
 
                     If scheduleFile$ <> "" Then
                         Call NewSchedule(scheduleFile$)

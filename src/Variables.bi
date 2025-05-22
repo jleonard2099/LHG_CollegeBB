@@ -42,7 +42,7 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 ' Conferences / Orgs
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
-'Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim memberName$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
 
 

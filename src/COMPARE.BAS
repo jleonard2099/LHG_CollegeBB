@@ -192,6 +192,7 @@ Sub Comparisons_Screen (teamName$, backToMenu, posn$())
                     I$ = GetKeyPress$
 
                 Case 15:
+
                     Cls
 
                     For dc = 1 To 19
@@ -650,7 +651,7 @@ Sub PlayerComparisons_Screen (idx, position$, teamName$)
     Locate 1, 2: Print teamName$
 
     Color 15, 0
-    Locate 1, 16: Print String$(34, 177)
+    Locate 2, 16: Print String$(34, 177)
 
     Color 14
 

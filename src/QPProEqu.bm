@@ -146,7 +146,7 @@ Function MGetKey (Row%, Col%)
     'was clicked
 
     'Clear keyboard buffer
-    ' ???
+    'Sleep
 
     Do
         k$ = InKey$
@@ -749,6 +749,8 @@ Sub MAMenu (menuChoices$(), Selected%, Start%, Count%, ScanCode%, ItemFGColor%, 
 
     UserIn$ = "" ' *** Reset UserIn$ ***
 
+    'Sleep
+
     Do
         UserIn$ = InKey$
     Loop Until UserIn$ <> ""
@@ -865,6 +867,8 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
     Next x
 
     GoSub DrawMenu
+
+    'Sleep
 
     'get cursor key movements and redraw menu
     Do
@@ -997,6 +1001,8 @@ Sub NumIn (Number#, Max, XCode, FGColor&, BGColor&)
     Locate , Pos(0) + Max - ALength + 1, 1 'locate and turn on the cursor
 
     NGetKey:
+    'Sleep
+
     Do
         Call CapNum 'print Cap/Num if active
 

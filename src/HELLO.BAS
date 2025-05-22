@@ -32,8 +32,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim memberName$(TEAMS_PER_CONFERENCE)
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -108,9 +106,10 @@ Next
 '1 = Steal chance
 '2 = Foul chance
 '2nd index represents Def Category
-'Data 1,4,2,5,15,29,22,36,7,9,7,12
-'-- Update to improve foul chances
-Data 2,5,1,4,15,29,22,36,7,9,3,12
+
+'-- Update last 4 to adjust foul chances
+'Data 2,5,1,4,15,29,22,36,7,9,3,12
+Data 3,6,2,5,15,29,22,36,6,8,2,11
 For I = 0 To 2
     For I1 = 1 To 4
         Read defAdjVsPass(I, I1)
@@ -124,9 +123,9 @@ Next
 '3 = Steal chance
 '4 = Foul chance
 '2nd index represents Def Coverage
-'Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,9
-'-- Update to improve foul chances
-Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,9,3,7
+
+'Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,7
+Data -7,-10,-4,-10,70,100,20,100,0,2,-1,3,15,22,8,29,4,8,2,6
 For I = 0 To 4
     For I1 = 0 To 3
         Read defAdjVsShot(I, I1)
@@ -1335,7 +1334,7 @@ Sub COLHOOP ()
 
         Call SETSTAMINA
 
-        If playerMode = 1 And P9 = compTeam Or playerMode = 2 Then
+        If (playerMode = 1 And P9 = compTeam) Or playerMode = 2 Then
             Call ComputerCoach
         Else
             Call PlayStyle
@@ -2160,7 +2159,7 @@ Sub COLHOOP ()
                 playChoice = 1
 
                 GoTo 520
-                
+
             End If
 
             Call Rolld100(RN0)
@@ -2404,7 +2403,7 @@ Sub COLHOOP ()
 
             'Chance of Turnover
             '   Def Foul Chance + Off T/O Rating + Def TO Adj + Def TO Chance - Pressure Rating
-            toChance = 1 + defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
+            toChance = 2 + defAdjVsPass(2, defCategory(D)) + teamAdj(P, 5) + teamAdj(D, 6) + defAdjVsPass(0, defCategory(D)) - pressureRating(D, 0) + 1
 
             If RN0 <= toChance Then
 
@@ -2452,7 +2451,7 @@ Sub COLHOOP ()
             'The alternative would be to differentiate between
             'jump shots and layups (which I think can be done)
             If (teamYears(D) >= 2005) And (defCoverage(D) < 2) Then
-                foulChance = foulChance + 4
+                foulChance = foulChance + 3
             End If
 
             ' ** Foul on shot attempt **
@@ -2485,23 +2484,23 @@ Sub COLHOOP ()
             Select Case offStrat(P)
 
                 Case 0, 2, 4
-                    OY% = -1
-
-                Case 1, 6
                     OY% = 1
 
+                Case 1, 6
+                    OY% = 3
+
                 Case 5
-                    OY% = 2
+                    OY% = 4
 
                 Case 7
-                    OY% = -2
+                    OY% = 0
 
                 Case 10, 13
                     'Delay / Stall
                     OY% = CInt((defAdjVsShot(2, defCoverage(D)) / 2)) * -1
 
                 Case Else
-                    OY% = 0
+                    OY% = 2
 
             End Select
 
@@ -2527,23 +2526,23 @@ Sub COLHOOP ()
             Select Case offStrat(P)
 
                 Case 0, 2, 4
-                    OY% = -3
+                    OY% = -2
 
                 Case 1, 6
-                    OY% = 3
+                    OY% = 4
 
                 Case 3, 8
-                    OY% = 0
+                    OY% = 1
 
                 Case 5
-                    OY% = 7
+                    OY% = 8
 
                 Case 7
-                    OY% = -7
+                    OY% = -6
 
                 Case 9, 11, 12, 14, 15
                     'Normal, Quick, Milk Clock, Stall, Hold, Shoot Three
-                    OY% = 0
+                    OY% = 1
 
                 Case 10, 13
                     'Delay, Total Stall
@@ -3325,11 +3324,13 @@ Sub COLHOOP ()
             passString$ = "PASS TO " + players$(P, lineupIdx(P, ballCarrier)) + " OF "
             Print passString$;
             Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
+
             If Len(passString$) + Len(gameTeams$(P)) > 38 Then
                 Print Left$(gameTeams$(P), 38 - Len(passString$))
             Else
                 Print gameTeams$(P)
             End If
+
             Color 15, 0
 
             Locate 10
@@ -3629,7 +3630,7 @@ Sub COLHOOP ()
                         foulDrawChance = foulDrawChance - 1
 
                     Case 5
-                        foulDrawChance = foulDrawChance + 3
+                        foulDrawChance = foulDrawChance + 2 '3
                 
                 End Select
 
@@ -4402,7 +4403,7 @@ Sub COLHOOP ()
 
         'BONUS
         GoTo 570
-    
+
     Else
 
         If gameClock! <= 0 Then 170
@@ -8953,7 +8954,7 @@ Sub FoulCalled (randomFouler)
 
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
 
-            teamIdx = D
+            P9 = D
             C1 = 1
             Call PlayStyle
             Call PlayItSafe
@@ -9091,6 +9092,9 @@ Sub REBOUNDSORT ()
     S6 = 0
     S7 = 0
 
+    H1 = 0
+    H2 = 0
+
     8828 '
     If plyrRebVal(S6) > plyrRebVal(S6 + 1) Then
 
@@ -9135,9 +9139,8 @@ Sub ComputerCoach ()
             plyrStaminaGame(I) = plyrOff_GAME!(P9, I, 3)
         End If
 
-        'If plyrOff_GAME!(P9, I, 12) >= foulsToDQ Then
         If (plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ) Or (currHalf = 1 And plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 2) Or (plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720) Then
-            'Fouled out player should not be used
+            'Player who has fouled out or with too many fouls should not be used
             plyrStaminaGame(I) = 0
         End If
 
@@ -9232,7 +9235,7 @@ Sub ComputerCoach ()
                 Else
 
                     'Try to fill with any remaining positions
-                    '(skipping only disabled players / "XXX"
+                    '(skipping only disabled players / "XXX")
                     rebIdx = 13
 
                     For I1 = 0 To 4
@@ -9849,6 +9852,7 @@ Sub SCOREBOARD ()
     Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
 
     'Team 1
+    '-- change to 15 -
     Locate 2, 14 - (Len(gameTeams$(0)) / 2)
     Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
@@ -10487,7 +10491,9 @@ Sub ChangeContributions ()
                     For I1 = 0 To 13:
 
                         TY% = TY% + plyrOff_GAME!(teamChoice, I1, 3)
-                        If rosterStatus(teamChoice, I1) = -1 Then Color teamRat_GAME(teamChoice, 0), teamRat_GAME(teamChoice, 1)
+                        If rosterStatus(teamChoice, I1) = -1 Then
+                            Color teamRat_GAME(teamChoice, 0), teamRat_GAME(teamChoice, 1)
+                        End If
 
                         Print Using "## "; I1 + 1;
                         Print players$(teamChoice, I1);
@@ -10665,39 +10671,73 @@ End Sub
 'stamina ratings to players
 Sub SETSTAMINA ()
 
+    'Cumulative Contribution
     SQ% = 0
 
     For I = 0 To 13
+
+        'Games Played = 0 (Team and Player) and Enabled in Roster
         If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then
+            'Add in Player's contribution %
             SQ% = SQ% + plyrOff_GAME!(P9, I, 3)
         End If
+
+        testA = teamRat_GAME(P9, 5)
+        testB = plyrRat_GAME(P9, I, 0)
+
+        'Games Played <> 0 (Team and Player) and Enabled in Roster
         If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then
-            SQ% = SQ% + plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
-            plyrOff_GAME!(P9, I, 3) = plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
+
+            'Add in fraction of player's contribution, based on games played
+            currContrib = plyrOff_GAME!(P9, I, 3)
+            test1 = currContrib * testA
+            test2 = test1 / testB
+
+            adjustedContrib = plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
+
+            SQ% = SQ% + adjustedContrib
+            plyrOff_GAME!(P9, I, 3) = adjustedContrib
+
         End If
     Next
 
-    'So SQ% is a sum of plyrOff_GAME!(P9, X, 3) values...
+
     For I = 0 To 13
+
         If teamRat_GAME(P9, 5) = 0 And plyrRat_GAME(P9, I, 0) = 0 And rosterStatus(P9, I) = 0 Then
+            'Adjust player contribution by cumulative contribution and game stamina
             plyrOff_GAME!(P9, I, 3) = CInt(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina)
         End If
+
         If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And rosterStatus(P9, I) = 0 Then
+            'Same calculation ?!?!?!
             plyrOff_GAME!(P9, I, 3) = CInt(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina)
         End If
+
         If plyrOff_GAME!(P9, I, 3) < 1 Then
+            'Ensure contribution is always positive
             plyrOff_GAME!(P9, I, 3) = 1
         End If
+
     Next I
+
 
     SQ% = 0
 
+    'Add up contribution for all enabled players
     For I = 0 To 13
-        If rosterStatus(P9, I) = 0 Then SQ% = SQ% + plyrOff_GAME!(P9, I, 3)
+        If rosterStatus(P9, I) = 0 Then
+            SQ% = SQ% + plyrOff_GAME!(P9, I, 3)
+        End If
     Next
+
 
     For I = 0 To 13
         If gameAvgTmStamina > 120 And teamAdj(P9, 8) <> 99 Then
+            'For most teams (where "99" value exists)
+            '(this represents that we have accurate 3FG adjustments,
+            'as well as Off TO / Steal adjustments)
+            ' ** Adjust foul draw rating based on team pace / stamina **
             plyrOff_GAME!(P9, I, 16) = plyrOff_GAME!(P9, I, 16) * (120 / gameAvgTmStamina)
             plyrOff_GAME!(P9, I, 16) = CInt(plyrOff_GAME!(P9, I, 16))
         End If
@@ -10705,6 +10745,7 @@ Sub SETSTAMINA ()
 
     rebFoulChance = 8
 
+    'Adjust rebound chance based on team pace / stamina
     If gameAvgTmStamina > 114 Then
         rebFoulChance = CInt((114 / gameAvgTmStamina) * rebFoulChance)
     End If
@@ -10743,7 +10784,6 @@ Sub COMPUTERSUBS ()
             'Disabled player or inactive spot
             'Based on roster name, disable status or # of fouls so far
             If goodPlayer%(P9, rosterIdx(I)) = 0 Then
-                '(rosterStatus(P9, I1) <> 0 Or players$(P9, I1) = "XXX" Or plyrOff_GAME!(P9, I1, 12) >= foulsToDQ)
                 disabledPlayers = disabledPlayers + 1
             End If
 
@@ -10947,7 +10987,6 @@ Sub PlayStyle ()
 
             For I1 = 0 To 13
                 If goodPlayer%(P9, I1) = 0 Then
-                    'rosterStatus(P9, I1) <> 0 Or players$(P9, I1) = "XXX" Or plyrOff_GAME!(P9, I1, 12) >= foulsToDQ Then
                     nonPlayers = nonPlayers + 1
                 End If
             Next
@@ -11313,7 +11352,9 @@ Sub PlayItSafe ()
         Print "Z - CONTINUE"
 
         Do
+
             I$ = GetKeyPress$
+
             If UCase$(I$) = "Z" And MJ = 0 Then Exit Do
             If UCase$(I$) = "Z" And MJ = 25 Then skipChangeToSafe% = 1: Exit Do
             playChoice = Val(I$)
@@ -14598,26 +14639,18 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
     Print #1,
 
-    '-- The code below was used to print
-    '-- disabled players in the boxscore
-    '-- output so that they could be easily identified.
-    'Print #1, "BENCH WARMERS"
-    '--Print #1, "DISABLED BUT PLAYED"
-
-    'For I = 0 To 1
-
-    '    For I1 = 0 To 13
-
-    '        'If players$(I, I1) <> "XXX" And rosterStatus(I, I1) = -1 Then
-    '--If players$(I, I1) <> "XXX" And rosterStatus(I, I1) = -1 And timePlayed(I, I1) > 0 Then
-    '            Print #1, players$(I, I1); " ["; gameTeams$(I); "]"
-    '        End If
-
-    '    Next I1
-
-    'Next I
-
     If printChoice = 1 Then Print #1, Chr$(12)
+
+
+    playerCount = 0
+    For I = 0 To 13:
+        If rosterStatus(gameIdx, I) = 0 Then
+            playerCount = playerCount + 1
+        End If
+    Next
+
+    Print #1, "ACTIVE PLAYERS = "; playerCount
+
 
     Close #1
 
@@ -15550,35 +15583,41 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
     'FY% = 2 * (Average FGA/G for this team (Off + Def) - League FGA/G)
     FY%(gameIdx) = 2 * teamRat_GAME(gameIdx, 3) - teamRat_GAME(gameIdx, 4)
 
-    CNT% = 0
-    CNTX% = 0
+    playerCount = 0
+    npcCount = 0
 
     Do
+
         If teamRat_GAME(gameIdx, 5) <> 0 Then
 
             For I = 0 To 13
 
-                If rosterStatus(gameIdx, I) = -1 Then rosterStatus(gameIdx, I) = 0
-
-                Call Rolld100(RN0)
-
-                If UCase$(players$(gameIdx, I)) = "XXX" Then
-                    CNTX% = CNTX% + 1
+                'Reset disabled players
+                If rosterStatus(gameIdx, I) = -1 Then
+                    rosterStatus(gameIdx, I) = 0
                 End If
 
-                If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And RN0 > CInt(plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5) * 100)) Then
+                'Players minutes played / Total Team Minutes
+                playerTeamContrib = plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5)
+                If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And d100% > CInt(playerTeamContrib * 100)) Then
+                    npcCount = npcCount + 1
                     rosterStatus(gameIdx, I) = -1
                 End If
 
             Next
 
-            For I = 0 To 13:
-                If rosterStatus(gameIdx, I) = 0 Then CNT% = CNT% + 1
-            Next
-
         End If
 
-    Loop Until (CNT% < 10 And CNTX% < 4) Or (CNTX% >= 5 And CNT% < 8)
+        For I = 0 To 13:
+            If rosterStatus(gameIdx, I) = 0 Then
+                playerCount = playerCount + 1
+            End If
+        Next
+
+        'Keep looping until we have at least:
+        ' (10 active players and <= 3 non-players)
+        ' (9+ active players and < 5 non-players)
+    Loop While (playerCount < 10 And npcCount < 4) Or (playerCount < 8 And npcCount >= 5)
 
 End Sub
 
