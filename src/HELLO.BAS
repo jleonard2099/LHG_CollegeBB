@@ -1506,8 +1506,8 @@ Sub COLHOOP ()
 
     End If
 
-    If currHalf < 3 And playerMode <> 0 Then
-
+    If currHalf < 3 
+    
         If playerMode = 1 Then
             P9 = compTeam
             Call ComputerCoach
@@ -1519,10 +1519,6 @@ Sub COLHOOP ()
             P9 = 1
             Call ComputerCoach
         End If
-
-    End If
-
-    If currHalf < 3 Then
 
         Erase teamFouls
 
@@ -1578,20 +1574,27 @@ Sub COLHOOP ()
     Locate 2, 31
     Print "END OF REGULATION"
 
+
+    '----------------------------------------
+    '                Overtime!
+    '----------------------------------------
     'If scores are tied, it's Overtime!
     If score(0, 0) = score(1, 0) Then
 
         pbpString$ = "OVERTIME !!!"
 
         Select Case pbpOpt
+
             Case 0:
                 Color 7, 0
                 Call WINDEX
                 Print pbpString$
+
             Case 1:
                 Call WINDEX
                 Print pbpString$
                 Call DELAY
+
         End Select
 
         timeouts(0) = timeouts(0) + 1
@@ -9163,7 +9166,6 @@ Sub ComputerCoach ()
             '8794 will just go to the next "For" entry
             'Could we use "Continue"???
             If goodPlayer%(P9, rosterIdx(rebIdx)) = 0 Then
-                '(rosterStatus(P9, rosterIdx(rebIdx)) <> 0 Or players$(P9, rosterIdx(rebIdx)) = "XXX" Or (plyrOff_GAME!(P9, rosterIdx(rebIdx), 12) >= foulsToDQ) Or (currHalf = 1 And plyrOff_GAME!(P9, rosterIdx(rebIdx), 12) >= foulsToDQ - 2) Or (plyrOff_GAME!(P9, rosterIdx(rebIdx), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720))
                 GoTo 8794
             End If
 
@@ -9225,7 +9227,6 @@ Sub ComputerCoach ()
                 If rebIdx >= 0 Then
 
                     If goodPlayer%(P9, rosterIdx(rebIdx)) = 0 Then
-                        '(rosterStatus(P9, rosterIdx(rebIdx)) <> 0 Or players$(P9, rosterIdx(rebIdx)) = "XXX" Or (plyrOff_GAME!(P9, rosterIdx(rebIdx), 12) >= foulsToDQ) Or (plyrOff_GAME!(P9, rosterIdx(rebIdx), 12) >= foulsToDQ - 1 And (currHalf = 1 Or currHalf = 2 And gameClock! > 720))
                         GoTo 8705
                     Else
                         plyrRebIdx(I1) = rosterIdx(rebIdx)
@@ -10816,7 +10817,6 @@ Sub COMPUTERSUBS ()
                 End If
 
                 If goodPlayer%(P9, lineupIdx(P9, I1)) = 0 Then
-                    '((plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ) Or (plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ - 2 And currHalf = 1) Or (plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720)) Then
                     foulPlayers = foulPlayers + 1
                 End If
 
@@ -11000,7 +11000,6 @@ Sub PlayStyle ()
                         Color 14, 0: Print players$(P9, lineupIdx(P9, I1)); " HAS FOULED OUT"
                         skipMenu% = 1
                         Exit For
-
                     End If
 
                 Next
@@ -11090,8 +11089,6 @@ Sub PlayStyle ()
         End If
 
     Loop Until K = 6
-
-
 
 End Sub
 
@@ -15584,7 +15581,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
     FY%(gameIdx) = 2 * teamRat_GAME(gameIdx, 3) - teamRat_GAME(gameIdx, 4)
 
     playerCount = 0
-    npcCount = 0
+    nonPlayerCount = 0
 
     Do
 
@@ -15600,7 +15597,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
                 'Players minutes played / Total Team Minutes
                 playerTeamContrib = plyrRat_GAME(gameIdx, I, 0) / teamRat_GAME(gameIdx, 5)
                 If UCase$(players$(gameIdx, I)) = "XXX" Or (rosterStatus(gameIdx, I) = 0 And d100% > CInt(playerTeamContrib * 100)) Then
-                    npcCount = npcCount + 1
+                    nonPlayerCount = nonPlayerCount + 1
                     rosterStatus(gameIdx, I) = -1
                 End If
 
@@ -15617,7 +15614,7 @@ Sub ReadGameTeam (teamYear$, targetTeam$, teamIdx, gameIdx)
         'Keep looping until we have at least:
         ' (10 active players and <= 3 non-players)
         ' (9+ active players and < 5 non-players)
-    Loop While (playerCount < 10 And npcCount < 4) Or (playerCount < 8 And npcCount >= 5)
+    Loop While (playerCount < 10 And nonPlayerCount < 4) Or (playerCount < 8 And nonPlayerCount >= 5)
 
 End Sub
 
@@ -17605,7 +17602,7 @@ Function goodPlayer% (teamIdx, playerIdx)
 
     playerFouls = plyrOff_GAME!(teamIdx, playerIdx, 12)
 
-    If (rosterStatus(teamIdx, playerIdx) <> 0 Or players$(teamIdx, playerIdx) = "XXX" Or (playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (playerFouls >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720)) Then
+    If (rosterStatus(teamIdx, playerIdx) <> 0 Or players$(teamIdx, playerIdx) = "XXX" Or (playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1)) Then
 
         goodPlayer% = 0
 
