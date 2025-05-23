@@ -3,7 +3,7 @@
 ### Game Description ###
 Courtside College Basketball is a fast-paced simulator, allowing you to recreate original seasons or conjure up the tournament match of your dreams! Several styles of offense and defense give you the choice to strategize each moment. Save and compile stats, input your own teams or draft or trade players. Play against a friend, against the computer, or watch simulations at your own pace. Teams and players are rated in several categories using real-world stats, so the outcomes are not only possible - they feel real.
 
-**· Each player contributes as they did in real life! · Stats Compiler · You determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more! ·**
+**· YOU determine starting lineup, substitutions, shot selection, passing, offensive and defensive styles of play and more! · Create a game with rules of your choosing · Host a full 68-team tournament with play-in games - or build a mega tournament of up to 256 teams!! · Players contribute same as they did in real life! · Input your own teams, or draft players from teams already included · Track team stats and records across a full season or an entire career! · Compare replays against real stats to gauge accuracy ·**
 
 ### About Project ###
 With permission from Lance Haffner himself, this effort is being made to bring his original source code from the DOS world into the modern world. This is due in part to cross-platform compilers for BASIC such as [QB64pe](https://github.com/QB64-Phoenix-Edition/QB64pe). But this effort aims to restore his original vision for a cross-platform sports sim empire, while also opening the door for improvements to accuracy, usability and portability.
