@@ -112,12 +112,10 @@ Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
 
     Shared coachMode$(), foulShotOpt$()
     Shared playMode$()
-    Shared regionNames$(), slotName$()
     Shared sClockOpt$(), yesNoText$()
 
-    Shared consolationSetting(), nbrRegionalTeams()
-    Shared scheduleNG%(), teamRatings()
-    Shared tourneyDefaults(), tourneyParams()
+    Shared consolationSetting()
+    Shared tourneyDefaults()
 
     If consolationSetting(0) = 1 Then
         consolation$ = "Y"
@@ -395,7 +393,7 @@ Sub SeedBrackets (currRegion, nbrRegions, teamCount, sourceFile$, tourneyName$)
 
     Shared regionNames$(), slotName$()
 
-    Shared consolationSetting(), nbrRegionalTeams()
+    Shared nbrRegionalTeams()
     Shared teamRatings()
     Shared tourneyParams()
 
@@ -473,15 +471,23 @@ Sub SeedBrackets (currRegion, nbrRegions, teamCount, sourceFile$, tourneyName$)
         playInSeeds = (nbrRegionalTeams(0) / 2)
         slotsUsed = 0
 
-        '-- This currently assumes 1 winner goes to each region
+        'Seed Play-in Teams
+        'Currently this defaults to assigning 1 winner to each region
+        'It also assigns them sequentially.
         '-- This would need changed eventually
         If currRegion > 0 And currRegion <= playInSeeds Then
+
             slotsUsed = slotsUsed + 1
-            lastSeed = nbrRegionalTeams(currRegion)
-            slotName$(currRegion, lastSeed, 0) = "PLAY-IN GM" + Str$(currRegion) + " WINNER"
-            slotName$(currRegion, lastSeed, 1) = "XXX"
-            tourneyParams(currRegion, lastSeed, 0) = 1700 + currRegion
-            tourneyParams(currRegion, lastSeed, 1) = 1
+            
+            '-- Update here to use different slots for seeding
+            '-- Currently only uses the last seed
+            seedSlot = nbrRegionalTeams(currRegion) 'last seed
+
+            slotName$(currRegion, seedSlot, 0) = "PLAY-IN GM" + Str$(currRegion) + " WINNER"
+            slotName$(currRegion, seedSlot, 1) = "XXX"
+            tourneyParams(currRegion, seedSlot, 0) = 1700 + currRegion
+            tourneyParams(currRegion, seedSlot, 1) = 1
+
         End If
 
         Do

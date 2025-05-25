@@ -904,7 +904,8 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
     Return
 
     MoveUp:
-    If Selected% = 1 Then
+    'If Selected% = 1 Then
+    If Selected% = 0 Then
         Selected% = UBound(menuChoices$)
     Else
         Selected% = Selected% - 1
@@ -913,7 +914,8 @@ Sub MMenuVert (menuChoices$(), Selected%, Start%, ScanCode%, ItemFGColor%, ItemB
 
     MoveDown:
     If Selected% = UBound(menuChoices$) Then
-        Selected% = 1
+        'Selected% = 1
+        Selected% = 0
     Else
         Selected% = Selected% + 1
     End If

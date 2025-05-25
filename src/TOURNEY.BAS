@@ -106,35 +106,33 @@ Sub TOURNEY ()
             Color 14
             Print "GM ID#  REG  RND  GM    VISITING TEAM        HOME TEAM            MA  HC  3  SC": Color 15
 
-            'Show 20 schedule entries on the screen at once
-            '-- we could update this to 25
-            For X = 1 To 20
+            For X = 1 To SCHED_ENTRIES_PER_SCREEN
 
                 Locate X + 2, 1
 
-                If X + NS% * 20 <= scheduleAP%(0) Then
+                If X + NS% * SCHED_ENTRIES_PER_SCREEN <= scheduleAP%(0) Then
 
-                    Print Using "###      ##   ##   ##"; X + NS% * 20; scheduleNG%(X + NS% * 20, 15); scheduleNG%(X + NS% * 20, 16); scheduleNG%(X + NS% * 20, 17);
+                    Print Using "###      ##   ##   ##"; X + NS% * SCHED_ENTRIES_PER_SCREEN; scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 15); scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 16); scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 17);
 
                     'Visiting Team
-                    Locate , 25: Print visitingTeam$(X + NS% * 20); " ";
-                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * 20);
+                    Locate , 25: Print visitingTeam$(X + NS% * SCHED_ENTRIES_PER_SCREEN); " ";
+                    If scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 13) = 1 Then Print Using "###"; visitorScores(X + NS% * SCHED_ENTRIES_PER_SCREEN);
 
                     'Home Team
-                    Locate , 46: Print homeTeam$(X + NS% * 20); " ";
-                    If scheduleNG%(X + NS% * 20, 13) = 1 Then Print Using "###"; homeScores(X + NS% * 20);
+                    Locate , 46: Print homeTeam$(X + NS% * SCHED_ENTRIES_PER_SCREEN); " ";
+                    If scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 13) = 1 Then Print Using "###"; homeScores(X + NS% * SCHED_ENTRIES_PER_SCREEN);
 
                     'Mode of Play
-                    Locate , 67: Print modeAbbrev$(scheduleNG%(X + NS% * 20, 8));
+                    Locate , 67: Print modeAbbrev$(scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 8));
 
                     'Home Court
-                    Locate , 72: If scheduleNG%(X + NS% * 20, 2) = 1 Then Print "Y";: Else Print "N";
+                    Locate , 72: If scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 2) = 1 Then Print "Y";: Else Print "N";
 
                     '3 Pt Option
-                    Locate , 75: Print yesNo$(scheduleNG%(X + NS% * 20, 3));
+                    Locate , 75: Print yesNo$(scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 3));
 
                     'Shot Clock
-                    Locate , 78: Print Left$(sClockOpt$(scheduleNG%(X + NS% * 20, 7)), 2)
+                    Locate , 78: Print Left$(sClockOpt$(scheduleNG%(X + NS% * SCHED_ENTRIES_PER_SCREEN, 7)), 2)
 
                 End If
 
@@ -149,7 +147,7 @@ Sub TOURNEY ()
                         Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                         Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
-                    NS% = Int((targetGame% - 1) / 20)
+                    NS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
 
                     'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
                     boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
@@ -167,7 +165,7 @@ Sub TOURNEY ()
                         Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
                     Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
 
-                    NS% = Int((targetGame% - 1) / 20)
+                    NS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
 
                 Case "P":
                     ' *** SAVE TOURNAMENT SCHEDULE ***
@@ -229,7 +227,9 @@ Sub TOURNEY ()
 
                     'Create the Tournament file (equivalent to GAME82)
                     Open "TOURNEY" For Output As #2
-                    Print #2, tourneyName$ + ".TOU"
+                    
+                    '-- change to using a full path here
+                    Print #2, tourneyFile$
                     Print #2, SG%
                     Print #2, EG%
                     Print #2, 0
@@ -325,7 +325,7 @@ Sub ReadTourneyFile (tourneyFile$)
     Close #1
 
     scheduleAP%(0) = fileLength& / TOURNEY_SIZE_BYTES
-    BS% = Int((scheduleAP%(0) - 1) / 20)
+    BS% = Int((scheduleAP%(0) - 1) / SCHED_ENTRIES_PER_SCREEN)
 
     For I = 1 To scheduleAP%(0)
 

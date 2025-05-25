@@ -89,16 +89,16 @@ Sub ViewTourneyInfo (ACTION%)
 
         Open diskPaths$(1) + baseFile$ + ".INF" For Input As #1
 
-        Input #1, FF$
+        Input #1, tournName$
 
-        Input #1, R% ' NUMBER OF REGIONS
+        Input #1, numReg ' NUMBER OF REGIONS
 
-        For I = 1 To 16
+        For I = 0 To 16
             Input #1, nbrRegionalTeams(I) ' NUMBER OF TEAMS IN REGION
             Input #1, regionNames$(I) ' NAME OF REGION
         Next
 
-        For I = 1 To 16
+        For I = 0 To 16
             For I1 = 1 To 16
                 For I2 = 0 To 3
                     Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
@@ -125,7 +125,7 @@ Sub ViewTourneyInfo (ACTION%)
         Close #3
 
         scheduleAP%(0) = fileLength& / 90
-        BS% = Int((scheduleAP%(0) - 1) / 20)
+        BS% = Int((scheduleAP%(0) - 1) / 25)
 
         For I = 1 To scheduleAP%(0)
 
@@ -167,7 +167,7 @@ Sub ViewTourneyInfo (ACTION%)
 
         Next
 
-        Call ViewBracket(R%, ACTION%)
+        Call ViewBracket(numReg, ACTION%)
 
     End If
 
@@ -225,7 +225,7 @@ End Sub
 'team colors for the current bracket and
 'prints the team name and score using the
 'corresponding colors.
-Sub TeamColors (currentTeam$, currentScore%)
+Sub TeamColors (index, currentTeam$, currentScore%)
 
     Shared slotName$(), tourneyParams(), scheduleNG%()
 
@@ -239,12 +239,12 @@ Sub TeamColors (currentTeam$, currentScore%)
 
     Else
 
-        X$ = _Trim$(currentTeam$)
+        printTeam$ = _Trim$(currentTeam$)
 
-        For X = 1 To 16
+        For X = 0 To 16
 
             For X1 = 1 To 16
-                If X$ = slotName$(X, X1, 0) Then
+                If printTeam$ = slotName$(X, X1, 0) Then
                     Color tourneyParams(X, X1, 2), tourneyParams(X, X1, 3)
                     found = 1
                     Exit For
@@ -255,11 +255,14 @@ Sub TeamColors (currentTeam$, currentScore%)
 
         Next
 
-        'Color 7, 0
-
-        If Not (scheduleNG%(I, 13) = 0) Then
-            Print _Trim$(currentTeam$);
-            Color 14, 0: Print Using " ###"; currentScore%
+        If scheduleNG%(index, 13) = 1 Then
+            'Completed game
+            Print printTeam$;
+            Color 14, 0
+            'XCoord = Pos(0) + (15 - Len(printTeam$))
+            'Locate , XCoord
+            'Print Space$(15 - Len(printTeam$));
+            Print Using " ###"; currentScore%
         Else
             Print _Trim$(currentTeam$)
         End If
@@ -326,12 +329,15 @@ Sub ViewBracket (numberRegions, ACTION%)
         If regionNames$(0) <> "" Then
             menuChoices$(0) = regionNames$(0)
             Start% = 0
+            Count% = Count% + 1
         End If
 
         menuChoices$(numberRegions + 1) = "CHAMPIONSHIP BRACKET"
         menuChoices$(numberRegions + 2) = "EXIT                "
 
-        Call box0(3, 31, 3 + numberRegions + 3, 52, 2, 15, 1)
+        '4 + Count% = top/bottom row,
+        '   rows for last 2 brackets
+        Call box0(3, 31, 4 + Count%, 52, 2, 15, 1)
 
         _MouseShow "DEFAULT"
         MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
@@ -412,8 +418,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 2
@@ -422,8 +428,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 3 + consolationSetting(0)
@@ -432,8 +438,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 2: '3 Teams
                         ' 5 TEAM BRACKET
@@ -454,8 +460,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 2
@@ -464,8 +470,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 3
@@ -474,8 +480,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 4 + consolationSetting(0)
@@ -484,8 +490,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 3: '5 Teams
                         ' 6 TEAM BRACKET
@@ -506,8 +512,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 2
@@ -516,8 +522,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 3
@@ -526,8 +532,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 4
@@ -536,8 +542,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 5 + consolationSetting(0)
@@ -546,8 +552,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 4: '6 Teams
                         ' 7 TEAM BRACKET
@@ -568,8 +574,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 2
@@ -578,8 +584,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 3
@@ -588,8 +594,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 4
@@ -598,8 +604,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 5
@@ -608,8 +614,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 6 + consolationSetting(0)
@@ -618,8 +624,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 5: '7 Teams
                         ' 8 TEAM BRACKET
@@ -640,8 +646,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 2
@@ -650,8 +656,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 3
@@ -660,8 +666,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 4
@@ -670,8 +676,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 5
@@ -680,8 +686,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 6
@@ -690,8 +696,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 7 + consolationSetting(0)
@@ -700,8 +706,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 6: '8 Teams
                         '9 TEAM BRACKET
@@ -714,8 +720,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
                             If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
@@ -734,8 +740,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 3
@@ -744,8 +750,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 4
@@ -754,8 +760,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 5
@@ -764,8 +770,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 6
@@ -774,8 +780,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 7
@@ -784,8 +790,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 8 + consolationSetting(0)
@@ -794,8 +800,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 7: '10 Teams
                         '10 TEAM BRACKET
@@ -807,8 +813,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -834,8 +840,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
                             If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
@@ -854,8 +860,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 4
@@ -864,8 +870,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 5
@@ -874,8 +880,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 6
@@ -884,8 +890,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 7
@@ -894,8 +900,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 8
@@ -904,8 +910,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 9 + consolationSetting(0)
@@ -914,8 +920,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 8: '11 Teams
                         '11 TEAM BRACKET
@@ -927,8 +933,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -940,8 +946,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                         For I = 1 To scheduleAP%(0)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
                         Print
                         Print
                         Print
@@ -960,8 +966,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
                             If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
@@ -980,8 +986,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 5
@@ -990,8 +996,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 6
@@ -1000,8 +1006,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 7
@@ -1010,8 +1016,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 8
@@ -1020,8 +1026,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 9
@@ -1030,8 +1036,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 10 + consolationSetting(0)
@@ -1040,8 +1046,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 9: '12 Teams
                         '12 TEAM BRACKET
@@ -1053,8 +1059,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1068,8 +1074,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1083,8 +1089,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1098,8 +1104,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1126,8 +1132,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 6
@@ -1136,8 +1142,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 7
@@ -1146,8 +1152,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 8
@@ -1156,8 +1162,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 9
@@ -1166,8 +1172,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 10
@@ -1176,8 +1182,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 11 + consolationSetting(0)
@@ -1186,8 +1192,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
                         Locate 12, 64
 
                     Case 10: '13 Teams
@@ -1200,8 +1206,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1212,8 +1218,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1224,8 +1230,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1239,8 +1245,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1254,8 +1260,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1278,8 +1284,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 7
@@ -1288,8 +1294,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 8
@@ -1298,8 +1304,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 9
@@ -1308,8 +1314,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 10
@@ -1318,8 +1324,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 11
@@ -1328,8 +1334,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 12 + consolationSetting(0)
@@ -1338,8 +1344,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 11: '14 Teams
                         '14 TEAM BRACKET
@@ -1351,8 +1357,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1363,8 +1369,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1375,8 +1381,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
                         Print
@@ -1390,8 +1396,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1402,8 +1408,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1414,8 +1420,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
                             If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
@@ -1434,8 +1440,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 8
@@ -1444,8 +1450,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 9
@@ -1454,8 +1460,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 10
@@ -1464,8 +1470,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 11
@@ -1474,8 +1480,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 12
@@ -1484,8 +1490,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 13 + consolationSetting(0)
@@ -1494,8 +1500,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 12: '15 Teams
                         '15 TEAM BRACKET
@@ -1506,8 +1512,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1518,8 +1524,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1530,8 +1536,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1541,8 +1547,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1553,8 +1559,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1565,8 +1571,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1577,8 +1583,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         For I = 0 To 7
                             If (I Mod 2) = 0 Then Locate 3 * I + 2, 22: Print bracketA$(I + 1)
@@ -1597,8 +1603,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 9
@@ -1607,8 +1613,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 10
@@ -1616,8 +1622,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 11
@@ -1626,8 +1632,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 12
@@ -1636,8 +1642,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 13
@@ -1646,8 +1652,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 14 + consolationSetting(0)
@@ -1656,8 +1662,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                     Case 13: '16 Teams
                         '16 TEAM BRACKET
@@ -1668,8 +1674,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1680,8 +1686,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1692,8 +1698,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1704,8 +1710,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1716,8 +1722,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1728,8 +1734,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1740,8 +1746,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Print
 
@@ -1752,8 +1758,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Call TeamColors(homeTeam$(I), homeScores(I))
+                        Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         Color 15
 
@@ -1776,8 +1782,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 2, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 4, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 2, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 4, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 10
@@ -1786,8 +1792,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 8, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 10, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 8, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 10, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 11
@@ -1796,8 +1802,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 14, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 16, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 14, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 16, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 12
@@ -1806,8 +1812,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 20, 21: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 22, 21: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 20, 21: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 22, 21: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 13
@@ -1816,8 +1822,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 3, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 9, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 3, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 9, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 14
@@ -1826,8 +1832,8 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 15, 39: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 21, 39: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 15, 39: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 21, 39: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                         REG = regionNbr
                         GAME = 15 + consolationSetting(0)
@@ -1836,40 +1842,42 @@ Sub ViewBracket (numberRegions, ACTION%)
                             If scheduleNG%(I, 15) = regionNbr And scheduleNG%(I, 17) = GAME Then Exit For
                         Next
 
-                        Locate 6, 56: Call TeamColors(visitingTeam$(I), visitorScores(I))
-                        Locate 18, 56: Call TeamColors(homeTeam$(I), homeScores(I))
+                        Locate 6, 56: Call TeamColors(I, visitingTeam$(I), visitorScores(I))
+                        Locate 18, 56: Call TeamColors(I, homeTeam$(I), homeScores(I))
 
                 End Select
 
                 'Print team and wait for keypress
                 Locate 12, 64
 
-                If scheduleNG%(I, 13) <> 0 Then
+                If scheduleNG%(I, 13) = 1 Then
 
                     'Determine winner
                     If homeScores(I) > visitorScores(I) Then
-                        X$ = _Trim$(homeTeam$(I))
+                        printTeam$ = _Trim$(homeTeam$(I))
                     Else
-                        X$ = _Trim$(visitingTeam$(I))
+                        printTeam$ = _Trim$(visitingTeam$(I))
                     End If
 
                     found = 0
 
                     'Determine team color
-                    For X = 1 To 16
+                    For X = 0 To 16
+
                         For X1 = 1 To 16
-                            If X$ = slotName$(X, X1, 0) Then
+                            If printTeam$ = slotName$(X, X1, 0) Then
                                 Color tourneyParams(X, X1, 2), tourneyParams(X, X1, 3)
                                 found = 1
                                 Exit For
                             End If
                         Next
+
                         If found = 1 Then Exit For
+
                     Next
 
                     'Print winner
-                    Color 7, 0
-                    Print X$
+                    Print printTeam$
 
                 End If
 

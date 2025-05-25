@@ -32,6 +32,8 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim scheduleFile$, tourneyFile$
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -964,7 +966,7 @@ Sub COLHOOP ()
             earlyExit = 1
         Else
 
-            Open diskPaths$(1) + tourneyFile$ As #9 Len = TOURNEY_SIZE_BYTES
+            Open tourneyFile$ As #9 Len = TOURNEY_SIZE_BYTES
 
             For X = 0 To 14
                 Field #9, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -1407,6 +1409,7 @@ Sub COLHOOP ()
 
     Call ResetShotClock
 
+
     '----------------------------------------
     '                Tip Off!
     '----------------------------------------
@@ -1506,8 +1509,8 @@ Sub COLHOOP ()
 
     End If
 
-    If currHalf < 3 
-    
+    If currHalf < 3 Then
+
         If playerMode = 1 Then
             P9 = compTeam
             Call ComputerCoach
@@ -1610,6 +1613,15 @@ Sub COLHOOP ()
                 playerTime(I, I1) = 300
             Next
         Next
+
+        For X = 0 To 1
+            For Y = 0 To 13
+                If plyrOff_GAME!(X, Y, 12) = 5 Then
+                    'pbpDelay! = 0.4
+                    Call SCOREBOARD
+                End If
+            Next Y
+        Next X
 
         ballCarrier = -1
         Call DEADBALLOPTIONS
@@ -4842,7 +4854,7 @@ Sub COLHOOP ()
 
         pbpString$ = players$(D, lineupIdx(D, ballCarrier)) + " HAS THE DEF RB"
         Call SELECTPBP(D, 1)
-        
+
         If pbpOpt = 1 Then
             pbpString$ = "FOR " + gameTeams$(D)
             Call PBP(D)
@@ -4955,7 +4967,7 @@ Sub COLHOOP ()
         GoTo 9065
 
     Else
- 
+
         If gameClock! <= 0 Then
 
             GoTo 170
@@ -4992,7 +5004,7 @@ Sub COLHOOP ()
             End If
 
         End If
-        
+
     End If
 
 
@@ -5496,11 +5508,11 @@ Sub AUTOSETUP (validTeam)
     If validTeam = 1 And tourneyPlay = 1 Then
 
         'Read in tournament settings
-        tournFileNoExt$ = Mid$(tourneyFile$, 1, Len(tourneyFile$) - 4)
+        tournFileNoExt$ = GetFileBaseName$(tourneyFile$)
+        
         Open diskPaths$(1) + tournFileNoExt$ + ".INF" For Input As #1
 
         Input #1, X$
-
         Input #1, X$ ' NUMBER OF REGIONS
 
         For I = 1 To 16
@@ -8956,14 +8968,13 @@ Sub FoulCalled (randomFouler)
         End If
 
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
-
             P9 = D
             C1 = 1
             Call PlayStyle
             Call PlayItSafe
-
         End If
 
+        'Allow the player to be subbed out
         Call DEADBALLOPTIONS
 
         For I = 0 To 1
@@ -9125,10 +9136,14 @@ End Sub
 '        ComputerCoach Subroutine
 '----------------------------------------
 'This subroutine essentially handles the
-'AI for the computer coach. After an
-'evaluation of substitutions, it then calls
-'another routine to decide on strategies
+'AI for determining a lineup and strategy
+'for a computer team. After an evaluation
+'of player fatigue and contributions, it
+'makaes a lineup and calls another routine
+'to decide on strategies
 Sub ComputerCoach ()
+
+    'NOTE - this only processes for P9
 
     'Assign and sort stamina for all players
     For I = 0 To 13
@@ -9142,7 +9157,8 @@ Sub ComputerCoach ()
             plyrStaminaGame(I) = plyrOff_GAME!(P9, I, 3)
         End If
 
-        If (plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ) Or (currHalf = 1 And plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 2) Or (plyrOff_GAME!(P9, rosterIdx(I), 12) >= foulsToDQ - 1 And currHalf = 2 And gameClock! > 720) Then
+        playerFouls = plyrOff_GAME!(P9, rosterIdx(I), 12)
+        If (playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1) Then
             'Player who has fouled out or with too many fouls should not be used
             plyrStaminaGame(I) = 0
         End If
@@ -9295,7 +9311,7 @@ Sub UpdateNextRoundSeeds ()
     Shared teamYrTourn$()
 
     'CHECK FOR FILLING IN TOURNEY SCHEDULE
-    Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
+    Open tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
     fileLength& = LOF(1)
     Close #1
 
@@ -9303,7 +9319,7 @@ Sub UpdateNextRoundSeeds ()
 
     For currGame = 1 To numGames
 
-        Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
+        Open tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
 
         For X = 0 To 14
             Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -9340,8 +9356,6 @@ Sub UpdateNextRoundSeeds ()
 
             'Seed Play-in Winners
             If schedOptions(15) = 0 And schedOptions(16) = 1 Then
-
-                test = 1
 
                 'Since game #1 seeds to region #1,
                 'We compare those 2 fields
@@ -9634,7 +9648,7 @@ Sub UpdateTourneyFile (gameIdx, loseTeam$, winTeam$)
 
     Shared tourneyOptions()
 
-    Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
+    Open tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
 
     For X = 0 To 14
         Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$
@@ -10493,6 +10507,7 @@ Sub ChangeContributions ()
 
                         TY% = TY% + plyrOff_GAME!(teamChoice, I1, 3)
                         If rosterStatus(teamChoice, I1) = -1 Then
+                            'Disabled player
                             Color teamRat_GAME(teamChoice, 0), teamRat_GAME(teamChoice, 1)
                         End If
 
@@ -10769,7 +10784,8 @@ Sub COMPUTERSUBS ()
     disabledPlayers = 0
     tiredPlayers = 0
     foulPlayers = 0
-    skipG9% = 0
+
+    skipLogic = 0
 
     'offStatus = 50 means team is in BONUS
     If Not (offStatus = 50 And (playerMode = 1 And P9 = compTeam) Or (playerMode = 2 And P9 = P)) Then
@@ -10784,7 +10800,9 @@ Sub COMPUTERSUBS ()
 
             'Disabled player or inactive spot
             'Based on roster name, disable status or # of fouls so far
-            If goodPlayer%(P9, rosterIdx(I)) = 0 Then
+            'If goodPlayer%(P9, rosterIdx(I)) = 0 Then
+            playerFouls = plyrOff_GAME!(P9, I1, 12)
+            If ((playerFouls >= foulsToDQ) Or players$(teamIdx, playerIdx) = "XXX" Or rosterStatus(teamIdx, playerIdx) <> 0) Then
                 disabledPlayers = disabledPlayers + 1
             End If
 
@@ -10816,7 +10834,8 @@ Sub COMPUTERSUBS ()
                     tiredPlayers = tiredPlayers + 1
                 End If
 
-                If goodPlayer%(P9, lineupIdx(P9, I1)) = 0 Then
+                'If goodPlayer%(P9, lineupIdx(P9, I1)) = 0 Then
+                If ((playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1)) Then
                     foulPlayers = foulPlayers + 1
                 End If
 
@@ -10830,12 +10849,12 @@ Sub COMPUTERSUBS ()
         If (tiredPlayers >= 1 And 5 - tiredPlayers < 14 - fatiguePlayers) Or (foulPlayers >= 1 And disabledPlayers < 13) Or (currHalf = 2 And gameClock! < 120 And XS = 0 And G9%(P9) = 0) Or computerTimeout = 1 Then
             computerTimeout = 0
             Call ComputerCoach
-            skipG9% = 1
+            skipLogic = 1
         End If
 
     End If
 
-    If skipG9% = 0 Then
+    If skipLogic = 0 Then
         If currHalf = 2 And gameClock! <= 120 Then
             G9%(P9) = 1
         End If
@@ -14923,7 +14942,7 @@ Sub SAVESTATS ()
 
                 Close #2
 
-                Open diskPaths$(1) + tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
+                Open tourneyFile$ As #1 Len = TOURNEY_SIZE_BYTES
 
                 For X = 0 To 14
                     Field #1, X * 2 As X$, 2 As Q$(X + 1), 90 - 2 - 2 * X As X$

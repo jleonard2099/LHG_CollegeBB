@@ -75,6 +75,40 @@ Dim teamIndicator$(1)
 Dim yesNo$(0 To 1), yesNoText$(1)
 
 
+
+'----------------------------------------
+' Used in ADDTOURN / BRACKET routines
+'----------------------------------------
+Dim TC
+
+Dim Shared playinOpt$
+
+'           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
+' Mode of Play is no longer used as it's saved
+' with the file
+Dim tourneyParams(0 To 17, 0 To 17, 0 To 3)
+
+'Number of Teams Per Region (up to 16 Regions)
+'Additional regions
+'   Playin Teams
+'   Championship Teams
+Dim nbrRegionalTeams(0 To 17)
+
+'Team Names for Each Seed Slot
+Dim slotName$(0 To 17, 0 To 17, 0 To 3)
+
+'Region Names
+Dim regionNames$(0 To 17)
+
+Dim yearNumber$(MAX_TEAMS, 3)
+
+'TOURNAMENT DEFAULTS
+Dim tourneyDefaults(14)
+
+'0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
+Dim consolationSetting(1)
+
+
 '----------------------------------------
 ' Used in ALIGN / MERGE routines
 '----------------------------------------
@@ -223,43 +257,11 @@ Dim tmReb!, tmSteal!, tmTO!
 Dim statPlyrVal!(0 To 14, 0 To 26)
 
 
-'----------------------------------------
-' Used in ADDTOURN / BRACKET routines
-'----------------------------------------
-Dim TC
-
-Dim Shared playinOpt$
-
-'           REGION, SEED NUMBER, TEAM#/MODE OF PLAY (0,1)
-' Mode of Play is no longer used as it's saved
-' with the file
-Dim tourneyParams(0 To 17, 0 To 17, 0 To 3)
-
-'Number of Teams Per Region (up to 16 Regions)
-'Additional regions
-'   Playin Teams
-'   Championship Teams
-Dim nbrRegionalTeams(0 To 17)
-
-'Team Names for Each Seed Slot
-Dim slotName$(0 To 17, 0 To 17, 0 To 3)
-
-'Region Names
-Dim regionNames$(0 To 17)
-
-Dim yearNumber$(MAX_TEAMS, 3)
-
-'TOURNAMENT DEFAULTS
-Dim tourneyDefaults(14)
-
-'0-CONSOLATION IN REGIONS, 1-CONSOLATION IN CHAMPIONSHIP
-Dim consolationSetting(1)
-
 
 '----------------------------------------
 ' Used in Game Routines
 '----------------------------------------
-Dim scheduleFile$, tourneyFile$
+'Dim scheduleFile$, tourneyFile$
 Dim schedHomeTm$, schedVisTm$
 
 Dim actualAttendance&
