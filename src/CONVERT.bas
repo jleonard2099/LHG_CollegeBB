@@ -261,7 +261,7 @@ Sub ConvertTeam4to5 (targetFile$, silent)
 
         Kill targetFile$
 
-        Call FCopy(newFile$, targetFile$, Buff$, copyErr%)
+        result$ = CopyFile$(newFile$, targetFile$)
 
         Kill newFile$
 
@@ -313,7 +313,7 @@ Sub ConvertTeam5to4 (targetFile$, silent)
 
         Kill targetFile$
 
-        Call FCopy(oldFile$, targetFile$, Buff$, copyErr%)
+        result$ = CopyFile$(oldFile$, targetFile$)
 
         Kill oldFile$
 
@@ -502,7 +502,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         'Kill targetFile$
 
-        'Call FCopy(newFile$, targetFile$, Buff$, copyErr%)
+        'result$ = CopyFile$(newFile$, targetFile$)
 
         'Kill newFile$
 

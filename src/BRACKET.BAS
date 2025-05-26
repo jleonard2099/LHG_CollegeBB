@@ -90,7 +90,6 @@ Sub ViewTourneyInfo (ACTION%)
         Open diskPaths$(1) + baseFile$ + ".INF" For Input As #1
 
         Input #1, tournName$
-
         Input #1, numReg ' NUMBER OF REGIONS
 
         For I = 0 To 16
@@ -99,7 +98,7 @@ Sub ViewTourneyInfo (ACTION%)
         Next
 
         For I = 0 To 16
-            For I1 = 1 To 16
+            For I1 = 0 To 16
                 For I2 = 0 To 3
                     Input #1, slotName$(I, I1, I2) ' SEED SLOT NAME
                     Input #1, tourneyParams(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
@@ -125,7 +124,7 @@ Sub ViewTourneyInfo (ACTION%)
         Close #3
 
         scheduleAP%(0) = fileLength& / 90
-        BS% = Int((scheduleAP%(0) - 1) / 25)
+        BS% = Int((scheduleAP%(0) - 1) / SCHED_ENTRIES_PER_SCREEN)
 
         For I = 1 To scheduleAP%(0)
 
@@ -309,8 +308,8 @@ Sub ViewBracket (numberRegions, ACTION%)
         Locate , 1
         Color , 0
 
-        For I = 1 To numberRegions
-            If regionNames$(I) = "" Then
+        For I = 0 To numberRegions
+            If I > 0 And regionNames$(I) = "" Then
                 regionNames$(I) = "TO BE NAMED"
             End If
             menuChoices$(I) = regionNames$(I)

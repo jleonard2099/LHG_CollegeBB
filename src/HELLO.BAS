@@ -27,13 +27,17 @@ DefInt A-Z
 '$Include: 'QPProEqu.bi'
 '$Include: 'StringManip.bi'
 '$Include: 'QBWRITE.bi'
+Dim Shared Doc$(LineNo)
+Dim Shared Text$(row)
+
+Common Shared Npath$, NewFile, KeyPress, PageNo, NoOfPages
+Common Shared LastKey
+Common Shared FileLine, FLNo, keystroke$, InsertMode
 
 ' For Utils
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-Dim scheduleFile$, tourneyFile$
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -5509,19 +5513,19 @@ Sub AUTOSETUP (validTeam)
 
         'Read in tournament settings
         tournFileNoExt$ = GetFileBaseName$(tourneyFile$)
-        
+
         Open diskPaths$(1) + tournFileNoExt$ + ".INF" For Input As #1
 
         Input #1, X$
         Input #1, X$ ' NUMBER OF REGIONS
 
-        For I = 1 To 16
-            Input #1, X$ ' NUMBER OF TEAMS IN REGION
+        For I = 0 To 16
+            Input #1, X% ' NUMBER OF TEAMS IN REGION
             Input #1, X$ ' NAME OF REGION
         Next
 
-        For I = 1 To 16
-            For I1 = 1 To 16
+        For I = 0 To 16
+            For I1 = 0 To 16
                 For I2 = 1 To 4
                     Input #1, seedSlotName$(I, I1, I2) ' SEED SLOT NAME
                     Input #1, tourneySettings(I, I1, I2) ' REGION, SEED NUMBER, MODE PLAY/TM#
@@ -14664,9 +14668,6 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
             playerCount = playerCount + 1
         End If
     Next
-
-    Print #1, "ACTIVE PLAYERS = "; playerCount
-
 
     Close #1
 

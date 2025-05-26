@@ -150,7 +150,7 @@ Sub TOURNEY ()
                     NS% = Int((targetGame% - 1) / SCHED_ENTRIES_PER_SCREEN)
 
                     'boxName$ = diskPaths$(1) + "BOX" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%)))
-                    boxName$ = diskPaths$(1) + scheduleFile$ + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
+                    boxName$ = diskPaths$(1) + GetFileBaseName$(tourneyFile$) + "_GAME" + Mid$(Str$(targetGame%), 2, Len(Str$(targetGame%))) + ".BS"
 
                     Call EditBoxscore(boxName$)
                     Color 15, 0

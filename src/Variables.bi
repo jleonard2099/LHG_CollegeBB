@@ -261,7 +261,7 @@ Dim statPlyrVal!(0 To 14, 0 To 26)
 '----------------------------------------
 ' Used in Game Routines
 '----------------------------------------
-'Dim scheduleFile$, tourneyFile$
+Dim scheduleFile$, tourneyFile$
 Dim schedHomeTm$, schedVisTm$
 
 Dim actualAttendance&
@@ -272,7 +272,7 @@ Dim FY%(0 To 1)
 Dim alpha$(4), tickerPeriod$(14), teamYrTourn$(0 To 3)
 
 Dim schedOptions(18)
-Dim tourneySettings(1 To 16, 1 To 16, 0 To 4)
+Dim tourneySettings(0 To 16, 0 To 16, 0 To 4)
 
 Dim avgAttendance&(1)
 
@@ -337,6 +337,6 @@ Dim Shared offStyles$(9), offStyles_brief$(15)
 Dim Shared offStylesNew$(15)
 Dim Shared pbpStyle$(1), players$(1, 13)
 Dim Shared positions_GAME$(0 To 1, 0 To 13), posnName$(0 To 4)
-Dim Shared seedSlotName$(1 To 16, 1 To 16, 0 To 4), SX$(32, 2)
+Dim Shared seedSlotName$(0 To 16, 0 To 16, 0 To 4), SX$(32, 2)
 Dim Shared teamGender$(0 To 1)
 

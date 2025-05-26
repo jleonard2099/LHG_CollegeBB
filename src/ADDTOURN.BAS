@@ -297,6 +297,7 @@ Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
     GetDiv4:
     Locate 13, 35 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 2 'specify field parameters
+    regionCount# = nbrRegions
     Call NumIn(regionCount#, Max, XCode, FG, BG) 'get input
     If XCode = 1 GoTo GetDiv3: 'can't back up any more, stay here
     If XCode = 2 GoTo Done 'all done entering data
@@ -356,10 +357,10 @@ Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
 
             Else
 
-                If tourneyDefaults(11) = 1 Then 
+                If tourneyDefaults(11) = 1 Then
                     'Play-in games are handled as "region 0"
                     startRegion = 0
-                Else    
+                Else
                     startRegion = 1
                 End If
 
@@ -437,6 +438,7 @@ Sub SeedBrackets (currRegion, nbrRegions, teamCount, sourceFile$, tourneyName$)
     REGIONSIZE:
     Locate 9, 34 'location of beginning of field
     CapsOn = 0: NumOnly = 0: Max = 2 'specify field parameters
+    teamQty# = teamCount
     Call NumIn(teamQty#, Max, XCode, FG, BG) 'get input
     If XCode = 1 GoTo NameRegion: 'can't back up any more, stay here
 
@@ -478,7 +480,7 @@ Sub SeedBrackets (currRegion, nbrRegions, teamCount, sourceFile$, tourneyName$)
         If currRegion > 0 And currRegion <= playInSeeds Then
 
             slotsUsed = slotsUsed + 1
-            
+
             '-- Update here to use different slots for seeding
             '-- Currently only uses the last seed
             seedSlot = nbrRegionalTeams(currRegion) 'last seed
@@ -651,7 +653,9 @@ Sub EditRegionSeeds (nbrRegions, teamCount, saveFile$, tourneyName$)
         Color , 0
 
         For I = 0 To nbrRegions
-            If regionNames$(I) = "" Then regionNames$(I) = "TO BE NAMED"
+            If I > 0 And regionNames$(I) = "" Then
+                regionNames$(I) = "TO BE NAMED"
+            End If
             menuChoices$(I) = regionNames$(I)
         Next
 
@@ -758,9 +762,15 @@ Sub LoadTourney (nbrRegions, ACTION%)
             'Reset tournament
 
             'Create TOU file as backup of TCX
-            Call FCopy(diskPaths$(1) + baseFile$ + ".TCX", diskPaths$(1) + baseFile$ + ".TOU", Buff$, copyErr%)
+            'Call FCopy(diskPaths$(1) + baseFile$ + ".TCX", diskPaths$(1) + baseFile$ + ".TOU", Buff$, copyErr%)
+            result$ = CopyFile$(diskPaths$(1) + baseFile$ + ".TCX", diskPaths$(1) + baseFile$ + ".TOU")
 
-            MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
+            If result$ = "" Then
+                MsgText$ = "ALL FILES SAVED...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
+            Else
+                MsgText$ = "THERE WAS AN ERROR SAVING FILES...PRESS ANY KEY TO RETURN TO TOURNAMENT OPTIONS"
+            End If
+
             BoxWidth = 18
             BoxHeight = (Len(MsgText$) / BoxWidth) + 3 'top and box lines + 1 extra
             Locate ((25 - BoxHeight) / 2), (80 - ((BoxWidth + 2) / 2))
