@@ -396,7 +396,7 @@ Sub InputTeam ()
         Locate 24, 29: Input opp3FGA!
         Locate 24, 29: Print " "
 
-        Locate 25, 1: Print "19. 3 FGA % ";
+        Locate 25, 1: Print "19. 3 FG % ";
         Locate 25, 14: Input tm3FGAPct!
         Locate 25, 14: Print " "
         Locate 25, 29: Input opp3FGAPct!
@@ -570,7 +570,7 @@ Sub InputTeam ()
                     Locate 24, 29: Print " "
 
                 Case 19
-                    Locate 25, 1: Print "19. 3 FGA %";
+                    Locate 25, 1: Print "19. 3 FG %";
                     Locate 25, 14: Print Space$(10)
                     Locate 25, 14: Input tm3FGAPct!
                     Locate 25, 14: Print " "
