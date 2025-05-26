@@ -27,12 +27,6 @@ DefInt A-Z
 '$Include: 'QPProEqu.bi'
 '$Include: 'StringManip.bi'
 '$Include: 'QBWRITE.bi'
-Dim Shared Doc$(LineNo)
-Dim Shared Text$(row)
-
-Common Shared Npath$, NewFile, KeyPress, PageNo, NoOfPages
-Common Shared LastKey
-Common Shared FileLine, FLNo, keystroke$, InsertMode
 
 ' For Utils
 '$Include: 'BoxRoutines.bi'
@@ -10806,8 +10800,10 @@ Sub COMPUTERSUBS ()
             'Based on roster name, disable status or # of fouls so far
             'If goodPlayer%(P9, rosterIdx(I)) = 0 Then
             playerFouls = plyrOff_GAME!(P9, I1, 12)
-            If ((playerFouls >= foulsToDQ) Or players$(teamIdx, playerIdx) = "XXX" Or rosterStatus(teamIdx, playerIdx) <> 0) Then
+            'If ((playerFouls >= foulsToDQ) Or players$(teamIdx, playerIdx) = "XXX" Or rosterStatus(teamIdx, playerIdx) <> 0) Then
+            If ((playerFouls >= foulsToDQ) Or players$(P9, I1) = "XXX" Or rosterStatus(P9, I1) <> 0) Then
                 disabledPlayers = disabledPlayers + 1
+                foulPlayers = foulPlayers + 1
             End If
 
             If I1 <= 4 Then
@@ -13116,7 +13112,7 @@ Sub ComputerStrategy ()
 
                 Case 89 To 93
                     offStrat(P9) = 7
-                    
+
                 Case 94 To 100
                     offStrat(P9) = 8
 
