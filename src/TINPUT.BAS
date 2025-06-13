@@ -825,6 +825,8 @@ Sub InputTeam ()
                     playerStats!(I, 6) = playerOff!(I, 19)
                     playerStats!(I, 7) = playerOff!(I, 10)
                     playerStats!(I, 8) = playerOff!(I, 12)
+                    
+                    'Assists
                     playerStats!(I, 9) = playerOff!(I, 11)
 
                     'Blocks
