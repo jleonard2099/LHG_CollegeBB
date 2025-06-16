@@ -282,13 +282,12 @@ Dim Shared C1, clockSecs
 Dim Shared D, P, P9
 Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
 Dim Shared compTeam, currGame, gameOver, endAllGames
-Dim Shared fastBreak, forcedThree, ftNumber
+Dim Shared fastBreak, forcedThree, ftNumber, foulPlayer
 Dim Shared G9, gameAvgTmStamina, gameLoc, guardIdx
 Dim Shared halfTime
 Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul
-Dim Shared foulOnPlay, foulsToDQ
-Dim Shared guardNbr, lineupChanged, MJ
-Dim Shared nbrLines, offStatus
+Dim Shared foulOnPlay, foulsToDQ, guardNbr
+Dim Shared MJ, nbrLines, offStatus
 Dim Shared passes, playerMode, playerOpt, pbpOpt, pbpType
 Dim Shared rebFoulChance, S2, sClockVal, shotClock, shotType, sndOpt
 Dim Shared threePtOpt, threePtShotChance
@@ -300,6 +299,7 @@ Dim Shared X0%, X1%, XX%
 Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
 
 Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
+Dim Shared pbpLines$(1 To 13)
 Dim Shared prevBall$, pbpString$
 
 Dim Shared crashBoards(1), G9%(1)

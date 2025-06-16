@@ -1,7 +1,7 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.22"
+Const GAME_VERSION$ = "5.25"
 Const MAX_FILES = 10240
 Const MAX_CAREER_YEARS = 15
 Const MAX_CONFERENCES = 40
@@ -889,8 +889,8 @@ Sub COLHOOP ()
 
         currGame = schedGame(0) + schedGame(2)
 
-        'Open "pbplog" + Str$(currGame) For Append As #11
-        Open "pbplog" For Append As #11
+        ''Open "pbplog" + Str$(currGame) For Append As #11
+        'Open "pbplog" For Append As #11
 
         If Not _FileExists(scheduleFile$) Then
 
@@ -937,7 +937,7 @@ Sub COLHOOP ()
 
     Else
 
-        Open "pbplog" For Append As #11
+        'Open "pbplog" For Append As #11
 
     End If
 
@@ -1349,7 +1349,8 @@ Sub COLHOOP ()
         If (playerMode = 1 And P9 = compTeam) Or playerMode = 2 Then
             Call ComputerCoach
         Else
-            Call PlayStyle
+            Call ChooseLineup
+            Call CHANGESTRATEGY(P9)
             Call PlayItSafe
         End If
 
@@ -1373,7 +1374,7 @@ Sub COLHOOP ()
     Next P9
 
     Call CheckGameClock
-    Call STEALADJ
+    Call StealAdjustments
 
     If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 Then
         whistle& = _SndOpen("whistle.mp3")
@@ -1539,7 +1540,7 @@ Sub COLHOOP ()
         Call SCOREBOARD
 
         ballCarrier = -1
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         gameClock! = 1200
         Call UPDATESCREEN
@@ -1634,7 +1635,7 @@ Sub COLHOOP ()
         Next X
 
         ballCarrier = -1
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         Call SCOREBOARD
 
@@ -1756,6 +1757,8 @@ Sub COLHOOP ()
             Do
                 I$ = GetKeyPress$
                 I1% = Val(I$)
+
+                'Call pbplog(1761)
             Loop Until I1% >= 0 And I1% <= 5 And Not (I1% = 3 And timeouts(P9) <= 0) And ((I1% = 1 Or I1% = 4) And threePtOpt = 1)
 
             Color 15, 0
@@ -1886,9 +1889,11 @@ Sub COLHOOP ()
                 pbpString$ = "THEY QUICKLY CALL FOR A TIMEOUT"
                 Call PBP(P)
 
-                timeouts(P) = timeouts(P) - 1
+                If timeouts(P) > 0 Then
+                    timeouts(P) = timeouts(P) - 1
+                End If
 
-                Call DEADBALLOPTIONS
+                Call DEADBALLOPTIONS(deadballTO)
 
                 Call SCOREBOARD
 
@@ -2072,8 +2077,6 @@ Sub COLHOOP ()
         Call PressFatigueOff
     End If
 
-    Call pbplog(2073)
-
     GoTo 400
 
     'End If
@@ -2185,8 +2188,6 @@ Sub COLHOOP ()
                 shotChance! = 98
                 playChoice = 1
 
-                Call pbplog(2186)
-
                 GoTo 520
 
             End If
@@ -2211,11 +2212,9 @@ Sub COLHOOP ()
                     desigFouler = Val(I$)
                 Loop Until desigFouler >= 0 And desigFouler <= 4
 
-                If passes > 1 Then skipInbound% = 1
-
             End If
 
-            If skipInbound% = 0 Then
+            If passes <= 1 Then
 
                 Select Case RN1
 
@@ -2232,8 +2231,6 @@ Sub COLHOOP ()
                             passes = 0
                             Call TimeoutCalled(P)
 
-                            Call pbplog(2233)
-
                             If A6 = 0 Then
                                 Call PRESSGUARD
                                 GoTo 300
@@ -2242,8 +2239,6 @@ Sub COLHOOP ()
                             End If
 
                         Else
-
-                            Call pbplog(2244)
 
                             pbpString$ = "5 SECOND VIOLATION...TURNOVER"
                             shotViolation = 1
@@ -2254,8 +2249,6 @@ Sub COLHOOP ()
                     Case 5 To 7
                         pbpString$ = gameTeams$(P) + " CAN'T INBOUND THE BALL"
                         Call SELECTPBP(P, 1)
-
-                        Call pbplog(2256)
 
                         pbpString$ = "5 SECOND VIOLATION...TURNOVER"
                         shotViolation = 1
@@ -2287,8 +2280,6 @@ Sub COLHOOP ()
 
                     Call LASTSHOT
 
-                    Call pbplog(2288)
-
                     GoTo 517
 
                 End If
@@ -2317,8 +2308,6 @@ Sub COLHOOP ()
                             'Call AdjustShotClock
 
                     End Select
-
-                    Call pbplog(2319)
 
                     'Check for steal
                     GoTo 435
@@ -2363,8 +2352,6 @@ Sub COLHOOP ()
             Else
                 Call FoulCalled(1)
             End If
-
-            Call pbplog(2365)
 
             GoTo 9065
 
@@ -2428,8 +2415,6 @@ Sub COLHOOP ()
 
                 LT = 4
 
-                Call pbplog(2429)
-
                 GoTo 9065
 
             End If
@@ -2452,8 +2437,6 @@ Sub COLHOOP ()
 
                 Call LASTSHOT
 
-                Call pbplog(2453)
-
                 'Turnover
                 GoTo 517
 
@@ -2473,8 +2456,6 @@ Sub COLHOOP ()
 
             If RN0 <= stealChance Then
                 'Steal
-                Call pbplog(2474)
-
                 GoTo 435
             End If
 
@@ -2514,8 +2495,6 @@ Sub COLHOOP ()
 
                 LT = 4
 
-                Call pbplog(2515)
-
                 GoTo 9065
 
             End If
@@ -2525,7 +2504,6 @@ Sub COLHOOP ()
             If RN0 <= foulChance + 1 Then
                 'Offensive Foul
                 offStatus = 0
-                Call pbplog(2526)
                 GoTo 580
             End If
 
@@ -2562,8 +2540,6 @@ Sub COLHOOP ()
             If RN0 <= toChance Then
 
                 Call LASTSHOT
-
-                Call pbplog(2564)
 
                 GoTo 517
 
@@ -2604,7 +2580,6 @@ Sub COLHOOP ()
 
             If RN0 <= stealChance + OY% Then
                 'Check for steal
-                Call pbplog(2605)
                 GoTo 435
             End If
 
@@ -2678,7 +2653,6 @@ Sub COLHOOP ()
     If offStrat(P) = 13 Or offStrat(P) = 14 Or (sClockVal >= 1 And offStrat(P) = 11 And shotClock > 15) Or (sClockVal >= 1 And d100% > GS%) Or ((sClockVal = 0 And d100% > GS% And d100% <= 80)) Then
 
         'No Shot / Difficult Shot
-        Call pbplog(2679)
         GoTo 437
 
     Else
@@ -2692,7 +2666,6 @@ Sub COLHOOP ()
                 If currHalf <= 2 Then
                     If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
                         'Fatigued - No Shot / Difficult Shot
-                        Call pbplog(2693)
                         GoTo 437
                     End If
                 End If
@@ -2723,8 +2696,6 @@ Sub COLHOOP ()
                         shotType = 3
                     End If
 
-                    Call pbplog(2723)
-
                     GoTo 520
 
                 End If
@@ -2738,8 +2709,6 @@ Sub COLHOOP ()
         'Delay Offense
         If offStrat(P) = 10 Then
 
-            Call pbplog(2740)
-
             'No Shot / Difficult Shot
             GoTo 437
 
@@ -2750,8 +2719,6 @@ Sub COLHOOP ()
                 If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
                     If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
                         'No Shot / Difficult Shot
-                        Call pbplog(2751)
-
                         GoTo 437
                     End If
                 End If
@@ -2770,8 +2737,6 @@ Sub COLHOOP ()
         If J8% = 1 Then
             shotType = 4
         End If
-
-        Call pbplog(2772)
 
         GoTo 520
 
@@ -2923,8 +2888,6 @@ Sub COLHOOP ()
 
         End If
 
-        Call pbplog(2923)
-
         GoTo 300
 
     Else
@@ -3017,8 +2980,6 @@ Sub COLHOOP ()
             playChoice = 1
         End If
 
-        Call pbplog(3018)
-
         GoTo 520
 
     End If
@@ -3062,7 +3023,7 @@ Sub COLHOOP ()
 
         Call ChangePossession
 
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -3071,8 +3032,6 @@ Sub COLHOOP ()
                 pctContrib(I) = 0
             End If
         Next
-
-        Call pbplog(3073)
 
         GoTo 300
 
@@ -3187,8 +3146,6 @@ Sub COLHOOP ()
                     shotViolation = 1
 
                     Call LASTSHOT
-
-                    Call pbplog(3189)
 
                     GoTo 517
 
@@ -3445,8 +3402,6 @@ Sub COLHOOP ()
     '3 = Foul
     '4 = Shoot (3FGA)
 
-    Call pbplog(3445)
-
     'Computer Opponent or "Let Computer Shoot"
     scoreDiff = score(P, 0) - score(D, 0)
 
@@ -3463,6 +3418,7 @@ Sub COLHOOP ()
 
             Do
                 I$ = GetKeyPress$
+                'Call pbplog(3421)
             Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N" Or UCase$(I$) = "3"
 
             If UCase$(I$) = "Y" Or I$ = "3" Then
@@ -3556,6 +3512,7 @@ Sub COLHOOP ()
         Do
 
             I$ = GetKeyPress$
+            'Call pbplog(3515)
 
             Select Case UCase$(I$)
 
@@ -3674,7 +3631,6 @@ Sub COLHOOP ()
 
         Case 1
             ' *** PASS ***
-            Call pbplog(3671)
             GoTo 350
 
         Case 2
@@ -3745,7 +3701,6 @@ Sub COLHOOP ()
 
                     If missedLast = 1 Then
                         'Missed last FT - REBOUND
-                        Call pbplog(3741)
                         GoTo 650
                     Else
 
@@ -3761,8 +3716,6 @@ Sub COLHOOP ()
 
                         ballCarrier = 6
                         offStatus = 0
-
-                        Call pbplog(3757)
 
                         GoTo 300
 
@@ -3877,8 +3830,6 @@ Sub COLHOOP ()
 
                     If missedLast = 1 Then
 
-                        Call pbplog(3870)
-
                         GoTo 670
 
                     Else
@@ -3894,8 +3845,6 @@ Sub COLHOOP ()
 
                         ballCarrier = 6
                         offStatus = 0
-
-                        Call pbplog(3888)
 
                         GoTo 300
 
@@ -4059,8 +4008,6 @@ Sub COLHOOP ()
                 Call STOPPAGE
                 Call PRESSGUARD
 
-                Call pbplog(4058)
-
                 GoTo 300
 
             Else
@@ -4172,8 +4119,6 @@ Sub COLHOOP ()
 
                 End If
 
-                Call pbplog(4171)
-
                 GoTo 670
                 
             End If
@@ -4186,10 +4131,8 @@ Sub COLHOOP ()
 
             If A6 = 0 Then
                 Call PRESSGUARD
-                Call pbplog(4185)
                 GoTo 300
             Else
-                Call pbplog(4188)
                 GoTo 350
             End If
 
@@ -4213,15 +4156,13 @@ Sub COLHOOP ()
                 Do
                     I$ = GetKeyPress$
                     desigFouler = Val(I$)
+                    'Call pbplog(4159)
                 Loop Until desigFouler >= 0 And desigFouler <= 4
             End If
 
-            foulPlayer = desigFouler
-
             ' ** Intentional foul / designated player **
+            foulPlayer = desigFouler
             Call FoulCalled(0)
-
-            Call pbplog(4220)
 
             GoTo 9065
 
@@ -4234,7 +4175,6 @@ Sub COLHOOP ()
                 'Take regular shot
                 P3 = 1
                 playChoice = 1
-                Call pbplog(4233)
                 GoTo 537
 
             Else
@@ -4296,7 +4236,6 @@ Sub COLHOOP ()
 
                         If missedLast = 1 Then
                             'Missed shot
-                            Call pbplog(4295)
                             GoTo 650
                         Else
 
@@ -4312,8 +4251,6 @@ Sub COLHOOP ()
                             ballCarrier = 6
                             offStatus = 0
 
-                            Call pbplog(4311)
-
                             GoTo 300
 
                         End If
@@ -4321,7 +4258,6 @@ Sub COLHOOP ()
                     Else
 
                         'FOULED on Good Shot
-
                         Call AdjustClockTime(4)
                         Call AdjustPlayTime
                         'Call AdjustShotClock
@@ -4348,8 +4284,6 @@ Sub COLHOOP ()
 
                         ' ** Foul on made 3FGA **
                         Call FoulCalled(1)
-
-                        Call pbplog(4347)
 
                         GoTo 619
 
@@ -4393,8 +4327,6 @@ Sub COLHOOP ()
 
                         Call UPDATESCREEN
 
-                        Call pbplog(4391)
-
                         GoTo 670
 
                     Else
@@ -4437,8 +4369,6 @@ Sub COLHOOP ()
 
                         Call UPDATESCREEN
 
-                        Call pbplog(4436)
-
                         GoTo 562
 
                     End If 'Done processing normal 3-pointer
@@ -4461,8 +4391,6 @@ Sub COLHOOP ()
 
     If missedLast = 1 Then
 
-        Call pbplog(4459)
-
         GoTo 650
 
     Else
@@ -4477,8 +4405,6 @@ Sub COLHOOP ()
         Call PRESSGUARD
 
         offStatus = 0
-
-        Call pbplog(4477)
 
         GoTo 300
 
@@ -4507,7 +4433,6 @@ Sub COLHOOP ()
     If teamFouls(D) > BONUS_FOUL_NUM Then
 
         'BONUS
-        Call pbplog(4504)
         GoTo 570
 
     Else
@@ -4529,7 +4454,7 @@ Sub COLHOOP ()
 
         Call UPDATESCREEN
 
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -4540,8 +4465,6 @@ Sub COLHOOP ()
         Next
 
         Call PRESSGUARD
-
-        Call pbplog(4540)
 
         GoTo 300
 
@@ -4585,19 +4508,16 @@ Sub COLHOOP ()
 
             Case 1 To 16
                 foulOnReb = 1
-                Call pbplog(4584)
                 GoTo 707
 
             Case 17 To 24
                 'Call ReboundOffense
                 Call ReboundDistribution(P)
-                Call pbplog(4590)
                 GoTo 760
 
             Case 25 To 100
                 'Call ReboundDefense
                 Call ReboundDistribution(D)
-                Call pbplog(4596)
                 GoTo 800
 
         End Select
@@ -4625,7 +4545,6 @@ Sub COLHOOP ()
 
     scoreDiff = score(D, 0) - score(P, 0)
     If currHalf > 1 And gameClock! < 30 And (scoreDiff = 2 Or scoreDiff = 0 Or scoreDiff = -2) And RN0 <= 12 Then
-        Call pbplog(4624)
         GoTo 700
     End If
     '--- loop
@@ -4642,7 +4561,6 @@ Sub COLHOOP ()
 
             If offStatus = 98 Then
             
-                Call pbplog(4641)
                 GoTo 700
 
             Else
@@ -4659,7 +4577,7 @@ Sub COLHOOP ()
 
                 Call ChangePossession
 
-                Call DEADBALLOPTIONS
+                Call DEADBALLOPTIONS(deadballTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4668,8 +4586,6 @@ Sub COLHOOP ()
                         pctContrib(I) = 0
                     End If
                 Next
-
-                Call pbplog(4668)
 
                 GoTo 300
 
@@ -4691,7 +4607,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(D, 1)
                 Call DELAY
 
-                Call DEADBALLOPTIONS
+                Call DEADBALLOPTIONS(deadballTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4702,8 +4618,6 @@ Sub COLHOOP ()
                 Next
 
                 Call ChangePossession
-
-                Call pbplog(4702)
 
                 GoTo 300
 
@@ -4718,7 +4632,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call DEADBALLOPTIONS
+                Call DEADBALLOPTIONS(deadballTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4730,8 +4644,6 @@ Sub COLHOOP ()
 
                 LT = 4
 
-                Call pbplog(4729)
-
                 GoTo 520
 
             End If
@@ -4739,8 +4651,6 @@ Sub COLHOOP ()
         Case 18 To 19
 
             If offStatus = 99 Then
-
-                Call pbplog(4739)
 
                 GoTo 700
                 
@@ -4780,8 +4690,6 @@ Sub COLHOOP ()
                 Call STOPPAGE
                 Call PRESSGUARD
 
-                Call pbplog(4779)
-
                 GoTo 300
 
             End If
@@ -4789,8 +4697,6 @@ Sub COLHOOP ()
         Case 20
 
             If offStatus = 99 Then
-
-                Call pbplog(4789)
 
                 GoTo 700
 
@@ -4822,13 +4728,10 @@ Sub COLHOOP ()
 
                     Call UPDATESCREEN
 
-                    Call pbplog(4821)
-
                     GoTo 562
 
                 Else
 
-                    Call pbplog(4827)
                     GoTo 560
 
                 End If
@@ -4932,8 +4835,6 @@ Sub COLHOOP ()
 
                 ballCarrier = Int(Rnd(1) * 5)
 
-                Call pbplog(4931)
-
                 GoTo 760
 
             Else
@@ -5007,8 +4908,6 @@ Sub COLHOOP ()
         LT = 4
         foulOnReb = 0
 
-        Call pbplog(5006)
-
         GoTo 9065
 
     Else
@@ -5042,8 +4941,6 @@ Sub COLHOOP ()
             GoTo LAYUP
 
         Else
-
-            Call pbplog(5042)
 
             GoTo 300
 
@@ -5087,8 +4984,6 @@ Sub COLHOOP ()
         LT = 4
         foulOnReb = 0
 
-        Call pbplog(5085)
-
         GoTo 9065
 
     Else
@@ -5121,11 +5016,8 @@ Sub COLHOOP ()
                 If rebShotRoll <= 7 Then
                     shotType = 9
                     playChoice = 1
-                    Call pbplog(5120)
-
                     GoTo 537
                 Else
-                    Call pbplog(5124)
                     GoTo 520
                 End If
 
@@ -5195,7 +5087,7 @@ Sub COLHOOP ()
 
         turnovers(P) = turnovers(P) + 1
 
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -5215,7 +5107,7 @@ Sub COLHOOP ()
 
         possArrow = 1 - possArrow
 
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -5261,8 +5153,6 @@ Sub COLHOOP ()
 
         If missedLast And intentional = 0 Then
 
-            Call pbplog(5124)
-
             GoTo 650
 
         Else
@@ -5296,8 +5186,6 @@ Sub COLHOOP ()
 
             End If
 
-            Call pbplog(5295)
-
             GoTo 300
 
         End If
@@ -5308,7 +5196,6 @@ Sub COLHOOP ()
         If teamFouls(D) > BONUS_FOUL_NUM Then
 
             'BONUS
-            Call pbplog(5307)
             GoTo 570
 
         Else
@@ -5316,7 +5203,7 @@ Sub COLHOOP ()
             'Not in bonus
             If gameClock! <= 0 Then 170
 
-            Call DEADBALLOPTIONS
+            Call DEADBALLOPTIONS(deadballTO)
 
             For I = 0 To 1
                 If defCategory(I) = 0 Then
@@ -5331,7 +5218,6 @@ Sub COLHOOP ()
                 pbpString$ = gameTeams$(P) + " BALL O.B. AFTER FOUL"
                 Call SELECTPBP(P, 1)
 
-                Call pbplog(5330)
                 GoTo 350
 
             Else
@@ -5352,7 +5238,6 @@ Sub COLHOOP ()
 
                 If missedLast = 1 Then
 
-                    Call pbplog(5351)
                     GoTo 650
 
                 Else
@@ -5369,7 +5254,6 @@ Sub COLHOOP ()
                     ballCarrier = 6
                     offStatus = 0
 
-                    Call pbplog(5368)
                     GoTo 300
 
                 End If
@@ -5507,7 +5391,6 @@ Sub InitVar ()
     gameOver = 0
     guardNbr = 0
     halfTime = 0
-    lineupChanged = 0
     nbrLines = 1
     passes = 0
     pbpType = 0
@@ -5864,7 +5747,7 @@ Sub TimeoutCalled (chargeTeam)
         Call SELECTPBP(chargeTeam, 1)
         Call DELAY
 
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             For I1 = 0 To 13
@@ -5922,7 +5805,7 @@ End Sub
 Sub FRAMEOPTION (boxHeight, teamIdx)
 
     PCopy 0, 1
-    Screen , , 1, 1
+    'Screen , , 1, 1
 
     Locate 8, 8
     Color teamRat_GAME(teamIdx, 0), teamRat_GAME(teamIdx, 1)
@@ -8928,8 +8811,8 @@ Sub HalfCourt (shotChoice)
 
     Locate 12, 14
     Locate , 14: Print Using "TIME REMAINING #.#"; T!
-    Locate , 14: Print "0 - SHOOT A 2"
-    Locate , 14: Print "1 - SHOOT A 3"
+    Locate , 14: Print "0 - SHOOT 2-PT FG"
+    Locate , 14: Print "1 - SHOOT 3-PT FG"
 
     Do
         I$ = GetKeyPress$
@@ -9118,12 +9001,13 @@ Sub FoulCalled (randomFouler)
         If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
             P9 = D
             C1 = 1
-            Call PlayStyle
+            Call ChooseLineup
+            Call CHANGESTRATEGY(P9)
             Call PlayItSafe
         End If
 
         'Allow the player to be subbed out
-        Call DEADBALLOPTIONS
+        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -9302,8 +9186,7 @@ Sub ComputerCoach ()
             plyrStaminaGame(I) = plyrOff_GAME!(P9, I, 3)
         End If
 
-        playerFouls = plyrOff_GAME!(P9, rosterIdx(I), 12)
-        If (playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1) Then
+        If foulDanger%(P9, rosterIdx(I)) = 1 Then
             'Player who has fouled out or with too many fouls should not be used
             plyrStaminaGame(I) = 0
         End If
@@ -9940,53 +9823,79 @@ Sub UPDATESCREEN ()
     'Team strategies / decisions
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-        'Team Play Styles
-        Locate 9, 41
-        Color , 0
-        Print Space$(39);
-
-        Locate , 41
-        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
-        Print "DEF-"; defStyles_brief$(defStrat(D))
-
-        Locate , 41
-        Color , 0
-        Print Space$(39);
-
-        Locate , 41
-        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
-        Print "OFF-"; offStyles_brief$(offStrat(P))
-
-        Color 15, 0
-        Locate 11, 41
-        Color 14: Print "(1) ";
-        Color 15: Print "SHOOT        ";
-        Color 14: Print "ENTER";
-        Color 15: Print "-PASS"
-        Locate , 41
-        Print Space$(35);
-        Locate , 41
-        Color 14: Print "(2)  ";
-        Color 15: Print gameTeams$(P);
-        Print " CALL TIMEOUT       "
-        Locate , 41
-        Color 14: Print "(T)  ";
-        Color 15: Print "10 MIN TICKER"
-        Locate , 41
-        Color 14: Print "(D)  ";
-        Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-        Locate , 41
-        Color 14: Print "(B)  ";
-        Color 15: Print "BOXSCORE"
+        Call DisplayUserOpts
 
         Color 15, 0
 
-        Locate 19, 1
+        Locate 24, 1
         Call PrintActiveLineup(0)
-        Locate 19, 40
+        Locate 24, 40
         Call PrintActiveLineup(1)
 
     End If
+
+End Sub
+
+
+'----------------------------------------
+'        DisplayUserOpts Subroutine
+'----------------------------------------
+'This subroutine displays all end user
+'options such as current team strategy,
+'shoot / pass decisions and other useful
+'keyboard shortcuts
+Sub DisplayUserOpts
+
+    'Team Play Styles
+    Locate 10, 41
+    Color , 0
+    Print Space$(39);
+
+    Locate , 41
+    Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
+    Print "DEF-"; defStyles_brief$(defStrat(D))
+
+    Locate , 41
+    Color , 0
+    Print Space$(39);
+
+    Locate , 41
+    Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
+    Print "OFF-"; offStyles_brief$(offStrat(P))
+
+    Color 15, 0
+
+    Locate 13, 41
+    Color 14: Print "<ENTER> ";
+    Color 15: Print "PASS"
+
+    Locate , 41
+    Color 14: Print "(1) ";
+    Color 15: Print "SHOOT"
+
+    Locate , 41
+    Print Space$(35);
+
+    Locate , 41
+    Color 14: Print "(2) ";
+    Color 15: Print gameTeams$(P);
+    Print " CALL TIMEOUT       "
+
+    Locate , 41
+    Color 14: Print "(3) ";
+    Color 15: Print "COMMIT INTL FOUL (LAST 4 MIN)"
+
+    Locate , 41
+    Color 14: Print "(4) ";
+    Color 15: Print "SHOOT A FORCED 3-POINTER"
+
+    Locate , 41
+    Color 14: Print "(T) ";
+    Color 15: Print "10 MIN TICKER"
+
+    Locate , 41
+    Color 14: Print "(B) ";
+    Color 15: Print "BOXSCORE"
 
 End Sub
 
@@ -10003,19 +9912,19 @@ Sub SCOREBOARD ()
 
     Call TICKERUPDATE
 
-    'Frames
     Color 9, 0
 
+    'Frame Visitor Score
     Locate 3, 11: Print Chr$(218); String$(5, 196); Chr$(191)
     Locate , 11: Print Chr$(179);: Locate , 17: Print Chr$(179)
     Locate , 11: Print Chr$(192); String$(5, 196); Chr$(217)
 
+    'Frame Home Score
     Locate 3, 58: Print Chr$(218); String$(5, 196); Chr$(191)
     Locate , 58: Print Chr$(179);: Locate , 64: Print Chr$(179)
     Locate , 58: Print Chr$(192); String$(5, 196); Chr$(217)
 
     'Team 1
-    '-- change to 15 -
     Locate 2, 14 - (Len(gameTeams$(0)) / 2)
     Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
@@ -10101,47 +10010,22 @@ Sub SCOREBOARD ()
     'Team strategies / decisions
     If (autoPlay = 0 Or pbpDelay! > 0) Then
 
-        Locate 9, 41
-        Color teamRat_GAME(D, 0), teamRat_GAME(D, 1)
-        Print "DEF-"; defStyles_brief$(defStrat(D))
-        Locate , 41
-        Color teamRat_GAME(P, 0), teamRat_GAME(P, 1)
-        Print "OFF-"; offStyles_brief$(offStrat(P))
-
-        Color 15, 0
-
-        Locate 11, 41
-        Color 14: Print "(1) ";
-        Color 15: Print "SHOOT        ";
-        Color 14: Print "ENTER";
-        Color 15: Print "-PASS"
-        Locate 12, 41
-        Print Space$(35);
-        Locate , 41
-        Color 14: Print "(2)  ";
-        Color 15: Print gameTeams$(P);
-        Print " CALL TIMEOUT       "
-        Locate 13, 41
-        Color 14: Print "(T)  ";
-        Color 15: Print "10 MIN TICKER"
-        Locate 14, 41
-        Color 14: Print "(D)  ";
-        Color 15: Print "CHANGE DEFENSE FROM 2-3 ZONE"
-        Locate 15, 41
-        Color 14: Print "(B)  ";
-        Color 15: Print "BOXSCORE"
+        Call DisplayUserOpts
 
         Color 9, 0
-        Locate 7, 1
-        Print String$(38, 205); Chr$(203); String$(38, 205)
 
+        'Horizontal frame for scoreboard / PBP
+        Locate 7, 1
+        Print String$(38, 205); Chr$(203); String$(40, 205)
+
+        'Vertical frame for left/right windows
         Locate 8, 1
-        For I = 1 To 8
+        For I = 1 To 13
             Locate , 39: Print Chr$(186)
         Next
 
         'Team 1 Overview
-        Locate 17, 1
+        Locate 22, 1
         Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
         'Win/Loss record from current stats files
@@ -10153,7 +10037,7 @@ Sub SCOREBOARD ()
         Call PrintActiveLineup(0)
 
         'Team 2 Overview
-        Locate 17, 40
+        Locate 22, 40
         Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1);
 
         'Win/Loss record from current stats files
@@ -10164,13 +10048,20 @@ Sub SCOREBOARD ()
         Call PrintActiveLineup(1)
 
         Color 9, 0
+
+        'Vertical frame for each team
         For I = 1 To 9:
-            Locate 14 + I, 39: Print Chr$(186)
+            Locate 19 + I, 39: Print Chr$(186)
         Next
 
-        'Color 9, 0
-        Locate 16, 1: Print String$(79, 205)
-        Locate 16, 39: Print Chr$(206)
+        'Horizontal frame for PBP / lineups
+        Locate 21, 1: Print String$(79, 205)
+        Locate 21, 39: Print Chr$(206)
+
+        'Horizontal frame for bottom of screen
+        Locate 29, 1: Print String$(79, 205);
+        Locate 29, 39: Print Chr$(202);
+
         Color 7, 0
 
     End If
@@ -10895,10 +10786,9 @@ Sub COMPUTERSUBS ()
             End If
 
             'Disabled player or inactive spot
-            playerFouls = plyrOff_GAME!(P9, I1, 12)
 
             'Based on fouls so far, roster name or disable status
-            If ((playerFouls >= foulsToDQ) Or players$(P9, I1) = "XXX" Or playerActive%(P9, I1) = 0) Then
+            If ((plyrOff_GAME!(P9, I1, 12) >= foulsToDQ) Or players$(P9, I1) = "XXX" Or playerActive%(P9, I1) = 0) Then
                 disabledPlayers = disabledPlayers + 1
                 foulPlayers = foulPlayers + 1
             End If
@@ -10939,7 +10829,7 @@ Sub COMPUTERSUBS ()
                 End If
 
                 'Close to fouling out
-                If ((playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1)) Then
+                If foulDanger%(P9, I1) = 1 Then
                     foulPlayers = foulPlayers + 1
                 End If
 
@@ -11009,21 +10899,34 @@ End Sub
 
 
 '----------------------------------------
-'          PlayStyle Subroutine
+'        ChooseLineup Subroutine
 '----------------------------------------
 'This subroutine walks the user through
 'the selection of play styles for their
 'team on both offense and defense.
-Sub PlayStyle ()
+Sub ChooseLineup ()
 
-    Call DisplayLineups
+    Call DisplayRoster
 
     'Select the lineup
     Color 14, 0
-    Locate 19, 1: Print "STARTING LINEUP"
+    Locate 19, 1
+    Print "STARTING LINEUP"
+
+    Color 14
+    Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+    Locate 21, 32: Color 15: Print "O";
+    Color 3: Print "FFENSE STYLE-";
+    Color 7: Print offStyles_brief$(offStrat(P9))
+
+    Locate 22, 32: Color 3: Print "DE";
+    Color 15: Print "F";
+    Color 3: Print "ENSE STYLE-";
+    Color 7: Print defStyles_brief$(defStrat(P9))
 
     If C1 = 1 Then
 
+        'Existing possession
         For M = 0 To 4
 
             Locate M + 20, 1
@@ -11055,8 +10958,7 @@ Sub PlayStyle ()
 
     Else
 
-        '--- Does this ever get used???
-        '--- If not, why is it here???
+        'New possession
         For I = 0 To 4
 
             Do
@@ -11070,11 +10972,45 @@ Sub PlayStyle ()
                 I$ = GetKeyPress$
                 Call LetterToNumber(I$, posn)
 
-                'Valid position #, player has not fouled out, and is active / eligible
-                If posn >= 0 And posn <= 13 And plyrOff_GAME!(P9, posn, 12) < foulsToDQ And players$(P9, posn) <> "XXX" And playerActive%(P9, posn) = 1 Then
-                    For I2 = 0 To 4
-                        If lineupIdx(P9, I2) = posn Then Exit For
-                    Next I2
+                If UCase$(I$) = "F" Or UCase$(I$) = "O" Then
+                    posn = 15
+                End If
+
+                If posn = 15 Then
+
+                    If UCase$(I$) = "F" Then
+                        defStrat(P9) = defStrat(P9) + 1
+                        If defStrat(P9) > 17 Then defStrat(P9) = 0
+                    End If
+
+                    If UCase$(I$) = "O" Then
+                        offStrat(P9) = offStrat(P9) + 1
+                        If offStrat(P9) > 15 Then offStrat(P9) = 0
+                    End If
+
+                    Color 14
+                    Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+
+                    Locate 21, 32
+                    Color 15: Print "O";
+                    Color 3: Print "FFENSE STYLE-";
+                    Color 7: Print offStyles_brief$(offStrat(P9))
+
+                    Locate 22, 32
+                    Color 3: Print "DE";
+                    Color 15: Print "F";
+                    Color 3: Print "ENSE STYLE-";
+                    Color 7: Print defStyles_brief$(defStrat(P9))
+
+                Else
+
+                    'Valid position #, player has not fouled out, and is active / eligible
+                    If posn >= 0 And posn <= 13 And plyrOff_GAME!(P9, posn, 12) < foulsToDQ And players$(P9, posn) <> "XXX" And playerActive%(P9, posn) = 1 Then
+                        For I2 = 0 To 4
+                            If lineupIdx(P9, I2) = posn Then Exit For
+                        Next I2
+                    End If
+
                 End If
 
             Loop Until posn >= 0 And posn <= 13
@@ -11114,7 +11050,12 @@ Sub PlayStyle ()
             I$ = GetKeyPress$
             K = Val(I$)
 
-        Loop Until K >= 0 And K <= 4 Or K = 6
+            Select Case UCase$(I$)
+                Case "O": K = 5
+                Case "F": K = 5
+            End Select
+
+        Loop Until K >= 0 And K <= 6
 
         Select Case K
 
@@ -11124,7 +11065,7 @@ Sub PlayStyle ()
 
                     'We've chosen someone who has been fouled on
                     Color 14, 0
-                    Locate 20, 29: Print players$(P9, lineupIdx(P9, K)); " IS AT THE FT LINE"
+                    Locate 25, 29: Print players$(P9, lineupIdx(P9, K)); " IS AT THE FT LINE"
                     goodLineup = 0
 
                 Else
@@ -11171,8 +11112,6 @@ Sub PlayStyle ()
 
                     Loop Until posn >= 0 And posn <= 13
 
-                    lineupIdx(P9, K) = posn
-
                     'FATIGUE
                     If playerTime(P9, posn) - gameClock! > 60 And playerTime(P9, posn) < 120 Then
                         tmFatigue(P9, posn) = tmFatigue(P9, posn) + 1
@@ -11186,6 +11125,7 @@ Sub PlayStyle ()
                         tmFatigue(P9, posn) = 0
                     End If
 
+                    lineupIdx(P9, K) = posn
                     nonPlayers = 0
 
                     For IP% = 0 To lineupIdx(P9, K)
@@ -11208,7 +11148,29 @@ Sub PlayStyle ()
 
 
             Case 5
-                '
+                If UCase$(I$) = "F" Then
+                    defStrat(P9) = defStrat(P9) + 1
+                    If defStrat(P9) > 17 Then defStrat(P9) = 0
+                End If
+
+                If UCase$(I$) = "O" Then
+                    offStrat(P9) = offStrat(P9) + 1
+                    If offStrat(P9) > 15 Then offStrat(P9) = 0
+                End If
+
+                Color 14
+                Locate 19, 29: Print "   SELECT OFFENSIVE AND DEFENSIVE STYLE"
+
+                Locate 21, 32
+                Color 15: Print "O";
+                Color 3: Print "FFENSE STYLE-";
+                Color 7: Print offStyles_brief$(offStrat(P9))
+
+                Locate 22, 32
+                Color 3: Print "DE";
+                Color 15: Print "F";
+                Color 3: Print "ENSE STYLE-";
+                Color 7: Print defStyles_brief$(defStrat(P9))
 
             Case 6
                 nonPlayers = 0
@@ -11224,7 +11186,7 @@ Sub PlayStyle ()
                     For I1 = 0 To 4
 
                         If plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ Then
-                            Locate 20, 29
+                            Locate 25, 29
                             Color 14, 0
                             Print players$(P9, lineupIdx(P9, I1)); " HAS FOULED OUT"
                             goodLineup = 0
@@ -11235,10 +11197,6 @@ Sub PlayStyle ()
 
                 End If
 
-                If goodLineup = 1 Then
-                    Call CHANGESTRATEGY
-                End If
-
         End Select
 
     Loop Until K = 6 And goodLineup = 1
@@ -11247,12 +11205,12 @@ End Sub
 
 
 '----------------------------------------
-'           LINEUPS Subroutine
+'        DisplayRoster Subroutine
 '----------------------------------------
 'This subroutine displays the starting
 'lineup for each team and gives the user
 'an interface for changing the lineup
-Sub DisplayLineups ()
+Sub DisplayRoster ()
 
     Shared alpha$()
 
@@ -11352,15 +11310,15 @@ End Sub
 
 
 '----------------------------------------
-'          PlayStyle Subroutine
+'        CHANGESTRATEGY Subroutine
 '----------------------------------------
 'This subroutine walks the user through
 'the selection of play styles for their
 'team on both offense and defense.
-Sub CHANGESTRATEGY ()
+Sub CHANGESTRATEGY (teamSelected)
 
     109 '
-    Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1)
+    Color teamRat_GAME(teamSelected, 0), teamRat_GAME(teamSelected, 1)
     Cls
 
     Print Tab(33); "OFFENSIVE STYLE"
@@ -11378,7 +11336,7 @@ Sub CHANGESTRATEGY ()
     Next
 
     Print
-    Locate 20, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(P9)
+    Locate 20, 5: Print "SELECT OFFENSIVE STYLE FOR "; gameTeams$(teamSelected)
 
     Do
         I$ = GetKeyPress$
@@ -11394,7 +11352,7 @@ Sub CHANGESTRATEGY ()
         GoTo 109
     End If
 
-    If offChoice = 14 And defCoverage(1 - P9) <> 2 Then
+    If offChoice = 14 And defCoverage(1 - teamSelected) <> 2 Then
         Beep
         Color 12
         Locate 22, 5: Print "DEFENSE IS NOT IN PASSIVE ZONE!"
@@ -11402,7 +11360,7 @@ Sub CHANGESTRATEGY ()
         GoTo 109
     End If
 
-    If offChoice = 10 And score(P9, 0) - score(1 - P9, 0) > -11 Then
+    If offChoice = 10 And score(teamSelected, 0) - score(1 - teamSelected, 0) > -11 Then
         Beep
         Color 12
         Locate 22, 5: Print "ILLEGAL SELECTION!"
@@ -11426,7 +11384,7 @@ Sub CHANGESTRATEGY ()
         GoTo 109
     End If
 
-    If offChoice = 13 And score(P9, 0) - score(1 - P9, 0) <= 0 Then
+    If offChoice = 13 And score(teamSelected, 0) - score(1 - teamSelected, 0) <= 0 Then
         Beep
         Color 12
         Locate 22, 5: Print "ILLEGAL SELECTION!"
@@ -11436,9 +11394,9 @@ Sub CHANGESTRATEGY ()
 
     'How to loop around this with so many conditions?
     'Possibly build a bunch of nested If/Then statements?
-    offStrat(P9) = offChoice
+    offStrat(teamSelected) = offChoice
 
-    crashBoards(P9) = 0
+    crashBoards(teamSelected) = 0
 
     If currHalf >= 2 And gameClock! <= 120 Then
 
@@ -11448,7 +11406,7 @@ Sub CHANGESTRATEGY ()
             I$ = GetKeyPress$
         Loop Until UCase$(I$) = "Y" Or UCase$(I$) = "N"
 
-        If UCase$(I$) = "Y" Then crashBoards(P9) = 1
+        If UCase$(I$) = "Y" Then crashBoards(teamSelected) = 1
 
     End If
 
@@ -11526,7 +11484,7 @@ Sub PlayItSafe ()
 
                 Locate P5(A) + 3, 20
                 Print players$(P9, lineupIdx(P9, P4(A))); " WILL NOW PLAY NORMAL DEFENSE!"
-                Call STEALADJ
+                Call StealAdjustments
 
                 dFGPA(P9) = dFGPA(P9) - 1
                 A = A + 1
@@ -11545,8 +11503,9 @@ Sub PlayItSafe ()
 
         For ZZ = 0 To 4
 
-            If (currHalf <= 1 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 12) >= foulsToDQ - 3 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 0) Or (plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 12) = foulsToDQ - 1 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 0) Then
-
+            If plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 22) = 0 And _
+                ((currHalf <= 1 And plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 12) >= foulsToDQ - 3) Or _ 
+                (plyrOff_GAME!(P9, lineupIdx(P9, ZZ), 12) = foulsToDQ - 1)) Then
                 A = A + 1
 
                 If S2 = 1 Then
@@ -11593,7 +11552,7 @@ Sub PlayItSafe ()
 
                 Locate P5(A) + 3, 20
                 Print players$(P9, lineupIdx(P9, P4(A))); " WILL NOW PLAY SAFE!"
-                Call STEALADJ
+                Call StealAdjustments
 
                 dFGPA(P9) = dFGPA(P9) + 1
                 A = A + 1
@@ -11651,12 +11610,12 @@ End Sub
 
 
 '----------------------------------------
-'          STEALADJ Subroutine
+'          StealAdjustments Subroutine
 '----------------------------------------
 'Uses data from all player ratings to help
 'calculate several team-based adjustments
 'for frequency of steals, etc.
-Sub STEALADJ ()
+Sub StealAdjustments ()
 
     For I = 0 To 1
 
@@ -12071,6 +12030,7 @@ Sub GetPassChoice ()
             Do
 
                 I$ = GetKeyPress$
+                'Call pbplog(12034)
 
                 Select Case UCase$(I$)
 
@@ -12098,152 +12058,6 @@ Sub GetPassChoice ()
 
 End Sub
 
-'----------------------------------------
-'       DEADBALLOPTIONS Subroutine
-'----------------------------------------
-'This subroutine handles any deadball
-'situations. If not computer controlled,
-'the user is given a chance to handle
-'any changes to lineup, strategy, players.
-Sub DEADBALLOPTIONS ()
-
-    Do
-
-        prevBall$ = ""
-        Call CLEARPBP
-
-        'Substitutions for computer teams
-        If playerMode = 2 Then
-            P9 = 0
-            Call COMPUTERSUBS
-            Call FATIGUE
-            P9 = 1
-            Call COMPUTERSUBS
-            Call FATIGUE
-        End If
-
-        If playerMode = 1 Then
-            P9 = compTeam
-            Call COMPUTERSUBS
-            Call FATIGUE
-        End If
-
-        Call CLEARPBPBOX
-
-        'Present user options
-        If playerMode = 2 Then
-
-            S2 = 0
-            P9 = P
-            C1 = 2
-            Call CheckGameClock
-            Call STEALADJ
-
-        Else
-
-            Locate 9, 1
-            Color 14, 0
-            Print "<ENTER>";
-            Color 15, 0
-            Print "-CONTINUE"
-            Print "1-SUB "; gameTeams$(P)
-            Print "2-SUB "; gameTeams$(D)
-            Print "3-CHANGE STRATEGY "; gameTeams$(P)
-            Print "4-CHANGE STRATEGY "; gameTeams$(D)
-            Print "5-TIME OUT "; gameTeams$(P)
-            Print "6-TIME OUT "; gameTeams$(D)
-
-            221 '
-            I$ = GetKeyPress$
-            P3 = Val(I$)
-
-            If P3 = 0 Or (playerMode = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And timeouts(P) <= 0) And P = compTeam) Or (playerMode = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And timeouts(D) <= 0) And D = compTeam) Then
-
-                'This is essentially for automated input,
-                'when ENTER is pressed (to continue),
-                'or if the team has no timeouts
-                S2 = 0
-                P9 = P
-                C1 = 2
-                Call CheckGameClock
-                Call STEALADJ
-
-                If lineupChanged = 1 Then
-                    lineupChanged = 0
-                    Call CheckGameClock
-                    Call SCOREBOARD
-                End If
-
-                If pbpDelay! > 0 Then
-                    Call WINDEX
-                End If
-
-            Else
-
-                Select Case P3
-
-                    Case 1
-                        'Substitution - Offense
-                        S2 = P
-                        C1 = 1
-                        P9 = S2
-                        Call PlayStyle
-                        Call PlayItSafe
-                        P9 = P
-                        lineupChanged = 1
-
-                    Case 2
-                        'Substitution - Defense
-                        S2 = D
-                        C1 = 1
-                        P9 = S2
-                        Call PlayStyle
-                        Call PlayItSafe
-                        P9 = P
-                        lineupChanged = 1
-
-                    Case 3
-                        'Strategy - Offense
-                        P9 = P
-                        Call CHANGESTRATEGY
-                        Call SCOREBOARD
-
-                    Case 4
-                        'Strategy - Defense
-                        P9 = D
-                        Call CHANGESTRATEGY
-                        Call SCOREBOARD
-
-                    Case 5
-                        'Timeouts - Offense
-                        If timeouts(P) <= 0 Then
-                            GoTo 221
-                        Else
-                            timeouts(P) = timeouts(P) - 1
-                            Call RESETFATIGUE
-                            Call SCOREBOARD
-                        End If
-
-                    Case 6
-                        'Timeouts - Defense
-                        If timeouts(D) <= 0 Then
-                            GoTo 221
-                        Else
-                            timeouts(D) = timeouts(D) - 1
-                            Call RESETFATIGUE
-                            Call SCOREBOARD
-                        End If
-
-                End Select
-
-            End If 'Done checking input
-
-        End If 'Done checking computer control
-
-    Loop Until P3 = 0 Or playerMode = 2
-
-End Sub
-
 
 '----------------------------------------
 '        RESETFATIGUE Subroutine
@@ -12264,7 +12078,9 @@ Sub RESETFATIGUE ()
 
         For I1 = 0 To 13
             tmFatigue(I, I1) = tmFatigue(I, I1) + 1
-            If tmFatigue(I, I1) > 0 Then tmFatigue(I, I1) = 0
+            If tmFatigue(I, I1) > 0 Then
+                tmFatigue(I, I1) = 0
+            End If
         Next
 
     Next
@@ -12272,22 +12088,24 @@ Sub RESETFATIGUE ()
 End Sub
 
 
-'------------------------------
-'    STOPPAGE Subroutine
-'------------------------------
-'This routine handles all the
-'things that can happen when
-'the clock is stopped, including
-'substitutions, strategy and
-'time-outs.
-Sub STOPPAGE ()
+'----------------------------------------
+'       DEADBALLOPTIONS Subroutine
+'----------------------------------------
+'This subroutine handles any deadball
+'situations. If not computer controlled,
+'the user is given a chance to handle
+'any changes to lineup, strategy, players.
+Sub DEADBALLOPTIONS (useTakeTO)
 
-    810 '
+    lineupChanged = 0
+    userTakeTO = 0
+
+    prevBall$ = ""
     Call CLEARPBP
 
-    If playerMode <> 0 Then
+    Do
 
-        'Computer team substitutions
+        'Substitutions for computer teams
         If playerMode = 2 Then
             P9 = 0
             Call COMPUTERSUBS
@@ -12303,101 +12121,297 @@ Sub STOPPAGE ()
             Call FATIGUE
         End If
 
-    End If
+        Call CLEARPBPBOX
 
-    If playerMode = 2 Then
-
-        S2 = 0
-        P9 = P
-        C1 = 2
-        Call CheckGameClock
-
-    Else
-
-        If pbpOpt = 1 Then
-            If pbpDelay! > 0 Then
-                Locate 11, 1
-            End If
-        Else
-            Call CLEARPBPBOX
-        End If
-
-        Color 14, 0
-        Print "<ENTER>";
-        Color 15, 0
-        Print "-CONTINUE"
-        Print "1-TIME OUT "; gameTeams$(P)
-        Print "2-TIME OUT "; gameTeams$(D)
-        Print "3-CHANGE STRATEGY "; gameTeams$(P)
-        Print "4-CHANGE STRATEGY "; gameTeams$(D)
-
-        813 '
-        I$ = GetKeyPress$
-        P3 = Val(I$)
-
-        If P3 < 1 Or P3 > 4 Then
+        'User options to continue play
+        If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
             S2 = 0
             P9 = P
             C1 = 2
             Call CheckGameClock
+            Call StealAdjustments
 
         Else
 
-            'Can't do timeout?
-            If P3 = 1 And timeouts(P) <= 0 Or P3 = 2 And timeouts(D) <= 0 Or (P3 = 1 Or P3 = 3) And P = compTeam And playerMode = 1 Or (P3 = 2 Or P3 = 4) And D = compTeam And playerMode = 1 Then
-                GoTo 813
+            'At least 1 human
+            Locate 10, 1
+            Color 14, 0
+            Print "<ENTER>";
+            Color 15, 0
+            Print "-CONTINUE"
+
+            If playerMode = 0 Then
+
+                Print "1 - SUB "; gameTeams$(P)
+                Print "2 - SUB "; gameTeams$(D)
+                Print "3 - CHANGE STRATEGY "; gameTeams$(P)
+                Print "4 - CHANGE STRATEGY "; gameTeams$(D)
+                Print "5 - TIME OUT "; gameTeams$(P)
+                Print "6 - TIME OUT "; gameTeams$(D)
+
+                I$ = GetKeyPress$
+                P3 = Val(I$)
+                'Call pbplog(12155)
+
+            Else
+
+                tgtTeam = 1 - compTeam
+
+                Print "1 - SUB "; gameTeams$(tgtTeam)
+                Print "2 - CHANGE STRATEGY "; gameTeams$(tgtTeam)
+                Print "3 - TIME OUT "; gameTeams$(tgtTeam)
+
+                I$ = GetKeyPress$
+                P3 = Val(I$)
+                'Call pbplog(12167)
+
+                'Translate limited opt's as if
+                'they were on the larger menu
+                If tgtTeam = P Then
+                    P3 = (P3 * 2) - 1
+                Else
+                    P3 = P3 * 2
+                End If
+
             End If
 
-            'Strategy - Offense
-            If P3 = 3 Then
+            If P3 = 0 Or _ 
+                (playerMode = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And timeouts(P) <= 0) And P = compTeam) Or _ 
+                (playerMode = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And timeouts(D) <= 0) And D = compTeam) Then
+
+                'When ENTER is pressed (to continue),
+                'team has no timeouts or computer team
+                S2 = 0
                 P9 = P
-                Call CHANGESTRATEGY
-                Call SCOREBOARD
-                GoTo 810
-            End If
+                C1 = 2
+                Call CheckGameClock
+                Call StealAdjustments
 
-            'Strategy - Defense
-            If P3 = 4 Then
-                P9 = D
-                Call CHANGESTRATEGY
-                Call SCOREBOARD
-                GoTo 810
-            End If
+                If lineupChanged = 1 Then
+                    lineupChanged = 0
+                    Call CheckGameClock
+                    Call SCOREBOARD
+                End If
 
-            For I = 0 To 1
-                For I1 = 0 To 1
-                    pressureRating(I, I1) = 0
-                Next
-            Next
+                If pbpDelay! > 0 Then
+                    Call WINDEX
+                End If
 
-            'Timeout - Offense
-            If P3 = 1 Then
+            Else
 
-                timeouts(P) = timeouts(P) - 1
-                Color 14, 0
-                Call SCOREBOARD
+                Select Case P3
 
-                Call DEADBALLOPTIONS
+                    Case 1
+                        'Substitution - Offense
+                        S2 = P
+                        C1 = 1
+                        P9 = S2
+                        Call ChooseLineup
+                        Call PlayItSafe
+                        P9 = P
+                        lineupChanged = 1
+                        Call SCOREBOARD
 
-            End If
+                    Case 2
+                        'Substitution - Defense
+                        S2 = D
+                        C1 = 1
+                        P9 = S2
+                        Call ChooseLineup
+                        Call PlayItSafe
+                        P9 = P
+                        lineupChanged = 1
+                        Call SCOREBOARD
 
-            'Timeout - Defense
-            If P3 = 2 Then
+                    Case 3
+                        'Strategy - Offense
+                        P9 = P
+                        Call CHANGESTRATEGY(P9)
+                        Call SCOREBOARD
 
-                timeouts(D) = timeouts(D) - 1
-                Color 14, 0
-                Call SCOREBOARD
+                    Case 4
+                        'Strategy - Defense
+                        P9 = D
+                        Call CHANGESTRATEGY(P9)
+                        Call SCOREBOARD
 
-                Call DEADBALLOPTIONS
+                    Case 5
+                        'Timeouts - Offense
+                        If timeouts(P) > 0 Then
+                            userTakeTO = 1
+                            timeouts(P) = timeouts(P) - 1
+                            Call RESETFATIGUE
+                            Call SCOREBOARD
+                        End If
 
-            End If
+                    Case 6
+                        'Timeouts - Defense
+                        If timeouts(D) > 0 Then
+                            userTakeTO = 1
+                            timeouts(D) = timeouts(D) - 1
+                            Call RESETFATIGUE
+                            Call SCOREBOARD
+                        End If
 
+                End Select
+
+            End If 'Done checking input
+
+            Call WINDEX
+
+        End If 'Done checking computer control
+
+    Loop Until I$ = Chr$(13) Or playerMode = 2 Or lineupChanged = 0
+
+End Sub
+
+
+'------------------------------
+'    STOPPAGE Subroutine
+'------------------------------
+'This routine handles all the
+'things that can happen when
+'the clock is stopped, including
+'substitutions, strategy and
+'time-outs.
+Sub STOPPAGE ()
+
+    Do
+
+        Call CLEARPBP
+
+        'Computer team substitutions
+        If playerMode = 2 Then
+            P9 = 0
+            Call COMPUTERSUBS
+            Call FATIGUE
+            P9 = 1
+            Call COMPUTERSUBS
+            Call FATIGUE
+        End If
+
+        'Computer vs. Human
+        If playerMode = 1 Then
+            P9 = compTeam
+            Call COMPUTERSUBS
+            Call FATIGUE
         End If
 
         Call CLEARPBPBOX
 
-    End If
+        'User options to continue play
+        If playerMode = 2 Or playerMode = 1 And P = compTeam Then
+
+            S2 = 0
+            P9 = P
+            C1 = 2
+            Call CheckGameClock
+            Call StealAdjustments
+
+        Else
+
+            'At least 1 human
+            Locate 10, 1
+            Color 14, 0
+            Print "<ENTER>";
+            Color 15, 0
+            Print "-CONTINUE"
+
+            If playerMode = 0 Then
+                Print "1 - TIME OUT "; gameTeams$(P)
+                Print "2 - TIME OUT "; gameTeams$(D)
+                Print "3 - CHANGE STRATEGY "; gameTeams$(P)
+                Print "4 - CHANGE STRATEGY "; gameTeams$(D)
+
+                I$ = GetKeyPress$
+                P3 = Val(I$)
+                'Call pbplog(12344)
+
+            Else
+
+                tgtTeam = 1 - compTeam
+
+                Print "1 - TIME OUT "; gameTeams$(tgtTeam)
+                Print "2 - CHANGE STRATEGY "; gameTeams$(tgtTeam)
+
+                I$ = GetKeyPress$
+                P3 = Val(I$)
+                'Call pbplog(12345)
+
+                'Translate limited opt's as if
+                'they were on the larger menu
+                If tgtTeam = P Then
+                    P3 = (P3 * 2) - 1
+                Else
+                    P3 = P3 * 2
+                End If
+
+            End If
+
+            If P3 = 0 Or _ 
+                P3 = 1 And timeouts(P) <= 0 Or _ 
+                P3 = 2 And timeouts(D) <= 0 Or _ 
+                ((P3 = 1 Or P3 = 3) And P = compTeam And playerMode = 1) Or _ 
+                ((P3 = 2 Or P3 = 4) And D = compTeam And playerMode = 1) Then
+
+                'When ENTER is pressed (to continue),
+                'team has no timeouts or computer team
+                S2 = 0
+                P9 = P
+                C1 = 2
+
+                Call CheckGameClock
+                Call StealAdjustments
+
+            Else
+
+                Select Case P3
+
+                    Case 1
+                        'Timeout - Offense
+                        If timeouts(P) > 0 Then
+                            timeouts(P) = timeouts(P) - 1
+                        End If
+                        Color 14, 0
+                        Call SCOREBOARD
+
+                    Case 2
+                        'Timeout - Defense
+                        If timeouts(D) > 0 Then
+                            timeouts(D) = timeouts(D) - 1
+                        End If
+
+                        Color 14, 0
+                        Call SCOREBOARD
+
+                    Case 3
+                        'Strategy - Offense
+                        P9 = P
+                        Call CHANGESTRATEGY(P9)
+                        Call SCOREBOARD
+
+                    Case 4
+                        'Strategy - Defense
+                        P9 = D
+                        Call CHANGESTRATEGY(P9)
+                        Call SCOREBOARD
+
+                End Select
+
+                For I = 0 To 1
+                    For I1 = 0 To 1
+                        pressureRating(I, I1) = 0
+                    Next
+                Next
+
+            End If
+
+            Call CLEARPBPBOX
+
+        End If
+
+    Loop Until I$ = Chr$(13) Or playerMode = 2 Or (playerMode = 1 And P = compTeam)
 
 End Sub
 
@@ -12424,6 +12438,7 @@ Sub PRESSGUARD ()
         'Full Court Press only
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
+
             ' COMPUTER GUARD FOR PRESS
             guardNbr = 1
             If plyrOff_GAME!(P, lineupIdx(P, 0), 4) >= plyrOff_GAME!(P, lineupIdx(P, 1), 4) And tmFatigue(P, lineupIdx(P, 0)) <= 3 Then
@@ -12431,6 +12446,7 @@ Sub PRESSGUARD ()
             End If
 
         Else
+
             Call FRAMEOPTION(8, P)
             Locate 10, 15
 
@@ -12444,6 +12460,7 @@ Sub PRESSGUARD ()
             Do
                 I$ = GetKeyPress$
                 I1 = Val(I$)
+                'Call pbplog(12465)
             Loop Until I1 >= 0 And I1 <= 1
 
             guardNbr = I1
@@ -12713,7 +12730,7 @@ Sub ComputerStrategy ()
 
                         Case 47 To 64
                             defStrat(P9) = 3
-                            
+
                         Case 65 To 66
                             defStrat(P9) = 13
 
@@ -13743,7 +13760,7 @@ Sub FreeThrow_One (missedLastFT)
 
     offStatus = 50
 
-    Call DEADBALLOPTIONS
+    Call DEADBALLOPTIONS(deadballTO)
 
     For I = 0 To 1
         If defCategory(I) = 0 Then
@@ -13842,7 +13859,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
 
     offStatus = 50
 
-    Call DEADBALLOPTIONS
+    Call DEADBALLOPTIONS(deadballTO)
 
     For I = 0 To 1
         If defCategory(I) = 0 Then
@@ -13937,7 +13954,7 @@ Sub FreeThrow_Two (missedLastFT)
 
     offStatus = 50
 
-    Call DEADBALLOPTIONS
+    Call DEADBALLOPTIONS(deadballTO)
 
     For I = 0 To 1
         If defCategory(I) = 0 Then
@@ -14028,7 +14045,7 @@ Sub FreeThrow_Three (missedLastFT)
 
     offStatus = 50
 
-    Call DEADBALLOPTIONS
+    Call DEADBALLOPTIONS(deadballTO)
 
     For I = 0 To 1
         If defCategory(I) = 0 Then
@@ -15862,7 +15879,7 @@ End Sub
 'should be started.
 Sub EndOfGame ()
 
-    Close #11
+    'Close #11
     Call POSTGAME
 
     Cls
@@ -17701,6 +17718,31 @@ End Sub
 
 
 '----------------------------------------
+'          foulDanger% Function
+'----------------------------------------
+'This function will let you know if the
+'target player is in danger of exceeding
+'acceptable fouls based on the game clock
+Function foulDanger% (teamIdx, playerIdx)
+
+    playerFouls = plyrOff_GAME!(teamIdx, playerIdx, 12)
+
+    If (playerFouls >= foulsToDQ) Or _ 
+        (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or _ 
+        (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1) Then
+
+        foulDanger% = 1
+
+    Else
+
+        foulDanger% = 0
+
+    End If
+
+End Function
+
+
+'----------------------------------------
 '          GetTeamYear Function
 '----------------------------------------
 'This subroutine determines the 4-digit
@@ -17727,17 +17769,17 @@ End Function
 '----------------------------------------
 '          goodPlayer% Function
 '----------------------------------------
-'This function returns whether the player
+'This function determines if the player
 'for the specified team / roster index
-'is valid for the game. This is based on
-'several factors such as roster status,
-'player name, or how much the player
-'has fouled
+'is a good candidate for substitution.
+'This is based on several factors such
+'as roster status, player name, or
+'how much the player has fouled
 Function goodPlayer% (teamIdx, playerIdx)
 
     playerFouls = plyrOff_GAME!(teamIdx, playerIdx, 12)
 
-    If (playerActive%(teamIdx, playerIdx) = 0 Or players$(teamIdx, playerIdx) = "XXX" Or (playerFouls >= foulsToDQ) Or (currHalf = 1 And playerFouls >= foulsToDQ - 2) Or (currHalf = 2 And gameClock! > 720 And playerFouls >= foulsToDQ - 1)) Then
+    If playerActive%(teamIdx, playerIdx) = 0 Or players$(teamIdx, playerIdx) = "XXX" Or foulDanger%(teamIdx, playerIdx) = 1 Then
 
         goodPlayer% = 0
 
@@ -17755,11 +17797,10 @@ End Function
 '----------------------------------------
 'This function attempts to determine if
 'the team has been loaded from a disk of
-'women's teams only". It is only able to
-'do this by checking if the last letter
-'(ie, 2024W) or first letter (ie, WNBA)
-' is a "W", as has been common to do in
-'the modding community.
+'women's teams". It is only able to do
+'this by checking if the last or first
+'letter (ie, 2024W, WNBA) is a "W", as
+'has been common to do in the community.
 'This obviously would not be useful for
 'leagues that would choose a W arbitrarily
 '(ie, for a "World" league, etc.)
