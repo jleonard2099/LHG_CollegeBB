@@ -277,9 +277,11 @@ Dim tourneySettings(0 To 16, 0 To 16, 0 To 4)
 Dim avgAttendance&(1)
 
 ' Shared / Global
+Dim Shared prevBall$, pbpString$
+
 Dim Shared earlyExit
-Dim Shared C1, clockSecs
-Dim Shared D, P, P9
+Dim Shared clockSecs
+Dim Shared C1, D, P, P9
 Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
 Dim Shared compTeam, currGame, gameOver, endAllGames
 Dim Shared fastBreak, forcedThree, ftNumber, foulPlayer
@@ -298,9 +300,7 @@ Dim Shared X0%, X1%, XX%
 
 Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
 
-Dim Shared A1$, B1$, C1$, D1$, E1$, F1$, G1$, H1$
 Dim Shared pbpText$(1 To MAX_PBP_LINES)
-Dim Shared prevBall$, pbpString$
 
 Dim Shared crashBoards(1), G9%(1)
 Dim Shared ST%(32), SX%(32, 1, 14)
@@ -311,8 +311,8 @@ Dim Shared ft3PtFoul(1), homeCtFactor(1, 6)
 
 Dim Shared P4(14), P5(14)
 
-Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), mandatoryTO(0 To 1), offStrat(1)
-Dim Shared pbpFG(1 TO MAX_PBP_LINES), pbpBG(1 TO MAX_PBP_LINES), pctContrib(1)
+'Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), mandatoryTO(0 To 1), offStrat(1)
+Dim Shared pbpFG(1 To MAX_PBP_LINES), pbpBG(1 To MAX_PBP_LINES), pctContrib(1)
 Dim Shared plyrStaminaGame(13), plyrRebIdx(13), plyrRebVal(13)
 Dim Shared playerTime(1, 13), pressureRating(1, 1)
 Dim Shared plyrDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)

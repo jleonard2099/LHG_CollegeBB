@@ -1,7 +1,7 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.25"
+Const GAME_VERSION$ = "5.26"
 Const MAX_FILES = 10240
 Const MAX_CAREER_YEARS = 15
 Const MAX_CONFERENCES = 40
@@ -35,6 +35,8 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), mandatoryTO(0 To 1), offStrat(1)
+
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -1542,7 +1544,7 @@ Sub COLHOOP ()
 
         ballCarrier = -1
         Call DEADBALLOPTIONS(deadballTO)
-        If deadballTO = 1 Then Call STOPPAGE (takeTO)
+        If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
         gameClock! = 1200
         Call UPDATESCREEN
@@ -1638,7 +1640,7 @@ Sub COLHOOP ()
 
         ballCarrier = -1
         Call DEADBALLOPTIONS(deadballTO)
-        If deadballTO = 1 Then Call STOPPAGE (takeTO)
+        If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
         Call SCOREBOARD
 
@@ -1897,7 +1899,7 @@ Sub COLHOOP ()
                 End If
 
                 Call DEADBALLOPTIONS(deadballTO)
-                If deadballTO = 1 Then Call STOPPAGE (takeTO)
+                If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
                 Call SCOREBOARD
 
@@ -3028,7 +3030,7 @@ Sub COLHOOP ()
         Call ChangePossession
 
         Call DEADBALLOPTIONS(deadballTO)
-        If deadballTO = 1 Then Call STOPPAGE (takeTO)
+        If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -3716,7 +3718,7 @@ Sub COLHOOP ()
                         Call SELECTPBP(P, 1)
                         Call DELAY
 
-                        Call STOPPAGE (takeTO)
+                        Call STOPPAGE(takeTO)
                         Call PRESSGUARD
 
                         ballCarrier = 6
@@ -3845,7 +3847,7 @@ Sub COLHOOP ()
                         Call SELECTPBP(P, 1)
                         Call DELAY
 
-                        Call STOPPAGE (takeTO)
+                        Call STOPPAGE(takeTO)
                         Call PRESSGUARD
 
                         ballCarrier = 6
@@ -4010,7 +4012,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE (takeTO)
+                Call STOPPAGE(takeTO)
                 Call PRESSGUARD
 
                 GoTo 300
@@ -4250,7 +4252,7 @@ Sub COLHOOP ()
                             Call SELECTPBP(P, 1)
                             Call DELAY
 
-                            Call STOPPAGE (takeTO)
+                            Call STOPPAGE(takeTO)
                             Call PRESSGUARD
 
                             ballCarrier = 6
@@ -4406,7 +4408,7 @@ Sub COLHOOP ()
         Call SELECTPBP(D, 1)
         Call DELAY
 
-        Call STOPPAGE (takeTO)
+        Call STOPPAGE(takeTO)
         Call PRESSGUARD
 
         offStatus = 0
@@ -4460,7 +4462,7 @@ Sub COLHOOP ()
         Call UPDATESCREEN
 
         Call DEADBALLOPTIONS(deadballTO)
-        If deadballTO = 1 Then Call STOPPAGE (takeTO)
+        If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -4584,7 +4586,7 @@ Sub COLHOOP ()
                 Call ChangePossession
 
                 Call DEADBALLOPTIONS(deadballTO)
-                If deadballTO = 1 Then Call STOPPAGE (takeTO)
+                If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4615,7 +4617,7 @@ Sub COLHOOP ()
                 Call DELAY
 
                 Call DEADBALLOPTIONS(deadballTO)
-                If deadballTO = 1 Then Call STOPPAGE (takeTO)
+                If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4641,7 +4643,7 @@ Sub COLHOOP ()
                 Call DELAY
 
                 Call DEADBALLOPTIONS(deadballTO)
-                If deadballTO = 1 Then Call STOPPAGE (takeTO)
+                If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4696,7 +4698,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE (takeTO)
+                Call STOPPAGE(takeTO)
                 Call PRESSGUARD
 
                 GoTo 300
@@ -5097,7 +5099,7 @@ Sub COLHOOP ()
         turnovers(P) = turnovers(P) + 1
 
         Call DEADBALLOPTIONS(deadballTO)
-        If deadballTO = 1 Then Call STOPPAGE (takeTO)
+        If deadballTO = 1 Then Call STOPPAGE(takeTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -5176,7 +5178,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE (takeTO)
+                Call STOPPAGE(takeTO)
                 Call PRESSGUARD
 
                 offStatus = 0
@@ -5189,7 +5191,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE (takeTO)
+                Call STOPPAGE(takeTO)
                 Call PRESSGUARD
 
                 offStatus = 0
@@ -5258,7 +5260,7 @@ Sub COLHOOP ()
                     Call SELECTPBP(P, 1)
                     Call DELAY
 
-                    Call STOPPAGE (takeTO)
+                    Call STOPPAGE(takeTO)
                     Call PRESSGUARD
 
                     ballCarrier = 6
@@ -6003,84 +6005,57 @@ Sub PBP (teamIdx)
 
     M$ = InKey$
 
-    If UCase$(M$) = "O" Then
-        Call OPTIONS
-    End If
+    Select Case UCase$(M$)
 
-    If UCase$(M$) = Chr$(17) Then
-        Cls
-        End
-    End If
+        Case "B"
+            Call BOXOPTIONS(0)
+            Call SCOREBOARD
+
+        Case "D"
+            Call ZONECHANGE
+            Call SCOREBOARD
+
+        Case "O"
+            Call OPTIONS
+
+        Case "T"
+            Call TICKER
+            Call SCOREBOARD
+
+        Case Chr$(17)
+            Cls
+            End
+
+    End Select
 
     'Positive delay OR Verbose PBP
     If (autoPlay = 0 Or pbpDelay! > 0) And pbpOpt = 0 Then
 
         pbpString$ = PadRight$(pbpString$, 38)
-        'Print #11, pbpString$
 
-        Locate 8, 1
-
-        Select Case nbrLines
-
-            Case 1
-                A1$ = pbpString$
-
-            Case 2
-                B1$ = pbpString$
-
-            Case 3
-                C1$ = pbpString$
-
-            Case 4
-                D1$ = pbpString$
-
-            Case 5
-                E1$ = pbpString$
-
-            Case 6
-                F1$ = pbpString$
-
-            Case 7
-                G1$ = pbpString$
-
-            Case 8
-                H1$ = pbpString$
-
-            Case Is > 8
-                A1$ = B1$
-                B1$ = C1$
-                C1$ = D1$
-                D1$ = E1$
-                E1$ = F1$
-                F1$ = G1$
-                G1$ = H1$
-                H1$ = pbpString$
-
-                For I = 1 To 7
-                    pbpFG(I) = pbpFG(I + 1)
-                    pbpBG(I) = pbpBG(I + 1)
-                Next
-
-        End Select
-
-        If nbrLines < 8 Then
+        If nbrLines <= MAX_PBP_LINES Then
+            pbpText$(nbrLines) = pbpString$
             pbpFG(nbrLines) = teamRat_GAME(teamIdx, 0)
             pbpBG(nbrLines) = teamRat_GAME(teamIdx, 1)
         Else
-            pbpFG(8) = teamRat_GAME(teamIdx, 0)
-            pbpBG(8) = teamRat_GAME(teamIdx, 1)
+            For I = 1 To MAX_PBP_LINES - 1
+                pbpText$(I) = pbpText$(I + 1)
+                pbpFG(I) = pbpFG(I + 1)
+                pbpBG(I) = pbpBG(I + 1)
+            Next
+            pbpText$(MAX_PBP_LINES) = pbpString$
+            pbpFG(MAX_PBP_LINES) = teamRat_GAME(teamIdx, 0)
+            pbpBG(MAX_PBP_LINES) = teamRat_GAME(teamIdx, 1)
         End If
 
         nbrLines = nbrLines + 1
 
-        Color pbpFG(1), pbpBG(1): Print Left$(A1$, 38)
-        Color pbpFG(2), pbpBG(2): Print Left$(B1$, 38)
-        Color pbpFG(3), pbpBG(3): Print Left$(C1$, 38)
-        Color pbpFG(4), pbpBG(4): Print Left$(D1$, 38)
-        Color pbpFG(5), pbpBG(5): Print Left$(E1$, 38)
-        Color pbpFG(6), pbpBG(6): Print Left$(F1$, 38)
-        Color pbpFG(7), pbpBG(7): Print Left$(G1$, 38)
-        Color pbpFG(8), pbpBG(8): Print Left$(H1$, 38)
+        ' Display all stored lines
+        Locate 8, 1
+        For I = 1 To MAX_PBP_LINES
+            Color pbpFG(I), pbpBG(I)
+            Print Left$(pbpText$(I), 38)
+        Next
 
         Color 15, 0
         Call DELAY
@@ -7794,7 +7769,7 @@ End Sub
 'for the play-by-play text.
 Sub WINDEX ()
 
-    For I = 8 To 15
+    For I = 8 To (7 + MAX_PBP_LINES)
         Locate I, 1
         Call BLANKLINE
     Next I
@@ -7825,7 +7800,7 @@ End Sub
 'the cursor further down when done.
 Sub CLEARPBPBOX ()
 
-    For I = 8 To 15:
+    For I = 8 To (7 + MAX_PBP_LINES):
         Locate I, 1
         Call BLANKLINE
     Next I
@@ -7844,14 +7819,7 @@ Sub CLEARPBP ()
 
     If pbpDelay! > 0 And pbpOpt <> 1 Then
         nbrLines = 1
-        A1$ = ""
-        B1$ = ""
-        C1$ = ""
-        D1$ = ""
-        E1$ = ""
-        F1$ = ""
-        G1$ = ""
-        H1$ = ""
+        Erase pbpText$
     End If
 
 End Sub
@@ -10936,16 +10904,16 @@ Sub ChooseLineup ()
 
     If C1 = 1 Then
 
-        'Existing possession
-        For M = 0 To 4
+        'Existing roster
+        For slot = 0 To 4
 
-            Locate M + 20, 1
+            Locate slot + 20, 1
             Color 2, 0
-            Print Using "# "; M;
+            Print Using "# "; slot;
             Color 15, 0
-            Print "ENTER "; posnName$(M); " # ";
+            Print "ENTER "; posnName$(slot); " # ";
 
-            Z = lineupIdx(P9, M)
+            Z = lineupIdx(P9, slot)
             nonPlayers = 0
 
             For IP% = 0 To Z
@@ -10968,16 +10936,16 @@ Sub ChooseLineup ()
 
     Else
 
-        'New possession
-        For I = 0 To 4
+        'New roster from scratch
+        For slot = 0 To 4
 
             Do
 
-                Locate I + 20, 1
+                Locate slot + 20, 1
                 Color 2, 0
-                Print Using "# "; I;
+                Print Using "# "; slot;
                 Color 15
-                Print "ENTER "; posnName$(I); " # ";
+                Print "ENTER "; posnName$(slot); " # ";
 
                 I$ = GetKeyPress$
                 Call LetterToNumber(I$, posn)
@@ -11017,7 +10985,9 @@ Sub ChooseLineup ()
                     'Valid position #, player has not fouled out, and is active / eligible
                     If posn >= 0 And posn <= 13 And plyrOff_GAME!(P9, posn, 12) < foulsToDQ And players$(P9, posn) <> "XXX" And playerActive%(P9, posn) = 1 Then
                         For I2 = 0 To 4
-                            If lineupIdx(P9, I2) = posn Then Exit For
+                            If lineupIdx(P9, I2) = posn Then
+                                Exit For
+                            End If
                         Next I2
                     End If
 
@@ -11025,16 +10995,35 @@ Sub ChooseLineup ()
 
             Loop Until posn >= 0 And posn <= 13
 
-            lineupIdx(P9, I) = posn
+            lineupIdx(P9, slot) = posn
             nonPlayers = 0
+            alreadyAssigned = 0
 
-            For IP% = 0 To lineupIdx(P9, I)
+            For IP% = 0 To lineupIdx(P9, slot)
+
                 If playerActive%(P9, IP%) = 0 Or players$(P9, IP%) = "" Or players$(P9, IP%) = "XXX" Then
                     nonPlayers = nonPlayers + 1
                 End If
+
             Next
 
-            If playerActive%(P9, posn) = 1 Then
+            For X = 0 To (slot - 1)
+
+                If lineupIdx(P9, X) = posn Then
+                    alreadyAssigned = 1
+                    Color 14, 0
+                    Locate 25, 30
+                    Print Space$(40)
+                    Locate 25, 30
+                    Print players$(P9, lineupIdx(P9, X)); " IS ALREADY IN THE LINEUP!"
+                    lineupIdx(P9, slot) = -1
+                    slot = slot - 1
+                    If slot < 0 Then slot = 0
+                End If
+
+            Next X
+
+            If playerActive%(P9, posn) = 1 And alreadyAssigned = 0 Then
                 Print players$(P9, posn);
 
                 'Print player name in team colors (activated)
@@ -11055,19 +11044,19 @@ Sub ChooseLineup ()
         Do
             Locate LAST_ROW, 1
             Color 12, 0
-            Print "# TO CHANGE (0-4) 6=NONE";
+            Print "SLOT # TO CHANGE (0-4) 6=NONE";
             Locate 1, 1
             I$ = GetKeyPress$
-            K = Val(I$)
+            slot = Val(I$)
 
             Select Case UCase$(I$)
-                Case "O": K = 5
-                Case "F": K = 5
+                Case "O": slot = 5
+                Case "F": slot = 5
             End Select
 
-        Loop Until K >= 0 And K <= 6
+        Loop Until slot >= 0 And slot <= 6
 
-        Select Case K
+        Select Case slot
 
             Case Is <= 4
 
@@ -11075,14 +11064,18 @@ Sub ChooseLineup ()
 
                     'We've chosen someone who has been fouled on
                     Color 14, 0
-                    Locate 25, 29: Print players$(P9, lineupIdx(P9, K)); " IS AT THE FT LINE"
+                    Locate 25, 30
+                    Print Space$(40)
+                    Locate 25, 30
+                    Print players$(P9, lineupIdx(P9, slot)); " IS AT THE FT LINE"
+
                     goodLineup = 0
 
                 Else
 
                     Locate LAST_ROW, 1: Print Space$(25);
 
-                    Z = lineupIdx(P9, K)
+                    Z = lineupIdx(P9, slot)
                     playerTime(P9, Z) = gameClock!
 
                     nonPlayers = 0
@@ -11099,24 +11092,39 @@ Sub ChooseLineup ()
 
                     Do
 
-                        Locate K + 20, 1: Print Space$(26);
-
-                        lineupIdx(P9, K) = -1
+                        Locate slot + 20, 1: Print Space$(26);
 
                         Locate , 1
-                        Color 2: Print Using "# "; K;
+                        Color 2: Print Using "# "; slot;
                         Color 15
-                        Print "ENTER "; posnName$(K); " # ";
+                        Print "ENTER "; posnName$(slot); " # ";
 
                         I$ = GetKeyPress$
                         Call LetterToNumber(I$, posn)
 
-                        'Valid position #, player has not fouled out, and is active / eligible
-                        If posn >= 0 And posn <= 13 And plyrOff_GAME!(P9, posn, 12) < foulsToDQ And players$(P9, posn) <> "XXX" And playerActive%(P9, posn) = 1 Then
+                        If posn = 15 Then
 
-                            For I2 = 0 To 4
-                                If lineupIdx(P9, I2) = posn Then Exit For
-                            Next I2
+                            If UCase$(I$) = "F" Then
+                                defStrat(P9) = defStrat(P9) + 1
+                                If defStrat(P9) > 17 Then defStrat(P9) = 0
+                            End If
+
+                            If UCase$(I$) = "O" Then
+                                offStrat(P9) = offStrat(P9) + 1
+                                If offStrat(P9) > 15 Then offStrat(P9) = 0
+                            End If
+
+                        Else
+                            'Valid position #, player has not fouled out, and is active / eligible
+                            If posn >= 0 And posn <= 13 And plyrOff_GAME!(P9, posn, 12) < foulsToDQ And players$(P9, posn) <> "XXX" And playerActive%(P9, posn) = 1 Then
+
+                                For I2 = 0 To 4
+                                    If lineupIdx(P9, I2) = posn Then
+                                        Exit For
+                                    End If
+                                Next I2
+
+                            End If
 
                         End If
 
@@ -11135,16 +11143,33 @@ Sub ChooseLineup ()
                         tmFatigue(P9, posn) = 0
                     End If
 
-                    lineupIdx(P9, K) = posn
                     nonPlayers = 0
 
-                    For IP% = 0 To lineupIdx(P9, K)
+                    For X = 0 To 4
+
+                        If lineupIdx(P9, X) = posn Then
+                            goodLineup = 0
+                            Color 14, 0
+                            Locate 25, 30
+                            Print Space$(40)
+                            Locate 25, 30
+                            Print players$(P9, lineupIdx(P9, X)); " IS ALREADY IN THE LINEUP!"
+                            'lineupIdx(P9, slot) = -1
+                        End If
+
+                    Next X
+
+                    If goodLineup = 1 Then lineupIdx(P9, slot) = posn
+
+                    For IP% = 0 To lineupIdx(P9, slot)
+
                         If playerActive%(P9, IP%) = 0 Or players$(P9, IP%) = "" Or players$(P9, IP%) = "XXX" Then
                             nonPlayers = nonPlayers + 1
                         End If
+
                     Next
 
-                    If playerActive%(P9, posn) = 1 Then
+                    If playerActive%(P9, posn) = 1 And goodLineup = 1 Then
                         Print players$(P9, posn);
 
                         'Print player name in team colors (activated)
@@ -11155,7 +11180,6 @@ Sub ChooseLineup ()
                     End If
 
                 End If
-
 
             Case 5
                 If UCase$(I$) = "F" Then
@@ -11196,8 +11220,10 @@ Sub ChooseLineup ()
                     For I1 = 0 To 4
 
                         If plyrOff_GAME!(P9, lineupIdx(P9, I1), 12) >= foulsToDQ Then
-                            Locate 25, 29
                             Color 14, 0
+                            Locate 25, 30
+                            Print Space$(40)
+                            Locate 25, 30
                             Print players$(P9, lineupIdx(P9, I1)); " HAS FOULED OUT"
                             goodLineup = 0
                             Exit For
@@ -11209,7 +11235,7 @@ Sub ChooseLineup ()
 
         End Select
 
-    Loop Until K = 6 And goodLineup = 1
+    Loop Until slot = 6 And goodLineup = 1
 
 End Sub
 
