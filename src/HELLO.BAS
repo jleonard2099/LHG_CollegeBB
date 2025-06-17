@@ -19,6 +19,7 @@ Const TOURNEY_SIZE_BYTES = 94
 Const LAST_COL = 80
 Const LAST_ROW = 30
 Const SCHED_ENTRIES_PER_SCREEN = 25
+Const MAX_PBP_LINES = 13
 
 Const BONUS_FOUL_NUM = 6
 
@@ -1541,6 +1542,7 @@ Sub COLHOOP ()
 
         ballCarrier = -1
         Call DEADBALLOPTIONS(deadballTO)
+        If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
         gameClock! = 1200
         Call UPDATESCREEN
@@ -1636,6 +1638,7 @@ Sub COLHOOP ()
 
         ballCarrier = -1
         Call DEADBALLOPTIONS(deadballTO)
+        If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
         Call SCOREBOARD
 
@@ -1894,6 +1897,7 @@ Sub COLHOOP ()
                 End If
 
                 Call DEADBALLOPTIONS(deadballTO)
+                If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
                 Call SCOREBOARD
 
@@ -3024,6 +3028,7 @@ Sub COLHOOP ()
         Call ChangePossession
 
         Call DEADBALLOPTIONS(deadballTO)
+        If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -3711,7 +3716,7 @@ Sub COLHOOP ()
                         Call SELECTPBP(P, 1)
                         Call DELAY
 
-                        Call STOPPAGE
+                        Call STOPPAGE (takeTO)
                         Call PRESSGUARD
 
                         ballCarrier = 6
@@ -3840,7 +3845,7 @@ Sub COLHOOP ()
                         Call SELECTPBP(P, 1)
                         Call DELAY
 
-                        Call STOPPAGE
+                        Call STOPPAGE (takeTO)
                         Call PRESSGUARD
 
                         ballCarrier = 6
@@ -4005,7 +4010,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE
+                Call STOPPAGE (takeTO)
                 Call PRESSGUARD
 
                 GoTo 300
@@ -4245,7 +4250,7 @@ Sub COLHOOP ()
                             Call SELECTPBP(P, 1)
                             Call DELAY
 
-                            Call STOPPAGE
+                            Call STOPPAGE (takeTO)
                             Call PRESSGUARD
 
                             ballCarrier = 6
@@ -4401,7 +4406,7 @@ Sub COLHOOP ()
         Call SELECTPBP(D, 1)
         Call DELAY
 
-        Call STOPPAGE
+        Call STOPPAGE (takeTO)
         Call PRESSGUARD
 
         offStatus = 0
@@ -4455,6 +4460,7 @@ Sub COLHOOP ()
         Call UPDATESCREEN
 
         Call DEADBALLOPTIONS(deadballTO)
+        If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -4578,6 +4584,7 @@ Sub COLHOOP ()
                 Call ChangePossession
 
                 Call DEADBALLOPTIONS(deadballTO)
+                If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4608,6 +4615,7 @@ Sub COLHOOP ()
                 Call DELAY
 
                 Call DEADBALLOPTIONS(deadballTO)
+                If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4633,6 +4641,7 @@ Sub COLHOOP ()
                 Call DELAY
 
                 Call DEADBALLOPTIONS(deadballTO)
+                If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
                 For I = 0 To 1
                     If defCategory(I) = 0 Then
@@ -4687,7 +4696,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE
+                Call STOPPAGE (takeTO)
                 Call PRESSGUARD
 
                 GoTo 300
@@ -5088,6 +5097,7 @@ Sub COLHOOP ()
         turnovers(P) = turnovers(P) + 1
 
         Call DEADBALLOPTIONS(deadballTO)
+        If deadballTO = 1 Then Call STOPPAGE (takeTO)
 
         For I = 0 To 1
             If defCategory(I) = 0 Then
@@ -5166,7 +5176,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE
+                Call STOPPAGE (takeTO)
                 Call PRESSGUARD
 
                 offStatus = 0
@@ -5179,7 +5189,7 @@ Sub COLHOOP ()
                 Call SELECTPBP(P, 1)
                 Call DELAY
 
-                Call STOPPAGE
+                Call STOPPAGE (takeTO)
                 Call PRESSGUARD
 
                 offStatus = 0
@@ -5248,7 +5258,7 @@ Sub COLHOOP ()
                     Call SELECTPBP(P, 1)
                     Call DELAY
 
-                    Call STOPPAGE
+                    Call STOPPAGE (takeTO)
                     Call PRESSGUARD
 
                     ballCarrier = 6
@@ -12097,7 +12107,6 @@ End Sub
 'any changes to lineup, strategy, players.
 Sub DEADBALLOPTIONS (useTakeTO)
 
-    lineupChanged = 0
     userTakeTO = 0
 
     prevBall$ = ""
@@ -12143,12 +12152,10 @@ Sub DEADBALLOPTIONS (useTakeTO)
 
             If playerMode = 0 Then
 
-                Print "1 - SUB "; gameTeams$(P)
-                Print "2 - SUB "; gameTeams$(D)
+                Print "1 - TIME OUT "; gameTeams$(P)
+                Print "2 - TIME OUT "; gameTeams$(D)
                 Print "3 - CHANGE STRATEGY "; gameTeams$(P)
                 Print "4 - CHANGE STRATEGY "; gameTeams$(D)
-                Print "5 - TIME OUT "; gameTeams$(P)
-                Print "6 - TIME OUT "; gameTeams$(D)
 
                 I$ = GetKeyPress$
                 P3 = Val(I$)
@@ -12158,9 +12165,8 @@ Sub DEADBALLOPTIONS (useTakeTO)
 
                 tgtTeam = 1 - compTeam
 
-                Print "1 - SUB "; gameTeams$(tgtTeam)
+                Print "1 - TIME OUT "; gameTeams$(tgtTeam)
                 Print "2 - CHANGE STRATEGY "; gameTeams$(tgtTeam)
-                Print "3 - TIME OUT "; gameTeams$(tgtTeam)
 
                 I$ = GetKeyPress$
                 P3 = Val(I$)
@@ -12177,8 +12183,10 @@ Sub DEADBALLOPTIONS (useTakeTO)
             End If
 
             If P3 = 0 Or _ 
-                (playerMode = 1 And (P3 = 1 Or P3 = 3 Or P3 = 5 And timeouts(P) <= 0) And P = compTeam) Or _ 
-                (playerMode = 1 And (P3 = 2 Or P3 = 4 Or P3 = 6 And timeouts(D) <= 0) And D = compTeam) Then
+                P3 = 1 And timeouts(P) <= 0 Or _ 
+                P3 = 2 And timeouts(D) <= 0 Or _ 
+                (playerMode = 1 And P = compTeam And (P3 = 1 Or P3 = 3)) Or _
+                (playerMode = 1 And D = compTeam And (P3 = 2 Or P3 = 4)) Then
 
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
@@ -12188,41 +12196,27 @@ Sub DEADBALLOPTIONS (useTakeTO)
                 Call CheckGameClock
                 Call StealAdjustments
 
-                If lineupChanged = 1 Then
-                    lineupChanged = 0
-                    Call CheckGameClock
-                    Call SCOREBOARD
-                End If
-
-                If pbpDelay! > 0 Then
-                    Call WINDEX
-                End If
-
             Else
 
                 Select Case P3
 
                     Case 1
-                        'Substitution - Offense
-                        S2 = P
-                        C1 = 1
-                        P9 = S2
-                        Call ChooseLineup
-                        Call PlayItSafe
-                        P9 = P
-                        lineupChanged = 1
-                        Call SCOREBOARD
+                        'Timeouts - Offense
+                        If timeouts(P) > 0 Then
+                            userTakeTO = 1
+                            timeouts(P) = timeouts(P) - 1
+                            Call RESETFATIGUE
+                            Call SCOREBOARD
+                        End If
 
                     Case 2
-                        'Substitution - Defense
-                        S2 = D
-                        C1 = 1
-                        P9 = S2
-                        Call ChooseLineup
-                        Call PlayItSafe
-                        P9 = P
-                        lineupChanged = 1
-                        Call SCOREBOARD
+                        'Timeouts - Defense
+                        If timeouts(D) > 0 Then
+                            userTakeTO = 1
+                            timeouts(D) = timeouts(D) - 1
+                            Call RESETFATIGUE
+                            Call SCOREBOARD
+                        End If
 
                     Case 3
                         'Strategy - Offense
@@ -12236,24 +12230,6 @@ Sub DEADBALLOPTIONS (useTakeTO)
                         Call CHANGESTRATEGY(P9)
                         Call SCOREBOARD
 
-                    Case 5
-                        'Timeouts - Offense
-                        If timeouts(P) > 0 Then
-                            userTakeTO = 1
-                            timeouts(P) = timeouts(P) - 1
-                            Call RESETFATIGUE
-                            Call SCOREBOARD
-                        End If
-
-                    Case 6
-                        'Timeouts - Defense
-                        If timeouts(D) > 0 Then
-                            userTakeTO = 1
-                            timeouts(D) = timeouts(D) - 1
-                            Call RESETFATIGUE
-                            Call SCOREBOARD
-                        End If
-
                 End Select
 
             End If 'Done checking input
@@ -12262,7 +12238,7 @@ Sub DEADBALLOPTIONS (useTakeTO)
 
         End If 'Done checking computer control
 
-    Loop Until I$ = Chr$(13) Or playerMode = 2 Or lineupChanged = 0
+    Loop Until I$ = Chr$(13) Or (playerMode = 1 And P = compTeam) Or userTakeTO = 1 Or playerMode = 2
 
 End Sub
 
@@ -12275,7 +12251,9 @@ End Sub
 'the clock is stopped, including
 'substitutions, strategy and
 'time-outs.
-Sub STOPPAGE ()
+Sub STOPPAGE (userTakeTO)
+
+    userTakeTO = 0
 
     Do
 
@@ -12319,10 +12297,12 @@ Sub STOPPAGE ()
             Print "-CONTINUE"
 
             If playerMode = 0 Then
-                Print "1 - TIME OUT "; gameTeams$(P)
-                Print "2 - TIME OUT "; gameTeams$(D)
+                Print "1 - SUB "; gameTeams$(P)
+                Print "2 - SUB "; gameTeams$(D)
                 Print "3 - CHANGE STRATEGY "; gameTeams$(P)
                 Print "4 - CHANGE STRATEGY "; gameTeams$(D)
+                Print "5 - TIME OUT "; gameTeams$(P)
+                Print "6 - TIME OUT "; gameTeams$(D)
 
                 I$ = GetKeyPress$
                 P3 = Val(I$)
@@ -12332,8 +12312,9 @@ Sub STOPPAGE ()
 
                 tgtTeam = 1 - compTeam
 
-                Print "1 - TIME OUT "; gameTeams$(tgtTeam)
+                Print "1 - SUB "; gameTeams$(tgtTeam)
                 Print "2 - CHANGE STRATEGY "; gameTeams$(tgtTeam)
+                Print "3 - TIME OUT "; gameTeams$(tgtTeam)
 
                 I$ = GetKeyPress$
                 P3 = Val(I$)
@@ -12350,10 +12331,8 @@ Sub STOPPAGE ()
             End If
 
             If P3 = 0 Or _ 
-                P3 = 1 And timeouts(P) <= 0 Or _ 
-                P3 = 2 And timeouts(D) <= 0 Or _ 
-                ((P3 = 1 Or P3 = 3) And P = compTeam And playerMode = 1) Or _ 
-                ((P3 = 2 Or P3 = 4) And D = compTeam And playerMode = 1) Then
+                (playerMode = 1 And P = compTeam And (P3 = 1 Or P3 = 3 Or (P3 = 5 And timeouts(P) <= 0))) Or _ 
+                (playerMode = 1 And D = compTeam And (P3 = 2 Or P3 = 4 Or (P3 = 6 And timeouts(D) <= 0))) Then
 
                 'When ENTER is pressed (to continue),
                 'team has no timeouts or computer team
@@ -12369,20 +12348,25 @@ Sub STOPPAGE ()
                 Select Case P3
 
                     Case 1
-                        'Timeout - Offense
-                        If timeouts(P) > 0 Then
-                            timeouts(P) = timeouts(P) - 1
-                        End If
-                        Color 14, 0
+                        'Substitution - Offense
+                        S2 = P
+                        C1 = 1
+                        P9 = S2
+                        Call ChooseLineup
+                        Call PlayItSafe
+                        P9 = P
+                        lineupChanged = 1
                         Call SCOREBOARD
-
+                    
                     Case 2
-                        'Timeout - Defense
-                        If timeouts(D) > 0 Then
-                            timeouts(D) = timeouts(D) - 1
-                        End If
-
-                        Color 14, 0
+                        'Substitution - Defense
+                        S2 = D
+                        C1 = 1
+                        P9 = S2
+                        Call ChooseLineup
+                        Call PlayItSafe
+                        P9 = P
+                        lineupChanged = 1
                         Call SCOREBOARD
 
                     Case 3
@@ -12395,6 +12379,26 @@ Sub STOPPAGE ()
                         'Strategy - Defense
                         P9 = D
                         Call CHANGESTRATEGY(P9)
+                        Call SCOREBOARD
+
+                    Case 5
+                        'Timeout - Offense
+                        If timeouts(P) > 0 Then
+                            timeouts(P) = timeouts(P) - 1
+                        End If
+                        userTakeTO = 1
+
+                        Color 14, 0
+                        Call SCOREBOARD
+
+                    Case 6
+                        'Timeout - Defense
+                        If timeouts(D) > 0 Then
+                            timeouts(D) = timeouts(D) - 1
+                        End If
+                        userTakeTO = 1
+
+                        Color 14, 0
                         Call SCOREBOARD
 
                 End Select
@@ -12412,6 +12416,7 @@ Sub STOPPAGE ()
         End If
 
     Loop Until I$ = Chr$(13) Or playerMode = 2 Or (playerMode = 1 And P = compTeam)
+    'Or lineupChanged = 1
 
 End Sub
 
