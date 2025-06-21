@@ -7,7 +7,7 @@ Sub DRAFT ()
 
     _Title "Courtside College Basketball - Team Draft"
 
-    Shared d3FG_Adj(), dthreeFGA_Adj()
+    Shared d3FG_Adj(), d3FGA_Adj()
     Shared dFGPctAdj_DRAFT!()
 
     Shared leagRat_DRAFT()
@@ -48,7 +48,7 @@ Sub DRAFT ()
 
                 Case 1:
 
-                    Erase dFGPctAdj_DRAFT!, dthreeFGA_Adj, d3FG_Adj
+                    Erase dFGPctAdj_DRAFT!, d3FGA_Adj, d3FG_Adj
                     Erase leagRat_DRAFT, plyrOff_DRAFT!, plyrRat_DRAFT!
                     Erase stamina_DRAFT!, teamRat_DRAFT
 
@@ -395,7 +395,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     Shared plyrStat_DRAFT!(), plyrRat_DRAFT!(), stamina_DRAFT!()
 
     Shared leagRat_DRAFT(), teamRat_DRAFT(), teamStats_DRAFT!()
-    Shared avgRat_DRAFT(), d3FG_Adj(), dthreeFGA_Adj()
+    Shared avgRat_DRAFT(), d3FG_Adj(), d3FGA_Adj()
 
     Cls
 
@@ -408,7 +408,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
             numPlayers = numPlayers + 1
             stamina_DRAFT!(0) = stamina_DRAFT!(0) + avgRat_DRAFT(0, I, 1)
             dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) + avgRat_DRAFT(0, I, 2)
-            dthreeFGA_Adj(0) = dthreeFGA_Adj(0) + avgRat_DRAFT(0, I, 3)
+            d3FGA_Adj(0) = d3FGA_Adj(0) + avgRat_DRAFT(0, I, 3)
             d3FG_Adj(0) = d3FG_Adj(0) + avgRat_DRAFT(0, I, 4)
             leagRat_DRAFT(0, 0) = leagRat_DRAFT(0, 0) + avgRat_DRAFT(0, I, 5)
             leagRat_DRAFT(0, 2) = leagRat_DRAFT(0, 2) + avgRat_DRAFT(0, I, 6)
@@ -425,8 +425,8 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     stamina_DRAFT!(0) = stamina_DRAFT!(0) / (numPlayers - 1)
     dFGPctAdj_DRAFT!(0) = dFGPctAdj_DRAFT!(0) / (numPlayers - 1)
 
-    dthreeFGA_Adj(0) = dthreeFGA_Adj(0) / (numPlayers - 1)
-    If dthreeFGA_Adj(0) > 20 Then dthreeFGA_Adj(0) = 100 - dthreeFGA_Adj(0)
+    d3FGA_Adj(0) = d3FGA_Adj(0) / (numPlayers - 1)
+    If d3FGA_Adj(0) > 20 Then d3FGA_Adj(0) = 100 - d3FGA_Adj(0)
 
     d3FG_Adj(0) = d3FG_Adj(0) / (numPlayers - 1)
     If d3FG_Adj(0) > 20 Then d3FG_Adj(0) = 100 - d3FG_Adj(0)
@@ -463,7 +463,7 @@ Sub SaveTeamDraft (draftNew, teamYear$, teamName$, teamPosn)
     LSet Q$(1) = MKI$(stamina_DRAFT!(0))
     LSet Q$(2) = MKI$(dFGPctAdj_DRAFT!(0))
     LSet Q$(3) = MKI$(d3FG_Adj(0))
-    LSet Q$(4) = MKI$(dthreeFGA_Adj(0))
+    LSet Q$(4) = MKI$(d3FGA_Adj(0))
 
     For I = 0 To 4:
         LSet Q$(I + 5) = MKI$(leagRat_DRAFT(0, I))
@@ -765,7 +765,7 @@ End Sub
 Sub ReadDraftTeam (teamIdx, draftIdx)
 
     Shared tmAtt_DRAFT&(), CK!()
-    Shared dFGPctAdj_DRAFT!(), d3FG_Adj(), dthreeFGA_Adj()
+    Shared dFGPctAdj_DRAFT!(), d3FG_Adj(), d3FGA_Adj()
     Shared leagRat_DRAFT(), avgRat_DRAFT()
     Shared plyrOff_DRAFT!(), plyrDef_DRAFT!()
     Shared plyrRat_DRAFT!(), plyrStat_DRAFT!(), stamina_DRAFT!()
@@ -789,7 +789,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     stamina_DRAFT!(draftIdx) = CVI(Q$(1))
     dFGPctAdj_DRAFT!(draftIdx) = CVI(Q$(2))
     d3FG_Adj(draftIdx) = CVI(Q$(3))
-    dthreeFGA_Adj(draftIdx) = CVI(Q$(4))
+    d3FGA_Adj(draftIdx) = CVI(Q$(4))
 
     For I = 0 To 4:
         leagRat_DRAFT(draftIdx, I) = CVI(Q$(I + 5))
@@ -816,7 +816,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     Close #1
 
     If d3FG_Adj(draftIdx) > 20 Then d3FG_Adj(draftIdx) = 100 - d3FG_Adj(draftIdx)
-    If dthreeFGA_Adj(draftIdx) > 20 Then dthreeFGA_Adj(draftIdx) = 100 - dthreeFGA_Adj(draftIdx)
+    If d3FGA_Adj(draftIdx) > 20 Then d3FGA_Adj(draftIdx) = 100 - d3FGA_Adj(draftIdx)
     If leagRat_DRAFT(draftIdx, 0) > 20 Then leagRat_DRAFT(draftIdx, 0) = 100 - leagRat_DRAFT(draftIdx, 0)
     If leagRat_DRAFT(draftIdx, 2) > 20 Then leagRat_DRAFT(draftIdx, 2) = 100 - leagRat_DRAFT(draftIdx, 2)
     If leagRat_DRAFT(draftIdx, 3) > 20 Then leagRat_DRAFT(draftIdx, 3) = 100 - leagRat_DRAFT(draftIdx, 3)
@@ -824,7 +824,7 @@ Sub ReadDraftTeam (teamIdx, draftIdx)
     For I = 0 To 13
         avgRat_DRAFT(draftIdx, I, 1) = stamina_DRAFT!(draftIdx)
         avgRat_DRAFT(draftIdx, I, 2) = dFGPctAdj_DRAFT!(draftIdx)
-        avgRat_DRAFT(draftIdx, I, 3) = dthreeFGA_Adj(draftIdx)
+        avgRat_DRAFT(draftIdx, I, 3) = d3FGA_Adj(draftIdx)
         avgRat_DRAFT(draftIdx, I, 4) = d3FG_Adj(draftIdx)
         avgRat_DRAFT(draftIdx, I, 5) = leagRat_DRAFT(draftIdx, 0)
         avgRat_DRAFT(draftIdx, I, 6) = leagRat_DRAFT(draftIdx, 2)

@@ -30,14 +30,14 @@ Dim previousYear$
 Dim Shared fileLength&
 
 Dim CK
-Dim defFGPctAdj!, def3FG_Adj, defthreeFGA_Adj
+Dim defFGPctAdj!, def3FGPctAdj, defthreeFGA_Adj
 Dim staminaRating!
 
 Dim teamAttendance&
 
 Dim coach$, mascot$, arenaName$
 
-Dim d3FG_Adj(1), dthreeFGA_Adj(1)
+Dim d3FG_Adj(1), d3FGA_Adj(1)
 
 Dim leagueRatings(0 To 4)
 Dim teamRatings(0 To 9), teamStats!(0 To 24)

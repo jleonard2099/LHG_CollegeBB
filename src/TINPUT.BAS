@@ -14,7 +14,7 @@ Sub InputTeam ()
     Shared tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
     Shared tmReb!, tmSteal!, tmTO!
 
-    Shared def3FG_Adj, defthreeFGA_Adj
+    Shared def3FGPctAdj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -1004,11 +1004,11 @@ Sub InputTeam ()
             defthreeFGA_Adj = 100 + defthreeFGA_Adj
         End If
 
-        def3FG_Adj = opp3FGAPct! - leag3FGPct!
+        def3FGPctAdj = opp3FGAPct! - leag3FGPct!
 
         'DEF 3FG %
-        If def3FG_Adj < 0 Then
-            def3FG_Adj = 100 + def3FG_Adj
+        If def3FGPctAdj < 0 Then
+            def3FGPctAdj = 100 + def3FGPctAdj
         End If
 
         For I = 0 To 13
@@ -1436,7 +1436,7 @@ Sub SaveTeam (newID, teamName$, yearNumber$, teamIdx)
     Shared tmFGA!, tmFGPct!, tmFTA!, tmFTPct!
     Shared tmReb!, tmSteal!, tmTO!
 
-    Shared def3FG_Adj, defthreeFGA_Adj
+    Shared def3FGPctAdj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 

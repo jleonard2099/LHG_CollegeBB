@@ -105,7 +105,7 @@ End Sub
 'faster and easier to proceed through screens
 Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
-    Shared def3FG_Adj, defthreeFGA_Adj
+    Shared def3FGPctAdj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -128,9 +128,9 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         offFoulAdj = leagueRatings(3) - 100
     End If
 
-    d3FGAdj = def3FG_Adj
+    d3FGAdj = def3FGPctAdj
     If d3FGAdj > 20 Then
-        d3FGAdj = def3FG_Adj - 100
+        d3FGAdj = def3FGPctAdj - 100
     End If
 
     dthreeFGAAdj = defthreeFGA_Adj
@@ -238,7 +238,7 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
 
             Case 7
                 Locate 10, 17: Print Space$(10)
-                Locate 10, 1: Input " 7. DEF 3FG% ADJ"; def3FG_Adj
+                Locate 10, 1: Input " 7. DEF 3FG% ADJ"; def3FGPctAdj
                 Locate 10, 17: Print " "
 
             Case 8
@@ -366,8 +366,8 @@ Sub EditTeam (teamName$, yearNumber$, teamIdx)
         defthreeFGA_Adj = 100 + defthreeFGA_Adj
     End If
 
-    If def3FG_Adj < 0 Then
-        def3FG_Adj = 100 + def3FG_Adj
+    If def3FGPctAdj < 0 Then
+        def3FGPctAdj = 100 + def3FGPctAdj
     End If
 
     If leagueRatings(0) < 0 Then
@@ -937,7 +937,7 @@ End Sub
 'team roster to the default printer
 Sub Roster_Report (printDest, destFile$, teamName$)
 
-    Shared def3FG_Adj, defthreeFGA_Adj
+    Shared def3FGPctAdj, defthreeFGA_Adj
     Shared defFGPctAdj!, staminaRating!
 
     Shared mascot$, coach$, arenaName$
@@ -976,9 +976,9 @@ Sub Roster_Report (printDest, destFile$, teamName$)
         offFoulAdj = leagueRatings(3) - 100
     End If
 
-    d3FGAdj = def3FG_Adj
+    d3FGAdj = def3FGPctAdj
     If d3FGAdj > 20 Then
-        d3FGAdj = def3FG_Adj - 100
+        d3FGAdj = def3FGPctAdj - 100
     End If
 
     dthreeFGAAdj = defthreeFGA_Adj
@@ -1041,7 +1041,7 @@ End Sub
 'team roster to the user's display
 Sub ViewRoster (targetTeam$)
 
-    Shared def3FG_Adj, defthreeFGA_Adj
+    Shared def3FGPctAdj, defthreeFGA_Adj
     Shared defFGPctAdj!, staminaRating!
 
     Shared mascot$, coach$, arenaName$
@@ -1070,9 +1070,9 @@ Sub ViewRoster (targetTeam$)
         offFoulAdj = leagueRatings(3) - 100
     End If
 
-    d3FGAdj = def3FG_Adj
+    d3FGAdj = def3FGPctAdj
     If d3FGAdj > 20 Then
-        d3FGAdj = def3FG_Adj - 100
+        d3FGAdj = def3FGPctAdj - 100
     End If
 
     dthreeFGAAdj = defthreeFGA_Adj
@@ -1258,7 +1258,7 @@ End Sub
 'to the original team file
 Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
 
-    Shared def3FG_Adj, defthreeFGA_Adj
+    Shared def3FGPctAdj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
     Shared mascot$, coach$, arenaName$
 
@@ -1285,7 +1285,7 @@ Sub SaveChangedTeam (newID, yearNumber$, teamName$, teamIdx)
     LSet Q$(0) = RTrim$(teamName$)
     LSet Q$(1) = MKI$(staminaRating!)
     LSet Q$(2) = MKI$(defFGPctAdj!)
-    LSet Q$(3) = MKI$(def3FG_Adj)
+    LSet Q$(3) = MKI$(def3FGPctAdj)
     LSet Q$(4) = MKI$(defthreeFGA_Adj)
 
     For I = 0 To 4:

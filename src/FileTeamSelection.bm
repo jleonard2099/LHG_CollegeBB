@@ -230,7 +230,7 @@ End Sub
 ' been included for.
 Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
 
-    Shared defFGPctAdj!, def3FG_Adj, defthreeFGA_Adj
+    Shared defFGPctAdj!, def3FGPctAdj, defthreeFGA_Adj
     Shared staminaRating!
 
     Shared leagueRatings(), teamRatings()
@@ -252,7 +252,7 @@ Sub ReadTeam (teamYear$, targetTeam$, teamIdx)
     targetTeam$ = RTrim$(Q$(0))
     staminaRating! = CVI(Q$(1))
     defFGPctAdj! = CVI(Q$(2))
-    def3FG_Adj = CVI(Q$(3))
+    def3FGPctAdj = CVI(Q$(3))
     defthreeFGA_Adj = CVI(Q$(4))
 
     For I = 0 To 4:
