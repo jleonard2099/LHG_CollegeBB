@@ -35,7 +35,6 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
-
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -764,7 +763,6 @@ Sub COLHOOP ()
 
     Dim GS%, invalid3FG
     Dim playChoice, pbpType
-    Dim threePtShotChance
 
     Shared actualAttendance&
     Shared avgAttendance&()
@@ -772,6 +770,7 @@ Sub COLHOOP ()
     Shared scheduleFile$, tourneyFile$
     Shared schedHomeTm$, schedVisTm$
 
+    Shared J8%, threePtShotChance
     Shared tickerStart
 
     Shared FY%(), schedOptions()
@@ -5466,7 +5465,7 @@ Sub InitVar ()
 
     Erase crashBoards
     Erase defStrat, defCategory, defCoverage, eventSettings
-    Erase ft3PtFoul, lineupIdx, offStrat, oppScore
+    Erase ft3PtFoul, offStrat, oppScore
     Erase pbpFG, pbpBG
     Erase plyrStaminaGame, plyrRebIdx, plyrRebVal
     Erase playerTime, powerRating, pressureRating
@@ -5510,6 +5509,8 @@ Sub AUTOSETUP (validTeam)
 
     Shared tourneyFile$
 
+    Shared FY%()
+
     Shared schedOptions(), tourneySettings()
 
     gameLoc = schedOptions(2)
@@ -5537,7 +5538,7 @@ Sub AUTOSETUP (validTeam)
         Call ReadGameExtraData(tgtYear$, tgtId, tgtTeam, validTeam)
 
         'FY% = 2 * (Average FGA/G for this team (Off + Def) - League FGA/G)
-        FY%(gameIdx) = 2 * teamRat_GAME(gameIdx, 3) - teamRat_GAME(gameIdx, 4)
+        FY%(tgtTeam) = 2 * teamRat_GAME(tgtTeam, 3) - teamRat_GAME(tgtTeam, 4)
 
         Call StartingLineup(tgtTeam)
 
@@ -5771,8 +5772,6 @@ Sub TimeoutCalled (chargeTeam)
         pbpString$ = "TIME OUT " + gameTeams$(chargeTeam)
         Call SELECTPBP(chargeTeam, 1)
         Call DELAY
-
-        Call DEADBALLOPTIONS(deadballTO)
 
         For I = 0 To 1
             For I1 = 0 To 13
@@ -7884,18 +7883,18 @@ Sub TICKER ()
                     Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
                 Else
                     Select Case RN0
-                        Case 1 To 33: 
+                        Case 1 To 33:
                             Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
-                        Case 34 To 67: 
+                        Case 34 To 67:
                             Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
-                        Case 67 To 100: 
+                        Case 67 To 100:
                             Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
                     End Select
                 End If
 
             Else
 
-                If halfTime = 0 Then 
+                If halfTime = 0 Then
                     Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
                 End If
 
@@ -11026,9 +11025,8 @@ Sub ChooseLineup ()
                                 Locate 25, 30
                                 Print Space$(40)
                                 Locate 25, 30
-                                Print players$(P9, lineupIdx(P9, X)); " IS ALREADY IN THE LINEUP!"
+                                Print players$(P9, lineupIdx(P9, I2)); " IS ALREADY IN THE LINEUP!"
                                 posn = -1
-                                lineupIdx(P9, I2) = -1
                                 Exit For
                             End If
                         Next I2
@@ -11113,7 +11111,7 @@ Sub ChooseLineup ()
                     Locate Z + 3 - nonPlayers, 3
                     Color 15, 0
                     'Only print valid roster indices
-                    If Z >= 0 Then Print Left$(players$(P9, Z), 12)                    
+                    If Z >= 0 Then Print Left$(players$(P9, Z), 12)
 
                     Do
 
@@ -11153,7 +11151,7 @@ Sub ChooseLineup ()
                                         Locate 25, 30
                                         Print Space$(40)
                                         Locate 25, 30
-                                        Print players$(P9, lineupIdx(P9, X)); " IS ALREADY IN THE LINEUP!"
+                                        Print players$(P9, lineupIdx(P9, I2)); " IS ALREADY IN THE LINEUP!"
                                         posn = -1
                                         Exit For
                                     End If
@@ -11184,7 +11182,7 @@ Sub ChooseLineup ()
                     Locate 25, 30
                     Print Space$(40)
 
-                    If goodLineup = 1 Then 
+                    If goodLineup = 1 Then
                         lineupIdx(P9, slot) = posn
                     End If
 
@@ -11529,7 +11527,7 @@ Sub DefPlaySafeNormal ()
             safePlyrCnt = safePlyrCnt + 1
 
             If skipHeader = 0 Then
-                Locate 2, 1            
+                Locate 2, 1
                 Print "THE FOLLOWING PLAYER(S) ARE PLAYING SAFE, BUT CAN NOW PLAY NORMAL:"
                 Locate 4, 1
                 skipHeader = 1
@@ -11542,7 +11540,7 @@ Sub DefPlaySafeNormal ()
             Print currIdx; "- "; players$(P9, lineupIdx(P9, slot))
             menuPos(safePlyrCnt) = currIdx
             playerPos(safePlyrCnt) = slot
-            currIdx = currIdx + 1                
+            currIdx = currIdx + 1
         End If
 
     Next slot
@@ -11746,7 +11744,7 @@ End Sub
 'defense / offense / players.
 Sub SHOTPERCENT ()
 
-    Shared J8%
+    Shared J8%, threePtShotChance
     
     baseChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0)
 
@@ -12202,7 +12200,7 @@ End Sub
 'situations. If not computer controlled,
 'the user is given a chance to handle
 'any changes to lineup, strategy, players.
-Sub DEADBALLOPTIONS (useTakeTO)
+Sub DEADBALLOPTIONS (userTakeTO)
 
     userTakeTO = 0
 
@@ -12276,8 +12274,8 @@ Sub DEADBALLOPTIONS (useTakeTO)
 
             End If
 
-            If P3 = 0 Or _ 
-                P3 = 1 And timeouts(P) <= 0 Or _ 
+            If P3 = 0 Or _
+                P3 = 1 And timeouts(P) <= 0 Or _
                 P3 = 2 And timeouts(D) <= 0 Or _ 
                 (playerMode = 1 And P = compTeam And (P3 = 1 Or P3 = 3)) Or _
                 (playerMode = 1 And D = compTeam And (P3 = 2 Or P3 = 4)) Then
@@ -12295,21 +12293,11 @@ Sub DEADBALLOPTIONS (useTakeTO)
 
                     Case 1
                         'Timeouts - Offense
-                        If timeouts(P) > 0 Then
-                            userTakeTO = 1
-                            timeouts(P) = timeouts(P) - 1
-                            Call RESETFATIGUE
-                            Call SCOREBOARD
-                        End If
+                        Call TimeoutCalled(P)
 
                     Case 2
                         'Timeouts - Defense
-                        If timeouts(D) > 0 Then
-                            userTakeTO = 1
-                            timeouts(D) = timeouts(D) - 1
-                            Call RESETFATIGUE
-                            Call SCOREBOARD
-                        End If
+                        Call TimeoutCalled(D)
 
                     Case 3
                         'Strategy - Offense
@@ -12332,6 +12320,7 @@ Sub DEADBALLOPTIONS (useTakeTO)
         End If 'Done checking computer control
 
     Loop Until I$ = Chr$(13) Or (playerMode = 1 And P = compTeam) Or userTakeTO = 1 Or playerMode = 2
+    'Loop Until I$ = Chr$(13) Or userTakeTO = 1 Or playerMode = 2
 
 End Sub
 
@@ -12340,7 +12329,7 @@ End Sub
 '           STOPPAGE Subroutine
 '----------------------------------------
 'This routine presents a team all options
-'needed for when the clock is stopped, 
+'needed for when the clock is stopped,
 'including, substitutions, strategy and
 'time-outs.
 Sub STOPPAGE (userTakeTO)
@@ -12443,7 +12432,7 @@ Sub STOPPAGE (userTakeTO)
                         Call DefPlaySafeNormal
                         lineupChanged = 1
                         Call SCOREBOARD
-                    
+
                     Case 2
                         'Substitution - Defense
                         C1 = 1
@@ -12468,23 +12457,11 @@ Sub STOPPAGE (userTakeTO)
 
                     Case 5
                         'Timeout - Offense
-                        If timeouts(P) > 0 Then
-                            timeouts(P) = timeouts(P) - 1
-                        End If
-                        userTakeTO = 1
-
-                        Color 14, 0
-                        Call SCOREBOARD
+                        Call TimeoutCalled(P)
 
                     Case 6
                         'Timeout - Defense
-                        If timeouts(D) > 0 Then
-                            timeouts(D) = timeouts(D) - 1
-                        End If
-                        userTakeTO = 1
-
-                        Color 14, 0
-                        Call SCOREBOARD
+                        Call TimeoutCalled(D)
 
                 End Select
 
@@ -17852,14 +17829,14 @@ Function foulTrouble% (teamIdx, playerIdx)
     'Last 19  mins of 2nd half = threshold at 4 fouls
     If (playerFouls >= foulsToDQ) Or _ 
         (currHalf = 1 And gameClock! <= 600 And playerFouls >= foulsToDQ - 3) Or _ 
-        ((currHalf = 1 And gameClock! > 600) Or (currHalf = 2 And gameClock! <= 600) And playerFouls >= foulsToDQ - 2) Or _ 
+        (((currHalf = 1 And gameClock! > 600) Or (currHalf = 2 And gameClock! <= 600)) And (playerFouls >= foulsToDQ - 2)) Or _
         (currHalf = 2 And gameClock! > 600 And playerFouls >= foulsToDQ - 1) Then
 
-        foulDanger% = 1
+        foulTrouble% = 1
 
     Else
 
-        foulDanger% = 0
+        foulTrouble% = 0
 
     End If
 

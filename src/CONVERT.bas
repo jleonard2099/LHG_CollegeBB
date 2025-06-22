@@ -78,7 +78,7 @@ End Sub
 'to the old team file format. Because only
 'the COLBBTMS file is different, this is
 'the only file we will save.
-Sub SaveTeamDataOld (newID, yearNumber$, teamName$, teamIdx)
+Sub SaveTeamDataOld (yearNumber$, teamIdx)
 
     Shared def3FGPctAdj, defthreeFGA_Adj
     Shared teamAttendance&, defFGPctAdj!, staminaRating!
@@ -306,7 +306,7 @@ Sub ConvertTeam5to4 (targetFile$, silent)
 
             'To convert to 4.0, let's just not write the new fields!!!
             If validData = 1 Then
-                Call SaveTeamDataOld(0, diskID$, teamName$, currTeam)
+                Call SaveTeamDataOld(diskID$, teamName$)
             End If
 
         Next currTeam
@@ -436,7 +436,7 @@ End Sub
 'This subroutine writes all scheduled data,
 'as stored in the relevant arrays, back to
 'the target schedule file.
-Sub SaveSchedFileConverted (saveFile$, numberGames)
+Sub SaveSchedFileConverted (saveFile$)
 
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()

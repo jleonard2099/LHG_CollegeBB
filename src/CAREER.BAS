@@ -133,8 +133,6 @@ Sub MergeFirstYear ()
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
-    Dim TMR
-
     NB = -1
 
     Do

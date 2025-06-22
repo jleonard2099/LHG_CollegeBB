@@ -370,7 +370,7 @@ Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
 
                 Call ScheduleNextRoundSeeds(nbrRegions, tourneyDefaults(11), sourceFile$, tourneyName$)
 
-                Call CHAMPIONSHIP(nbrRegions, sourceFile$, tourneyName$)
+                Call CHAMPIONSHIP(nbrRegions, sourceFile$)
 
                 Call SaveTourneyInfo(nbrRegions, sourceFile$, tourneyName$)
 
@@ -703,7 +703,7 @@ Sub EditRegionSeeds (nbrRegions, teamCount, saveFile$, tourneyName$)
 
     If ExitCode% <> 27 Then
         Call ScheduleNextRoundSeeds(nbrRegions, 0, saveFile$, tourneyName$)
-        Call CHAMPIONSHIP(nbrRegions, saveFile$, tourneyName$)
+        Call CHAMPIONSHIP(nbrRegions, saveFile$)
         Call SaveTourneyInfo(nbrRegions, saveFile$, tourneyName$)
     End If
 
@@ -716,7 +716,7 @@ End Sub
 'This subroutine uses the data loaded so
 'far for the tournament, then calls routines
 'to generate the appropriate schedule.
-Sub ScheduleNextRoundSeeds (nbrRegions, playIn, saveFile$, tourneyName$)
+Sub ScheduleNextRoundSeeds (nbrRegions, saveFile$, tourneyName$)
 
     Shared nbrRegionalTeams()
 
@@ -729,7 +729,7 @@ Sub ScheduleNextRoundSeeds (nbrRegions, playIn, saveFile$, tourneyName$)
 
         If nbrRegionalTeams(currRegion) >= 4 Then
             nxtRndGames = nbrRegionalTeams(currRegion) - 3
-            Call ScheduleWinners(nxtRndGames, currRegion, playIn, saveFile$)
+            Call ScheduleWinners(nxtRndGames, currRegion, saveFile$)
         End If
 
     Next
@@ -830,7 +830,7 @@ End Sub
 'This subroutine loads the regular bracket
 'games for the tournament, depending on the
 'number of regions.
-Sub ScheduleWinners (newRndGames, currRegion, playIn, saveFile$)
+Sub ScheduleWinners (newRndGames, currRegion, saveFile$)
 
     Shared TC
 
@@ -3270,7 +3270,7 @@ End Sub
 'This subroutine configures the championship
 'bracket / seed for the tournament, depending
 'on the number of regions.
-Sub CHAMPIONSHIP (nbrRegions, saveFile$, tournName$)
+Sub CHAMPIONSHIP (nbrRegions, saveFile$)
 
     Shared TC
 

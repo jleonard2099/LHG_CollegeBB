@@ -265,7 +265,7 @@ Dim scheduleFile$, tourneyFile$
 Dim schedHomeTm$, schedVisTm$
 
 Dim actualAttendance&
-Dim J8%, X0%, X1%
+Dim J8%, X0%, X1%, threePtShotChance
 
 Dim FY%(0 To 1)
 
