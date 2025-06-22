@@ -306,7 +306,7 @@ Sub ConvertTeam5to4 (targetFile$, silent)
 
             'To convert to 4.0, let's just not write the new fields!!!
             If validData = 1 Then
-                Call SaveTeamDataOld(diskID$, teamName$)
+                Call SaveTeamDataOld(diskID$, currTeam)
             End If
 
         Next currTeam
@@ -498,7 +498,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         Call ReadSchedOld(targetFile$)
 
-        'Call SaveSchedFileConverted(newFile$, numberGames)
+        'Call SaveSchedFileConverted(newFile$)
 
         'Kill targetFile$
 
@@ -508,7 +508,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         Kill targetFile$
 
-        Call SaveSchedFileConverted(targetFile$, numberGames)
+        Call SaveSchedFileConverted(targetFile$)
 
         If silent = 0 Then
             result& = _MessageBox("Success!", "The schedule file has been converted for use", "ok", "info", 1)

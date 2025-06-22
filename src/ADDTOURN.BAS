@@ -368,7 +368,7 @@ Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
                     Call SeedBrackets(currRegion, nbrRegions, nbrTeams, sourceFile$, tourneyName$)
                 Next
 
-                Call ScheduleNextRoundSeeds(nbrRegions, tourneyDefaults(11), sourceFile$, tourneyName$)
+                Call ScheduleNextRoundSeeds(nbrRegions, sourceFile$, tourneyName$)
 
                 Call CHAMPIONSHIP(nbrRegions, sourceFile$)
 
@@ -702,7 +702,7 @@ Sub EditRegionSeeds (nbrRegions, teamCount, saveFile$, tourneyName$)
     Loop Until SELECTION% = nbrRegions + 1 Or ExitCode% = 27
 
     If ExitCode% <> 27 Then
-        Call ScheduleNextRoundSeeds(nbrRegions, 0, saveFile$, tourneyName$)
+        Call ScheduleNextRoundSeeds(nbrRegions, saveFile$, tourneyName$)
         Call CHAMPIONSHIP(nbrRegions, saveFile$)
         Call SaveTourneyInfo(nbrRegions, saveFile$, tourneyName$)
     End If
