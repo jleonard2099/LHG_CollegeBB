@@ -770,7 +770,7 @@ Sub COLHOOP ()
     Shared scheduleFile$, tourneyFile$
     Shared schedHomeTm$, schedVisTm$
 
-    Shared J8%, threePtShotChance
+    Shared threePtRange, threePtShotChance
     Shared tickerStart
 
     Shared FY%(), schedOptions()
@@ -2743,10 +2743,6 @@ Sub COLHOOP ()
 
         shotType = Int(Rnd(1) * 3) + 5
 
-        If J8% = 1 Then
-            shotType = 4
-        End If
-
         GoTo 520
 
     End If
@@ -2946,7 +2942,7 @@ Sub COLHOOP ()
     ' ***BAD SHOT ***
 
     437 '
-    J8% = 0
+    threePtRange = 0
 
     playChoice = 0
     shotType = 1
@@ -3072,7 +3068,7 @@ Sub COLHOOP ()
     shotType = Int(Rnd(1) * 3) + 5
 
     520 '
-    If J8% = 1 Then
+    If threePtRange = 1 Then
         shotType = 4
     End If
 
@@ -3613,7 +3609,7 @@ Sub COLHOOP ()
     End If
 
     ' *** Decide if 3FGA ***
-    If J8% = 1 Then
+    If threePtRange = 1 Then
         If (playerMode = 1 And P = compTeam) Or (playerMode = 2) Then
             playChoice = 4
         End If
@@ -4188,7 +4184,9 @@ Sub COLHOOP ()
 
         Case 5
             ' *** 3FG ATTEMPT ***
-            J8% = 0
+            'Assign 0 now so that it won't 
+            'be considered after the shot
+            threePtRange = 0
 
             If threePtOpt = 0 Then
                 '3-point not supported
@@ -11744,7 +11742,7 @@ End Sub
 'defense / offense / players.
 Sub SHOTPERCENT ()
 
-    Shared J8%, threePtShotChance
+    Shared threePtRange, threePtShotChance
     
     baseChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0)
 
@@ -11765,7 +11763,7 @@ Sub SHOTPERCENT ()
 
     ' ** Chance for 3-Point Shot **
     Call Rolld100(threePtShotChance)
-    J8% = 0
+    threePtRange = 0
 
     'Adjust 3-point chance based on defense
     If teamYears(D) < 2000 Then
@@ -11811,10 +11809,10 @@ Sub SHOTPERCENT ()
         If offStrat(P) = 15 Then
             'Shoot 3's no matter what!
             threePtShotChance = Int(Rnd(1) * 5) + 11
-            J8% = 1
+            threePtRange = 1
         Else
             threePtShotChance = Int(Rnd(1) * 5) + 3
-            J8% = 0
+            threePtRange = 0
         End If
 
     Else
@@ -11831,11 +11829,11 @@ Sub SHOTPERCENT ()
         If (currHalf < 3 And gameClock! > 120) And (playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0) Then
             'Bad shot b/c of fatigue
             threePtShotChance = Int(Rnd(1) * 5) + 3
-            J8% = 0
+            threePtRange = 0
         Else
             'Normal 3-pointer
             threePtShotChance = FX% + teamAdj(D, 2)
-            J8% = 1
+            threePtRange = 1
         End If
 
     End If

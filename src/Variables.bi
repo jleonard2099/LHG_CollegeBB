@@ -265,7 +265,7 @@ Dim scheduleFile$, tourneyFile$
 Dim schedHomeTm$, schedVisTm$
 
 Dim actualAttendance&
-Dim J8%, X0%, X1%, threePtShotChance
+Dim X0%, X1%, threePtShotChance
 
 Dim FY%(0 To 1)
 
@@ -318,7 +318,7 @@ Dim Shared score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
 Dim Shared statsGame3FGM(1, 13), statsGame3FGA(1, 13)
 Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecLoss(1)
 Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1), teamYears(1)
-Dim Shared threeFG(1, 13, 1), timeouts(1), timePlayed(1, 13)
+Dim Shared threeFG(1, 13, 1), threePtRange, timeouts(1), timePlayed(1, 13)
 Dim Shared tmFatigue(1, 13), totRebounds(1), turnovers(1)
 
 Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25)
