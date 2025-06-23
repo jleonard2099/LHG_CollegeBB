@@ -7855,40 +7855,54 @@ Sub TICKER ()
 
         If halfTime = 1 Then
 
-            If ruleOptType = 0 Then
+            Select Case RN0
 
-                If RN0 <= 50 Then
-                    Locate , 23: Print "PRUDENTIAL AT THE HALF SCOREBOARD"
-                Else
-                    Locate , 28: Print "RED MAN HALFTIME REPORT"
-                End If
+                Case 1 to 20:
+                    'ESPN
+                    Locate , 28: Print "ALLSTATE HALFTIME REPORT"
 
-            Else
+                Case 21 to 40:
+                    'NBC
+                    'Previously, "Prudential Halftime"
+                    Locate , 28: Print "XFINITY HALFTIME REPORT"
 
-                If RN0 <= 50 Then
+                Case 41 to 60:
+                    'NBC - Sunday Night
                     Locate , 29: Print "TOYOTA HALFTIME REPORT"
-                Else
-                    Locate , 29: Print "HONDA HALFTIME REPORT"
-                End If
 
-            End If
+                Case 61 to 80:
+                    'ABC
+                    Locate , 31: Print "KIA HALFTIME REPORT"
+
+                Case 81 to 100:
+                    'CBS/Fox
+                    Locate , 28: Print "VERIZON HALFTIME REPORT"
+ 
+           End Select
 
         Else
 
             If gameOver = 1 Then
 
-                If ruleOptType = 0 Then
-                    Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
-                Else
-                    Select Case RN0
-                        Case 1 To 33:
-                            Locate , 27: Print "USA TODAY FINAL SCOREBOARD"
-                        Case 34 To 67:
-                            Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
-                        Case 67 To 100:
-                            Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
-                    End Select
-                End If
+                Select Case RN0
+
+                    Case 1 to 25
+                        'ABC
+                        Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
+
+                    Case 26 To 50:
+                        'Fox / CBS
+                        Locate , 27: Print "STATE FARM FINAL SCOREBOARD"
+
+                    Case 51 To 75:
+                        'NBC
+                        Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
+
+                    Case 76 To 100:
+                        'ESPN
+                        Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
+
+                End Select
 
             Else
 
