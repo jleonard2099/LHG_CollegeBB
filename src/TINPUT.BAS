@@ -1095,17 +1095,22 @@ Sub InputTeam ()
         If X! < 0 Then leagueRatings(0) = 100 + X!
         If X! > 0 Then leagueRatings(0) = X!
 
+        'Turnover Rate
+        baseTORate! = 1200 - (((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) * 4)
+        baseTORate! = baseTORate! / 6
+
         'Off TO Rating
-        R! = 1200 - (((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) * 4)
-        R! = R! / 6
-        toAdj! = (tmTO! - oppSteal!) / nbrGmsPlayed!
-        X! = (toAdj! / R!) - .01
+        unforcedTOs! = (tmTO! - oppSteal!) / nbrGmsPlayed!
+        'Normalize calculations to 100
+        X! = (unforcedTOs! / baseTORate!) - .01
         X! = CInt(X! * 100)
+
         leagueRatings(1) = X!
 
-        'Def TO Adj
-        toAdj! = (oppTO! - tmSteal!) / nbrGmsPlayed!
-        X! = (toAdj! / R!) - .01
+        'Def TO Rating
+        unforcedTOs! = (oppTO! - tmSteal!) / nbrGmsPlayed!
+        'Normalize calculations to 100
+        X! = (unforcedTOs! / baseTORate!) - .01
         X! = CInt(X! * 100)
         X! = X! - 4
 
