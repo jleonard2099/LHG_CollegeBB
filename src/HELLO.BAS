@@ -2674,11 +2674,9 @@ Sub COLHOOP ()
             'All but last 2 mins / Overtime
             If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
 
-                If currHalf <= 2 Then
-                    If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
-                        'Fatigued - No Shot / Difficult Shot
-                        GoTo 437
-                    End If
+                If currHalf <= 2 And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
+                    'Fatigued - No Shot / Difficult Shot
+                    GoTo 437
                 End If
 
             End If
@@ -2728,11 +2726,9 @@ Sub COLHOOP ()
             If currHalf <= 2 Then
 
                 'All but last 2 mins / Overtime
-                If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
-                    If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
-                        'No Shot / Difficult Shot
-                        GoTo 437
-                    End If
+                If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
+                    'No Shot / Difficult Shot
+                    GoTo 437
                 End If
 
             End If
@@ -3071,7 +3067,8 @@ Sub COLHOOP ()
     shotType = Int(Rnd(1) * 3) + 5
 
     520 '
-    If threePtRange = 1 Then
+    If threePtOpt = 1 And threePtRange = 1 Then
+    'If threePtRange = 1 Then
         shotType = 4
     End If
 
@@ -3612,27 +3609,29 @@ Sub COLHOOP ()
     End If
 
     ' *** Decide if 3FGA ***
-    If threePtRange = 1 Then
-        If (playerMode = 1 And P = compTeam) Or (playerMode = 2) Then
-            playChoice = 4
-        End If
-    End If
-
     scoreDiff = score(D, 0) - score(P, 0)
 
-    'Try for 3 near end of game when down by 3
-    If currHalf >= 2 And gameClock! < 30 And scoreDiff >= 3 And ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
-        If threePtOpt = 1 Then
+    If threePtOpt = 1 Then
+
+        'Computer - try for 3 always when in range
+        If threePtRange = 1 Then
+            If (playerMode = 1 And P = compTeam) Or (playerMode = 2) Then
+                playChoice = 4
+            End If
+        End If
+
+        'Try for 3 near end of game when down by 3
+        If currHalf >= 2 And gameClock! < 30 And scoreDiff >= 3 And ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
             playChoice = 4
         End If
+
+        '3-pt shot in player's frequency
+        If (playChoice = 1 And shotType = 4) Then
+            playChoice = 4
+        End If
+
     End If
 
-    'Shoot and in 3 pt range
-    If (playChoice = 1 And shotType = 4) Then
-        If threePtOpt = 1 Then
-            playChoice = 4
-        End If
-    End If
 
     ' *** Done determining value for playChoice ***
     playType = playChoice + 1
@@ -4202,6 +4201,8 @@ Sub COLHOOP ()
 
                 'Increase 3FGA
                 threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) + 1
+
+                'Increase FGA
                 plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) + 1
 
                 pbpType = 3 'Shot
@@ -4217,9 +4218,15 @@ Sub COLHOOP ()
 
                     If shotRoll > threePtShotChance Then
 
-                        'Remove the attempt from the record
+                        'FOUL on Missed Shot
+
+                        'Remove FGA attempt from record
                         plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) - 1
+                        If plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) < 0 Then plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 7) = 0
+
+                        'Remove 3FGA attempt from record
                         threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) - 1
+                        If threeFG(P, lineupIdx(P, ballCarrier), 1) < 0 Then threeFG(P, lineupIdx(P, ballCarrier), 1) = 0
 
                         Call ResetShotClock
                         Call AdjustClockTime(4)
@@ -4278,7 +4285,7 @@ Sub COLHOOP ()
 
                     Else
 
-                        'FOULED on Good Shot
+                        'FOUL on Good Shot
                         Call AdjustClockTime(4)
                         Call AdjustPlayTime
                         'Call AdjustShotClock
@@ -4298,7 +4305,9 @@ Sub COLHOOP ()
                         score(P, currHalf) = score(P, currHalf) + 3
                         score(P, 0) = score(P, 0) + 3
 
+                        'Increase FGM
                         plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) + 1
+                        'Increase 3FGM
                         threeFG(P, lineupIdx(P, ballCarrier), 0) = threeFG(P, lineupIdx(P, ballCarrier), 0) + 1
 
                         Call UPDATESCREEN
@@ -4311,8 +4320,6 @@ Sub COLHOOP ()
                     End If 'Done checking foul shot
 
                 Else
-
-                    'Not Fouled
 
                     If shotRoll > threePtShotChance Then
 
@@ -4375,11 +4382,13 @@ Sub COLHOOP ()
                             invalid3FG = 0
                             score(P, currHalf) = score(P, currHalf) + 2
                             score(P, 0) = score(P, 0) + 2
+                            'Remove 3FGA
                             threeFG(P, lineupIdx(P, ballCarrier), 1) = threeFG(P, lineupIdx(P, ballCarrier), 1) - 1
                         Else
                             'Reward 3 pts
                             score(P, currHalf) = score(P, currHalf) + 3
                             score(P, 0) = score(P, 0) + 3
+                            'Increase 3FGA
                             threeFG(P, lineupIdx(P, ballCarrier), 0) = threeFG(P, lineupIdx(P, ballCarrier), 0) + 1
                         End If
 
@@ -11797,11 +11806,10 @@ Sub SHOTPERCENT ()
     If teamYears(D) < 2000 Then
         threePtDefAdj = 0
     Else
-        'Three pointers were significantly more frequent
-        'after the year 2000. Defenses trended towards
-        'allowing more b/c their likelihood makes them risky.
-        'This is reflected here by increasing the likelihood
-        'the shot will be taken.
+        'Three pointers were more frequent after the year 2000. 
+        'Defenses trended towards allowing more b/c the shot
+        'likelihood makes them risky. This is reflected here 
+        'by increasing the likelihood the shot will be taken.
         '--- currently adjusting to tweak 3FGA
         threePtDefAdj = 0
     End If
@@ -11830,7 +11838,7 @@ Sub SHOTPERCENT ()
     threePtDefAdj = threePtDefAdj - 9
 
     ' ** Check for three-point shot **
-    '% of player shots that are 3 FG + def threeFGA_Adj + adjustment due to Def
+    'Check shot chance against % of player shots that are 3 FG (+ Def style adj + Opp's adj)
     If threePtShotChance > plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) + teamAdj(D, 3) + threePtDefAdj Or plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) = 0 Then
 
         'Strategy = Shoot only 3's

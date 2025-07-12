@@ -260,6 +260,7 @@ Sub ViewScheduleSummary (statFile$, teamName$, totalGames, menuExit)
                     Color 14, 1
                     Print "OPPONENT            SCORE  W/L  ATTEND   SITE"; Space$(35)
 
+                    Locate LAST_ROW, 1: Print Tab(80); " ";
                     Locate LAST_ROW - 1, 1: Print Tab(80); " ";
                     Locate LAST_ROW - 1, 27: Print "PRESS ANY KEY TO CONTINUE";
                     Locate 3, 1
