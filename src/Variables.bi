@@ -283,7 +283,7 @@ Dim Shared C1, D, MJ, P, P9
 
 Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
 Dim Shared clockSecs, compTeam, currGame
-Dim Shared gameOver, earlyExit, endAllGames
+Dim Shared gameOver, goaltendTOs, earlyExit, endAllGames
 Dim Shared fastBreak, forcedThree, foulPlayer
 Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul
 Dim Shared foulOnPlay, foulsToDQ
@@ -302,9 +302,9 @@ Dim Shared pbpText$(1 To MAX_PBP_LINES)
 
 Dim Shared ST%(32), SX%(32, 1, 14)
 
-Dim Shared crashBoards(1), defAdjVsPass(2, 4), defAdjVsShot(4, 3)
+Dim Shared assistAdj(1), crashBoards(1), defAdjVsPass(2, 4), defAdjVsShot(4, 3)
 Dim Shared dFG_Pct_Adj(1), d3FG_Pct_Adj(1), defStrat(1), defCategory(1), defCoverage(1)
-Dim Shared ft3PtFoul(1), homeCtFactor(1, 6)
+Dim Shared homeCtFactor(1, 6)
 Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), mandatoryTO(0 To 1), offStrat(1)
 Dim Shared pbpFG(1 To MAX_PBP_LINES), pbpBG(1 To MAX_PBP_LINES), pctContrib(1)
 Dim Shared plyrStaminaGame(13), plyrRebIdx(13), plyrRebVal(13)
@@ -319,9 +319,9 @@ Dim Shared statsGame3FGM(1, 13), statsGame3FGA(1, 13)
 Dim Shared teamAdj(0 To 1, 0 To 8), teamRat_GAME(1, 9), teamRecWins(1), teamRecLoss(1)
 Dim Shared teamStats_GAME(0 To 1, 0 To 24), teamFouls(1), teamStamina(1), teamYears(1)
 Dim Shared threeFG(1, 13, 1), threePtRange, timeouts(1), timePlayed(1, 13)
-Dim Shared tmFatigue(1, 13), totRebounds(1), turnovers(1)
+Dim Shared tmFatigue(1, 13), teamRebounds(1), turnovers(1)
 
-Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25)
+Dim Shared gameRatings!(0 To 1, 0 To 13, 0 To 25), offRebPct!(0 To 1)
 Dim game3FGM!(1, 13), game3FGA!(1, 13)
 
 Dim Shared defStyles$(0 To 17), defStyles_brief$(0 To 17), diskIDs$(5)
