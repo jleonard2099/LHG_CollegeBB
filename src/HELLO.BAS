@@ -2356,6 +2356,7 @@ Sub COLHOOP ()
 
             ' ** Intentional foul / designated person **
             '(DEF / Standard)
+            'Print #11, "FOUL - INTENTIONAL"
             If d100% <= 80 Then
                 foulPlayer = desigFouler
                 Call FoulCalled(0)
@@ -2420,6 +2421,7 @@ Sub COLHOOP ()
 
                 offStatus = 88
 
+                'Print #11, "FOUL - DEFENSE"
                 Call FoulCalled(1)
 
                 LT = 4
@@ -2498,6 +2500,7 @@ Sub COLHOOP ()
 
                 offStatus = 88
 
+                'Print #11, "FOUL - DEFENSE"
                 Call FoulCalled(1)
 
                 LT = 4
@@ -2690,7 +2693,7 @@ Sub COLHOOP ()
                 If assistChance <= plyrOff_GAME!(P, lineupIdx(P, rndCarrier), 4) Then
 
                     'increase shot chance for assist
-                    shotChance! =  shotChance! + assistShotBoost + assistAdj(P) + assistAdj(D)
+                    shotChance! = shotChance! + assistShotBoost + assistAdj(P) + assistAdj(D)
                     assistAdj(P) = 0
                     assistAdj(D) = 0
                     shotType = 2
@@ -3686,6 +3689,7 @@ Sub COLHOOP ()
 
                     Call UPDATESCREEN
 
+                    'Print #11, "FOUL - 2FGA"
                     Call FoulCalled(1)
 
                     Call FreeThrows(2, missedLast)
@@ -3812,6 +3816,7 @@ Sub COLHOOP ()
                 Call UPDATESCREEN
 
                 ' ** Foul on made FGA **
+                'Print #11, "FOUL - 2FGA"
                 Call FoulCalled(1)
 
                 619 '
@@ -4164,6 +4169,7 @@ Sub COLHOOP ()
 
             ' ** Intentional foul / designated player **
             foulPlayer = desigFouler
+            'Print #11, "FOUL - INTENTIONAL"
             Call FoulCalled(0)
 
             GoTo 9065
@@ -4219,6 +4225,7 @@ Sub COLHOOP ()
 
                         Call UPDATESCREEN
 
+                        'Print #11, "FOUL - 3FGA"
                         Call FoulCalled(1)
 
                         'Would have been a miss
@@ -4298,6 +4305,7 @@ Sub COLHOOP ()
 
                         Call UPDATESCREEN
 
+                        'Print #11, "FOUL - 3FGA"
                         Call FoulCalled(1)
 
                         GoTo 619
@@ -4440,6 +4448,7 @@ Sub COLHOOP ()
     Call ChangePossession
 
     ' ** Foul on Offense **
+    'Print #11, "FOUL - OFFENSE"
     Call FoulCalled(1)
 
     ballCarrier = foulPlayer
@@ -4932,6 +4941,7 @@ Sub COLHOOP ()
 
         ' ** Loose Ball Foul: offensive rebound (by defense) **
         ' Pushing / Holding / Blocking / Reaching
+        'Print #11, "FOUL - OFF REB"
         Call FoulCalled(1)
 
         LT = 4
@@ -5029,6 +5039,7 @@ Sub COLHOOP ()
         Call ChangePossession
 
         ' ** Loose Ball Foul: defensive rebound (by offense) **
+        'Print #11, "FOUL - DEF REB"
         Call FoulCalled(1)
 
         LT = 4
@@ -5487,9 +5498,9 @@ Sub InitVar ()
     'Erase tourneySettings
     'Erase seedSlotName$
 
-    Erase crashBoards
-    Erase defStrat, defCategory, defCoverage, eventSettings
-    Erase ft3PtFoul, offStrat, oppScore
+    Erase assistAdj, crashBoards
+    Erase defStrat, defCategory, defCoverage
+    Erase eventSettings, offStrat, oppScore
     Erase pbpFG, pbpBG
     Erase plyrStaminaGame, plyrRebIdx, plyrRebVal
     Erase playerTime, powerRating, pressureRating
@@ -12152,13 +12163,13 @@ Sub WHOGETSBALL ()
 
                 playerOK = 0
 
-               ' Check stamina conditions - continue loop if player doesn't meet requirements
+                ' Check stamina conditions - continue loop if player doesn't meet requirements
                 ' Only high-performing players (asstPerGame >= 5) are subject to stamina checks
                 If asstPerGame! >= 5 Then
                     ' Determine required stamina ratio based on experience and game situation
 
-                    If maxStamina! < 10 Then 
-                    ' Low experience player
+                    If maxStamina! < 10 Then
+                        ' Low experience player
                         If currHalf = 1 Then
                             requiredRatio! = 0.75
                         ElseIf currHalf = 2 And gameClock! > 120 Then
@@ -12166,8 +12177,8 @@ Sub WHOGETSBALL ()
                         Else
                             requiredRatio! = 0 ' No restriction
                         End If
-                    Else 
-                    ' Experienced player
+                    Else
+                        ' Experienced player
                         If currHalf = 1 Then
                             requiredRatio! = 0.4
                         ElseIf currHalf = 2 And gameClock! > 120 Then
@@ -12177,11 +12188,11 @@ Sub WHOGETSBALL ()
                         End If
                     End If
                     
-                     If (requiredRatio! = 0 Or contribRatio! > requiredRatio!) Then
+                    If (requiredRatio! = 0 Or contribRatio! > requiredRatio!) Then
                         playerOK = 1
-                     End If
+                    End If
                      
-                Else                    
+                Else
                     playerOK = 1
                 End If
 
@@ -14257,30 +14268,41 @@ Sub EVENTS (specialCount, specialStat)
 
         checkSpecial% = 0
 
-        'Team / game conditions for special box score
-        If currHalf - 3 > eventSettings(1) Or score(1, 0) + score(0, 0) > eventSettings(2) Or teamRebounds(0) + teamRebounds(1) > eventSettings(3) Or score(1, 0) > eventSettings(4) Or score(0, 0) > eventSettings(4) Or teamRebounds(1) > eventSettings(5) Or teamRebounds(0) > eventSettings(5) Then
+        'Score / period rebound conditions for special box score
+        If currHalf - 3 > eventSettings(1) Or _ 
+            score(0, 0) > eventSettings(4) Or _ 
+            score(1, 0) > eventSettings(4) Or _ 
+            score(0, 0) + score(1, 0) > eventSettings(2) Or _
+            teamRebounds(0) > eventSettings(5) Or _
+            teamRebounds(1) > eventSettings(5) Or _ 
+            teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then
 
             checkSpecial% = 1
 
         Else
 
-            For I = 0 To 1
+            I = 0
+            Do While I <= 1 And checkSpecial% = 0
 
-                For I1 = 0 To 13
+                I1 = 0
+                Do While I1 <= 13 And checkSpecial% = 0
 
-                    'Player conditions for special box score
+                    'Player stat conditions for special box score
                     'FGM * 2 + FTM + 3FM = Points / Game
-                    If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Or plyrOff_GAME!(I, I1, 11) > eventSettings(7) Or plyrOff_GAME!(I, I1, 14) > eventSettings(8) Or plyrOff_GAME!(I, I1, 15) > eventSettings(9) Or plyrOff_GAME!(I, I1, 13) > eventSettings(10) Or threeFG(I, I1, 0) > eventSettings(11) Then
+                    If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Or _
+                        plyrOff_GAME!(I, I1, 11) > eventSettings(7) Or _
+                        plyrOff_GAME!(I, I1, 14) > eventSettings(8) Or _ 
+                        plyrOff_GAME!(I, I1, 15) > eventSettings(9) Or _ 
+                        plyrOff_GAME!(I, I1, 13) > eventSettings(10) Or _
+                        threeFG(I, I1, 0) > eventSettings(11) Then
                         checkSpecial% = 1
+                    Else
+                        I1 = I1 + 1
                     End If
 
-                    If checkSpecial% = 1 Then Exit For
+                Loop
 
-                Next
-
-                If checkSpecial% = 1 Then Exit For
-
-            Next 'done checking if special event already found
+            Loop 'done checking if special event already found
 
         End If
 
