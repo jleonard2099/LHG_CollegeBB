@@ -714,6 +714,7 @@ End Sub
 '$Include: 'CONVERT.BAS'
 '$Include: 'TITLE.bm'
 '$Include: 'ADDTOURN.BAS'
+
 '$Include: 'ALIGN.BAS'
 '$Include: 'BLANKCON.BAS'
 '$Include: 'BLANKORG.BAS'
@@ -758,7 +759,7 @@ End Sub
 'disable, etc.
 Sub COLHOOP ()
 
-    _Title "Courtside College Basketball v" + GAME_VERSION$
+    _Title "Courtside College Basketball v" + GAME_VERSION$ + " - COURT'S LIVE!"
 
     Dim GS%, invalid3FG
     Dim playChoice, pbpType
@@ -15962,6 +15963,7 @@ Sub EndOfGame ()
 
     If UCase$(I$) = "Y" Or (autoPlay = 1 And endAllGames <> 1) Then
         Cls
+        Locate LAST_ROW / 2, 33
         Print "PLEASE WAIT ..."
     End If
 

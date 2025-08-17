@@ -8,7 +8,7 @@ Sub ADDTOURN ()
 
     _Title "Courtside College Basketball - Create Tournament"
 
-    Shared regionNames$(), slotName$()
+    Shared playMode$(), regionNames$(), slotName$()
 
     Shared consolationSetting(), nbrRegionalTeams()
     Shared tourneyDefaults(), tourneyParams()
@@ -205,7 +205,7 @@ Sub SetupTourney (ACTION%, nbrRegions, tourneyName$, sourceFile$)
 
             Case 1:
                 tourneyDefaults(8) = tourneyDefaults(8) + 1
-                If tourneyDefaults(8) > 3 Then tourneyDefaults(8) = 3
+                If tourneyDefaults(8) > 3 Then tourneyDefaults(8) = 0
 
             Case 2:
                 tourneyDefaults(7) = tourneyDefaults(7) + 1
@@ -6302,3 +6302,4 @@ Sub SortTourney ()
     Next Z
 
 End Sub
+
