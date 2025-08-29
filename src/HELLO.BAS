@@ -1433,7 +1433,6 @@ Sub COLHOOP ()
     '----------------------------------------
     '                Tip Off!
     '----------------------------------------
-
     If (currHalf = 1 Or currHalf = 3) Or teamYears(impactTeam) < 1981 Then
         possArrow = D
         pbpString$ = gameTeams$(P) + " GETS THE JUMP"
@@ -1707,10 +1706,10 @@ Sub COLHOOP ()
 
     End If
 
-    scoreDiffOp = score(D, 0) - score(P, 0)
+    scoreDiffOpp = score(D, 0) - score(P, 0)
 
     'Last 5 seconds, down by 1 score!!!
-    If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOp <= 3 Or threePtOpt = 0 And scoreDiffOp <= 2) And scoreDiffOp >= 0 And currHalf >= 2 Then
+    If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOpp <= 3 Or threePtOpt = 0 And scoreDiffOpp <= 2) And scoreDiffOpp >= 0 And currHalf >= 2 Then
 
         If playerMode = 2 Or playerMode = 1 And P = compTeam Then
 
@@ -11659,7 +11658,7 @@ Sub DefPlaySafeNormal ()
         End If
 
         If safeStatus = 50 And skipHeader = 1 Then
-            Locate currIdx + 5, 1
+            'Locate currIdx + 5, 1
             Print currIdx; "- "; players$(P9, lineupIdx(P9, slot))
             menuPos(safePlyrCnt) = currIdx
             playerPos(safePlyrCnt) = slot
@@ -11697,7 +11696,7 @@ Sub DefPlaySafeNormal ()
                     plyrOff_GAME!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) = plyrOff_GAME!(P9, lineupIdx(P9, playerPos(safeIdx)), 17) * 3
                     plyrOff_GAME!(P9, lineupIdx(P9, playerPos(safeIdx)), 22) = 0
 
-                    Locate menuPos(safeIdx) + 5, 20
+                    Locate menuPos(safeIdx) + 3, 20
                     Print players$(P9, lineupIdx(P9, playerPos(safeIdx))); " WILL NOW PLAY NORMAL DEFENSE!"
                     Call StealAdjustments
 
@@ -11717,6 +11716,8 @@ Sub DefPlaySafeNormal ()
     'Check for normal players to play safe
     If checkNormal = 1 Then
 
+        Cls
+
         dangerPlyrCnt = 0
         currIdx = 1
         assignSafe = 1
@@ -11728,7 +11729,6 @@ Sub DefPlaySafeNormal ()
                 dangerPlyrCnt = dangerPlyrCnt + 1
 
                 If currIdx = 1 Then
-                    Cls
                     Locate 2, 1
                     Print "THE FOLLOWING PLAYER(S) CAN BE MADE TO PLAY SAFE:"
                     Locate 4, 1
@@ -11770,7 +11770,7 @@ Sub DefPlaySafeNormal ()
                         plyrOff_GAME!(P9, lineupIdx(P9, playerPos(normIdx)), 17) = Int((plyrOff_GAME!(P9, lineupIdx(P9, playerPos(normIdx)), 17) + 1) / 3)
                         plyrOff_GAME!(P9, lineupIdx(P9, playerPos(normIdx)), 22) = 50
 
-                        Locate menuPos(normIdx) + 5, 20
+                        Locate menuPos(normIdx) + 3, 20
                         Print players$(P9, lineupIdx(P9, playerPos(normIdx))); " WILL NOW PLAY SAFE!"
                         Call StealAdjustments
 
