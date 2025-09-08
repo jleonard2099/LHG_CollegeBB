@@ -410,7 +410,9 @@ Sub NewSchedule (scheduleFile$)
 
                     Locate 8, 12: Print "TOTAL GAMES ="; scheduleAP%(0)
                     Locate 9, 12: Print "SELECT GAME # TO START AND END WITH": Print
-                    Locate 10, 12: Input "ENTER START GAME #: "; SG%: Print
+                    Locate 10, 33: Print Space$(10)
+                    Locate 10, 12: Input "ENTER START GAME #:"; SG%: Print
+                    Locate 11, 31: Print Space$(10)
                     Locate 11, 12: Input "ENTER END GAME #:"; EG%: Print
 
                     Do
@@ -1617,6 +1619,18 @@ Sub LoadScheduleInfo (targetFile$)
         visitorScores(I) = CVI(Q$(22))
         homeScores(I) = CVI(Q$(23))
 
+        'Make sure "Yes"/"No" options
+        'have valid values
+        If scheduleNG%(I, 3) > 1 Then
+            scheduleNG%(I, 3) = 1
+        End If
+        If scheduleNG%(I, 10) > 1 Then
+            scheduleNG%(I, 10) = 1
+        End If
+        If scheduleNG%(I, 14) > 1 Then
+            scheduleNG%(I, 14) = 1
+        End If
+
     Next
 
     Close #1
@@ -1760,6 +1774,8 @@ Sub CreateConferenceSchedule ()
 
             If scheduleFile$ <> "" Then
 
+                invalidFile = 0
+
                 For I = 1 To scheduleAP%(0)
 
                     Print "GAME"; I
@@ -1768,16 +1784,33 @@ Sub CreateConferenceSchedule ()
 
                     'Replace template values with those from global change
                     X = scheduleNG%(I, 0)
-                    scheduleNG%(I, 0) = memberIdx(X)
-                    scheduleYN$(I, 0) = memberYear$(X)
+                    If memberIdx(X) > 0 Then
 
-                    X = scheduleNG%(I, 1)
-                    scheduleNG%(I, 1) = memberIdx(X)
-                    scheduleYN$(I, 1) = memberYear$(X)
+                        scheduleNG%(I, 0) = memberIdx(X)
+                        scheduleYN$(I, 0) = memberYear$(X)
 
-                    Print "GAME"; I
-                    Print scheduleNG%(I, 0), scheduleYN$(I, 0)
-                    Print scheduleNG%(I, 1), scheduleYN$(I, 1)
+                        If memberIdx(X) > 0 Then
+                            X = scheduleNG%(I, 1)
+                            scheduleNG%(I, 1) = memberIdx(X)
+                            scheduleYN$(I, 1) = memberYear$(X)
+                        Else
+                            invalidFile = 1
+                        End If                        
+                    Else
+                        invalidFile = 1
+                    End If
+
+                    If invalidFile = 1 Then
+                        Locate 9,
+                        Call CSMsgBox("ONE OR MORE TEAMS WERE INVALID. CANNOT CREATE A SCHEDULE... PRESS ANY KEY AND TRY SELECTING ANOTHER LEAGUE", 32, PASS)
+                        K$ = GetKeyPress$
+                        Call CSMsgBox("", 0, PASS)
+                        Exit Sub
+                    Else
+                        Print "GAME"; I
+                        Print scheduleNG%(I, 0), scheduleYN$(I, 0)
+                        Print scheduleNG%(I, 1), scheduleYN$(I, 1)
+                    End If
 
                 Next
 

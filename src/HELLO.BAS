@@ -6138,6 +6138,8 @@ Sub PBP (teamIdx)
     'Positive delay OR Verbose PBP
     If (autoPlay = 0 Or pbpDelay! > 0) And pbpOpt = 0 Then
 
+        'Clean up / restrict to 38 char's
+        'this is the width of the PBP window
         pbpString$ = PadRight$(pbpString$, 38)
 
         If nbrLines <= MAX_PBP_LINES Then
@@ -14283,9 +14285,11 @@ Sub EVENTS (specialCount, specialStat)
         Else
 
             I = 0
+
             Do While I <= 1 And checkSpecial% = 0
 
                 I1 = 0
+
                 Do While I1 <= 13 And checkSpecial% = 0
 
                     'Player stat conditions for special box score
@@ -14297,11 +14301,13 @@ Sub EVENTS (specialCount, specialStat)
                         plyrOff_GAME!(I, I1, 13) > eventSettings(10) Or _
                         threeFG(I, I1, 0) > eventSettings(11) Then
                         checkSpecial% = 1
-                    Else
-                        I1 = I1 + 1
                     End If
 
+                    I1 = I1 + 1
+
                 Loop
+                
+                I = I + 1
 
             Loop 'done checking if special event already found
 
