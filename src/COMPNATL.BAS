@@ -197,7 +197,7 @@ Sub CompileNatlOrg ()
                                             defTotals!(L) = statsDefTot!(L)
                                         Next
 
-                                        Call CalcStatTotalsConf(totalGames, TN$, finalUpdate$)
+                                        Call CalcRecordsConf(totalGames, TN$, finalUpdate$)
                                         Call CalcStatLeadersConf(totalGames, TN$)
 
                                         Cls

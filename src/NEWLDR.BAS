@@ -1393,7 +1393,7 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
                         If W > 1 Then
 
                             Color 14
-                            Locate LAST_ROW - 2: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
+                            Locate LAST_ROW - 1, 15: Print "HIT ENTER TO CONTINUE (ESC TO RETURN TO MAIN MENU)"
                             Color 15
 
                             I$ = GetKeyPress$
@@ -1405,7 +1405,6 @@ Sub DisplayTeamView (printOrView, TVN, maxRecords, categoryID)
 
                             Color 14, 0
                             Cls
-
 
                         End If
 

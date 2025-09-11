@@ -1276,30 +1276,30 @@ Sub SortStats (categoryPick)
     'SORT BASED ON CATEGORY
     Select Case categoryPick
 
-        Case 1: SG% = 0
-        Case 2: SG% = 10
-        Case 3: SG% = 14
-        Case 4: SG% = 2
-        Case 5: SG% = 1
-        Case 6: SG% = 15
-        Case 7: SG% = 18
-        Case 8: SG% = 19
-        Case 9: SG% = 16
-        Case 10: SG% = 4
-        Case 11: SG% = 3
-        Case 12: SG% = 17
-        Case 14: SG% = 22
-        Case 15: SG% = 20
-        Case 16: SG% = 13
-        Case 17: SG% = 12
-        Case 18: SG% = 23
-        Case 19: SG% = 5
-        Case 20: SG% = 21
-        Case 21: SG% = 6
-        Case 22: SG% = 8
-        Case 23: SG% = 9
-        Case 24: SG% = 7
-        Case 25: SG% = 11
+        Case 1: statGroup = 0
+        Case 2: statGroup = 10
+        Case 3: statGroup = 14
+        Case 4: statGroup = 2
+        Case 5: statGroup = 1
+        Case 6: statGroup = 15
+        Case 7: statGroup = 18
+        Case 8: statGroup = 19
+        Case 9: statGroup = 16
+        Case 10: statGroup = 4
+        Case 11: statGroup = 3
+        Case 12: statGroup = 17
+        Case 14: statGroup = 22
+        Case 15: statGroup = 20
+        Case 16: statGroup = 13
+        Case 17: statGroup = 12
+        Case 18: statGroup = 23
+        Case 19: statGroup = 5
+        Case 20: statGroup = 21
+        Case 21: statGroup = 6
+        Case 22: statGroup = 8
+        Case 23: statGroup = 9
+        Case 24: statGroup = 7
+        Case 25: statGroup = 11
 
     End Select
 
@@ -1332,7 +1332,7 @@ Sub SortStats (categoryPick)
 
             For Z1 = Z + 1 To 13
 
-                If statPlyrVal!(Z, SG%) < statPlyrVal!(Z1, SG%) Then
+                If statPlyrVal!(Z, statGroup) < statPlyrVal!(Z1, statGroup) Then
 
                     For I = 0 To 24:
                         Swap statPlyrVal!(Z, I), statPlyrVal!(Z1, I)

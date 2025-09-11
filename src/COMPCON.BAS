@@ -150,7 +150,7 @@ Sub CompileCollege ()
                             defTotals!(L) = statsDefTot!(L)
                         Next
 
-                        Call CalcStatTotalsConf(totalGames, TN$, finalUpdate$)
+                        Call CalcRecordsConf(totalGames, TN$, finalUpdate$)
                         Call CalcStatLeadersConf(totalGames, TN$)
 
                     End If
@@ -756,12 +756,12 @@ End Sub
 
 
 '----------------------------------------
-'     CalcStatTotalsConf Subroutine
+'     CalcRecordsConf Subroutine
 '----------------------------------------
 'This subroutine compares all pre-loaded
 'stats to each of the record categories to
 'see if any should be updated
-Sub CalcStatTotalsConf (totalGames, teamName$, finalUpdate$)
+Sub CalcRecordsConf (totalGames, teamName$, finalUpdate$)
 
     Shared defTotals!(), offTotals!()
     Shared plyrRecords!(), statPlyrVal!()
