@@ -68,8 +68,6 @@ Sub CompileCollege ()
         defLeaders!(X, 19) = 9999
     Next
 
-    C$ = ","
-
     conferenceFile$ = _OpenFileDialog$("Choose Conference Stats file", diskPaths$(2), "*.TMS", "Conference Stats files [.TMS]")
 
     If conferenceFile$ <> "" Then
