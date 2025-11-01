@@ -425,7 +425,7 @@ Sub NewSchedule (scheduleFile$)
                 If SG% <= 0 Then SG% = 1
                 If EG% > scheduleAP%(0) Then EG% = scheduleAP%(0)
 
-                Open "GAME82" For Output As #1
+                Open cfgPath$ + "GAME82" For Output As #1
                 Print #1, scheduleFile$
                 Print #1, SG% 'Start Game
                 Print #1, EG% 'End Game
@@ -439,7 +439,7 @@ Sub NewSchedule (scheduleFile$)
                     scheduleNG%(I, 12) = Int(TM% / 30) - 18
                 Next
 
-                Open "TICKER" For Output As #2
+                Open cfgPath$ + "TICKER" For Output As #2
 
                 For I = 1 To 32:
                     For I1 = 0 To 1:
@@ -491,7 +491,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "Z"
                 'Export to text file
-                Open "schedule" For Append As #15
+                Open cfgPath$ + "schedule" For Append As #15
 
                 For X = 1 To scheduleAP%(0)
 
@@ -675,52 +675,54 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
         Color 15, 0
         Cls
 
+        Locate 2
         Color 2
         Print Tab(29); "SELECT OPENING OPTIONS"
 
-        Locate 2, 2: Color 14
+        Locate 4, 2: Color 14
         Print "(1) ";
         Color 15: Print playMode$(scheduleNG%(gameIndex%, 8))
-        Locate 3, 2: Color 14
+        Locate 5, 2: Color 14
         Print "(2) ";
         Color 15: Print "VISITING TEAM: "; visitor$
-        Locate 4, 2: Color 14
+        Locate 6, 2: Color 14
         Print "(3) ";
         Color 15: Print "HOME TEAM: "; home$
-        Locate 5, 2: Color 14
+        Locate 7, 2: Color 14
         Print "(4) ";
         Color 15: Print "GAME DATE (XX-XX-XX)  "; DT$
-        Locate 6, 2: Color 14
+        Locate 8, 2: Color 14
         Print "(5) ";
         Color 15: Print "GAME TIME (XX:XXP)    "; TM$
-        Locate 7, 2: Color 14
+        Locate 9, 2: Color 14
         Print "(6) ";
         Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; scheduleNG%(gameIndex%, 4) / 10
-        Locate 8, 2: Color 14
+        Locate 10, 2: Color 14
         Print "(7) ";
         Color 15: Print "GAME LOCATION: "; location$(scheduleNG%(gameIndex%, 2))
-        Locate 9, 2: Color 14
+        Locate 11, 2: Color 14
         Print "(8) ";
         Color 15: Print "SHOT CLOCK: "; sClockOpt$(scheduleNG%(gameIndex%, 7))
-        Locate 10, 2: Color 14
+        Locate 12, 2: Color 14
         Print "(9) ";
         Color 15: Print "3-POINT SHOT: "; yesNoText$(scheduleNG%(gameIndex%, 3))
-        Locate 11, 2: Color 14
+        Locate 13, 2: Color 14
         Print "(A) ";
         Color 15: Print "FOULS TO DISQUALIFY: "; scheduleNG%(gameIndex%, 5)
-        Locate 12, 2: Color 14
+        Locate 14, 2: Color 14
         Print "(B) ";
         Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(scheduleNG%(gameIndex%, 6))
-        Locate 13, 2: Color 14
+        Locate 15, 2: Color 14
         Print "(C) ";
         Color 15: Print "HUMAN COACHES: "; coachMode$(scheduleNG%(gameIndex%, 9))
-        Locate 14, 2: Color 14
+        Locate 16, 2: Color 14
         Print "(D) ";
         Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(scheduleNG%(gameIndex%, 10))
-        Locate 15, 2: Color 14
+        Locate 17, 2: Color 14
         Print "(E) ";
         Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS: "; yesNoText$(scheduleNG%(gameIndex%, 14))
-        Locate 17, 2: Color 14
+
+        Locate 19, 2: Color 14
         Print "(0) ";
         Color 15: Print "ACCEPT SETTINGS"
 
@@ -767,7 +769,7 @@ Sub NewGame (visitor$, home$, YN$, DT$, TM$, NTMS, gameIndex%)
                     Locate 6, 26: Input TM$
 
                 Case 6:
-                    Locate 7, 32: Input displayPause!
+                    Locate 9, 32: Input displayPause!
                     scheduleNG%(gameIndex%, 4) = displayPause! * 10
 
                 Case 7:
@@ -1059,7 +1061,7 @@ Sub EditParameters ()
     'Read in existing parameters if there are any
     If _FileExists("EVENTS.BOX") Then
 
-        Open "EVENTS.BOX" For Input As #1
+        Open cfgPath$ + "EVENTS.BOX" For Input As #1
 
         For X = 1 To 13
             Input #1, eventSettings(X)
@@ -1156,7 +1158,7 @@ Sub EditParameters ()
     Loop Until B9 = 0 'ENTER also counts as 0
 
     'Save all changes
-    Open "EVENTS.BOX" For Output As #2
+    Open cfgPath$ + "EVENTS.BOX" For Output As #2
 
     For X = 1 To 13
         Print #2, eventSettings(X)
@@ -1452,28 +1454,29 @@ Sub ChangeGlobalSettings ()
         Color 15, 0
         Cls
 
+        Locate 2
         Print Tab(30); "GLOBAL SETTINGS FOR SCHEDULE"
 
-        Locate 3, 2: Color 14: Print "(1) ";
+        Locate 4, 2: Color 14: Print "(1) ";
         Color 15: Print "GAME PLAY: "; playMode$(playerOpt)
-        Locate 4, 2: Color 14: Print "(2) ";
+        Locate 5, 2: Color 14: Print "(2) ";
         Color 15: Print "SHOT CLOCK: "; sClockOpt$(sClockVal)
-        Locate 5, 2: Color 14: Print "(3) ";
+        Locate 6, 2: Color 14: Print "(3) ";
         Color 15: Print "3-POINT SHOT: "; yesNoText$(threePtOpt)
-        Locate 6, 2: Color 14: Print "(4) ";
+        Locate 7, 2: Color 14: Print "(4) ";
         Color 15: Print Using "FOULS TO DISQUALIFY: ##"; foulsToDQ
-        Locate 7, 2: Color 14: Print "(5) ";
+        Locate 8, 2: Color 14: Print "(5) ";
         Color 15: Print "FREE THROWS ON 10TH FOUL: "; foulShotOpt$(ft10thFoul)
-        Locate 8, 2: Color 14: Print "(6) ";
+        Locate 9, 2: Color 14: Print "(6) ";
         Color 15: Print Using "PLAY-BY-PLAY DELAY (SECS): ##.#  "; displayPause!
-        Locate 9, 2: Color 14: Print "(7) ";
+        Locate 10, 2: Color 14: Print "(7) ";
         Color 15: Print "HUMAN COACHES: "; coachMode$(coachOpt)
-        Locate 10, 2: Color 14: Print "(8) ";
+        Locate 11, 2: Color 14: Print "(8) ";
         Color 15: Print "3-FT WHEN FOULED ON 3-PT ATTEMPT: "; yesNoText$(ft3PtFoul)
-        Locate 11, 2: Color 14: Print "(9) ";
+        Locate 12, 2: Color 14: Print "(9) ";
         Color 15: Print "1 FT ON 1ST 6 FLOOR FOULS: "; yesNoText$(ft6FloorFouls)
 
-        Locate 13, 2: Color 14: Print "(0) ";
+        Locate 14, 2: Color 14: Print "(0) ";
         Color 15: Print "ACCEPT GLOBAL SETTINGS"
 
         Do
@@ -1506,7 +1509,7 @@ Sub ChangeGlobalSettings ()
                 ft10thFoul = 1 - ft10thFoul
 
             Case 6:
-                Locate 8, 32: Input displayPause!
+                Locate 9, 32: Input displayPause!
 
             Case 7:
                 coachOpt = 1 - coachOpt
@@ -1907,6 +1910,7 @@ Sub EditBoxscore (boxName$)
     Else
 
         Call QBWRITE(boxName$)
+        Screen menu&
 
     End If
 

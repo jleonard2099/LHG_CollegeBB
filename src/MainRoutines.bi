@@ -168,5 +168,6 @@ Declare Sub ViewTeamLeaders (printOrView, plyrTotalStats, teamTotalStats)
 Declare Sub ViewTourneyInfo (ACTION%)
 Declare Sub WRITEGAME (outputFile$)
 
+Declare Function CanWriteLocally%
 Declare Function FindStatsCon% (statFile$, numberGames)
 Declare Function FindStatsNat% (statFile$, numberGames, NRT)
