@@ -304,7 +304,7 @@ Close #1
 Kill "WRITETEST.TMP"
 CanWriteLocally = 1 ' SUCCESS - TRUE
 WriteTestFailed:
-On Error GoTo 0
+On Error GoTo Errhandler
 
 ' Determine base path for config files
 If (CanWriteLocally = 1) Or dirSeparator$ = "/" Then
