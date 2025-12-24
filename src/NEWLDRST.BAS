@@ -179,7 +179,6 @@ Sub NewStandings_Screen (league$)
         End Select
 
         If targetDiv$ <> "" Or (targetDiv$ = "" And expStdLeagName$(AA) <> "") Then
-        'If targetDiv$ <> "" Then
 
             Color 11
             Locate 2, 35: Print league$
@@ -283,9 +282,6 @@ Sub NewStandings_Report (printDest, destFile$, league$)
 
         Call SortStandings(AA, ZZ)
 
-        Print #1, league$
-        Print #1, Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
-
         Select Case NT
 
             Case 1
@@ -297,7 +293,10 @@ Sub NewStandings_Report (printDest, destFile$, league$)
         End Select
 
         If targetDiv$ <> "" Or (targetDiv$ = "" And expStdLeagName$(AA) <> "") Then
-        'If targetDiv$ <> "" Then
+
+            Print #1, league$
+            Print #1, 
+            Print #1, Tab(20); "                     MAJ          HOME    ROAD   LAST 10"
 
             Print #1, RTrim$(targetDiv$);
             Print #1, Tab(20); "G   W   L   PCT   GB  #  WS  LS   W- L    W- L    W- L "

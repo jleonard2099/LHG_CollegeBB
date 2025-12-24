@@ -1,4 +1,5 @@
-'----------------------------------------
+
+    '----------------------------------------
 '           InputTeam Subroutine
 '----------------------------------------
 'This subroutine assists the user with the
@@ -27,6 +28,7 @@ Sub InputTeam ()
     Shared playerStats!(), playerRatings!()
 
     Shared playerNames$(), position$()
+    
 
     inputX$(0) = "COLLEGE BASKETBALL"
     inputX$(1) = "H S BASKETBALL"
@@ -632,10 +634,10 @@ Sub InputTeam ()
         teamRatings(4) = leagFGAPerGame!
         teamRatings(5) = nbrGmsPlayed!
 
-        If choice = 1 Then
-            F3 = 32
+        If choice = 0 Then
+            leagMinsPerGm = 40
         Else
-            F3 = 40
+            leagMinsPerGm = 32
         End If
 
         For I = 0 To 13
@@ -804,26 +806,34 @@ Sub InputTeam ()
 
                     End If
 
-                    playerStats!(I, 0) = playerOff!(I, 7)
-                    playerStats!(I, 1) = playerOff!(I, 8)
-                    playerStats!(I, 2) = playerOff!(I, 9)
+                    playerStats!(I, 0) = playerOff!(I, 7)   'Games
+                    playerStats!(I, 1) = playerOff!(I, 8)   'Minutes Played
+                    playerStats!(I, 2) = playerOff!(I, 9)   'FGA
 
+                    'FG %
                     If playerStats!(I, 2) = 0 Then
                         playerOff!(I, 0) = 0
                     Else
                         playerOff!(I, 0) = CInt(playerStats!(I, 3) / playerStats!(I, 2) * 100)
                     End If
 
+                    'FTA
                     playerStats!(I, 4) = playerOff!(I, 16)
 
+                    'FT %
                     If playerStats!(I, 4) = 0 Then
                         playerOff!(I, 1) = 0
                     Else
                         playerOff!(I, 1) = CInt(playerStats!(I, 5) / playerStats!(I, 4) * 100)
                     End If
 
+                    'ORB
                     playerStats!(I, 6) = playerOff!(I, 19)
+                    
+                    'TRB
                     playerStats!(I, 7) = playerOff!(I, 10)
+                    
+                    'PF
                     playerStats!(I, 8) = playerOff!(I, 12)
                     
                     'Assists
@@ -880,84 +890,99 @@ Sub InputTeam ()
                 X2! = .83
             End If
 
+            'Team/Opp FTA's
             tmFTA! = CInt((tmFTA! * X2!))
             oppFTA! = CInt((oppFTA! * X2!))
 
+            'Player FTA's
             For I = 0 To 13:
                 playerOff!(I, 16) = CInt((playerOff!(I, 16) * X2))
             Next I
 
         End If
 
-        X9! = 0
+        teamActivity! = 0
 
+        'Total opponent missed shots
         X1! = oppFGA! - ((oppFGPct! * oppFGA!) / 100) + oppFTA! - ((oppFTA! * oppFTPct!) / 100)
-        X2! = tmFGA! - ((tmFGA! * tmFGPct!) / 100) + tmFTA! - ((tmFTA! * tmFTPct!) / 100)
-        RD! = (tmReb! - X1! + X2! - oppReb!) / (nbrGmsPlayed! * 2)
-        HS! = tmReb! - X1! + X2! - oppReb!
-        M7! = ((35 + RD!) / leagRebPerGame!)
 
+        'Team missed shots estimate
+        X2! = tmFGA! - ((tmFGA! * tmFGPct!) / 100) + tmFTA! - ((tmFTA! * tmFTPct!) / 100)
+
+        'Rebounding Differential
+        reboundDiff! = (tmReb! - X1! + X2! - oppReb!) / (nbrGmsPlayed! * 2)
+        
+        'Rebound Advantage
+        reboundAdv! = tmReb! - X1! + X2! - oppReb!
+        
+        'Rebound Strength Multiplier
         If choice = 2 Then
-            M7! = ((44 + RD!) / leagRebPerGame!)
+            reboundStr! = ((44 + reboundDiff!) / leagRebPerGame!)
+        Else
+            reboundStr! = ((35 + reboundDiff!) / leagRebPerGame!)
         End If
 
         For I = 0 To 13
 
             If playerNames$(I) <> "XXX" Then
-                'Sum of all player Blocks + Assists
-                X9! = X9! + playerOff!(I, 10) + playerOff!(I, 9)
+                'Sum of all player Rebounds + Assists
+                teamActivity! = teamActivity! + playerOff!(I, 10) + playerOff!(I, 9)
             End If
 
         Next I
 
         For I = 0 To 13
 
+            'M is a factor of how often a player
+            'contributes in a single game
             If playerNames$(I) <> "XXX" Then
 
-                'M is a factor of how often a player
-                'contributes in a single game
+                'Minutes played > 0
                 If playerOff!(I, 8) <> 0 Then
-                    If choice = 0 Then
-                        'College
-                        M! = 40 / (playerOff!(I, 8) / playerOff!(I, 7))
-                    End If
-                    If choice = 1 Then
-                        'High School
-                        M! = 32 / (playerOff!(I, 8) / playerOff!(I, 7))
-                    End If
+                    M! = leagMinsPerGm / (playerOff!(I, 8) / playerOff!(I, 7))
                     plyrMinAdj! = M!
                 Else
-                    M! = (X9! / 5) / (playerOff!(I, 9) + playerOff!(I, 10))
-                    MI! = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9! / 5)
-                    If M! < 1.1 Then plyrMinAdj! = 1.1
+                    'No time recorded - use Rebounds + Assists
+                    currPlayerActivity! = playerOff!(I, 10) + playerOff!(I, 9)
+                    avgPlayerActivity! = teamActivity! / 5
+                    M! = avgPlayerActivity! / currPlayerActivity!
+                    If M! < 1.1 Then 
+                        plyrMinAdj! = 1.1
+                    End If
                 End If
 
-                'Tot Reb / 40 Min
-                playerOff!(I, 2) = CInt((((playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj!) * M7!))
+                'Player Reb / Game, Adjusted
+                adjRebPerGame! = (playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj! * reboundStr!
+                playerOff!(I, 2) = CInt(adjRebPerGame!)
 
-                '(Tot Reb / 40 Min) * 10
-                X = CInt(((((playerOff!(I, 10) / playerOff!(I, 7)) * plyrMinAdj!) * M7!) * 10))
+                'Reb / Game * 10
+                X = CInt(adjRebPerGame! * 10))
 
-                '(Off Reb / 40 Min) * 10
+                'If ORB = 0
                 If playerOff!(I, 19) = 0 Then
+                    'Estimate DEF rebounds
                     playerRatings!(I, 4) = CInt((X * .35))
                 Else
+                    'Calculate from ORB / TRB
                     playerRatings!(I, 4) = CInt((X * (playerOff!(I, 19) / playerOff!(I, 10))))
                 End If
 
-                '(Def Reb / 40 Min) x 10
+                'Player Reb / Game
                 playerOff!(I, 2) = X - playerRatings!(I, 4)
 
                 'Assist Rating (based on Assits / Game)
                 If inputQQ(0) = 1 Then
                     'Adjust entered assists / game based on time contribution and team
-                    playerOff!(I, 4) = CInt(((playerOff!(I, 11) / playerOff!(I, 7)) * plyrMinAdj!) * (L6 / (tmAsst! / nbrGmsPlayed!)))
+                    'L6 = average assists / team (global)
+                    asstPerGame! = playerOff!(I, 11) / playerOff!(I, 7)
+                    playerOff!(I, 4) = CInt((asstPerGame! * plyrMinAdj!) * (L6 / (tmAsst! / nbrGmsPlayed!)))
                 End If
 
                 'Steal Rating (based on Steals / Game)
                 If inputQQ(2) = 1 Then
                     'Adjust entered steals / game based on time contribution
-                    playerSteals = CInt(((playerOff!(I, 13) / playerOff!(I, 7)) * plyrMinAdj!))
+                    stlsPerGame! = playerOff!(I, 13) / playerOff!(I, 7)
+                    playerSteals = CInt(stlsPerGame! * plyrMinAdj!)
                     playerOff!(I, 5) = playerSteals
                     playerDef!(I) = playerSteals
                 End If
@@ -1015,31 +1040,35 @@ Sub InputTeam ()
 
             If playerNames$(I) <> "XXX" Then
 
-                'Contribution Pct
-                playerOff!(I, 3) = (playerOff!(I, 9) + playerOff!(I, 10)) / X9!
+                currPlayerActivity! = playerOff!(I, 10) + playerOff!(I, 9)
+
+                'Contributions, as %
+                playerOff!(I, 3) = currPlayerActivity! / teamActivity!
                 playerOff!(I, 3) = CInt((100 * playerOff!(I, 3)))
 
-                '3FGA / TOT FGA
+                '3 FG% = 3FGA / TOT FGA (% of shots that are 3FG)
                 If playerOff!(I, 9) <> 0 Then
                     playerRatings!(I, 3) = CInt(playerOff!(I, 17) / playerOff!(I, 9) * 100)
                 End If
 
                 If M! < 1 Then plyrMinAdj! = 1
 
-                'Fouls Rating (adjusted for player time contrib)
-                B3 = (playerOff!(I, 12) / playerOff!(I, 7)) * plyrMinAdj!
-                B3 = CInt((B3 * 10))
-                playerRatings!(I, 5) = B3
+                'Fouls / Game (adjusted for player time contrib)
+                foulRating = (playerOff!(I, 12) / playerOff!(I, 7)) * plyrMinAdj!
+                foulRating = CInt((foulRating * 10))
+                playerRatings!(I, 5) = foulRating
 
                 'FGA * FG%
-                B3 = playerOff!(I, 9) * (playerOff!(I, 0) / 100)
+                expectedFGM = playerOff!(I, 9) * (playerOff!(I, 0) / 100)
 
                 '3FGA * 3FG%
-                B4 = playerOff!(I, 17) * (playerOff!(I, 18) / 100)
+                expected3FGM = playerOff!(I, 17) * (playerOff!(I, 18) / 100)
 
                 'Adjusted FG%
                 If playerOff!(I, 9) - playerOff!(I, 17) <> 0 Then
-                    playerOff!(I, 0) = ((B3 - B4) / (playerOff!(I, 9) - playerOff!(I, 17))) + .005
+                    'actualFGA! = FGA + 3FGA
+                    actualFGA! = (playerOff!(I, 9) - playerOff!(I, 17))
+                    playerOff!(I, 0) = ((expectedFGM - expected3FGM) / actualFGA!) + .005
                 End If
 
                 playerOff!(I, 0) = CInt((playerOff!(I, 0) * 100))
@@ -1063,73 +1092,105 @@ Sub InputTeam ()
 
             If playerNames$(I) <> "XXX" Then
 
-                X! = ((playerOff!(I, 9) * playerOff!(I, 0)) / 100)
-                MI = (playerOff!(I, 8) / playerOff!(I, 7)) / 40
+                'Expected FGM = FGA * FG%
+                expectedFGM! = ((playerOff!(I, 9) * playerOff!(I, 0)) / 100)
 
+                'Player's Contribution % / game
                 If playerOff!(I, 8) = 0 Then
-                    MI = (playerOff!(I, 9) + playerOff!(I, 10)) / (X9! / 5)
+                    'No play time - estimate based on activity
+                    playerActivity! = (playerOff!(I, 9) + playerOff!(I, 10))
+                    MI =  playerActivity! / (teamActivity! / 5)
+                Else
+                    '(Minutes / Game) / 40 (32 for HS)
+                    playerMinsPerGm = playerOff!(I, 8) / playerOff!(I, 7)
+                    MI = playerMinsPerGm / leagMinsPerGm
                 End If
-
-                X! = X! * .1
 
                 If MI > 1 And playerOff!(I, 8) = 0 Then
                     MI = 1
                 End If
-                X! = X! + ((playerOff!(I, 7) * 1.64) * MI)
-                X! = ((playerOff!(I, 16) - X!) / 2)
-                X! = CInt(((X! / (playerOff!(I, 9) + X!)) * 100))
 
-                If X! < 0 Then X! = 0
+                'Expected FTA
+                expectedFTA! = expectedFGM! * .1
+                
+                'Calibrate FT contribution
+                expectedFTA! = expectedFTA! + ((playerOff!(I, 7) * 1.64) * MI)
+                
+                'Foul Rating = Actual FTA vs. Expected
+                foulRating! = ((playerOff!(I, 16) - expectedFTA!) / 2)
+                
+                'Normalize foul draw rating
+                foulRating! = CInt(((foulRating! / (playerOff!(I, 9) + foulRating!)) * 100))
+
+                If foulRating! < 0 Then 
+                    foulRating! = 0
+                End If
 
                 'Foul Draw rating
-                playerRatings!(I, 6) = X!
+                playerRatings!(I, 6) = foulRating!
 
             End If
 
         Next I
 
         'Off Steal Rating
+        '---------------
         gameStls! = oppSteal! / nbrGmsPlayed!
+        'Normalize to points based on team avg. 7 steals / game
+        '0.4 steals = 1 "point"
         X! = CInt((gameStls! - 7) / .4)
 
+        'Normalize as rating around 100
         If X! < 0 Then leagueRatings(0) = 100 + X!
         If X! > 0 Then leagueRatings(0) = X!
 
         'Turnover Rate
-        baseTORate! = 1200 - (((tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)) * 4)
+        '---------------
+        shotAttPerTeam = (tmFGA! + oppFGA!) / (nbrGmsPlayed! * 2)
+        'Normalize to expected TO's
+        baseTORate! = 1200 - (shotAttPerTeam * 4)
         baseTORate! = baseTORate! / 6
 
         'Off TO Rating
+        '---------------
         unforcedTOs! = (tmTO! - oppSteal!) / nbrGmsPlayed!
-        'Normalize calculations to 100
         X! = (unforcedTOs! / baseTORate!) - .01
+        'Normalize calculations to % scale
         X! = CInt(X! * 100)
 
         leagueRatings(1) = X!
 
         'Def TO Rating
+        '---------------
         unforcedTOs! = (oppTO! - tmSteal!) / nbrGmsPlayed!
-        'Normalize calculations to 100
         X! = (unforcedTOs! / baseTORate!) - .01
+        'Normalize calculations to % scale
         X! = CInt(X! * 100)
+        'Adjust by 4 ("fudge factor")
         X! = X! - 4
 
+        'Normalize as rating around 100
         If X! < 0 Then leagueRatings(2) = 100 + X!
         If X! > 0 Then leagueRatings(2) = X!
 
         'Off Foul Adj
-        homeScoreTeam! = CInt(((oppFGA! * oppFGPct!) / 100))
-        X! = (homeScoreTeam! * .1) + (nbrGmsPlayed! * 8.2)
+        expectOppScore! = CInt(((oppFGA! * oppFGPct!) / 100))
+        'Adjust by foul baseline
+        X! = (expectOppScore! * .1) + (nbrGmsPlayed! * 8.2)
+        'Compare actual FTA to expected
         X! = (oppFTA! - X!) / 2
+        'Normalize with FGA
         X! = (X! / (oppFGA! + X!)) - .09
+        'Normalize calculations to % scale
         X! = CInt(X! * 100)
 
-        If X! > 0 Then leagueRatings(3) = X!
+        'Normalize as rating around 100
         If X! < 0 Then leagueRatings(3) = X! + 100
+        If X! > 0 Then leagueRatings(3) = X!
 
-        '---------------
-        ' Assists
-        '---------------
+        '------------------------------
+        ' Assists - Manual Input
+        '------------------------------
         If inputQQ(0) = 0 Then
 
             Cls
@@ -1189,9 +1250,9 @@ Sub InputTeam ()
 
         End If
 
-        '---------------
-        ' Foul Commit
-        '---------------
+        '------------------------------
+        ' Foul Commit - Manual Input
+        '------------------------------
         If inputQQ(1) = 0 Then
 
             Cls
@@ -1253,9 +1314,9 @@ Sub InputTeam ()
 
         End If
 
-        '---------------
-        ' Steals & TOs
-        '---------------
+        '------------------------------
+        ' Steals & TOs - Manual Input
+        '------------------------------
         If inputQQ(2) = 0 Then
 
             HQ = tmFGA! - oppFGA!
@@ -1360,8 +1421,12 @@ Sub InputTeam ()
                 playerOff!(I, 5) = playerOff!(I, 5) + inputRatings(I)
             Next I
 
-            If inputRatings(14) < 0 Then inputRatings(14) = 100 + inputRatings(14)
-            If inputRatings(16) < 0 Then inputRatings(16) = 100 + inputRatings(16)
+            If inputRatings(14) < 0 Then 
+                inputRatings(14) = 100 + inputRatings(14)
+            End If
+            If inputRatings(16) < 0 Then 
+                inputRatings(16) = 100 + inputRatings(16)
+            End If
 
             For I = 0 To 2
                 leagueRatings(I) = inputRatings(I + 14)
@@ -1371,9 +1436,9 @@ Sub InputTeam ()
 
         End If
 
-        '---------------
-        ' Block Ratings
-        '---------------
+        '------------------------------
+        ' Block Ratings - Manual Input
+        '------------------------------
         If inputQQ(3) = 0 Then
 
             Cls
@@ -1419,6 +1484,7 @@ Sub InputTeam ()
             playerOff!(I, 6) = playerOff!(I, 6) + inputRatings(I)
         Next I
 
+        ' Save our work!!!
         Call SaveTeam(1, teamName$, yearNumber$, teamNumber)
 
     End If 'We ESC'd out of the first menu

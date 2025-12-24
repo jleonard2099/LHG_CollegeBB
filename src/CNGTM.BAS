@@ -931,7 +931,7 @@ End Sub
 
 
 '----------------------------------------
-'         Roster_Report Subroutine
+'        Roster_Report Subroutine
 '----------------------------------------
 'This subroutine formats and outputs the
 'team roster to the default printer

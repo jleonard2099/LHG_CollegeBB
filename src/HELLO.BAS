@@ -417,7 +417,7 @@ Sub Main_Menu (menuSelection)
         menuChoices$(7) = "CONFIGURE GAME FOLDERS "
         menuChoices$(8) = "EXIT PROGRAM           "
 
-        SELECTION% = 1
+        menuSelection = 1
         Count% = 8
         Start% = 1
         ExitCode% = 8
@@ -501,7 +501,8 @@ Sub TeamMgt_Menu ()
         menuChoices$(5) = "DRAFT PLAYERS             "
         menuChoices$(6) = "CONVERT DATA FILE FROM 4.0"
         menuChoices$(7) = "RETURN TO MAIN MENU       "
-        SELECTION% = 1
+
+        menuSelection = 1
         Count% = 7
         Start% = 1
         ExitCode% = 7
@@ -515,14 +516,14 @@ Sub TeamMgt_Menu ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case menuSelection
 
                 Case 1:
                     Call InputTeam
@@ -548,11 +549,11 @@ Sub TeamMgt_Menu ()
 
         Else
 
-            SELECTION% = 7
+            menuSelection = 7
 
         End If
 
-    Loop Until SELECTION% = 7 Or ExitCode% = 27
+    Loop Until menuSelection = 7 Or ExitCode% = 27
 
 End Sub
 
@@ -580,7 +581,8 @@ Sub Replay_Menu ()
         menuChoices$(4) = "MERGE SEPARATE STATISTICAL FILES"
         menuChoices$(5) = "TEAM CAREER OPTIONS             "
         menuChoices$(6) = "RETURN TO MAIN MENU             "
-        SELECTION% = 1
+
+        menuSelection = 1
         Count% = 6
         Start% = 1
         ExitCode% = 6
@@ -594,14 +596,14 @@ Sub Replay_Menu ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
 
         If ExitCode% <> 27 Then
 
-            Select Case SELECTION%
+            Select Case menuSelection
 
                 Case 1:
                     Call LOOKY
@@ -625,7 +627,7 @@ Sub Replay_Menu ()
 
         End If
 
-    Loop Until SELECTION% = 6 Or ExitCode% = 27
+    Loop Until menuSelection = 6 Or ExitCode% = 27
 
 End Sub
 
@@ -660,7 +662,8 @@ Sub Leaders_Menu ()
         menuChoices$(12) = "DELETE NATIONAL STATS    "
         menuChoices$(13) = "RETURN TO MAIN MENU      "
         menuChoices$(14) = "EXIT PROGRAM             "
-        SELECTION% = 1
+
+        menuSelection = 1
         Count% = 14
         Start% = 1
         FileFGColor = 15: FileBGColor = 1
@@ -688,34 +691,46 @@ Sub Leaders_Menu ()
         Print "TO TRACK AND UPDATE TO GENERATE A NATIONAL POLL AND LEADERS."
 
         _MouseShow "DEFAULT"
-        MAMenu menuChoices$(), SELECTION%, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
+        MAMenu menuChoices$(), menuSelection, Start%, Count%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Rows%, Columns%, Spacing%, Row%, Column%
         _MouseHide
 
         If ExitCode% <> 27 Then
 
             Color , 0
 
-            Select Case SELECTION%
+            Select Case menuSelection
+
                 Case 1: Call CREATCON
+
                 Case 2: Call CompileCollege
+
                 Case 3: Call SEECON
+
                 Case 4: Call HD2HDCON
+
                 Case 5: Call Records_Menu
+
                 Case 6: Call NEWLDR
+
                 Case 7: Call BLANKCON
+
                 Case 8: Call CREATENATL
+
                 Case 9: Call CompileNatlOrg
+
                 Case 10: Call SEENATL
+
                 Case 11: Call Records_Menu
+
                 Case 12: Call BLANKORG
 
             End Select
 
         End If 'Done checking for ESC
 
-    Loop Until SELECTION% >= 13 Or ExitCode% = 27
+    Loop Until menuSelection >= 13 Or ExitCode% = 27
 
-    If SELECTION% = 14 Then
+    If menuSelection = 14 Then
         System
     End If
 
@@ -7974,24 +7989,24 @@ Sub TICKER ()
 
                 Case 1 To 20:
                     'ESPN
-                    Locate , 28: Print "ALLSTATE HALFTIME REPORT"
+                    halftimeString$ = "ALLSTATE HALFTIME REPORT"
 
                 Case 21 To 40:
                     'NBC
                     'Previously, "Prudential Halftime"
-                    Locate , 28: Print "XFINITY HALFTIME REPORT"
+                    halftimeString$ = "XFINITY HALFTIME REPORT"
 
                 Case 41 To 60:
                     'NBC - Sunday Night
-                    Locate , 29: Print "TOYOTA HALFTIME REPORT"
+                    halftimeString$ = "TOYOTA HALFTIME REPORT"
 
                 Case 61 To 80:
                     'ABC
-                    Locate , 31: Print "KIA HALFTIME REPORT"
+                    halftimeString$ = "KIA HALFTIME REPORT"
 
                 Case 81 To 100:
                     'CBS/Fox
-                    Locate , 28: Print "VERIZON HALFTIME REPORT"
+                    halftimeString$ = "VERIZON HALFTIME REPORT"
  
             End Select
 
@@ -8003,31 +8018,34 @@ Sub TICKER ()
 
                     Case 1 To 25
                         'ABC
-                        Locate , 27: Print "CHEVROLET FINAL SCOREBOARD"
+                        halftimeString$ = "CHEVROLET FINAL SCOREBOARD"
 
                     Case 26 To 50:
                         'Fox / CBS
-                        Locate , 27: Print "STATE FARM FINAL SCOREBOARD"
+                        halftimeString$ = "STATE FARM FINAL SCOREBOARD"
 
                     Case 51 To 75:
                         'NBC
-                        Locate , 24: Print "FEDERAL EXPRESS FINAL SCOREBOARD"
+                        halftimeString$ = "FEDERAL EXPRESS FINAL SCOREBOARD"
 
                     Case 76 To 100:
                         'ESPN
-                        Locate , 23: Print "ESPN SPORTSCENTER FINAL SCOREBOARD"
+                        halftimeString$ = "ESPN SPORTSCENTER FINAL SCOREBOARD"
 
                 End Select
 
             Else
 
                 If halfTime = 0 Then
-                    Locate , 30: Print "LANCE HAFFNER GAMES SCOREBOARD"
+                    halftimeString$ = "LANCE HAFFNER GAMES SCOREBOARD"
                 End If
 
             End If
 
         End If
+
+        Locate , ((80 - Len(halftimeString$)) / 2)
+        Print halftimeString$
 
         Color 15
 
