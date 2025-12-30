@@ -75,7 +75,7 @@ Sub UpdateExpandedStandings ()
                         If (Left$(locIndicator$(I), 1) = "V" Or Left$(locIndicator$(I), 1) = "A") Then
                             totAwayWins(currRecord) = totAwayWins(currRecord) + 1
                         End If
-                        If (Left$(locIndicator$(I), 1) = "H")
+                        If (Left$(locIndicator$(I), 1) = "H") Then
                             totHomeWins(currRecord) = totHomeWins(currRecord) + 1
                         End If
 
@@ -90,7 +90,7 @@ Sub UpdateExpandedStandings ()
                         If (Left$(locIndicator$(I), 1) = "V" Or Left$(locIndicator$(I), 1) = "A") Then
                             totAwayLosses(currRecord) = totAwayLosses(currRecord) + 1
                         End If
-                        If (Left$(locIndicator$(I), 1) = "H")
+                        If (Left$(locIndicator$(I), 1) = "H") Then
                             totHomeLosses(currRecord) = totHomeLosses(currRecord) + 1
                         End If
 
