@@ -72,7 +72,7 @@ Sub UpdateExpandedStandings ()
                         lastWinStreak(currRecord) = lastWinStreak(currRecord) + 1
                         lastLoseStreak(currRecord) = 0
 
-                        If (Left$(locIndicator$(I), 1) = "V" Or Left$(locIndicator$(I), 1) = "A") Thens
+                        If (Left$(locIndicator$(I), 1) = "V" Or Left$(locIndicator$(I), 1) = "A") Then
                             totAwayWins(currRecord) = totAwayWins(currRecord) + 1
                         End If
                         If (Left$(locIndicator$(I), 1) = "H")
