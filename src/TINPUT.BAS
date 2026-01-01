@@ -956,7 +956,7 @@ Sub InputTeam ()
                 playerOff!(I, 2) = CInt(adjRebPerGame!)
 
                 'Reb / Game * 10
-                X = CInt(adjRebPerGame! * 10))
+                X = CInt(adjRebPerGame! * 10)
 
                 'If ORB = 0
                 If playerOff!(I, 19) = 0 Then

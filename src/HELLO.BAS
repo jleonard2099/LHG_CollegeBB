@@ -3513,7 +3513,7 @@ Sub COLHOOP ()
                     If playChoice <> 1 Then
 
                         'Human Opponent, Computer Shoots | Computer is Visitor AND on Defense, Computer Shoots | Computer is Visitor AND On Offense | Computer is Home Team
-                        If (playerMode = 0 And coachOpt = 1) Or 
+                        If (playerMode = 0 And coachOpt = 1) Or _
                             (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
                             (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
@@ -5692,7 +5692,7 @@ End Sub
 'key is desired for a choice.
 Sub LetterToNumber (promptVal$, J)
 
-    char$ = UCase$(promptval$)
+    char$ = UCase$(promptVal$)
     code% = Asc(char$)
 
     ' Digits 0-9
@@ -12257,7 +12257,7 @@ Sub BALLDISTRIBUTE ()
 
     Call Rolld100(RN0)
 
-    If (playerMode = 0 And coachOpt = 1) Or 
+    If (playerMode = 0 And coachOpt = 1) Or _
         (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
         (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
         'Computer in charge - auto determine
