@@ -296,7 +296,8 @@ Sub DraftChoices (draftNew, doneDrafting, teamPosn)
                     T3 = 0
 
                     For I = 1 To 14
-                        Print Using "## "; I;: Print plyrNames_DRAFT$(0, I - 1);
+                        Print Using "## "; I;
+                        Print plyrNames_DRAFT$(0, I - 1);
                         Locate , 17: Print plyrOff_DRAFT!(0, I - 1, 3)
                         Locate , 1
                         T3 = T3 + plyrOff_DRAFT!(0, I - 1, 3)

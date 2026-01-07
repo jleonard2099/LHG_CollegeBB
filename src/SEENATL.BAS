@@ -223,30 +223,35 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     Open destFile$ For Output As #1
 
-    Print #1, orgName$ + " OVERALL RANKINGS"
+    XCoord = Int((80 - Len(orgName$) - 17) / 2)
+    Print #1,
+    Print #1, Tab(XCoord); orgName$ + " OVERALL RANKINGS"
+    Print #1, 
     Print #1, Tab(20); "RATING     W    L    STRENGTH OF SCHEDULE"
+    Print #1, 
 
     For P = 1 To NRT
         Print #1, Using "###  "; P;
         Print #1, pollTeam$(P); Tab(22); Using "###.#    ##   ##          ###.#"; pollRatings#(P, 1); pollRatings#(P, 2); pollRatings#(P, 3); pollRatings#(P, 4)
     Next
 
-    Print #1, Chr$(12)
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
+
     Print #1, "FIELD GOAL % (MIN 5 FGM/G)"; Tab(41); "FREE THROW % (MIN 2.5 FTM/G)"
     Print #1,
     Print #1, "                            PCT   FGA"; Tab(41); "                            PCT   FTA"
 
     For P = 41 To 60
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, Left$(leaderName$(P), 10) + ", " + leaderTeam$(P);
             Print #1, Tab(28);
             Print #1, Using "##.#  ####"; confLdrVal!(P) * 100; leaderText$(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 20) = "" Then
             Print #1,
         Else
@@ -262,15 +267,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 1 To 20
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "##.#"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 20) = "" Then
             Print #1,
         Else
@@ -281,19 +284,22 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     Next
 
-    Print #1, Chr$(12)
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
+
     Print #1, "STEALS PER GAME"; Tab(41); "STEALS"
 
     For P = 81 To 90
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
+        If leaderName$(P) <> "" Then
         Else
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "##.#"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
+
+		Print #1, Tab(41);
         If leaderName$(P + 10) = "" Then
             Print #1,
         Else
@@ -309,15 +315,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 101 To 110
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "##.#"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 10) = "" Then
             Print #1,
         Else
@@ -333,15 +337,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 121 To 130
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(33);
             Print #1, Using "###.#"; confLdrVal!(P) * 100;
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 20) = "" Then
             Print #1,
         Else
@@ -357,15 +359,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 131 To 140
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "####"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 20) = "" Then
             Print #1,
         Else
@@ -377,20 +377,20 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
     Next
 
     Print #1,
-    Print #1, Chr$(12)
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
+
     Print #1, "REBOUNDS PER GAME"; Tab(41); "REBOUNDS"
 
     For P = 161 To 170
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "##.#"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 10) = "" Then
             Print #1,
         Else
@@ -406,15 +406,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 181 To 190
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "##.#"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 10) = "" Then
             Print #1,
         Else
@@ -430,15 +428,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 201 To 210
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "####"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 10) = "" Then
             Print #1,
         Else
@@ -454,15 +450,13 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
 
     For P = 221 To 230
 
-        If leaderName$(P) = "" Then
-            Print #1, Tab(41);
-        Else
+        If leaderName$(P) <> "" Then
             Print #1, leaderName$(P) + ", " + leaderTeam$(P);
             Print #1, Tab(34);
             Print #1, Using "##.#"; confLdrVal!(P);
-            Print #1, Tab(41);
         End If
 
+		Print #1, Tab(41);
         If leaderName$(P + 10) = "" Then
             Print #1,
         Else
@@ -487,70 +481,130 @@ Sub NatLeaders_Report (orgName$, NRT, printDest, destFile$)
     Next
 
     Print #1,
-    Print #1, Chr$(12)
-    Print #1, Tab(25); "OFFENSIVE TOTALS"
-    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
+
+    Print #1, Tab(32); "OFFENSIVE TOTALS"
+    Print #1, Tab(16); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
     For X = 1 To 20
 
         If offLeaderTeams$(X) <> "" And offLeaderTeams$(X) <> "*" And offLeaderTeams$(X) <> " " Then
-            Print #1, Left$(offLeaderTeams$(X), 11); Tab(13);
-            Print #1, Using "##"; offLeaders!(X, 16);
+
+            'Player
+            Print #1, offLeaderTeams$(X);
+
+            'Games
             Print #1, Tab(16);
+            Print #1, Using "##"; offLeaders!(X, 16);
+
+            'FGA
+            Print #1, Tab(19);
+            Print #1, Using "####"; offLeaders!(X, 1);
+
+            'FGM
+            Print #1, Tab(24);
             Print #1, Using "####"; offLeaders!(X, 2);
-            Print #1, Tab(21);
-            Print #1, Using "####"; offLeaders!(X, 3);
-            Print #1, Tab(26);
+
+            'FG %
+            Print #1, Tab(29);
             Print #1, Using ".###"; offLeaders!(X, 17);
-            Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; offLeaders!(X, 4); offLeaders!(X, 5); offLeaders!(X, 18);
-            Print #1, Tab(46);
+
+            'FTA / FTM / FT%
+            Print #1, Tab(34);
+            Print #1, Using "#### #### .###"; offLeaders!(X, 3); offLeaders!(X, 4); offLeaders!(X, 18);
+
+            'Rebounds
+            Print #1, Tab(49);
+            Print #1, Using "####"; offLeaders!(X, 5);
+
+            'Assists
+            Print #1, Tab(54);
+            Print #1, Using "####"; offLeaders!(X, 8);
+
+            'Personal Fouls
+            Print #1, Tab(59);
             Print #1, Using "####"; offLeaders!(X, 6);
-            Print #1, Tab(51);
-            Print #1, Using "####"; offLeaders!(X, 9);
-            Print #1, Tab(56);
-            Print #1, Using "####"; offLeaders!(X, 7);
-            Print #1, Tab(61);
-            Print #1, Using "###"; offLeaders!(X, 8);
-            Print #1, Tab(65);
-            Print #1, Using "###"; offLeaders!(X, 10);
-            Print #1, Tab(69);
+
+            'Steals
+            Print #1, Tab(64);
+            Print #1, Using "###"; offLeaders!(X, 7);
+
+            'Blocks
+            Print #1, Tab(68);
+            Print #1, Using "###"; offLeaders!(X, 9);
+
+            'Points
+            Print #1, Tab(72);
             Print #1, Using "#####"; offLeaders!(X, 20);
-            Print #1, Tab(75);
+
+            'Average
+            Print #1, Tab(78);
             Print #1, Using "###.#"; offLeaders!(X, 19)
+
         End If
 
     Next
 
     Print #1,
-    Print #1, Tab(25); "DEFENSIVE TOTALS"
-    Print #1, Tab(13); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG": Color 15
+    Print #1, Tab(32); "DEFENSIVE TOTALS"
+    Print #1, Tab(16); "G  FGA  FGM  PCT  FTA  FTM  PCT  REB  AST   PF STL BLK   PTS   AVG"
 
     For X = 1 To 20
 
         If defLeaderTeams$(X) <> "" And defLeaderTeams$(X) <> "*" And defLeaderTeams$(X) <> " " Then
-            Print #1, Left$(defLeaderTeams$(X), 11); Tab(13);
-            Print #1, Using "##"; defLeaders!(X, 16);
+
+            'Player
+            Print #1, defLeaderTeams$(X); 
+
+            'Games
             Print #1, Tab(16);
+            Print #1, Using "##"; defLeaders!(X, 16);
+
+            'FGA
+            Print #1, Tab(19);
+            Print #1, Using "####"; defLeaders!(X, 1);
+
+            'FGM
+            Print #1, Tab(24);
             Print #1, Using "####"; defLeaders!(X, 2);
-            Print #1, Tab(21);
-            Print #1, Using "####"; defLeaders!(X, 3);
-            Print #1, Tab(26);
+
+            'FG %
+            Print #1, Tab(29);
             Print #1, Using ".###"; defLeaders!(X, 17);
-            Print #1, Tab(31);
-            Print #1, Using "#### #### .###"; defLeaders!(X, 4); defLeaders!(X, 5); defLeaders!(X, 18);
-            Print #1, Tab(46);
-            Print #1, Using "#### ####"; defLeaders!(X, 6); defLeaders!(X, 9);
-            Print #1, Tab(56);
-            Print #1, Using "####"; defLeaders!(X, 7);
-            Print #1, Tab(61);
-            Print #1, Using "###"; defLeaders!(X, 8);
-            Print #1, Tab(65);
-            Print #1, Using "###"; defLeaders!(X, 10);
-            Print #1, Tab(69);
+
+            'FTA / FTM / FT%
+            Print #1, Tab(34);
+            Print #1, Using "#### #### .###"; defLeaders!(X, 3); defLeaders!(X, 4); defLeaders!(X, 18);
+
+            'Rebounds
+            Print #1, Tab(49);
+            Print #1, Using "####"; defLeaders!(X, 5);
+
+            'Assists
+            Print #1, Tab(54);
+            Print #1, Using "####"; defLeaders!(X, 8);
+
+            'Personal Fouls
+            Print #1, Tab(59);
+            Print #1, Using "####"; defLeaders!(X, 6);
+
+            'Steals
+            Print #1, Tab(64);
+            Print #1, Using "###"; defLeaders!(X, 7);
+
+            'Blocks
+            Print #1, Tab(68);
+            Print #1, Using "###"; defLeaders!(X, 9);
+
+            'Points
+            Print #1, Tab(72);
             Print #1, Using "#####"; defLeaders!(X, 20);
-            Print #1, Tab(75);
+
+            'Average
+            Print #1, Tab(78);
             Print #1, Using "###.#"; defLeaders!(X, 19)
+
         End If
 
     Next

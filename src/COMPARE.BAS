@@ -539,7 +539,8 @@ Sub TeamComparisons_Screen (teamName$)
     End If
     If statsOffTot!(3) > 0 Then
         statPCT! = (statsOffTot!(4) / statsOffTot!(3))
-        Print "     ";: Print Using ".###"; statPCT!;
+        Print "     ";
+        Print Using ".###"; statPCT!;
     End If
 
     'Rebounds / Assists / Fouls / Steals / TOs
@@ -628,7 +629,8 @@ Sub TeamComparisons_Screen (teamName$)
     End If
     If statsDefTot!(13) > 0 Then
         Locate 20, 68: statPCT! = (statsDefTot!(13) / statsDefTot!(14))
-        Print "    ";: Print Using ".###"; statPCT!;
+        Print "    ";
+        Print Using ".###"; statPCT!;
     End If
 
 End Sub
@@ -1328,7 +1330,9 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
         Print #1, Tab(68); Using "    .###"; statPCT!
     End If
 
-    Print #1, Chr$(12)
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
 
 
     '--------------------
@@ -1684,7 +1688,9 @@ Sub Comparisons_Report (printDest, destFile$, teamName$, posn$())
             Print #1,
 
             If playerIdx Mod 3 = 2 Then
-                Print #1, Chr$(12)
+                Print #1, 
+                If printDest = 1 Then Print #1, Chr$(12)
+                Print #1, 
             End If
 
         End If 'done checking for null player

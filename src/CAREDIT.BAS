@@ -252,7 +252,10 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerName$, playerIdx)
     Next Z
 
     If 55 - PTN < VV Then
-        Print #1, Chr$(12)
+        Print #1, 
+        If printDest = 1 Then Print #1, Chr$(12)
+        Print #1, 
+
         Print #1, Tab(59); careerName$
         Print #1,
         Print #1, "PLAYER      YEAR   G  FGM   FGA  PCT  FTM   FTA  PCT   PTS  AVG.  3FGM 3FGA  PCT   RB   AVG   PF  AST  BLK   ST  HI   MIN  AVG."
@@ -455,8 +458,6 @@ Sub CareerStatsPlayer_Report (printDest, destFile$, careerName$, playerIdx)
     If TT14 > 0 Then 
         Print #1, Tab(125); Using "##"; Int((TT14 / 60) / TT1) + 0.5
     End If
-
-    Print #1, Chr$(12)
 
     Close #1
 

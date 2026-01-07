@@ -987,14 +987,16 @@ Sub StatsSchedule_Report (printDest, destFile$, teamName$, totalGames)
         Print #1, Using "###"; teamScore(I);
         Print #1, Tab(5); Left$(oppName$(I), 14);
         Print #1, Tab(20); Using "###"; oppScore(I);
-        Print #1, Tab(24); locIndicator$(I); Tab(27);
-
+        Print #1, Tab(24); locIndicator$(I); 
+        
+        Print #1, Tab(27);
         If I + 28 <= totalGames Then
             Print #1, Using "###"; teamScore(I + 28);
             Print #1, Tab(31); Left$(oppName$(I + 28), 14);
             Print #1, Tab(46); Using "###"; oppScore(I + 28);
-            Print #1, Tab(50); locIndicator$(I + 28); Tab(53);
-
+            Print #1, Tab(50); locIndicator$(I + 28); 
+            
+            Print #1, Tab(53);
             If I + 56 <= totalGames Then
                 Print #1, Using "###"; teamScore(I + 56);
                 Print #1, Tab(57); Left$(oppName$(I + 56), 14);
@@ -1009,7 +1011,9 @@ Sub StatsSchedule_Report (printDest, destFile$, teamName$, totalGames)
 
     Next I
 
-    Print #1, Chr$(12)
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
 
     Print #1,
     Print #1, Tab(27); "OVERALL RECORD ("; totalWins; "-"; totalLosses; ")"
@@ -1091,8 +1095,9 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames)
         End If
 
         '3FGM, 3FGA, 3FG PCT
-        Print #1, Tab(44); Using "#### ####"; stats3FGM!(I); stats3FGA!(I);: Print #1, Tab(54);
+        Print #1, Tab(44); Using "#### ####"; stats3FGM!(I); stats3FGA!(I);
 
+        Print #1, Tab(54);
         If stats3FGA!(I) = 0 Then
             Print #1, ".---";
         Else
@@ -1185,15 +1190,17 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames)
     'Player Stats
     Print #1,
     Print #1, Tab(15);
-    Print #1, "               OFF  DEF  TOT": Print #1, Tab(15);
+    Print #1, "               OFF  DEF  TOT"
+    Print #1, Tab(15);
     Print #1, " PTS   AVG HI  REB  REB  REB   AVG   PF  AST  BLK  STL   TO"
 
     For I = 0 To 13
 
         'Player Name
-        Print #1, Left$(statPlyrNames$(I), 13);: Print #1, Tab(15);
+        Print #1, Left$(statPlyrNames$(I), 13);
 
         'Points
+        Print #1, Tab(15);
         Print #1, Using "####"; statPlyrVal!(I, 2) * 2 + statPlyrVal!(I, 4) + stats3FGM!(I);
 
         'Average
@@ -1214,7 +1221,8 @@ Sub StatsSummary_Report (printDest, destFile$, teamName$, totalGames)
 
     Next I
 
-    Print #1, "TEAM";: Print #1, Tab(39); Using "####"; statsOffTot!(15)
+    Print #1, "TEAM";
+    Print #1, Tab(39); Using "####"; statsOffTot!(15)
 
     Print #1,
     Print #1, "TOTALS";

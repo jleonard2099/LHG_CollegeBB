@@ -402,9 +402,13 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
         Print #1, ". ";
         Print #1, carLdrPlyrName$(0, I);
         Print #1, Tab(18); Using "####"; carLdrVal!(0, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(1, I);
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(1, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(1, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(2, I);
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(2, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(2, I)
     Next
 
@@ -418,9 +422,13 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
         Print #1, ". ";
         Print #1, carLdrPlyrName$(3, I);
         Print #1, Tab(18); Using "##.#"; carLdrVal!(3, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(5, I);
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(5, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(5, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(4, I);
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(4, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(4, I)
     Next
 
@@ -434,9 +442,13 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
         Print #1, ". ";
         Print #1, carLdrPlyrName$(6, I);
         Print #1, Tab(18); Using "##.#"; carLdrVal!(6, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(7, I);
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(7, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(7, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(8, I);
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(8, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(8, I)
     Next
 
@@ -449,9 +461,13 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
         Print #1, ". ";
         Print #1, carLdrPlyrName$(9, I);
         Print #1, Tab(18); Using "##.#"; carLdrVal!(9, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(10, I);
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(10, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(10, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(11, I);
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(11, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(11, I)
     Next
 
@@ -465,9 +481,13 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
         Print #1, ". ";
         Print #1, carLdrPlyrName$(12, I);
         Print #1, Tab(18); Using "####"; carLdrVal!(12, I);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(13, I);
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(13, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(13, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";: Print #1, carLdrPlyrName$(14, I);
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
+		Print #1, carLdrPlyrName$(14, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(14, I)
     Next
 
@@ -481,10 +501,12 @@ Sub CareerLeaders_Report (careerName$, printDest, destFile$)
         Print #1, ". ";
         Print #1, carLdrPlyrName$(15, I);
         Print #1, Tab(18); Using "####"; Int((carLdrVal!(15, I) + 30) / 60);
-        Print #1, Tab(28); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(28); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(16, I);
         Print #1, Tab(47); Using "####"; carLdrVal!(16, I);
-        Print #1, Tab(58); Using "##"; I + 1;: Print #1, ". ";
+        Print #1, Tab(58); Using "##"; I + 1;
+		Print #1, ". ";
         Print #1, carLdrPlyrName$(17, I);
         Print #1, Tab(76); Using "####"; carLdrVal!(17, I)
     Next

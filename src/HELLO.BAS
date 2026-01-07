@@ -10192,7 +10192,9 @@ Sub SCOREBOARD ()
         Color teamRat_GAME(0, 0), teamRat_GAME(0, 1): Print gameTeams$(0);
 
         'Win/Loss record from current stats files
-        Print Using " [##"; teamRecWins(0);: Print "-";: Print Using "##]"; teamRecLoss(0)
+        Print Using " [##"; teamRecWins(0);
+        Print "-";
+        Print Using "##]"; teamRecLoss(0)
 
         Color 14, 0
         Print "# NAME         FG FT RB CX EF PA PT F"
@@ -10204,7 +10206,9 @@ Sub SCOREBOARD ()
         Color teamRat_GAME(1, 0), teamRat_GAME(1, 1): Print gameTeams$(1);
 
         'Win/Loss record from current stats files
-        Print Using " [##"; teamRecWins(1);: Print "-";: Print Using "##]"; teamRecLoss(1)
+        Print Using " [##"; teamRecWins(1);
+        Print "-";
+        Print Using "##]"; teamRecLoss(1)
 
         Color 14, 0
         Locate , 40: Print "# NAME          FG FT RB CX EF PA PT F"
@@ -14499,7 +14503,7 @@ Sub BOXOPTIONS (outputChoice)
             Else
                 'File = prompt | auto-create
                 If autoPlay <> 1 Then
-                    boxName$ = _SAVEFILEDIALOG$("Save Boxscore File", diskPaths$(1) + "\Boxscore","*.BSS","Special Boxscore File")
+                    boxName$ = _SaveFileDialog$("Save Boxscore File", diskPaths$(1) + "\Boxscore", "*.BSS", "Special Boxscore File")
 
                     'Cls
                     'Print "ENTER FILENAME FOR BOXSCORE (NO SPACES OR PERIODS)";
@@ -14799,12 +14803,14 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
                 If timePlayed(I, I1) = 0 Then
                     Print #1, Tab(15); "DNP";
                 Else
-                    Print #1, Using "##"; Int(timePlayed(I, I1) / 60);: Print #1, ":";
+                    Print #1, Using "##"; Int(timePlayed(I, I1) / 60);
+                    Print #1, ":";
 
                     If timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60 > 9 Then
                         Print #1, Using "##"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     Else
-                        Print #1, "0";: Print #1, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
+                        Print #1, "0";
+                        Print #1, Using "#"; timePlayed(I, I1) - Int(timePlayed(I, I1) / 60) * 60;
                     End If
                 End If
 
@@ -14894,8 +14900,7 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
 
     Print #1,
 
-    If printChoice = 1 Then Print #1, Chr$(12)
-
+    Close #1
 
     playerCount = 0
     For I = 0 To 13:
@@ -14904,18 +14909,18 @@ Sub BOX2FILE (printChoice, boxName$, hasSpecial)
         End If
     Next
 
-    Close #1
-
     If printChoice = 1 Then
 
         Open boxName$ For Input As #2
 
-        Do
+        Do While Not EOF(2)
             Line Input #2, X$
             LPrint X$
-        Loop While Left$(X$, 1) <> Chr$(12)
+        Loop
 
         Close #2
+
+        LPrint Chr$(12)
 
         Kill boxName$
 
@@ -14938,22 +14943,58 @@ Sub BOX2SPC (boxName$)
     Print #1,
 
     'Output any special events
-    If currHalf - 3 > eventSettings(1) Then Print #1, Using "MORE THAN ## OVERTIMES"; eventSettings(1)
-    If score(1, 0) + score(0, 0) > eventSettings(2) Then Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
-    If teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
-    If score(0, 0) > eventSettings(4) Then Print #1, gameTeams$(0);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If score(1, 0) > eventSettings(4) Then Print #1, gameTeams$(1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
-    If teamRebounds(0) > eventSettings(5) Then Print #1, gameTeams$(0);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
-    If teamRebounds(1) > eventSettings(5) Then Print #1, gameTeams$(1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    If currHalf - 3 > eventSettings(1) Then 
+        Print #1, Using "MORE THAN ## OVERTIMES"; eventSettings(1)
+    End If
+    If score(1, 0) + score(0, 0) > eventSettings(2) Then 
+        Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
+    End If
+    If teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then 
+        Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
+    End If
+    If score(0, 0) > eventSettings(4) Then 
+        Print #1, gameTeams$(0);
+        Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    End If
+    If score(1, 0) > eventSettings(4) Then 
+        Print #1, gameTeams$(1);
+        Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
+    End If
+    If teamRebounds(0) > eventSettings(5) Then 
+        Print #1, gameTeams$(0);
+        Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    End If
+    If teamRebounds(1) > eventSettings(5) Then 
+        Print #1, gameTeams$(1);
+        Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
+    End If
 
     For I = 0 To 1
         For I1 = 0 To 13
-            If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then Print #1, players$(I, I1);: Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
-            If plyrOff_GAME!(I, I1, 11) > eventSettings(7) Then Print #1, players$(I, I1);: Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
-            If plyrOff_GAME!(I, I1, 14) > eventSettings(8) Then Print #1, players$(I, I1);: Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
-            If plyrOff_GAME!(I, I1, 15) > eventSettings(9) Then Print #1, players$(I, I1);: Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
-            If plyrOff_GAME!(I, I1, 13) > eventSettings(10) Then Print #1, players$(I, I1);: Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
-            If threeFG(I, I1, 0) > eventSettings(11) Then Print #1, players$(I, I1);: Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
+            If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then 
+                Print #1, players$(I, I1);
+                Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
+            End If
+            If plyrOff_GAME!(I, I1, 11) > eventSettings(7) Then 
+                Print #1, players$(I, I1);
+                Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
+            End If
+            If plyrOff_GAME!(I, I1, 14) > eventSettings(8) Then 
+                Print #1, players$(I, I1);
+                Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
+            End If
+            If plyrOff_GAME!(I, I1, 15) > eventSettings(9) Then 
+                Print #1, players$(I, I1);
+                Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
+            End If
+            If plyrOff_GAME!(I, I1, 13) > eventSettings(10) Then 
+                Print #1, players$(I, I1);
+                Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
+            End If
+            If threeFG(I, I1, 0) > eventSettings(11) Then 
+                Print #1, players$(I, I1);
+                Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
+            End If
         Next
     Next
 

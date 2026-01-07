@@ -443,7 +443,9 @@ Sub ViewGameRecords
     Else
         Print teamRecords!(0, 0); "- "; teamRecDesc$(0, 1);
         Print Using " (###) AT "; teamRecords!(0, 1);
-        Print teamRecDesc$(0, 2);: Print Using " (###)"; teamRecords!(0, 2);: Print ", " + teamRecDesc$(0, 3)
+        Print teamRecDesc$(0, 2);
+        Print Using " (###)"; teamRecords!(0, 2);
+        Print ", " + teamRecDesc$(0, 3)
     End If
     Print
 
@@ -460,15 +462,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST POINTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(3, 0); "- "; teamRecDesc$(3, 0);
-    Print Using " (###) "; teamRecords!(3, 1);: Print teamRecDesc$(3, 1) + " ";
-    Print teamRecDesc$(3, 2);: Print Using " (###)"; teamRecords!(3, 2);: Print ", " + teamRecDesc$(3, 3)
+    Print Using " (###) "; teamRecords!(3, 1);
+    Print teamRecDesc$(3, 1) + " ";
+    Print teamRecDesc$(3, 2);
+    Print Using " (###)"; teamRecords!(3, 2);
+    Print ", " + teamRecDesc$(3, 3)
     Print
 
     Color 14: Print "FEWEST POINTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(4, 0); "- "; teamRecDesc$(4, 0);
-    Print Using " (###) "; teamRecords!(4, 1);: Print teamRecDesc$(4, 1) + " ";
-    Print teamRecDesc$(4, 2);: Print Using " (###)"; teamRecords!(4, 2);: Print ", " + teamRecDesc$(4, 3)
+    Print Using " (###) "; teamRecords!(4, 1);
+    Print teamRecDesc$(4, 1) + " ";
+    Print teamRecDesc$(4, 2);
+    Print Using " (###)"; teamRecords!(4, 2);
+    Print ", " + teamRecDesc$(4, 3)
     Print
 
     Color 14: Print "MOST POINTS, FIRST HALF"
@@ -490,15 +498,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST POINTS, BOTH TEAMS, FIRST HALF"
     Color 15
     Print teamRecords!(8, 0); "- "; teamRecDesc$(8, 0);
-    Print Using " (###) "; teamRecords!(8, 1);: Print teamRecDesc$(8, 1) + " ";
-    Print teamRecDesc$(8, 2);: Print Using " (###)"; teamRecords!(8, 2);: Print ", " + teamRecDesc$(8, 3)
+    Print Using " (###) "; teamRecords!(8, 1);
+    Print teamRecDesc$(8, 1) + " ";
+    Print teamRecDesc$(8, 2);
+    Print Using " (###)"; teamRecords!(8, 2);
+    Print ", " + teamRecDesc$(8, 3)
     Print
 
     Color 14: Print "FEWEST POINTS, BOTH TEAMS, FIRST HALF"
     Color 15
     Print teamRecords!(9, 0); "- "; teamRecDesc$(9, 0);
-    Print Using " (###) "; teamRecords!(9, 1);: Print teamRecDesc$(9, 1) + " ";
-    Print teamRecDesc$(9, 2);: Print Using " (###)"; teamRecords!(9, 2);: Print ", " + teamRecDesc$(9, 3)
+    Print Using " (###) "; teamRecords!(9, 1);
+    Print teamRecDesc$(9, 1) + " ";
+    Print teamRecDesc$(9, 2);
+    Print Using " (###)"; teamRecords!(9, 2);
+    Print ", " + teamRecDesc$(9, 3)
     Print
 
     Color 14: Print "MOST POINTS, SECOND HALF"
@@ -514,15 +528,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST POINTS, BOTH TEAMS, SECOND HALF"
     Color 15
     Print teamRecords!(12, 0); "- "; teamRecDesc$(12, 0);
-    Print Using " (###) "; teamRecords!(12, 1);: Print teamRecDesc$(12, 1) + " ";
-    Print teamRecDesc$(12, 2);: Print Using " (###)"; teamRecords!(12, 2);: Print ", " + teamRecDesc$(12, 3)
+    Print Using " (###) "; teamRecords!(12, 1);
+    Print teamRecDesc$(12, 1) + " ";
+    Print teamRecDesc$(12, 2);
+	Print Using " (###)"; teamRecords!(12, 2);
+	Print ", " + teamRecDesc$(12, 3)
     Print
 
     Color 14: Print "FEWEST POINTS, BOTH TEAMS, SECOND HALF"
     Color 15
     Print teamRecords!(13, 0); "- "; teamRecDesc$(13, 0);
-    Print Using " (###) "; teamRecords!(13, 1);: Print teamRecDesc$(13, 1) + " ";
-    Print teamRecDesc$(13, 2);: Print Using " (###)"; teamRecords!(13, 2);: Print ", " + teamRecDesc$(13, 3)
+    Print Using " (###) "; teamRecords!(13, 1);
+	Print teamRecDesc$(13, 1) + " ";
+    Print teamRecDesc$(13, 2);
+	Print Using " (###)"; teamRecords!(13, 2);
+	Print ", " + teamRecDesc$(13, 3)
     Print
 
     I$ = GetKeyPress$
@@ -555,8 +575,11 @@ Sub ViewGameRecords
         Print "NO RECORD AT THIS TIME"
     Else
         Print teamRecords!(16, 0); "- "; teamRecDesc$(16, 0);
-        Print Using " (###) "; teamRecords!(16, 1);: Print teamRecDesc$(16, 1) + " ";
-        Print teamRecDesc$(16, 2);: Print Using " (###)"; teamRecords!(16, 2);: Print ", " + teamRecDesc$(16, 3)
+        Print Using " (###) "; teamRecords!(16, 1);
+        Print teamRecDesc$(16, 1) + " ";
+        Print teamRecDesc$(16, 2);
+		Print Using " (###)"; teamRecords!(16, 2);
+		Print ", " + teamRecDesc$(16, 3)
     End If
     Print
 
@@ -566,8 +589,11 @@ Sub ViewGameRecords
         Print "NO RECORD AT THIS TIME"
     Else
         Print teamRecords!(17, 0); "- "; teamRecDesc$(17, 0);
-        Print Using " (###) "; teamRecords!(17, 1);: Print teamRecDesc$(17, 1) + " ";
-        Print teamRecDesc$(17, 2);: Print Using " (###)"; teamRecords!(17, 2);: Print ", " + teamRecDesc$(17, 3)
+        Print Using " (###) "; teamRecords!(17, 1);
+		Print teamRecDesc$(17, 1) + " ";
+        Print teamRecDesc$(17, 2);
+		Print Using " (###)"; teamRecords!(17, 2);
+		Print ", " + teamRecDesc$(17, 3)
     End If
     Print
 
@@ -579,26 +605,38 @@ Sub ViewGameRecords
 
     Color 14: Print "HIGHEST FIELD GOAL PERCENTAGE, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(30, 0);: Print "- "; teamRecDesc$(30, 0) + " " + teamRecDesc$(30, 1) + " " + teamRecDesc$(30, 2) + ", " + teamRecDesc$(30, 3);: Print Using "###/###"; teamRecords!(30, 1); teamRecords!(30, 2)
+    Print Using ".### "; teamRecords!(30, 0);
+    Print "- "; teamRecDesc$(30, 0) + " " + teamRecDesc$(30, 1) + " " + teamRecDesc$(30, 2) + ", " + teamRecDesc$(30, 3);
+    Print Using "###/###"; teamRecords!(30, 1); teamRecords!(30, 2)
     Print
 
     Color 14: Print "LOWEST FIELD GOAL PERCENTAGE, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(31, 0);: Print "- "; teamRecDesc$(31, 0) + " " + teamRecDesc$(31, 1) + " " + teamRecDesc$(31, 2) + ", " + teamRecDesc$(31, 3);: Print Using "###/###"; teamRecords!(31, 1); teamRecords!(31, 2)
+    Print Using ".### "; teamRecords!(31, 0);
+    Print "- "; teamRecDesc$(31, 0) + " " + teamRecDesc$(31, 1) + " " + teamRecDesc$(31, 2) + ", " + teamRecDesc$(31, 3);
+    Print Using "###/###"; teamRecords!(31, 1); teamRecords!(31, 2)
     Print
 
     Color 14: Print "HIGHEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(32, 0);: Print "- "; teamRecDesc$(32, 0);
-    Print Using " (.###) "; teamRecords!(32, 1);: Print teamRecDesc$(32, 1) + " ";
-    Print teamRecDesc$(32, 2);: Print Using " (.###)"; teamRecords!(32, 2);: Print ", " + teamRecDesc$(32, 3)
+    Print Using ".### "; teamRecords!(32, 0);
+    Print "- "; teamRecDesc$(32, 0);
+    Print Using " (.###) "; teamRecords!(32, 1);
+    Print teamRecDesc$(32, 1) + " ";
+    Print teamRecDesc$(32, 2);
+    Print Using " (.###)"; teamRecords!(32, 2);
+    Print ", " + teamRecDesc$(32, 3)
     Print
 
     Color 14: Print "LOWEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(33, 0);: Print "- "; teamRecDesc$(33, 0);
-    Print Using " (.###) "; teamRecords!(33, 1);: Print teamRecDesc$(33, 1) + " ";
-    Print teamRecDesc$(33, 2);: Print Using " (.###)"; teamRecords!(33, 2);: Print ", " + teamRecDesc$(33, 3)
+    Print Using ".### "; teamRecords!(33, 0);
+    Print "- "; teamRecDesc$(33, 0);
+    Print Using " (.###) "; teamRecords!(33, 1);
+    Print teamRecDesc$(33, 1) + " ";
+    Print teamRecDesc$(33, 2);
+    Print Using " (.###)"; teamRecords!(33, 2);
+    Print ", " + teamRecDesc$(33, 3)
     Print
 
     Color 14: Print "MOST FIELD GOALS, GAME"
@@ -614,15 +652,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST FIELD GOALS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(36, 0); "- "; teamRecDesc$(36, 0);
-    Print Using " (###) "; teamRecords!(36, 1);: Print teamRecDesc$(36, 1) + " ";
-    Print teamRecDesc$(36, 2);: Print Using " (###)"; teamRecords!(36, 2);: Print ", " + teamRecDesc$(36, 3)
+    Print Using " (###) "; teamRecords!(36, 1);
+    Print teamRecDesc$(36, 1) + " ";
+    Print teamRecDesc$(36, 2);
+    Print Using " (###)"; teamRecords!(36, 2);
+    Print ", " + teamRecDesc$(36, 3)
     Print
 
     Color 14: Print "FEWEST FIELD GOALS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(37, 0); "- "; teamRecDesc$(37, 0);
-    Print Using " (###) "; teamRecords!(37, 1);: Print teamRecDesc$(37, 1) + " ";
-    Print teamRecDesc$(37, 2);: Print Using " (###)"; teamRecords!(37, 2);: Print ", " + teamRecDesc$(37, 3);
+    Print Using " (###) "; teamRecords!(37, 1);
+    Print teamRecDesc$(37, 1) + " ";
+    Print teamRecDesc$(37, 2);
+    Print Using " (###)"; teamRecords!(37, 2);
+    Print ", " + teamRecDesc$(37, 3);
 
     I$ = GetKeyPress$
     If I$ = Chr$(27) Then Exit Sub
@@ -653,15 +697,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(44, 0); "- "; teamRecDesc$(44, 0);
-    Print Using " (###) "; teamRecords!(44, 1);: Print teamRecDesc$(44, 1) + " ";
-    Print teamRecDesc$(44, 2);: Print Using " (###)"; teamRecords!(44, 2);: Print ", " + teamRecDesc$(44, 3)
+    Print Using " (###) "; teamRecords!(44, 1);
+    Print teamRecDesc$(44, 1) + " ";
+    Print teamRecDesc$(44, 2);
+    Print Using " (###)"; teamRecords!(44, 2);
+    Print ", " + teamRecDesc$(44, 3)
     Print
 
     Color 14: Print "FEWEST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(45, 0); "- "; teamRecDesc$(45, 0);
-    Print Using " (###) "; teamRecords!(45, 1);: Print teamRecDesc$(45, 1) + " ";
-    Print teamRecDesc$(45, 2);: Print Using " (###)"; teamRecords!(45, 2);: Print ", " + teamRecDesc$(45, 3);
+    Print Using " (###) "; teamRecords!(45, 1);
+    Print teamRecDesc$(45, 1) + " ";
+    Print teamRecDesc$(45, 2);
+    Print Using " (###)"; teamRecords!(45, 2);
+    Print ", " + teamRecDesc$(45, 3);
 
     I$ = GetKeyPress$
     If I$ = Chr$(27) Then Exit Sub
@@ -694,8 +744,11 @@ Sub ViewGameRecords
         Print "NO RECORD AT THIS TIME"
     Else
         Print teamRecords!(51, 0); "- "; teamRecDesc$(51, 0);
-        Print Using " (###) "; teamRecords!(51, 1);: Print teamRecDesc$(51, 1) + " ";
-        Print teamRecDesc$(51, 2);: Print Using " (###)"; teamRecords!(51, 2);: Print ", " + teamRecDesc$(51, 3)
+        Print Using " (###) "; teamRecords!(51, 1);
+        Print teamRecDesc$(51, 1) + " ";
+        Print teamRecDesc$(51, 2);
+        Print Using " (###)"; teamRecords!(51, 2);
+        Print ", " + teamRecDesc$(51, 3)
     End If
     Print
 
@@ -721,8 +774,11 @@ Sub ViewGameRecords
     Color 14: Print "MOST THREE-POINT FIELD GOALS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(54, 0); "- "; teamRecDesc$(54, 0);
-    Print Using " (###) "; teamRecords!(54, 1);: Print teamRecDesc$(54, 1) + " ";
-    Print teamRecDesc$(54, 2);: Print Using " (###)"; teamRecords!(54, 2);: Print ", " + teamRecDesc$(54, 3)
+    Print Using " (###) "; teamRecords!(54, 1);
+    Print teamRecDesc$(54, 1) + " ";
+    Print teamRecDesc$(54, 2);
+    Print Using " (###)"; teamRecords!(54, 2);
+    Print ", " + teamRecDesc$(54, 3)
     Print
 
     Color 14: Print "MOST THREE-POINT FIELD GOALS, ONE HALF"
@@ -738,8 +794,11 @@ Sub ViewGameRecords
     Color 14: Print "MOST THREE-POINT FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(58, 0); "- "; teamRecDesc$(58, 0);
-    Print Using " (###) "; teamRecords!(58, 1);: Print teamRecDesc$(58, 1) + " ";
-    Print teamRecDesc$(58, 2);: Print Using " (###)"; teamRecords!(58, 2);: Print ", " + teamRecDesc$(58, 3)
+    Print Using " (###) "; teamRecords!(58, 1);
+    Print teamRecDesc$(58, 1) + " ";
+    Print teamRecDesc$(58, 2);
+    Print Using " (###)"; teamRecords!(58, 2);
+    Print ", " + teamRecDesc$(58, 3)
     Print
 
     Color 14: Print "MOST THREE-POINT FIELD GOAL ATTEMPTS, ONE HALF"
@@ -764,21 +823,31 @@ Sub ViewGameRecords
 
     Color 14: Print "LOWEST FREE THROW PERCENTAGE, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(61, 0);: Print "- "; teamRecDesc$(61, 0) + " " + teamRecDesc$(61, 1) + " " + teamRecDesc$(61, 2) + ", " + teamRecDesc$(61, 3);: Print Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
+    Print Using ".### "; teamRecords!(61, 0);
+    Print "- "; teamRecDesc$(61, 0) + " " + teamRecDesc$(61, 1) + " " + teamRecDesc$(61, 2) + ", " + teamRecDesc$(61, 3);
+    Print Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
     Print
 
     Color 14: Print "HIGHEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(62, 0);: Print "- "; teamRecDesc$(62, 0);
-    Print Using " (.###) "; teamRecords!(62, 1);: Print teamRecDesc$(62, 1) + " ";
-    Print teamRecDesc$(62, 2);: Print Using " (.###)"; teamRecords!(62, 2);: Print ", " + teamRecDesc$(62, 3)
+    Print Using ".### "; teamRecords!(62, 0);
+    Print "- "; teamRecDesc$(62, 0);
+    Print Using " (.###) "; teamRecords!(62, 1);
+    Print teamRecDesc$(62, 1) + " ";
+    Print teamRecDesc$(62, 2);
+    Print Using " (.###)"; teamRecords!(62, 2);
+    Print ", " + teamRecDesc$(62, 3)
     Print
 
     Color 14: Print "LOWEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
     Color 15
-    Print Using ".### "; teamRecords!(63, 0);: Print "- "; teamRecDesc$(63, 0);
-    Print Using " (.###) "; teamRecords!(63, 1);: Print teamRecDesc$(63, 1) + " ";
-    Print teamRecDesc$(63, 2);: Print Using " (.###)"; teamRecords!(63, 2);: Print ", " + teamRecDesc$(63, 3)
+    Print Using ".### "; teamRecords!(63, 0);
+    Print "- "; teamRecDesc$(63, 0);
+    Print Using " (.###) "; teamRecords!(63, 1);
+    Print teamRecDesc$(63, 1) + " ";
+    Print teamRecDesc$(63, 2);
+    Print Using " (.###)"; teamRecords!(63, 2);
+    Print ", " + teamRecDesc$(63, 3)
     Print
 
     Color 14: Print "MOST FREE THROWS MADE, GAME"
@@ -794,15 +863,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST FREE THROWS MADE, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(66, 0); "- "; teamRecDesc$(66, 0);
-    Print Using " (###) "; teamRecords!(66, 1);: Print teamRecDesc$(66, 1) + " ";
-    Print teamRecDesc$(66, 2);: Print Using " (###)"; teamRecords!(66, 2);: Print ", " + teamRecDesc$(66, 3)
+    Print Using " (###) "; teamRecords!(66, 1);
+    Print teamRecDesc$(66, 1) + " ";
+    Print teamRecDesc$(66, 2);
+    Print Using " (###)"; teamRecords!(66, 2);
+    Print ", " + teamRecDesc$(66, 3)
     Print
 
     Color 14: Print "FEWEST FREE THROWS MADE, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(67, 0); "- "; teamRecDesc$(67, 0);
-    Print Using " (###) "; teamRecords!(67, 1);: Print teamRecDesc$(67, 1) + " ";
-    Print teamRecDesc$(67, 2);: Print Using " (###)"; teamRecords!(67, 2);: Print ", " + teamRecDesc$(67, 3);
+    Print Using " (###) "; teamRecords!(67, 1);
+    Print teamRecDesc$(67, 1) + " ";
+    Print teamRecDesc$(67, 2);
+    Print Using " (###)"; teamRecords!(67, 2);
+    Print ", " + teamRecDesc$(67, 3);
 
     I$ = GetKeyPress$
     If I$ = Chr$(27) Then Exit Sub
@@ -829,15 +904,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(74, 0); "- "; teamRecDesc$(74, 0);
-    Print Using " (###) "; teamRecords!(74, 1);: Print teamRecDesc$(74, 1) + " ";
-    Print teamRecDesc$(74, 2);: Print Using " (###)"; teamRecords!(74, 2);: Print ", " + teamRecDesc$(74, 3)
+    Print Using " (###) "; teamRecords!(74, 1);
+    Print teamRecDesc$(74, 1) + " ";
+    Print teamRecDesc$(74, 2);
+    Print Using " (###)"; teamRecords!(74, 2);
+    Print ", " + teamRecDesc$(74, 3)
     Print
 
     Color 14: Print "FEWEST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(75, 0); "- "; teamRecDesc$(75, 0);
-    Print Using " (###) "; teamRecords!(75, 1);: Print teamRecDesc$(75, 1) + " ";
-    Print teamRecDesc$(75, 2);: Print Using " (###)"; teamRecords!(75, 2);: Print ", " + teamRecDesc$(75, 3)
+    Print Using " (###) "; teamRecords!(75, 1);
+    Print teamRecDesc$(75, 1) + " ";
+    Print teamRecDesc$(75, 2);
+    Print Using " (###)"; teamRecords!(75, 2);
+    Print ", " + teamRecDesc$(75, 3)
     Print
 
     Color 14: Print "MOST FREE THROW ATTEMPTS, ONE HALF"
@@ -848,8 +929,11 @@ Sub ViewGameRecords
     Color 14: Print "MOST FREE THROW ATTEMPTS, BOTH TEAMS, HALF"
     Color 15
     Print teamRecords!(77, 0); "- "; teamRecDesc$(77, 0);
-    Print Using " (###) "; teamRecords!(77, 1);: Print teamRecDesc$(77, 1) + " ";
-    Print teamRecDesc$(77, 2);: Print Using " (###)"; teamRecords!(77, 2);: Print ", " + teamRecDesc$(77, 3)
+    Print Using " (###) "; teamRecords!(77, 1);
+    Print teamRecDesc$(77, 1) + " ";
+    Print teamRecDesc$(77, 2);
+    Print Using " (###)"; teamRecords!(77, 2);
+    Print ", " + teamRecDesc$(77, 3)
 
     I$ = GetKeyPress$
     If I$ = Chr$(27) Then Exit Sub
@@ -871,15 +955,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST REBOUNDS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(82, 0); "- "; teamRecDesc$(82, 0);
-    Print Using " (###) "; teamRecords!(82, 1);: Print teamRecDesc$(82, 1) + " ";
-    Print teamRecDesc$(82, 2);: Print Using " (###)"; teamRecords!(82, 2);: Print ", " + teamRecDesc$(82, 3)
+    Print Using " (###) "; teamRecords!(82, 1);
+    Print teamRecDesc$(82, 1) + " ";
+    Print teamRecDesc$(82, 2);
+    Print Using " (###)"; teamRecords!(82, 2);
+    Print ", " + teamRecDesc$(82, 3)
     Print
 
     Color 14: Print "FEWEST REBOUNDS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(83, 0); "- "; teamRecDesc$(83, 0);
-    Print Using " (###) "; teamRecords!(83, 1);: Print teamRecDesc$(83, 1) + " ";
-    Print teamRecDesc$(83, 2);: Print Using " (###)"; teamRecords!(83, 2);: Print ", " + teamRecDesc$(83, 3)
+    Print Using " (###) "; teamRecords!(83, 1);
+    Print teamRecDesc$(83, 1) + " ";
+    Print teamRecDesc$(83, 2);
+    Print Using " (###)"; teamRecords!(83, 2);
+    Print ", " + teamRecDesc$(83, 3)
     Print
 
     Color 14: Print "MOST REBOUNDS, ONE HALF"
@@ -907,15 +997,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(88, 0); "- "; teamRecDesc$(88, 0);
-    Print Using " (###) "; teamRecords!(88, 1);: Print teamRecDesc$(88, 1) + " ";
-    Print teamRecDesc$(88, 2);: Print Using " (###)"; teamRecords!(88, 2);: Print ", " + teamRecDesc$(88, 3)
+    Print Using " (###) "; teamRecords!(88, 1);
+    Print teamRecDesc$(88, 1) + " ";
+    Print teamRecDesc$(88, 2);
+	Print Using " (###)"; teamRecords!(88, 2);
+	Print ", " + teamRecDesc$(88, 3)
     Print
 
     Color 14: Print "FEWEST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(89, 0); "- "; teamRecDesc$(89, 0);
-    Print Using " (###) "; teamRecords!(89, 1);: Print teamRecDesc$(89, 1) + " ";
-    Print teamRecDesc$(89, 2);: Print Using " (###)"; teamRecords!(89, 2);: Print ", " + teamRecDesc$(89, 3)
+    Print Using " (###) "; teamRecords!(89, 1);
+	Print teamRecDesc$(89, 1) + " ";
+    Print teamRecDesc$(89, 2);
+	Print Using " (###)"; teamRecords!(89, 2);
+	Print ", " + teamRecDesc$(89, 3)
     Print
 
     Color 14: Print "MOST OFFENSIVE REBOUNDS, ONE HALF"
@@ -943,15 +1039,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST ASSISTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(98, 0); "- "; teamRecDesc$(98, 0);
-    Print Using " (###) "; teamRecords!(98, 1);: Print teamRecDesc$(98, 1) + " ";
-    Print teamRecDesc$(98, 2);: Print Using " (###)"; teamRecords!(98, 2);: Print ", " + teamRecDesc$(98, 3)
+    Print Using " (###) "; teamRecords!(98, 1);
+	Print teamRecDesc$(98, 1) + " ";
+    Print teamRecDesc$(98, 2);
+	Print Using " (###)"; teamRecords!(98, 2);
+	Print ", " + teamRecDesc$(98, 3)
     Print
 
     Color 14: Print "FEWEST ASSISTS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(99, 0); "- "; teamRecDesc$(99, 0);
-    Print Using " (###) "; teamRecords!(99, 1);: Print teamRecDesc$(99, 1) + " ";
-    Print teamRecDesc$(99, 2);: Print Using " (###)"; teamRecords!(99, 2);: Print ", " + teamRecDesc$(99, 3)
+    Print Using " (###) "; teamRecords!(99, 1);
+	Print teamRecDesc$(99, 1) + " ";
+    Print teamRecDesc$(99, 2);
+	Print Using " (###)"; teamRecords!(99, 2);
+	Print ", " + teamRecDesc$(99, 3)
     Print
 
     Color 14: Print "MOST ASSISTS, ONE HALF"
@@ -978,15 +1080,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST PERSONAL FOULS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(106, 0); "- "; teamRecDesc$(106, 0);
-    Print Using " (###) "; teamRecords!(106, 1);: Print teamRecDesc$(106, 1) + " ";
-    Print teamRecDesc$(106, 2);: Print Using " (###)"; teamRecords!(106, 2);: Print ", " + teamRecDesc$(106, 3)
+    Print Using " (###) "; teamRecords!(106, 1);
+	Print teamRecDesc$(106, 1) + " ";
+    Print teamRecDesc$(106, 2);
+	Print Using " (###)"; teamRecords!(106, 2);
+	Print ", " + teamRecDesc$(106, 3)
     Print
 
     Color 14: Print "FEWEST PERSONAL FOULS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(107, 0); "- "; teamRecDesc$(107, 0);
-    Print Using " (###) "; teamRecords!(107, 1);: Print teamRecDesc$(107, 1) + " ";
-    Print teamRecDesc$(107, 2);: Print Using " (###)"; teamRecords!(107, 2);: Print ", " + teamRecDesc$(107, 3)
+    Print Using " (###) "; teamRecords!(107, 1);
+	Print teamRecDesc$(107, 1) + " ";
+    Print teamRecDesc$(107, 2);
+	Print Using " (###)"; teamRecords!(107, 2);
+	Print ", " + teamRecDesc$(107, 3)
     Print
 
     Color 14: Print "MOST PERSONAL FOULS, ONE HALF"
@@ -1014,8 +1122,11 @@ Sub ViewGameRecords
     Color 14: Print "MOST STEALS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(114, 0); "- "; teamRecDesc$(114, 0);
-    Print Using " (###) "; teamRecords!(114, 1);: Print teamRecDesc$(114, 1) + " ";
-    Print teamRecDesc$(114, 2);: Print Using " (###)"; teamRecords!(114, 2);: Print ", " + teamRecDesc$(114, 3)
+    Print Using " (###) "; teamRecords!(114, 1);
+	Print teamRecDesc$(114, 1) + " ";
+    Print teamRecDesc$(114, 2);
+	Print Using " (###)"; teamRecords!(114, 2);
+	Print ", " + teamRecDesc$(114, 3)
     Print
 
     Color 14: Print "MOST STEALS, ONE HALF"
@@ -1031,8 +1142,11 @@ Sub ViewGameRecords
     Color 14: Print "MOST BLOCKS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(119, 0); "- "; teamRecDesc$(119, 0);
-    Print Using " (###) "; teamRecords!(119, 1);: Print teamRecDesc$(119, 1) + " ";
-    Print teamRecDesc$(119, 2);: Print Using " (###)"; teamRecords!(119, 2);: Print ", " + teamRecDesc$(119, 3)
+    Print Using " (###) "; teamRecords!(119, 1);
+	Print teamRecDesc$(119, 1) + " ";
+    Print teamRecDesc$(119, 2);
+	Print Using " (###)"; teamRecords!(119, 2);
+	Print ", " + teamRecDesc$(119, 3)
     Print
 
     Color 14: Print "MOST BLOCKS, HALF"
@@ -1060,15 +1174,21 @@ Sub ViewGameRecords
     Color 14: Print "MOST TURNOVERS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(124, 0); "- "; teamRecDesc$(124, 0);
-    Print Using " (###) "; teamRecords!(124, 1);: Print teamRecDesc$(124, 1) + " ";
-    Print teamRecDesc$(124, 2);: Print Using " (###)"; teamRecords!(124, 2);: Print ", " + teamRecDesc$(124, 3)
+    Print Using " (###) "; teamRecords!(124, 1);
+	Print teamRecDesc$(124, 1) + " ";
+    Print teamRecDesc$(124, 2);
+	Print Using " (###)"; teamRecords!(124, 2);
+	Print ", " + teamRecDesc$(124, 3)
     Print
 
     Color 14: Print "FEWEST TURNOVERS, BOTH TEAMS, GAME"
     Color 15
     Print teamRecords!(125, 0); "- "; teamRecDesc$(125, 0);
-    Print Using " (###) "; teamRecords!(125, 1);: Print teamRecDesc$(125, 1) + " ";
-    Print teamRecDesc$(125, 2);: Print Using " (###)"; teamRecords!(125, 2);: Print ", " + teamRecDesc$(125, 3)
+    Print Using " (###) "; teamRecords!(125, 1);
+	Print teamRecDesc$(125, 1) + " ";
+    Print teamRecDesc$(125, 2);
+	Print Using " (###)"; teamRecords!(125, 2);
+	Print ", " + teamRecDesc$(125, 3)
     Print
 
     I$ = GetKeyPress$
@@ -1377,7 +1497,10 @@ Sub GameRecords_Report (printDest, destFile$)
     End If
     Print #1,
     
-    Print #1, Chr$(12)
+    Print #1, 
+    If printDest = 1 Then Print #1, Chr$(12)
+    Print #1, 
+
     Print #1, "                            TEAM RECORDS"
     Print #1,
 
@@ -1387,7 +1510,9 @@ Sub GameRecords_Report (printDest, destFile$)
     Else
         Print #1, teamRecords!(0, 0); "- "; teamRecDesc$(0, 1);
         Print #1, Using " (###) AT "; teamRecords!(0, 1);
-        Print #1, teamRecDesc$(0, 2);: Print #1, Using " (###)"; teamRecords!(0, 2);: Print #1, ", " + teamRecDesc$(0, 3)
+        Print #1, teamRecDesc$(0, 2);
+        Print #1, Using " (###)"; teamRecords!(0, 2);
+        Print #1, ", " + teamRecDesc$(0, 3)
     End If
     Print #1,
 
@@ -1401,14 +1526,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST POINTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(3, 0); "- "; teamRecDesc$(3, 0);
-    Print #1, Using " (###) "; teamRecords!(3, 1);: Print #1, teamRecDesc$(3, 1) + " ";
-    Print #1, teamRecDesc$(3, 2);: Print #1, Using " (###)"; teamRecords!(3, 2);: Print #1, ", " + teamRecDesc$(3, 3)
+    Print #1, Using " (###) "; teamRecords!(3, 1);
+	Print #1, teamRecDesc$(3, 1) + " ";
+    Print #1, teamRecDesc$(3, 2);
+	Print #1, Using " (###)"; teamRecords!(3, 2);
+	Print #1, ", " + teamRecDesc$(3, 3)
     Print #1,
 
     Print #1, "FEWEST POINTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(4, 0); "- "; teamRecDesc$(4, 0);
-    Print #1, Using " (###) "; teamRecords!(4, 1);: Print #1, teamRecDesc$(4, 1) + " ";
-    Print #1, teamRecDesc$(4, 2);: Print #1, Using " (###)"; teamRecords!(4, 2);: Print #1, ", " + teamRecDesc$(4, 3)
+    Print #1, Using " (###) "; teamRecords!(4, 1);
+	Print #1, teamRecDesc$(4, 1) + " ";
+    Print #1, teamRecDesc$(4, 2);
+	Print #1, Using " (###)"; teamRecords!(4, 2);
+	Print #1, ", " + teamRecDesc$(4, 3)
     Print #1,
 
     Print #1, "MOST POINTS, FIRST HALF"
@@ -1422,14 +1553,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST POINTS, BOTH TEAMS, FIRST HALF"
     Print #1, teamRecords!(8, 0); "- "; teamRecDesc$(8, 0);
-    Print #1, Using " (###) "; teamRecords!(8, 1);: Print #1, teamRecDesc$(8, 1) + " ";
-    Print #1, teamRecDesc$(8, 2);: Print #1, Using " (###)"; teamRecords!(8, 2);: Print #1, ", " + teamRecDesc$(8, 3)
+    Print #1, Using " (###) "; teamRecords!(8, 1);
+	Print #1, teamRecDesc$(8, 1) + " ";
+    Print #1, teamRecDesc$(8, 2);
+	Print #1, Using " (###)"; teamRecords!(8, 2);
+	Print #1, ", " + teamRecDesc$(8, 3)
     Print #1,
 
     Print #1, "FEWEST POINTS, BOTH TEAMS, FIRST HALF"
     Print #1, teamRecords!(9, 0); "- "; teamRecDesc$(9, 0);
-    Print #1, Using " (###) "; teamRecords!(9, 1);: Print #1, teamRecDesc$(9, 1) + " ";
-    Print #1, teamRecDesc$(9, 2);: Print #1, Using " (###)"; teamRecords!(9, 2);: Print #1, ", " + teamRecDesc$(9, 3)
+    Print #1, Using " (###) "; teamRecords!(9, 1);
+	Print #1, teamRecDesc$(9, 1) + " ";
+    Print #1, teamRecDesc$(9, 2);
+	Print #1, Using " (###)"; teamRecords!(9, 2);
+	Print #1, ", " + teamRecDesc$(9, 3)
     Print #1,
 
     Print #1, "MOST POINTS, SECOND HALF"
@@ -1442,14 +1579,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST POINTS, BOTH TEAMS, SECOND HALF"
     Print #1, teamRecords!(12, 0); "- "; teamRecDesc$(12, 0);
-    Print #1, Using " (###) "; teamRecords!(12, 1);: Print #1, teamRecDesc$(12, 1) + " ";
-    Print #1, teamRecDesc$(12, 2);: Print #1, Using " (###)"; teamRecords!(12, 2);: Print #1, ", " + teamRecDesc$(12, 3)
+    Print #1, Using " (###) "; teamRecords!(12, 1);
+	Print #1, teamRecDesc$(12, 1) + " ";
+    Print #1, teamRecDesc$(12, 2);
+	Print #1, Using " (###)"; teamRecords!(12, 2);
+	Print #1, ", " + teamRecDesc$(12, 3)
     Print #1,
 
     Print #1, "FEWEST POINTS, BOTH TEAMS, SECOND HALF"
     Print #1, teamRecords!(13, 0); "- "; teamRecDesc$(13, 0);
-    Print #1, Using " (###) "; teamRecords!(13, 1);: Print #1, teamRecDesc$(13, 1) + " ";
-    Print #1, teamRecDesc$(13, 2);: Print #1, Using " (###)"; teamRecords!(13, 2);: Print #1, ", " + teamRecDesc$(13, 3)
+    Print #1, Using " (###) "; teamRecords!(13, 1);
+	Print #1, teamRecDesc$(13, 1) + " ";
+    Print #1, teamRecDesc$(13, 2);
+	Print #1, Using " (###)"; teamRecords!(13, 2);
+	Print #1, ", " + teamRecDesc$(13, 3)
     Print #1,
 
     Print #1, "MOST POINTS, OVERTIME"
@@ -1473,8 +1616,11 @@ Sub GameRecords_Report (printDest, destFile$)
         Print #1, "NO RECORD AT THIS TIME"
     Else
         Print #1, teamRecords!(16, 0); "- "; teamRecDesc$(16, 0);
-        Print #1, Using " (###) "; teamRecords!(16, 1);: Print #1, teamRecDesc$(16, 1) + " ";
-        Print #1, teamRecDesc$(16, 2);: Print #1, Using " (###)"; teamRecords!(16, 2);: Print #1, ", " + teamRecDesc$(16, 3)
+        Print #1, Using " (###) "; teamRecords!(16, 1);
+		Print #1, teamRecDesc$(16, 1) + " ";
+        Print #1, teamRecDesc$(16, 2);
+		Print #1, Using " (###)"; teamRecords!(16, 2);
+		Print #1, ", " + teamRecDesc$(16, 3)
     End If
     Print #1,
 
@@ -1483,8 +1629,11 @@ Sub GameRecords_Report (printDest, destFile$)
         Print #1, "NO RECORD AT THIS TIME"
     Else
         Print #1, teamRecords!(17, 0); "- "; teamRecDesc$(17, 0);
-        Print #1, Using " (###) "; teamRecords!(17, 1);: Print #1, teamRecDesc$(17, 1) + " ";
-        Print #1, teamRecDesc$(17, 2);: Print #1, Using " (###)"; teamRecords!(17, 2);: Print #1, ", " + teamRecDesc$(17, 3)
+        Print #1, Using " (###) "; teamRecords!(17, 1);
+		Print #1, teamRecDesc$(17, 1) + " ";
+        Print #1, teamRecDesc$(17, 2);
+		Print #1, Using " (###)"; teamRecords!(17, 2);
+		Print #1, ", " + teamRecDesc$(17, 3)
     End If
     Print #1,
 
@@ -1511,9 +1660,13 @@ Sub GameRecords_Report (printDest, destFile$)
     Print #1,
 
     Print #1, "LOWEST FIELD GOAL PERCENTAGE, BOTH TEAMS, GAME"
-    Print #1, Using ".### "; teamRecords!(33, 0);: Print #1, "- "; teamRecDesc$(33, 0);
-    Print #1, Using " (.###) "; teamRecords!(33, 1);: Print #1, teamRecDesc$(33, 1) + " ";
-    Print #1, teamRecDesc$(33, 2);: Print #1, Using " (.###)"; teamRecords!(33, 2);: Print #1, ", " + teamRecDesc$(33, 3)
+    Print #1, Using ".### "; teamRecords!(33, 0);
+	Print #1, "- "; teamRecDesc$(33, 0);
+    Print #1, Using " (.###) "; teamRecords!(33, 1);
+	Print #1, teamRecDesc$(33, 1) + " ";
+    Print #1, teamRecDesc$(33, 2);
+	Print #1, Using " (.###)"; teamRecords!(33, 2);
+	Print #1, ", " + teamRecDesc$(33, 3)
     Print #1,
 
     Print #1, "MOST FIELD GOALS, GAME"
@@ -1526,14 +1679,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST FIELD GOALS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(36, 0); "- "; teamRecDesc$(36, 0);
-    Print #1, Using " (###) "; teamRecords!(36, 1);: Print #1, teamRecDesc$(36, 1) + " ";
-    Print #1, teamRecDesc$(36, 2);: Print #1, Using " (###)"; teamRecords!(36, 2);: Print #1, ", " + teamRecDesc$(36, 3)
+    Print #1, Using " (###) "; teamRecords!(36, 1);
+	Print #1, teamRecDesc$(36, 1) + " ";
+    Print #1, teamRecDesc$(36, 2);
+	Print #1, Using " (###)"; teamRecords!(36, 2);
+	Print #1, ", " + teamRecDesc$(36, 3)
     Print #1,
 
     Print #1, "FEWEST FIELD GOALS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(37, 0); "- "; teamRecDesc$(37, 0);
-    Print #1, Using " (###) "; teamRecords!(37, 1);: Print #1, teamRecDesc$(37, 1) + " ";
-    Print #1, teamRecDesc$(37, 2);: Print #1, Using " (###)"; teamRecords!(37, 2);: Print #1, ", " + teamRecDesc$(37, 3)
+    Print #1, Using " (###) "; teamRecords!(37, 1);
+	Print #1, teamRecDesc$(37, 1) + " ";
+    Print #1, teamRecDesc$(37, 2);
+	Print #1, Using " (###)"; teamRecords!(37, 2);
+	Print #1, ", " + teamRecDesc$(37, 3)
     Print #1,
 
     Print #1, "MOST FIELD GOALS, ONE HALF"
@@ -1554,14 +1713,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(44, 0); "- "; teamRecDesc$(44, 0);
-    Print #1, Using " (###) "; teamRecords!(44, 1);: Print #1, teamRecDesc$(44, 1) + " ";
-    Print #1, teamRecDesc$(44, 2);: Print #1, Using " (###)"; teamRecords!(44, 2);: Print #1, ", " + teamRecDesc$(44, 3)
+    Print #1, Using " (###) "; teamRecords!(44, 1);
+	Print #1, teamRecDesc$(44, 1) + " ";
+    Print #1, teamRecDesc$(44, 2);
+	Print #1, Using " (###)"; teamRecords!(44, 2);
+	Print #1, ", " + teamRecDesc$(44, 3)
     Print #1,
 
     Print #1, "FEWEST FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(45, 0); "- "; teamRecDesc$(45, 0);
-    Print #1, Using " (###) "; teamRecords!(45, 1);: Print #1, teamRecDesc$(45, 1) + " ";
-    Print #1, teamRecDesc$(45, 2);: Print #1, Using " (###)"; teamRecords!(45, 2);: Print #1, ", " + teamRecDesc$(45, 3)
+    Print #1, Using " (###) "; teamRecords!(45, 1);
+	Print #1, teamRecDesc$(45, 1) + " ";
+    Print #1, teamRecDesc$(45, 2);
+	Print #1, Using " (###)"; teamRecords!(45, 2);
+	Print #1, ", " + teamRecDesc$(45, 3)
     Print #1,
 
     Print #1, "MOST FIELD GOAL ATTEMPTS, ONE HALF"
@@ -1585,8 +1750,11 @@ Sub GameRecords_Report (printDest, destFile$)
         Print #1, "NO RECORD AT THIS TIME"
     Else
         Print #1, teamRecords!(51, 0); "- "; teamRecDesc$(51, 0);
-        Print #1, Using " (###) "; teamRecords!(51, 1);: Print #1, teamRecDesc$(51, 1) + " ";
-        Print #1, teamRecDesc$(51, 2);: Print #1, Using " (###)"; teamRecords!(51, 2);: Print #1, ", " + teamRecDesc$(51, 3)
+        Print #1, Using " (###) "; teamRecords!(51, 1);
+        Print #1, teamRecDesc$(51, 1) + " ";
+        Print #1, teamRecDesc$(51, 2);
+        Print #1, Using " (###)"; teamRecords!(51, 2);
+        Print #1, ", " + teamRecDesc$(51, 3)
     End If
     Print #1,
 
@@ -1604,8 +1772,11 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST THREE-POINT FIELD GOALS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(54, 0); "- "; teamRecDesc$(54, 0);
-    Print #1, Using " (###) "; teamRecords!(54, 1);: Print #1, teamRecDesc$(54, 1) + " ";
-    Print #1, teamRecDesc$(54, 2);: Print #1, Using " (###)"; teamRecords!(54, 2);: Print #1, ", " + teamRecDesc$(54, 3)
+    Print #1, Using " (###) "; teamRecords!(54, 1);
+    Print #1, teamRecDesc$(54, 1) + " ";
+    Print #1, teamRecDesc$(54, 2);
+	Print #1, Using " (###)"; teamRecords!(54, 2);
+	Print #1, ", " + teamRecDesc$(54, 3)
     Print #1,
     
     Print #1, "MOST THREE-POINT FIELD GOALS, ONE HALF"
@@ -1618,8 +1789,11 @@ Sub GameRecords_Report (printDest, destFile$)
     
     Print #1, "MOST THREE-POINT FIELD GOAL ATTEMPTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(58, 0); "- "; teamRecDesc$(58, 0);
-    Print #1, Using " (###) "; teamRecords!(58, 1);: Print #1, teamRecDesc$(58, 1) + " ";
-    Print #1, teamRecDesc$(58, 2);: Print #1, Using " (###)"; teamRecords!(58, 2);: Print #1, ", " + teamRecDesc$(58, 3)
+    Print #1, Using " (###) "; teamRecords!(58, 1);
+	Print #1, teamRecDesc$(58, 1) + " ";
+    Print #1, teamRecDesc$(58, 2);
+	Print #1, Using " (###)"; teamRecords!(58, 2);
+	Print #1, ", " + teamRecDesc$(58, 3)
     Print #1,
     
     Print #1, "MOST THREE-POINT FIELD GOAL ATTEMPTS, ONE HALF"
@@ -1635,20 +1809,29 @@ Sub GameRecords_Report (printDest, destFile$)
     Print #1,
 
     Print #1, "LOWEST FREE THROW PERCENTAGE, GAME"
-    Print #1, Using ".### "; teamRecords!(61, 0);: Print #1, "- "; teamRecDesc$(61, 0) + " " + teamRecDesc$(61, 1) + " " + teamRecDesc$(61, 2) + ", " + teamRecDesc$(61, 3);
+    Print #1, Using ".### "; teamRecords!(61, 0);
+	Print #1, "- "; teamRecDesc$(61, 0) + " " + teamRecDesc$(61, 1) + " " + teamRecDesc$(61, 2) + ", " + teamRecDesc$(61, 3);
     Print #1, Using "###/###"; teamRecords!(61, 1); teamRecords!(61, 2)
     Print #1,
 
     Print #1, "HIGHEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
-    Print #1, Using ".### "; teamRecords!(62, 0);: Print #1, "- "; teamRecDesc$(62, 0);
-    Print #1, Using " (.###) "; teamRecords!(62, 1);: Print #1, teamRecDesc$(62, 1) + " ";
-    Print #1, teamRecDesc$(62, 2);: Print #1, Using " (.###)"; teamRecords!(62, 2);: Print #1, ", " + teamRecDesc$(62, 3)
+    Print #1, Using ".### "; teamRecords!(62, 0);
+	Print #1, "- "; teamRecDesc$(62, 0);
+    Print #1, Using " (.###) "; teamRecords!(62, 1);
+	Print #1, teamRecDesc$(62, 1) + " ";
+    Print #1, teamRecDesc$(62, 2);
+	Print #1, Using " (.###)"; teamRecords!(62, 2);
+	Print #1, ", " + teamRecDesc$(62, 3)
     Print #1,
 
     Print #1, "LOWEST FREE THROW PERCENTAGE, BOTH TEAMS, GAME"
-    Print #1, Using ".### "; teamRecords!(63, 0);: Print #1, "- "; teamRecDesc$(63, 0);
-    Print #1, Using " (.###) "; teamRecords!(63, 1);: Print #1, teamRecDesc$(63, 1) + " ";
-    Print #1, teamRecDesc$(63, 2);: Print #1, Using " (.###)"; teamRecords!(63, 2);: Print #1, ", " + teamRecDesc$(63, 3)
+    Print #1, Using ".### "; teamRecords!(63, 0);
+	Print #1, "- "; teamRecDesc$(63, 0);
+    Print #1, Using " (.###) "; teamRecords!(63, 1);
+	Print #1, teamRecDesc$(63, 1) + " ";
+    Print #1, teamRecDesc$(63, 2);
+	Print #1, Using " (.###)"; teamRecords!(63, 2);
+	Print #1, ", " + teamRecDesc$(63, 3)
     Print #1,
 
     Print #1, "MOST FREE THROWS MADE, GAME"
@@ -1661,14 +1844,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST FREE THROWS MADE, BOTH TEAMS, GAME"
     Print #1, teamRecords!(66, 0); "- "; teamRecDesc$(66, 0);
-    Print #1, Using " (###) "; teamRecords!(66, 1);: Print #1, teamRecDesc$(66, 1) + " ";
-    Print #1, teamRecDesc$(66, 2);: Print #1, Using " (###)"; teamRecords!(66, 2);: Print #1, ", " + teamRecDesc$(66, 3)
+    Print #1, Using " (###) "; teamRecords!(66, 1);
+	Print #1, teamRecDesc$(66, 1) + " ";
+    Print #1, teamRecDesc$(66, 2);
+	Print #1, Using " (###)"; teamRecords!(66, 2);
+	Print #1, ", " + teamRecDesc$(66, 3)
     Print #1,
 
     Print #1, "FEWEST FREE THROWS MADE, BOTH TEAMS, GAME"
     Print #1, teamRecords!(67, 0); "- "; teamRecDesc$(67, 0);
-    Print #1, Using " (###) "; teamRecords!(67, 1);: Print #1, teamRecDesc$(67, 1) + " ";
-    Print #1, teamRecDesc$(67, 2);: Print #1, Using " (###)"; teamRecords!(67, 2);: Print #1, ", " + teamRecDesc$(67, 3)
+    Print #1, Using " (###) "; teamRecords!(67, 1);
+	Print #1, teamRecDesc$(67, 1) + " ";
+    Print #1, teamRecDesc$(67, 2);
+	Print #1, Using " (###)"; teamRecords!(67, 2);
+	Print #1, ", " + teamRecDesc$(67, 3)
     Print #1,
 
     Print #1, "MOST FREE THROWS MADE, ONE HALF"
@@ -1685,14 +1874,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(74, 0); "- "; teamRecDesc$(74, 0);
-    Print #1, Using " (###) "; teamRecords!(74, 1);: Print #1, teamRecDesc$(74, 1) + " ";
-    Print #1, teamRecDesc$(74, 2);: Print #1, Using " (###)"; teamRecords!(74, 2);: Print #1, ", " + teamRecDesc$(74, 3)
+    Print #1, Using " (###) "; teamRecords!(74, 1);
+	Print #1, teamRecDesc$(74, 1) + " ";
+    Print #1, teamRecDesc$(74, 2);
+	Print #1, Using " (###)"; teamRecords!(74, 2);
+	Print #1, ", " + teamRecDesc$(74, 3)
     Print #1,
 
     Print #1, "FEWEST FREE THROW ATTEMPTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(75, 0); "- "; teamRecDesc$(75, 0);
-    Print #1, Using " (###) "; teamRecords!(75, 1);: Print #1, teamRecDesc$(75, 1) + " ";
-    Print #1, teamRecDesc$(75, 2);: Print #1, Using " (###)"; teamRecords!(75, 2);: Print #1, ", " + teamRecDesc$(75, 3)
+    Print #1, Using " (###) "; teamRecords!(75, 1);
+	Print #1, teamRecDesc$(75, 1) + " ";
+    Print #1, teamRecDesc$(75, 2);
+	Print #1, Using " (###)"; teamRecords!(75, 2);
+	Print #1, ", " + teamRecDesc$(75, 3)
     Print #1,
 
     Print #1, "MOST FREE THROW ATTEMPTS, ONE HALF"
@@ -1701,8 +1896,11 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST FREE THROW ATTEMPTS, BOTH TEAMS, HALF"
     Print #1, teamRecords!(77, 0); "- "; teamRecDesc$(77, 0);
-    Print #1, Using " (###) "; teamRecords!(77, 1);: Print #1, teamRecDesc$(77, 1) + " ";
-    Print #1, teamRecDesc$(77, 2);: Print #1, Using " (###)"; teamRecords!(77, 2);: Print #1, ", " + teamRecDesc$(77, 3)
+    Print #1, Using " (###) "; teamRecords!(77, 1);
+	Print #1, teamRecDesc$(77, 1) + " ";
+    Print #1, teamRecDesc$(77, 2);
+	Print #1, Using " (###)"; teamRecords!(77, 2);
+	Print #1, ", " + teamRecDesc$(77, 3)
     Print #1,
 
     Print #1, "MOST REBOUNDS, GAME"
@@ -1715,14 +1913,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST REBOUNDS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(82, 0); "- "; teamRecDesc$(82, 0);
-    Print #1, Using " (###) "; teamRecords!(82, 1);: Print #1, teamRecDesc$(82, 1) + " ";
-    Print #1, teamRecDesc$(82, 2);: Print #1, Using " (###)"; teamRecords!(82, 2);: Print #1, ", " + teamRecDesc$(82, 3)
+    Print #1, Using " (###) "; teamRecords!(82, 1);
+	Print #1, teamRecDesc$(82, 1) + " ";
+    Print #1, teamRecDesc$(82, 2);
+	Print #1, Using " (###)"; teamRecords!(82, 2);
+	Print #1, ", " + teamRecDesc$(82, 3)
     Print #1,
 
     Print #1, "FEWEST REBOUNDS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(83, 0); "- "; teamRecDesc$(83, 0);
-    Print #1, Using " (###) "; teamRecords!(83, 1);: Print #1, teamRecDesc$(83, 1) + " ";
-    Print #1, teamRecDesc$(83, 2);: Print #1, Using " (###)"; teamRecords!(83, 2);: Print #1, ", " + teamRecDesc$(83, 3)
+    Print #1, Using " (###) "; teamRecords!(83, 1);
+	Print #1, teamRecDesc$(83, 1) + " ";
+    Print #1, teamRecDesc$(83, 2);
+	Print #1, Using " (###)"; teamRecords!(83, 2);
+	Print #1, ", " + teamRecDesc$(83, 3)
     Print #1,
 
     Print #1, "MOST REBOUNDS, ONE HALF"
@@ -1739,14 +1943,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(88, 0); "- "; teamRecDesc$(88, 0);
-    Print #1, Using " (###) "; teamRecords!(88, 1);: Print #1, teamRecDesc$(88, 1) + " ";
-    Print #1, teamRecDesc$(88, 2);: Print #1, Using " (###)"; teamRecords!(88, 2);: Print #1, ", " + teamRecDesc$(88, 3)
+    Print #1, Using " (###) "; teamRecords!(88, 1);
+	Print #1, teamRecDesc$(88, 1) + " ";
+    Print #1, teamRecDesc$(88, 2);
+	Print #1, Using " (###)"; teamRecords!(88, 2);
+	Print #1, ", " + teamRecDesc$(88, 3)
     Print #1,
 
     Print #1, "FEWEST OFFENSIVE REBOUNDS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(89, 0); "- "; teamRecDesc$(89, 0);
-    Print #1, Using " (###) "; teamRecords!(89, 1);: Print #1, teamRecDesc$(89, 1) + " ";
-    Print #1, teamRecDesc$(89, 2);: Print #1, Using " (###)"; teamRecords!(89, 2);: Print #1, ", " + teamRecDesc$(89, 3)
+    Print #1, Using " (###) "; teamRecords!(89, 1);
+	Print #1, teamRecDesc$(89, 1) + " ";
+    Print #1, teamRecDesc$(89, 2);
+	Print #1, Using " (###)"; teamRecords!(89, 2);
+	Print #1, ", " + teamRecDesc$(89, 3)
     Print #1,
 
     Print #1, "MOST OFFENSIVE REBOUNDS, ONE HALF"
@@ -1763,14 +1973,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST ASSISTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(98, 0); "- "; teamRecDesc$(98, 0);
-    Print #1, Using " (###) "; teamRecords!(98, 1);: Print #1, teamRecDesc$(98, 1) + " ";
-    Print #1, teamRecDesc$(98, 2);: Print #1, Using " (###)"; teamRecords!(98, 2);: Print #1, ", " + teamRecDesc$(98, 3)
+    Print #1, Using " (###) "; teamRecords!(98, 1);
+	Print #1, teamRecDesc$(98, 1) + " ";
+    Print #1, teamRecDesc$(98, 2);
+	Print #1, Using " (###)"; teamRecords!(98, 2);
+	Print #1, ", " + teamRecDesc$(98, 3)
     Print #1,
 
     Print #1, "FEWEST ASSISTS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(99, 0); "- "; teamRecDesc$(99, 0);
-    Print #1, Using " (###) "; teamRecords!(99, 1);: Print #1, teamRecDesc$(99, 1) + " ";
-    Print #1, teamRecDesc$(99, 2);: Print #1, Using " (###)"; teamRecords!(99, 2);: Print #1, ", " + teamRecDesc$(99, 3)
+    Print #1, Using " (###) "; teamRecords!(99, 1);
+	Print #1, teamRecDesc$(99, 1) + " ";
+    Print #1, teamRecDesc$(99, 2);
+	Print #1, Using " (###)"; teamRecords!(99, 2);
+	Print #1, ", " + teamRecDesc$(99, 3)
     Print #1,
 
     Print #1, "MOST ASSISTS, ONE HALF"
@@ -1787,14 +2003,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST PERSONAL FOULS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(106, 0); "- "; teamRecDesc$(106, 0);
-    Print #1, Using " (###) "; teamRecords!(106, 1);: Print #1, teamRecDesc$(106, 1) + " ";
-    Print #1, teamRecDesc$(106, 2);: Print #1, Using " (###)"; teamRecords!(106, 2);: Print #1, ", " + teamRecDesc$(106, 3)
+    Print #1, Using " (###) "; teamRecords!(106, 1);
+	Print #1, teamRecDesc$(106, 1) + " ";
+    Print #1, teamRecDesc$(106, 2);
+	Print #1, Using " (###)"; teamRecords!(106, 2);
+	Print #1, ", " + teamRecDesc$(106, 3)
     Print #1,
 
     Print #1, "FEWEST PERSONAL FOULS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(107, 0); "- "; teamRecDesc$(107, 0);
-    Print #1, Using " (###) "; teamRecords!(107, 1);: Print #1, teamRecDesc$(107, 1) + " ";
-    Print #1, teamRecDesc$(107, 2);: Print #1, Using " (###)"; teamRecords!(107, 2);: Print #1, ", " + teamRecDesc$(107, 3)
+    Print #1, Using " (###) "; teamRecords!(107, 1);
+	Print #1, teamRecDesc$(107, 1) + " ";
+    Print #1, teamRecDesc$(107, 2);
+	Print #1, Using " (###)"; teamRecords!(107, 2);
+	Print #1, ", " + teamRecDesc$(107, 3)
     Print #1,
 
     Print #1, "MOST PERSONAL FOULS, ONE HALF"
@@ -1811,8 +2033,11 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST STEALS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(114, 0); "- "; teamRecDesc$(114, 0);
-    Print #1, Using " (###) "; teamRecords!(114, 1);: Print #1, teamRecDesc$(114, 1) + " ";
-    Print #1, teamRecDesc$(114, 2);: Print #1, Using " (###)"; teamRecords!(114, 2);: Print #1, ", " + teamRecDesc$(114, 3)
+    Print #1, Using " (###) "; teamRecords!(114, 1);
+	Print #1, teamRecDesc$(114, 1) + " ";
+    Print #1, teamRecDesc$(114, 2);
+	Print #1, Using " (###)"; teamRecords!(114, 2);
+	Print #1, ", " + teamRecDesc$(114, 3)
     Print #1,
 
     Print #1, "MOST STEALS, ONE HALF"
@@ -1825,8 +2050,11 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST BLOCKS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(119, 0); "- "; teamRecDesc$(119, 0);
-    Print #1, Using " (###) "; teamRecords!(119, 1);: Print #1, teamRecDesc$(119, 1) + " ";
-    Print #1, teamRecDesc$(119, 2);: Print #1, Using " (###)"; teamRecords!(119, 2);: Print #1, ", " + teamRecDesc$(119, 3)
+    Print #1, Using " (###) "; teamRecords!(119, 1);
+	Print #1, teamRecDesc$(119, 1) + " ";
+    Print #1, teamRecDesc$(119, 2);
+	Print #1, Using " (###)"; teamRecords!(119, 2);
+	Print #1, ", " + teamRecDesc$(119, 3)
     Print #1,
 
     Print #1, "MOST BLOCKS, HALF"
@@ -1843,14 +2071,20 @@ Sub GameRecords_Report (printDest, destFile$)
 
     Print #1, "MOST TURNOVERS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(124, 0); "- "; teamRecDesc$(124, 0);
-    Print #1, Using " (###) "; teamRecords!(124, 1);: Print #1, teamRecDesc$(124, 1) + " ";
-    Print #1, teamRecDesc$(124, 2);: Print #1, Using " (###)"; teamRecords!(124, 2);: Print #1, ", " + teamRecDesc$(124, 3)
+    Print #1, Using " (###) "; teamRecords!(124, 1);
+	Print #1, teamRecDesc$(124, 1) + " ";
+    Print #1, teamRecDesc$(124, 2);
+	Print #1, Using " (###)"; teamRecords!(124, 2);
+	Print #1, ", " + teamRecDesc$(124, 3)
     Print #1,
 
     Print #1, "FEWEST TURNOVERS, BOTH TEAMS, GAME"
     Print #1, teamRecords!(125, 0); "- "; teamRecDesc$(125, 0);
-    Print #1, Using " (###) "; teamRecords!(125, 1);: Print #1, teamRecDesc$(125, 1) + " ";
-    Print #1, teamRecDesc$(125, 2);: Print #1, Using " (###)"; teamRecords!(125, 2);: Print #1, ", " + teamRecDesc$(125, 3)
+    Print #1, Using " (###) "; teamRecords!(125, 1);
+	Print #1, teamRecDesc$(125, 1) + " ";
+    Print #1, teamRecDesc$(125, 2);
+	Print #1, Using " (###)"; teamRecords!(125, 2);
+	Print #1, ", " + teamRecDesc$(125, 3)
 
     Close #1
 
