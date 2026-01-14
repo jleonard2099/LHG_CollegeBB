@@ -151,11 +151,22 @@ Sub HD2HDCON ()
                 Next K
 
                 'Generate output
-                If VPP <> 1 Then
-                    Call Hd2HdColl_Report(team$, printChoice)
-                Else
-                    Call Hd2HdColl_Screen(team$)
-                End If
+                Select Case VPP
+
+                    Case 0
+                        If printChoice = 0 Then
+                            destFile$ = _SaveFileDialog$("Save League Comparison Report", _CWD$ + "\League Comparison Report", "*.txt", "Text File")
+                            If destFile$ <> "" Then
+                                Call Hd2HdColl_Report(team$, printChoice, destFile$)
+                            End If
+                        Else
+                            Call Hd2HdPro_Report(team$, printChoice, "Comparison")
+                        End If
+                    
+                    Case 1
+                        Call Hd2HdColl_Screen(team$)
+                
+                End Select
 
                 Cls
 
@@ -220,7 +231,7 @@ End Sub
 '----------------------------------------
 'This subroutine outputs the calculated
 'comparison values to the default printer
-Sub Hd2HdColl_Report (teamName$, printDest)
+Sub Hd2HdColl_Report (teamName$, printDest, printFile$)
 
     Shared awayWins(), awayLosses()
     Shared homeWins(), homeLosses()
@@ -235,12 +246,6 @@ Sub Hd2HdColl_Report (teamName$, printDest)
 
     Shared div1Name$, div2Name$
 
-    If printDest = 0 Then
-        destFile$ = _SaveFileDialog$("Save Comparison Report", _CWD$ + "\Comparison", "*.txt", "Text File")
-    Else
-        destFile$ = "Comparison"
-    End If
-
     Dim divisionNames$(1 To 2)
 
     divisionNames$(1) = div1Name$
@@ -249,7 +254,7 @@ Sub Hd2HdColl_Report (teamName$, printDest)
     Color 15, 0
     Cls
 
-    Open destFile$ For Output As #1
+    Open printFile$ For Output As #1
 
     div = 0
 
@@ -679,7 +684,7 @@ Sub Hd2HdColl_Report (teamName$, printDest)
 
     If printDest = 1 Then
 
-        Open destFile$ For Input As #2
+        Open printFile$ For Input As #2
 
         Do While Not EOF(2)
             Line Input #2, X$
@@ -690,7 +695,7 @@ Sub Hd2HdColl_Report (teamName$, printDest)
 
         LPrint Chr$(12)
 
-        Kill destFile$
+        Kill printFile$
 
     End If
 
@@ -1232,4 +1237,3 @@ Sub Hd2HdColl_Screen (teamName$)
     I$ = GetKeyPress$
 
 End Sub
-

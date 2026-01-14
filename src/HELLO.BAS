@@ -14518,7 +14518,9 @@ Sub BOXOPTIONS (outputChoice)
             End If
 
             'Includes a special option to send to printer when done
-            Call BOX2FILE(outputChoice, boxName$, 0)
+            If boxName$ <> "" Then
+                Call BOX2FILE(outputChoice, boxName$, 0)
+            End If
 
     End Select
 
@@ -14943,55 +14945,55 @@ Sub BOX2SPC (boxName$)
     Print #1,
 
     'Output any special events
-    If currHalf - 3 > eventSettings(1) Then 
+    If currHalf - 3 > eventSettings(1) Then
         Print #1, Using "MORE THAN ## OVERTIMES"; eventSettings(1)
     End If
-    If score(1, 0) + score(0, 0) > eventSettings(2) Then 
+    If score(1, 0) + score(0, 0) > eventSettings(2) Then
         Print #1, Using "MORE THAN ### COMBINED POINTS"; eventSettings(2)
     End If
-    If teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then 
+    If teamRebounds(0) + teamRebounds(1) > eventSettings(3) Then
         Print #1, Using "MORE THAN ### COMBINED REBOUNDS"; eventSettings(3)
     End If
-    If score(0, 0) > eventSettings(4) Then 
+    If score(0, 0) > eventSettings(4) Then
         Print #1, gameTeams$(0);
         Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
     End If
-    If score(1, 0) > eventSettings(4) Then 
+    If score(1, 0) > eventSettings(4) Then
         Print #1, gameTeams$(1);
         Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(4)
     End If
-    If teamRebounds(0) > eventSettings(5) Then 
+    If teamRebounds(0) > eventSettings(5) Then
         Print #1, gameTeams$(0);
         Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
     End If
-    If teamRebounds(1) > eventSettings(5) Then 
+    If teamRebounds(1) > eventSettings(5) Then
         Print #1, gameTeams$(1);
         Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(5)
     End If
 
     For I = 0 To 1
         For I1 = 0 To 13
-            If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then 
+            If plyrOff_GAME!(I, I1, 8) * 2 + plyrOff_GAME!(I, I1, 10) + threeFG(I, I1, 0) > eventSettings(6) Then
                 Print #1, players$(I, I1);
                 Print #1, Using " SCORED MORE THAN ### POINTS"; eventSettings(6)
             End If
-            If plyrOff_GAME!(I, I1, 11) > eventSettings(7) Then 
+            If plyrOff_GAME!(I, I1, 11) > eventSettings(7) Then
                 Print #1, players$(I, I1);
                 Print #1, Using " HAD MORE THAN ### REBOUNDS"; eventSettings(7)
             End If
-            If plyrOff_GAME!(I, I1, 14) > eventSettings(8) Then 
+            If plyrOff_GAME!(I, I1, 14) > eventSettings(8) Then
                 Print #1, players$(I, I1);
                 Print #1, Using " HAD MORE THAN ### ASSISTS"; eventSettings(8)
             End If
-            If plyrOff_GAME!(I, I1, 15) > eventSettings(9) Then 
+            If plyrOff_GAME!(I, I1, 15) > eventSettings(9) Then
                 Print #1, players$(I, I1);
                 Print #1, Using " BLOCKED MORE THAN ### SHOTS"; eventSettings(9)
             End If
-            If plyrOff_GAME!(I, I1, 13) > eventSettings(10) Then 
+            If plyrOff_GAME!(I, I1, 13) > eventSettings(10) Then
                 Print #1, players$(I, I1);
                 Print #1, Using " HAD MORE THAN ### STEALS"; eventSettings(10)
             End If
-            If threeFG(I, I1, 0) > eventSettings(11) Then 
+            If threeFG(I, I1, 0) > eventSettings(11) Then
                 Print #1, players$(I, I1);
                 Print #1, Using " MADE MORE THAN ### 3-PT FIELD GOALS"; eventSettings(11)
             End If

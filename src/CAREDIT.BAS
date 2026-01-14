@@ -139,7 +139,7 @@ Sub EditPlayers (careerName$)
                                 Select Case userKey$
 
                                     Case "F"
-                                        userFile$ = _SaveFileDialog$("Save Report File", _CWD$ + "\Report", "*.txt", "Text File")
+                                        userFile$ = _SaveFileDialog$("Save Career Stats Report",_CWD$ + "\Career Stats Report","*.txt","Text File")
                                         If userFile$ <> "" Then
                                             Call CareerStatsPlayer_Report(0, userFile$, careerName$, B9)
                                         End If
