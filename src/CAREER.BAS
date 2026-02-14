@@ -684,6 +684,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
     Shared statsOffTot!(), statsDefTot!()
 
+    Dim TMR1
+
     NB = -1
 
     Call LoadCareerFile (careerFile$)
@@ -691,7 +693,7 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
     Locate 20, 21
     Print "LOADING STATS FILE . . . . PLEASE WAIT"
 
-    TMR1% = 14 * (14 + 3) + (16 * 2)
+    TMR1 = 14 * (14 + 3) + (16 * 2)
 
     'Call ReadTeamStats(temp$, statFile$)
 
@@ -712,8 +714,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
         Color 5
         Locate 21, 38
-        TMR1% = TMR1% - 1
-        Print Using "####"; TMR1%
+        TMR1 = TMR1 - 1
+        Print Using "####"; TMR1
 
     Next
 
@@ -722,8 +724,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
         Color 5
         Locate 21, 38
-        TMR1% = TMR1% - 1
-        Print Using "####"; TMR1%
+        TMR1 = TMR1 - 1
+        Print Using "####"; TMR1
     Next
 
     For L = 0 To 15: 
@@ -731,8 +733,8 @@ Sub AddCareerYear (targetYear, finalUpdate, careerFile$, statFile$)
 
         Color 5
         Locate 21, 38
-        TMR1% = TMR1% - 1
-        Print Using "####"; TMR1%
+        TMR1 = TMR1 - 1
+        Print Using "####"; TMR1
     Next
 
     Close #2
@@ -831,6 +833,8 @@ Sub LoadCareerFile (loadFile$)
 
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
 
+    Dim TMR
+
     Color 15, 0
     Cls
     
@@ -886,6 +890,8 @@ Sub SaveCareerFile (saveFile$)
     Shared careerPlayers$()
 
     Shared carPlyrStat!(), car3FGM!(), car3FGA!()
+
+    Dim TMR
 
     Cls
     Color 15

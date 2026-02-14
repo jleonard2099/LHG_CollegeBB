@@ -431,7 +431,7 @@ End Sub
 'This subroutine writes all scheduled data,
 'as stored in the relevant arrays, back to
 'the target schedule file.
-Sub SaveSchedFileConverted (saveFile$)
+Sub SaveSchedFileConverted (saveFile$, numberGames)
 
     Shared homeScores(), visitorScores()
     Shared scheduleAP%(), scheduleNG%()
@@ -447,7 +447,7 @@ Sub SaveSchedFileConverted (saveFile$)
 
     Field #1, 38 As X$, 2 As Q$(22), 2 As Q$(23), 5 As Q$(20), 5 As Q$(21)
 
-    For I = 1 To scheduleAP%(0)
+    For I = 1 To scheduleAP%(0) 'numberGames
 
         For X = 0 To 18:
             LSet Q$(X + 1) = MKI$(scheduleNG%(I, X))
@@ -493,7 +493,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         Call ReadSchedOld(targetFile$)
 
-        'Call SaveSchedFileConverted(newFile$)
+        'Call SaveSchedFileConverted(newFile$, numberGames)
 
         'Kill targetFile$
 
@@ -503,7 +503,7 @@ Sub ConvertSched4to5 (targetFile$, silent)
 
         Kill targetFile$
 
-        Call SaveSchedFileConverted(targetFile$)
+        Call SaveSchedFileConverted(targetFile$, numberGames)
 
         If silent = 0 Then
             result& = _MessageBox("Success!", "The schedule file has been converted for use", "ok", "info", 1)

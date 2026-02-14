@@ -124,7 +124,9 @@ Sub LoadTeamStats (statFile$, teamName$, totalGames)
 
     Next
 
-    Call ReadTeamStats(teamName$, statFile$)
+    Call ReadTeamStats (teamName$, statFile$)
+    
+    '-- Here is where we need to use actual team names vs stat file names
 
     For I = 0 To 13
 
