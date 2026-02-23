@@ -160,7 +160,7 @@ Sub HD2HDCON ()
                                 Call Hd2HdColl_Report(team$, printChoice, destFile$)
                             End If
                         Else
-                            Call Hd2HdPro_Report(team$, printChoice, "Comparison")
+                            Call Hd2HdColl_Report(team$, printChoice, "Comparison")
                         End If
                     
                     Case 1

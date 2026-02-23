@@ -515,6 +515,29 @@ End Sub
 
 
 '----------------------------------------
+'       ConvertAllSched Subroutine
+'----------------------------------------
+' Quick and dirty script to convert all
+' schedule files in the "Schedule" folder
+Sub ConvertAllSched ()
+
+    fileSpec$ = diskPaths$(3) + "*.SCD"
+
+    Count% = FileCount%(fileSpec$)
+    ReDim foundFiles$(0 To Count%)
+    foundFiles$(0) = fileSpec$
+    Call ReadFile(foundFiles$())
+
+    For X = 1 To Count%
+        target$ = diskPaths$(3) + foundFiles$(X)
+        Print "Converting "; target$
+        Call ConvertSched4to5(target$, 1)
+    Next X
+
+End Sub
+
+
+'----------------------------------------
 '       ConvertAllTeam Subroutine
 '----------------------------------------
 ' Quick and dirty script to convert all
@@ -533,29 +556,6 @@ Sub ConvertAllTeam ()
         Print "Converting "; target$
         Call ConvertTeam4to5(target$, 1)
         'Call ConvertTeam5to4 (target$, 1)
-    Next X
-
-End Sub
-
-
-'----------------------------------------
-'       ConvertAllSched Subroutine
-'----------------------------------------
-' Quick and dirty script to convert all
-' schedule files in the "Schedule" folder
-Sub ConvertAllSched ()
-
-    fileSpec$ = diskPaths$(3) + "*.SCD"
-
-    Count% = FileCount%(fileSpec$)
-    ReDim foundFiles$(0 To Count%)
-    foundFiles$(0) = fileSpec$
-    Call ReadFile(foundFiles$())
-
-    For X = 1 To Count%
-        target$ = diskPaths$(3) + foundFiles$(X)
-        Print "Converting "; target$
-        Call ConvertSched4to5(target$, 1)
     Next X
 
 End Sub
