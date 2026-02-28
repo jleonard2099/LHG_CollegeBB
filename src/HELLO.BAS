@@ -1,7 +1,7 @@
 $Debug
 $Color:32
 
-Const GAME_VERSION$ = "5.29"
+Const GAME_VERSION$ = "5.3"
 Const MAX_FILES = 10240
 Const MAX_CAREER_YEARS = 15
 Const MAX_CONFERENCES = 40
@@ -995,8 +995,9 @@ Sub COLHOOP ()
         Close #8
 
         'Other areas of code, like creating box files,
-        'will use scheduleFile$. We would check for
-        'tourneyPlay = 1 to distinguish but tourneyPlay = 0 after most
+        'will use scheduleFile$.
+        'We would check for tourneyPlay = 1 in order
+        'to distinguish but tourneyPlay = 0 after most
         'of the initial AUTOSETUP process
         scheduleFile$ = tourneyFile$
 
@@ -2302,8 +2303,10 @@ Sub COLHOOP ()
 
                 ' *** CHECK FOR TURNOVER ***
 
+                'Fixed turnover chance - first pass of the ball
                 'NOTE - defAdjVsPass(0, 4) is a value of 5
-                toChance = 7 + defAdjVsPass(0, 4)
+                'toChance = 7 + defAdjVsPass(0, 4)
+                toChance = 12
 
                 If RN1 <= toChance Then
 
@@ -2330,11 +2333,10 @@ Sub COLHOOP ()
                 ' *** CHECK FOR STEAL ***
 
                 'Off Steal Rating + Steal Chance
-                'We are referencing a fixed index of defAdjVsPass
-                'We are not relying on the current DEFENSE
-                'So technically fixed values could be put in here
-                'However, if research would show them needing changed...
-                stealChance = stealChance + teamAdj(P, 4) + defAdjVsPass(1, 1)
+                'Fixed steal chance - first pass of the ball
+                'NOTE - defAdjVsPass(1, 1) is a value of 15
+                'stealChance = stealChance + teamAdj(P, 4) + defAdjVsPass(1, 1)
+                stealChance = stealChance + teamAdj(P, 4) + 15
 
                 If RN1 <= stealChance Then
 
@@ -2688,6 +2690,9 @@ Sub COLHOOP ()
 
     End Select
 
+
+
+
     'Total Stall | Hold Ball | Milk Clock and 15+ Secs on Shot Clock
     'Shot Clock + Difficult Shot | No Shot Clock + Difficult Shot OR 25% of the time
     If offStrat(P) = 13 Or offStrat(P) = 14 Or (sClockVal >= 1 And offStrat(P) = 11 And shotClock > 15) Or (sClockVal >= 1 And d100% > GS%) Or ((sClockVal = 0 And d100% > GS% And d100% <= 80)) Then
@@ -2701,82 +2706,78 @@ Sub COLHOOP ()
 
             assistShotBoost = 0
 
-            'All but last 2 mins / Overtime
-            If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) Then
-
-                If currHalf <= 2 And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
-                    'Fatigued - No Shot / Difficult Shot
-                    GoTo 437
-                End If
-
-            End If
-
-            Call SHOTPERCENT
-
-            rndCarrier = Int(Rnd(1) * 5)
-            assistShotBoost = Int(Rnd(1) * 28) + 1
-            assistChance = Int(Rnd(1) * 9) + 1
-
-            shotChance! = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) + dFG_Pct_Adj(D)
-
-            ' *** CHECK ASSIST SHOT ***
-            If tmFatigue(P, lineupIdx(P, ballCarrier)) > -5 Then
-
-                'Player is not fatigued - check assist rating
-                If assistChance <= plyrOff_GAME!(P, lineupIdx(P, rndCarrier), 4) Then
-
-                    'increase shot chance for assist
-                    shotChance! = shotChance! + assistShotBoost + assistAdj(P) + assistAdj(D)
-                    assistAdj(P) = 0
-                    assistAdj(D) = 0
-                    shotType = 2
-
-                    offStatus = 0
-
-                    If d100% <= 50 Then
-                        shotType = 3
-                    End If
-
-                    GoTo 520
-
-                End If
-
+            'All but last 2 mins / Overtime - Fatigued player
+            If (currHalf = 1 Or currHalf = 2 And gameClock! > 120) And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
+                'Fatigued - No Shot / Difficult Shot
+                GoTo 437
             End If
 
         End If
 
-
-        ' *** CHECK AVERAGE SHOT ***
-        'Delay Offense
-        If offStrat(P) = 10 Then
-
-            'No Shot / Difficult Shot
-            GoTo 437
-
-        Else
-
-            If currHalf <= 2 Then
-
-                'All but last 2 mins / Overtime
-                If Not (currHalf = 2 And gameClock! <= 120 Or currHalf > 2) And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
-                    'No Shot / Difficult Shot
-                    GoTo 437
-                End If
-
-            End If
-
-        End If
-
-        playChoice = 1
         Call SHOTPERCENT
 
-        offStatus = 0
+        rndCarrier = Int(Rnd(1) * 5)
+        assistShotBoost = Int(Rnd(1) * 28) + 1
+        assistChance = Int(Rnd(1) * 9) + 1
 
-        shotType = Int(Rnd(1) * 3) + 5
+        shotChance! = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0) + dFG_Pct_Adj(D)
 
-        GoTo 520
+        ' *** CHECK ASSIST SHOT ***
+        If tmFatigue(P, lineupIdx(P, ballCarrier)) > -5 Then
+
+            'Player is not fatigued - check assist rating
+            If assistChance <= plyrOff_GAME!(P, lineupIdx(P, rndCarrier), 4) Then
+
+                'increase shot chance for assist
+                shotChance! = shotChance! + assistShotBoost + assistAdj(P) + assistAdj(D)
+                assistAdj(P) = 0
+                assistAdj(D) = 0
+                shotType = 2
+
+                offStatus = 0
+
+                If d100% <= 50 Then
+                    shotType = 3
+                End If
+
+                GoTo 520
+
+            End If
+
+        End If
 
     End If
+
+
+    ' *** CHECK AVERAGE SHOT ***
+    'Delay Offense
+    If offStrat(P) = 10 Then
+
+        'No Shot / Difficult Shot
+        GoTo 437
+
+    Else
+
+        If currHalf <= 2 Then
+
+            'All but last 2 mins / Overtime - Fatigued player
+            If (currHalf = 1 Or currHalf = 2 And gameClock! > 120) And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
+                'Fatigued - No Shot / Difficult Shot
+                GoTo 437
+            End If
+
+        End If
+
+    End If
+
+    playChoice = 1
+    Call SHOTPERCENT
+
+    offStatus = 0
+
+    shotType = Int(Rnd(1) * 3) + 5
+
+    GoTo 520
 
 
     '----- NOODLE -----
@@ -3101,7 +3102,6 @@ Sub COLHOOP ()
 
     520 '
     If threePtOpt = 1 And threePtRange = 1 Then
-        'If threePtRange = 1 Then
         shotType = 4
     End If
 
@@ -3512,32 +3512,11 @@ Sub COLHOOP ()
                     'Determine when PC will take TO
                     If playChoice <> 1 Then
 
-                        'Human Opponent, Computer Shoots | Computer is Visitor AND on Defense, Computer Shoots | Computer is Visitor AND On Offense | Computer is Home Team
-                        If (playerMode = 0 And coachOpt = 1) Or _
-                            (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
-                            (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+                        Call TimeoutChoice(computerTimeout)
 
-                            If gameClock! <= 660 And gameClock! >= 540 And currHalf = 1 And timeouts(P) >= 5 Then
-                                playChoice = 2
-                                computerTimeout = 1
-                            Else
-                                If gameClock! <= 240 And gameClock! >= 120 And currHalf = 1 And timeouts(P) >= 4 Then
-                                    playChoice = 2
-                                    computerTimeout = 1
-                                Else
-                                    If gameClock! <= 840 And gameClock! >= 720 And currHalf = 2 And timeouts(P) >= 3 Then
-                                        playChoice = 2
-                                        computerTimeout = 1
-                                    Else
-                                        If gameClock! <= 300 And gameClock! >= 180 And currHalf = 2 And timeouts(P) >= 2 Then
-                                            playChoice = 2
-                                            computerTimeout = 1
-                                        End If
-                                    End If
-                                End If
-
-                            End If
-
+                        If computerTimeout = 1 Then
+                            playChoice = 2
+                            computerTimeout = 1
                         End If
 
                     End If
@@ -4170,6 +4149,9 @@ Sub COLHOOP ()
         Case 3
             ' *** TIMEOUT ***
             Call TimeoutCalled(P)
+
+            lastDefCheckDiff = score(D, 0) - score(P, 0)
+            lastOffCheckDiff = score(P, 0) - score(D, 0)
 
             Call STOPPAGE(takeTO)
 
@@ -4830,11 +4812,9 @@ Sub COLHOOP ()
 
                 plyrRebRat = plyrOff_GAME!(P, lineupIdx(P, I), 21)
 
-                'All but last 2 mins / Overtime
-                If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                    If playerStamina%(P, lineupIdx(P, I)) <= 0 Then
-                        plyrRebRat = CInt(plyrRebRat * .5)
-                    End If
+                'All but last 2 mins / Overtime - Fatigued player
+                If (currHalf = 1 Or currHalf = 2 And gameClock! > 120) And playerStamina%(P, lineupIdx(P, I)) <= 0 Then
+                    plyrRebRat = CInt(plyrRebRat * .5)
                 End If
 
                 If tmFatigue(P, lineupIdx(P, I)) <= -5 Then
@@ -4853,11 +4833,9 @@ Sub COLHOOP ()
 
                 plyrRebRat = plyrOff_GAME!(1 - P, lineupIdx(1 - P, I), 2)
 
-                'All but last 2 mins / Overtime
-                If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                    If playerStamina%(1 - P, lineupIdx(1 - P, I)) <= 0 Then
-                        plyrRebRat = CInt(plyrRebRat * .5)
-                    End If
+                'All but last 2 mins / Overtime - Fatigued player
+                If (currHalf = 1 Or currHalf = 2 And gameClock! > 120) And playerStamina%(1 - P, lineupIdx(1 - P, I)) <= 0 Then
+                    plyrRebRat = CInt(plyrRebRat * .5)
                 End If
 
                 If tmFatigue(1 - P, lineupIdx(1 - P, I)) <= -5 Then
@@ -5013,11 +4991,9 @@ Sub COLHOOP ()
                 rebShotRoll = Int(Rnd(1) * 10) + 1
                 Call SHOTPERCENT
 
-                'All but last 2 mins / Overtime
-                If Not (currHalf > 2 Or currHalf = 2 And gameClock! <= 120) Then
-                    If playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
-                        shotChance! = CInt(shotChance! * .6)
-                    End If
+                'All but last 2 mins / Overtime - Fatigued player
+                If (currHalf = 1 Or currHalf = 2 And gameClock! > 120) And playerStamina%(P, lineupIdx(P, ballCarrier)) <= 0 Then
+                    shotChance! = CInt(shotChance! * .6)
                 End If
 
                 If rebShotRoll <= 7 Then
@@ -5420,7 +5396,6 @@ Sub InitVar ()
     Shared statsOffTot!(), statsDefTot!(), gameStatPlyrVal!()
     Shared indRecords!(), teamRecords!()
 
-    Shared alpha$()
     Shared gameSite$(), locIndicator$(), oppName$()
     Shared indRecDesc$(), teamRecDesc$()
     Shared teamIndicator$(), teamYrTourn$()
@@ -5435,12 +5410,6 @@ Sub InitVar ()
 
     teamIndicator$(0) = "VISITING TEAM"
     teamIndicator$(1) = "HOME TEAM"
-
-    alpha$(0) = "A "
-    alpha$(1) = "B "
-    alpha$(2) = "C "
-    alpha$(3) = "D "
-    alpha$(4) = "E "
 
     pbpStyle$(0) = "VERBOSE        "
     pbpStyle$(1) = "HAFFNER CLASSIC"
@@ -5488,6 +5457,8 @@ Sub InitVar ()
     gameOver = 0
     guardNbr = 0
     halfTime = 0
+    lastOffCheckDiff = 0
+    lastDefCheckDiff = 0
     MJ = 0
     nbrLines = 1
     passes = 0
@@ -5914,6 +5885,137 @@ End Sub
 
 
 '----------------------------------------
+'        TimeoutChoice Subroutine
+'----------------------------------------
+'This subroutine determines whether the
+'computer should take a timeout.  If the
+'Offense is taking a TO, the regular flow
+'of the game will handle it. It the DEF
+'is taking a TO, it will happen here.
+Sub TimeoutChoice (offTakeTO)
+
+    Dim toChoice
+
+    'Default to no choice / no TO
+    toChoice = -1
+
+    ' ***********************************
+    ' *** Check for TimeOut - Offense ***
+    ' ***********************************
+
+    '  Human Opponent, Computer Shoots
+    '  Computer on Defense, But Human Lets Computer Shoot
+    '  Computer on Offense
+    '  Computer vs. Computer
+    If (playerMode = 0 And coachOpt = 1) Or _
+        (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
+        (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+    
+            'Tournament play widens the window for calling timeouts
+            'run trigger = "unanswered points"; the team is on a "run"
+            If tourneyPlay = 1 Then
+                toScoreBuffer = 3
+                runTrigger = 4
+            Else
+                toScoreBuffer = 0
+                runTrigger = 6
+            End If
+
+            timeWindow = 0
+
+            If currHalf = 1 And gameClock! <= 660 And gameClock! >= 540 Then timeWindow = 1
+            If currHalf = 1 And gameClock! <= 240 And gameClock! >= 120 Then timeWindow = 2
+            If currHalf = 2 And gameClock! <= 840 And gameClock! >= 720 Then timeWindow = 3
+            If currHalf = 2 And gameClock! <= 300 And gameClock! >= 180 Then timeWindow = 4
+
+            'OFF - check for TO
+            scoreDiff = score(P, 0) - score(D, 0)
+
+            Select Case timeWindow
+
+                Case 1
+                    If timeouts(P) >= 5 And scoreDiff <= (5 + toScoreBuffer) Then
+                        toChoice = P
+                    End If
+
+                Case 2
+                    If timeouts(P) >= 4 And scoreDiff <= (8 + toScoreBuffer) Then
+                        toChoice = P
+                    End If
+
+                Case 3
+                    If timeouts(P) >= 3 And scoreDiff <= (5 + toScoreBuffer) Then
+                        toChoice = P
+                    End If
+
+                Case 4
+                    If timeouts(P) >= 2 And scoreDiff <= (10 + toScoreBuffer) Then
+                        toChoice = P
+                    End If
+            End Select
+
+            'Emergency stopper — outside time windows, fires anytime
+            If (lastOffCheckDiff - scoreDiff) >= runTrigger And timeouts(P) >= 1 Then
+                toChoice = P
+                lastOffCheckDiff = scoreDiff
+            End If
+                
+        End If
+    
+
+    End If
+
+    If toChoice = P Then
+        offTakeTO = 1
+    End If
+
+    ' ***********************************
+    ' *** Check for TimeOut - Defense ***
+    ' ***********************************
+    '  Computer on Defense, But Human Lets Computer Shoot
+    '  Computer is Visitor AND On Offense
+    '  Computer vs. Computer
+    If (playerMode = 1 And P = compTeam And coachOpt = 1) Or _
+        (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+
+		If tourneyPlay = 1 Then
+			runTrigger = 6
+			clockThreshold = 300
+		Else
+			runTrigger = 8
+			clockThreshold = 240
+		End If
+
+		scoreDiff = score(D, 0) - score(P, 0)  
+
+        'Opponent killing clock late, defense is trailing
+        If gameClock! <= 300 And currHalf = 2 And scoreDiff < 0 And timeouts(D) >= 1 Then
+            toChoice = D
+        End If
+
+        'Opponent on a scoring run
+        If (scoreDiff - lastDefCheckDiff) <= -runTrigger And timeouts(D) >= 1 Then
+            toChoice = D
+        End If
+
+        'Opponent just scored, defense wants to regroup
+        ' requires a flag set immediately after opponent scores
+        If opponentJustScored = 1 And gameClock! <= 300 And currHalf = 2 And timeouts(D) >= 1 Then
+            toChoice = D
+        End If
+
+    End If
+
+    'Offense hasn't taken a timeout
+    If toChoice = D And offTakeTO = 0 Then
+        lastDefCheckDiff = scoreDiff
+        Call TimeoutCalled(D)
+    End If
+
+End Sub
+
+
+'----------------------------------------
 '           TEAMBOX Subroutine
 '----------------------------------------
 'This subroutine draws an ASCII box using
@@ -6047,12 +6149,14 @@ Sub DISABLEPLAYERS (teamIdx)
 
         For I = 0 To 13
 
-            If I <= 9 Then Print Using "#"; I;
-            If I = 10 Then Print "A";
-            If I = 11 Then Print "B";
-            If I = 12 Then Print "C";
-            If I = 13 Then Print "D";
-            If I = 14 Then Print "E";
+            'Print alphanum char corresponding to index
+            For I = 0 To 13
+                If I <= 9 Then
+                    Print Chr$(48 + I);
+                Else
+                    Print Chr$(55 + I);
+                End If
+            Next I
 
             Print " ";
 
@@ -8740,6 +8844,18 @@ Function ShotPacing%
 
     End If
 
+	If tourneyPlay = 1 Then
+
+        'Adjust pacing for playoff leads
+		crunchLevel = GetDesparationLevel%
+
+		If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 THEN
+			'Leading team burns clock deliberately
+			paceValue = paceValue + (3 * crunchLevel)
+		End If
+
+	End If
+
     ShotPacing% = paceValue
 
 End Function
@@ -10813,15 +10929,19 @@ Sub DEFENSEMENU ()
         Print
 
         For I = 0 To 17
-            Locate , 5: Print Using "# "; I;
-            If I = 10 Then Locate , 5: Print "A ";
-            If I = 11 Then Locate , 5: Print "B ";
-            If I = 12 Then Locate , 5: Print "C ";
-            If I = 13 Then Locate , 5: Print "D ";
-            If I = 14 Then Locate , 5: Print "E ";
-            If I = 15 Then Locate , 5: Print "F ";
-            If I = 16 Then Locate , 5: Print "G ";
-            If I = 17 Then Locate , 5: Print "H ";
+
+
+            Locate , 5
+            
+            'Print alphanum char corresponding to index
+            For I = 0 To 13
+                If I <= 9 Then
+                    Print Chr$(48 + I);
+                Else
+                    Print Chr$(55 + I);
+                End If
+            Next I
+
             Print defStyles$(I)
         Next
 
@@ -10955,6 +11075,8 @@ Sub COMPUTERSUBS ()
     skipLogic = 0
 
     'offStatus = 50 means team is in BONUS
+    'If it's a computer-controlled offense not in BONUS
+    'If offStatus <> 50 Or (playerMode = 1 And P9 = compTeam) Or (playerMode = 2 And P9 = P) Then
     If Not (offStatus = 50 And (playerMode = 1 And P9 = compTeam) Or (playerMode = 2 And P9 = P)) Then
 
         For I1 = 0 To 13
@@ -11456,9 +11578,8 @@ End Sub
 'an interface for changing the lineup
 Sub DisplayRoster ()
 
-    Shared alpha$()
-
     Cls
+
     Color teamRat_GAME(P9, 0), teamRat_GAME(P9, 1): Print gameTeams$(P9);
 
     Color 15, 0
@@ -11479,10 +11600,12 @@ Sub DisplayRoster ()
         If playerActive%(P9, R1) = 1 And players$(P9, R1) <> "XXX" And players$(P9, R1) <> "" Then
 
             Color 2
+
+            'Print alphanum char corresponding to index
             If R1 <= 9 Then
-                Print Using "# "; R1;
+                Print Chr$(48 + R1) + " ";
             Else
-                Print alpha$(R1 - 10);
+                Print Chr$(55 + R1) + " ";
             End If
 
             Color 15
@@ -11569,14 +11692,20 @@ Sub CHANGESTRATEGY (teamSelected)
     Print
 
     For I = 0 To 15
-        Locate 3 + I, 5: Print Using "# "; I;
-        If I = 10 Then Locate , 5: Print "A ";
-        If I = 11 Then Locate , 5: Print "B ";
-        If I = 12 Then Locate , 5: Print "C ";
-        If I = 13 Then Locate , 5: Print "D ";
-        If I = 14 Then Locate , 5: Print "E ";
-        If I = 15 Then Locate , 5: Print "F ";
+
+        Locate 3 + I, 5
+        
+        'Print alphanum char corresponding to index
+        For I = 0 To 13
+            If I <= 9 Then
+                Print Chr$(48 + I);
+            Else
+                Print Chr$(55 + I);
+            End If
+        Next I
+
         Print offStylesNew$(I)
+
     Next
 
     Print
@@ -11911,11 +12040,34 @@ Sub SHOTPERCENT ()
 
     baseChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 0)
 
+    'Tired player - less likely to shoot
     If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
         baseChance = baseChance - 10
     End If
 
-    shotChance! = baseChance + dFG_Pct_Adj(D) + defAdjVsShot(0, defCoverage(D))
+    defModifier = defAdjVsShot(0, defCoverage(D))
+
+	If tourneyPlay = 1 Then
+
+        'Adjust defensive impact on shot % for tournament play / desparation
+		crunchLevel = GetDesparationLevel%
+
+		'Teams tend to have higher defensive pressure overall
+		If crunchLevel > 0 AND score(P, 0) - score(D, 0) < 0 Then
+			defModifier = defModifier + crunchLevel * 2
+            'Team that is behind has slightly lower make chance
+            baseChance = baseChance + (crunchLevel * -3)
+		End If
+
+		If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
+			defModifier = defModifier + crunchLevel * 3
+            'Team that is ahead has slightly higher make chance
+            baseChance = baseChance + crunchLevel
+		End If
+
+	End If
+    
+    shotChance! = baseChance + dFG_Pct_Adj(D) + defModifier
 
     'Improve chance for homefield advantage
     If gameLoc = P Then
@@ -11965,9 +12117,48 @@ Sub SHOTPERCENT ()
     'Fudge factor
     threePtDefAdj = threePtDefAdj - 9
 
+    'Player's 3FG frequency + Def style adj + Opp's adj
+    plyrBase3FG = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19)
+    threePtThresh = plyrBase3FG + teamAdj(D, 3) + threePtDefAdj
+
+    'Consider impact of tournament pressure
+	If tourneyPlay = 1 Then
+
+        'Adjust 3FGA frequency for tournament play / desparation
+		crunchLevel = GetDesparationLevel%
+
+        'If team is behind...
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) < 0 Then
+
+            'Players who don't normally shoot 3FGA's as much will
+            'take more desparate attempts
+            If plyrBase3FG < 34 Then
+                threeFGChance = threeFGChance * (1 + 0.08 * crunchLevel)
+            Else
+                threeFGChance = threeFGChance * (1 + 0.02 * crunchLevel)
+            End If
+
+        End If
+
+        'If team is ahead...
+        If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 Then
+
+            'Players who don't normally shoot 3FGA's will take them
+            'even less often
+            If plyrBase3FG < 34 Then
+                threeFGChance = threeFGChance * (1 - (.15 * crunchLevel))
+            Else
+                'Good shooters will still be more conservative
+                threeFGChance = threeFGChance * (1 - (.05 * crunchLevel))
+            End If
+
+        End If
+
+	End If
+
     ' ** Check for three-point shot **
-    'Check shot chance against % of player shots that are 3 FG (+ Def style adj + Opp's adj)
-    If threePtShotChance > plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) + teamAdj(D, 3) + threePtDefAdj Or plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) = 0 Then
+    If threePtShotChance > threePtThresh Or _ 
+        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 19) = 0 Then
 
         'Strategy = Shoot only 3's
         If offStrat(P) = 15 Then
@@ -14075,7 +14266,27 @@ Sub FreeThrow_OneAndOne (missedLastFT)
         Call Rolld100(shotRoll)
 
         'FT Success Chance
-        ftShotChance = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
+        playerBaseFTPct = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
+
+        ftShotChance = playerBaseFTPct
+
+        'Consider playoff pressure
+        If tourneyPlay = 1 Then
+
+            'Adjust FT% for tournament play / desparation
+            crunchLevel = GetDesparationLevel%
+
+            If crunchLevel > 0 THEN
+
+                'Pressure only on players below 75%, scales with how far below
+                ftPressurePenalty = (75 - playerBaseFTPct) * .10 * crunchLevel
+                ftShotChance = playerBaseFTPct - MAX(ftPressurePenalty, 0)
+
+            End If
+
+        End If
+
+        'Tired shooter
         If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
             ftShotChance = CInt(ftShotChance * .9)
         End If
@@ -17925,6 +18136,33 @@ Function foulTrouble% (teamIdx, playerIdx)
         foulTrouble% = 0
 
     End If
+
+End Function
+
+
+'----------------------------------------
+'      GetDesparationLevel% Function
+'----------------------------------------
+'This function uses game clock and score
+'deficit to determine how desparate a team
+'might be to play more aggressively.
+Function GetDesparationLevel%()
+
+	scoreDiff = ABS(score(P, 0) - score(D, 0))
+
+	level = 0
+	
+    If gameClock! <= 120 AND scoreDiff <= 6 Then
+		'Full crunch
+        level = 2  
+    End If
+
+	IF gameClock! <= 300 AND scoreDiff <= 10 Then
+		'Late game
+        level = 1 
+	End If
+
+	GetDesparationLevel% = level
 
 End Function
 

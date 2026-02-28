@@ -43,8 +43,8 @@ Dim roadLosses, roadWins, totalLosses, totalWins
 Dim memberIdx(TEAMS_PER_CONFERENCE)
 Dim memberConf$(MAX_CONFERENCES)
 Dim memberName$(TEAMS_PER_CONFERENCE)
+Dim memberTeam$(TEAMS_PER_CONFERENCE)
 Dim memberYear$(TEAMS_PER_CONFERENCE)
-
 
 
 ' *** Schedule Data ***
@@ -269,7 +269,7 @@ Dim X0%, X1%, threePtShotChance
 
 Dim FY%(0 To 1)
 
-Dim alpha$(4), tickerPeriod$(14), teamYrTourn$(0 To 3)
+Dim tickerPeriod$(14), teamYrTourn$(0 To 3)
 
 Dim schedOptions(18)
 Dim tourneyOptions(18), tourneySettings(0 To 16, 0 To 16, 0 To 4)
@@ -282,13 +282,14 @@ Dim Shared prevBall$, pbpString$
 Dim Shared C1, D, MJ, P, P9
 
 Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
-Dim Shared clockSecs, compTeam, currGame
+Dim Shared clockSecs, compTeam, computerTimeout, currGame
 Dim Shared gameOver, goaltendTOs, earlyExit, endAllGames
 Dim Shared fastBreak, forcedThree, foulPlayer
 Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul
 Dim Shared foulOnPlay, foulsToDQ
 Dim Shared gameAvgTmStamina, gameLoc, guardNbr
-Dim Shared halfTime, nbrLines, offStatus
+Dim Shared halfTime
+Dim Shared lastDefCheckDiff, lastOffCheckDiff, nbrLines, offStatus
 Dim Shared passes, periodEnd, playerMode, playerOpt, pbpOpt
 Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotClock, shotType, sndOpt
