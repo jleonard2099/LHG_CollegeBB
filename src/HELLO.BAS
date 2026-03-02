@@ -5911,58 +5911,55 @@ Sub TimeoutChoice (offTakeTO)
         (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
         (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
     
-            'Tournament play widens the window for calling timeouts
-            'run trigger = "unanswered points"; the team is on a "run"
-            If tourneyPlay = 1 Then
-                toScoreBuffer = 3
-                runTrigger = 4
-            Else
-                toScoreBuffer = 0
-                runTrigger = 6
-            End If
-
-            timeWindow = 0
-
-            If currHalf = 1 And gameClock! <= 660 And gameClock! >= 540 Then timeWindow = 1
-            If currHalf = 1 And gameClock! <= 240 And gameClock! >= 120 Then timeWindow = 2
-            If currHalf = 2 And gameClock! <= 840 And gameClock! >= 720 Then timeWindow = 3
-            If currHalf = 2 And gameClock! <= 300 And gameClock! >= 180 Then timeWindow = 4
-
-            'OFF - check for TO
-            scoreDiff = score(P, 0) - score(D, 0)
-
-            Select Case timeWindow
-
-                Case 1
-                    If timeouts(P) >= 5 And scoreDiff <= (5 + toScoreBuffer) Then
-                        toChoice = P
-                    End If
-
-                Case 2
-                    If timeouts(P) >= 4 And scoreDiff <= (8 + toScoreBuffer) Then
-                        toChoice = P
-                    End If
-
-                Case 3
-                    If timeouts(P) >= 3 And scoreDiff <= (5 + toScoreBuffer) Then
-                        toChoice = P
-                    End If
-
-                Case 4
-                    If timeouts(P) >= 2 And scoreDiff <= (10 + toScoreBuffer) Then
-                        toChoice = P
-                    End If
-            End Select
-
-            'Emergency stopper — outside time windows, fires anytime
-            If (lastOffCheckDiff - scoreDiff) >= runTrigger And timeouts(P) >= 1 Then
-                toChoice = P
-                lastOffCheckDiff = scoreDiff
-            End If
-                
+        'Tournament play widens the window for calling timeouts
+        'run trigger = "unanswered points"; the team is on a "run"
+        If tourneyPlay = 1 Then
+            toScoreBuffer = 3
+            runTrigger = 4
+        Else
+            toScoreBuffer = 0
+            runTrigger = 6
         End If
-    
 
+        timeWindow = 0
+
+        If currHalf = 1 And gameClock! <= 660 And gameClock! >= 540 Then timeWindow = 1
+        If currHalf = 1 And gameClock! <= 240 And gameClock! >= 120 Then timeWindow = 2
+        If currHalf = 2 And gameClock! <= 840 And gameClock! >= 720 Then timeWindow = 3
+        If currHalf = 2 And gameClock! <= 300 And gameClock! >= 180 Then timeWindow = 4
+
+        'OFF - check for TO
+        scoreDiff = score(P, 0) - score(D, 0)
+
+        Select Case timeWindow
+
+            Case 1
+                If timeouts(P) >= 5 And scoreDiff <= (5 + toScoreBuffer) Then
+                    toChoice = P
+                End If
+
+            Case 2
+                If timeouts(P) >= 4 And scoreDiff <= (8 + toScoreBuffer) Then
+                    toChoice = P
+                End If
+
+            Case 3
+                If timeouts(P) >= 3 And scoreDiff <= (5 + toScoreBuffer) Then
+                    toChoice = P
+                End If
+
+            Case 4
+                If timeouts(P) >= 2 And scoreDiff <= (10 + toScoreBuffer) Then
+                    toChoice = P
+                End If
+        End Select
+
+        'Emergency stopper — outside time windows, fires anytime
+        If (lastOffCheckDiff - scoreDiff) >= runTrigger And timeouts(P) >= 1 Then
+            toChoice = P
+            lastOffCheckDiff = scoreDiff
+        End If
+                
     End If
 
     If toChoice = P Then
@@ -5978,15 +5975,15 @@ Sub TimeoutChoice (offTakeTO)
     If (playerMode = 1 And P = compTeam And coachOpt = 1) Or _
         (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
-		If tourneyPlay = 1 Then
-			runTrigger = 6
-			clockThreshold = 300
-		Else
-			runTrigger = 8
-			clockThreshold = 240
-		End If
+        If tourneyPlay = 1 Then
+            runTrigger = 6
+            clockThreshold = 300
+        Else
+            runTrigger = 8
+            clockThreshold = 240
+        End If
 
-		scoreDiff = score(D, 0) - score(P, 0)  
+        scoreDiff = score(D, 0) - score(P, 0)  
 
         'Opponent killing clock late, defense is trailing
         If gameClock! <= 300 And currHalf = 2 And scoreDiff < 0 And timeouts(D) >= 1 Then
@@ -8844,17 +8841,17 @@ Function ShotPacing%
 
     End If
 
-	If tourneyPlay = 1 Then
+    If tourneyPlay = 1 Then
 
         'Adjust pacing for playoff leads
-		crunchLevel = GetDesparationLevel%
+        crunchLevel = GetDesparationLevel%
 
-		If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 THEN
-			'Leading team burns clock deliberately
-			paceValue = paceValue + (3 * crunchLevel)
-		End If
+        If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 THEN
+            'Leading team burns clock deliberately
+            paceValue = paceValue + (3 * crunchLevel)
+        End If
 
-	End If
+    End If
 
     ShotPacing% = paceValue
 
@@ -12047,25 +12044,25 @@ Sub SHOTPERCENT ()
 
     defModifier = defAdjVsShot(0, defCoverage(D))
 
-	If tourneyPlay = 1 Then
+    If tourneyPlay = 1 Then
 
         'Adjust defensive impact on shot % for tournament play / desparation
-		crunchLevel = GetDesparationLevel%
+        crunchLevel = GetDesparationLevel%
 
-		'Teams tend to have higher defensive pressure overall
-		If crunchLevel > 0 AND score(P, 0) - score(D, 0) < 0 Then
-			defModifier = defModifier + crunchLevel * 2
+        'Teams tend to have higher defensive pressure overall
+        If crunchLevel > 0 AND score(P, 0) - score(D, 0) < 0 Then
+            defModifier = defModifier + crunchLevel * 2
             'Team that is behind has slightly lower make chance
             baseChance = baseChance + (crunchLevel * -3)
-		End If
+        End If
 
-		If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
-			defModifier = defModifier + crunchLevel * 3
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
+            defModifier = defModifier + crunchLevel * 3
             'Team that is ahead has slightly higher make chance
             baseChance = baseChance + crunchLevel
-		End If
+        End If
 
-	End If
+    End If
     
     shotChance! = baseChance + dFG_Pct_Adj(D) + defModifier
 
@@ -12122,10 +12119,10 @@ Sub SHOTPERCENT ()
     threePtThresh = plyrBase3FG + teamAdj(D, 3) + threePtDefAdj
 
     'Consider impact of tournament pressure
-	If tourneyPlay = 1 Then
+    If tourneyPlay = 1 Then
 
         'Adjust 3FGA frequency for tournament play / desparation
-		crunchLevel = GetDesparationLevel%
+        crunchLevel = GetDesparationLevel%
 
         'If team is behind...
         If crunchLevel > 0 And score(P, 0) - score(D, 0) < 0 Then
@@ -12154,7 +12151,7 @@ Sub SHOTPERCENT ()
 
         End If
 
-	End If
+    End If
 
     ' ** Check for three-point shot **
     If threePtShotChance > threePtThresh Or _ 
@@ -18148,21 +18145,21 @@ End Function
 'might be to play more aggressively.
 Function GetDesparationLevel%()
 
-	scoreDiff = ABS(score(P, 0) - score(D, 0))
+    scoreDiff = ABS(score(P, 0) - score(D, 0))
 
-	level = 0
-	
+    level = 0
+    
     If gameClock! <= 120 AND scoreDiff <= 6 Then
-		'Full crunch
+        'Full crunch
         level = 2  
     End If
 
-	IF gameClock! <= 300 AND scoreDiff <= 10 Then
-		'Late game
+    IF gameClock! <= 300 AND scoreDiff <= 10 Then
+        'Late game
         level = 1 
-	End If
+    End If
 
-	GetDesparationLevel% = level
+    GetDesparationLevel% = level
 
 End Function
 
