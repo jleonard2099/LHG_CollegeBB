@@ -35,6 +35,7 @@ DefInt A-Z
 '$Include: 'BoxRoutines.bi'
 '$Include: 'FileTeamSelection.bi'
 '$Include: 'Variables.bi'
+Dim Shared C1, D, MJ, P, P9
 '$Include: 'MainRoutines.bi'
 '$Include: 'TITLE.bi'
 
@@ -3793,8 +3794,7 @@ Sub COLHOOP ()
                     rndPlayer = Int(Rnd(1) * 5)
                     pbpString$ = "STUFF BY " + players$(D, lineupIdx(D, rndPlayer)) + " !!!"
                     'Technically, interrupting a dunk is a block, but the play is being fouled
-                    'I'm not sure why this is the only circumstance in which a dunk is stuffed
-                    '(it happens on ~2.7% of attempts)
+                    'Cleanly blocked dunks are VERY rare.
                     'Commented line below would credit block
                     'plyrOff_GAME!(D, lineupIdx(D, rndPlayer), 15) = plyrOff_GAME!(D, lineupIdx(D, rndPlayer), 15) + 1
                     Call PBP(D)
@@ -3817,37 +3817,42 @@ Sub COLHOOP ()
                 End If
 
                 617 '
-                pbpString$ = "... AND " + teamGender$(P) + "'S FOULED !!!"
-                Call SELECTPBP(P, 0)
-                Call DELAY
+                'Only 0.34% of fouls on dunks are clean
+                If willDunk = 0 Or (willDunk = 1 And RN >= 34) Then
 
-                'Update score and FGA
-                score(P, currHalf) = score(P, currHalf) + 2
-                score(P, 0) = score(P, 0) + 2
-                
-                'Increase FGM
-                plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) + 1
+                    pbpString$ = "... AND " + teamGender$(P) + "'S FOULED !!!"
+                    Call SELECTPBP(P, 0)
+                    Call DELAY
 
-                Call UPDATESCREEN
+                    'Update score and FGA
+                    score(P, currHalf) = score(P, currHalf) + 2
+                    score(P, 0) = score(P, 0) + 2
+                    
+                    'Increase FGM
+                    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 8) + 1
 
-                ' ** Foul on made FGA **
-                'Print #11, "FOUL - 2FGA"
-                Call FoulCalled(1)
+                    Call UPDATESCREEN
 
-                619 '
-                If (autoPlay = 0 Or pbpDelay! > 0) Then
+                    ' ** Foul on made FGA **
+                    'Print #11, "FOUL - 2FGA"
+                    Call FoulCalled(1)
 
-                    If pbpOpt = 1 Then
-                        Call WINDEX
-                        Print gameTeams$(P)
+                    619 '
+                    If (autoPlay = 0 Or pbpDelay! > 0) Then
+
+                        If pbpOpt = 1 Then
+                            Call WINDEX
+                            Print gameTeams$(P)
+                        End If
+
+                        pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WILL SHOOT 1"
+                        Call SELECTPBP(P, 0)
+
                     End If
 
-                    pbpString$ = players$(P, lineupIdx(P, ballCarrier)) + " WILL SHOOT 1"
-                    Call SELECTPBP(P, 0)
+                    Call FreeThrows(1, missedLast)
 
                 End If
-
-                Call FreeThrows(1, missedLast)
 
                 If gameClock! <= 0 Then
 
@@ -5983,7 +5988,7 @@ Sub TimeoutChoice (offTakeTO)
             clockThreshold = 240
         End If
 
-        scoreDiff = score(D, 0) - score(P, 0)  
+        scoreDiff = score(D, 0) - score(P, 0)
 
         'Opponent killing clock late, defense is trailing
         If gameClock! <= 300 And currHalf = 2 And scoreDiff < 0 And timeouts(D) >= 1 Then
@@ -6148,14 +6153,14 @@ Sub DISABLEPLAYERS (teamIdx)
 
             'Print alphanum char corresponding to index
             For I = 0 To 13
-                If I <= 9 Then
-                    Print Chr$(48 + I);
-                Else
-                    Print Chr$(55 + I);
-                End If
-            Next I
 
-            Print " ";
+                If I <= 9 Then
+                    Print Chr$(48 + I) + " ";
+                Else
+                    Print Chr$(55 + I) + " ";
+                End If
+
+            Next I
 
             'Automatically disable "non-existent" players
             If players$(teamIdx, I) = "XXX" Then
@@ -8846,7 +8851,7 @@ Function ShotPacing%
         'Adjust pacing for playoff leads
         crunchLevel = GetDesparationLevel%
 
-        If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 THEN
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
             'Leading team burns clock deliberately
             paceValue = paceValue + (3 * crunchLevel)
         End If
@@ -9268,7 +9273,7 @@ Sub FoulCalled (randomFouler)
             offStatus = 50
         End If
 
-        If playerMode = 0 Or playerMode = 1 And D <> compTeam Then
+        If playerMode = 0 Or playerMode = 1 And compTeam <> D Then
             P9 = D
             C1 = 1
             Call ChooseLineup
@@ -10931,15 +10936,14 @@ Sub DEFENSEMENU ()
             Locate , 5
             
             'Print alphanum char corresponding to index
-            For I = 0 To 13
-                If I <= 9 Then
-                    Print Chr$(48 + I);
-                Else
-                    Print Chr$(55 + I);
-                End If
-            Next I
+            If I <= 9 Then
+                Print Chr$(48 + I) + " - ";
+            Else
+                Print Chr$(55 + I) + " - ";
+            End If
 
             Print defStyles$(I)
+
         Next
 
         Print
@@ -11691,15 +11695,13 @@ Sub CHANGESTRATEGY (teamSelected)
     For I = 0 To 15
 
         Locate 3 + I, 5
-        
+
         'Print alphanum char corresponding to index
-        For I = 0 To 13
-            If I <= 9 Then
-                Print Chr$(48 + I);
-            Else
-                Print Chr$(55 + I);
-            End If
-        Next I
+        If I <= 9 Then
+            Print Chr$(48 + I) + " - ";
+        Else
+            Print Chr$(55 + I) + " - ";
+        End If
 
         Print offStylesNew$(I)
 
@@ -12050,7 +12052,7 @@ Sub SHOTPERCENT ()
         crunchLevel = GetDesparationLevel%
 
         'Teams tend to have higher defensive pressure overall
-        If crunchLevel > 0 AND score(P, 0) - score(D, 0) < 0 Then
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) < 0 Then
             defModifier = defModifier + crunchLevel * 2
             'Team that is behind has slightly lower make chance
             baseChance = baseChance + (crunchLevel * -3)
@@ -12138,7 +12140,7 @@ Sub SHOTPERCENT ()
         End If
 
         'If team is ahead...
-        If crunchLevel > 0 AND score(P, 0) - score(D, 0) > 0 Then
+        If crunchLevel > 0 And score(P, 0) - score(D, 0) > 0 Then
 
             'Players who don't normally shoot 3FGA's will take them
             'even less often
@@ -14273,7 +14275,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
             'Adjust FT% for tournament play / desparation
             crunchLevel = GetDesparationLevel%
 
-            If crunchLevel > 0 THEN
+            If crunchLevel > 0 Then
 
                 'Pressure only on players below 75%, scales with how far below
                 ftPressurePenalty = (75 - playerBaseFTPct) * .10 * crunchLevel
@@ -18143,20 +18145,20 @@ End Function
 'This function uses game clock and score
 'deficit to determine how desparate a team
 'might be to play more aggressively.
-Function GetDesparationLevel%()
+Function GetDesparationLevel% ()
 
-    scoreDiff = ABS(score(P, 0) - score(D, 0))
+    scoreDiff = Abs(score(P, 0) - score(D, 0))
 
     level = 0
     
-    If gameClock! <= 120 AND scoreDiff <= 6 Then
+    If gameClock! <= 120 And scoreDiff <= 6 Then
         'Full crunch
-        level = 2  
+        level = 2
     End If
 
-    IF gameClock! <= 300 AND scoreDiff <= 10 Then
+    If gameClock! <= 300 And scoreDiff <= 10 Then
         'Late game
-        level = 1 
+        level = 1
     End If
 
     GetDesparationLevel% = level

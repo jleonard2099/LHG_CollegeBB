@@ -279,7 +279,7 @@ Dim avgAttendance&(1)
 ' Shared / Global
 Dim Shared prevBall$, pbpString$
 
-Dim Shared C1, D, MJ, P, P9
+'Dim Shared C1, D, MJ, P, P9
 
 Dim Shared autoPlay, ballCarrier, coachOpt, currHalf
 Dim Shared clockSecs, compTeam, computerTimeout, currGame
