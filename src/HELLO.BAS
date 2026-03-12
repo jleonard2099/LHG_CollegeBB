@@ -14669,7 +14669,7 @@ Sub POSTGAME ()
         'Append special events
         Call BOX2SPC(boxName$)
 
-        Call BOX2FILE(2, boxName$, specialStat)
+        Call BOX2FILE(2, diskPaths$(1) + boxName$, specialStat)
 
     End If
 

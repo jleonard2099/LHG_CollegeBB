@@ -1073,10 +1073,11 @@ Sub EditParameters ()
 
     Cls
     Color 14
+    Locate 2
     Print "PARAMETERS FOR SAVING SPECIAL EVENTS BOXSCORES"
 
     Color 15
-
+    Locate 4
     Print " 1. OVERTIME PERIODS ARE OVER "; eventSettings(1)
     Print " 2. TOTAL POINTS GREATER THAN "; eventSettings(2)
     Print " 3. TOTAL REBOUNDS GREATER THAN "; eventSettings(3)
@@ -1093,65 +1094,66 @@ Sub EditParameters ()
 
     Do
 
+        Locate LAST_ROW - 2, 40: Print Space$(10);
         Locate LAST_ROW - 2, 1: Print "SELECT # TO CHANGE 1-11 (0 TO CONTINUE) ";
         Input B9
 
         Select Case B9
 
             Case 1:
-                Locate 2, 30: Print Space$(10)
-                Locate 2, 1: Input " 1. OVERTIME PERIODS ARE OVER"; eventSettings(1)
-                Locate 2, 30: Print " "
+                Locate 4, 30: Print Space$(10)
+                Locate 4, 1: Input " 1. OVERTIME PERIODS ARE OVER"; eventSettings(1)
+                Locate 4, 30: Print " "
 
             Case 2:
-                Locate 3, 30: Print Space$(10)
-                Locate 3, 1: Input " 2. TOTAL POINTS GREATER THAN"; eventSettings(2)
-                Locate 3, 30: Print " "
+                Locate 5, 30: Print Space$(10)
+                Locate 5, 1: Input " 2. TOTAL POINTS GREATER THAN"; eventSettings(2)
+                Locate 5, 30: Print " "
 
             Case 3:
-                Locate 4, 32: Print Space$(10)
-                Locate 4, 1: Input " 3. TOTAL REBOUNDS GREATER THAN"; eventSettings(3)
-                Locate 4, 32: Print " "
+                Locate 6, 32: Print Space$(10)
+                Locate 6, 1: Input " 3. TOTAL REBOUNDS GREATER THAN"; eventSettings(3)
+                Locate 6, 32: Print " "
 
             Case 4:
-                Locate 5, 29: Print Space$(10)
-                Locate 5, 1: Input " 4. TEAM POINTS GREATER THAN"; eventSettings(4)
-                Locate 5, 29: Print " "
+                Locate 7, 29: Print Space$(10)
+                Locate 7, 1: Input " 4. TEAM POINTS GREATER THAN"; eventSettings(4)
+                Locate 7, 29: Print " "
 
             Case 5:
-                Locate 6, 31: Print Space$(10)
-                Locate 6, 1: Input " 5. TEAM REBOUNDS GREATER THAN"; eventSettings(5)
-                Locate 6, 31: Print " "
+                Locate 8, 31: Print Space$(10)
+                Locate 8, 1: Input " 5. TEAM REBOUNDS GREATER THAN"; eventSettings(5)
+                Locate 8, 31: Print " "
 
             Case 6:
-                Locate 7, 30: Print Space$(10)
-                Locate 7, 1: Input " 6. PLAYER'S POINTS MORE THAN"; eventSettings(6)
-                Locate 7, 30: Print " "
+                Locate 9, 30: Print Space$(10)
+                Locate 9, 1: Input " 6. PLAYER'S POINTS MORE THAN"; eventSettings(6)
+                Locate 9, 30: Print " "
 
             Case 7:
-                Locate 8, 32: Print Space$(10)
-                Locate 8, 1: Input " 7. PLAYER'S REBOUNDS MORE THAN"; eventSettings(7)
-                Locate 8, 33: Print " "
+                Locate 10, 32: Print Space$(10)
+                Locate 10, 1: Input " 7. PLAYER'S REBOUNDS MORE THAN"; eventSettings(7)
+                Locate 10, 33: Print " "
 
             Case 8:
-                Locate 9, 31: Print Space$(10)
-                Locate 9, 1: Input " 8. PLAYER'S ASSISTS MORE THAN"; eventSettings(8)
-                Locate 9, 31: Print " "
+                Locate 11, 31: Print Space$(10)
+                Locate 11, 1: Input " 8. PLAYER'S ASSISTS MORE THAN"; eventSettings(8)
+                Locate 11, 31: Print " "
 
             Case 9:
-                Locate 10, 30: Print Space$(10)
-                Locate 10, 1: Input " 9. PLAYER'S BLOCKS MORE THAN"; eventSettings(9)
-                Locate 10, 30: Print " "
+                Locate 12, 30: Print Space$(10)
+                Locate 12, 1: Input " 9. PLAYER'S BLOCKS MORE THAN"; eventSettings(9)
+                Locate 12, 30: Print " "
 
             Case 10:
-                Locate 11, 30: Print Space$(10)
-                Locate 11, 1: Input "10. PLAYER'S STEALS MORE THAN"; eventSettings(10)
-                Locate 11, 30: Print " "
+                Locate 13, 30: Print Space$(10)
+                Locate 13, 1: Input "10. PLAYER'S STEALS MORE THAN"; eventSettings(10)
+                Locate 13, 30: Print " "
 
             Case 11:
-                Locate 12, 29: Print Space$(10)
-                Locate 12, 1: Input "11. PLAYER'S 3-FGM MORE THAN"; eventSettings(11)
-                Locate 12, 29: Print " "
+                Locate 14, 29: Print Space$(10)
+                Locate 14, 1: Input "11. PLAYER'S 3-FGM MORE THAN"; eventSettings(11)
+                Locate 14, 29: Print " "
 
         End Select
 
