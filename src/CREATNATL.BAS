@@ -58,7 +58,6 @@ Sub CREATENATL ()
 
                 Case 2:
                     orgFile$ = _OpenFileDialog$("Choose Organization file", diskPaths$(2), "*.CON", "Organization files [.CON]")
-                    'ChooseFile$(diskPaths$(2) + "*.CON", "ORGANIZATION", FileExit%)
 
                     If orgFile$ <> "" Then
                         If _FileExists(orgFile$) Then
@@ -195,7 +194,6 @@ Sub ReviewEditNatOrg (orgFile$, orgName$)
                 'Add conference
                 targetFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
                 memberConf$(conferenceIndex) = GetFileBaseName$(targetFile$)
-                'ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", ExitCode%)
             Else
                 'Remove conference
                 memberConf$(conferenceIndex) = "XXX"

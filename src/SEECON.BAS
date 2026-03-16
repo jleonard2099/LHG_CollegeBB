@@ -40,6 +40,12 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
     Shared leaderName$(), leaderTeam$()
     Shared confLdrName$()
 
+    'Assume stat files are in same folder
+    memberFile$ = String.Replace$(targetFile$, ".LDR", ".TMS")
+    Call ReadConferenceMembers(memberFile$)
+
+    conf$ = conferenceName$
+
     Cls
 
     Locate 9, 6
@@ -71,14 +77,6 @@ Sub LoadLeaderFiles_Coll (targetFile$, conf$, div1$, div2$)
 
     Close #2
 
-    Call ReadConferenceStats(diskPaths$(2) + GetFileBaseName$(targetFile$) + ".TMS")
-
-    conf$ = conferenceName$
-    div1$ = PadRight$(div1Name$, 8)
-    div2$ = PadRight$(div2Name$, 8)
-
-    Cls
-    Locate 9, 1: Print "      PLEASE WAIT WHILE THE LEADER FILES ARE LOADING!!"
 
 End Sub
 

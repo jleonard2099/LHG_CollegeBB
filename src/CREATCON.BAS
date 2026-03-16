@@ -59,14 +59,14 @@ Sub CREATCON ()
 
                 Case 1:
                     Call DefineConference
-                    Call ReviewEditConference(conferenceName$)
+                    conferenceFile$ = diskPaths$(2) + conferenceName$ + ".TMI"
+                    Call ReviewEditConference(conferenceFile$)
 
                 Case 2:
                     confFile$ = _OpenFileDialog$("Choose League Definition file", diskPaths$(2), "*.TMI", "League Definition files [.TMI]")
-                    'ChooseFile$(diskPaths$(2) + "*.TMI", "CONFERENCE", FileExit%)
 
                     If confFile$ <> "" Then
-                        Call ReviewEditConference(GetFileBaseName$(confFile$))
+                        Call ReviewEditConference(confFile$)
                     End If
 
             End Select
@@ -93,6 +93,9 @@ Sub DefineConference ()
     Shared div1Name$, div2Name$
 
     Do
+
+        'boxText$ = "THe name should have no periods or special characters" + Chr$(13) + Chr$(10) + "Sample names are SEC, SWC, 94-ACC"
+        'conferenceName$ = _InputBox$("Enter Name for Conference", boxText$)
 
         Color 15, 0
         Cls
@@ -167,15 +170,13 @@ End Sub
 'This subroutine provides an interface to
 'the user allowing them to choose / clear
 'teams from the conference
-Sub ReviewEditConference (confFile$)
+Sub ReviewEditConference (targetFile$)
 
     Shared memberIdx()
     Shared memberName$(), memberYear$()
 
     Shared conferenceName$
     Shared div1Name$, div2Name$
-
-    targetFile$ = diskPaths$(2) + confFile$ + ".TMI"
 
     If _FileExists(targetFile$) Then
         Call ReadConferenceIndex(targetFile$)
@@ -241,7 +242,7 @@ Sub ReviewEditConference (confFile$)
 
     Loop Until choice = 3
 
-    Call SaveConferences(confFile$)
+    Call SaveConferences(targetFile$)
 
 End Sub
 
@@ -260,9 +261,11 @@ Sub SaveConferences (confFile$)
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
+    Dim confFile$
     Dim statFileNames$(TEAMS_PER_CONFERENCE)
 
-    Open diskPaths$(2) + confFile$ + ".TMI" For Output As #1
+    'Open Definition File
+    Open confFile$ For Output As #1
 
     Print #1, 0
     Print #1, conferenceName$
@@ -288,7 +291,9 @@ Sub SaveConferences (confFile$)
 
     Next X
 
-    Open diskPaths$(2) + confFile$ + ".TMS" For Output As #2
+    'Open Stat File
+    confStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS"
+    Open confStatFile$ For Output As #2
 
     Write #2, conferenceName$
     Write #2, div1Name$

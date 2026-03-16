@@ -80,7 +80,7 @@ Sub CompileCollege ()
             finalUpdate$ = UCase$(I$)
         Loop Until finalUpdate$ = "Y" Or finalUpdate$ = "N"
 
-        Call ReadConferenceStats(conferenceFile$)
+        Call ReadConferenceMembers(conferenceFile$)
 
         Erase seasonWins, seasonLosses, seasonWinPct!
         Erase divWins, divLosses, divWinPct!

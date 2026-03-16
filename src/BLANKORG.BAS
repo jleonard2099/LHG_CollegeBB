@@ -32,7 +32,7 @@ Sub BLANKORG ()
 
                 If memberConf$(X) <> "XXX" Then
 
-                    Call ReadConferenceStats (diskPaths$(2) + memberConf$(X) + ".TMS")
+                    Call ReadConferenceMembers (diskPaths$(2) + memberConf$(X) + ".TMS")
 
                     For XW = 1 To TEAMS_PER_CONFERENCE
                         If memberName$(XW) <> Chr$(42) Then

@@ -11,7 +11,7 @@ Declare Sub SaveScheduleStats (saveFile$, numberGames)
 Declare Sub ReadSeasonRecords (recordFile$)
 Declare Sub ReadGameRecords (recordFile$)
 Declare Sub ReadConferenceIndex (indexFile$)
-Declare Sub ReadConferenceStats (statFile$)
+Declare Sub ReadConferenceMembers (statFile$)
 Declare Sub ReadOrganizationFile (organizationFile$, orgName$)
 Declare Sub ReadTournamentFile (tourneyFile$)
 

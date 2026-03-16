@@ -71,7 +71,7 @@ Sub NEWLDR ()
                             memberName$(X) = "XXX"
                         Next
 
-                        Call ReadConferenceStats(confStatFile$)
+                        Call ReadConferenceMembers(confStatFile$)
                         Call UpdateExpandedLeaders(JB, PTS, TTS)
                         Call SaveExpandedLeaders(GetFileBaseName$(confStatFile$), JB, PTS, TTS)
 
@@ -95,7 +95,7 @@ Sub NEWLDR ()
                         Color 15, 0
                         Cls
 
-                        Call ReadConferenceStats(confStatFile$)
+                        Call ReadConferenceMembers(confStatFile$)
                         Call UpdateExpandedStandings
 
                     End If
