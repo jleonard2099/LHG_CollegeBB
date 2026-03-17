@@ -261,7 +261,6 @@ Sub SaveConferences (confFile$)
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
-    Dim confFile$
     Dim statFileNames$(TEAMS_PER_CONFERENCE)
 
     'Open Definition File
@@ -292,7 +291,8 @@ Sub SaveConferences (confFile$)
     Next X
 
     'Open Stat File
-    confStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS"
+    confStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS")
+
     Open confStatFile$ For Output As #2
 
     Write #2, conferenceName$
