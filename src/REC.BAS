@@ -14,6 +14,8 @@ Sub Records_Menu ()
     Shared plyrRecDesc$(), offRecDesc$(), defRecDesc$()
     Shared plyrRecords!(), offRecords!(), defRecords!()
 
+    SELECTION% = 1
+
     Do
 
         Cls
@@ -27,7 +29,6 @@ Sub Records_Menu ()
         menuChoices$(5) = "PRINT SINGLE GAME RECORDS"
         menuChoices$(6) = "DELETE GAME RECORDS      "
         menuChoices$(7) = "RETURN TO GAME MENU      "
-        SELECTION% = 1
         Count% = 7
         Start% = 1
         ExitCode% = 7

@@ -18,6 +18,8 @@ Sub DRAFT ()
 
     ReDim menuChoices$(1 To 3)
 
+    SELECTION% = 1
+
     Do
 
         Call TITLE
@@ -25,7 +27,6 @@ Sub DRAFT ()
         menuChoices$(1) = "DRAFT A NEW TEAM         "
         menuChoices$(2) = "DRAFT TO AN EXISTING TEAM"
         menuChoices$(3) = "EXIT TO MAIN MENU        "
-        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3

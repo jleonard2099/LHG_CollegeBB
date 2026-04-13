@@ -16,6 +16,8 @@ Sub SCHEDULE ()
 
     _Title "Courtside College Basketball - Scheduler"
 
+    SELECTION% = 1
+
     Do
 
         Color 7, 0
@@ -39,7 +41,6 @@ Sub SCHEDULE ()
         menuChoices$(8) = "BOXSCORE MAINTENANCE / PARAMETERS "
         menuChoices$(9) = "CONVERT SCHEDULE FILE FROM 4.0    "
         menuChoices$(10) = "RETURN TO COURTSIDE CB MAIN MENU  "
-        SELECTION% = 1
         Count% = 10
         Start% = 1
         ExitCode% = 10
@@ -344,6 +345,7 @@ Sub NewSchedule (scheduleFile$)
                 Call EditGame(DT$, TM$)
 
             Case "B":
+                Color 15, 2
                 Do
                     Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
@@ -359,6 +361,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "D":
                 ' *** DELETE A GAME FROM THE SCHEDULE ***
+                Color 15, 4
                 Do
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO DELETE "; targetGame%
                 Loop Until targetGame% >= 1 And targetGame% <= scheduleAP%(0)
@@ -382,6 +385,7 @@ Sub NewSchedule (scheduleFile$)
 
             Case "G":
                 'GOTO A SPECIFIC PAGE
+                Color 15, 2
                 Do
                     Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO GO TO        "
                     Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO GO TO "; targetGame%
@@ -588,6 +592,7 @@ Sub EditGame (DT$, TM$)
     Shared NS%
 
     ' *** EDIT A GAME ***
+    Color 15, 6
     Do
         Locate LAST_ROW - 3, 1: Print "ENTER GAME # TO EDIT        "
         Locate LAST_ROW - 3, 1: Input "ENTER GAME # TO EDIT "; targetGame%
@@ -898,12 +903,14 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                                 If memberIdx(I1) = scheduleNG%(I, 0) And memberYear$(I1) = scheduleYN$(I, 0) Or memberIdx(I1) = scheduleNG%(I, 1) And memberYear$(I1) = scheduleYN$(I, 1) Then
 
                                     Print
-                                    Print "FOUND A MATCH"
+                                    Print "FOUND A MATCH - ADDING GAME # ";
 
                                     Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #2 Len = SCHEDULE_SIZE_BYTES
 
                                     fileLength& = LOF(2)
                                     numberGames = fileLength& / SCHEDULE_SIZE_BYTES
+
+                                    Print numberGames + 1
 
                                     For X = 0 To 18
                                         Field #2, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -1005,12 +1012,15 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                             'Extract only
                             If Not (scheduleAction% = 5) Then
 
+                                Print
+                                Print "FOUND A MATCH - ADDING GAME # ";
+
                                 Open diskPaths$(3) + subSchedFile$ + ".SCD" For Random As #3 Len = SCHEDULE_SIZE_BYTES
                                 fileLength& = LOF(3)
-                                totalGames = fileLength& / SCHEDULE_SIZE_BYTES
 
-                                'Write matching games
-                                Locate 1, 1: Print totalGames + 1; " MATCHES"
+                                numberGames = fileLength& / SCHEDULE_SIZE_BYTES
+
+                                Print numberGames + 1
 
                                 For X = 0 To 18
                                     Field #3, X * 2 As X$, 2 As Q$(X + 1), SCHEDULE_SIZE_BYTES - 2 - 2 * X As X$
@@ -1029,7 +1039,7 @@ Sub ExtractSchedule (scheduleAction%, scheduleFile$)
                                 LSet Q$(22) = MKI$(visitorScores(I))
                                 LSet Q$(23) = MKI$(homeScores(I))
 
-                                Put #3, totalGames + 1
+                                Put #3, numberGames + 1
 
                                 Close #3
 
@@ -1692,23 +1702,23 @@ Sub CreateConferenceSchedule ()
 
     Locate 5, 1: Color , 0
     Color 15: Print "(1) ";
-    Color 14: Print "6 TEAM, 30 GAME SCHEDULE"
+    Color 14: Print "6 TEAMS, 30 GAMES TOTAL (2X ROUND-ROBIN)"
     Color 15: Print "(2) ";
-    Color 14: Print "7 TEAM, 42 GAME SCHEDULE"
+    Color 14: Print "7 TEAMS, 42 GAMES TOTAL (2X ROUND-ROBIN)"
     Color 15: Print "(3) ";
-    Color 14: Print "8 TEAM, 56 GAME SCHEDULE"
+    Color 14: Print "8 TEAMS, 56 GAMES TOTAL (2X ROUND-ROBIN)"
     Color 15: Print "(4) ";
-    Color 14: Print "9 TEAM, 72 GAME SCHEDULE"
+    Color 14: Print "9 TEAMS, 72 GAMES TOTAL (2X ROUND-ROBIN)"
     Color 15: Print "(5) ";
-    Color 14: Print "10 TEAM, 90 GAME SCHEDULE"
+    Color 14: Print "10 TEAMS, 90 GAMES TOTAL (2X ROUND-ROBIN)"
     Color 15: Print "(6) ";
-    Color 14: Print "11 TEAM, 88 GAME SCHEDULE"
+    Color 14: Print "11 TEAMS, 88 GAMES TOTAL "
     Color 15: Print "(7) ";
-    Color 14: Print "12 TEAM  96 GAME SCHEDULE"
+    Color 14: Print "12 TEAM  96 GAMES TOTAL" 
     Color 15: Print "(8) ";
-    Color 14: Print "13 TEAM 117 GAME SCHEDULE"
+    Color 14: Print "13 TEAMS, 117 GAMES TOTAL"
     Color 15: Print "(9) ";
-    Color 14: Print "16 TEAM 128 GAME SCHEDULE"
+    Color 14: Print "16 TEAMS, 128 GAMES TOTAL"
     Color 15: Print "(0) ";
     Color 14: Print "RETURN TO COURTSIDE MAIN MENU"
 

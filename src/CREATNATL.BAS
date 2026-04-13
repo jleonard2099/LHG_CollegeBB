@@ -12,6 +12,8 @@ Sub CREATENATL ()
 
     ReDim menuChoices$(1 To 3)
 
+    SELECTION% = 1
+
     Do
 
         Color 15, 0
@@ -21,7 +23,6 @@ Sub CREATENATL ()
         menuChoices$(1) = "CREATE AN ORGANIZATION     "
         menuChoices$(2) = "REVIEW ORGANIZATION MEMBERS"
         menuChoices$(3) = "RETURN TO LEADERS MENU     "
-        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
@@ -95,21 +96,24 @@ Sub DefineNatOrg (organization$)
 
     Do
 
+        'boxText$ = "The name should have no periods or special characters" + Chr$(13) + Chr$(10) + "Sample names are NCAA 2020, NAIA 2020, USCAA 2020"
+        'organization$ = _InputBox$("Enter Name for Conference", boxText$)
+
         Color 15, 0
         Cls
 
-        Call MenuBox (6, 8, 61, 7, 15, 1)
+        Call MenuBox (6, 8, 61, 8, 15, 1)
 
         Do
 
-            Locate 7, 32
+            Locate 8, 32
 
             Locate , 12: Print "ENTER NAME FOR ORGANIZATION: "
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
-            Locate , 12: Print "SAMPLE NAMES ARE NCAA-90, SOUTH, MIDWEST"
+            Locate , 12: Print "SAMPLE NAMES ARE NCAA 2020, NAIA 2020, USCAA 2020"
 
-            Locate 7, 40: Input organization$
+            Locate 8, 40: Input organization$
 
             If organization$ <> "" Then
 
@@ -142,40 +146,32 @@ Sub ReviewEditNatOrg (orgFile$, orgName$)
         Color 14, 0
         Cls
 
-        Print
-        Print "  "; orgName$
-        Print
+        Locate 2, 2
+        Print orgName$
+        Locate 3, 1
 
         Color 12
 
-        For I = 1 To 10
+        For I = 1 To 20
 
-            Color 2: Print Using "## "; I;
-            Color 15: Print Left$(memberConf$(I), 17);
-
-            Locate , 21
-            Color 2: Print Using "## "; I + 10;
-            Color 15: Print Left$(memberConf$(I + 10), 17);
+            Color 2: Print Using "  ## "; I;
+            Color 15: Print Left$(memberConf$(I), 35);
 
             Locate , 41
             Color 2: Print Using "## "; I + 20;
-            Color 15: Print Left$(memberConf$(I + 20), 17);
-
-            Locate , 61
-            Color 2: Print Using "## "; I + 30;
-            Color 15: Print Left$(memberConf$(I + 30), 17)
+            Color 15: Print Left$(memberConf$(I + 20), 35)
 
         Next I
 
         Do
 
-            Locate 21, 1
+            Locate 26, 1
 
-            Color 14: Print "(1) ";
+            Color 14: Print "  (1) ";
             Color 15: Print "ADD A CONFERENCE"
-            Color 14: Print "(2) ";
+            Color 14: Print "  (2) ";
             Color 15: Print "REMOVE A CONFERENCE"
-            Color 14: Print "(3) ";
+            Color 14: Print "  (3) ";
             Color 15: Print "END AND SAVE ORGANIZATION"
 
             I$ = GetKeyPress$

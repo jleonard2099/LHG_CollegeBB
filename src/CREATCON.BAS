@@ -16,6 +16,8 @@ Sub CREATCON ()
 
     ReDim menuChoices$(1 To 3)
 
+    SELECTION% = 1
+
     Do
 
         Color 15, 0
@@ -25,7 +27,6 @@ Sub CREATCON ()
         menuChoices$(1) = "CREATE A CONFERENCE      "
         menuChoices$(2) = "MODIFY CONFERENCE MEMBERS"
         menuChoices$(3) = "RETURN TO LEADERS MENU   "
-        SELECTION% = 1
         Count% = 3
         Start% = 1
         ExitCode% = 3
@@ -94,23 +95,23 @@ Sub DefineConference ()
 
     Do
 
-        'boxText$ = "THe name should have no periods or special characters" + Chr$(13) + Chr$(10) + "Sample names are SEC, SWC, 94-ACC"
+        'boxText$ = "The name should have no periods or special characters" + Chr$(13) + Chr$(10) + "Sample names are ACC 2020, SEC 2020, Pac-12 2020"
         'conferenceName$ = _InputBox$("Enter Name for Conference", boxText$)
 
         Color 15, 0
         Cls
 
-        Call MenuBox(6, 8, 61, 7, 15, 1)
+        Call MenuBox(6, 8, 61, 8, 15, 1)
 
         Do
 
-            Locate 7, 32
+            Locate 8, 32
 
             Locate , 12: Print "ENTER NAME FOR CONFERENCE: "
             Print
             Locate , 12: Print "THE NAME SHOULD HAVE NO PERIODS OR SPECIAL CHARACTERS."
-            Locate , 12: Print "SAMPLE NAMES ARE SEC, SWC, 94-ACC"
-            Locate 7, 37: Input conferenceName$
+            Locate , 12: Print "SAMPLE NAMES ARE ACC 2020, SEC 2020, Pac-12 2020"
+            Locate 8, 37: Input conferenceName$
 
             If conferenceName$ <> "" Then
 
@@ -193,14 +194,14 @@ Sub ReviewEditConference (targetFile$)
 
         Color 12
         Locate , 6: Print div1Name$;
-        Locate , 53: Print div2Name$
+        Locate , 44: Print div2Name$
 
         For I = 1 To TEAMS_PER_DIV
 
             Color 2: Print Using "  ##"; I;
             Color 15: Print " "; Left$(memberName$(I), 25);
 
-            Locate , 50
+            Locate , 41
             Color 2: Print Using "##"; I + 15;
             Color 15: Print " "; Left$(memberName$(I + 15), 25)
 
@@ -208,13 +209,13 @@ Sub ReviewEditConference (targetFile$)
 
         Do
 
-            Locate 21, 1
+            Locate 22, 1
 
-            Color 14: Print "(1) ";
+            Color 14: Print "  (1) ";
             Color 15: Print "ADD A TEAM"
-            Color 14: Print "(2) ";
+            Color 14: Print "  (2) ";
             Color 15: Print "REMOVE A TEAM"
-            Color 14: Print "(3) ";
+            Color 14: Print "  (3) ";
             Color 15: Print "END AND SAVE CONFERENCE"
 
             I$ = GetKeyPress$
@@ -291,7 +292,7 @@ Sub SaveConferences (confFile$)
     Next X
 
     'Open Stat File
-    confStatFile$ = String.Replace$(leagueFile$, ".TMI", ".TMS")
+    confStatFile$ = String.Replace$(confFile$, ".TMI", ".TMS")
 
     Open confStatFile$ For Output As #2
 
