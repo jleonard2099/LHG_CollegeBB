@@ -129,7 +129,8 @@ Sub SCHEDULE ()
                 Case 9
                     scheduleFile$ = _OpenFileDialog$("Select schedule file", diskPaths$(3), "*.SCD", "Schedule files [.SCD]")
                     Call ConvertSched4to5(scheduleFile$, 0)
-                    'Call ConvertAllSched
+                    '--Call ConvertAllSched
+                    '--Call RunAllSchedules
 
             End Select
 

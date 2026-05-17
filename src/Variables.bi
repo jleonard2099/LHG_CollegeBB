@@ -265,16 +265,21 @@ Dim scheduleFile$, tourneyFile$
 Dim schedHomeTm$, schedVisTm$
 
 Dim actualAttendance&
+
 Dim X0%, X1%, threePtShotChance
 
-Dim FY%(0 To 1)
+Dim staminaScale As Single
 
 Dim tickerPeriod$(14), teamYrTourn$(0 To 3)
 
-Dim schedOptions(18)
+'Dim FY%(0 To 1)
+'Dim maxRoster(0 To 1), schedOptions(18)
 Dim tourneyOptions(18), tourneySettings(0 To 16, 0 To 16, 0 To 4)
 
 Dim avgAttendance&(1)
+
+
+
 
 ' Shared / Global
 Dim Shared prevBall$, pbpString$
@@ -289,7 +294,9 @@ Dim Shared ft3PtFoul, ft6FloorFouls, ft10thFoul
 Dim Shared foulOnPlay, foulsToDQ
 Dim Shared gameAvgTmStamina, gameLoc, guardNbr
 Dim Shared halfTime
-Dim Shared lastDefCheckDiff, lastOffCheckDiff, nbrLines, offStatus
+Dim Shared lastDefCheckDiff, lastOffCheckDiff
+Dim Shared lastTOHalf, lastTOClock
+Dim Shared nbrLines, offStatus
 Dim Shared passes, periodEnd, playerMode, playerOpt, pbpOpt
 Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotClock, shotType, sndOpt

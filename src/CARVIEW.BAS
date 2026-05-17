@@ -466,13 +466,13 @@ Sub ViewRosterSequence (careerName$)
                     Print "HIT ENTER TO CONTINUE OR ESC TO GO TO MAIN MENU"
                     I$ = GetKeyPress$
 
-                    If I$ = Chr$(27) Then Exit For
-
                     Cls
                     
                 Loop Until I$ = Chr$(27) Or I$ = Chr$(13)
 
             End If 'Done checking for valid player
+
+            If I$ = Chr$(27) Then Exit For
 
         Next I
 

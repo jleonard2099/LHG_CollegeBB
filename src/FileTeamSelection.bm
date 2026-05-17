@@ -457,15 +457,15 @@ End Sub
 'Reads in compiled stats for a given team
 Sub ReadTeamStats (teamName$, statFile$)
 
-    Shared statPlyrVal!()
     Shared stats3FGM!(), stats3FGA!()
     Shared statsDefTot!(), statsOffTot!()
+    Shared statPlyrVal!()
 
     Shared statPlyrNames$()
 
-    Erase statPlyrVal!
     Erase stats3FGM!, stats3FGA!
     Erase statsDefTot!, statsOffTot!
+    Erase statPlyrVal!
     Erase statPlyrNames$
 
     Open diskPaths$(1) + statFile$ For Input As #1
@@ -850,14 +850,12 @@ Function nameStatFile$ (teamName$)
     'Length of 'converted' name for file
     '-- update this if we want to support long files
     QQ = 8
+    XX = 11
 
-    For XX = 11 To 4 Step -1
-        If Mid$(teamPrefix$, XX, 1) = "_" Then
-            QQ = XX - 4
-        Else
-            Exit For
-        End If
-    Next XX
+    Do While XX >= 4 And Mid$(teamPrefix$, XX, 1) = "_"
+        QQ = XX - 4
+        XX = XX - 1
+    Loop
 
     nameStatFile$ = Mid$(teamPrefix$, 4, QQ) + "." + Left$(teamPrefix$, 2)
 
