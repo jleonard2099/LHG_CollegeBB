@@ -14,9 +14,9 @@ Sub CREATCON ()
     Shared conferenceName$
     Shared div1Name$, div2Name$
 
-    ReDim menuChoices$(1 To 3)
+    ReDim menuChoices$(1 To 4)
 
-    SELECTION% = 1
+    menuSelection = 1
 
     Do
 
@@ -26,7 +26,8 @@ Sub CREATCON ()
         Call TITLE
         menuChoices$(1) = "CREATE A CONFERENCE      "
         menuChoices$(2) = "MODIFY CONFERENCE MEMBERS"
-        menuChoices$(3) = "RETURN TO LEADERS MENU   "
+        menuChoices$(3) = "UPDATE MEMBER INDEXES    "
+        menuChoices$(4) = "RETURN TO LEADERS MENU   "
         Count% = 3
         Start% = 1
         ExitCode% = 3
@@ -40,7 +41,7 @@ Sub CREATCON ()
         Call box0(Row% - 1, Column% - 1, Row% + Count%, Column% + menuWidth%, 2, FileFGColor, FileBGColor)
 
         _MouseShow "DEFAULT"
-        MMenuVert menuChoices$(), SELECTION%, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
+        MMenuVert menuChoices$(), menuSelection, Start%, ExitCode%, FileFGColor, FileBGColor, HiLiteFGColor%, HiLiteBGColor%, Count%, Row%, Column%
         _MouseHide
 
         Color , 0
@@ -56,7 +57,7 @@ Sub CREATCON ()
             div1Name$ = ""
             div2Name$ = ""
 
-            Select Case SELECTION%
+            Select Case menuSelection
 
                 Case 1:
                     Call DefineConference
@@ -70,11 +71,25 @@ Sub CREATCON ()
                         Call ReviewEditConference(confFile$)
                     End If
 
+                Case 3
+                    fileSpec$ = diskPaths$(2) + "*.TMI"
+
+                    Count% = FileCount%(fileSpec$)
+                    ReDim foundFiles$(0 To Count%)
+                    foundFiles$(0) = fileSpec$
+                    Call ReadFile(foundFiles$())
+
+                    For X = 1 To Count%
+                        target$ = diskPaths$(2) + foundFiles$(X)
+                        Print "Converting "; target$
+                        Call UpdateConferenceIndexes(target$)
+                    Next X
+
             End Select
 
         End If 'Done checking for ESC
 
-    Loop Until SELECTION% = 3 Or ExitCode% = 27
+    Loop Until menuSelection = 4 Or ExitCode% = 27
 
     Color 15, 0
     Cls
@@ -305,5 +320,78 @@ Sub SaveConferences (confFile$)
     Next
 
     Close #2
+
+End Sub
+
+
+'----------------------------------------
+'   UpdateConferenceIndexes Subroutine
+'----------------------------------------
+' This routine was specifically designed
+' to assist with fixing league / conference
+' files after a Teams file has been sorted.
+' It will find the new indexes of each team
+' in the file and update it.
+Sub UpdateConferenceIndexes (sourceFile$)
+
+    Shared memberIdx()
+    Shared memberName$(), memberYear$()
+
+    Dim totalMembers As Integer
+    Dim currMember As Integer, currTeam As Integer
+    Dim found As Integer
+    Dim searchName As String
+    Dim teamName$
+
+    fileType = 0
+
+    ' Need to read in conference indexes
+    Call ReadConferenceIndex(sourceFile$)
+
+    'Assume all teams are in the same year
+    yearNumber$ = memberYear$(1)
+
+    'Read in all teams for the disk number that year
+    Open diskPaths$(0) + TEAM_FILE_NAME$ + "." + yearNumber$ For Random As #1 Len = TEAM_SIZE_BYTES
+    fileLength& = LOF(1)
+    Field #1, 15 As team$
+
+    Open "convertlog" For Append As #21
+
+    numberTeams = fileLength& / TEAM_SIZE_BYTES
+
+    For teamIdx = 1 To numberTeams
+        Get #1, teamIdx
+        teamNames$(teamIdx) = team$
+        teamIndex(teamIdx) = teamIdx
+    Next teamIdx
+
+    Close #1
+
+    totalMembers = TEAMS_PER_CONFERENCE
+
+    For currMember = 1 To totalMembers
+
+        searchName = RTrim$(memberName$(currMember))
+        found = 0
+
+        For currTeam = 1 To numberTeams
+            If RTrim$(teamNames$(currTeam)) = searchName Then
+                memberIdx(currMember) = currTeam
+                found = 1
+                Exit For
+            End If
+        Next currTeam
+
+        If found = 0 And searchName <> "XXX" Then
+            Print #21, "WARNING: No match found for [" + searchName + "] at slot " + Str$(X)
+        End If
+
+    Next currMember
+
+    Close #21
+
+    'Here we can write the index file back
+    Call SaveConferences(sourceFile$)
 
 End Sub

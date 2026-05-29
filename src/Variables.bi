@@ -272,8 +272,12 @@ Dim staminaScale As Single
 
 Dim tickerPeriod$(14), teamYrTourn$(0 To 3)
 
-'Dim FY%(0 To 1)
-'Dim maxRoster(0 To 1), schedOptions(18)
+Dim FY%(0 To 1)
+
+Dim maxRoster(0 To 1), schedOptions(18)
+Dim rosterCandidateIdx(13)
+Dim sortedRebounds(13), sortedStamina(13), staminaRosterIdx(13)
+
 Dim tourneyOptions(18), tourneySettings(0 To 16, 0 To 16, 0 To 4)
 
 Dim avgAttendance&(1)
@@ -315,12 +319,11 @@ Dim Shared dFG_Pct_Adj(1), d3FG_Pct_Adj(1), defStrat(1), defCategory(1), defCove
 Dim Shared homeCtFactor(1, 6)
 Dim Shared leagRat_GAME(1, 4), lineupIdx(0 To 1, 0 To 4), mandatoryTO(0 To 1), offStrat(1)
 Dim Shared pbpFG(1 To MAX_PBP_LINES), pbpBG(1 To MAX_PBP_LINES), pctContrib(1)
-Dim Shared plyrStaminaGame(13), plyrRebIdx(13), plyrRebVal(13)
 Dim Shared playerTime(1, 13), pressureRating(1, 1)
 Dim Shared plyrDef_GAME(0 To 1, 0 To 13), plyrOff_GAME!(0 To 1, 0 To 13, 0 To 24)
 Dim Shared plyrRat_GAME(0 To 1, 0 To 13, 0 To 6), plyrStat_GAME(0 To 1, 0 To 13, 0 To 15)
 Dim Shared periodPlayerTot(1, 8, 13, 14), periodTeamTot(1, 7, 14)
-Dim Shared rebRatings(9), rosterIdx(13), rosterStatus(1, 13)
+Dim Shared rebRatings(9), rosterStatus(1, 13)
 Dim Shared schedGame(2)
 Dim Shared score(0 To 1, 0 To 10), scSettings(0 To 3), statTotals(14)
 Dim Shared statsGame3FGM(1, 13), statsGame3FGA(1, 13)
