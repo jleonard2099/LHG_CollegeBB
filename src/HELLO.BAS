@@ -1412,7 +1412,6 @@ Sub COLHOOP ()
     matchPace = CInt(((FY%(1) + FY%(0)) / 2))
     totalMatchPace& = totalMatchPace& + matchPace
 
-
     For team = 0 To 1
 
         Call SETSTAMINA
@@ -1698,7 +1697,6 @@ Sub COLHOOP ()
         For X = 0 To 1
             For Y = 0 To 13
                 If plyrOff_GAME!(X, Y, 12) = 5 Then
-                    'pbpDelay! = 0.4
                     Call SCOREBOARD
                 End If
             Next Y
@@ -1771,6 +1769,7 @@ Sub COLHOOP ()
     'Last 5 seconds, down by 1 score!!!
     If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOpp <= 3 Or threePtOpt = 0 And scoreDiffOpp <= 2) And scoreDiffOpp >= 0 And currHalf >= 2 Then
 
+        'Computer on Offense
         If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
             ' Computer handle last 5 seconds
@@ -2266,6 +2265,7 @@ Sub COLHOOP ()
 
             skipInbound% = 0
 
+            'Computer on Defense
             If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
@@ -3469,7 +3469,6 @@ Sub COLHOOP ()
 
     Print
 
-
     ' *** Determine value for playChoice ***
     'playChoice = play type
     '0 = Pass
@@ -3503,7 +3502,7 @@ Sub COLHOOP ()
 
         Else
 
-            'PC vs PC, Computer on Defense
+            'Computer on Defense
             If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
                 If currHalf >= 2 And gameClock! <= 60 And scoreDiff > 0 Then
@@ -3512,7 +3511,7 @@ Sub COLHOOP ()
                     GoTo 532
                 Else
 
-                    'Human Opponent | PC is Visitor AND Coach Shots
+                    '[Human vs. PC | Human Opponent] AND Coach Shots
                     If (playerMode = 1 Or playerMode = 0) And coachOpt <> 1 Then
                         'Get user input
                         GoTo 530
@@ -3649,7 +3648,7 @@ Sub COLHOOP ()
         playChoice = 3
     End If
 
-    'Timeout
+    'Timeout - Human Offense
     If Val(I$) = 2 And (playerMode = 0 Or playerMode = 1 And D = compTeam) And timeouts(P) > 0 Then
         playChoice = 2
     End If
@@ -3668,17 +3667,14 @@ Sub COLHOOP ()
 
     If threePtOpt = 1 Then
 
-        'Computer - try for 3 always when in range
-        If threePtRange = 1 Then
-            If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        'Computer on Offense
+        'Try for 3 when in range (always) or when down by 3 late in game
+        If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+            If threePtRange = 1 Or _
+               currHalf >= 2 And gameClock! < 30 And scoreDiff >= 3 Then
+
                 playChoice = 4
             End If
-        End If
-
-        'Try for 3 near end of game when down by 3
-        If currHalf >= 2 And gameClock! < 30 And scoreDiff >= 3 And _
-            ((playerMode = 1 And P = compTeam) Or playerMode = 2) Then
-            playChoice = 4
         End If
 
         '3-pt shot in player's frequency
@@ -4228,6 +4224,7 @@ Sub COLHOOP ()
             pbpString$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP(P, 1)
 
+            'Computer on Defense
             If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
@@ -6004,13 +6001,8 @@ Sub TimeoutChoice (offTakeTO)
     ' ***********************************
     ' *** Check for TimeOut - Offense ***
     ' ***********************************
-    '  Human Opponent, Computer Shoots
-    '  Computer on Defense, But Human Lets Computer Shoot
     '  Computer on Offense
-    '  Computer vs. Computer
-    '(playerMode = 1 And D = compTeam And coachOpt = 1) Or _
-    If (playerMode = 0 And coachOpt = 1) Or _
-        (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+    If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
     
         'Tournament play widens the window for calling timeouts
         'run trigger = "unanswered points"; the team is on a "run"
@@ -6045,12 +6037,15 @@ Sub TimeoutChoice (offTakeTO)
 
         ' Half 2 - late game, trailing
         If currHalf = 2 And timeouts(P) >= 1 Then
+
             If gameClock! <= 300 And offScoreDiff <= -(5 - toScoreBuffer) Then
                 toChoice = P
             End If
+
             If gameClock! <= 120 And offScoreDiff < 0 Then
                 toChoice = P
             End If
+
         End If
 
         'Emergency - outside time windows, fires anytime
@@ -6071,9 +6066,7 @@ Sub TimeoutChoice (offTakeTO)
     ' *** Check for TimeOut - Defense ***
     ' ***********************************
     '  Computer On Defense
-    '  Computer vs. Computer
-    If (playerMode = 1 And P = compTeam And coachOpt = 1) Or _
-        (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+    If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
 
         If tourneyPlay = 1 Then
             clockThreshold = 300
@@ -6095,20 +6088,24 @@ Sub TimeoutChoice (offTakeTO)
 
         defScoreDiff = score(D, 0) - score(P, 0)
 
-        'Opponent killing clock late, defense is trailing
-        If gameClock! <= 300 And currHalf = 2 And defScoreDiff < 0 And timeouts(D) >= 1 Then
-            toChoice = D
-        End If
+        If timeouts(D) >= 1 Then
 
-        'Opponent on a scoring run
-        If (defScoreDiff - lastDefCheckDiff) <= -runTrigger And timeouts(D) >= 1 Then
-            toChoice = D
-        End If
+            'Opponent killing clock late, defense is trailing
+            If gameClock! <= 300 And currHalf = 2 And defScoreDiff < 0 Then
+                toChoice = D
+            End If
 
-        'Opponent just scored, defense wants to regroup
-        ' requires a flag set immediately after opponent scores
-        If opponentJustScored = 1 And gameClock! <= 300 And currHalf = 2 And timeouts(D) >= 1 Then
-            toChoice = D
+            'Opponent on a scoring run
+            If (defScoreDiff - lastDefCheckDiff) <= -runTrigger Then
+                toChoice = D
+            End If
+
+            'Opponent just scored, defense wants to regroup
+            ' requires a flag set immediately after opponent scores
+            If gameClock! <= 300 And currHalf = 2 And opponentJustScored = 1 Then
+                toChoice = D
+            End If
+
         End If
 
         ' Always reset baseline so delta doesn't inflate across possessions
@@ -6430,9 +6427,11 @@ Sub SELECTPBP (teamIdx, clean)
     Select Case pbpOpt
 
         Case 0:
+            'Verbose
             Call PBP(teamIdx)
 
         Case 1:
+            'Classic
             If pbpDelay! > 0 Then
                 If clean = 1 Then Call WINDEX
                 Print pbpString$
@@ -6697,7 +6696,6 @@ Sub MAKEPBP (pbpType)
                             'In women's basketball they dunk even less often
                             '-- "1%" factor = 15
                             If (ballCarrier = 0 Or ballCarrier = 1) Then
-                                '-- was 18
                                 If (teamGender$(P) = "SHE" And d100% <= 22) Or (teamGender$(P) = "HE" And d100% <= 45) Then
                                     willDunk = 1
                                 End If
@@ -9408,7 +9406,7 @@ End Sub
 
 
 '----------------------------------------
-'         CreditAssists Subroutine
+'        CreditAssists Subroutine
 '----------------------------------------
 'This subroutine appears to be crediting
 'assists, per its similarity to the code
@@ -9787,9 +9785,13 @@ Sub FindValidSubs (teamIdx)
 
         For slot = 0 To 4
 
-            Do Until (playerActive%(teamIdx, staminaRosterIdx(checkIdx)) = 1 And players$(teamIdx, staminaRosterIdx(checkIdx)) <> "XXX") Or checkIdx = 0
+            Do Until (playerActive%(teamIdx, staminaRosterIdx(checkIdx)) = 1 And players$(teamIdx, staminaRosterIdx(checkIdx)) <> "XXX") Or checkIdx <= 0
                 checkIdx = checkIdx - 1
             Loop
+
+            If checkIdx < 0 Then
+                checkIdx = 0 ' safety guard against negative index
+            End If
 
             rosterCandidateIdx(slot) = staminaRosterIdx(checkIdx)
             sortedRebounds(slot) = plyrOff_GAME!(teamIdx, staminaRosterIdx(checkIdx), 2)
@@ -11054,7 +11056,9 @@ End Sub
 'their zone strategy, except for a 2-3 / 3-2.
 Sub ZONECHANGE ()
 
-    If (playerMode = 1 And compTeam = P9 Or playerMode = 0) And (defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or defStrat(D) >= 15) And (offStrat(P) <= 14 And offStrat(P) >= 10) Then
+    'Human Player on Offense
+    If (playerMode = 1 And compTeam = P9 Or playerMode = 0) And _
+        (defStrat(D) = 2 Or defStrat(D) = 7 Or defStrat(D) = 12 Or defStrat(D) >= 15) And (offStrat(P) <= 14 And offStrat(P) >= 10) Then
 
         Call FRAMEOPTION(8, P)
         Locate 10, 15
@@ -11195,15 +11199,13 @@ Sub SETSTAMINA ()
 
             'Add in fraction of player's contribution, based on games played
             currContrib = plyrOff_GAME!(P9, I, 3)
-
-            adjustedContrib = plyrOff_GAME!(P9, I, 3) * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
+            adjustedContrib = currContrib * teamRat_GAME(P9, 5) / plyrRat_GAME(P9, I, 0)
 
             SQ% = SQ% + adjustedContrib
             plyrOff_GAME!(P9, I, 3) = adjustedContrib
 
         End If
     Next
-
 
     For I = 0 To 13
 
@@ -11213,7 +11215,6 @@ Sub SETSTAMINA ()
         End If
 
         If teamRat_GAME(P9, 5) <> 0 And plyrRat_GAME(P9, I, 0) <> 0 And playerActive%(P9, I) = 1 Then
-            'Same calculation ?!?!?!
             plyrOff_GAME!(P9, I, 3) = CInt(plyrOff_GAME!(P9, I, 3) / SQ% * gameAvgTmStamina)
         End If
 
@@ -11224,26 +11225,17 @@ Sub SETSTAMINA ()
 
     Next I
 
-
-    SQ% = 0
-
-    'Add up contribution for all enabled players
     For I = 0 To 13
-        If playerActive%(P9, I) = 1 Then
-            SQ% = SQ% + plyrOff_GAME!(P9, I, 3)
-        End If
-    Next
 
-
-    For I = 0 To 13
+        'For most teams (where "99" value exists)
+        '(this represents that we have stat-accurate
+        'adjustments (3FG, TO / Steal)
         If gameAvgTmStamina > 120 And teamAdj(P9, 8) <> 99 Then
-            'For most teams (where "99" value exists)
-            '(this represents that we have accurate 3FG adjustments,
-            'as well as Off TO / Steal adjustments)
-            ' ** Adjust foul draw rating based on team pace / stamina **
+            ' ** Adjust foul draw rating based on team stamina **
             plyrOff_GAME!(P9, I, 16) = plyrOff_GAME!(P9, I, 16) * (120 / gameAvgTmStamina)
             plyrOff_GAME!(P9, I, 16) = CInt(plyrOff_GAME!(P9, I, 16))
         End If
+
     Next I
 
     rebFoulChance = 8
@@ -11280,9 +11272,8 @@ Sub EvaluateSubs (teamIdx)
 
     skipLogic = 0
 
+    'Computer on Offense
     'offStatus = 50 means team is in BONUS
-    'If it's a computer-controlled offense not in BONUS
-    'If offStatus <> 50 Or (playerMode = 1 And teamIdx = compTeam) Or (playerMode = 2 And teamIdx = P) Then
     If Not (offStatus = 50 And (playerMode = 1 And teamIdx = compTeam) Or (playerMode = 2 And teamIdx = P)) Then
 
         For I1 = 0 To 13
@@ -11332,6 +11323,10 @@ Sub EvaluateSubs (teamIdx)
                         End If
 
                 End Select
+
+                If currPlyrCX <= 0 And (quarter < 4 Or (quarter = 4 And gameClock! > 120)) Then
+                    tiredPlayers = tiredPlayers + 1
+                End If
 
                 'Close to fouling out
                 If foulDanger%(teamIdx, I1) = 1 Then
@@ -13129,8 +13124,9 @@ Sub PRESSGUARD ()
     End If
 
     If defCategory(D) = 1 Or defCategory(D) = 2 Then
-        'Full Court Press only
 
+        'Full Court Press only
+        'Computer on Offense
         If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
 
             ' COMPUTER GUARD FOR PRESS
@@ -14407,6 +14403,8 @@ End Sub
 'the stat adjustments and score afterward.
 Sub FreeThrow_OneAndOne (missedLastFT)
 
+    Dim ftShotChance, shotRoll
+
     offStatus = 50
 
     Call STOPPAGE(takeTO)
@@ -14446,6 +14444,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
         playerBaseFTPct = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)
 
         ftShotChance = playerBaseFTPct
+        Print #11, "BASE FT CHANCE:"; Str$(ftShotChance);
 
         'Consider playoff pressure
         If tourneyPlay = 1 Then
@@ -14455,6 +14454,7 @@ Sub FreeThrow_OneAndOne (missedLastFT)
 
             If crunchLevel > 0 Then
 
+                Print #11, ", CRUNCH:YES";
                 'Pressure only on players below 75%, scales with how far below
                 ftPressurePenalty = (75 - playerBaseFTPct) * .10 * crunchLevel
                 ftShotChance = playerBaseFTPct - MAX(ftPressurePenalty, 0)
@@ -14465,14 +14465,20 @@ Sub FreeThrow_OneAndOne (missedLastFT)
 
         'Tired shooter
         If tmFatigue(P, lineupIdx(P, ballCarrier)) <= -5 Then
+            Print #11, ", FATIGUED:YES";
             ftShotChance = CInt(ftShotChance * .9)
+        Else
+            Print #11, ", FATIGUED:NO";
         End If
+
+        Print #11, ", ROLL:"; Str$(shotRoll); ", CHANCE:"; Str$(ftShotChance)
 
         If shotRoll <= ftShotChance Then
 
             'Increase FTM
             plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 10) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 10) + 1
 
+            Print #11, "RESULT: MADE FREE THROW!"
             If pbpOpt = 0 Then
                 Call THREEFT(freethrow)
             Else
@@ -14484,6 +14490,8 @@ Sub FreeThrow_OneAndOne (missedLastFT)
             End If
 
         Else
+
+            Print #11, "RESULT: MISSED FREE THROW!"
 
             If pbpOpt = 1 Then
                 Call MISSFT(freethrow)
@@ -14520,8 +14528,8 @@ End Sub
 'this routine walks through play-by-play
 'for free throws. It also calculates the
 'stat adjustments and score afterward.
-Sub FreeThrows (nbrFTAs, missedLastFT)
-
+Sub FreeThrows (ftCount, missedLastFT)
+    
     offStatus = 50
 
     Call STOPPAGE(takeTO)
@@ -14543,16 +14551,16 @@ Sub FreeThrows (nbrFTAs, missedLastFT)
             Print gameTeams$(P)
         End If
 
-        pbpString$ = Str$(nbrFTAs) + " FT: " + players$(P, lineupIdx(P, ballCarrier)) + Str$(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)) + " %"
+        pbpString$ = Str$(ftCount) + " FT: " + players$(P, lineupIdx(P, ballCarrier)) + Str$(plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 1)) + " %"
         Call SELECTPBP(P, 0)
 
     End If
 
-    'Increase FT ATT
-    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 9) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 9) + 3
-
     'FT Attempts
-    For freethrow = 1 To nbrFTAs:
+    For freethrow = 1 To ftCount:
+
+        'Increase FT ATT
+        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 9) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 9) + 1
 
         Call Rolld100(shotRoll)
 
@@ -14574,7 +14582,8 @@ Sub FreeThrows (nbrFTAs, missedLastFT)
                 Call THREEFT(freethrow)
             End If
 
-            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then 'And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And swish& Then
+                'And d100% < 10
                 _SndPlay swish&
             End If
 
@@ -14586,7 +14595,8 @@ Sub FreeThrows (nbrFTAs, missedLastFT)
                 Call BADFT(freethrow)
             End If
 
-            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then 'And d100% < 10 Then
+            If (autoPlay <> 1 Or playerMode <> 2) And sndOpt = 1 And backboard& Then
+                'And d100% < 10
                 _SndPlay backboard&
             End If
 
