@@ -116,7 +116,6 @@ Next
 '2 = Foul chance
 '2nd index represents Def Category
 
-'Data 2,5,1,4,15,29,22,36,7,9,3,12
 Data 3,6,2,5,15,29,22,36,6,8,3,11
 For I = 0 To 2
     For I1 = 1 To 4
@@ -132,7 +131,6 @@ Next
 '4 = Foul chance
 '2nd index represents Def Coverage
 
-'Data -7,-10,-4,-10,70,100,20,100,-1,1,-2,2,15,22,8,29,5,7,3,7
 Data -7,-10,-4,-10,70,100,20,100,0,2,-1,3,15,22,8,29,4,8,2,6
 For I = 0 To 4
     For I1 = 0 To 3
@@ -2254,7 +2252,6 @@ Sub COLHOOP ()
             End If
 
             Call Rolld100(RN0)
-            Call Rolld100(RN1)
 
             foulOnPlay = 99
             C1 = 2
@@ -2277,6 +2274,8 @@ Sub COLHOOP ()
             End If
 
             If passes <= 1 Then
+
+                Call Rolld100(RN1)
 
                 Select Case RN1
 
@@ -2831,105 +2830,7 @@ Sub COLHOOP ()
     If RNX <= (stealRating) Then
 
         'Successful steal!
-        plyrOff_GAME!(D, lineupIdx(D, stealPlyr), 18) = plyrOff_GAME!(D, lineupIdx(D, stealPlyr), 18) + 1
-        plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) + 1
-
-        If defCategory(D) <= 0 Or passes <> 1 Then
-            Call LASTSHOT
-        End If
-
-        Call ResetShotClock
-
-        If (autoPlay = 0 Or pbpDelay! > 0) Then
-
-            pbpString$ = "BALL STOLEN BY " + players$(D, lineupIdx(D, stealPlyr)) + "!"
-
-            If pbpOpt = 1 Then
-                Call WINDEX
-                Call PBP(D)
-                Call DELAY
-            Else
-
-                Call Rolld100(RN0)
-
-                Select Case RN0
-
-                    Case 1 To 3
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " QUICKLY REACHES IN!"
-
-                    Case 4 To 6
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " SNEAKS IN FROM BEHIND!"
-
-                    Case 7 To 10
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " GETS A HAND ON THE BALL!"
-
-                    Case Else
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " REACHES FOR IT!"
-
-                End Select
-
-                Call PBP(D)
-
-                RN1 = Int(Rnd(1) * 20) + 1
-
-                Select Case RN1
-
-                    Case 1
-                        pbpString$ = "PASS INTERCEPTED BY " + players$(D, lineupIdx(D, stealPlyr)) + "!"
-                    Case 2
-                        pbpString$ = "PASS IS PICKED OFF BY " + players$(D, lineupIdx(D, stealPlyr)) + "!"
-                    Case 3
-                        pbpString$ = "BALL IS STOLEN BY " + players$(D, lineupIdx(D, stealPlyr)) + "!"
-                    Case 4
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " WITH THE STEAL!"
-                    Case 5
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " TAKES IT AWAY!"
-                    Case 6
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " STEALS IT!"
-                    Case 7
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " RIPS IT LOOSE!"
-                    Case 8
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " TAKES THE BALL AWAY!"
-                    Case 9
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " STEALS THE BALL!"
-                    Case 10
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " PICKS IT OFF!"
-                    Case 11
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " SWIPES THE BALL!"
-                    Case 12
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " WITH THE STOLEN BALL!"
-                    Case 13
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " STRIPS IT AWAY!"
-                    Case 14
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " WITH THE STEAL!"
-                    Case 15
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " SWIPES AND STEALS IT!"
-                    Case 16
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " SNATCHES IT AWAY!"
-                    Case 17
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " QUICKLY REACHES IN!"
-                    Case 18
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " TAKES IT THE OTHER WAY!"
-                    Case 19
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " POKES IT LOOSE!"
-                    Case 20
-                        pbpString$ = players$(D, lineupIdx(D, stealPlyr)) + " STRIPS IT CLEAN!"
-
-                End Select
-
-                Call PBP(D)
-
-            End If
-
-        End If
-
-        plyrOff_GAME!(D, lineupIdx(D, stealPlyr), 13) = plyrOff_GAME!(D, lineupIdx(D, stealPlyr), 13) + 1
-        turnovers(P) = turnovers(P) + 1
-
-        Call UPDATESCREEN
-
-        Call ChangePossession
-        P9 = D
+        Call StealOccurred(stealPlyr)
 
         If gameClock! <= 0 Then 170
 
@@ -14686,6 +14587,117 @@ Sub OPTIONS ()
     Call SCOREBOARD
 
 End Sub
+
+
+'----------------------------------------
+'        StealOccurred Subroutine
+'----------------------------------------
+'This subroutine handles stats and PBP
+'for a successful steal event
+Sub StealOccurred (defPlayer)
+
+    'Increase player steals / TO's
+    plyrOff_GAME!(D, lineupIdx(D, defPlayer), 18) = plyrOff_GAME!(D, lineupIdx(D, defPlayer), 18) + 1
+    plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) = plyrOff_GAME!(P, lineupIdx(P, ballCarrier), 23) + 1
+
+    If defCategory(D) <= 0 Or passes <> 1 Then
+        Call LASTSHOT
+    End If
+
+    Call ResetShotClock
+
+    If (autoPlay = 0 Or pbpDelay! > 0) Then
+
+        pbpString$ = "BALL STOLEN BY " + players$(D, lineupIdx(D, defPlayer)) + "!"
+
+        If pbpOpt = 1 Then
+            Call WINDEX
+            Call PBP(D)
+            Call DELAY
+        Else
+
+            Call Rolld100(RN0)
+
+            Select Case RN0
+
+                Case 1 To 3
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " QUICKLY REACHES IN!"
+
+                Case 4 To 6
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " SNEAKS IN FROM BEHIND!"
+
+                Case 7 To 10
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " GETS A HAND ON THE BALL!"
+
+                Case Else
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " REACHES FOR IT!"
+
+            End Select
+
+            Call PBP(D)
+
+            RN1 = Int(Rnd(1) * 20) + 1
+
+            Select Case RN1
+
+                Case 1
+                    pbpString$ = "PASS INTERCEPTED BY " + players$(D, lineupIdx(D, defPlayer)) + "!"
+                Case 2
+                    pbpString$ = "PASS IS PICKED OFF BY " + players$(D, lineupIdx(D, defPlayer)) + "!"
+                Case 3
+                    pbpString$ = "BALL IS STOLEN BY " + players$(D, lineupIdx(D, defPlayer)) + "!"
+                Case 4
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " WITH THE STEAL!"
+                Case 5
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " TAKES IT AWAY!"
+                Case 6
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " STEALS IT!"
+                Case 7
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " RIPS IT LOOSE!"
+                Case 8
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " TAKES THE BALL AWAY!"
+                Case 9
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " STEALS THE BALL!"
+                Case 10
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " PICKS IT OFF!"
+                Case 11
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " SWIPES THE BALL!"
+                Case 12
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " WITH THE STOLEN BALL!"
+                Case 13
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " STRIPS IT AWAY!"
+                Case 14
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " WITH THE STEAL!"
+                Case 15
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " SWIPES AND STEALS IT!"
+                Case 16
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " SNATCHES IT AWAY!"
+                Case 17
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " QUICKLY REACHES IN!"
+                Case 18
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " TAKES IT THE OTHER WAY!"
+                Case 19
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " POKES IT LOOSE!"
+                Case 20
+                    pbpString$ = players$(D, lineupIdx(D, defPlayer)) + " STRIPS IT CLEAN!"
+
+            End Select
+
+            Call PBP(D)
+
+        End If
+
+    End If
+
+    plyrOff_GAME!(D, lineupIdx(D, defPlayer), 13) = plyrOff_GAME!(D, lineupIdx(D, defPlayer), 13) + 1
+    turnovers(P) = turnovers(P) + 1
+
+    Call UPDATESCREEN
+
+    Call ChangePossession
+    P9 = D
+
+End Sub 
 
 
 '----------------------------------------
