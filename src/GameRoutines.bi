@@ -115,6 +115,10 @@ Declare Function GetDesparationLevel% ()
 Declare Function GetTeamYear% (yearFromName$)
 Declare Function GetTeamGender$ (diskID$)
 Declare Function goodPlayer% (teamIdx, playerIdx)
+Declare Function IsDefensePC
+Declare Function IsOffensePC
+Declare Function IsOffenseHuman
+Declare Function IsDefenseHuman
 Declare Function playerActive% (teamIdx, playerIdx)
 Declare Function playerInLineup% (teamIdx, playerIdx)
 Declare Function playerStamina% (team, handler)

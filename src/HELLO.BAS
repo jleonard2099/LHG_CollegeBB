@@ -1767,8 +1767,7 @@ Sub COLHOOP ()
     'Last 5 seconds, down by 1 score!!!
     If gameClock! <= 5 And (threePtOpt = 1 And scoreDiffOpp <= 3 Or threePtOpt = 0 And scoreDiffOpp <= 2) And scoreDiffOpp >= 0 And currHalf >= 2 Then
 
-        'Computer on Offense
-        If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        If IsOffensePC Then
 
             ' Computer handle last 5 seconds
             scoreDiffTm = score(P, 0) - score(D, 0)
@@ -2262,8 +2261,7 @@ Sub COLHOOP ()
 
             skipInbound% = 0
 
-            'Computer on Defense
-            If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+            If IsDefensePC Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
                 Do
@@ -3403,8 +3401,7 @@ Sub COLHOOP ()
 
         Else
 
-            'Computer on Defense
-            If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+            If IsDefensePC Then
 
                 If currHalf >= 2 And gameClock! <= 60 And scoreDiff > 0 Then
                     'Less than 30 secs left in H2 / OT and Off is ahead - INTL FOUL
@@ -3568,9 +3565,8 @@ Sub COLHOOP ()
 
     If threePtOpt = 1 Then
 
-        'Computer on Offense
-        'Try for 3 when in range (always) or when down by 3 late in game
-        If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        If IsOffensePC Then
+            'Try for 3 when in range (always) or when down by 3 late in game
             If threePtRange = 1 Or _
                currHalf >= 2 And gameClock! < 30 And scoreDiff >= 3 Then
 
@@ -4125,8 +4121,7 @@ Sub COLHOOP ()
             pbpString$ = "DESIGNATED FOULER (0-4)"
             Call SELECTPBP(P, 1)
 
-            'Computer on Defense
-            If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+            If IsDefensePC Then
                 desigFouler = Int(Rnd(1) * 5)
             Else
                 Do
@@ -5902,8 +5897,7 @@ Sub TimeoutChoice (offTakeTO)
     ' ***********************************
     ' *** Check for TimeOut - Offense ***
     ' ***********************************
-    '  Computer on Offense
-    If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+    If IsOffensePC Then
     
         'Tournament play widens the window for calling timeouts
         'run trigger = "unanswered points"; the team is on a "run"
@@ -5966,8 +5960,7 @@ Sub TimeoutChoice (offTakeTO)
     ' ***********************************
     ' *** Check for TimeOut - Defense ***
     ' ***********************************
-    '  Computer On Defense
-    If (playerMode = 1 And D = compTeam) Or playerMode = 2 Then
+    If IsDefensePC Then
 
         If tourneyPlay = 1 Then
             clockThreshold = 300
@@ -9691,7 +9684,8 @@ Sub FindValidSubs (teamIdx)
             Loop
 
             If checkIdx < 0 Then
-                checkIdx = 0 ' safety guard against negative index
+                'Safety guard against negative index
+                checkIdx = 0 
             End If
 
             rosterCandidateIdx(slot) = staminaRosterIdx(checkIdx)
@@ -12606,7 +12600,7 @@ Sub BALLDISTRIBUTE ()
 
     If (playerMode = 0 And coachOpt = 1) Or _
         (playerMode = 1 And D = compTeam And coachOpt = 1) Or _ 
-        (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        IsOffensePC Then
         'Computer in charge - auto determine
 
         Call WHOGETSBALL
@@ -12843,8 +12837,7 @@ Sub DEADBALLOPTIONS (userTakeTO)
 
         End If 'Done checking computer control
 
-    Loop Until I$ = Chr$(13) Or userTakeTO = 1 Or _ 
-        (playerMode = 1 And P = compTeam) Or playerMode = 2
+    Loop Until I$ = Chr$(13) Or userTakeTO = 1 Or IsOffensePC
 
 End Sub
 
@@ -13000,8 +12993,7 @@ Sub STOPPAGE (userTakeTO)
 
         End If
 
-    Loop Until I$ = Chr$(13) Or _ 
-        (playerMode = 1 And P = compTeam) Or playerMode = 2
+    Loop Until I$ = Chr$(13) Or IsOffensePC
 
 End Sub
 
@@ -13027,8 +13019,7 @@ Sub PRESSGUARD ()
     If defCategory(D) = 1 Or defCategory(D) = 2 Then
 
         'Full Court Press only
-        'Computer on Offense
-        If (playerMode = 1 And P = compTeam) Or playerMode = 2 Then
+        If IsOffensePC Then
 
             ' COMPUTER GUARD FOR PRESS
             guardNbr = 1
@@ -16042,11 +16033,18 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
         Locate , 12: Print teamIndicator$(gameIdx)
         Locate , 12: Print "ENTER DISK ID: "
         Print
-        Locate , 12: Print "THE DISK ID IS USUALLY THE LAST TWO DIGITS OF THE"
-        Locate , 12: Print "SEASON DISK YOU ARE PLAYING FROM (IE. 89, 76, 67)."
+        Locate , 12: Print "THE DISK ID IS USUALLY THE 4-DIGIT YEAR FOR THE"
+        Locate , 12: Print "SEASON YOU WANT TO PLAY (IE. 1967, 1989, 2010)."
         Print
-        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID"
+        Locate , 12: Print "HIT <ENTER> TO USE PREVIOUS ID:"
         Locate 8,
+
+        If numberTeams > 0 Then 
+            yearToShow$ = _IIF(previousYear$ <> "", previousYear$, yearNumber$)
+            Locate 13, 44
+            Color 14, 4: Print yearToShow$
+            Color 15, 4
+        End If
 
         I$ = GetKeyPress$
 
@@ -16094,7 +16092,7 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
                         Call CSMsgBox(MsgText$, BoxWidth, PASS)
                         I$ = GetKeyPress$
                         Call CSMsgBox("", 0, PASS)
-
+                        chosenIdx = 0
                         Exit Sub
 
                     Else
@@ -16128,34 +16126,36 @@ Sub ChooseGameTeam (yearNumber$, numberTeams, chosenIdx, teamName$, gameIdx)
 
             End If 'Done checking for ENTER key
 
-            'Locate 2, 33
-            'Color 31: Print "LOADING..."
             chosenIdx = 1
 
-            Do
+            If numberTeams > 0 Then
 
-                Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, gameIdx)
-                teamGender$(gameIdx) = GetTeamGender$(yearNumber$)
+                Do
 
-                If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
+                    Call SelectGameTeam(numberTeams, yearNumber$, chosenIdx, teamName$, ExitCode%, gameIdx)
+                    teamGender$(gameIdx) = GetTeamGender$(yearNumber$)
 
-                    Do
+                    If ExitCode% <> 27 And numberTeams <> 0 And chosenIdx > 0 Then
 
-                        YCoord = Int((80 - Len(teamName$)) / 2)
-                        Locate 2, YCoord
-                        Color teamRat_GAME(gameIdx, 0), teamRat_GAME(gameIdx, 1): Print teamName$
+                        Do
 
-                        Color 15, 4
-                        Locate 3, 32: Print "ANY CHANGE? (Y/N)";
+                            YCoord = Int((80 - Len(teamName$)) / 2)
+                            Locate 2, YCoord
+                            Color teamRat_GAME(gameIdx, 0), teamRat_GAME(gameIdx, 1): Print teamName$
 
-                        J$ = GetKeyPress$
+                            Color 15, 4
+                            Locate 3, 32: Print "ANY CHANGE? (Y/N)";
 
-                    Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
+                            J$ = GetKeyPress$
 
-                End If
+                        Loop Until J$ = Chr$(27) Or UCase$(J$) = "Y" Or UCase$(J$) = "N"
 
-                'chosenIdx = -1 means there was invalid data
-            Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
+                    End If
+
+                    'chosenIdx = -1 means there was invalid data
+                Loop Until ExitCode% = 27 Or J$ = Chr$(27) Or UCase$(J$) = "N" Or chosenIdx = -1
+
+            End If
 
         End If 'Done checking for ESC
 
@@ -18503,6 +18503,54 @@ Function goodPlayer% (teamIdx, playerIdx)
         goodPlayer% = 1
 
     End If
+
+End Function
+
+
+'--------------------------------------------
+'        IsOffensePC Function
+'--------------------------------------------
+'This function returns TRUE if the computer
+'is on offense
+Function IsOffensePC
+    
+    IsOffensePC = (playerMode = 1 And P = compTeam) Or playerMode = 2
+
+End Function
+
+
+'--------------------------------------------
+'        IsDefensePC Function
+'--------------------------------------------
+'This function returns TRUE if the computer
+'is on defense
+Function IsDefensePC
+
+    IsDefensePC = (playerMode = 1 And D = compTeam) Or playerMode = 2
+
+End Function
+
+
+'--------------------------------------------
+'        IsOffenseHuman Function
+'--------------------------------------------
+'This function returns TRUE if a human player
+'is on offense
+Function IsOffenseHuman
+
+    IsOffenseHuman = Not IsOffensePC
+
+End Function
+
+
+'--------------------------------------------
+'        IsDefenseHuman Function
+'--------------------------------------------
+'This function returns TRUE if a human player
+'is on defense
+Function IsDefenseHuman
+
+    IsDefenseHuman = Not IsDefensePC
 
 End Function
 
