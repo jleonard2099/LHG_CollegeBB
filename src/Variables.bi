@@ -304,7 +304,7 @@ Dim Shared nbrLines, offStatus
 Dim Shared passes, periodEnd, playerMode, playerOpt, pbpOpt
 Dim Shared rebFoulChance, ruleOptType
 Dim Shared sClockVal, shotClock, shotType, sndOpt
-Dim Shared threePtOpt, tickerGames, tourneyPlay, willDunk
+Dim Shared threePtOpt, tourneyPlay, useTicker, willDunk
 
 Dim Shared gameClock!, pbpDelay!, shotChance!, timeElapsed!
 
